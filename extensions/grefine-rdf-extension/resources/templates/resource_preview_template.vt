@@ -1,0 +1,22 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/extension/rdf-extension/styles/flyout.css"></link>
+  <script type="text/javascript" src="/externals/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript">
+    jQuery(function(){
+      jQuery.get("$previewResourceUrl",{},function(data){
+        jQuery('div.flyout-content').empty().html(data);
+      });
+    });
+  </script>
+</head>
+<body>
+    <div><a href="$resourceUri">$resourceUri</a></div>
+    <div class="flyout-content">
+      <img src="/images/large-spinner.gif" /> 
+      <div>
+        Fetching for information about $resourceUri
+      </div>
+    </div>  
+  </body>
+</html>

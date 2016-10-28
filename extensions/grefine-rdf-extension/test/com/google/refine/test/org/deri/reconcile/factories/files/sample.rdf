@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+>
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Person">
+    <rdfs:label>Person</rdfs:label>
+  </rdfs:Class>
+  <rdfs:Property rdf:about="http://xmlns.com/foaf/0.1/givenName">
+    <rdfs:label>give name</rdfs:label>
+  </rdfs:Property>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/renaud_delbru#me">
+    <foaf:familyName>Delbru</foaf:familyName>
+    <foaf:mbox_sha1sum>247d80518c87c6f8129d5a3ec60a07665eded006</foaf:mbox_sha1sum>
+    <foaf:givenName>Renaud</foaf:givenName>
+	<foaf:givenName xml:lang="en">EN-Renaud</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/renaud_delbru_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/renaud_delbru"/>
+  </foaf:Person> 
+</rdf:RDF>

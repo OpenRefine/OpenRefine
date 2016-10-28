@@ -1,0 +1,55 @@
+<p>This example will reconcile <a href="http://www.guardian.co.uk/news/datablog/2011/mar/10/world-top-100-universities-reputation-rankings-reputation-times-higher-education">the list of 100 top universities from  the Guardian data blog</a> against <a href="http://data.nytimes.com/">organizations RDF dump from data.nytimes.com</a>.
+</p>
+<ul class="steps">
+<li class="step step1">
+Create a Google Refine project from the CSV file that can be exported from the <a href="https://spreadsheets.google.com/ccc?key=0AonYZs4MzlZbdEVfN3d1ejhQTnZlSW1SWnpVcml1Ymc&hl=en">Google spreadsheet provided by the Guardian Data Blog</a>. A snippet is shown in the figure below.
+<p>
+  <img src="files/dump/screenshots/universities.png" border="1" width="600" />
+</p>
+</li>
+<li class="step step2">
+Let us define a new reconciliation service based on <a href="http://data.nytimes.com/">the RDF dump provided by the NY Times describing organizations</a>. Select <span class="instruction">Based on RDF file...</span> from the RDF menu as shown in the figure below.
+<p>
+  <img src="files/dump/screenshots/add-service.png" border="1" />
+</p>
+</li>
+<li class="step step3">
+Enter the details of the new service (no worries! not a lot of details are required). Pick a name for the service (in the example below we chose "NYT organizations"). Choose the file and the format. Finally, select properties that are used to label resources in the RDF data (NYT organizations dump uses <code>skos:prefLabel</code> so we selected it as shown below).
+<p class="note">
+ For file format, the default option "auto-detect" uses the file extension to detect the RDF format of the file.
+</p>
+<p class="note">
+ For label properties, you can select more than one property but this will have its cost on the performance.
+ If the property is not one of those provided, you can select other and enter the full URI for the property (or properties) wanted.
+</p>
+<p>
+  <img src="files/dump/screenshots/details.png" />
+</p>
+</li>
+<li class="step step4">
+Choose <span class="instruction">start reconciling...</span> from the column drop down menu of the "University" column. Select the "NYT organizations" service that we have just added. As shown below, type guessing will suggest a list of types with <code>skos:Concept</code>.
+<p>
+  <img src="files/dump/screenshots/reconciliation.png" width="600"/>
+</p>
+</li>
+<li class="step step5">
+Go ahead with the <span class="instruction">start reconciling</span> button. After a while, Google Refine presents reconciliation results with factes about reconciliation decision and top candidate score (see figure below).
+<p>
+  <img src="files/dump/screenshots/results.png" width="600" border="1"/>
+</p>
+</li>
+<li class="step step6">
+Pingo! we are almost there... now we still have the task of going through the results and confirming correct suggestions that are not automatically matched. You can preview reconciliation suggestions to inform your decision (see figure below).
+<p>
+  <img src="files/dump/screenshots/preview.png" border="1"/>
+</p>
+</li>
+</ul>
+
+<p class="note">
+  For more details and technical documentation see <a href="searchReconDocs">SPARQL with fulltext search -based Reconciliation</a> and <a href="sparqlReconDocs"> SPARQL-based Reconciliation </a>
+</p>
+
+<p class="note">
+To get the reconciled URIs in the RDF exporter use <code>cell.recon.match.id</code> (see <a href="/faq">FAQ</a> for more details)
+</p>

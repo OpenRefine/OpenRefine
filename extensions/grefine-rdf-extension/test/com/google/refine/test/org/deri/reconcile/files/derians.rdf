@@ -1,0 +1,1169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+>
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Person">
+    <rdfs:label>Person</rdfs:label>
+  </rdfs:Class>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/renaud_delbru#me">
+    <foaf:familyName>Delbru</foaf:familyName>
+    <foaf:mbox_sha1sum>247d80518c87c6f8129d5a3ec60a07665eded006</foaf:mbox_sha1sum>
+    <foaf:givenName>Renaud</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/renaud_delbru_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/renaud_delbru"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/gofran_shukair#me">
+    <foaf:familyName>Shukair</foaf:familyName>
+    <foaf:mbox_sha1sum>dd480f0dfd892dc5311c1f539fd30f75659956b1</foaf:mbox_sha1sum>
+    <foaf:givenName>Gofran</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/gofran_shukair.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/gofran_shukair"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/nikos_loutas#me">
+    <foaf:familyName>Loutas</foaf:familyName>
+    <foaf:mbox_sha1sum>3dbf24201ea61f1d65816eac02c736406d3dc16f</foaf:mbox_sha1sum>
+    <foaf:givenName>Nikos</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/nikos_loutas_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/nikos_loutas"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/david_crowley#me">
+    <foaf:familyName>Crowley</foaf:familyName>
+    <foaf:mbox_sha1sum></foaf:mbox_sha1sum>
+    <foaf:givenName>David</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/david_crowley.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/david_crowley"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/manfred_hauswirth#me">
+    <foaf:familyName>Hauswirth</foaf:familyName>
+    <foaf:mbox_sha1sum>ddb493a8a7c94cb9fc0c6e8d108ce0f62fee6f06</foaf:mbox_sha1sum>
+    <foaf:givenName>Manfred</foaf:givenName>
+    <foaf:phone>+353 91 495009</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/manfred_hauswirth.jpg"/>
+    <foaf:title>Prof. Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/manfred_hauswirth"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/axel_polleres#me">
+    <foaf:familyName>Polleres</foaf:familyName>
+    <foaf:mbox_sha1sum>776866afe69158abddfa6dbf92aaaf2045bd91a4</foaf:mbox_sha1sum>
+    <foaf:givenName>Axel</foaf:givenName>
+    <foaf:phone>+353 91 495723</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/axel_polleres.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/axel_polleres"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/marcel_karnstedt#me">
+    <foaf:familyName>Karnstedt</foaf:familyName>
+    <foaf:mbox_sha1sum>cb3d8caf8c55c72f11ec748f9a19c51a9fc8c91f</foaf:mbox_sha1sum>
+    <foaf:givenName>Marcel</foaf:givenName>
+    <foaf:phone>+353 91 494034</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/marcel_karnstedt.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/marcel_karnstedt"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/vit_novacek#me">
+    <foaf:familyName>Novacek</foaf:familyName>
+    <foaf:mbox_sha1sum>c91b8f5b6908408264728371f7331249e3857a87</foaf:mbox_sha1sum>
+    <foaf:givenName>Vit</foaf:givenName>
+    <foaf:phone>+353 91 495738</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/vit_novacek.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/vit_novacek"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/josiane%20xavier_parreira#me">
+    <foaf:familyName>Parreira</foaf:familyName>
+    <foaf:mbox_sha1sum>a69a534c7a5802053569792e8c769d8981487eb4</foaf:mbox_sha1sum>
+    <foaf:givenName>Josiane Xavier</foaf:givenName>
+    <foaf:phone>+353 91 495838</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/josiane_parreira.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/josiane%20xavier_parreira"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/mark_leyden#me">
+    <foaf:familyName>Leyden</foaf:familyName>
+    <foaf:mbox_sha1sum>e625d95563133a0cf62cc0074dbdaee3499e249c</foaf:mbox_sha1sum>
+    <foaf:givenName>Mark</foaf:givenName>
+    <foaf:phone>+353 91 495083</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/mark_leyden.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/mark_leyden"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/lorea_lorenzo#me">
+    <foaf:familyName>Lorenzo</foaf:familyName>
+    <foaf:mbox_sha1sum>0e9a40907ed718f95ce5d690698a03d36c220fc7</foaf:mbox_sha1sum>
+    <foaf:givenName>Lorea</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/lorea_lorenzo.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/lorea_lorenzo"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/vinhtuan_thai#me">
+    <foaf:familyName>Thai</foaf:familyName>
+    <foaf:mbox_sha1sum>67abf94faa44a44ca38d68dec2192740d8bc04da</foaf:mbox_sha1sum>
+    <foaf:givenName>VinhTuan</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/thai_vinhtuan_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/vinhtuan_thai"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/sajin_kumar#me">
+    <foaf:familyName>Kumar</foaf:familyName>
+    <foaf:mbox_sha1sum>e2f3cc4a85492e7464b2518b694f24de53b8a14e</foaf:mbox_sha1sum>
+    <foaf:givenName>Sajin</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/sajin_kumar.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/sajin_kumar"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/myriam_leggieri#me">
+    <foaf:familyName>Leggieri</foaf:familyName>
+    <foaf:mbox_sha1sum>2c01905faf3b08549a2d9066313598adf2de5f73</foaf:mbox_sha1sum>
+    <foaf:givenName>Myriam</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/myriam.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/myriam_leggieri"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/holger_stenzhorn#me">
+    <foaf:familyName>Stenzhorn</foaf:familyName>
+    <foaf:mbox_sha1sum>664eb9d6a6ac7887c4314d3e170ef169e6520b0e</foaf:mbox_sha1sum>
+    <foaf:givenName>Holger</foaf:givenName>
+    <foaf:phone>+353 91 495711</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/holger_stenzhorn.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/holger_stenzhorn"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/evangelos_kalampokis#me">
+    <foaf:familyName>Kalampokis</foaf:familyName>
+    <foaf:mbox_sha1sum></foaf:mbox_sha1sum>
+    <foaf:givenName>Evangelos</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/evangelos_kalampokis.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/evangelos_kalampokis"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ioana_hulpus#me">
+    <foaf:familyName>Hulpus</foaf:familyName>
+    <foaf:mbox_sha1sum>9569b62e8a29c3f90f67af7f6625b833ecb3ecf7</foaf:mbox_sha1sum>
+    <foaf:givenName>Ioana</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ioana_hulpus.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ioana_hulpus"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/julie_letierce#me">
+    <foaf:familyName>Letierce</foaf:familyName>
+    <foaf:mbox_sha1sum>f820ecd2040481e8585a7a4205c9578e6ca04922</foaf:mbox_sha1sum>
+    <foaf:givenName>Julie</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/julie_letierce.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/julie_letierce"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/vassilios_peristeras#me">
+    <foaf:familyName>Peristeras</foaf:familyName>
+    <foaf:mbox_sha1sum>e3205977bcf5d6f363dd38673e6e46a627205fa0</foaf:mbox_sha1sum>
+    <foaf:givenName>Vassilios</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/vassilios_peristeras.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/vassilios_peristeras"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/pradeep_dantuluri#me">
+    <foaf:familyName>Dantuluri</foaf:familyName>
+    <foaf:mbox_sha1sum>2f2929e7a80ba05c522068152acf9694d137e824</foaf:mbox_sha1sum>
+    <foaf:givenName>Pradeep</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/pradeep_varma_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/pradeep_dantuluri"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/erik_aumayr#me">
+    <foaf:familyName>Aumayr</foaf:familyName>
+    <foaf:mbox_sha1sum>abd8dc97984bc359d9dc49cf19675add16ae601e</foaf:mbox_sha1sum>
+    <foaf:givenName>Erik</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/erik_emyr.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/erik_aumayr"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/anna_karpinska#me">
+    <foaf:familyName>Karpinska</foaf:familyName>
+    <foaf:mbox_sha1sum>da650b353dc8e5dd58290d4b2039d90af653c332</foaf:mbox_sha1sum>
+    <foaf:givenName>Anna</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/anna_karpinska.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/anna_karpinska"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/knud_m%F6ller#me">
+    <foaf:familyName>Möller</foaf:familyName>
+    <foaf:mbox_sha1sum>b15d1e7efb11374644555fa9734bf75a553a362c</foaf:mbox_sha1sum>
+    <foaf:givenName>Knud</foaf:givenName>
+    <foaf:phone>+353 91 495086</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/knud_moeller.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/knud_m%F6ller"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/conor_hayes#me">
+    <foaf:familyName>Hayes</foaf:familyName>
+    <foaf:mbox_sha1sum>e3e11c1ce25fbaccc08ed9085e4ccd882a79a8f1</foaf:mbox_sha1sum>
+    <foaf:givenName>Conor</foaf:givenName>
+    <foaf:phone>+353 91 495110</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/conor_hayes.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/conor_hayes"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/tobias_wunner#me">
+    <foaf:familyName>Wunner</foaf:familyName>
+    <foaf:mbox_sha1sum>3c2dc5d37120300b3ec409539bb96a25a96f7722</foaf:mbox_sha1sum>
+    <foaf:givenName>Tobias</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/tobias_wunner.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/tobias_wunner"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/hilda_fitzpatrick#me">
+    <foaf:familyName>Fitzpatrick</foaf:familyName>
+    <foaf:mbox_sha1sum>2e8741bf0dbf489f4dfef4726e64e788b43f2ee6</foaf:mbox_sha1sum>
+    <foaf:givenName>Hilda</foaf:givenName>
+    <foaf:phone>+353 91 495053</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/hilda_fitzpatrick_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/hilda_fitzpatrick"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ted_vickey#me">
+    <foaf:familyName>Vickey</foaf:familyName>
+    <foaf:mbox_sha1sum>17b976680d892a09d42023ff60c2593a712f69b8</foaf:mbox_sha1sum>
+    <foaf:givenName>Ted</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ted_wiki.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ted_vickey"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/alessandra_mileo#me">
+    <foaf:familyName>Mileo</foaf:familyName>
+    <foaf:mbox_sha1sum>25a11e331c48c51344a49c67ffd09a992cfeaf3f</foaf:mbox_sha1sum>
+    <foaf:givenName>Alessandra</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/alessandra_mileo.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/alessandra_mileo"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/fabrizio_orlandi#me">
+    <foaf:familyName>Orlandi</foaf:familyName>
+    <foaf:mbox_sha1sum>2801b2c73ca3ef7eabdcb422bc8b43b8396ebe2a</foaf:mbox_sha1sum>
+    <foaf:givenName>Fabrizio</foaf:givenName>
+    <foaf:phone>+353 91 494035</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/fabrizio_orlandi.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/fabrizio_orlandi"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/j%FCrgen_umbrich#me">
+    <foaf:familyName>Umbrich</foaf:familyName>
+    <foaf:mbox_sha1sum>b9514eba2ed2ae41a072765fe3ed3544de10974f</foaf:mbox_sha1sum>
+    <foaf:givenName>Jürgen</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/juergen_umbrich.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/j%FCrgen_umbrich"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/sean_o%27riain#me">
+    <foaf:familyName>O'Riain</foaf:familyName>
+    <foaf:mbox_sha1sum>f8b5c098bcde620d88854dc9e5b72eebf5106f31</foaf:mbox_sha1sum>
+    <foaf:givenName>Sean</foaf:givenName>
+    <foaf:phone>+353 91 495080</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/sean_oriain.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/sean_o%27riain"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/claire_browne#me">
+    <foaf:familyName>Browne</foaf:familyName>
+    <foaf:mbox_sha1sum>740b9818989d85df704c9e61d4b2505017abe838</foaf:mbox_sha1sum>
+    <foaf:givenName>Claire</foaf:givenName>
+    <foaf:phone>+353 91 495006</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/claire_browne.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/claire_browne"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/edward_curry#me">
+    <foaf:familyName>Curry</foaf:familyName>
+    <foaf:mbox_sha1sum>0a02d1555c8d88a05f6a579057f7f9319e744f99</foaf:mbox_sha1sum>
+    <foaf:givenName>Edward</foaf:givenName>
+    <foaf:phone>+353 91 492973</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/edward_curry_01.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/edward_curry"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/michael_sherry#me">
+    <foaf:familyName>Sherry</foaf:familyName>
+    <foaf:mbox_sha1sum>4895f122981e49caf8ec0dfc087fbaea8bf635cd</foaf:mbox_sha1sum>
+    <foaf:givenName>Michael</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/michael_sherry2.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/michael_sherry"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/szymon_danielczyk#me">
+    <foaf:familyName>Danielczyk</foaf:familyName>
+    <foaf:mbox_sha1sum>290c4264a262e1b40abe33a79c4bb9b62ca40d0b</foaf:mbox_sha1sum>
+    <foaf:givenName>Szymon</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/szymon.danielczyk.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/szymon_danielczyk"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/sheila_kinsella#me">
+    <foaf:familyName>Kinsella</foaf:familyName>
+    <foaf:mbox_sha1sum>9a348bd34fe67b15f388c95c2cb9b4bfc9073797</foaf:mbox_sha1sum>
+    <foaf:givenName>Sheila</foaf:givenName>
+    <foaf:phone>+353 91 495017</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/sheila_kinsella_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/sheila_kinsella"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/jacek_jankowski#me">
+    <foaf:familyName>Jankowski</foaf:familyName>
+    <foaf:mbox_sha1sum>2563826e77000b3c85dc51c0ca5058b2c95ce077</foaf:mbox_sha1sum>
+    <foaf:givenName>Jacek</foaf:givenName>
+    <foaf:phone>+353 91 495784</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/jacek_jankowski_03.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/jacek_jankowski"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/angel_proorocu#me">
+    <foaf:familyName>Proorocu</foaf:familyName>
+    <foaf:mbox_sha1sum>fe768d602b9aeb90df2abb0c72b9e1c87acd466e</foaf:mbox_sha1sum>
+    <foaf:givenName>Angel</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/angel.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/angel_proorocu"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/behrang_qasemizadeh#me">
+    <foaf:familyName>Qasemizadeh</foaf:familyName>
+    <foaf:mbox_sha1sum>44065852bc61f82696e7e3e1c2ab1547531cb94f</foaf:mbox_sha1sum>
+    <foaf:givenName>Behrang</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/behrang_qasemizadeh.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/behrang_qasemizadeh"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/v%E1clav_bel%E1k#me">
+    <foaf:familyName>Belák</foaf:familyName>
+    <foaf:mbox_sha1sum>6ea9b91baf0f47c8e08b32bb00fbe55ac54b0002</foaf:mbox_sha1sum>
+    <foaf:givenName>Václav</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/vaclav_belak.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/v%E1clav_bel%E1k"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/simon_scerri#me">
+    <foaf:familyName>Scerri</foaf:familyName>
+    <foaf:mbox_sha1sum>ab6d7f6be0a4f94d5084190f850196fb50c3134a</foaf:mbox_sha1sum>
+    <foaf:givenName>Simon</foaf:givenName>
+    <foaf:phone>+353 91 495081</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/simon_scerri_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/simon_scerri"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/danh%20le_phuoc#me">
+    <foaf:familyName>Phuoc</foaf:familyName>
+    <foaf:mbox_sha1sum>f38bc0919e1d6149ba0f94a4009a3bddb88a896a</foaf:mbox_sha1sum>
+    <foaf:givenName>Danh Le</foaf:givenName>
+    <foaf:phone>+353 91 495728</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/danhle_phuoc.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/danh%20le_phuoc"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/gerry_conway#me">
+    <foaf:familyName>Conway</foaf:familyName>
+    <foaf:mbox_sha1sum>db9785f6d4a9f386ee8a3c1d3f1b08d5dec724dd</foaf:mbox_sha1sum>
+    <foaf:givenName>Gerry</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/gerry_conway.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/gerry_conway"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/maciej_zaremba#me">
+    <foaf:familyName>Zaremba</foaf:familyName>
+    <foaf:mbox_sha1sum>9573b2bf53334b0da604a2e57189cda32c5af2e7</foaf:mbox_sha1sum>
+    <foaf:givenName>Maciej</foaf:givenName>
+    <foaf:phone>+353 91 495138</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/maciej_zaremba_01.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/maciej_zaremba"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/lisa_carter#me">
+    <foaf:familyName>Carter</foaf:familyName>
+    <foaf:mbox_sha1sum>4a18b8e62e80d142d2a83ba89aeedf50e0a93390</foaf:mbox_sha1sum>
+    <foaf:givenName>Lisa</foaf:givenName>
+    <foaf:phone>+353 91 495054</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/lisa_carter_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/lisa_carter"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/john_breslin#me">
+    <foaf:familyName>Breslin</foaf:familyName>
+    <foaf:mbox_sha1sum>9a6b7eefc08fd755d51dd9321aecfcc87992e9a2</foaf:mbox_sha1sum>
+    <foaf:givenName>John</foaf:givenName>
+    <foaf:phone>+353 91 492622</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/john_breslin.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/john_breslin"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/nuno_lopes#me">
+    <foaf:familyName>Lopes</foaf:familyName>
+    <foaf:mbox_sha1sum>f55387fb8cb7af2a64a81ddeb4f1e8affb000ed0</foaf:mbox_sha1sum>
+    <foaf:givenName>Nuno</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/nuno_lopes.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/nuno_lopes"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/smitashree_choudhury#me">
+    <foaf:familyName>Choudhury</foaf:familyName>
+    <foaf:mbox_sha1sum>9fc90e35c75c832e7d913a25edcbd580f7112685</foaf:mbox_sha1sum>
+    <foaf:givenName>Smitashree</foaf:givenName>
+    <foaf:phone>+353 91 495053</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/smitashree_choudhory_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/smitashree_choudhury"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/aidan_hogan#me">
+    <foaf:familyName>Hogan</foaf:familyName>
+    <foaf:mbox_sha1sum>d2163e057507f828085f322cc77dc43b4105a158</foaf:mbox_sha1sum>
+    <foaf:givenName>Aidan</foaf:givenName>
+    <foaf:phone>+353 91 495130</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/Aidan_Hogan.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/aidan_hogan"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/marc_mellotte#me">
+    <foaf:familyName>Mellotte</foaf:familyName>
+    <foaf:mbox_sha1sum>70fea7a43cef2ca547127e36cb784e37bfa73c39</foaf:mbox_sha1sum>
+    <foaf:givenName>Marc</foaf:givenName>
+    <foaf:phone>+353 91 495213</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/marc_melotte.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/marc_mellotte"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/vinny_reynolds#me">
+    <foaf:familyName>Reynolds</foaf:familyName>
+    <foaf:mbox_sha1sum>2e5fe5458ea3e457515f91d5f32d5bf3ee27eb0e</foaf:mbox_sha1sum>
+    <foaf:givenName>Vinny</foaf:givenName>
+    <foaf:phone>+353 91 495128</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/vinny_reynolds_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/vinny_reynolds"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ronan_rochford#me">
+    <foaf:familyName>Rochford</foaf:familyName>
+    <foaf:mbox_sha1sum>85089dddc6569ac7a639838dfa578f76ef59df0f</foaf:mbox_sha1sum>
+    <foaf:givenName>Ronan</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ronan_rochford.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ronan_rochford"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/micah_herstand#me">
+    <foaf:familyName>Herstand</foaf:familyName>
+    <foaf:mbox_sha1sum>4a28960eb43faa500fc22e97bfee1029f99615ec</foaf:mbox_sha1sum>
+    <foaf:givenName>Micah</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/herstad_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/micah_herstand"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/umair_ul%20hassan#me">
+    <foaf:familyName>ul Hassan</foaf:familyName>
+    <foaf:mbox_sha1sum>da04cb4456c8cbf1f82e96ab1f225e569c23a007</foaf:mbox_sha1sum>
+    <foaf:givenName>Umair</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/umair_hasan.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/umair_ul%20hassan"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/lukasz_porwol#me">
+    <foaf:familyName>Porwol</foaf:familyName>
+    <foaf:mbox_sha1sum>aab462f2796eaa48e5df1dd4cbeb600e6d77ed62</foaf:mbox_sha1sum>
+    <foaf:givenName>Lukasz</foaf:givenName>
+    <foaf:phone>+353 91 495214</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/lukasz_porwol.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/lukasz_porwol"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/mihai%20daniel_andrei#me">
+    <foaf:familyName>Andrei</foaf:familyName>
+    <foaf:mbox_sha1sum>df9d0477507c32b85b823e12da82bc5206714475</foaf:mbox_sha1sum>
+    <foaf:givenName>Mihai Daniel</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/mihai_andrei.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/mihai%20daniel_andrei"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/souleiman_hasan#me">
+    <foaf:familyName>Hasan</foaf:familyName>
+    <foaf:mbox_sha1sum>9e0df059997cf6d0db4d7a0310df3198568ea979</foaf:mbox_sha1sum>
+    <foaf:givenName>Souleiman</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/soulemain_hasan.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/souleiman_hasan"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/yojana_priya#me">
+    <foaf:familyName>Priya</foaf:familyName>
+    <foaf:mbox_sha1sum>29267e6e261b200c5198bea7c98b015a2ce3c20b</foaf:mbox_sha1sum>
+    <foaf:givenName>Yojana</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/yojana_priya.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/yojana_priya"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/nitish_aggarwal#me">
+    <foaf:familyName>Aggarwal</foaf:familyName>
+    <foaf:mbox_sha1sum>9b85e236d9f0aca98718221823309786cc2bc9d5</foaf:mbox_sha1sum>
+    <foaf:givenName>Nitish</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/fileadmin/images/elements/nophoto.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/nitish_aggarwal"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/sami_bhiri#me">
+    <foaf:familyName>Bhiri</foaf:familyName>
+    <foaf:mbox_sha1sum>d6f4be5bdf43436e7fb323b0e36beb73a976085b</foaf:mbox_sha1sum>
+    <foaf:givenName>Sami</foaf:givenName>
+    <foaf:phone>+353 91 495335</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/sami_bhiri_01.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/sami_bhiri"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/owen_sacco#me">
+    <foaf:familyName>Sacco</foaf:familyName>
+    <foaf:mbox_sha1sum>510e1c999ba13b7b5eeb86def84417920af21b37</foaf:mbox_sha1sum>
+    <foaf:givenName>Owen</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/owen_sacco.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/owen_sacco"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/raluca_zaharia#me">
+    <foaf:familyName>Zaharia</foaf:familyName>
+    <foaf:mbox_sha1sum>954610edc52be10c4de121b41c41f03022c315b0</foaf:mbox_sha1sum>
+    <foaf:givenName>Raluca</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/raluca_zaharia.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/raluca_zaharia"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/gerard_conneely#me">
+    <foaf:familyName>Conneely</foaf:familyName>
+    <foaf:mbox_sha1sum>9e5f14ea1c1be319f3a30638b36ef071ef17e25b</foaf:mbox_sha1sum>
+    <foaf:givenName>Gerard</foaf:givenName>
+    <foaf:phone>+353 91 495211</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ger_connelley_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/gerard_conneely"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/sarven_capadisli#me">
+    <foaf:familyName>Capadisli</foaf:familyName>
+    <foaf:mbox_sha1sum>9cdee571beab245b32c955783ef0e9d738dd912a</foaf:mbox_sha1sum>
+    <foaf:givenName>Sarven</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/sarven_capadisli.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/sarven_capadisli"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/fadi_badra#me">
+    <foaf:familyName>Badra</foaf:familyName>
+    <foaf:mbox_sha1sum>c190fe3748479986f9b91261540c9b0ed20e464d</foaf:mbox_sha1sum>
+    <foaf:givenName>Fadi</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/fadi_badra.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/fadi_badra"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/vinod_hegde#me">
+    <foaf:familyName>Hegde</foaf:familyName>
+    <foaf:mbox_sha1sum>7a2b452622d78b97b178b607cb311388db578a23</foaf:mbox_sha1sum>
+    <foaf:givenName>Vinod</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/vinod_hegde.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/vinod_hegde"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/richard_cyganiak#me">
+    <foaf:familyName>Cyganiak</foaf:familyName>
+    <foaf:mbox_sha1sum>bb3df3cf988e2d5fc234840d9dc9d4a6eaf822bd</foaf:mbox_sha1sum>
+    <foaf:givenName>Richard</foaf:givenName>
+    <foaf:phone>+353 91 495711</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/richard_cyganiak.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/richard_cyganiak"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/stephen_mulcahy#me">
+    <foaf:familyName>Mulcahy</foaf:familyName>
+    <foaf:mbox_sha1sum>496c843d405dd5b869d1b13af804c6f2578588bd</foaf:mbox_sha1sum>
+    <foaf:givenName>Stephen</foaf:givenName>
+    <foaf:phone>+353 91 494052</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/stephen_mulcahy.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/stephen_mulcahy"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/patrick_mulrooney#me">
+    <foaf:familyName>Mulrooney</foaf:familyName>
+    <foaf:mbox_sha1sum>79c784122be316e22344795c6f0807885ed0356d</foaf:mbox_sha1sum>
+    <foaf:givenName>Patrick</foaf:givenName>
+    <foaf:phone>+353 91 495060</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/mulrooney_patrick.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/patrick_mulrooney"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/michael_hausenblas#me">
+    <foaf:familyName>Hausenblas</foaf:familyName>
+    <foaf:mbox_sha1sum>327b61f3721afbd39dceadf5e5b4fc2d79d5dcc8</foaf:mbox_sha1sum>
+    <foaf:givenName>Michael</foaf:givenName>
+    <foaf:phone>+353 91 495730</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/michael_hausenblas.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/michael_hausenblas"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/siegfried_handschuh#me">
+    <foaf:familyName>Handschuh</foaf:familyName>
+    <foaf:mbox_sha1sum>583cac1297018405882f186064c6d98cd127af70</foaf:mbox_sha1sum>
+    <foaf:givenName>Siegfried</foaf:givenName>
+    <foaf:phone>+353 91 495085</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/siegfried_handschuh_02.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/siegfried_handschuh"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/michelle_treacy#me">
+    <foaf:familyName>Treacy</foaf:familyName>
+    <foaf:mbox_sha1sum>fb375c82a4b9533c8eb16b253159f9de463af853</foaf:mbox_sha1sum>
+    <foaf:givenName>Michelle</foaf:givenName>
+    <foaf:phone>+353 91 495082</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/michelle_treacy.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/michelle_treacy"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/karl_o%27donovan#me">
+    <foaf:familyName>O'Donovan</foaf:familyName>
+    <foaf:mbox_sha1sum>1f70df545e135f8f997eabc20313d0c3ab409205</foaf:mbox_sha1sum>
+    <foaf:givenName>Karl</foaf:givenName>
+    <foaf:phone>+353 91 493126</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/fileadmin/images/elements/nophoto.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/karl_o%27donovan"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/antonio_aguilar#me">
+    <foaf:familyName>Aguilar</foaf:familyName>
+    <foaf:mbox_sha1sum>140d9a9bb21f39fd5a0bdf895a2ae5c6c51fcda6</foaf:mbox_sha1sum>
+    <foaf:givenName>Antonio</foaf:givenName>
+    <foaf:phone>+353 91 493126</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/antonio_aguilar_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/antonio_aguilar"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/lin_clark#me">
+    <foaf:familyName>Clark</foaf:familyName>
+    <foaf:mbox_sha1sum>579441ea0e0e9f41346d8241f8dd2b81cb2fa5fc</foaf:mbox_sha1sum>
+    <foaf:givenName>Lin</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/lin_clark.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/lin_clark"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/harinder%20s._jagdev#me">
+    <foaf:familyName>Jagdev</foaf:familyName>
+    <foaf:mbox_sha1sum>009609a4b3d2b2f4b3fe4f47c70b229a0190a709</foaf:mbox_sha1sum>
+    <foaf:givenName>Harinder S.</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/harinder_jagdev.jpg"/>
+    <foaf:title>Prof. Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/harinder%20s._jagdev"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/wassim_derguech#me">
+    <foaf:familyName>Derguech</foaf:familyName>
+    <foaf:mbox_sha1sum>e77352fae4e413f0104958cd0e9768c7021707f6</foaf:mbox_sha1sum>
+    <foaf:givenName>Wassim</foaf:givenName>
+    <foaf:phone>+353 91 495141</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/wassim_derguech.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/wassim_derguech"/>
+  </foaf:Person>
+  <rdf:Description rdf:about="http://www.deri.ie/">
+    <xhv:stylesheet rdf:resource="http://www.deri.ie/fileadmin/stylesheets/page.css"/>
+    <xhv:stylesheet rdf:resource="http://www.deri.ie/fileadmin/stylesheets/general_jack.css"/>
+    <xhv:stylesheet rdf:resource="http://www.deri.ie/typo3temp/stylesheet_f666929cfa.css"/>
+  </rdf:Description>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/philipp_obermeier#me">
+    <foaf:familyName>Obermeier</foaf:familyName>
+    <foaf:mbox_sha1sum>12700984e2ca95ac8f7e8e0662f5d3308474adf7</foaf:mbox_sha1sum>
+    <foaf:givenName>Philipp</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/philipp_obermeier.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/philipp_obermeier"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/gearoid_hynes#me">
+    <foaf:familyName>Hynes</foaf:familyName>
+    <foaf:mbox_sha1sum>78f7eea5cda74c6912341f44f8d52726fa977248</foaf:mbox_sha1sum>
+    <foaf:givenName>Gearoid</foaf:givenName>
+    <foaf:phone>+353 91 495140</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/gearoid_hynes.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/gearoid_hynes"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/slawomir_grzonkowski#me">
+    <foaf:familyName>Grzonkowski</foaf:familyName>
+    <foaf:mbox_sha1sum>cc73895eb36508f74d967f57ca7699cd96a05d59</foaf:mbox_sha1sum>
+    <foaf:givenName>Slawomir</foaf:givenName>
+    <foaf:phone>+353 91 495053</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/slawomir_grzonkowski.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/slawomir_grzonkowski"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/peyman_nasirifard#me">
+    <foaf:familyName>Nasirifard</foaf:familyName>
+    <foaf:mbox_sha1sum>a98769208add49785928af29bccaa4bbaf29c5be</foaf:mbox_sha1sum>
+    <foaf:givenName>Peyman</foaf:givenName>
+    <foaf:phone>+353 91 495712</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/peyman_nasirifard_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/peyman_nasirifard"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/benjamin_heitmann#me">
+    <foaf:familyName>Heitmann</foaf:familyName>
+    <foaf:mbox_sha1sum>15415e5cf57759c376c37d34c570d9c9d612ab29</foaf:mbox_sha1sum>
+    <foaf:givenName>Benjamin</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/benjamin_heitmann.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/benjamin_heitmann"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/franco_ravagli#me">
+    <foaf:familyName>Ravagli</foaf:familyName>
+    <foaf:mbox_sha1sum>1c578321ce69f47f2cf3070ddb11973e0b12c344</foaf:mbox_sha1sum>
+    <foaf:givenName>Franco</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/franko_ravagli.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/franco_ravagli"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/pierre_ludwick#me">
+    <foaf:familyName>Ludwick</foaf:familyName>
+    <foaf:mbox_sha1sum>c4b06a75d2c2e4a58795a0ad0bfa37bff6551d1f</foaf:mbox_sha1sum>
+    <foaf:givenName>Pierre</foaf:givenName>
+    <foaf:phone>+353 91 495053</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/pierre_ludwick.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/pierre_ludwick"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/gerard_cahill#me">
+    <foaf:familyName>Cahill</foaf:familyName>
+    <foaf:mbox_sha1sum>0a9e496a6834f62bafe4657022633f5afbbb2100</foaf:mbox_sha1sum>
+    <foaf:givenName>Gerard</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/gerard_cahill_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/gerard_cahill"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/brian_davis#me">
+    <foaf:familyName>Davis</foaf:familyName>
+    <foaf:mbox_sha1sum>8c6dfc17028b508310f6c7cde2ba007c545b591f</foaf:mbox_sha1sum>
+    <foaf:givenName>Brian</foaf:givenName>
+    <foaf:phone>+353 91 495012</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/brian_davis.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/brian_davis"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/laurentiu_vasiliu#me">
+    <foaf:familyName>Vasiliu</foaf:familyName>
+    <foaf:mbox_sha1sum>58c0e3d72b002b21231abbb9d803de035dfe3023</foaf:mbox_sha1sum>
+    <foaf:givenName>Laurentiu</foaf:givenName>
+    <foaf:phone>+353 91 495008</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/laurentiu_vasiliu.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/laurentiu_vasiliu"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/maciej_dabrowski#me">
+    <foaf:familyName>Dabrowski</foaf:familyName>
+    <foaf:mbox_sha1sum>743e84095d705a37ad0c2b544d498497445df506</foaf:mbox_sha1sum>
+    <foaf:givenName>Maciej</foaf:givenName>
+    <foaf:phone>+353 91 495138</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/maciej_dabrowski.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/maciej_dabrowski"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/deirdre_lee#me">
+    <foaf:familyName>Lee</foaf:familyName>
+    <foaf:mbox_sha1sum>748c27aa7847d6268604d3cc3d642e488c8c1cb7</foaf:mbox_sha1sum>
+    <foaf:givenName>Deirdre</foaf:givenName>
+    <foaf:phone>+353 91 495336</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/deirdre_lee_02.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/deirdre_lee"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/brendan_smith#me">
+    <foaf:familyName>Smith</foaf:familyName>
+    <foaf:mbox_sha1sum>dc6a3d6ccf191f088f20935a66b45bba82595f13</foaf:mbox_sha1sum>
+    <foaf:givenName>Brendan</foaf:givenName>
+    <foaf:phone>+353 87 2935106</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/brendan_smith_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/brendan_smith"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/martin_osterloh#me">
+    <foaf:familyName>Osterloh</foaf:familyName>
+    <foaf:mbox_sha1sum></foaf:mbox_sha1sum>
+    <foaf:givenName>Martin</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/martin_osterloh.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/martin_osterloh"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/andr%E9_freitas#me">
+    <foaf:familyName>Freitas</foaf:familyName>
+    <foaf:mbox_sha1sum>d3b73e11f371a9fee2e23ec599408f5ca4ecdfe9</foaf:mbox_sha1sum>
+    <foaf:givenName>André</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/andre_freitas.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/andr%E9_freitas"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/gabriela_vulcu#me">
+    <foaf:familyName>Vulcu</foaf:familyName>
+    <foaf:mbox_sha1sum>49d5e707f2299b5b8e84dec88836f554288dc47e</foaf:mbox_sha1sum>
+    <foaf:givenName>Gabriela</foaf:givenName>
+    <foaf:phone>+353 91 495336</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/gabriela_vulcu_01.JPG"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/gabriela_vulcu"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/georgeta_bordea#me">
+    <foaf:familyName>Bordea</foaf:familyName>
+    <foaf:mbox_sha1sum>b14e4ebe12866664dea704d57d66610417c631c8</foaf:mbox_sha1sum>
+    <foaf:givenName>Georgeta</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/georgeta_bordea.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/georgeta_bordea"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/robert_fuller#me">
+    <foaf:familyName>Fuller</foaf:familyName>
+    <foaf:mbox_sha1sum>cdc6bd96dfe83f08e24af340ad5a581d44d96074</foaf:mbox_sha1sum>
+    <foaf:givenName>Robert</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/robert_fuller.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/robert_fuller"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/paul_buitelaar#me">
+    <foaf:familyName>Buitelaar</foaf:familyName>
+    <foaf:mbox_sha1sum>1b01a3da0c0ebff7089eb364ef40def825fb3148</foaf:mbox_sha1sum>
+    <foaf:givenName>Paul</foaf:givenName>
+    <foaf:phone>+353 91 495007</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/paul_buitelaar.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/paul_buitelaar"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/mengjiao_wang#me">
+    <foaf:familyName>Wang</foaf:familyName>
+    <foaf:mbox_sha1sum>e926a48a4dbad4e695982ad6404ef9d52b2b92f8</foaf:mbox_sha1sum>
+    <foaf:givenName>Mengjiao</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/wang.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/mengjiao_wang"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/feng_gao#me">
+    <foaf:familyName>Gao</foaf:familyName>
+    <foaf:mbox_sha1sum>6d8056a91b407f1ee2f777760bcc364c552c0ecc</foaf:mbox_sha1sum>
+    <foaf:givenName>Feng</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/feng_gao.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/feng_gao"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/jeffrey_chan#me">
+    <foaf:familyName>Chan</foaf:familyName>
+    <foaf:mbox_sha1sum>6e4690735bfcf5e4cdad72a412d9fca827e9e217</foaf:mbox_sha1sum>
+    <foaf:givenName>Jeffrey</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/jeffrey_chan.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/jeffrey_chan"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/charlie_abela#me">
+    <foaf:familyName>Abela</foaf:familyName>
+    <foaf:mbox_sha1sum>4203aaa283a10f49a8ee5161c0be62bf1ef512f6</foaf:mbox_sha1sum>
+    <foaf:givenName>Charlie</foaf:givenName>
+    <foaf:phone>+353 91 495114 </foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/charlie_abela.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/charlie_abela"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ratnesh_sahay#me">
+    <foaf:familyName>Sahay</foaf:familyName>
+    <foaf:mbox_sha1sum>d373ff256da71d815dea1d6308b69a54f949585e</foaf:mbox_sha1sum>
+    <foaf:givenName>Ratnesh</foaf:givenName>
+    <foaf:phone>+353 91 495253</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ratnesh_sahay_02.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ratnesh_sahay"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/giovanni_tummarello#me">
+    <foaf:familyName>Tummarello</foaf:familyName>
+    <foaf:mbox_sha1sum>a9dcc29cbf526167c1bd10e8e3dd2bca60d739e1</foaf:mbox_sha1sum>
+    <foaf:givenName>Giovanni</foaf:givenName>
+    <foaf:phone>+353 91 495285</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/giovanni_tummarello.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/giovanni_tummarello"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/nur_rakhmawati#me">
+    <foaf:familyName>Rakhmawati</foaf:familyName>
+    <foaf:mbox_sha1sum>8472f463735cc194fecfe6ece0ff7606ed55bf0d</foaf:mbox_sha1sum>
+    <foaf:givenName>Nur</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/nur_rakhmawati.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/nur_rakhmawati"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/maria_smyth#me">
+    <foaf:familyName>Smyth</foaf:familyName>
+    <foaf:mbox_sha1sum>157f6d96e25133704a910c82bcadcead3eb1f8a6</foaf:mbox_sha1sum>
+    <foaf:givenName>Maria</foaf:givenName>
+    <foaf:phone>+353 91 495015</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/maria_smyth.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/maria_smyth"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/aftab_iqbal#me">
+    <foaf:familyName>Iqbal</foaf:familyName>
+    <foaf:mbox_sha1sum>2be34af8168408e1f51a99e5994098f3d8ee6f1c</foaf:mbox_sha1sum>
+    <foaf:givenName>Aftab</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/aftab_iqbal.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/aftab_iqbal"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/sirko_schindler#me">
+    <foaf:familyName>Schindler</foaf:familyName>
+    <foaf:mbox_sha1sum>1829427a834b7a1315aff94e11b5871bf4c159ef</foaf:mbox_sha1sum>
+    <foaf:givenName>Sirko</foaf:givenName>
+    <foaf:phone> +353 91 495541</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/fileadmin/images/elements/nophoto.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/sirko_schindler"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/alexandre_passant#me">
+    <foaf:familyName>Passant</foaf:familyName>
+    <foaf:mbox_sha1sum>0cfa0c4363ecc5d6a0250fdac77c4267cab8a4dd</foaf:mbox_sha1sum>
+    <foaf:givenName>Alexandre</foaf:givenName>
+    <foaf:phone>+353 91 495 212</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/alexandre_passant.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/alexandre_passant"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/andrew_gallagher#me">
+    <foaf:familyName>Gallagher</foaf:familyName>
+    <foaf:mbox_sha1sum>6a853b835109f325405f72c8e04e5840f669347a</foaf:mbox_sha1sum>
+    <foaf:givenName>Andrew</foaf:givenName>
+    <foaf:phone>+353 91 495111</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/andrew_gallagher_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/andrew_gallagher"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/krystian_samp#me">
+    <foaf:familyName>Samp</foaf:familyName>
+    <foaf:mbox_sha1sum>9b0de18d2709362b3a7ba1e0706a1ffdd56074b1</foaf:mbox_sha1sum>
+    <foaf:givenName>Krystian</foaf:givenName>
+    <foaf:phone>+353 91 495213</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/krystian_samp.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/krystian_samp"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ronan_fox#me">
+    <foaf:familyName>Fox</foaf:familyName>
+    <foaf:mbox_sha1sum>ca651e13c2ad45eec61fccad88bd6d8028902b49</foaf:mbox_sha1sum>
+    <foaf:givenName>Ronan</foaf:givenName>
+    <foaf:phone>+353 91 495487</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ronan_fox_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ronan_fox"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/stephane_campinas#me">
+    <foaf:familyName>Campinas</foaf:familyName>
+    <foaf:mbox_sha1sum>ed96d06112b00dd0c6b007db8d7f0e72ed78a334</foaf:mbox_sha1sum>
+    <foaf:givenName>Stephane</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/stephane_campinas.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/stephane_campinas"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/matthias_samwald#me">
+    <foaf:familyName>Samwald</foaf:familyName>
+    <foaf:mbox_sha1sum>fc1b994d1936f17215ea603d98883d2a7db9134a</foaf:mbox_sha1sum>
+    <foaf:givenName>Matthias</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/matthias_samwald_01.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/matthias_samwald"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/stefan_decker#me">
+    <foaf:familyName>Decker</foaf:familyName>
+    <foaf:mbox_sha1sum>1bc1f862b688a45b7e0c8d4a8467c23177c53fad</foaf:mbox_sha1sum>
+    <foaf:givenName>Stefan</foaf:givenName>
+    <foaf:phone>+353 91 495011</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/stefan_decker_03.jpg"/>
+    <foaf:title>Prof. Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/stefan_decker"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/laura_dragan#me">
+    <foaf:familyName>Dragan</foaf:familyName>
+    <foaf:mbox_sha1sum>81fa8ee7e5e16c892088803d19d24eb9b9720ca7</foaf:mbox_sha1sum>
+    <foaf:givenName>Laura</foaf:givenName>
+    <foaf:phone>+353 91 495053</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/laura_josan.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/laura_dragan"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/izabela_irzynska#me">
+    <foaf:familyName>Irzynska</foaf:familyName>
+    <foaf:mbox_sha1sum>6a3dc5f292a3aab485b1dd29107f37af74cc6ea0</foaf:mbox_sha1sum>
+    <foaf:givenName>Izabela</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/izabela_irzynska.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/izabela_irzynska"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ashraf_jamshaid#me">
+    <foaf:familyName>Jamshaid</foaf:familyName>
+    <foaf:mbox_sha1sum>5cdecbadb3dcdf8682d025e0812d4abdebe4321b</foaf:mbox_sha1sum>
+    <foaf:givenName>Ashraf</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ashraf.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ashraf_jamshaid"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/yolanda_cobos#me">
+    <foaf:familyName>Cobos</foaf:familyName>
+    <foaf:mbox_sha1sum>4a975265d4174cc0a920e845da73a24a28003132</foaf:mbox_sha1sum>
+    <foaf:givenName>Yolanda</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/yolanda_cobos.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/yolanda_cobos"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/jodi_schneider#me">
+    <foaf:familyName>Schneider</foaf:familyName>
+    <foaf:mbox_sha1sum>22409bc633060af57d28715f61c3e2560df99a14</foaf:mbox_sha1sum>
+    <foaf:givenName>Jodi</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/jodi_schneider.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/jodi_schneider"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/carmel_fennell#me">
+    <foaf:familyName>Fennell</foaf:familyName>
+    <foaf:mbox_sha1sum>f6f90e9efed14e656ec185b1728af51ecbde9b72</foaf:mbox_sha1sum>
+    <foaf:givenName>Carmel</foaf:givenName>
+    <foaf:phone>+353 91 495054</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/carmell_fennell.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/carmel_fennell"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/james_cooley#me">
+    <foaf:familyName>Cooley</foaf:familyName>
+    <foaf:mbox_sha1sum>c385ceb03b2948c0f6ef65e400a086e05bb1a214</foaf:mbox_sha1sum>
+    <foaf:givenName>James</foaf:givenName>
+    <foaf:phone>+353 91 495137</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/james_cooley.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/james_cooley"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/samantha_lam#me">
+    <foaf:familyName>Lam</foaf:familyName>
+    <foaf:mbox_sha1sum>56aa8406d6e5d74bf8a1c8e01e15684f2747d2a3</foaf:mbox_sha1sum>
+    <foaf:givenName>Samantha</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/samantha_lam.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/samantha_lam"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/fadi_maali#me">
+    <foaf:familyName>Maali</foaf:familyName>
+    <foaf:mbox_sha1sum>6dccb9ad508e1e5192904a7483533cb02fdd8980</foaf:mbox_sha1sum>
+    <foaf:givenName>Fadi</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/fadi_maali.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/fadi_maali"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/will_fleury#me">
+    <foaf:familyName>Fleury</foaf:familyName>
+    <foaf:mbox_sha1sum>ae05407b8b4ad5f33ba52377b0d7d2284a4055ac</foaf:mbox_sha1sum>
+    <foaf:givenName>Will</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/will_fleury_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/will_fleury"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/ismael_rivera#me">
+    <foaf:familyName>Rivera</foaf:familyName>
+    <foaf:mbox_sha1sum>a35902bd228b6fc6dacea3477f23ed4348e93aa7</foaf:mbox_sha1sum>
+    <foaf:givenName>Ismael</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/ismael_rivera.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/ismael_rivera"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/omnia_ossama#me">
+    <foaf:familyName>Ossama</foaf:familyName>
+    <foaf:mbox_sha1sum>6a199c567d6cca04d9fffe40ce30231dafb1bb8b</foaf:mbox_sha1sum>
+    <foaf:givenName>Omnia</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/omnia_ossama.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/omnia_ossama"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/brian_wall#me">
+    <foaf:familyName>Wall</foaf:familyName>
+    <foaf:mbox_sha1sum>ef01e72ef4bfca51cfb77e4e5f150eaba9863205</foaf:mbox_sha1sum>
+    <foaf:givenName>Brian</foaf:givenName>
+    <foaf:phone>+353 91 495052</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/brian_wall.jpg"/>
+    <foaf:title>Dr.</foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/brian_wall"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/michael_turley#me">
+    <foaf:familyName>Turley</foaf:familyName>
+    <foaf:mbox_sha1sum>3d7577a60a847deabb1030b2d7e5b17632236cfb</foaf:mbox_sha1sum>
+    <foaf:givenName>Michael</foaf:givenName>
+    <foaf:phone>+353 91 495010</foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/michael_turley_01.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/michael_turley"/>
+  </foaf:Person>
+  <foaf:Person rdf:about="http://www.deri.ie/about/team/member/daniel_paraschiv#me">
+    <foaf:familyName>Paraschiv</foaf:familyName>
+    <foaf:mbox_sha1sum>baf1119b930b4b7a0c0b8177cad3939320ae654b</foaf:mbox_sha1sum>
+    <foaf:givenName>Daniel</foaf:givenName>
+    <foaf:phone></foaf:phone>
+    <foaf:img rdf:resource="http://www.deri.ie/uploads/tx_derimp/daniel__2_.jpg"/>
+    <foaf:title></foaf:title>
+    <foaf:page rdf:resource="http://www.deri.ie/about/team/member/daniel_paraschiv"/>
+  </foaf:Person>
+</rdf:RDF>

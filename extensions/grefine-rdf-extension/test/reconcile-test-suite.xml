@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+ 
+<suite name="Suite1" verbose="1" >
+  <test name="Regression1"   >
+    <packages>
+      <package name="com.google.refine.test.org.deri.reconcile" />
+      <package name="com.google.refine.test.org.deri.reconcile.endpoints" />
+      <package name="com.google.refine.test.org.deri.reconcile.executors" />
+      <package name="com.google.refine.test.org.deri.reconcile.factories" />
+      <package name="com.google.refine.test.org.deri.reconcile.sindice" />
+   </packages>
+ </test>
+</suite>

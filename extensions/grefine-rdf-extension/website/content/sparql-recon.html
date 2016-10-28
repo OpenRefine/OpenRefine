@@ -1,0 +1,65 @@
+<p>This example will reconcile <a href="files/sparql/GDPS.csv">a list of GDP prer country values as of 2009</a> according to <a href="http://data.worldbank.org/">the World Databank</a> against <a href="http://dbpedia.org">DBpedia</a> using the Virtuoso SPARQL endpoint at <a href="http://dbpedia.org/sparql">http://dbpedia.org/sparql</a>.
+
+<p >
+I exported the data as CSV from the World Databank using <a href="http://databank.worldbank.org/ddp/editReport?REQUEST_SOURCE=search&CNO=2&country=&series=NY.GDP.MKTP.CD&period=">this wizard</a>
+</p>
+</p>
+
+<ul class="steps">
+<li class="step step1">
+Create a Google Refine project from the CSV file. A snippet is shown in the figure below.
+<p>
+  <img src="files/sparql/screenshots/gdps.png" border="1" />
+</p>
+</li>
+<li class="step step2">
+Next we define a new reconciliation service based on <a href="http://dbpedia.org/sparql">DBpedia SPARQL endpoint</a>. Select <span class="instruction">Based on SPARQL endpoint...</span> from the RDF menu as shown in the figure below.
+<p>
+  <img src="files/sparql/screenshots/add-service.png" border="1" />
+</p>
+</li>
+<li class="step step3">
+Enter the details of the new service. Pick a name for the service (in the example below we chose "DBPedia"). <em>Make sure to select Virtuoso for the endpoint type</em>. Finally, select properties that are used to label resources in the RDF data (we chose <code>rdfs:label</code> as shown below).
+<p class="note">
+ Endpoint type allows the use of proprietary fulltext search SPARQL extensions provided by some vendors. Fulltext search provides much better results than just comparing values using regular expression (i.e. using <code>regex</code> which is part of the standard SPARQL).
+</p>
+<p class="note">
+ For label properties, you can select more than one property but this will have its cost on the performance.
+ If the property is not one of those provided, you can select other and enter the full URI for the property (or properties) wanted.</p>
+<p>
+  <img src="files/sparql/screenshots/details.png" />
+</p>
+</li>
+<li class="step step4">
+Choose <span class="instruction">start reconciling...</span> from the column drop down menu of the "Country Name" column. Select the "DBpedia" service that we have just added. As shown below, type guessing will suggest a list of types. Select <code>dbo:Country</code> as it best fits our data.
+<p>
+  <img src="files/sparql/screenshots/reconciliation.png" width="600"/>
+</p>
+<p class="note">
+Autocomplete is provided for searching both types and related properties, you are encouraged to try them but be patient as searching the whole DBpedia based on text matching takes a while.
+</p>
+<p>
+  <img src="files/sparql/screenshots/autocomplete.png" border="1"/>
+</p>
+</li>
+<li class="step step5">
+Go ahead with the <span class="instruction">start reconciling</span> button. After a while, Google Refine presents reconciliation results with factes about reconciliation decision and top candidate score (see figure below).
+<p>
+  <img src="files/sparql/screenshots/results.png" width="600" border="1"/>
+</p>
+</li>
+<li class="step step6">
+Unfortunately, not all values will get automatically matched. You will have to spend some time resolving ambiguity when multiple sugggestions provided. You can preview reconciliation suggestions to inform your decision (see figure below). You can also search for more suggestions using <span class="instruction">search for match</span>.
+<p>
+  <img src="files/sparql/screenshots/popup.png" border="1"/>
+</p>
+</li>
+</ul>
+
+<p class="note">
+  For more details and technical documentation see <a href="searchReconDocs">SPARQL with fulltext search -based Reconciliation</a> and <a href="sparqlReconDocs"> SPARQL-based Reconciliation </a>
+</p>
+
+<p class="note">
+To get the reconciled URIs in the RDF exporter use <code>cell.recon.match.id</code> (see <a href="/faq">FAQ</a> for more details)
+</p>
