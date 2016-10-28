@@ -14,7 +14,7 @@ Building
 
 Running
 ==========
-To run run "refine" file in the project root.
+To run run refine file in the project root.
 
 
 
