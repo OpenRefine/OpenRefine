@@ -1,15 +1,20 @@
 #FAIRifier
 
 Depenencies:
-  - java 8
+  - Java 8
   - Apache Ant
 
 
 Building
 ========
-  to buld run ant in FAIR-ifier/extensions/grefine-rdf-extension. Afterwards run Ant in  FAIR-ifier.
+  To buld run ant in the folder FAIR-ifier.
+  Then run ant in FAIR-ifier/extensions.
+  Then run ant in FAIR-ifier/extensions/grefine-rdf-extension.
   
-To run run refine file in the project root.
+
+Running
+==========
+To run run "refine" file in the project root.
 
 
 
