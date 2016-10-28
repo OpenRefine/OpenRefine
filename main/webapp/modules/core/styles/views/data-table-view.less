@@ -1,0 +1,335 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+@import-less url("../theme.less");
+
+.viewpanel-header {
+  position: relative;
+  background: @fill_secondary;
+  font-size: 1.3em;
+  padding: @padding_normal;
+  overflow: hidden;
+  text-align: right;
+  }
+
+.viewpanel-rowrecord, .viewpanel-pagesize, .viewpanel-sorting {
+  position: absolute;
+  top: @padding_normal;
+  padding: 0 10px 0 0;
+  }
+
+.viewpanel-pagesize {
+  left: 180px;
+  }
+
+.viewpanel-sorting {
+  left: 350px;
+  }
+
+.viewpanel-pagingcount {
+  font-weight: bold
+  }
+
+.data-header-table-container {
+  border-top: 1px solid @chrome_primary;
+  border-bottom: 2px solid @chrome_primary;
+  background: @fill_primary;
+  overflow: visible;
+  }
+
+.data-header-table {
+  width: 1px;
+  position: relative;
+  }
+  
+.data-table-container {
+  overflow: auto;
+  }
+
+.data-header-table, .data-table {
+  margin: 0;
+  padding: 0;
+  font-size: 1.1em;
+  border-collapse: collapse;
+  }
+
+.data-table td, .data-header-table td {
+  padding: 2px 5px;
+  }
+.data-table td {
+  border-bottom: 1px dotted #ddd;
+  border-right: 1px solid #ddd;
+  }
+.data-header-table td {
+  border-bottom: 1px dotted @chrome_primary;
+  border-right: 1px solid @chrome_primary;
+  }
+
+table.data-header-table > tbody > tr > td {
+  overflow: hidden !important;
+  }
+
+table.data-table > tbody > tr.odd > td {
+  background: @fill_secondary;
+  }
+
+table.data-table > tbody > tr.contextual > td > div {
+  opacity: 0.3;
+  }
+
+table.data-header-table td.column-header, table.data-table td.column-header {
+  vertical-align: top;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 4px 6px 4px 4px;
+  border-bottom: none;
+  font-weight: bold;
+  }
+
+/* For the preview in the importing stage */
+table.data-table td.column-header {
+  background: @fill_primary;
+  border-bottom: 2px solid @chrome_primary;
+  }
+
+.column-header-name {
+  margin: 0 0 0 21px;
+  padding: 4px 0 0 0;
+  display: block;
+  }
+
+a.column-header-menu {
+  float: left;
+  display: block;
+  margin: 0 4px 0 0;
+  width: 17px;
+  height: 19px;
+  background-image: url(../../images/menu-dropdown.png);
+  background-repeat: no-repeat;
+  }
+
+a.column-header-menu:hover {
+  background-position: -17px 0px;
+  text-decoration: none;
+  }
+  
+.column-header-recon-stats-bar {
+  margin-top: 10px;
+  height: 4px;
+  background: #ddd;
+  border: 1px solid #ccc;
+  position: relative;
+  width: 100%;
+  }
+
+.column-header-recon-stats-matched {
+  position: absolute;
+  height: 100%;
+  background: @green_primary;
+  }
+  
+.column-header-recon-stats-blanks {
+  position: absolute;
+  height: 100%;
+  background: @green_secondary;
+  }
+
+div.data-table-cell-content {
+  line-height: 1.2;
+  color: #222;
+  position: relative;
+  }
+
+div.data-table-cell-content-numeric {
+  text-align: right;
+  }
+
+a.data-table-cell-edit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 25px;
+  height: 16px;
+  text-decoration: none;
+  background-image: url(../../images/edit-map.png);
+  background-repeat: no-repeat;
+  visibility: hidden;
+  }
+
+a.data-table-cell-edit:hover {
+  background-position: -25px 0px;
+  }
+
+div.data-table-cell-content-numeric > a.data-table-cell-edit {
+  left: 0px;
+  right: auto;
+  }
+
+.data-table-value-nonstring {
+  color: #282;
+  }
+
+.data-table-error {
+  color: red;
+  }
+  
+div.data-table-recon-candidates {
+  padding: 1px 0;
+  min-width: 15em;
+  color: @metadata_grey;
+  }
+  
+div.data-table-recon-candidate {
+  padding: 1px 35px 1px;
+  position: relative;
+  }
+
+a.data-table-recon-topic {
+  color: @link_secondary;
+  }
+
+.data-table-recon-score, .data-table-recon-new {
+  color: #aaa;
+  margin: 0 0.5em;
+  }
+
+a.data-table-recon-action, .data-table-recon-extra > a {
+  text-decoration: none;
+  color: @link_secondary;
+  }
+  
+a.data-table-recon-action, .data-table-recon-extra {
+  font-size: 0.8em;
+  display: block;
+  margin: 3px 0 0;
+  }
+
+a.data-table-recon-match, a.data-table-recon-match-similar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url('../../images/checks-map.png');
+  background-repeat: no-repeat;
+  background-position: -16px 0;
+  text-decoration: none;
+  }
+  
+a.data-table-recon-match:hover {
+  background-position: 0 0;
+  }
+
+a.data-table-recon-match-similar {
+  background-position: -16px -16px;
+  left: 16px;
+  }
+  
+a.data-table-recon-match-similar:hover {
+  background-position: 0 -16px;
+  }
+
+a.data-table-star-on, a.data-table-star-off, a.data-table-flag-on, a.data-table-flag-off {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url('../../images/star-flag-map.png');
+  background-repeat: no-repeat;
+  text-decoration: none;
+  }
+  
+a.data-table-star-on {
+  background-position: 0 0;
+  }
+
+a.data-table-star-off {
+  background-position: -17px 0;
+  }
+
+a.data-table-flag-on {
+  background-position: 0 -17px;
+  }
+
+a.data-table-flag-off {
+  background-position: -17px -17px;
+  }
+
+.data-table-cell-editor, .data-table-topic-popup {
+  border: 1px solid @chrome_primary;
+  background: @chrome_secondary;
+  padding: @padding_tight;
+  .rounded_corners();
+  }
+ 
+.data-table-topic-popup-header {
+  padding: 0 0 5px;
+  }
+  
+.data-table-cell-editor-editor {
+  display: block;
+  width: 98%;
+  height: 3em;
+  font-family: monospace;
+  margin: 3px 0;
+  }
+
+.data-table-cell-editor-action {
+  float: left;
+  vertical-align: bottom;
+  text-align: center;
+  }
+
+.data-table-cell-editor-key {
+  font-size: 0.8em;
+  color: @light_grey;
+  }
+
+ul.sorting-dialog-blank-error-positions {
+  margin: 0;
+  padding: 5px;
+  height: 10em;
+  border: 1px solid #ccc;
+  .rounded_corners(3px);
+  }
+  
+ul.sorting-dialog-blank-error-positions > li {
+  display: block;
+  border: 1px solid #ccc;
+  background: #eee;
+  padding: 5px;
+  margin: 2px;
+  cursor: move;
+  .rounded_corners(3px);
+  }

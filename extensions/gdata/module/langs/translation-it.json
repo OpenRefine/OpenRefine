@@ -1,0 +1,56 @@
+{
+    "gdata-import": {
+		"preparing": "In preparazione ...",
+		"creating": "Creazione il progetto ...",
+		"title": "Documenti Pubblici",
+		"import-by-url": "Importa un Google Spreadsheet o Fusion Table <em>pubblico</em> inserendo l'URL:",
+		"next->": "Avanti &raquo;",
+		"auth-doc": "Documenti Autorizzati",
+		"please": "Per piacere",
+		"sign-in": "autenticati ed autorizza",
+		"sign-out": "esci",
+		"access-data": "accedi ai tuoi dati Google.",
+		"retrieving": "Recuperando i documenti Google Doc ...",
+		"re-sign-in": "rieffettua l'autenticazione",
+		"another-account": "con un altro account"
+    },
+	"gdata-parsing": {
+		"start-over": "&laquo; Ricomincia",
+		"conf-pars": "Configura le opzioni per il parsing",
+		"proj-name": "Nome&nbsp;del&nbsp;progetto",
+		"create-proj": "Crea un progetto &raquo;",
+		"updating-preview": "Aggiornando la preview ...",
+		"worksheet": "Worksheets",
+		"option": "Opzioni",
+		"preview-button": "Aggiorna&nbsp;la&nbsp;Preview",
+		"ignore-first": "Ignora le prime",
+		"ignore": "linee all'inizio del file",
+		"parse-next": "Parsa le prossime",
+		"parse": "linee come nomi delle colonne",
+		"discard-next": "Scarta le prime",
+		"discard": "righe di dati",
+		"limit-next": "Carica al massimo",
+		"limit": "righe di dati",
+		"store-row": "Salva righe vuote",
+		"store-cell": "Salva le celle vuote come 'null'"		
+	},
+	"gdata-source": {
+		"alert-url": "Devi specificare un indirizzo web (URL) per l'import.",
+		"type": "Tipo",
+		"title": "Titolo",
+		"authors": "Autori",
+		"updated": "Aggiornato"
+	},
+	"gdata-exporter": {
+		"uploading": "Caricando...",
+		"upload-error": "Errore durante il caricamento: ",
+		"new-spreadsheet": "Un nuovo Google spreadsheet",
+		"enter-spreadsheet": "Inserisci un nome per il nuovo Google spreadsheet",
+		"new-fusion": "Una nuova tabella Google Fusion",
+		"enter-fusion": "Inserisci un nome per la nuova tabella Google Fusion"
+	},
+	"gdata-auth": {
+		"authorize-label": "OpenRefine - Autorizzazione",
+		"authorized-label": "Processo di autorizzazione completato. Chiudi questa finestra e torna ad OpenRefine."
+	}
+}

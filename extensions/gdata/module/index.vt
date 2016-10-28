@@ -1,0 +1,22 @@
+#*
+ * Access this page at the URL /extension/gdata/
+ *#
+<html>
+  <head>
+    <title>Google Data (gData) Extension v$version</title>
+  </head>
+  <body>
+    <h1>Google Data Extension v$version</h1>
+    <h2>by Tom Morris <tfmorris@gmail.com></h2>    
+    <p>The Google Spreadsheet/Google Data extension allows OpenRefine to read
+    (and write, soon) Google Spreadsheets.  It should be easily adaptable to
+    other data sources which implement the gData protocol such as Google Base.
+    </p>
+    <h3>Known Limitations</h3>
+    <ul>
+    	<li>No write support</li>
+	<li>No authentication support.  You must use the public share URL for the
+  the Google spreadsheet you want to load.</li>
+    </ul>
+  </body>
+</html>

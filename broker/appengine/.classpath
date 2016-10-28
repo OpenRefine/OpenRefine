@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/butterfly-trunk.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
+	<classpathentry kind="lib" path="/grefine-server/lib/servlet-api-2.5.jar" sourcepath="/grefine-server/lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/json-20100208.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/json-20100208-sources.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/httpclient-4.0.1.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/httpclient-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/httpcore-4.0.1.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/httpcore-4.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar" sourcepath="/grefine/webapp/WEB-INF/lib-src/slf4j-api-1.5.6-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/grefine-broker"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/velocity-1.5.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+</classpath>

@@ -1,0 +1,206 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+@import-less url("../theme.less");
+
+.browsing-panel-header {
+  position: relative;
+  display: none;
+  }
+
+.browsing-panel-indicator {
+  visibility: hidden;
+  position: absolute;
+  width: 50%;
+  margin: 5px;
+  top: 0em;
+  left: 20%;
+  text-align: center;
+  background-color: #fff;
+  padding: 4px 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border: 1px solid #ccc;
+  }
+
+.browsing-panel-indicator img {
+  vertical-align: text-top;
+  }
+
+.browsing-panel-controls {
+  position: relative;
+  padding: @padding_normal;
+  visibility: hidden;
+  text-align: right;
+  }
+
+.browsing-panel-controls-refresh {
+  position: absolute;
+  top: @padding_normal;
+  left: @padding_normal;
+  }
+
+.browsing-panel-help, .history-panel-help {
+  margin: 1em;
+  padding: 0 0 13px 0;
+  background: @fill_primary;
+  border: 1px solid @chrome_primary;
+  color: @near_black;
+  .rounded_corners();
+  }
+  
+.browsing-panel-help h1, .history-panel-help h1 {
+  margin: 10px;
+  padding: 20px 0 0 10px;
+  font-size: 1.15em;
+  font-weight: bold;
+  background: url(../../images/logo-gem-40.png) no-repeat right top;
+  }
+
+.browsing-panel-help p, .history-panel-help p {
+  padding: 7px 20px;
+  line-height: 1.3;
+  }
+
+@history_done_background: #fff;
+@history_undone_background: @chrome_secondary;
+@history_entry_index_width: 30px;
+
+a.history-entry {
+  display: block;
+  position: relative;
+  padding: @padding_normal;
+  padding-left:  @padding_normal + @history_entry_index_width;
+  text-decoration: none;
+  color: #000;
+  border-bottom: 1px dotted #ddd;
+  }
+
+.history-entry-index {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: @history_entry_index_width;
+  text-align: right;
+  font-size: 80%;
+  padding: 2px 0px;
+  }
+
+a.history-entry.filtered-out {
+  height: 1px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  }
+
+a.history-entry.filtered-out > * {
+  display: none;
+  }
+
+.history-panel-controls {
+  padding: @padding_normal;
+  text-align: right;
+  }
+
+.history-panel-filter {
+  padding: @padding_tighter @padding_normal;
+  background: @chrome_secondary;
+  border: 1px solid @chrome_primary;
+  border-left: 0;  
+  border-right: 0;
+  }
+
+.history-panel-body {
+  background: @history_undone_background;
+  overflow: auto;
+  }
+
+.history-past {
+  position: relative;
+  background: @history_done_background;
+  }
+
+.history-now {
+  background: @selected_primary;
+  }
+
+.history-future {
+  position: relative;
+  padding-bottom: @padding_loose;
+  }
+
+.history-highlight {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  display: none;
+  }
+  
+.history-past .history-highlight {
+  background: @history_undone_background;
+  bottom: 0;
+  }
+
+.history-future .history-highlight {
+  background: @history_done_background;
+  top: 0;
+  }
+
+.history-future a.history-entry, .history-future a.history-entry-index {
+  color: @light_grey;
+  }
+
+.history-now a.history-entry, .history-now a.history-entry-index {
+  color: #fff;
+  }
+  
+.history-past a.history-entry:hover, .history-future a.history-entry:hover {
+  border-bottom: 1px solid @selected_primary;
+  }
+
+.history-extract-dialog-panel {
+  border: 1px solid @chrome_primary;
+  height: 400px;
+  overflow: auto;
+  }
+  
+table.history-extract-dialog-entries {
+  border-collapse: separate;
+  border-spacing: @padding_tight;
+  word-break: break-all;
+  }
+  
+textarea.history-operation-json {
+  white-space: pre;
+  font-family: monospace;
+  height: 450px;
+  }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="org.testng.eclipse.launchconfig">
+<booleanAttribute key="com.mountainminds.eclemma.core.INPLACE_INSTRUMENTATION" value="false"/>
+<listAttribute key="com.mountainminds.eclemma.core.INSTRUMENTATION_PATHS">
+<listEntry value="/grefine-broker/module/MOD-INF/classes"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.testng.remote.RemoteTestNG"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="grefine-broker"/>
+<mapAttribute key="org.testng.eclipse.ALL_CLASS_METHODS">
+<mapEntry key="com.google.refine.broker.tests.RefineBrokerTests" value=""/>
+</mapAttribute>
+<listAttribute key="org.testng.eclipse.CLASS_TEST_LIST">
+<listEntry value="com.google.refine.broker.tests.RefineBrokerTests"/>
+</listAttribute>
+<stringAttribute key="org.testng.eclipse.COMPLIANCE_LEVEL" value="JDK"/>
+<listAttribute key="org.testng.eclipse.GROUP_LIST"/>
+<listAttribute key="org.testng.eclipse.GROUP_LIST_CLASS"/>
+<stringAttribute key="org.testng.eclipse.LOG_LEVEL" value="2"/>
+<listAttribute key="org.testng.eclipse.METHOD_TEST_LIST"/>
+<listAttribute key="org.testng.eclipse.PACKAGE_TEST_LIST"/>
+<mapAttribute key="org.testng.eclipse.PARAMETERS"/>
+<listAttribute key="org.testng.eclipse.SUITE_TEST_LIST">
+<listEntry value="tests/conf/tests.xml"/>
+</listAttribute>
+<intAttribute key="org.testng.eclipse.TYPE" value="1"/>
+</launchConfiguration>

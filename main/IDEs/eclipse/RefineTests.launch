@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.testng.eclipse.launchconfig">
+<booleanAttribute key="com.mountainminds.eclemma.core.INPLACE_INSTRUMENTATION" value="false"/>
+<listAttribute key="com.mountainminds.eclemma.core.INSTRUMENTATION_PATHS">
+<listEntry value="/refine/src/main/webapp/WEB-INF/classes"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/OpenRefine/main/tests/server/lib/testng-5.12.1.jar"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.testng.remote.RemoteTestNG"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="OpenRefine"/>
+<mapAttribute key="org.testng.eclipse.ALL_CLASS_METHODS"/>
+<listAttribute key="org.testng.eclipse.CLASS_TEST_LIST"/>
+<stringAttribute key="org.testng.eclipse.COMPLIANCE_LEVEL" value="JDK"/>
+<listAttribute key="org.testng.eclipse.GROUP_LIST"/>
+<listAttribute key="org.testng.eclipse.GROUP_LIST_CLASS"/>
+<stringAttribute key="org.testng.eclipse.LOG_LEVEL" value="2"/>
+<listAttribute key="org.testng.eclipse.PACKAGE_TEST_LIST"/>
+<listAttribute key="org.testng.eclipse.SUITE_TEST_LIST">
+<listEntry value="main/tests/server/conf/tests.xml"/>
+</listAttribute>
+<intAttribute key="org.testng.eclipse.TYPE" value="3"/>
+</launchConfiguration>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<ruleset name="OpenRefine PMD Ruleset"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+  <description>OpenRefine PMD Ruleset</description>
+
+  <rule ref="rulesets/basic.xml">
+    <exclude name="EmptyCatchBlock"/>
+    <exclude name="AvoidUsingHardCodedIP"/>
+  </rule>
+
+  <rule ref="rulesets/braces.xml">
+    <exclude name="IfStmtsMustUseBraces"/>
+  </rule>  
+  
+  <rule ref="rulesets/unusedcode.xml"/>
+  <rule ref="rulesets/imports.xml"/>
+  <rule ref="rulesets/strings.xml">
+    <exclude name="ConsecutiveLiteralAppends"/>
+    <exclude name="AvoidDuplicateLiterals"/>
+  </rule>
+
+  <rule ref="rulesets/unusedcode.xml"/>
+  <rule ref="rulesets/clone.xml"/>
+  
+  <rule ref="rulesets/migrating.xml">
+    <exclude name="JUnit4TestShouldUseTestAnnotation"/>
+  </rule>  
+  
+</ruleset>

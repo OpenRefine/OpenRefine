@@ -1,0 +1,41 @@
+/*
+ * imgAreaSelect default style
+ */
+
+.imgareaselect-border1 {
+    border: 1px solid #ff6a00;
+}
+
+.imgareaselect-border2 {
+    border: 1px solid #ff6a00;
+}
+
+.imgareaselect-border3 {
+    border: 1px solid #ff6a00;
+}
+
+.imgareaselect-border4 {
+    border: 1px solid #ff6a00;
+}
+
+.imgareaselect-border1, .imgareaselect-border2,
+.imgareaselect-border3, .imgareaselect-border4 {
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+}
+
+.imgareaselect-handle {
+    background-color: #fff;
+    border: solid 1px #000;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+}
+
+.imgareaselect-outer {
+    background-color: #000;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+}
+
+.imgareaselect-selection {  
+}

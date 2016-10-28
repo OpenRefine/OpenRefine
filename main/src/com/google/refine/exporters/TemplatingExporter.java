@@ -1,0 +1,151 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+package com.google.refine.exporters;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONWriter;
+
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.FilteredRecords;
+import com.google.refine.browsing.FilteredRows;
+import com.google.refine.browsing.RecordVisitor;
+import com.google.refine.browsing.RowVisitor;
+import com.google.refine.expr.ParsingException;
+import com.google.refine.model.Project;
+import com.google.refine.sorting.SortingRecordVisitor;
+import com.google.refine.sorting.SortingRowVisitor;
+import com.google.refine.templating.Parser;
+import com.google.refine.templating.Template;
+import com.google.refine.util.ParsingUtilities;
+
+public class TemplatingExporter implements WriterExporter {
+
+    @Override
+    public String getContentType() {
+        return "application/x-unknown";
+    }
+
+    @Override
+    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
+        String limitString = options.getProperty("limit");
+        int limit = limitString != null ? Integer.parseInt(limitString) : -1;
+        
+        JSONObject sortingJson = null;
+        try{
+            String json = options.getProperty("sorting");
+            sortingJson = (json == null) ? null : 
+                ParsingUtilities.evaluateJsonStringToObject(json);
+        } catch (JSONException e) {
+        }
+        
+        String templateString = options.getProperty("template");
+        String prefixString = options.getProperty("prefix");
+        String suffixString = options.getProperty("suffix");
+        String separatorString = options.getProperty("separator");
+        
+        Template template;
+        try {
+            template = Parser.parse(templateString);
+        } catch (ParsingException e) {
+            throw new IOException("Missing or bad template", e);
+        }
+        
+        template.setPrefix(prefixString);
+        template.setSuffix(suffixString);
+        template.setSeparator(separatorString);
+        
+        if (!"true".equals(options.getProperty("preview"))) {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter jsonWriter = new JSONWriter(stringWriter);
+            try {
+                jsonWriter.object();
+                jsonWriter.key("template"); jsonWriter.value(templateString);
+                jsonWriter.key("prefix"); jsonWriter.value(prefixString);
+                jsonWriter.key("suffix"); jsonWriter.value(suffixString);
+                jsonWriter.key("separator"); jsonWriter.value(separatorString);
+                jsonWriter.endObject();
+            } catch (JSONException e) {
+                // ignore
+            }
+            
+            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
+        }
+        
+        if (engine.getMode() == Mode.RowBased) {
+            FilteredRows filteredRows = engine.getAllFilteredRows();
+            RowVisitor visitor = template.getRowVisitor(writer, limit);
+            
+            if (sortingJson != null) {
+                try {
+                    SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                    srv.initializeFromJSON(project, sortingJson);
+                    
+                    if (srv.hasCriteria()) {
+                        visitor = srv;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            filteredRows.accept(project, visitor);
+        } else {
+            FilteredRecords filteredRecords = engine.getFilteredRecords();
+            RecordVisitor visitor = template.getRecordVisitor(writer, limit);
+            
+            if (sortingJson != null) {
+                try {
+                    SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                    srv.initializeFromJSON(project, sortingJson);
+                    
+                    if (srv.hasCriteria()) {
+                        visitor = srv;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            filteredRecords.accept(project, visitor);
+        }
+    }
+    
+}

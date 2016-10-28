@@ -1,0 +1,20 @@
+<div class="history-panel-help" bind="helpDiv">
+  <h1 bind="or_proj_undo"></h1>
+  <p bind="or_proj_mistakes"></p>
+  <p><a href="https://github.com/OpenRefine/OpenRefine/wiki/History" target="_blank"><b><span bind="or_proj_learnMore"></span></b></a></p>
+</div>
+<div class="history-panel-controls" bind="controlsDiv">
+  <a class="button button-pill-left" href="javascript:{}" bind="extractLink"></a><a class="button button-pill-right" href="javascript:{}" bind="applyLink"></a>
+</div>
+<div class="history-panel-filter" bind="bodyControlsDiv">
+<span bind="or_proj_filter"> </span><input type="text"  size="30" bind="filterInput" />
+</div>
+<div class="history-panel-body" bind="bodyDiv">
+  <div class="history-past" bind="pastDiv">
+    <div class="history-highlight" bind="pastHighlightDiv"></div>
+  </div>
+  <div class="history-now" bind="nowDiv"></div>
+  <div class="history-future" bind="futureDiv">
+    <div class="history-highlight" bind="futureHighlightDiv"></div>
+  </div>
+</div>'

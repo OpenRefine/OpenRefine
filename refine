@@ -1,0 +1,1003 @@
+#!/bin/bash
+
+########################################################## 
+#               OpenRefine Control System             #
+##########################################################
+
+# -------------- utility functions ----------------------
+
+fail () {
+   cat <<EOF
+ERROR: $1
+Type '$0 -h' for usage information.
+EOF
+exit 1
+}
+
+error() {
+    echo "Error: $1"
+    exit 1
+}
+
+warn() {
+    echo "Warning: $1"
+    exit 0
+}
+
+usage() {
+    cat <<EOF
+Usage: $0 [options] <action>
+where [options] include:
+
+  -h print this message and exit
+  
+  -p <port> the port that OpenRefine will listen to
+     default: 3333
+
+  -i <interface> the host interface OpenRefine should bind to
+     default: 127.0.0.1
+
+  -w <path> path to the webapp
+     default: main/webapp
+
+  -d <path> path to the data directory
+     default: OS dependent
+
+  -m <memory> max memory heap size to use
+     default: 1024M
+
+  -k <google api key> a server API key for calling Google APIs
+
+  -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
+     default: info
+
+  -x <name=value> additional configuration parameters to pass to OpenRefine
+     default: [none]
+  
+  --debug enable JVM debugging (on port 8000)
+       
+  --jmx enable JMX monitoring (for jconsole and jvisualvm)
+  
+and <action> is one of
+
+   build ............................... Build OpenRefine      
+   run ................................. Run OpenRefine [default]
+
+   test ................................ Run all OpenRefine tests
+   server_test ......................... Run only the server tests
+   ui_test ............................. Run only the UI tests
+
+   broker .............................. Run OpenRefine Broker
+   
+   broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
+   broker_appengine_upload <id> <ver> .. Upload OpenRefine to Google App Engine
+   
+   findbugs ............................ Run Findbugs against OpenRefine
+   pmd ................................. Run PMD against OpenRefine
+   cpd ................................. Run Copy/Paste Detection against OpenRefine
+   jslint .............................. Run JSlint against OpenRefine
+
+   whitespace <extension> .............. Normalize whitespace in files with the given extension
+
+   mac_dist <version> .................. Make MacOSX binary distribution
+   windows_dist <version> .............. Make Windows binary distribution
+   linux_dist <version> ................ Make Linux binary distribution
+   dist <version> ...................... Make all distributions
+
+   clean ............................... Clean compiled classes
+   distclean ........................... Remove all generated files
+                
+EOF
+    exit 1
+}
+                
+add_option() {
+    OPTS="$OPTS $1"
+}
+                
+load_configs() {
+   TEMP_CONFIG=$(mktemp -t refine.XXXXXXX)
+   if [ "${TEMP_CONFIG}" = "" ] ; then
+       error "Could not create temporary file to load configurations"
+   fi
+   cat $1 | egrep "^[A-Z]" | sed 's/^\(.*\)$/export \1/' > ${TEMP_CONFIG}
+   . ${TEMP_CONFIG}
+   rm ${TEMP_CONFIG}
+}
+                    
+check_macosx() {
+    if [ "$OS" != "macosx" ] ; then
+        error "This action can only run on MacOSX"
+    fi
+}
+
+check_downloaders() {
+    CURL="`which curl 2> /dev/null`"
+    WGET="`which wget 2> /dev/null`"
+    
+    if [ -z "$CURL" ] && [ -z "$WGET" ] ; then
+        error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
+    fi
+}
+
+check_unzip() {
+    UNZIP="`which unzip 2> /dev/null`"
+    
+    if [ -z "$UNZIP" ] ; then
+        error "We need 'unzip' present in PATH to expand external dependencies."
+    fi
+}
+    
+check_python() {
+    PYTHON="`which python 2> /dev/null`"
+    if [ -z "$PYTHON" ] ; then
+        error "This action requires you to have 'python' installed and present in your PATH. You can download it for free at http://www.python.org/"
+    fi
+    PYTHON_VERSION="`$PYTHON --version 2>&1 | cut -f 2 -d ' ' | cut -f 1,2 -d .`"
+    if [ "$PYTHON_VERSION" != "2.6" ] && [ "$PYTHON_VERSION" != "2.7" ]; then
+        error "This action requires Python version 2.6.x. or 2.7.x. You can download it for free at http://www.python.org/"
+    fi
+}
+
+check_pywin32() {
+    PYWIN32="`$PYTHON -c 'import win32api' 2>&1`"
+
+    if [ ! -z "$PYWIN32" ] ; then
+        error "This action requires you to have 'pywin32' windows extensions for Python installed on your machine. You can download it for free at http://sourceforge.net/projects/pywin32/"
+    fi
+}
+
+check_running() {
+    check_downloaders
+    URL="http://${REFINE_HOST}:${REFINE_PORT}/"
+    CHECK_STR="<title>OpenRefine</title>"
+
+    if [ "$CURL" ] ; then
+        curl -s -S -f $URL > /dev/null 2>&1
+        if [ "$?" = "7" ] || [ "$?" = "22" ] ; then
+            NOT_RUNNING="1"
+        fi
+    elif [ "$WGET" ] ; then
+        wget -O - $URL > /dev/null 2>&1
+        if [ "$?" = "4" ] ; then
+            NOT_RUNNING="1"
+        fi
+    fi    
+
+    if [ -z "${NOT_RUNNING}" ] ; then
+        if [ "$CURL" ] ; then
+            RUNNING=`curl -s $URL | grep "$CHECK_STR"`
+        elif [ "$WGET" ] ; then
+            RUNNING=`wget -q -O - $URL | grep "$CHECK_STR"`
+        fi    
+        
+        if [ -z "${RUNNING}" ] ; then
+            error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
+        fi
+    else
+        RUNNING=""
+    fi
+}
+
+get_version() {
+    VERSION="$1"
+    
+    if [ -z "$VERSION" ] ; then
+        fail "Must specify a version number"
+    fi
+
+    NUM_VERSION=`echo $VERSION | sed -E 's/-.*//g'`
+    
+    if [ "${NUM_VERSION}" = "" ] ; then
+        fail "${VERSION} is not a valid version number"
+    fi
+    
+    if [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}"
+    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}.0"
+    elif [ "`echo "${NUM_VERSION}" | egrep ''^[0-9]+\.[0-9]+$''`" = "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}.0.0"
+    elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+$'`" = "${NUM_VERSION}" ] ; then
+        FULL_VERSION="${NUM_VERSION}.0.0.0"
+    else 
+        fail "${VERSION} is not a valid version number"
+    fi
+}
+
+get_revision() {
+    if [ -d ".svn" ] ; then
+        INFO=`svn info`
+        REVISION=`echo $INFO | sed s/^$VERSION-//`
+    elif [ -d ".git" ] ; then
+        INFO=`git describe`
+        REVISION=`echo $INFO`
+	REVISION=${REVISION:4}
+    else
+        error "cannot obtain revision, exiting!"
+    fi
+}
+    
+download() {
+    URL=$1
+    DEST=$2
+    
+    check_downloaders
+    
+    if [ "$CURL" ] ; then
+        curl -L -o $DEST $URL || exit "Error while downloading $URL"
+    elif [ "$WGET" ] ; then
+        wget -O $DEST $URL || error "Error while downloading $URL"
+    fi
+}
+
+tool_download() {
+    URL=$1
+    FILE=$2
+    DIR=$3
+    
+    cd $REFINE_TOOLS_DIR
+        if [ ! -f "$FILE" ] ; then
+            download $URL $FILE
+        fi
+        if [ ! -d "$DIR" ] ; then
+            if [ -z "`echo $FILE | sed 's@.*.tar.gz$@@' | sed 's@.*.tgz$@@'`" ] ; then
+                tar xzf $FILE || error "Error while expanding $FILE"
+            fi
+            if [ -z "`echo $FILE | sed 's@.*.zip$@@'`" ] ; then
+                check_unzip
+                $UNZIP -q $FILE || error "Error while expanding $FILE"
+            fi
+        fi
+    cd ..
+}
+
+load_data() {
+    FILE=$1
+    NAME=$2
+    URL="http://${REFINE_HOST}:${REFINE_PORT}/command/core/create-project-from-upload"
+    CURL="`which curl 2> /dev/null`"
+    
+    if [ -z "$CURL" ] ; then
+        error "We need 'curl' present in PATH to upload data to OpenRefine."
+    else
+        curl -s -F "project-file=@$FILE" -F "project-name=$NAME" $URL > /dev/null || error "Error while uploading $FILE to OpenRefine"
+        echo "Loaded $FILE as $NAME"
+    fi
+}
+
+display() {
+    FILE=$1
+    if [ "$OS" = "macosx" ] ; then
+	open $FILE
+    elif [ "$OS" = "linux" ] ; then
+	gnome-open $FILE
+    else
+	notepad $FILE
+    fi  
+
+}
+# ----------------------------------------------------------------------------------------------
+
+build_prepare() {
+    if [ ! -d $REFINE_BUILD_DIR ] ; then 
+        mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
+    fi
+}
+
+dist_prepare() {
+    if [ ! -d $REFINE_DIST_DIR ] ; then 
+        mkdir $REFINE_DIST_DIR || error "Error while making directory $REFINE_DIST_DIR"
+    fi
+}
+
+tools_prepare() {
+    if [ ! -d $REFINE_TOOLS_DIR ] ; then 
+        mkdir $REFINE_TOOLS_DIR || error "Error while making directory $REFINE_TOOLS_DIR"
+    fi
+}
+                        
+ant_prepare() {
+    tools_prepare
+
+    ANT_VERSION="1.9.0"
+    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz"
+    ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
+    ANT_DIR="apache-ant-${ANT_VERSION}"
+    
+    ANT="`which ant 2> /dev/null`"
+    if [ -z "$ANT" ] ; then
+        if [ -z "$ANT_HOME" ] ; then
+            cd $REFINE_TOOLS_DIR
+                if [ ! -f "$ANT_FILE" ] ; then
+                    download $ANT_URL $ANT_FILE
+                fi
+                if [ ! -d "$ANT_DIR" ] ; then
+                    tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
+                fi
+                export ANT_HOME="`pwd`/$ANT_DIR"
+                if [ "$OS" = "windows" ] ; then
+                    export ANT_HOME=`cygpath --unix "$ANT_HOME"`
+                fi
+            cd ..
+        fi
+        ANT="$ANT_HOME/bin/ant"
+    fi
+}
+
+appengine_prepare() {
+    if [ -z "$APPENGINE_HOME" ] ; then
+        error "You have to have the APPENGINE_HOME environment variable set and pointing to the local installation of the Google AppEngine SDK."
+    elif [ ! -f "$APPENGINE_HOME/bin/appcfg.sh" ] ; then
+        error "Environment variable APPENGINE_HOME is set to '$APPENGINE_HOME' which doesn't point to a valid Google App Engine SDK."
+    fi
+    APPENGINE="$APPENGINE_HOME/bin/appcfg.sh"
+    APPENGINE_LOCAL="$APPENGINE_HOME/bin/dev_appserver.sh"
+    
+    ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
+}
+
+launch4j_prepare() {
+    tools_prepare
+
+    L4J_VERSION="3.8"
+    if [ "$OS" = "macosx" ] ; then
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-macosx-x86-10.8.tgz"
+    elif [ "$OS" = "windows" ] ; then
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-win32.zip"
+    elif [ "$OS" = "linux" ] ; then
+        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-linux.tgz"
+    fi
+    
+    LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
+    LAUNCH4J_DIR="launch4j"
+    
+    tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
+
+    # Workaround: launch4j 3.0.2 & earlier does not work on versions of MacOS
+    # without PPC support (e.g. Lion) so we patch it to include Intel binaries; 
+    # the following lines can be removed once we update to a version of 
+    # launch4j that fixes the issue (not available yet).
+    # (3.1.0-beta1 fixes this, but introduces other bugs which make it unusable)
+    if [ "$OS" = "macosx" ] ; then
+        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak" ] ; then
+            mv "$REFINE_TOOLS_DIR/launch4j/bin/windres" "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak"
+            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/windres" $REFINE_TOOLS_DIR/launch4j/bin/windres
+            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/windres"
+        fi
+        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak" ] ; then
+            mv "$REFINE_TOOLS_DIR/launch4j/bin/ld" "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak"
+            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/ld" $REFINE_TOOLS_DIR/launch4j/bin/ld
+            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/ld"
+        fi
+    fi
+}
+    
+appbundler_prepare() {
+    tools_prepare
+    
+    APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
+    APPBUNDLER_DIR="."
+    APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
+
+    tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
+}
+   
+virtualenv_prepare() {
+    check_python
+
+    VIRTUALENV_DIR="virtualenv-1.9.1"
+    VIRTUALENV_FILE="${VIRTUALENV_DIR}.tar.gz"
+    VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/${VIRTUALENV_FILE}"
+
+    tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
+    
+    PYTHON_LOCAL="$REFINE_TOOLS_DIR/python"
+    if [ "$OS" = "windows" ] ; then
+        PYTHON_LOCAL="${PYTHON_LOCAL}_win"
+    fi
+    
+    if [ ! -d "$PYTHON_LOCAL" ] ; then
+        $PYTHON $REFINE_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
+    fi
+    
+    PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
+
+    if [ "$OS" = "windows" ] ; then
+        PYTHON="$PYTHON_HOME/Scripts/python.exe"
+        PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
+    else 
+        PYTHON="$PYTHON_HOME/bin/python"
+        PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
+    fi
+}
+    
+windmill_prepare() {
+    WINDMILL="`which windmill 2> /dev/null`"
+    if [ -z "$WINDMILL" ] ; then
+        check_python
+        tools_prepare
+        virtualenv_prepare
+
+        if [ "$OS" = "windows" ] ; then
+            check_pywin32
+            WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
+        else 
+            WINDMILL="$PYTHON_HOME/bin/windmill"
+        fi
+        
+        if [ ! -f "$WINDMILL" ] ; then
+            "$PYTHON_INSTALL" windmill
+        fi
+    fi    
+}
+
+findbugs_prepare() {
+    tools_prepare
+    FB_VERSION="2.0.2"
+    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/${FB_VERSION}/findbugs-${FB_VERSION}.tar.gz"
+    FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
+    FINDBUGS_DIR="findbugs-${FB_VERSION}"
+
+    tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
+}
+
+pmd_prepare() {
+    tools_prepare
+    
+    PMD_VERSION="4.2.6"
+    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip"
+    PMD_FILE=`echo $PMD_URL | sed 's|.*/||'`
+    PMD_DIR="pmd-bin-${PMD_VERSION}"
+
+    tool_download $PMD_URL $PMD_FILE $PMD_DIR
+}
+
+jslint_prepare() {
+    tools_prepare
+
+    JSLINT_VERSION="2.0.3"
+    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-${JSLINT_VERSION}-dist.zip"
+    JSLINT_FILE=`echo $JSLINT_URL | sed 's|.*/||'`
+    JSLINT_DIR="jslint4java-${JSLINT_VERSION}"
+
+    tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
+}
+            
+# ----------------------------------------------------------------------------------------------
+
+ant() {
+    ant_prepare   
+    
+    #export ANT_OPTS="-Xmx1024M"
+    
+    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
+}
+
+# ----------------------------------------------------------------------------------------------
+
+dist() {
+    windows_dist $1
+    linux_dist $1
+    mac_dist $1
+    
+    echo "All distributions were built and are located at $REFINE_DIST_DIR"
+    echo 
+    echo "Upload them to the distibution site, then prepend the releases array at"
+    echo
+    echo "   https://github.com/OpenRefine/OpenRefine/tree/gh-pages/javascript/releases.js"
+    echo
+    echo "with"
+    echo 
+    echo "    {"
+    echo "        \"description\": \"OpenRefine ${VERSION}\","
+    echo "        \"version\": \"${VERSION}\","
+    # TODO: We need to modify version checking for the future
+    echo "        \"revision\": \"${REVISION}\""
+    echo "    },"
+    echo
+}
+
+windows_dist() {
+    dist_prepare
+    get_version $1
+    get_revision
+
+    launch4j_prepare
+    
+    ANT_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
+    ant windows
+}
+
+linux_dist() {
+    dist_prepare
+    get_version $1
+    get_revision
+    
+    ant linux
+}
+    
+mac_dist() {
+    check_macosx
+    dist_prepare
+    get_version $1
+    get_revision
+
+    appbundler_prepare
+    
+    ANT_PARAMS="-Dappbundler.dir=${REFINE_TOOLS_DIR}/${APPBUNDLER_DIR}"
+    ant mac
+
+    mkdir -p "$REFINE_BUILD_DIR/mac/.background"
+    cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
+    
+    SIZE=250
+    
+    if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
+        rm "$REFINE_BUILD_DIR/temp_refine.dmg"
+    fi
+
+# Sign the bundle with a self-signed cert so OS X doesn't frustrate users by making app invisible
+    codesign --deep -s "OpenRefine Code Signing" "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+    spctl --assess --type execute --verbose=4 "$REFINE_BUILD_DIR/mac/OpenRefine.app"
+
+    TITLE="OpenRefine $VERSION"
+    echo "Building MacOSX DMG for $TITLE"
+    hdiutil create -srcfolder "$REFINE_BUILD_DIR/mac" -volname "$TITLE" -fs HFS+ -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}m "$REFINE_BUILD_DIR/temp_refine.dmg" || error "can't create empty DMG"
+    DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
+    echo $DEVICE
+    hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
+    
+    echo '
+       tell application "Finder"
+         tell disk "'$TITLE'"
+            open
+            set current view of container window to icon view
+            set toolbar visible of container window to false
+            set statusbar visible of container window to false
+            set the bounds of container window to {200, 100, 760, 460}
+            set theViewOptions to the icon view options of container window
+            set arrangement of theViewOptions to not arranged
+            set icon size of theViewOptions to 100
+            set background picture of theViewOptions to file ".background:dmg_background.png"
+            make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
+            set position of item "OpenRefine" of container window to {170, 175}
+            set position of item "Applications" of container window to {380, 175}
+            close
+            open               
+            update without registering applications
+            delay 5            
+            eject
+         end tell
+       end tell
+    ' | osascript || error "Error running applescript"
+    
+    sync
+    sync
+    sleep 3
+    hdiutil detach $DEVICE
+    
+    if [ -f "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" ] ; then
+        rm "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg"
+    fi
+    
+    hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error compressing DMG"
+    hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error internet-enabling DMG"
+    
+    rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
+}
+
+test() {
+    server_test $1
+    ui_test $1 
+}
+
+ui_test() {
+    INTERACTIVE=$1
+    
+    windmill_prepare
+
+    REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
+    
+    add_option "-Drefine.headless=true"
+    
+    run fork
+    
+    echo "Waiting for OpenRefine to load..."
+    sleep 5
+    check_running
+    if [ -z "$RUNNING" ] ; then
+        sleep 10
+    fi
+    echo "... proceed with the tests."
+    echo ""
+    
+    load_data "$REFINE_TEST_DIR/data/food.csv" "Food"
+    sleep 3
+    echo ""
+    
+    echo "Starting Windmill..."
+    if [ -z "$INTERACTIVE" ] ; then
+        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/ jsdir=$REFINE_TEST_DIR/client/src exit
+    else
+        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/
+    fi
+    
+    echo ""
+    echo "Killing OpenRefine"
+    /bin/kill -9 $REFINE_PID
+    echo "Cleaning up"
+    rm -rf $REFINE_DATA_DIR
+}
+
+server_test() {
+    ant server_test
+}
+
+run() {
+    FORK=$1
+    
+    check_running
+    
+    if [ "$RUNNING" ] ; then
+        warn "OpenRefine is already running."
+    fi
+    
+    if [ ! -d $REFINE_CLASSES_DIR ] ; then
+        IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
+        if [ -z "$IS_JAR" ] ; then
+            ant build
+            echo ""
+        fi
+    fi
+            
+    if [ -d $REFINE_CLASSES_DIR ] ; then
+        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+    fi
+
+    if [ "$OS" = "macosx" ] ; then
+        add_option '-Xdock:icon=graphics/icon/openrefine.icns'
+    fi
+    
+    if [ "$REFINE_DATA_DIR" ] ; then
+        add_option "-Drefine.data_dir=$REFINE_DATA_DIR"
+    fi
+
+    if [ "$REFINE_WEBAPP" ] ; then
+        add_option "-Drefine.webapp=$REFINE_WEBAPP"
+    fi
+                    
+    if [ "$REFINE_PORT" ] ; then
+        add_option "-Drefine.port=$REFINE_PORT"
+    fi
+    
+    if [ "$REFINE_HOST" ] ; then
+        add_option "-Drefine.host=$REFINE_HOST"
+    fi
+
+    if [ "$REFINE_GOOGLE_API_KEY" ] ; then
+        add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
+    fi
+
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
+
+    #echo "$RUN_CMD"
+    #echo ""
+  
+    echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo ""
+
+    if [ -z "$FORK" ] ; then
+        exec $RUN_CMD
+    else
+        $RUN_CMD &
+        REFINE_PID="$!"
+    fi
+}
+    
+broker_build() {
+    build_prepare
+    get_revision    
+    ant prepare_broker
+}
+
+broker_run() {
+    FORK=$1
+
+    if [ ! -d "broker/core/WEB-INF/lib" ] ; then
+        broker_build
+        echo ""
+    fi
+
+    if [ -d $REFINE_CLASSES_DIR ] ; then
+        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Drefine.development=true"
+    fi
+
+    add_option "-Drefine.webapp=broker/core"
+    add_option "-Drefine.headless=true"
+
+    add_option "-Drefine.port=$REFINE_PORT"
+    add_option "-Drefine.host=0.0.0.0"
+                    
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
+
+    #echo "$RUN_CMD"
+    #echo ""
+  
+    echo "Starting OpenRefine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo ""
+
+    if [ -z "$FORK" ] ; then
+        exec $RUN_CMD
+    else
+        $RUN_CMD &
+        REFINE_PID="$!"
+    fi
+    
+}
+
+broker_appengine_build() {
+    appengine_prepare
+    get_revision
+    
+    ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
+
+    if [ "$1" ] ; then
+        ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
+    fi
+    
+    if [ "$2" ] ; then
+        ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
+    fi
+        
+    ant prepare_broker_appengine
+}
+       
+broker_appengine_upload() {
+    broker_appengine_build $1 $2
+    "$APPENGINE" update "$REFINE_BUILD_DIR/broker/appengine"
+}
+
+broker_appengine_run() {
+    broker_appengine_build $1 $2
+    "$APPENGINE_LOCAL" "$REFINE_BUILD_DIR/broker/appengine"
+}
+    
+findbugs() {
+    findbugs_prepare
+    
+    ANT_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
+    ant findbugs
+    
+    display "$REFINE_BUILD_DIR/reports/findbugs.html"
+}    
+
+pmd() {
+    pmd_prepare
+    
+    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
+    ant pmd
+    
+    display "$REFINE_BUILD_DIR/reports/pmd.html"
+}    
+
+cpd() {
+    pmd_prepare
+    
+    ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
+    ant cpd
+
+    display "$REFINE_BUILD_DIR/reports/cpd.txt"
+}    
+
+jslint() {
+    jslint_prepare
+
+    ANT_PARAMS="-Djslint.dir=${REFINE_TOOLS_DIR}/${JSLINT_DIR}"
+    ant jslint
+
+    display "$REFINE_BUILD_DIR/reports/jslint.txt"
+}
+
+whitespace() {
+    [ $# -gt 0 ] || usage
+    
+    for i in `find . -name *.$1`; do
+        # expand tabs to spaces
+        expand -t 4 < $i > $i.1
+        
+        # convert DOS to UNIX newlines
+        tr -d '\r' < $i.1 > $i.2
+            
+        rm $i $i.1
+        mv $i.2 $i
+    done
+}   
+    
+# -------------------------- script -----------------------------
+    
+# ----- Normalize the current directory -------------------------
+
+cd `dirname $0`
+
+# ----- Default values ------------------------------------------
+
+OPTS=""
+
+# ---- OS-specific support --------------------------------------
+
+SYSTEM=`uname`
+
+case "$SYSTEM" in
+  CYGWIN*) OS="windows" ;;
+  Darwin*) OS="macosx"  ;;
+  Linux*)  OS="linux"   ;;
+  *) OS="other" ;;
+esac
+
+SEP=":" 
+if [ "$OS" = "windows" ] ; then
+    SEP=";" 
+fi
+
+# ----- Load configurations -------------------------------------
+
+load_configs refine.ini
+
+# ----- Make sure there is an appropriate java environment is available -------------
+
+if [ "$OS" = "macosx" ] ; then
+    if [ -z "$JAVA_HOME" ] ; then
+	# We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
+	# The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
+        export JAVA_HOME=$(/usr/libexec/java_home)
+    fi
+fi
+
+if [ "$JAVA_HOME" ] ; then
+    JAVA="$JAVA_HOME/bin/java"
+else 
+    JAVA="`which java 2> /dev/null`"
+fi
+
+if [ ! -x "$JAVA" ] ; then
+    error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
+fi
+
+JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep '^\"1\.(6|7|8|9)'`
+if [ -z "$JAVA_VERSION" ] ; then
+    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+fi
+
+# ----- Parse the command line args ------------------------------------------
+
+while [ $# -ne 0 ] ; do
+  case "$1" in
+    -h) usage;;
+    -p) shift; REFINE_PORT="$1"; shift; continue;;
+    -i) shift; REFINE_HOST="$1"; shift; continue;;
+    -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
+    -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
+    -m) shift; REFINE_MEMORY="$1"; shift; continue;;
+    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
+    -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
+    -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
+    --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
+    -*) fail "Invalid option: $1";;
+    *) break;;
+  esac
+done
+
+if [ $# -ne 0 ] ; then
+    ACTION=$1; shift
+fi
+
+if [ -z "$ACTION" ] ; then
+    ACTION="run"
+fi
+
+# ----- Verify and Set Required Environment Variables -------------------------
+
+if [ -z "$JAVA_OPTIONS" ] ; then
+  JAVA_OPTIONS=""
+fi
+add_option "$JAVA_OPTIONS"
+
+if [ -z "$REFINE_MEMORY" ] ; then
+    REFINE_MEMORY="1024M"
+fi
+add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
+
+if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
+    REFINE_MAX_FORM_CONTENT_SIZE="1048576"
+fi
+add_option "-Drefine.max_form_content_size=$REFINE_MAX_FORM_CONTENT_SIZE"
+
+if [ -z "$REFINE_PORT" ] ; then
+    REFINE_PORT="3333"
+fi
+
+if [ -z "$REFINE_HOST" ] ; then
+    REFINE_HOST="127.0.0.1"
+fi
+
+if [ -z "$REFINE_WEBAPP" ] ; then
+    REFINE_WEBAPP="main/webapp"
+fi
+
+if [ -z "$REFINE_TEST_DIR" ] ; then
+    REFINE_TEST_DIR="main/tests"
+fi
+
+if [ -z "$REFINE_CLASSES_DIR" ] ; then
+    REFINE_CLASSES_DIR="server/classes"
+fi
+
+if [ -z "$REFINE_LIB_DIR" ] ; then
+    REFINE_LIB_DIR="server/lib"
+fi
+
+if [ -z "$REFINE_BUILD_DIR" ] ; then
+    REFINE_BUILD_DIR="build"
+fi
+
+if [ -z "$REFINE_TOOLS_DIR" ] ; then
+    REFINE_TOOLS_DIR="tools"
+fi
+
+if [ -z "$REFINE_DIST_DIR" ] ; then
+    REFINE_DIST_DIR="dist"
+fi
+
+if [ -z "$REFINE_VERBOSITY" ] ; then
+    REFINE_VERBOSITY="info"
+fi
+add_option "-Drefine.verbosity=$REFINE_VERBOSITY"
+
+if [ ! -z "$REFINE_EXTRA_OPTS" ] ; then
+    add_option "-D$REFINE_EXTRA_OPTS"
+fi
+
+if [ -z "$JYTHONPATH" ] ; then
+    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython"
+else
+    JYTHONPATH="$REFINE_WEBAPP/WEB-INF/lib/jython${SEP}$JYTHONPATH"
+fi
+
+add_option "-Dpython.path=$JYTHONPATH"
+add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
+
+# ----- Respond to the action given --------------------------------------------
+case "$ACTION" in
+  build) build_prepare; ant build;;
+  clean) ant clean;;
+  whitespace) whitespace $1;;
+  distclean) ant distclean;;
+  test) test $1;;  
+  tests) test $1;;  
+  ui_test) ui_test $1;;  
+  ui_tests) ui_test $1;;  
+  server_test) server_test $1;;  
+  server_tests) server_test $1;;  
+  findbugs) findbugs;;  
+  pmd) pmd;;  
+  cpd) cpd;;  
+  jslint) jslint;;  
+  run) run;;  
+  broker) broker_run;;
+  broker_appengine_run) broker_appengine_run $1 $2;;
+  broker_appengine_upload) broker_appengine_upload $1 $2;;
+  mac_dist) mac_dist $1;;
+  windows_dist) windows_dist $1;;
+  linux_dist) linux_dist $1;;
+  dist) dist $1;;
+  *) usage; ;;
+esac
+
+# ----------- end of file --------------------

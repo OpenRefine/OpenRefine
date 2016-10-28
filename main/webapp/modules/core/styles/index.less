@@ -1,0 +1,125 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+@import-less url("theme.less");
+
+.main-layout-panel {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  visibility: hidden;
+  }
+
+#slogan {
+  margin: 0 1em;
+  font-style: italic;
+  font-size: 110%;
+  color: @near_black;
+  }
+
+#left-panel {
+  }
+
+#left-panel-body {
+  margin-left: @padding_tight;
+  overflow: hidden;
+  position: relative;
+  }
+
+#action-area-tabs {
+  margin: 0;
+  padding: 0;
+  padding-top: @padding_looser;
+  font-size: 1.3em;
+  }
+#action-area-tabs > li {
+  display: block;
+  padding-top: @padding_tight;
+  padding-bottom: @padding_tight;
+  padding-left: @padding_normal;
+  cursor: pointer;
+  }
+#action-area-tabs > li.selected {
+  background: @chrome_primary;
+  .rounded_corners_left();
+  }
+
+#project-links {
+  font-size: 1.3em;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  }
+
+#logo-container {
+  margin: 2em 0;
+  }
+
+#project-links > ul {
+  padding: 0;
+  margin: 1em 0;
+  line-height: 1.5em;
+  }
+
+#project-links > ul > li {
+  display: block;
+  }
+
+#openrefine-version {
+  margin: @padding_normal 0 0 0;
+  color: @metadata_grey;
+  font-size: 80%;
+  }
+
+#right-panel {
+  background: @chrome_primary;
+  }
+
+#right-panel-body {
+  overflow: auto;
+  position: relative;
+  }
+
+.action-area-tab-body {
+  visibility: hidden;
+  position: absolute;
+  background: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  }

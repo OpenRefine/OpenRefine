@@ -1,0 +1,129 @@
+/*
+
+Copyright 2011, Thomas F. Morris
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+package com.google.refine.exporters;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import org.json.JSONObject;
+import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
+import org.odftoolkit.odfdom.doc.table.OdfTable;
+import org.odftoolkit.odfdom.doc.table.OdfTableCell;
+import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+
+import com.google.refine.ProjectManager;
+import com.google.refine.browsing.Engine;
+import com.google.refine.model.Project;
+
+public class OdsExporter implements StreamExporter {
+
+    @Override
+    public String getContentType() {
+        return "application/vnd.oasis.opendocument.spreadsheet";
+    }
+
+    @Override
+    public void export(final Project project, Properties params, Engine engine,
+            OutputStream outputStream) throws IOException {
+
+        final OdfSpreadsheetDocument odfDoc;
+        try {
+            odfDoc = OdfSpreadsheetDocument.newSpreadsheetDocument();
+        } catch (Exception e) {
+            throw new IOException("Failed to create spreadsheet",e);
+        }
+        
+        TabularSerializer serializer = new TabularSerializer() {
+            OdfTable table;
+            //int rowCount = 0;
+            
+            @Override
+            public void startFile(JSONObject options) {
+                table = OdfTable.newTable(odfDoc);
+                table.setTableName(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+            }
+
+            @Override
+            public void endFile() {
+            }
+
+            @Override
+            public void addRow(List<CellData> cells, boolean isHeader) {
+                OdfTableRow r = table.appendRow();
+                //rowCount++;
+                
+                for (int i = 0; i < cells.size(); i++) {
+                    OdfTableCell c = r.getCellByIndex(i); // implicitly creates cell
+                    CellData cellData = cells.get(i);
+
+                    if (cellData != null && cellData.text != null && cellData.value != null) {
+                        Object v = cellData.value;
+                        if (v instanceof Number) {
+                            c.setDoubleValue(((Number) v).doubleValue());
+                        } else if (v instanceof Boolean) {
+                            c.setBooleanValue(((Boolean) v).booleanValue());
+                        } else if (v instanceof Date) {
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime((Date) v);
+                            c.setDateValue(cal);
+                        } else if (v instanceof Calendar) {
+                            c.setDateValue((Calendar) v);
+                        } else {
+                            c.setStringValue(cellData.text);
+                        }
+
+                        if (cellData.link != null) {
+                            // TODO: How do we do output hyperlinks?
+                        }
+                    }
+                }
+            }
+        };
+        
+        CustomizableTabularExporterUtilities.exportRows(
+                project, engine, params, serializer);
+        
+        try {
+            odfDoc.save(outputStream);
+        } catch (Exception e) {
+            throw new IOException("Error saving spreadsheet",e);
+        }
+        outputStream.flush();
+    }
+
+}

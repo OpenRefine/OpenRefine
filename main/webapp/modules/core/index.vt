@@ -1,0 +1,76 @@
+<!doctype html>
+<!--
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>OpenRefine</title>
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <script type="text/javascript" src="wirings.js"></script>
+  $scriptInjection
+  $styleInjection
+  <script>Refine.encodings = $encodingJson; Refine.defaultEncoding = $defaultEncoding;</script>
+</head>
+<body>
+  <div id="header">
+    <img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" />
+    <span id="slogan"></span>
+  </div>
+  
+  <div id="left-panel" class="main-layout-panel"><div id="left-panel-body">
+    <ul id="action-area-tabs">
+    </ul>
+    
+    <div id="project-links">
+      <div id="logo-container">
+        <img alt="OpenRefine" src="images/logo-gem-40.png" />
+        <div id="openrefine-version"></div>
+      </div>
+      <ul>
+        <li><a href="https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users" id="or-index-help"></a></li>
+        <li><a href="about.html" id="or-index-about"></a></li>
+      </ul>
+    </div>
+  </div></div> <!-- left-panel -->
+
+  <div id="right-panel" class="main-layout-panel"><div id="right-panel-body">
+  </div></div> <!-- right-panel -->
+  
+  <div id="no-project-message" class="message" style="display: none;">
+    <span id="or-index-noProj"></span><br/>
+    <span id="or-index-try"></span>
+    <a href="https://github.com/OpenRefine/OpenRefine/wiki/Sample-Datasets" target="_blank" id="or-index-sample"></a>.
+  </div>
+</body>
+</html>
