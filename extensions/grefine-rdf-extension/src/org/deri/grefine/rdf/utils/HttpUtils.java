@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class HttpUtils {
 	
 	private static Logger log = LoggerFactory.getLogger(HttpUtils.class);
-	public static final String USER_AGENT = "Google Refine LMF Extension (beta)";
+	public static final String USER_AGENT = "DTLS FAIRifier";
 	public static final int CONNECTION_TIMEOUT = 10000;
 	public static final int SO_TIMEOUT = 60000;
     private static final int MAX_REDIRECTS = 3;
@@ -41,16 +41,16 @@ public class HttpUtils {
     }
 	
 	public static HttpEntity get(String uri) throws IOException {
-		log.debug("GET request over " + uri);
-        HttpGet get = new HttpGet(uri);
-        return get(get);
+	    log.debug("GET request over " + uri);
+            HttpGet get = new HttpGet(uri);
+            return get(get);
 	}
 	
 	public static HttpEntity get(String uri, String accept) throws IOException {
-		log.debug("GET request over " + uri);
-        HttpGet get = new HttpGet(uri);
-        get.setHeader("Accept", accept);
-        return get(get);
+	    log.debug("GET request over " + uri);
+            HttpGet get = new HttpGet(uri);
+            get.setHeader("Accept", accept);
+            return get(get);
 	}
 	
 	private static HttpEntity get(HttpGet get) throws IOException {

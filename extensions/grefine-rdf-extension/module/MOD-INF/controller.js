@@ -1,5 +1,6 @@
 importPackage(org.deri.grefine.rdf.commands);
 importPackage(org.deri.grefine.reconcile.commands);
+importPackage(org.dtls.fairifier);
 var GRefineServiceManager = Packages.org.deri.grefine.reconcile.GRefineServiceManager;
 
 var rdfReconcileExtension = {
@@ -125,6 +126,8 @@ function init() {
     RefineServlet.registerCommand(module, "preview-rdf", new PreviewRdfCommand());
     RefineServlet.registerCommand(module, "save-baseURI", new SaveBaseURICommand(ctxt));
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
+    //FAIRifier commands
+    RefineServlet.registerCommand(module, "get-licenses", new LicenseGetterCommand());
     //Vocabs commands
     RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
     RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
@@ -156,6 +159,7 @@ function init() {
         module,
         [
             "scripts/fairDatapointPost.js",
+            "scripts/fairDatapointPost-catalog.js",
             
             "scripts/rdf-data-table-view.js",
             "scripts/menu-bar-extensions.js",
@@ -179,7 +183,7 @@ function init() {
         module,
         [
             "styles/rdf-schema-alignment-dialog.css",
-			"styles/rdf-reconcile-service.css",
+            "styles/rdf-reconcile-service.css",
             "styles/sindice/recon-dialog.css"
         ]
     );

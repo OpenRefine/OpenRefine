@@ -27,7 +27,7 @@ fairDataPointPostDialog.prototype._createDialog = function() {
     this._constructBody(body);
   
     this._level = DialogSystem.showDialog(frame);
-    
+    this._body = body;
     this._renderBody(body);
 };
 
@@ -37,11 +37,10 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
         'The created RDF schema provided can now be uploaded to a FairDatapoint. ' +
     '</p>').appendTo(body);
     
-    var html = $('<p class="base-uri-space"><span class="emphasized">Base URI:</span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
+    var html = $('<p class="base-uri-space"><span class="emphasized">Base URI </span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
     var elmts = DOM.bind(html);
     this._baseUriSpan = elmts.baseUriSpan;
     elmts.baseUriSpan.text(fairDataPointPost.baseUri);
-    
     elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
     	self._editBaseUri($(evt.target));
@@ -116,29 +115,31 @@ fairDataPointPostDialog.prototype._replaceBaseUri = function(newBaseUri,doNotSav
         var self = this;
         $.get(self._baseUriSpan.text(), function(data){
             var parser = N3.Parser();
-            var html = $('<p class="add-catalog-space"><span class="emphasized" bind="addCatalogSpan"><a href="#" bind="addCatalog" class="add">+</a>:</span><span>add catalog</span></p>');
+            $('<h2>catalogs</h2>').appendTo(self._body);            
+            var html = $('<p><a href="#" bind="addCatalog">+ </a><span>add catalog</span></p>').appendTo(self._body);
             var elmts = DOM.bind(html);
             elmts.addCatalog.click(function(evt){
                 evt.preventDefault();
+                this._fairDataPointCatalog = new fairDataPointPostCatalogDialog();
             });
-            var catalogs = parser.parse(data, function(error, triple, prefixes){
-                if (triple) {
-                    if(triple.predicate === "http://www.w3.org/ns/ldp#contains"){
-                        var object = triple.object;
-                        {object:
-                            $.get(object, function(datasetData){
-                                parser.parse(datasetData, function(e, t, p){
-                                    if (t) {
-                                        if(t.predicate === "http://www.w3.org/ns/dcat#dataset"){
-                                            return t.object;
-                                        };
-                                    };
-                                });
-                            });
-                        };
-                    };
-                };
-            });
+//            var catalogs = parser.parse(data, function(error, triple, prefixes){
+//                if (triple) {
+//                    if(triple.predicate === "http://www.w3.org/ns/ldp#contains"){
+//                        var object = triple.object;
+//                        {object:
+//                            $.get(object, function(datasetData){
+//                                parser.parse(datasetData, function(e, t, p){
+//                                    if (t) {
+//                                        if(t.predicate === "http://www.w3.org/ns/dcat#dataset"){
+//                                            return t.object;
+//                                        };
+//                                    };
+//                                });
+//                            });
+//                        };
+//                    };
+//                };
+//            });
         }).fail(function() {
             alert( "Failed to retrieve data from Fair DataPoint" );
         })
