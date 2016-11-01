@@ -148,12 +148,16 @@ fairDataPointPostDialog.prototype._renderBody = function(body) {
 };
 
 getFairCatalogs = function(rootUrl, self){
-    $.post('command/rdf-extension/get-fdp', {"uri" : rootUrl},function(data){
+    $.post('command/rdf-extension/get-fdp-catalogs', {"uri" : rootUrl},function(data){
         $('<h2>catalogs</h2>').appendTo(self._catalogDiv);
         var add_cat_html = $('<p><a href="#" bind="addCatalog">+ </a><span>add catalog</span></p>').appendTo(self._catalogDiv);
         var elmts = DOM.bind(add_cat_html);
         var add_cat_available_html = $('<select></select>');
        
+        data.content.forEach(function(element){
+            $('<option></option>').attr('value',element).text(element).appendTo(add_cat_available_html);
+        });
+        
         elmts.addCatalog.click(function(evt){
             evt.preventDefault();
             new fairDataPointPostCatalogDialog(function(catalog){

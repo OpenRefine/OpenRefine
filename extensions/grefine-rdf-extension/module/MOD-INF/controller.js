@@ -128,7 +128,7 @@ function init() {
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
     //FAIRifier commands
     RefineServlet.registerCommand(module, "get-licenses", new LicenseGetterCommand());
-    RefineServlet.registerCommand(module, "get-fdp", new GetFairDataPointCommand());
+    RefineServlet.registerCommand(module, "get-fdp-catalogs", new GetFairDataPointCatalogCommand());
     //Vocabs commands
     RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
     RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
