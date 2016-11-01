@@ -6,25 +6,9 @@
 
 var fairDataPointPostCatalog = {};
 
-function fairDataPointPostCatalogDialog(schema){
-    this._schema = cloneDeep(schema); // this is what can be munched on
+function fairDataPointPostCatalogDialog(callback){
     this._createDialog();
-    
-    this._licenses = $.get("command/rdf-extension/get-licenses", function(data){
-        var parser = N3.Parser();
-        alert(JSON.stringify( parser.parse(data.content, function(error, triple, prefixes){
-            if (!error){
-                if (triple) {
-                    if(triple.predicate === "http://www.w3.org/2000/01/rdf-schema#label"){
-                        return {'label':triple.object, 'url': triple.subject};
-                    };
-                };
-            };
-        })
-        ));
-        return licenses;
-    });
-    
+    this._callback = callback;
     this.fairDataPointPostCatalog = fairDataPointPostCatalog;
 };
 
@@ -36,6 +20,7 @@ fairDataPointPostCatalogDialog.prototype._createDialog = function() {
     
     var header = $('<div></div>').addClass("dialog-header").text("Add new catalog to FAIRDataPoint").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
     this._constructFooter(footer);
@@ -74,28 +59,15 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
     elmts.editVersion.click(function(evt){
         evt.preventDefault();
         self._editVersion($(evt.target));
-    });
-    var description_html = $('<p><span class="emphasized">description</span> <span bind="descriptionSpan" ></span> <a href="#" bind="editDescription">edit</a></p>').appendTo(body);    
-    var elmts = DOM.bind(description_html);
-    this._descriptionSpan = elmts.descriptionSpan;
-    elmts.editDescription.click(function(evt){
-        evt.preventDefault();
-        self._editDescription($(evt.target));
-    });
-    var license_html = $('<p><span class="emphasized">license</span> <span bind="LicenseSpan" ></span> <a href="#" bind="editLicense">edit</a></p>').appendTo(body);    
-    var elmts = DOM.bind(license_html);
-    this._licenseSpan = elmts.licenseSpan;
-    elmts.editLicense.click(function(evt){
-        evt.preventDefault();
-        self._editLicense($(evt.target));
-    });
+    });    
 };
 
 fairDataPointPostCatalogDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-        form.submit();
+        DialogSystem.dismissUntil(self._level - 1);
+        self._callback(self.fairDataPointPostCatalog);
     }).appendTo(footer);
     
     $('<button></button>').addClass('button').text("Cancel").click(function() {
@@ -169,28 +141,6 @@ fairDataPointPostCatalogDialog.prototype._editVersion = function(src){
     });
 };
 
-fairDataPointPostCatalogDialog.prototype._editDescription = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newDescription" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newDescription.val(fairDataPointPostCatalog.newDescription).focus().select();
-    elmts.applyButton.click(function() {
-        var newDescription = elmts.newDescription.val();
-        self.fairDataPointPostCatalog._description = newDescription;
-        self._descriptionSpan.empty().text(newDescription);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
 fairDataPointPostCatalogDialog.prototype._editTitle = function(src){
     var self = this;
     var menu = MenuSystem.createMenu().width('400px');
@@ -206,28 +156,6 @@ fairDataPointPostCatalogDialog.prototype._editTitle = function(src){
         var newTitle = elmts.newTitle.val();
         self.fairDataPointPostCatalog._title = newTitle;
         self._titleSpan.empty().text(newTitle);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
-fairDataPointPostCatalogDialog.prototype._editLicense = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search licenses"><input type="text" bind="newLicense" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newLicense.val(fairDataPointPostCatalog.newLicense).focus().select();
-    elmts.applyButton.click(function() {
-        var newLicense = elmts.newLicense.val();
-        self.fairDataPointPostCatalog._license = newLicense;
-        self._licenseSpan.empty().text(newLicense);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

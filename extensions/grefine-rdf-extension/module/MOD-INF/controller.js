@@ -128,6 +128,7 @@ function init() {
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
     //FAIRifier commands
     RefineServlet.registerCommand(module, "get-licenses", new LicenseGetterCommand());
+    RefineServlet.registerCommand(module, "get-fdp", new GetFairDataPointCommand());
     //Vocabs commands
     RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
     RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
@@ -160,6 +161,7 @@ function init() {
         [
             "scripts/fairDatapointPost.js",
             "scripts/fairDatapointPost-catalog.js",
+            "scripts/externals/rdfstore_min.js",
             
             "scripts/rdf-data-table-view.js",
             "scripts/menu-bar-extensions.js",
@@ -171,7 +173,6 @@ function init() {
             "scripts/rdf-schema-vocabulary-manager.js",
             "scripts/rdf-schema-new-prefix-widget.js",
             "scripts/externals/jquery.form.js",
-            "scripts/externals/n3-min.js",
             "scripts/sindice/sindice-dialog.js",
             "scripts/common.js"
 		]

@@ -2,18 +2,18 @@
 
 <!--+
     |
-    |  OpenRefine Build File
+    |  FAIRifier Build File
     |
     +-->
     
-<project name="openrefine" default="build" basedir=".">
+<project name="FAIRifier" default="build" basedir=".">
 
     <!-- Properties are immutable, so anything set in this file takes priority-->
     <property file="build.properties"/>
     
     <property environment="env"/>
 
-    <property name="version" value="trunk"/>
+    <property name="version" value="development"/>
     <property name="full_version" value="0.0.0.0"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
@@ -24,7 +24,7 @@
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
         
-    <property name="fullname" value="openrefine-${version}" />
+    <property name="fullname" value="FAIRifier-${version}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -62,7 +62,7 @@
     <property name="built.broker.webapp.dir" value="${build.dir}/broker" />
 
     <property name="mac.dir" value="${build.dir}/mac" />
-    <property name="release.name" value="openrefine-${version}" />
+    <property name="release.name" value="FAIRifier-${version}" />
     <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
     <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
     
@@ -240,8 +240,8 @@
              classpath="${appbundler.dir}/appbundler-1.0.jar" />
 
         <bundleapp outputdirectory="${mac.dir}"
-            name="OpenRefine"
-            displayname="OpenRefine ${version}"
+            name="FAIRifier"
+            displayname="FAIRifier ${version}"
             icon="${graphics.dir}/icon/openrefine.icns"
             identifier="com.google.refine.Refine"
 	    shortversion="${version}"
@@ -300,13 +300,12 @@
             <versionInfo
                 fileVersion="${full_version}"
                 txtFileVersion="${version}"
-                fileDescription="openrefine"
-                copyright="Copyright (c) 2013 OpenRefine contributors, 2010, Google, Inc."
+                fileDescription="FAIRifier"
                 productVersion="${full_version}"
                 txtProductVersion="${version}"
-                productName="OpenRefine"
-                companyName="OpenRefine team"
-                internalName="openrefine"
+                productName="FAIRifier"
+                companyName="DTLS team"
+                internalName="FAIRifier"
                 originalFilename="openrefine.exe" 
             />
           </config>

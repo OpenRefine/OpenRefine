@@ -9,7 +9,8 @@ var fairDataPointPost = {};
 function fairDataPointPostDialog(schema){
     this._schema = cloneDeep(schema); // this is what can be munched on
     this._createDialog();
-    fairDataPointPost.baseUri = "http://";
+    this.fairDataPointPost = fairDataPointPost;
+    this.fairDataPointPost.baseUri = "http://";
     this._replaceBaseUri(fairDataPointPost.baseUri,true);
 };
 
@@ -40,6 +41,7 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
     var html = $('<p class="base-uri-space"><span class="emphasized">Base URI </span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
     var elmts = DOM.bind(html);
     this._baseUriSpan = elmts.baseUriSpan;
+    this._catalogDiv =$('<div></div>');
     elmts.baseUriSpan.text(fairDataPointPost.baseUri);
     elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
@@ -92,9 +94,13 @@ fairDataPointPostDialog.prototype._editBaseUri = function(src){
 	var elmts = DOM.bind(menu);
 	elmts.newBaseUri.val(fairDataPointPost.baseUri).focus().select();
 	elmts.applyButton.click(function() {
-		var newBaseUri = elmts.newBaseUri.val();
+	        var newBaseUri = elmts.newBaseUri.val();
                 if(!newBaseUri || !newBaseUri.substring(7)=='http://'){
                     alert('Base URI should start with http://');
+                    return;
+                } if(self.fairDataPointPost.baseUri.length > 7){
+                    self._catalogDiv.html('');
+                    getFairCatalogs(self._baseUriSpan.text(), self);
                     return;
                 }
             MenuSystem.dismissAll();
@@ -110,18 +116,12 @@ fairDataPointPostDialog.prototype._replaceBaseUri = function(newBaseUri,doNotSav
     var frame = DialogSystem.createDialog();
     if(doNotSave){
         self._baseUriSpan.empty().text(newBaseUri);
+        self.fairDataPointPost.baseUri = newBaseUri;
     }else{
         self._baseUriSpan.empty().text(newBaseUri);
+        self.fairDataPointPost.baseUri = newBaseUri;
         var self = this;
-        $.get(self._baseUriSpan.text(), function(data){
-            var parser = N3.Parser();
-            $('<h2>catalogs</h2>').appendTo(self._body);            
-            var html = $('<p><a href="#" bind="addCatalog">+ </a><span>add catalog</span></p>').appendTo(self._body);
-            var elmts = DOM.bind(html);
-            elmts.addCatalog.click(function(evt){
-                evt.preventDefault();
-                this._fairDataPointCatalog = new fairDataPointPostCatalogDialog();
-            });
+        getFairCatalogs(newBaseUri, self);
 //            var catalogs = parser.parse(data, function(error, triple, prefixes){
 //                if (triple) {
 //                    if(triple.predicate === "http://www.w3.org/ns/ldp#contains"){
@@ -140,12 +140,30 @@ fairDataPointPostDialog.prototype._replaceBaseUri = function(newBaseUri,doNotSav
 //                    };
 //                };
 //            });
-        }).fail(function() {
-            alert( "Failed to retrieve data from Fair DataPoint" );
-        })
     }
 };
 
 fairDataPointPostDialog.prototype._renderBody = function(body) {
     var self = this;
 };
+
+getFairCatalogs = function(rootUrl, self){
+    $.post('command/rdf-extension/get-fdp', {"uri" : rootUrl},function(data){
+        $('<h2>catalogs</h2>').appendTo(self._catalogDiv);
+        var add_cat_html = $('<p><a href="#" bind="addCatalog">+ </a><span>add catalog</span></p>').appendTo(self._catalogDiv);
+        var elmts = DOM.bind(add_cat_html);
+        var add_cat_available_html = $('<select></select>');
+       
+        elmts.addCatalog.click(function(evt){
+            evt.preventDefault();
+            new fairDataPointPostCatalogDialog(function(catalog){
+               $('<option></option>').attr('value',JSON.stringify(catalog)).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
+            });
+        });
+        add_cat_available_html.appendTo(self._catalogDiv);
+        self._catalogDiv.appendTo(self._body);
+    }).fail(function() {
+        alert( "Failed to retrieve data from Fair DataPoint" );
+    });
+};
+
