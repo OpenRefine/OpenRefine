@@ -17,7 +17,7 @@ ExporterManager.MenuItems.push({});//add separator
 ExporterManager.MenuItems.push(
 		{
 			"id" : "postToFdp",
-          	"label":"POST to FairDatapoint",
+          	"label":"POST to FAIR Data Point",
           	"click": function() {new fairDataPointPostDialog(); }
 		}
 );

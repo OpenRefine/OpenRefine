@@ -16,9 +16,9 @@ fairDataPointPostCatalogDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("500px");
+    frame.width("300px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("Add new catalog to FAIRDataPoint").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("Add new catalog to FAIR Data Point").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);

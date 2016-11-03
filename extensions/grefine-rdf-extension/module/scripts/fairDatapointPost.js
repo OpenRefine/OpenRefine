@@ -18,9 +18,9 @@ fairDataPointPostDialog.prototype._createDialog = function() {
     var self = this;
     var frame = DialogSystem.createDialog();
     
-    frame.width("1000px");
+    frame.width("500px");
     
-    var header = $('<div></div>').addClass("dialog-header").text("POST to FairDatapoint").appendTo(frame);
+    var header = $('<div></div>').addClass("dialog-header").text("POST to Fair Data Point").appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     
@@ -35,13 +35,15 @@ fairDataPointPostDialog.prototype._createDialog = function() {
 fairDataPointPostDialog.prototype._constructBody = function(body) {
     var self = this;
     $('<p>' +
-        'The created RDF schema provided can now be uploaded to a FairDatapoint. ' +
+        'The created RDF schema provided can now be uploaded to a Fair Data Point. ' +
     '</p>').appendTo(body);
     
     var html = $('<p class="base-uri-space"><span class="emphasized">Base URI </span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
     var elmts = DOM.bind(html);
     this._baseUriSpan = elmts.baseUriSpan;
-    this._catalogDiv =$('<div></div>');
+    this._catalogDiv = $('<div></div>');
+    this._datasetDiv = $('<div></div>');
+    this._distributionDiv = $('<div></div>');
     elmts.baseUriSpan.text(fairDataPointPost.baseUri);
     elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
@@ -94,19 +96,19 @@ fairDataPointPostDialog.prototype._editBaseUri = function(src){
 	var elmts = DOM.bind(menu);
 	elmts.newBaseUri.val(fairDataPointPost.baseUri).focus().select();
 	elmts.applyButton.click(function() {
-	        var newBaseUri = elmts.newBaseUri.val();
-                if(!newBaseUri || !newBaseUri.substring(7)=='http://'){
-                    alert('Base URI should start with http://');
-                    return;
-                } if(self.fairDataPointPost.baseUri.length > 7){
-                    self._catalogDiv.html('');
-                    getFairCatalogs(self._baseUriSpan.text(), self);
-                    return;
-                }
+	    var newBaseUri = elmts.newBaseUri.val();
+            if(!newBaseUri || !newBaseUri.substring(7)=='http://'){
+                alert('Base URI should start with http://');
+                return;
+            } if(self.fairDataPointPost.baseUri.length > 7){
+                self._catalogDiv.html('');
+                self._datasetDiv.html('');
+                getFairCatalogs(self._baseUriSpan.text(), self);
+                return;
+            }
             MenuSystem.dismissAll();
             self._replaceBaseUri(newBaseUri,false);
         });
-	
 	elmts.cancelButton.click(function() {
                 MenuSystem.dismissAll();
         });
@@ -122,24 +124,7 @@ fairDataPointPostDialog.prototype._replaceBaseUri = function(newBaseUri,doNotSav
         self.fairDataPointPost.baseUri = newBaseUri;
         var self = this;
         getFairCatalogs(newBaseUri, self);
-//            var catalogs = parser.parse(data, function(error, triple, prefixes){
-//                if (triple) {
-//                    if(triple.predicate === "http://www.w3.org/ns/ldp#contains"){
-//                        var object = triple.object;
-//                        {object:
-//                            $.get(object, function(datasetData){
-//                                parser.parse(datasetData, function(e, t, p){
-//                                    if (t) {
-//                                        if(t.predicate === "http://www.w3.org/ns/dcat#dataset"){
-//                                            return t.object;
-//                                        };
-//                                    };
-//                                });
-//                            });
-//                        };
-//                    };
-//                };
-//            });
+        $('').val()
     }
 };
 
@@ -148,11 +133,11 @@ fairDataPointPostDialog.prototype._renderBody = function(body) {
 };
 
 getFairCatalogs = function(rootUrl, self){
-    $.post('command/rdf-extension/get-fdp-catalogs', {"uri" : rootUrl},function(data){
+    $.post('command/rdf-extension/get-fdp-info', {"uri" : rootUrl, "layer": "catalog"},function(data){
         $('<h2>catalogs</h2>').appendTo(self._catalogDiv);
         var add_cat_html = $('<p><a href="#" bind="addCatalog">+ </a><span>add catalog</span></p>').appendTo(self._catalogDiv);
         var elmts = DOM.bind(add_cat_html);
-        var add_cat_available_html = $('<select></select>');
+        var add_cat_available_html = $('<select class="catalogs"></select>');
        
         data.content.forEach(function(element){
             $('<option></option>').attr('value',element).text(element).appendTo(add_cat_available_html);
@@ -161,9 +146,19 @@ getFairCatalogs = function(rootUrl, self){
         elmts.addCatalog.click(function(evt){
             evt.preventDefault();
             new fairDataPointPostCatalogDialog(function(catalog){
-               $('<option></option>').attr('value',JSON.stringify(catalog)).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
+               if (catalog._title && catalog._identifier){
+                   $('<option></option>').attr('value',JSON.stringify(catalog)).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
+                   self._datasetDiv.html('');
+                   getFairDatasets(self.fairDataPointPost.baseUri + "/" + catalog._identifier, self);
+               }
             });
         });
+        add_cat_available_html.change(function(evt){
+            if ($(evt.target).val()){
+                self._datasetDiv.html('');
+                getFairDatasets(self.fairDataPointPost.baseUri + "/" + JSON.parse($(evt.target).val())._identifier, self);
+            }
+        }).change();
         add_cat_available_html.appendTo(self._catalogDiv);
         self._catalogDiv.appendTo(self._body);
     }).fail(function() {
@@ -171,3 +166,34 @@ getFairCatalogs = function(rootUrl, self){
     });
 };
 
+getFairDatasets = function(url, self){
+    $('<h2>datasets</h2>').appendTo(self._datasetDiv);
+    var add_dat_html = $('<p><a href="#" bind="addDataset">+ </a><span>add dataset</span></p>').appendTo(self._datasetDiv);
+    var elmts = DOM.bind(add_dat_html);
+    var add_dat_available_html = $('<select class="datasets"></select>');
+    
+    $.post('command/rdf-extension/get-fdp-info', {"uri" : url, "layer": "dataset"},function(data){
+        data.content.forEach(function(element){
+            $('<option></option>').attr('value',element).text(element).appendTo(add_dat_available_html);
+        });
+    });
+    
+    elmts.addDataset.click(function(evt){
+        evt.preventDefault();
+        new fairDataPointPostDatasetDialog(function(dataset){
+           if (dataset._title && dataset._identifier){
+               $('<option></option>').attr('value',JSON.stringify(dataset)).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
+               addFairDistribution(url + "/" + dataset._identifier, self);
+           }
+        });
+    });
+    add_dat_available_html.appendTo(self._datasetDiv);
+    self._datasetDiv.appendTo(self._body);
+};
+
+addFairDistribution = function(url, self){
+    $('<h2>distribution</h2>').appendTo(self._distributionDiv);
+    var add_dist_html = $('<p><a href="#" bind="addDistribution">+ </a><span>add distribution</span></p>').appendTo(self._distributionDiv);
+    var elmts = DOM.bind(add_dist_html);
+    
+};
