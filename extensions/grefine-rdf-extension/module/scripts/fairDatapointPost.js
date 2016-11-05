@@ -153,12 +153,14 @@ getFairCatalogs = function(rootUrl, self){
                }
             });
         });
+        
         add_cat_available_html.change(function(evt){
             if ($(evt.target).val()){
                 self._datasetDiv.html('');
                 getFairDatasets(self.fairDataPointPost.baseUri + "/" + JSON.parse($(evt.target).val())._identifier, self);
             }
         }).change();
+        
         add_cat_available_html.appendTo(self._catalogDiv);
         self._catalogDiv.appendTo(self._body);
     }).fail(function() {
@@ -183,17 +185,33 @@ getFairDatasets = function(url, self){
         new fairDataPointPostDatasetDialog(function(dataset){
            if (dataset._title && dataset._identifier){
                $('<option></option>').attr('value',JSON.stringify(dataset)).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
-               addFairDistribution(url + "/" + dataset._identifier, self);
+               self._distributionDiv.html('');
+               addFairDistribution(self);
            }
         });
     });
+    
+    add_dat_available_html.change(function(evt){
+        if ($(evt.target).val()){
+            self._distributionDiv.html('');
+            addFairDistribution(self);
+        }
+    }).change();
+    
     add_dat_available_html.appendTo(self._datasetDiv);
     self._datasetDiv.appendTo(self._body);
 };
 
-addFairDistribution = function(url, self){
+addFairDistribution = function(self){
     $('<h2>distribution</h2>').appendTo(self._distributionDiv);
-    var add_dist_html = $('<p><a href="#" bind="addDistribution">+ </a><span>add distribution</span></p>').appendTo(self._distributionDiv);
+    var add_dist_html = $('<p><a href="#" bind="addDistribution">+ </a><span>add distribution</span><br><span bind="distribution"></span></p>').appendTo(self._distributionDiv);
     var elmts = DOM.bind(add_dist_html);
-    
+    elmts.addDistribution.click(function(evt){
+        evt.preventDefault();
+        new fairDataPointPostDistributionDialog(function(distribution){
+            elmts.distribution.text(distribution._identifier + " - " + distribution._title);
+        });
+    });
+    add_dist_html.appendTo(self._distributionDiv);
+    self._distributionDiv.appendTo(self._body);
 };

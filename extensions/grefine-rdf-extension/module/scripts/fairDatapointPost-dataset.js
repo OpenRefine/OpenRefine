@@ -109,14 +109,22 @@ fairDataPointPostDatasetDialog.prototype._constructBody = function(body) {
         self._editCreator($(evt.target));        
     });
 
-    var language_html = $('<p><span class="emphasized">language </span><span bind="languageSpan" ></span> <a href="#" bind="editLanguage">edit</a></p>').appendTo(body);    
-    var elmts = DOM.bind(language_html);
-    this._languageSpan = elmts.languageSpan;
-    elmts.editLanguage.click(function(evt) {
-        evt.preventDefault();
-        self._editLanguage($(evt.target));        
+    var language_html = $('<p><span class="emphasized">language </span></p>');
+    var language_html_select = $('<select class="languages"></select>').appendTo(language_html);
+    
+    $.get('command/rdf-extension/get-languages',function(data){
+        data.content.forEach(function(element){
+            $('<option></option>').attr('value',element[1]).text(element[0]).appendTo(language_html_select);
+        });
     });
     
+    language_html_select.change(function(evt){
+        if ($(evt.target).val()){
+            fairDataPointPostDataset.language = $(evt.target).val();
+        }
+    }).change();
+    
+    language_html.appendTo(body);
 };
 
 fairDataPointPostDatasetDialog.prototype._constructFooter = function(footer) {
@@ -353,28 +361,6 @@ fairDataPointPostDatasetDialog.prototype._editCreator = function(src){
         var newCreator = elmts.newCreator.val();
         self.fairDataPointPostDataset._creator = newCreator;
         self._creatorSpan.empty().text(newCreator);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
-fairDataPointPostDatasetDialog.prototype._editLanguage = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newLanguage" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newLanguage.val(fairDataPointPostDataset.newLanguage).focus().select();
-    elmts.applyButton.click(function() {
-        var newLanguage = elmts.newLanguage.val();
-        self.fairDataPointPostDataset._language = newLanguage;
-        self._creatorSpan.empty().text(newLanguage);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
