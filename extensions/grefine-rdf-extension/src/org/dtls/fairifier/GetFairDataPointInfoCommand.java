@@ -15,6 +15,7 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParser;
+import org.openrdf.rio.turtle.TurtleParser;
 import org.openrdf.rio.helpers.StatementCollector;
 import java.io.ByteArrayInputStream;
 import org.openrdf.model.Statement;
@@ -57,7 +58,7 @@ public class GetFairDataPointInfoCommand extends Command{
 
     public ArrayList<DatasetMetadata> getFdpDatasets(String url) throws IOException, RDFParseException, RDFHandlerException{
         ArrayList<DatasetMetadata> out = new ArrayList<DatasetMetadata>();
-        RDFParser parser = Rio.createParser(RDFFormat.TURTLE);
+        TurtleParser parser = new TurtleParser();
         StatementCollector rdfStatementCollector = new StatementCollector();
         parser.setRDFHandler(rdfStatementCollector);
         
@@ -77,7 +78,7 @@ public class GetFairDataPointInfoCommand extends Command{
     
     public ArrayList<CatalogMetadata> getFdpCatalogs(String url) throws IOException, RDFParseException, RDFHandlerException{
         ArrayList<CatalogMetadata> out = new ArrayList<CatalogMetadata>();
-        RDFParser parser = Rio.createParser(RDFFormat.TURTLE);
+        TurtleParser parser = new TurtleParser();
         StatementCollector rdfStatementCollector = new StatementCollector();
         parser.setRDFHandler(rdfStatementCollector);
         
