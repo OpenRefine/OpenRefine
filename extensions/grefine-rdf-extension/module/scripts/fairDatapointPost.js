@@ -55,27 +55,11 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-//    	var schema = self.getJSON();
-//        JSON.stringify(schema);
+        $.post("command/rdf-extension/post-fdp-info", {"fdp": self.fairDataPointPost},function(response){
+            alert(reponse);
+        });
         
-        var form = document.createElement("form");
-        $(form)
-            .css("display", "none")
-            .attr("method", "post")
-            .attr("action", self._baseUriSpan.text());
-        $('<input />')
-            .attr("name", "engine")
-            .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
-            .appendTo(form);
-        $('<input />')
-            .attr("name", "project")
-            .attr("value", theProject.id)
-            .appendTo(form);
-
-        document.body.appendChild(form);
-        form.submit();
         window.open(self._baseUriSpan.text());
-        document.body.removeChild(form);
     }).appendTo(footer);
     
     $('<button></button>').addClass('button').text("Cancel").click(function() {
@@ -103,6 +87,7 @@ fairDataPointPostDialog.prototype._editBaseUri = function(src){
             } if(self.fairDataPointPost.baseUri.length > 7){
                 self._catalogDiv.html('');
                 self._datasetDiv.html('');
+                self.uri = self._baseUriSpan.text();
                 getFairCatalogs(self._baseUriSpan.text(), self);
                 return;
             }
@@ -149,6 +134,8 @@ getFairCatalogs = function(rootUrl, self){
                if (catalog._title && catalog._identifier){
                    $('<option></option>').attr('value',JSON.stringify(catalog)).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
                    self._datasetDiv.html('');
+                   self._distributionDiv.html('');
+                   self.fairDataPointPost.catalog = catalog;
                    getFairDatasets(self.fairDataPointPost.baseUri + "/" + catalog._identifier, self);
                }
             });
@@ -157,6 +144,7 @@ getFairCatalogs = function(rootUrl, self){
         add_cat_available_html.change(function(evt){
             if ($(evt.target).val()){
                 self._datasetDiv.html('');
+                self._distributionDiv.html('');
                 getFairDatasets(self.fairDataPointPost.baseUri + "/" + JSON.parse($(evt.target).val())._identifier, self);
             }
         }).change();
@@ -186,6 +174,7 @@ getFairDatasets = function(url, self){
            if (dataset._title && dataset._identifier){
                $('<option></option>').attr('value',JSON.stringify(dataset)).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
                self._distributionDiv.html('');
+               self.fairDataPointPost.dataset = dataset;
                addFairDistribution(self);
            }
         });
@@ -210,6 +199,7 @@ addFairDistribution = function(self){
         evt.preventDefault();
         new fairDataPointPostDistributionDialog(function(distribution){
             elmts.distribution.text(distribution._identifier + " - " + distribution._title);
+            self.fairDataPointPost.distribution = distribution;
         });
     });
     add_dist_html.appendTo(self._distributionDiv);

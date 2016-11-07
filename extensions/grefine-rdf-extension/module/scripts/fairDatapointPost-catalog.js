@@ -59,7 +59,25 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
     elmts.editVersion.click(function(evt){
         evt.preventDefault();
         self._editVersion($(evt.target));
-    });    
+    });
+    
+
+    var language_html = $('<p><span class="emphasized">language </span></p>');
+    var language_html_select = $('<select class="languages"></select>').appendTo(language_html);
+    
+    $.get('command/rdf-extension/get-languages',function(data){
+        data.content.forEach(function(element){
+            $('<option></option>').attr('value',element[1]).text(element[0]).appendTo(language_html_select);
+        });
+    });
+    
+    language_html_select.change(function(evt){
+        if ($(evt.target).val()){
+            fairDataPointPostCatalog.language = $(evt.target).val();
+        }
+    }).change();
+    
+    language_html.appendTo(body);
 };
 
 fairDataPointPostCatalogDialog.prototype._constructFooter = function(footer) {
