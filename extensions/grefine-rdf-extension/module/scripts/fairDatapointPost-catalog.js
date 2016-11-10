@@ -60,6 +60,14 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
         evt.preventDefault();
         self._editVersion($(evt.target));
     });
+
+    var homepage_html = $('<p><span class="emphasized">homepage</span> <span bind="homepageSpan" >http://</span> <a href="#" bind="editHomepage">edit</a></p>').appendTo(body);    
+    var elmts = DOM.bind(homepage_html);
+    this._homepageSpan = elmts.homepageSpan;
+    elmts.editHomepage.click(function(evt){
+        evt.preventDefault();
+        self._editHomepage($(evt.target));
+    });
     
 
     var language_html = $('<p><span class="emphasized">language </span></p>');
@@ -73,11 +81,20 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
     
     language_html_select.change(function(evt){
         if ($(evt.target).val()){
-            fairDataPointPostCatalog.language = $(evt.target).val();
+            self.fairDataPointPostCatalog._language = $(evt.target).val();
         }
     }).change();
     
     language_html.appendTo(body);
+    
+    var theme_html = $('<p><span class="emphasized">theme </span><span bind="themeSpan" >http://</span> <a href="#" bind="editTheme">edit</a></p>').appendTo(body);    
+    var elmts = DOM.bind(theme_html);
+    this._themeSpan = elmts.themeSpan;
+    elmts.editTheme.click(function(evt) {
+        evt.preventDefault();
+        self._editTheme($(evt.target));        
+    });
+
 };
 
 fairDataPointPostCatalogDialog.prototype._constructFooter = function(footer) {
@@ -174,6 +191,58 @@ fairDataPointPostCatalogDialog.prototype._editTitle = function(src){
         var newTitle = elmts.newTitle.val();
         self.fairDataPointPostCatalog._title = newTitle;
         self._titleSpan.empty().text(newTitle);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostCatalogDialog.prototype._editHomepage = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newHomepage" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newHomepage.val(fairDataPointPostCatalog.newHomepage).focus().select();
+    elmts.applyButton.click(function() {
+        var newHomepage = elmts.newHomepage.val();
+        self.fairDataPointPostCatalog._homepage = newHomepage;
+        if(!newHomepage || !newHomepage.substring(7)=='http://'){
+            alert('Theme URI should start with http://');
+            return;
+        }        
+        self._homepageSpan.empty().text(newHomepage);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostCatalogDialog.prototype._editTheme = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newTheme" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newTheme.val(fairDataPointPostCatalogDialog.newTheme).focus().select();
+    elmts.applyButton.click(function() {
+        var newTheme = elmts.newTheme.val();
+        self.fairDataPointPostCatalog._theme = newTheme;
+        if(!newTheme || !newTheme.substring(7)=='http://'){
+            alert('Theme URI should start with http://');
+            return;
+        }        
+        self._themeSpan.empty().text(newTheme);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

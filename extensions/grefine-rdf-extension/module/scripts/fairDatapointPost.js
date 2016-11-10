@@ -55,11 +55,11 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-        $.post("command/rdf-extension/post-fdp-info", {"fdp": self.fairDataPointPost},function(response){
-            alert(reponse);
+        $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost)},function(data){
+            alert(JSON.stringify(data));
         });
         
-        window.open(self._baseUriSpan.text());
+//        window.open(self._baseUriSpan.text());
     }).appendTo(footer);
     
     $('<button></button>').addClass('button').text("Cancel").click(function() {

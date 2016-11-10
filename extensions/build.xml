@@ -12,11 +12,10 @@
 
   <target name="clean">
     <echo message="cleaning extensions" />
-  	<ant dir="grefine-rdf-extension/" target="clean" />
     <ant dir="sample/" target="clean" />
     <ant dir="jython/" target="clean" />
     <ant dir="gdata/" target="clean" />
     <ant dir="pc-axis/" target="clean" />
-  	<ant dir="grefine-rdf-exension/" target="clean" />
+  	<ant dir="grefine-rdf-extension/" target="clean" />
   </target>
 </project>

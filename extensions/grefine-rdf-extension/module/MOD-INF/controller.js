@@ -129,6 +129,7 @@ function init() {
     //FAIRifier commands
     RefineServlet.registerCommand(module, "get-languages", new LanguageGetterCommand());
     RefineServlet.registerCommand(module, "get-fdp-info", new GetFairDataPointInfoCommand());
+    RefineServlet.registerCommand(module, "post-fdp-info", new PostFairDataToFairDataPoint());
     RefineServlet.registerCommand(module, "get-licenses", new LicenseGetterCommand());
     //Vocabs commands
     RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));

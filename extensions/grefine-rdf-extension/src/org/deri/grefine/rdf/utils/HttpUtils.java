@@ -7,6 +7,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -15,12 +16,13 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.http.params.*;
+import java.util.Map; 
 /**
  * Some HTTP utilities
  * 
  * @author Sergio Fernández <sergio.fernandez@salzburgresearch.at>
- *
+ * @author Shamanou van Leeuwen
  */
 public class HttpUtils {
 	
@@ -51,6 +53,31 @@ public class HttpUtils {
             HttpGet get = new HttpGet(uri);
             get.setHeader("Accept", accept);
             return get(get);
+	}
+	
+	public static HttpEntity post(String uri, String accept, Map<String,String> parameters) throws IOException {
+            log.debug("POST request over " + uri);
+            HttpPost post = new HttpPost(uri);
+            BasicHttpParams params = new BasicHttpParams();
+            for (Map.Entry<String, String> entry : parameters.entrySet()){
+                params.setParameter(entry.getKey(),entry.getValue());
+            }
+            post.setHeader("Accept", accept);
+            post.setParams(params);
+            return post(post);
+        }
+        
+	
+	private static HttpEntity post(HttpPost post) throws IOException {
+	    HttpClient client = createClient();
+	    HttpResponse response = client.execute(post);
+	    if (200 == response.getStatusLine().getStatusCode()) {
+	        return response.getEntity();
+	    } else {
+	        String msg = "Error performing POST request: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();
+	        log.error(msg);
+	        throw new ClientProtocolException(msg);
+	    }
 	}
 	
 	private static HttpEntity get(HttpGet get) throws IOException {

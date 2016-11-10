@@ -12,28 +12,23 @@ import org.json.JSONObject;
 import org.json.JSONException;
 import com.google.refine.commands.Command;
 import java.io.ByteArrayInputStream;
-import org.openrdf.model.Statement;
 import java.util.ArrayList;
 import java.io.InputStream;
 import nl.dtl.fairmetadata.io.*;
 import nl.dtl.fairmetadata.model.*;
-import org.openrdf.rio.turtle.TurtleWriter;
-import org.openrdf.model.URI;
-import org.openrdf.model.ModelFactory;
-import org.openrdf.model.vocabulary.*;
 import java.util.List;
-import org.openrdf.model.Model;
+import java.io.StringWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.openrdf.sail.memory.model.CalendarMemLiteral;
+import org.openrdf.model.URI;
+import org.openrdf.model.Literal;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.LiteralImpl;
-import org.openrdf.sail.memory.model.CalendarMemLiteral;
-import org.openrdf.model.impl.TreeModelFactory;
-import org.openrdf.model.Namespace;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeFactory;
+import nl.dtl.fairmetadata.utils.*;
+import org.openrdf.rio.RDFFormat;
+import javax.xml.datatype.DatatypeConfigurationException; 
+import java.util.HashMap;
 
 /**
  * 
@@ -46,92 +41,89 @@ public class PostFairDataToFairDataPoint extends Command{
     
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        ArrayList<URI> datasetUris = new ArrayList<URI>();
+        ArrayList<URI> distributionUris = new ArrayList<URI>();
+        ArrayList<URI> catalogThemes = new ArrayList<URI>();
+        ArrayList<URI> datasetThemes = new ArrayList<URI>();
+        ArrayList<Literal> keyWords = new ArrayList<Literal>();
+        
+        String catalogString;
+        String datasetString;
+        String distributionString;
+        
+        CatalogMetadata catalogMetadata = new CatalogMetadata();
+        DatasetMetadata datasetMetadata = new DatasetMetadata();
+        DistributionMetadata distributionMetadata = new DistributionMetadata();
+        
         try{
             JSONObject jsonObject = new JSONObject(req.getParameter("fdp"));
             JSONObject catalog = jsonObject.getJSONObject("catalog");
             JSONObject dataset = jsonObject.getJSONObject("dataset");
             JSONObject distribution = jsonObject.getJSONObject("distribution");
-        
-            URIImpl rootUri = new URIImpl(jsonObject.getString("baseUri"));
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        
-            StringWriter writer = new StringWriter();
-            TurtleWriter turtleWriter =  new TurtleWriter(writer);
-            TreeModelFactory f = new TreeModelFactory();
-            Model model = f.createEmptyModel();
-            Namespace rdf = model.setNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-            Namespace rdfs = model.setNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-            Namespace dcat = model.setNamespace("dcat", "http://www.w3.org/ns/dcat#");
-            Namespace xsd = model.setNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
-            Namespace owl = model.setNamespace("owl", "http://www.w3.org/2002/07/owl#");
-            Namespace dcterms = model.setNamespace("dcterms", "http://purl.org/dc/terms/");
-            Namespace ldp = model.setNamespace("ldp", "http://www.w3.org/ns/ldp#");
-            Namespace lang = model.setNamespace("lang", "http://id.loc.gov/vocabulary/iso639-1/");
             
-        
-            GregorianCalendar gregory = new GregorianCalendar();
-            gregory.setTime(new Date());
-            XMLGregorianCalendar calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregory);
-
-            model.add(rootUri, 
-                    new URIImpl("http://purl.org/dc/terms/title"), 
-                    new LiteralImpl(catalog.getString("_title")) );
-            model.add(rootUri, 
-                    new URIImpl("http://www.w3.org/2000/01/rdf-schema#label"), 
-                    new LiteralImpl(catalog.getString("_label")) );
-            model.add(rootUri, 
-                    new URIImpl("http://purl.org/dc/terms/identifier"), 
-                    new LiteralImpl(catalog.getString("_identifier")) );
-            model.add(rootUri, 
-                    new URIImpl("http://purl.org/dc/terms/hasVersion"), 
-                    new LiteralImpl(catalog.getString("_version")) );
-            model.add(rootUri, 
-                    new URIImpl("http://purl.org/dc/terms/issued"), 
-                    new CalendarMemLiteral("dtls fairifier" ,calendar ));
-            model.add(rootUri, 
-                    new URIImpl("http://purl.org/dc/terms/modified"), 
-                    new CalendarMemLiteral("dtls fairifier" ,calendar ));
-            model.add(rootUri, 
-                    new URIImpl("http://purl.org/dc/terms/language"), 
-                    new URIImpl(catalog.getString("_language")) );
-            model.add(rootUri, 
-                    new URIImpl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), 
-                    new URIImpl("http://www.w3.org/ns/dcat#Catalog") );
-            model.add(rootUri, 
-                    new URIImpl("http://www.w3.org/ns/dcat#themeTaxonomy"), 
-                    new URIImpl(catalog.getString("_theme")));
-            model.add(rootUri, 
-                    new URIImpl("http://www.w3.org/ns/dcat#dataset"), 
-                    new URIImpl( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" + dataset.getString("_identifier") ));
-            turtleWriter.startRDF();
-            for (Statement s : model){
-                turtleWriter.handleStatement(s);
+            catalogMetadata.setHomepage(new URIImpl(catalog.getString("_homepage")));
+            catalogThemes.add(new URIImpl(catalog.getString("_theme")));
+            catalogMetadata.setThemeTaxonomy(catalogThemes);
+            catalogMetadata.setTitle(new LiteralImpl(catalog.getString("_title")));
+            catalogMetadata.setIdentifier(new LiteralImpl(catalog.getString("_identifier")));
+            
+            catalogMetadata.setIssued(RDFUtils.getCurrentTime());
+            catalogMetadata.setModified(RDFUtils.getCurrentTime());
+            catalogMetadata.setVersion(new LiteralImpl(catalog.getString("_version")));
+            catalogMetadata.setUri(new URIImpl(jsonObject.getString("baseUri")));
+            
+            datasetUris.add( new URIImpl( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" + dataset.getString("_identifier") ));
+            
+            catalogMetadata.setDatasets(datasetUris);
+            
+            datasetMetadata.setLandingPage(new URIImpl(dataset.getString("_landingpage")));
+            datasetThemes.add(new URIImpl(dataset.getString("_theme")));
+            datasetMetadata.setThemes(datasetThemes);
+            datasetMetadata.setContactPoint(new URIImpl(dataset.getString("_creator")));
+            String[] keywordArray = dataset.getString("_keyword").split(",");
+            for (String keyword : keywordArray){
+                keyWords.add( new LiteralImpl(keyword) );
             }
-            turtleWriter.endRDF();
-        
+            datasetMetadata.setKeywords(keyWords);
+            
+            distributionUris.add( new URIImpl( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" + dataset.getString("_identifier") + "/" +  distribution.getString("_identifier") ));
+            
+            datasetMetadata.setDistribution(distributionUris);
+            datasetMetadata.setTitle(new LiteralImpl(dataset.getString("_title")));
+            datasetMetadata.setIdentifier(new LiteralImpl( dataset.getString("_identifier")));
+            datasetMetadata.setIssued( RDFUtils.getCurrentTime() );
+            datasetMetadata.setModified( RDFUtils.getCurrentTime() );
+            datasetMetadata.setVersion( new LiteralImpl(dataset.getString("_version")) );
+            datasetMetadata.setDescription( new LiteralImpl(dataset.getString("_description")) );
+            datasetMetadata.setUri( new URIImpl( jsonObject.getString("baseUri") + "/" + dataset.getString("_identifier") + "/" + dataset.getString("_identifier") ) );
+            
+            distributionMetadata.setAccessURL( new URIImpl(distribution.getString("_accessUrl")) );
+            distributionMetadata.setMediaType( new LiteralImpl(distribution.getString("_mediatype")) );
+            distributionMetadata.setTitle( new LiteralImpl(distribution.getString("_title")) );
+            distributionMetadata.setIdentifier( new LiteralImpl(distribution.getString("_identifier")) );
+            distributionMetadata.setVersion( new LiteralImpl(distribution.getString("_version")) );
+            distributionMetadata.setLicense(new URIImpl(distribution.getString("_license")));
+            distributionMetadata.setUri( new URIImpl( jsonObject.getString("baseUri") + "/" + dataset.getString("_identifier") + "/" + dataset.getString("_identifier") + "/" + catalog.getString("_identifier")) );
+
+            catalogString = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
+            datasetString = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE);
+            distributionString = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE);
+
+            HashMap<String,String> catalogParameters = new HashMap<String,String>();
+            catalogParameters.put("catalogID",catalog.getString("_identifier"));
+            catalogParameters.put("metadata",catalogString);
+            
+            HttpUtils.post(jsonObject.getString("baseUri"), "text/turtle", catalogParameters);
+            
             res.setCharacterEncoding("UTF-8");
             res.setHeader("Content-Type", "application/json");
-            JSONWriter jsonWriter = new JSONWriter(res.getWriter());
-            jsonWriter.object();
-            jsonWriter.key("code");
-            jsonWriter.value("ok");
-            jsonWriter.key("res");
-            jsonWriter.value(writer.toString());
-            jsonWriter.endObject();
+            JSONWriter writer = new JSONWriter(res.getWriter());
+            writer.object();
+            writer.key("code"); writer.value("ok");
+//            writer.key("content"); writer.value(catalogString);
+            writer.endObject();
         }catch(Exception ex){
-            try{
-                res.setCharacterEncoding("UTF-8");
-                res.setHeader("Content-Type", "application/json");
-                JSONWriter jsonWriter = new JSONWriter(res.getWriter());
-                jsonWriter.object();
-                jsonWriter.key("code");
-                jsonWriter.value("error");
-                jsonWriter.key("res");
-                jsonWriter.value(ex.toString());
-                jsonWriter.endObject();
-            }catch(Exception e){
-                
-            }
+            respondException(res, ex);
         }
     }
 }

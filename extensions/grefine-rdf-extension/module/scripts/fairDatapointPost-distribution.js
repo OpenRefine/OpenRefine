@@ -10,6 +10,7 @@ function fairDataPointPostDistributionDialog(callback){
     this._createDialog();
     this._callback = callback;
     this.fairDataPointPostDistribution = fairDataPointPostDistribution;
+    this.fairDataPointPostDistribution._accessUrl = "http://";
 };
 
 fairDataPointPostDistributionDialog.prototype._createDialog = function() {
@@ -22,7 +23,6 @@ fairDataPointPostDistributionDialog.prototype._createDialog = function() {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    
     this._constructFooter(footer);
     this._constructBody(body);
     this._level = DialogSystem.showDialog(frame);
@@ -48,14 +48,6 @@ fairDataPointPostDistributionDialog.prototype._constructBody = function(body) {
         self._editTitle($(evt.target));
     });
 
-    var label_html = $('<p><span class="emphasized">label</span> <span bind="labelSpan" ></span> <a href="#" bind="editLabel">edit</a></p>').appendTo(body);
-    var elmts = DOM.bind(label_html);
-    this._labelSpan = elmts.labelSpan;
-    elmts.editLabel.click(function(evt){
-        evt.preventDefault();
-        self._editLabel($(evt.target));
-    });
-    
     var version_html = $('<p><span class="emphasized">version</span> <span bind="versionSpan" ></span> <a href="#" bind="editVersion">edit</a></p>').appendTo(body);
     var elmts = DOM.bind(version_html);
     this._versionSpan = elmts.versionSpan;
@@ -74,7 +66,7 @@ fairDataPointPostDistributionDialog.prototype._constructBody = function(body) {
     
     var accessUrl_html = $('<p><span class="emphasized">Access URL </span><span bind="accessUrlSpan" >http://</span> <a href="#" bind="editAccessUrl">edit</a></p>').appendTo(body);    
     var elmts = DOM.bind(accessUrl_html);
-    this._accessUrlSpan = elmts.accesSUrlSpan;
+    this._accessUrlSpan = elmts.accessUrlSpan;
     elmts.editAccessUrl.click(function(evt) {
         evt.preventDefault();
         self._editAccessUrl($(evt.target));        
@@ -91,7 +83,7 @@ fairDataPointPostDistributionDialog.prototype._constructBody = function(body) {
     
     license_html_select.change(function(evt){
         if ($(evt.target).val()){
-            fairDataPointPostDistribution.license = $(evt.target).val();
+            self.fairDataPointPostDistribution._license = $(evt.target).val();
         }
     }).change();
     
@@ -155,28 +147,6 @@ fairDataPointPostDistributionDialog.prototype._editTitle = function(src){
     });
 };
 
-fairDataPointPostDistributionDialog.prototype._editLabel = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newLabel" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newLabel.val(fairDataPointPostDistribution.newLabel).focus().select();
-    elmts.applyButton.click(function() {
-        var newLabel = elmts.newLabel.val();
-        self.fairDataPointPostDistribution._label = newLabel;
-        self._labelSpan.empty().text(newLabel);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
 fairDataPointPostDistributionDialog.prototype._editMediatype = function(src){
     var self = this;
     var menu = MenuSystem.createMenu().width('400px');
@@ -190,7 +160,7 @@ fairDataPointPostDistributionDialog.prototype._editMediatype = function(src){
     elmts.newMediatype.val(fairDataPointPostDistribution.newMediatype).focus().select();
     elmts.applyButton.click(function() {
         var newMediatype = elmts.newMediatype.val();
-        self.fairDataPointPostDistribution._medatype = mediatype;
+        self.fairDataPointPostDistribution._mediatype = newMediatype;
         self._mediatypeSpan.empty().text(newMediatype);
         MenuSystem.dismissAll();
     });
@@ -221,7 +191,7 @@ fairDataPointPostDistributionDialog.prototype._editVersion = function(src){
     });
 };
 
-fairDataPointPostDatasetDialog.prototype._editAccessUrl = function(src){
+fairDataPointPostDistributionDialog.prototype._editAccessUrl = function(src){
     var self = this;
     var menu = MenuSystem.createMenu().width('400px');
     menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newAccessUrl" size="50"><br/>'+
@@ -234,11 +204,11 @@ fairDataPointPostDatasetDialog.prototype._editAccessUrl = function(src){
     elmts.newAccessUrl.val(fairDataPointPostDataset.newAccessUrl).focus().select();
     elmts.applyButton.click(function() {
         var newAccessUrl = elmts.newAccessUrl.val();
-        self.fairDataPointPostDataset._accessUrl = newAccessUrl;
+        self.fairDataPointPostDistribution._accessUrl = newAccessUrl;
         if(!newAccessUrl || !newAccessUrl.substring(7)=='http://'){
             alert('Access URI should start with http://');
             return;
-        }        
+        }
         self._accessUrlSpan.empty().text(newAccessUrl);
         MenuSystem.dismissAll();
     });

@@ -25,6 +25,7 @@ import nl.dtl.fairmetadata.io.*;
 import nl.dtl.fairmetadata.model.*;
 import org.openrdf.model.URI;
 import java.util.List;
+import nl.dtl.fairmetadata.utils.*;
 
 /**
  * 
@@ -34,7 +35,8 @@ import java.util.List;
  */
 
 public class GetFairDataPointInfoCommand extends Command{
-    
+    private MetadataParserUtils utils = new MetadataParserUtils();
+
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String uri = req.getParameter("uri");
@@ -56,7 +58,7 @@ public class GetFairDataPointInfoCommand extends Command{
         }
     }
 
-    public ArrayList<DatasetMetadata> getFdpDatasets(String url) throws IOException, RDFParseException, RDFHandlerException{
+    private ArrayList<DatasetMetadata> getFdpDatasets(String url) throws IOException, RDFParseException, RDFHandlerException{
         ArrayList<DatasetMetadata> out = new ArrayList<DatasetMetadata>();
         TurtleParser parser = new TurtleParser();
         StatementCollector rdfStatementCollector = new StatementCollector();
@@ -64,8 +66,8 @@ public class GetFairDataPointInfoCommand extends Command{
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url).getContent()));        
         parser.parse(reader, url);
-        CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
-        DatasetMetadataParser datasetMetadataParser = new DatasetMetadataParser(); 
+        CatalogMetadataParser catalogMetadataParser = utils.getCatalogParser();
+        DatasetMetadataParser datasetMetadataParser = utils.getDatasetParser(); 
         URI uri = new URIImpl(url);
         List<URI> datasetUris = catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), uri).getDatasets();
         for (URI u : datasetUris){
@@ -76,7 +78,7 @@ public class GetFairDataPointInfoCommand extends Command{
         return out;
     }
     
-    public ArrayList<CatalogMetadata> getFdpCatalogs(String url) throws IOException, RDFParseException, RDFHandlerException{
+    private ArrayList<CatalogMetadata> getFdpCatalogs(String url) throws IOException, RDFParseException, RDFHandlerException{
         ArrayList<CatalogMetadata> out = new ArrayList<CatalogMetadata>();
         TurtleParser parser = new TurtleParser();
         StatementCollector rdfStatementCollector = new StatementCollector();
@@ -84,8 +86,8 @@ public class GetFairDataPointInfoCommand extends Command{
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url).getContent()));        
         parser.parse(reader, url);
-        FDPMetadataParser fdpParser = new FDPMetadataParser();
-        CatalogMetadataParser catalogMetadataParser = new CatalogMetadataParser();
+        FDPMetadataParser fdpParser = utils.getFdpParser();
+        CatalogMetadataParser catalogMetadataParser = utils.getCatalogParser();
         URI uri = new URIImpl(url);
         List<URI> catalogUris = fdpParser.parse(new ArrayList(rdfStatementCollector.getStatements()), uri).getCatalogs();
         for (URI u : catalogUris){
