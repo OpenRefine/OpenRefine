@@ -17,7 +17,10 @@ import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.http.params.*;
-import java.util.Map; 
+import java.util.List; 
+import org.apache.http.NameValuePair;
+import org.apache.http.entity.StringEntity;
+
 /**
  * Some HTTP utilities
  * 
@@ -55,19 +58,14 @@ public class HttpUtils {
             return get(get);
 	}
 	
-	public static HttpEntity post(String uri, String accept, Map<String,String> parameters) throws IOException {
+	public static HttpEntity post(String uri,  String content) throws IOException {
             log.debug("POST request over " + uri);
             HttpPost post = new HttpPost(uri);
-            BasicHttpParams params = new BasicHttpParams();
-            for (Map.Entry<String, String> entry : parameters.entrySet()){
-                params.setParameter(entry.getKey(),entry.getValue());
-            }
-            post.setHeader("Accept", accept);
-            post.setParams(params);
+            post.setHeader("Content-Type","text/turtle");
+            post.setEntity(new StringEntity(content));
             return post(post);
         }
         
-	
 	private static HttpEntity post(HttpPost post) throws IOException {
 	    HttpClient client = createClient();
 	    HttpResponse response = client.execute(post);

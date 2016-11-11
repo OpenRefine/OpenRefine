@@ -56,7 +56,7 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost)},function(data){
-            alert(JSON.stringify(data));
+            alert("Metadata successfully posted to FAIR Data Point");
         });
         
 //        window.open(self._baseUriSpan.text());

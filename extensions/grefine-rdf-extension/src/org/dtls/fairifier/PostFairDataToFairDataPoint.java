@@ -28,7 +28,10 @@ import org.openrdf.model.impl.LiteralImpl;
 import nl.dtl.fairmetadata.utils.*;
 import org.openrdf.rio.RDFFormat;
 import javax.xml.datatype.DatatypeConfigurationException; 
-import java.util.HashMap;
+import org.apache.commons.io.IOUtils;
+import java.util.ArrayList; 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * 
@@ -95,7 +98,7 @@ public class PostFairDataToFairDataPoint extends Command{
             datasetMetadata.setModified( RDFUtils.getCurrentTime() );
             datasetMetadata.setVersion( new LiteralImpl(dataset.getString("_version")) );
             datasetMetadata.setDescription( new LiteralImpl(dataset.getString("_description")) );
-            datasetMetadata.setUri( new URIImpl( jsonObject.getString("baseUri") + "/" + dataset.getString("_identifier") + "/" + dataset.getString("_identifier") ) );
+            datasetMetadata.setUri( new URIImpl( jsonObject.getString("baseUri") + "/" + dataset.getString("_identifier") + "/" ) );
             
             distributionMetadata.setAccessURL( new URIImpl(distribution.getString("_accessUrl")) );
             distributionMetadata.setMediaType( new LiteralImpl(distribution.getString("_mediatype")) );
@@ -103,24 +106,25 @@ public class PostFairDataToFairDataPoint extends Command{
             distributionMetadata.setIdentifier( new LiteralImpl(distribution.getString("_identifier")) );
             distributionMetadata.setVersion( new LiteralImpl(distribution.getString("_version")) );
             distributionMetadata.setLicense(new URIImpl(distribution.getString("_license")));
-            distributionMetadata.setUri( new URIImpl( jsonObject.getString("baseUri") + "/" + dataset.getString("_identifier") + "/" + dataset.getString("_identifier") + "/" + catalog.getString("_identifier")) );
+            distributionMetadata.setUri( new URIImpl( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "/" + distribution.getString("_identifier") ));
 
-            catalogString = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE);
-            datasetString = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE);
-            distributionString = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE);
-
-            HashMap<String,String> catalogParameters = new HashMap<String,String>();
-            catalogParameters.put("catalogID",catalog.getString("_identifier"));
-            catalogParameters.put("metadata",catalogString);
+            catalogString = MetadataUtils.getString(catalogMetadata, RDFFormat.TURTLE).replaceAll("\\<" + catalogMetadata.getUri() + "\\>","<>");
+            datasetString = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE).replaceAll("\\<" + datasetMetadata.getUri() + "\\>","<>");
+            distributionString = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE).replaceAll("\\<" + distributionMetadata.getUri() + "\\>","<>");
             
-            HttpUtils.post(jsonObject.getString("baseUri"), "text/turtle", catalogParameters);
+            String catalogPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
+            String datasetPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
+            String distributionPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "?distributionID=" + distribution.getString("_identifier"), distributionString).getContent(),"UTF-8");
+            
             
             res.setCharacterEncoding("UTF-8");
             res.setHeader("Content-Type", "application/json");
             JSONWriter writer = new JSONWriter(res.getWriter());
             writer.object();
             writer.key("code"); writer.value("ok");
-//            writer.key("content"); writer.value(catalogString);
+            writer.key("catalogPost"); writer.value(catalogPost);
+            writer.key("datasetPost"); writer.value(datasetPost);
+            writer.key("distributionPost"); writer.value(distributionPost);
             writer.endObject();
         }catch(Exception ex){
             respondException(res, ex);
