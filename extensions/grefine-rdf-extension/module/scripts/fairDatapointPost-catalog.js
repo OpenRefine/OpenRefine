@@ -75,10 +75,13 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
     
     $.get('command/rdf-extension/get-languages',function(data){
         data.content.forEach(function(element){
+            if (typeof self.fairDataPointPostCatalog._language === 'undefined') {
+                self.fairDataPointPostCatalog._language = element[1];
+            }
             $('<option></option>').attr('value',element[1]).text(element[0]).appendTo(language_html_select);
         });
     });
-    
+     
     language_html_select.change(function(evt){
         if ($(evt.target).val()){
             self.fairDataPointPostCatalog._language = $(evt.target).val();

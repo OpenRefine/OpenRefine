@@ -69,7 +69,7 @@ public class HttpUtils {
 	private static HttpEntity post(HttpPost post) throws IOException {
 	    HttpClient client = createClient();
 	    HttpResponse response = client.execute(post);
-	    if (200 == response.getStatusLine().getStatusCode()) {
+	    if (201 == response.getStatusLine().getStatusCode()) {
 	        return response.getEntity();
 	    } else {
 	        String msg = "Error performing POST request: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();

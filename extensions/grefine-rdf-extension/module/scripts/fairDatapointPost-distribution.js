@@ -77,6 +77,9 @@ fairDataPointPostDistributionDialog.prototype._constructBody = function(body) {
     
     $.get('command/rdf-extension/get-licenses',function(data){
         data.content.forEach(function(element){
+            if (typeof self.fairDataPointPostDistribution._license === 'undefined') {
+                self.fairDataPointPostDistribution._license = element[0];
+            }
             $('<option></option>').attr('value',element[0]).text(element[1]).appendTo(license_html_select);
         });
     });
