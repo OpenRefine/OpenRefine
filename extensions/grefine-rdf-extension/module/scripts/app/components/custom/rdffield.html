@@ -1,0 +1,22 @@
+<div class="form-group {{form.htmlClass}}"
+     ng-class="{ '{{'schema-form-' + form.type}}': true, 'has-error': form.disableErrorState !== true && hasError(), 'has-success': form.disableSuccessState !== true && hasSuccess(), 'has-feedback': form.feedback !== false }">
+
+    <label ng-show="showTitle()">{{form.title}}</label>
+
+    <div>
+        <input type="url"
+            class="form-control"
+            ng-model="$$value$$"
+            sf-field-model
+            schema-validate="form"
+            sf-changed="form"
+            />
+    </div>
+
+    <span ng-if="form.feedback !== false"
+        class="form-control-feedback"
+        ng-class="evalInScope(form.feedback) || {'glyphicon': true, 'glyphicon-ok': form.disableSuccessState !== true && hasSuccess(), 'glyphicon-remove': form.disableErrorState !== true && hasError() }"
+        aria-hidden="true"></span>
+
+    <span class="help-block">{{ (hasError() && errorMessage(schemaError())) || form.description}}
+</div>

@@ -1,0 +1,1 @@
+var app = angular.module('app', ['ngRoute', 'templates', 'schemaForm']);

@@ -1,0 +1,15 @@
+<h1>Repository</h1>
+
+<div class="pull-right">
+    <button class="btn btn-default" ng-click="example()">Use example</button>
+</div>
+<div class="clearfix"></div>
+
+<form name="repoForm"
+    sf-schema="repositorySchema"
+    sf-form="repositoryForm"
+    sf-model="model"
+    ng-submit="onSubmit(repoForm)">
+</form>
+
+<pre ng-if="output">{{output}}</pre>
