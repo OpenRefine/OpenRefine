@@ -1,12 +1,12 @@
 package org.dtls.fairifier;
 
-import java.net.URI;
 import java.lang.IllegalArgumentException;
 import java.net.URL;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URLConnection;
 import java.io.IOException;
+
 /**
  * @author Shamanou van Leeuwen
  * @date 13-12-2016
@@ -19,6 +19,13 @@ public class FtpResource extends Resource{
     private String password;
     private String host;
     private String name;
+    
+    public FtpResource(URL hostLocation, String username, String password, String name){
+        this.host = hostLocation.toString();
+        this.password = password;
+        this.username = username;
+        this.name = name;
+    }
     
     public void push(){
         if (!this.hasModel()){
@@ -35,18 +42,5 @@ public class FtpResource extends Resource{
         } catch (IOException ex){
             throw new IllegalArgumentException("Invalid FTP URL");
         }
-    }
-    
-    public void setHost(URI hostLocation){
-        this.host = hostLocation.toString();
-    }
-    
-    public void setCredentials(String username, String password){
-        this.password = password;
-        this.username = username;
-    }
-    
-    public void setFileName(String name){
-        this.name = name;
     }
 }
