@@ -1,4 +1,5 @@
 package org.dtls.fairifier;
+
 import java.net.URI;
 import java.lang.IllegalArgumentException;
 import java.net.URL;
