@@ -5,6 +5,7 @@
  */
 
 var fairDataPointPost = {};
+var project = theProject;
 
 function fairDataPointPostDialog(schema){
     this._schema = cloneDeep(schema); // this is what can be munched on
@@ -56,6 +57,7 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
         $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost)},function(data){
+            var id = project.id;
             alert("Metadata successfully posted to FAIR Data Point");
         });
         

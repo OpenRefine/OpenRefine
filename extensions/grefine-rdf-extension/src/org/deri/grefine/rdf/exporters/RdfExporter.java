@@ -42,27 +42,24 @@ public class RdfExporter implements WriterExporter{
     private ApplicationContext applicationContext;
     final static Logger logger = LoggerFactory.getLogger("RdfExporter");
 
-	public RdfExporter(ApplicationContext ctxt, RDFFormat f){
+    public RdfExporter(ApplicationContext ctxt, RDFFormat f){
         this.format = f;
         this.applicationContext = ctxt;
     }
 	
-	public ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
     
-    public void export(Project project, Properties options, Engine engine,
-            OutputStream outputStream) throws IOException {
-	    export(project, options, engine, Rio.createWriter(format, outputStream));
+    public void export(Project project, Properties options, Engine engine,OutputStream outputStream) throws IOException {
+        export(project, options, engine, Rio.createWriter(format, outputStream));
     }
 
-	public void export(Project project, Properties options, Engine engine,
-					   Writer writer) throws IOException {
-		export(project, options, engine, Rio.createWriter(format, writer));
-	}
+    public void export(Project project, Properties options, Engine engine,Writer writer) throws IOException {
+        export(project, options, engine, Rio.createWriter(format, writer));
+    }
 
-	private void export(Project project, Properties options, Engine engine,
-						RDFWriter writer) throws IOException {
+    private void export(Project project, Properties options, Engine engine,RDFWriter writer) throws IOException {
     	RdfSchema schema;
     	try{
     		schema = Util.getProjectSchema(applicationContext,project);
@@ -70,38 +67,54 @@ public class RdfExporter implements WriterExporter{
     		throw new IOException("Unable to create index for RDF schema",ve);
     	}
         try{
-		for(Vocabulary v:schema.getPrefixesMap().values()){
-		        writer.handleNamespace(v.getName(), v.getUri());
-		}
-
-		exportModel(project, engine, schema, writer);
+            for(Vocabulary v:schema.getPrefixesMap().values()){
+                writer.handleNamespace(v.getName(), v.getUri());
+            }
+            exportModel(project, engine, schema, writer);
         }catch(RDFHandlerException ex){
         	throw new RuntimeException(ex);
         }
     }
 
+    public String exportToString(Project project, Engine engine, RDFWriter writer) throws IOException {
+        RdfSchema schema;
+        try{
+                schema = Util.getProjectSchema(applicationContext,project);
+        }catch(VocabularyIndexException ve){
+                throw new IOException("Unable to create index for RDF schema",ve);
+        }
+        try{
+            for(Vocabulary v:schema.getPrefixesMap().values()){
+                writer.handleNamespace(v.getName(), v.getUri());
+            }
+            exportModel(project, engine, schema, writer);
+            return writer.toString();
+        }catch(RDFHandlerException ex){
+                throw new RuntimeException(ex);
+        }
+    }
+    
     public Repository exportModel(final Project project, Engine engine, RdfSchema schema, RDFWriter writer) throws IOException{
     	RdfRowVisitor visitor = new RdfRowVisitor(schema, writer) {
 			
-			@Override
-			public boolean visit(Project project, int rowIndex, Row row) {
-				for(Node root:roots){
-					root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
+    	    @Override
+    	    public boolean visit(Project project, int rowIndex, Row row) {
+    	        for(Node root:roots){
+    	            root.createNode(baseUri, factory, con, project, row, rowIndex,blanks);
 
-					try {
+    	            try {
 					    // flush here to preserve root ordering in the output file
-					    flushStatements();
-					} catch (RepositoryException e) {
-					    throw new RuntimeException(e);
-					} catch (RDFHandlerException e) {
-						throw new RuntimeException(e);
-					}
-				}
-
-				return false;
-			}
-		};
-		return buildModel(project, engine, visitor);
+    	                flushStatements();
+    	            } catch (RepositoryException e) {
+    	                throw new RuntimeException(e);
+    	            } catch (RDFHandlerException e) {
+    	                throw new RuntimeException(e);
+    	            }
+    	        }
+    	        return false;
+    	    }
+	};
+	return buildModel(project, engine, visitor);
     }
     
     public static Repository buildModel(Project project, Engine engine, RdfRowVisitor visitor) {
