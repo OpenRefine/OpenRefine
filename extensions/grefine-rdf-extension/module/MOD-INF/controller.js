@@ -127,7 +127,7 @@ function init() {
     RefineServlet.registerCommand(module, "save-baseURI", new SaveBaseURICommand(ctxt));
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
     //FAIRifier commands
-    RefineServlet.registerCommand(module, "push-data", new PushFairDataToFairDataPoint());
+    RefineServlet.registerCommand(module, "push-data", new PushFairDataToFtpCommand());
     RefineServlet.registerCommand(module, "get-languages", new LanguageGetterCommand());
     RefineServlet.registerCommand(module, "get-fdp-info", new GetFairDataPointInfoCommand());
     RefineServlet.registerCommand(module, "post-fdp-info", new PostFairDataToFairDataPoint());
