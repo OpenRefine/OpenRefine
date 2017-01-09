@@ -125,9 +125,11 @@ getFairCatalogs = function(rootUrl, self){
         var add_cat_html = $('<p><a href="#" bind="addCatalog">+ </a><span>add catalog</span></p>').appendTo(self._catalogDiv);
         var elmts = DOM.bind(add_cat_html);
         var add_cat_available_html = $('<select class="catalogs"></select>');
-       
+        self.hasCatalogs = false;
+        
         data.content.forEach(function(element){
-            $('<option></option>').attr('value',element).text(element).appendTo(add_cat_available_html);
+            $('<option></option>').attr('value',element.identifier.label).text(element.identifier.label).appendTo(add_cat_available_html);
+            self.hasCatalogs = true;
         });
         
         elmts.addCatalog.click(function(evt){
@@ -143,16 +145,19 @@ getFairCatalogs = function(rootUrl, self){
             });
         });
         
-        add_cat_available_html.change(function(evt){
-            if ($(evt.target).val()){
-                self._datasetDiv.html('');
-                self._distributionDiv.html('');
-                getFairDatasets(self.fairDataPointPost.baseUri + "/" + JSON.parse($(evt.target).val())._identifier, self);
-            }
-        }).change();
-        
-        add_cat_available_html.appendTo(self._catalogDiv);
-        self._catalogDiv.appendTo(self._body);
+       add_cat_available_html.click(function(){
+           self._datasetDiv.html('');
+           self._distributionDiv.html('');
+           getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').text(), self);
+       }).change();
+       
+       add_cat_available_html.appendTo(self._catalogDiv);
+       self._catalogDiv.appendTo(self._body);
+       
+       if (self.hasCatalogs){
+           add_cat_available_html.click();
+       }
+       
     }).fail(function() {
         alert( "Failed to retrieve data from Fair DataPoint" );
     });
@@ -166,7 +171,7 @@ getFairDatasets = function(url, self){
     
     $.post('command/rdf-extension/get-fdp-info', {"uri" : url, "layer": "dataset"},function(data){
         data.content.forEach(function(element){
-            $('<option></option>').attr('value',element).text(element).appendTo(add_dat_available_html);
+            $('<option></option>').attr('value',element.title.label).text(element.title.label).appendTo(add_dat_available_html);
         });
     });
     
@@ -182,7 +187,7 @@ getFairDatasets = function(url, self){
         });
     });
     
-    add_dat_available_html.change(function(evt){
+    add_dat_available_html.click(function(evt){
         if ($(evt.target).val()){
             self._distributionDiv.html('');
             addFairDistribution(self);
