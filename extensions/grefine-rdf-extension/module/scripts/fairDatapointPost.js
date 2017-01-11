@@ -45,6 +45,7 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
     this._catalogDiv = $('<div></div>');
     this._datasetDiv = $('<div></div>');
     this._distributionDiv = $('<div></div>');
+    this._pushtoFtpDiv = $('<div></div>');
     elmts.baseUriSpan.text(fairDataPointPost.baseUri);
     elmts.editBaseUriLink.click(function(evt){
     	evt.preventDefault();
@@ -139,6 +140,7 @@ getFairCatalogs = function(rootUrl, self){
                    $('<option></option>').attr('value',JSON.stringify(catalog)).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
                    self._datasetDiv.html('');
                    self._distributionDiv.html('');
+                   self._pushtoFtpDiv.html('');
                    self.fairDataPointPost.catalog = catalog;
                    getFairDatasets(self.fairDataPointPost.baseUri + "/" + catalog._identifier, self);
                }
@@ -146,9 +148,12 @@ getFairCatalogs = function(rootUrl, self){
         });
         
        add_cat_available_html.click(function(){
-           self._datasetDiv.html('');
-           self._distributionDiv.html('');
-           getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').text(), self);
+           if (data.content.length > 0){
+               self._datasetDiv.html('');
+               self._distributionDiv.html('');
+               self._pushtoFtpDiv.html('');
+               getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').text(), self);
+           }
        }).change();
        
        add_cat_available_html.appendTo(self._catalogDiv);
@@ -211,4 +216,37 @@ addFairDistribution = function(self){
     });
     add_dist_html.appendTo(self._distributionDiv);
     self._distributionDiv.appendTo(self._body);
+};
+
+pushFatadataToFtp = function(self){
+    $('<h2>push FAIRified data to FTP</h2>').appendTo(self._pushtoFtpDiv);
+    var ftp_host_html = $('<p><span class="emphasized">host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self._body);
+    var elmts = DOM.bind(ftp_host_html);
+    self._ftpHostSpan = elmts.hostSpan;
+    elmts.editFtpHost.click(function(evt){
+        evt.preventDefault();
+        self._editFtpHost($(evt.target));
+    });
+};
+
+fairDataPointPostDialog.prototype._editFtpHost = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newFtpHost" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newTitle.val(fairDataPointPostCatalog.newFtpHost).focus().select();
+    elmts.applyButton.click(function() {
+        var newFtpHost = elmts.newFtpHost.val();
+        self.fairDataPointPostCatalog._ftpHost = newFtpHost;
+        self._ftpHostSpan.empty().text(newFtpHost);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
 };
