@@ -69,7 +69,14 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
         self._editHomepage($(evt.target));
     });
     
-
+    var publisher_html = $('<p><span class="emphasized">publisher</span> <span bind="publisherSpan" ></span> <a href="#" bind="editPublisher">edit</a></p>').appendTo(body);    
+    var elmts = DOM.bind(publisher_html);
+    this._publisherSpan = elmts.publisherSpan;
+    elmts.editPublisher.click(function(evt){
+        evt.preventDefault();
+        self._editPublisher($(evt.target));
+    });
+    
     var language_html = $('<p><span class="emphasized">language </span></p>');
     var language_html_select = $('<select class="languages"></select>').appendTo(language_html);
     
@@ -244,8 +251,30 @@ fairDataPointPostCatalogDialog.prototype._editTheme = function(src){
         if(!newTheme || !newTheme.substring(7)=='http://'){
             alert('Theme URI should start with http://');
             return;
-        }        
+        }
         self._themeSpan.empty().text(newTheme);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostCatalogDialog.prototype._editPublisher = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newPublisher" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newPublisher.val(fairDataPointPostCatalog.newPublisher).focus().select();
+    elmts.applyButton.click(function() {
+        var newPublisher = elmts.newPublisher.val();
+        self.fairDataPointPostCatalog._publisher = newPublisher;
+        self._publisherSpan.empty().text(newPublisher);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

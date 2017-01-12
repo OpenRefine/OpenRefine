@@ -95,12 +95,12 @@ fairDataPointPostDatasetDialog.prototype._constructBody = function(body) {
         self._editTheme($(evt.target));        
     });
 
-    var creator_html = $('<p><span class="emphasized">creator </span><span bind="creatorSpan" >http://</span> <a href="#" bind="editCreator">edit</a></p>').appendTo(body);    
-    var elmts = DOM.bind(creator_html);
-    this._creatorSpan = elmts.creatorSpan;
-    elmts.editCreator.click(function(evt) {
+    var publisher_html = $('<p><span class="emphasized">publisher</span> <span bind="publisherSpan" ></span> <a href="#" bind="editPublisher">edit</a></p>').appendTo(body);    
+    var elmts = DOM.bind(publisher_html);
+    this._publisherSpan = elmts.publisherSpan;
+    elmts.editPublisher.click(function(evt){
         evt.preventDefault();
-        self._editCreator($(evt.target));        
+        self._editPublisher($(evt.target));
     });
 
     var language_html = $('<p><span class="emphasized">language </span></p>');
@@ -321,25 +321,22 @@ fairDataPointPostDatasetDialog.prototype._editTheme = function(src){
     });
 };
 
-fairDataPointPostDatasetDialog.prototype._editCreator = function(src){
+
+fairDataPointPostDatasetDialog.prototype._editPublisher = function(src){
     var self = this;
     var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newCreator" size="50"><br/>'+
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newPublisher" size="50"><br/>'+
                     '<button class="button" bind="applyButton">Apply</button>' + 
                     '<button class="button" bind="cancelButton">Cancel</button></div>'
             );
     MenuSystem.showMenu(menu,function(){});
     MenuSystem.positionMenuLeftRight(menu, src);
     var elmts = DOM.bind(menu);
-    elmts.newCreator.val(fairDataPointPostDataset.newCreator).focus().select();
+    elmts.newPublisher.val(fairDataPointPostDataset.newPublisher).focus().select();
     elmts.applyButton.click(function() {
-        var newCreator = elmts.newCreator.val();
-        self.fairDataPointPostDataset._creator = newCreator;
-        if(!newCreator || !newCreator.substring(7)=='http://'){
-            alert('Theme URI should start with http://');
-            return;
-        }        
-        self._creatorSpan.empty().text(newCreator);
+        var newPublisher = elmts.newPublisher.val();
+        self.fairDataPointPostDataset._publisher = newPublisher;
+        self._publisherSpan.empty().text(newPublisher);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

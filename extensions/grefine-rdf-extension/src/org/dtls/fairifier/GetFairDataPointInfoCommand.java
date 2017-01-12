@@ -9,24 +9,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONWriter;
 import com.google.refine.commands.Command;
-import org.openrdf.rio.Rio;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParser;
-import org.openrdf.rio.turtle.TurtleParser;
-import org.openrdf.rio.helpers.StatementCollector;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.turtle.TurtleParser;
+import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import java.io.ByteArrayInputStream;
-import org.openrdf.model.Statement;
 import java.util.ArrayList;
 import java.io.InputStream;
 import nl.dtl.fairmetadata.io.*;
 import nl.dtl.fairmetadata.model.*;
-import org.openrdf.model.URI;
 import java.util.List;
 import nl.dtl.fairmetadata.utils.*;
-
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.IRI;
 /**
  * 
  * @author Shamanou van Leeuwen
@@ -36,7 +35,8 @@ import nl.dtl.fairmetadata.utils.*;
 
 public class GetFairDataPointInfoCommand extends Command{
     private MetadataParserUtils utils = new MetadataParserUtils();
-
+    private static final ValueFactory f = SimpleValueFactory.getInstance();
+    
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String uri = req.getParameter("uri");
@@ -68,9 +68,8 @@ public class GetFairDataPointInfoCommand extends Command{
         parser.parse(reader, url);
         CatalogMetadataParser catalogMetadataParser = utils.getCatalogParser();
         DatasetMetadataParser datasetMetadataParser = utils.getDatasetParser(); 
-        URI uri = new URIImpl(url);
-        List<URI> datasetUris = catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), uri).getDatasets();
-        for (URI u : datasetUris){
+        List<IRI> datasetUris = catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getDatasets();
+        for (IRI u : datasetUris){
             reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString()).getContent()));        
             parser.parse(reader, u.toString());
             out.add(datasetMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), u));
@@ -88,12 +87,11 @@ public class GetFairDataPointInfoCommand extends Command{
         parser.parse(reader, url);
         FDPMetadataParser fdpParser = utils.getFdpParser();
         CatalogMetadataParser catalogMetadataParser = utils.getCatalogParser();
-        URI uri = new URIImpl(url);
-        List<URI> catalogUris = fdpParser.parse(new ArrayList(rdfStatementCollector.getStatements()), uri).getCatalogs();
-        for (URI u : catalogUris){
+        List<IRI> catalogUris = fdpParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getCatalogs();
+        for (IRI u : catalogUris){
             reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString()).getContent()));        
             parser.parse(reader, u.toString());
-            out.add(catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), u));
+            out.add(catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()),u));
         }
         return out;
     }
