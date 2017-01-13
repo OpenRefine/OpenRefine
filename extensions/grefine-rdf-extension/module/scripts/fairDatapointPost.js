@@ -227,14 +227,40 @@ addFairDistribution = function(self){
 };
 
 pushFairdataToFtp = function(self){
-    $('<h2>push FAIRified data to FTP</h2>').appendTo(self._body);
-    var ftp_host_html = $('<p><span>host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self._body);
+    $('<h2>push FAIRified data to FTP</h2>').appendTo(self._pushtoFtpDiv);
+    var ftp_host_html = $('<p><span>host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self._pushtoFtpDiv);
     var elmts = DOM.bind(ftp_host_html);
     self._ftpHostSpan = elmts.hostSpan;
     elmts.editFtpHost.click(function(evt){
         evt.preventDefault();
         self._editFtpHost($(evt.target));
     });
+    
+    var ftp_host_html = $('<p><span>directory</span> <span bind="directorySpan" ></span> <a href="#" bind="editDirectory">edit</a></p>').appendTo(self._pushtoFtpDiv);
+    var elmts = DOM.bind(ftp_host_html);
+    self._directorySpan = elmts.directorySpan;
+    elmts.editDirectory.click(function(evt){
+        evt.preventDefault();
+        self._editDirectory($(evt.target));
+    });
+    
+    var ftp_host_html = $('<p><span>username</span> <span bind="usernameSpan" ></span> <a href="#" bind="editUsername">edit</a></p>').appendTo(self._pushtoFtpDiv);
+    var elmts = DOM.bind(ftp_host_html);
+    self._usernameSpan = elmts.usernameSpan;
+    elmts.editUsername.click(function(evt){
+        evt.preventDefault();
+        self._editUsername($(evt.target));
+    });
+    
+    var ftp_host_html = $('<p><span>password</span> <span bind="passwordSpan" ></span> <a href="#" bind="editPassword">edit</a></p>').appendTo(self._pushtoFtpDiv);
+    var elmts = DOM.bind(ftp_host_html);
+    self._passwordSpan = elmts.passwordSpan;
+    elmts.editPassword.click(function(evt){
+        evt.preventDefault();
+        self._editPassword($(evt.target));
+    });
+    
+    self._pushtoFtpDiv.appendTo(self._body);
 };
 
 fairDataPointPostDialog.prototype._editFtpHost = function(src){
@@ -247,11 +273,78 @@ fairDataPointPostDialog.prototype._editFtpHost = function(src){
     MenuSystem.showMenu(menu,function(){});
     MenuSystem.positionMenuLeftRight(menu, src);
     var elmts = DOM.bind(menu);
-    elmts.newTitle.val(fairDataPointPostCatalog.newFtpHost).focus().select();
+    elmts.newFtpHost.val(self._newFtpHost).focus().select();
     elmts.applyButton.click(function() {
         var newFtpHost = elmts.newFtpHost.val();
-        self.fairDataPointPostCatalog._ftpHost = newFtpHost;
+        self._ftpHost = newFtpHost;
         self._ftpHostSpan.empty().text(newFtpHost);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostDialog.prototype._editDirectory = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newDirectory" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newDirectory.val(self._directory).focus().select();
+    elmts.applyButton.click(function() {
+        var newDirectory = elmts.newDirectory.val();
+        self._directory = newDirectory;
+        self._directorySpan.empty().text(newDirectory);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostDialog.prototype._editUsername = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newUsername" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newUsername.val(self._username).focus().select();
+    elmts.applyButton.click(function() {
+        var newUsername = elmts.newUsername.val();
+        self._username = newUsername;
+        self._usernameSpan.empty().text(newUsername);
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+
+fairDataPointPostDialog.prototype._editPassword = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="password" bind="newPassword" size="50"><br/>'+
+                    '<button class="button" bind="applyButton">Apply</button>' + 
+                    '<button class="button" bind="cancelButton">Cancel</button></div>'
+            );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newPassword.val('***').focus().select();
+    elmts.applyButton.click(function() {
+        var newPassword = elmts.newPassword.val();
+        self._password = newPassword;
+        self._passwordSpan.empty().text(newPassword);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

@@ -18,13 +18,13 @@ public class FtpResource extends Resource{
     private String username;
     private String password;
     private String host;
-    private String name;
+    private String location;
     
-    public FtpResource(URL hostLocation, String username, String password, String name){
+    public FtpResource(URL hostLocation, String username, String password, String location){
         this.host = hostLocation.toString();
         this.password = password;
         this.username = username;
-        this.name = name;
+        this.location = location;
     }
     
     public void push(){
@@ -35,7 +35,7 @@ public class FtpResource extends Resource{
         }
         
         try{
-            URL url = new URL("ftp://"+ this.username +":"+ this.password +"@"+ this.host + File.separator + this.name +";type=i");
+            URL url = new URL("ftp://"+ this.username +":"+ this.password +"@"+ this.host + File.separator + this.location +";type=i");
             URLConnection urlc = url.openConnection();
             OutputStream os = urlc.getOutputStream();
             os.write(this.out.getBytes());
