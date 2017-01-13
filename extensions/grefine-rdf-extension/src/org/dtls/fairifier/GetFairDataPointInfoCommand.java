@@ -47,9 +47,11 @@ public class GetFairDataPointInfoCommand extends Command{
             writer.object();
             writer.key("code"); writer.value("ok");
             if (req.getParameter("layer").equals("catalog")){
-                writer.key("content"); writer.value(this.getFdpCatalogs(uri));
+                writer.key("content"); 
+                writer.value(this.getFdpCatalogs(uri));
             } else if(req.getParameter("layer").equals("dataset")){
-                writer.key("content"); writer.value(this.getFdpDatasets(uri));
+                writer.key("content"); 
+                writer.value(this.getFdpDatasets(uri));
             }
             
             writer.endObject();

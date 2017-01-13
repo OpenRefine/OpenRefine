@@ -90,6 +90,8 @@ fairDataPointPostDialog.prototype._editBaseUri = function(src){
             } if(self.fairDataPointPost.baseUri.length > 7){
                 self._catalogDiv.html('');
                 self._datasetDiv.html('');
+                self._distributionDiv.html('');
+                self._pushtoFtpDiv.html('');
                 self.uri = self._baseUriSpan.text();
                 getFairCatalogs(self._baseUriSpan.text(), self);
                 return;
@@ -129,7 +131,7 @@ getFairCatalogs = function(rootUrl, self){
         self.hasCatalogs = false;
         
         data.content.forEach(function(element){
-            $('<option></option>').attr('value',element.identifier.label).text(element.identifier.label).appendTo(add_cat_available_html);
+            $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label).appendTo(add_cat_available_html);
             self.hasCatalogs = true;
         });
         
@@ -137,23 +139,19 @@ getFairCatalogs = function(rootUrl, self){
             evt.preventDefault();
             new fairDataPointPostCatalogDialog(function(catalog){
                if (catalog._title && catalog._identifier){
-                   $('<option></option>').attr('value',JSON.stringify(catalog)).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
+                   $('<option></option>').attr('value',catalog._identifier).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
                    self._datasetDiv.html('');
                    self._distributionDiv.html('');
                    self._pushtoFtpDiv.html('');
                    self.fairDataPointPost.catalog = catalog;
                    getFairDatasets(self.fairDataPointPost.baseUri + "/" + catalog._identifier, self);
-               }
+               }s
             });
         });
         
        add_cat_available_html.click(function(){
-           if (data.content.length > 0){
-               self._datasetDiv.html('');
-               self._distributionDiv.html('');
-               self._pushtoFtpDiv.html('');
-               getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').text(), self);
-           }
+           self._datasetDiv.html('');
+           getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').val(), self);
        }).change();
        
        add_cat_available_html.appendTo(self._catalogDiv);
@@ -162,45 +160,53 @@ getFairCatalogs = function(rootUrl, self){
        if (self.hasCatalogs){
            add_cat_available_html.click();
        }
-       
-    }).fail(function() {
-        alert( "Failed to retrieve data from Fair DataPoint" );
+              
+    }).fail(function(xhr, status, error) {
+        alert( error );
     });
 };
 
 getFairDatasets = function(url, self){
-    $('<h2>datasets</h2>').appendTo(self._datasetDiv);
-    var add_dat_html = $('<p><a href="#" bind="addDataset">+ </a><span>add dataset</span></p>').appendTo(self._datasetDiv);
-    var elmts = DOM.bind(add_dat_html);
-    var add_dat_available_html = $('<select class="datasets"></select>');
-    
-    $.post('command/rdf-extension/get-fdp-info', {"uri" : url, "layer": "dataset"},function(data){
-        data.content.forEach(function(element){
-            $('<option></option>').attr('value',element.title.label).text(element.title.label).appendTo(add_dat_available_html);
+        $('<h2>datasets</h2>').appendTo(self._datasetDiv);
+        var add_dat_html = $('<p><a href="#" bind="addDataset">+ </a><span>add dataset</span></p>').appendTo(self._datasetDiv);
+        var elmts = DOM.bind(add_dat_html);
+        var add_dat_available_html = $('<select class="datasets"></select>');
+        self.hasDatasets = false;
+        $.post('command/rdf-extension/get-fdp-info', {"uri" : url, "layer": "dataset"},function(data){
+
+            data.content.forEach(function(element){
+                console.log(element);
+                $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label).appendTo(add_dat_available_html);
+                self.hasDatasets = true;
+            });
+        }).fail(function(xhr, status, error) {
+            alert( error );
         });
-    });
-    
-    elmts.addDataset.click(function(evt){
-        evt.preventDefault();
-        new fairDataPointPostDatasetDialog(function(dataset){
-           if (dataset._title && dataset._identifier){
-               $('<option></option>').attr('value',JSON.stringify(dataset)).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
-               self._distributionDiv.html('');
-               self.fairDataPointPost.dataset = dataset;
-               addFairDistribution(self);
-           }
+        elmts.addDataset.click(function(evt){
+            evt.preventDefault();
+            new fairDataPointPostDatasetDialog(function(dataset){
+                if (dataset._title && dataset._identifier){
+                    $('<option></option>').attr('value',dataset._identifier).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
+                    self._distributionDiv.html('');
+                    self._pushtoFtpDiv.html('');
+                    self.fairDataPointPost.dataset = dataset;
+                    addFairDistribution(self);
+                }
+            });
         });
-    });
     
-    add_dat_available_html.click(function(evt){
-        if ($(evt.target).val()){
+        add_dat_available_html.click(function(){
             self._distributionDiv.html('');
+            self._pushtoFtpDiv.html('');
             addFairDistribution(self);
-        }
-    }).change();
+        }).change();
     
-    add_dat_available_html.appendTo(self._datasetDiv);
-    self._datasetDiv.appendTo(self._body);
+        if (self.hasDatasets){
+            add_dat_available_html.click();
+        }
+    
+        add_dat_available_html.appendTo(self._datasetDiv);
+        self._datasetDiv.appendTo(self._body);
 };
 
 addFairDistribution = function(self){
@@ -211,16 +217,18 @@ addFairDistribution = function(self){
         evt.preventDefault();
         new fairDataPointPostDistributionDialog(function(distribution){
             elmts.distribution.text(distribution._identifier + " - " + distribution._title);
+            self._pushtoFtpDiv.html('');
             self.fairDataPointPost.distribution = distribution;
+            pushFairdataToFtp(self);
         });
     });
     add_dist_html.appendTo(self._distributionDiv);
     self._distributionDiv.appendTo(self._body);
 };
 
-pushFatadataToFtp = function(self){
-    $('<h2>push FAIRified data to FTP</h2>').appendTo(self._pushtoFtpDiv);
-    var ftp_host_html = $('<p><span class="emphasized">host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self._body);
+pushFairdataToFtp = function(self){
+    $('<h2>push FAIRified data to FTP</h2>').appendTo(self._body);
+    var ftp_host_html = $('<p><span>host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self._body);
     var elmts = DOM.bind(ftp_host_html);
     self._ftpHostSpan = elmts.hostSpan;
     elmts.editFtpHost.click(function(evt){
