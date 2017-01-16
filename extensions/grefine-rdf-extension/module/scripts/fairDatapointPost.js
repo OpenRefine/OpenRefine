@@ -57,12 +57,9 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
-        $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost)},function(data){
-            var id = project.id;
+        $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost), project: theProject.id},function(data){
             alert("Metadata successfully posted to FAIR Data Point");
         });
-        
-//        window.open(self._baseUriSpan.text());
     }).appendTo(footer);
     
     $('<button></button>').addClass('button').text("Cancel").click(function() {
@@ -145,12 +142,29 @@ getFairCatalogs = function(rootUrl, self){
                    self._pushtoFtpDiv.html('');
                    self.fairDataPointPost.catalog = catalog;
                    getFairDatasets(self.fairDataPointPost.baseUri + "/" + catalog._identifier, self);
-               }s
+               }
             });
         });
         
        add_cat_available_html.click(function(){
            self._datasetDiv.html('');
+           data.content.forEach(function(element){
+               if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
+                   console.log(JSON.stringify(element));
+                   self.fairDataPointPost.catalog = {
+                       _identifier : $('select.catalogs option:selected').val(),
+                       _title : '',
+                       _label : '',
+                       _version : '',
+                       _homepage : '',
+                       _publisher : '',
+                       _language : '',
+                       _theme : '',
+                   }
+               }
+           });
+           
+
            getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').val(), self);
        }).change();
        
@@ -162,12 +176,11 @@ getFairCatalogs = function(rootUrl, self){
        }
               
     }).fail(function(xhr, status, error) {
-        alert( error );
     });
 };
 
 getFairDatasets = function(url, self){
-        $('<h2>datasets</h2>').appendTo(self._datasetDiv);
+        $('<h2>datasets</var idh2>').appendTo(self._datasetDiv);
         var add_dat_html = $('<p><a href="#" bind="addDataset">+ </a><span>add dataset</span></p>').appendTo(self._datasetDiv);
         var elmts = DOM.bind(add_dat_html);
         var add_dat_available_html = $('<select class="datasets"></select>');
@@ -180,7 +193,6 @@ getFairDatasets = function(url, self){
                 self.hasDatasets = true;
             });
         }).fail(function(xhr, status, error) {
-            alert( error );
         });
         elmts.addDataset.click(function(evt){
             evt.preventDefault();
@@ -340,11 +352,11 @@ fairDataPointPostDialog.prototype._editPassword = function(src){
     MenuSystem.showMenu(menu,function(){});
     MenuSystem.positionMenuLeftRight(menu, src);
     var elmts = DOM.bind(menu);
-    elmts.newPassword.val('***').focus().select();
+    elmts.newPassword.val(self._password).focus().select();
     elmts.applyButton.click(function() {
         var newPassword = elmts.newPassword.val();
         self._password = newPassword;
-        self._passwordSpan.empty().text(newPassword);
+        self._passwordSpan.empty().text("*****");
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

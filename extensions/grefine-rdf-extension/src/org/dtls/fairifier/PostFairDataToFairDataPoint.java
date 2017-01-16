@@ -36,6 +36,17 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.IRI;
 import nl.dtl.fairmetadata.model.*;
 import java.util.Date;
+import java.net.URL;
+import org.deri.grefine.rdf.app.ApplicationContext;
+import com.google.refine.browsing.Engine;
+import com.google.refine.model.Project;
+import org.openrdf.rio.RDFWriter; 
+import org.openrdf.repository.Repository;
+import org.openrdf.rio.turtle.TurtleWriter;
+import java.io.StringWriter;
+import org.deri.grefine.rdf.exporters.RdfExporter;
+
+
 /**
  * 
  * @author Shamanou van Leeuwen
@@ -64,6 +75,14 @@ public class PostFairDataToFairDataPoint extends Command{
         CatalogMetadata catalogMetadata = new CatalogMetadata();
         DatasetMetadata datasetMetadata = new DatasetMetadata();
         DistributionMetadata distributionMetadata = new DistributionMetadata();
+        
+        Engine engine = null;
+        Project project = getProject(req);
+        try{
+            engine = getEngine(req, project);
+        }catch(Exception ex){}
+        ApplicationContext ctxt = new ApplicationContext(); 
+        RdfExporter exporter = new RdfExporter(ctxt, org.openrdf.rio.RDFFormat.TURTLE);
         
         try{
             JSONObject jsonObject = new JSONObject(req.getParameter("fdp"));
@@ -133,10 +152,21 @@ public class PostFairDataToFairDataPoint extends Command{
             datasetString = MetadataUtils.getString(datasetMetadata, RDFFormat.TURTLE).replaceAll("\\<" + datasetMetadata.getUri() + "\\>","<>");
             distributionString = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE).replaceAll("\\<" + distributionMetadata.getUri() + "\\>","<>");
             
-            String catalogPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
-            String datasetPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
-            String distributionPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "?distributionID=" + distribution.getString("_identifier"), distributionString).getContent(),"UTF-8");
+            String catalogPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri").replaceAll("/$", "") + "?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
+            String datasetPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri").replaceAll("/$", "") + "/" + catalog.getString("_identifier") + "?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
+            String distributionPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri").replaceAll("/$", "") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "?distributionID=" + distribution.getString("_identifier"), distributionString).getContent(),"UTF-8");
+
             
+            String data = exporter.exportToString(project, engine, new TurtleWriter(new StringWriter()));
+            PushFairDataToResourceAdapter adapter = new PushFairDataToResourceAdapter();
+            URL host = new URL(req.getParameter("_directory"));
+            adapter.setResource(
+                    new FtpResource(host, req.getParameter("_username"), 
+                            req.getParameter("_password"), 
+                            req.getParameter("_host")
+                    )
+            );
+            adapter.push();
             
             res.setCharacterEncoding("UTF-8");
             res.setHeader("Content-Type", "application/json");
@@ -147,6 +177,7 @@ public class PostFairDataToFairDataPoint extends Command{
             writer.key("datasetPost"); writer.value(datasetPost);
             writer.key("distributionPost"); writer.value(distributionPost);
             writer.endObject();
+
         }catch(Exception ex){
             respondException(res, ex);
         }

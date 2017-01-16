@@ -17,8 +17,10 @@ function RdfSchemaAlignmentDialog(schema){
 	
 	//initialize vocabularyManager
     this._prefixesManager = new RdfPrefixesManager(this,this._schema.prefixes);
-    
-    this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace || URL.getHostname()+'/',true);
+    var url = window.location.href
+    var arr = url.split("/");
+
+    this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace || arr[0] + "//" + arr[2] + "/",true);
 };
 
 RdfSchemaAlignmentDialog.prototype._createDialog = function() {
