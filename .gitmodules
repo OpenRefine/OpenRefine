@@ -2,3 +2,7 @@
 	path = extensions/grefine-rdf-extension/module/scripts/FAIR-metadata-editor
 	url = https://github.com/DTL-FAIRData/FAIR-metadata-editor.git
 	branch = ng-rewrite
+[submodule "metadata-form"]
+	path = metadata-form
+	url = https://github.com/kburger/metadata-form
+	branch = develop
