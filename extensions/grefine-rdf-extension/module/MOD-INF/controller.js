@@ -167,6 +167,8 @@ function init() {
             "scripts/fairDatapointPost-dataset.js",
             "scripts/fairDatapointPost-distribution.js",
             "scripts/externals/rdfstore_min.js",
+            "scripts/externals/angular.min.js",
+            "scripts/metadata-form.js",
             
             "scripts/rdf-data-table-view.js",
             "scripts/menu-bar-extensions.js",

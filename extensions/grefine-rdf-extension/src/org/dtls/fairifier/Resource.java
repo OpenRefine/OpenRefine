@@ -1,6 +1,5 @@
 package org.dtls.fairifier;
 
-import com.hp.hpl.jena.rdf.model.Model;
 import java.io.StringWriter;
 
 /**
@@ -9,20 +8,19 @@ import java.io.StringWriter;
  *
  */
 public abstract class Resource {
-    protected Model fairData = null;
-    public void setFairData(Model fairData){
+    public String fairData = null;
+    
+    public void setFairData(String fairData){
         this.fairData = fairData;
     }
     
     protected boolean hasModel(){
-        if (this.fairData == null) return true;
-        return false;
+        if (this.fairData == null) return false;
+        return true;
     }
     
     protected String getModelString(){
-        StringWriter out = new StringWriter();
-        this.fairData.write(out, "TTL");
-        return out.toString();
+        return this.fairData;
     }
     
     abstract void push();

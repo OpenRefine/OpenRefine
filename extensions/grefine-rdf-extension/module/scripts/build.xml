@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="FAIR-metadata-editor" default="build" basedir=".">
+ 	<target name="build">
+ 		<copydir src="/home/citroen/workspace/FAIRifier/metadata-form/dist" dest="."/>
+ 	</target>
+</project>

@@ -77,26 +77,6 @@ fairDataPointPostCatalogDialog.prototype._constructBody = function(body) {
         self._editPublisher($(evt.target));
     });
     
-    var language_html = $('<p><span class="emphasized">language </span></p>');
-    var language_html_select = $('<select class="languages"></select>').appendTo(language_html);
-    
-    $.get('command/rdf-extension/get-languages',function(data){
-        data.content.forEach(function(element){
-            if (typeof self.fairDataPointPostCatalog._language === 'undefined') {
-                self.fairDataPointPostCatalog._language = element[1];
-            }
-            $('<option></option>').attr('value',element[1]).text(element[0]).appendTo(language_html_select);
-        });
-    });
-     
-    language_html_select.change(function(evt){
-        if ($(evt.target).val()){
-            self.fairDataPointPostCatalog._language = $(evt.target).val();
-        }
-    }).change();
-    
-    language_html.appendTo(body);
-    
     var theme_html = $('<p><span class="emphasized">theme </span><span bind="themeSpan" >http://</span> <a href="#" bind="editTheme">edit</a></p>').appendTo(body);    
     var elmts = DOM.bind(theme_html);
     this._themeSpan = elmts.themeSpan;

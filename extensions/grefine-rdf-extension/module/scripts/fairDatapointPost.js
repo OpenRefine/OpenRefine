@@ -40,6 +40,18 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
     '</p>').appendTo(body);
     
     var html = $('<p class="base-uri-space"><span class="emphasized">Base URI </span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
+//    var html = $('     <div id="metadata-target" ng-app="metadata.form">' +
+//            '<metadata-form></metadata-form>'+
+//            '<button id="my-btn">Submit</button>'+
+//        '</div>' +
+//
+//        '<script>' +
+//            ' angular.bootstrap($("div#metadata-target"), ["metadata.form"] );'+
+//        '</script>'
+//        '<script src="https://code.angularjs.org/1.6.1/angular.min.js"></script>'+
+//        '<script src="metadata-form.js"></script>
+//        ).appendTo(body);
+    
     var elmts = DOM.bind(html);
     this._baseUriSpan = elmts.baseUriSpan;
     this._catalogDiv = $('<div></div>');
@@ -57,6 +69,16 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
     $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+//        self.fairDataPointPost.baseUri = "http://localhost:8084/fdp";
+//        self.fairDataPointPost.ftpHost = '127.0.0.1';
+//        self.fairDataPointPost.directory = '/home/citroen';
+//        self.fairDataPointPost.username = 'citroen';
+//        self.fairDataPointPost.password = "";
+//        self.fairDataPointPost.catalog = {_identifier:"test",_title:"test",_version:"test",_theme:"http://test.nl",_publisher:"test"};
+//        self.fairDataPointPost.dataset = {_identifier:"test",_title:"test",_publisher:'test',_theme:"http://test.nl",_version:"test"};
+//        self.fairDataPointPost.distribution = {_identifier:"test",_title:"test",_version:"test",_accessUrl:"http://test.nl"};
+//        
+        
         $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost), project: theProject.id},function(data){
             alert("Metadata successfully posted to FAIR Data Point");
         });
@@ -149,17 +171,17 @@ getFairCatalogs = function(rootUrl, self){
        add_cat_available_html.click(function(){
            self._datasetDiv.html('');
            data.content.forEach(function(element){
+               console.log(JSON.stringify(element));
                if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
                    console.log(JSON.stringify(element));
                    self.fairDataPointPost.catalog = {
                        _identifier : $('select.catalogs option:selected').val(),
-                       _title : '',
-                       _label : '',
-                       _version : '',
-                       _homepage : '',
-                       _publisher : '',
-                       _language : '',
-                       _theme : '',
+                       _title : element.title.label,
+                       _version : element.title.label,
+                       _publisher : element.publisher.label,
+                       _language : element.language.label,
+                       _theme : element.themeTaxonomy.label,
+                       _homepage : element.homepage.label                       
                    }
                }
            });
@@ -169,8 +191,8 @@ getFairCatalogs = function(rootUrl, self){
        }).change();
        
        add_cat_available_html.appendTo(self._catalogDiv);
-       self._catalogDiv.appendTo(self._body);
-       
+       self._catalogDiv.appendTo(self._body);it
+
        if (self.hasCatalogs){
            add_cat_available_html.click();
        }
@@ -197,7 +219,7 @@ getFairDatasets = function(url, self){
         elmts.addDataset.click(function(evt){
             evt.preventDefault();
             new fairDataPointPostDatasetDialog(function(dataset){
-                if (dataset._title && dataset._identifier){
+                if (dataset._title && dataset._identifier && dataset._version){
                     $('<option></option>').attr('value',dataset._identifier).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
                     self._distributionDiv.html('');
                     self._pushtoFtpDiv.html('');
@@ -290,6 +312,7 @@ fairDataPointPostDialog.prototype._editFtpHost = function(src){
         var newFtpHost = elmts.newFtpHost.val();
         self._ftpHost = newFtpHost;
         self._ftpHostSpan.empty().text(newFtpHost);
+        self.fairDataPointPost.ftpHost = newFtpHost;
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
@@ -312,6 +335,7 @@ fairDataPointPostDialog.prototype._editDirectory = function(src){
         var newDirectory = elmts.newDirectory.val();
         self._directory = newDirectory;
         self._directorySpan.empty().text(newDirectory);
+        self.fairDataPointPost.directory = newDirectory;
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
@@ -334,6 +358,7 @@ fairDataPointPostDialog.prototype._editUsername = function(src){
         var newUsername = elmts.newUsername.val();
         self._username = newUsername;
         self._usernameSpan.empty().text(newUsername);
+        self.fairDataPointPost.username = newUsername;
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
@@ -357,6 +382,7 @@ fairDataPointPostDialog.prototype._editPassword = function(src){
         var newPassword = elmts.newPassword.val();
         self._password = newPassword;
         self._passwordSpan.empty().text("*****");
+        self.fairDataPointPost.password = newPassword;
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
