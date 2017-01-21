@@ -565,6 +565,5 @@
         <delete dir="${dist.dir}" />
         <delete dir="${tools.dir}" />
     </target>
-	<ant dir="metadata-form" target="build"/>
 	<ant dir="extensions/grefine-rdf-extension/module/scripts" target="build"/>
 </project>
