@@ -46,6 +46,7 @@ import org.openrdf.rio.turtle.TurtleWriter;
 import java.io.StringWriter;
 import org.deri.grefine.rdf.exporters.RdfExporter;
 import java.lang.System;
+import java.lang.Exception;
 
 /**
  * 
@@ -89,7 +90,9 @@ public class PostFairDataToFairDataPoint extends Command{
             JSONObject dataset = jsonObject.getJSONObject("dataset");
             JSONObject distribution = jsonObject.getJSONObject("distribution");
 //          optional
-            catalogMetadata.setHomepage(f.createIRI(catalog.getString("_homepage")));
+            try{
+                catalogMetadata.setHomepage(f.createIRI(catalog.getString("_homepage")));
+            }catch(Exception e){}
             catalogThemes.add(f.createIRI(catalog.getString("_theme")));
             catalogMetadata.setThemeTaxonomy(catalogThemes);
             catalogMetadata.setTitle(f.createLiteral(catalog.getString("_title")));
@@ -104,16 +107,20 @@ public class PostFairDataToFairDataPoint extends Command{
             catalogMetadata.setUri(f.createIRI(jsonObject.getString("baseUri")));
             catalogMetadata.setIssued(f.createLiteral(date));
             catalogMetadata.setModified(f.createLiteral(date));
-//          optional            
-            datasetMetadata.setLandingPage(f.createIRI(dataset.getString("_landingpage")));
+//          optional
+            try{
+                datasetMetadata.setLandingPage(f.createIRI(dataset.getString("_landingpage")));
+            }catch (Exception e){}
             datasetThemes.add(f.createIRI(dataset.getString("_theme")));
             datasetMetadata.setThemes(datasetThemes);
 //          optional
-            String[] keywordArray = dataset.getString("_keyword").split(",");
-            for (String keyword : keywordArray){
-                keyWords.add(f.createLiteral(keyword) );
-            }
-            datasetMetadata.setKeywords(keyWords);
+            try{
+                String[] keywordArray = dataset.getString("_keyword").split(",");
+                for (String keyword : keywordArray){
+                    keyWords.add(f.createLiteral(keyword) );
+                }
+                datasetMetadata.setKeywords(keyWords);
+            }catch(Exception e){}
             
             datasetMetadata.setTitle(f.createLiteral(dataset.getString("_title")));
             identifier = new Identifier();
@@ -124,7 +131,9 @@ public class PostFairDataToFairDataPoint extends Command{
             datasetMetadata.setModified( f.createLiteral(date) );
             datasetMetadata.setVersion(f.createLiteral(dataset.getString("_version")) );
 //          optional
-            datasetMetadata.setDescription(f.createLiteral(dataset.getString("_description")) );
+            try{
+                datasetMetadata.setDescription(f.createLiteral(dataset.getString("_description")) );
+            }catch(Exception e){}
             String cUri = jsonObject.getString("baseUri") + "/catalog/" + catalog.getString("_identifier"); 
 //            System.out.println("cUri : " + cUri);
             datasetMetadata.setParentURI( f.createIRI(cUri) );
@@ -137,7 +146,9 @@ public class PostFairDataToFairDataPoint extends Command{
             
             distributionMetadata.setAccessURL( f.createIRI(distribution.getString("_accessUrl")) );
 //          optional
-            distributionMetadata.setMediaType(f.createLiteral(distribution.getString("_mediatype")) );
+            try{
+                distributionMetadata.setMediaType(f.createLiteral(distribution.getString("_mediatype")) );
+            }catch(Exception e){}
             distributionMetadata.setTitle(f.createLiteral(distribution.getString("_title")) );
             distributionMetadata.setParentURI( f.createIRI( jsonObject.getString("baseUri") +"/dataset/" + dataset.getString("_identifier") ));
             identifier = new Identifier();
@@ -146,7 +157,9 @@ public class PostFairDataToFairDataPoint extends Command{
             distributionMetadata.setIdentifier(identifier);
             distributionMetadata.setVersion(f.createLiteral(distribution.getString("_version")) );
 //          optional
-            distributionMetadata.setLicense(f.createIRI(distribution.getString("_license")));
+            try{
+                distributionMetadata.setLicense(f.createIRI(distribution.getString("_license")));
+            }catch (Exception e){}
             distributionMetadata.setUri( f.createIRI( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "/" + distribution.getString("_identifier") ));
             distributionMetadata.setIssued(f.createLiteral(date));
             distributionMetadata.setModified(f.createLiteral(date));
