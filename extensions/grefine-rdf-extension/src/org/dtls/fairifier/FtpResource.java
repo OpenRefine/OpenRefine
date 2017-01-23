@@ -46,6 +46,7 @@ public class FtpResource extends Resource{
             ftp.setFileTransferMode(ftp.BINARY_FILE_TYPE);
             ftp.enterLocalPassiveMode();//Switch to passive mode
             ftp.storeFile(this.filename, new ByteArrayInputStream(this.out.getBytes()));
+            ftp.completePendingCommand();
             ftp.logout();
             ftp.disconnect();
         } catch (Exception ex){

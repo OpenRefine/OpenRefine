@@ -48,13 +48,6 @@ fairDataPointPostDatasetDialog.prototype._constructBody = function(body) {
         evt.preventDefault();
         self._editTitle($(evt.target));
     });
-    var label_html = $('<p><span class="emphasized">label</span> <span bind="labelSpan" ></span> <a href="#" bind="editLabel">edit</a></p>').appendTo(body);    
-    var elmts = DOM.bind(label_html);
-    this._labelSpan = elmts.labelSpan;
-    elmts.editLabel.click(function(evt){
-        evt.preventDefault();
-        self._editLabel($(evt.target));
-    });
     var version_html = $('<p><span class="emphasized">version</span> <span bind="versionSpan" ></span> <a href="#" bind="editVersion">edit</a></p>').appendTo(body);    
     var elmts = DOM.bind(version_html);
     this._versionSpan = elmts.versionSpan;
@@ -151,28 +144,6 @@ fairDataPointPostDatasetDialog.prototype._editIdentifier = function(src){
         var newIdentifier = elmts.newIdentifier.val();
         self.fairDataPointPostDataset._identifier = newIdentifier;
         self._identifierSpan.empty().text(newIdentifier);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
-fairDataPointPostDatasetDialog.prototype._editLabel = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newLabel" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newLabel.val(fairDataPointPostDataset.newLabel).focus().select();
-    elmts.applyButton.click(function() {
-        var newLabel = elmts.newLabel.val();
-        self.fairDataPointPostDataset._label = newLabel;
-        self._labelSpan.empty().text(newLabel);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

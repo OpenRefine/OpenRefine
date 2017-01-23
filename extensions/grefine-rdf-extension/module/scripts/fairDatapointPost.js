@@ -150,7 +150,7 @@ getFairCatalogs = function(rootUrl, self){
         self.hasCatalogs = false;
         
         data.content.forEach(function(element){
-            $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label).appendTo(add_cat_available_html);
+            $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label + " - " + element.title.label).appendTo(add_cat_available_html);
             self.hasCatalogs = true;
         });
         
@@ -162,36 +162,39 @@ getFairCatalogs = function(rootUrl, self){
                    self._datasetDiv.html('');
                    self._distributionDiv.html('');
                    self._pushtoFtpDiv.html('');
+                   catalog._exists = false;
                    self.fairDataPointPost.catalog = catalog;
-                   getFairDatasets(self.fairDataPointPost.baseUri + "/" + catalog._identifier, self);
+                   getFairDatasets(self.fairDataPointPost.baseUri + "/catalog/" + catalog._identifier, self);
                }
             });
         });
         
        add_cat_available_html.click(function(){
            self._datasetDiv.html('');
-           data.content.forEach(function(element){
-               console.log(JSON.stringify(element));
-               if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
-                   console.log(JSON.stringify(element));
-                   self.fairDataPointPost.catalog = {
-                       _identifier : $('select.catalogs option:selected').val(),
-                       _title : element.title.label,
-                       _version : element.title.label,
-                       _publisher : element.publisher.label,
-                       _language : element.language.label,
-                       _theme : element.themeTaxonomy.label,
-                       _homepage : element.homepage.label                       
+           self._distributionDiv.html('');
+           self._pushtoFtpDiv.html('');
+           if (self.hasCatalogs){
+               data.content.forEach(function(element){
+                   themes=[];
+                   for (var i = 0; i < element.themeTaxonomy.length; i++) themes.push(element.themeTaxonomy[i].namespace+element.themeTaxonomy[i].localname) ;
+                   if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
+                       self.fairDataPointPost.catalog = {
+                               _identifier: element.identifier.identifier.label,
+                               _title: element.title.label,
+                               _version: element.title.label,
+                               _publisher: element.publisher.name.label,
+                               _theme: themes,
+                               _homepage: element.homepage.namespace + element.homepage.localName,
+                               _exists: true
+                       };   
                    }
-               }
-           });
-           
-
-           getFairDatasets(self.fairDataPointPost.baseUri + "/" + $('select.catalogs option:selected').val(), self);
+               });
+           }
+           getFairDatasets(self.fairDataPointPost.baseUri + "/catalog/" + $('select.catalogs option:selected').val(), self);
        }).change();
        
        add_cat_available_html.appendTo(self._catalogDiv);
-       self._catalogDiv.appendTo(self._body);it
+       self._catalogDiv.appendTo(self._body);
 
        if (self.hasCatalogs){
            add_cat_available_html.click();
@@ -202,20 +205,18 @@ getFairCatalogs = function(rootUrl, self){
 };
 
 getFairDatasets = function(url, self){
+    $.post('command/rdf-extension/get-fdp-info', {"uri" : url, "layer": "dataset"},function(data){
         $('<h2>datasets</var idh2>').appendTo(self._datasetDiv);
         var add_dat_html = $('<p><a href="#" bind="addDataset">+ </a><span>add dataset</span></p>').appendTo(self._datasetDiv);
         var elmts = DOM.bind(add_dat_html);
         var add_dat_available_html = $('<select class="datasets"></select>');
         self.hasDatasets = false;
-        $.post('command/rdf-extension/get-fdp-info', {"uri" : url, "layer": "dataset"},function(data){
 
-            data.content.forEach(function(element){
-                console.log(element);
-                $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label).appendTo(add_dat_available_html);
+       data.content.forEach(function(element){
+                $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label + " - " + element.title.label).appendTo(add_dat_available_html);
                 self.hasDatasets = true;
-            });
-        }).fail(function(xhr, status, error) {
         });
+
         elmts.addDataset.click(function(evt){
             evt.preventDefault();
             new fairDataPointPostDatasetDialog(function(dataset){
@@ -223,24 +224,49 @@ getFairDatasets = function(url, self){
                     $('<option></option>').attr('value',dataset._identifier).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
                     self._distributionDiv.html('');
                     self._pushtoFtpDiv.html('');
+                    dataset._exists = false;
                     self.fairDataPointPost.dataset = dataset;
                     addFairDistribution(self);
-                }
+                };
             });
         });
     
         add_dat_available_html.click(function(){
             self._distributionDiv.html('');
             self._pushtoFtpDiv.html('');
-            addFairDistribution(self);
+            if(self.hasDatasets){
+                data.content.forEach(function(element){
+                    themes=[];
+                    keywords=[];
+                    console.log(element);
+                    for (var i = 0; i < element.themes.length; i++) themes.push(element.themes[i].namespace+element.themes[i].localname) ;
+                    for (var i = 0; i < element.keywords.length; i++) themes.push(element.keywords[i].namespace+element.keywords[i].localname) ;
+                    if (element.identifier.identifier.label == $('select.datasets option:selected').val()){
+                        self.fairDataPointPost.dataset = {
+                                _identifier : element.identifier.identifier.label,
+                                _title : element.title.label,
+                                _version : element.title.label,
+                                _decription : element.description.label,
+                                _keywords : keywords,
+                                _landingpage : element.landingPage.namespace+element.landingPage.localName,
+                            _publisher : element.publisher.name.label,
+                            _theme : themes, 
+                            _exists : true
+                        }
+                    }
+                });
+            }
+            addFairDistribution(self);            
         }).change();
     
+        add_dat_available_html.appendTo(self._datasetDiv);
+        self._datasetDiv.appendTo(self._body);
+        
         if (self.hasDatasets){
             add_dat_available_html.click();
         }
     
-        add_dat_available_html.appendTo(self._datasetDiv);
-        self._datasetDiv.appendTo(self._body);
+    }).fail(function(xhr, status, error) {});
 };
 
 addFairDistribution = function(self){

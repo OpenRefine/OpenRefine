@@ -55,22 +55,6 @@ fairDataPointPostDistributionDialog.prototype._constructBody = function(body) {
         evt.preventDefault();
         self._editVersion($(evt.target));
     });
-
-    var mediatype_html = $('<p><span class="emphasized">mediatype</span> <span bind="mediatypeSpan" ></span> <a href="#" bind="editMediatype">edit</a></p>').appendTo(body);
-    var elmts = DOM.bind(mediatype_html);
-    this._mediatypeSpan = elmts.mediatypeSpan;
-    elmts.editMediatype.click(function(evt){
-        evt.preventDefault();
-        self._editMediatype($(evt.target));
-    });
-    
-    var accessUrl_html = $('<p><span class="emphasized">Access URL </span><span bind="accessUrlSpan" >http://</span> <a href="#" bind="editAccessUrl">edit</a></p>').appendTo(body);    
-    var elmts = DOM.bind(accessUrl_html);
-    this._accessUrlSpan = elmts.accessUrlSpan;
-    elmts.editAccessUrl.click(function(evt) {
-        evt.preventDefault();
-        self._editAccessUrl($(evt.target));        
-    });
     
     var license_html = $('<p><span class="emphasized">license </span></p>');
     var license_html_select = $('<select class="licenses"></select>').appendTo(license_html);
@@ -125,7 +109,10 @@ fairDataPointPostDistributionDialog.prototype._editIdentifier = function(src){
     });
     elmts.cancelButton.click(function() {
             MenuSystem.dismissAll();
-    });
+    });        if(!newAccessUrl || !newAccessUrl.substring(7)=='http://'){
+        alert('Access URI should start with http://');
+        return;
+    }
 };
 
 fairDataPointPostDistributionDialog.prototype._editTitle = function(src){
@@ -134,7 +121,13 @@ fairDataPointPostDistributionDialog.prototype._editTitle = function(src){
     menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newTitle" size="50"><br/>'+
                     '<button class="button" bind="applyButton">Apply</button>' + 
                     '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
+            );    var mediatype_html = $('<p><span class="emphasized">mediatype</span> <span bind="mediatypeSpan" ></span> <a href="#" bind="editMediatype">edit</a></p>').appendTo(body);
+            var elmts = DOM.bind(mediatype_html);
+            this._mediatypeSpan = elmts.mediatypeSpan;
+            elmts.editMediatype.click(function(evt){
+                evt.preventDefault();
+                self._editMediatype($(evt.target));
+            });
     MenuSystem.showMenu(menu,function(){});
     MenuSystem.positionMenuLeftRight(menu, src);
     var elmts = DOM.bind(menu);
@@ -143,28 +136,6 @@ fairDataPointPostDistributionDialog.prototype._editTitle = function(src){
         var newTitle = elmts.newTitle.val();
         self.fairDataPointPostDistribution._title = newTitle;
         self._titleSpan.empty().text(newTitle);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
-fairDataPointPostDistributionDialog.prototype._editMediatype = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newMediatype" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newMediatype.val(fairDataPointPostDistribution.newMediatype).focus().select();
-    elmts.applyButton.click(function() {
-        var newMediatype = elmts.newMediatype.val();
-        self.fairDataPointPostDistribution._mediatype = newMediatype;
-        self._mediatypeSpan.empty().text(newMediatype);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
@@ -187,32 +158,6 @@ fairDataPointPostDistributionDialog.prototype._editVersion = function(src){
         var newVersion = elmts.newVersion.val();
         self.fairDataPointPostDistribution._version = newVersion;
         self._versionSpan.empty().text(newVersion);
-        MenuSystem.dismissAll();
-    });
-    elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });
-};
-
-fairDataPointPostDistributionDialog.prototype._editAccessUrl = function(src){
-    var self = this;
-    var menu = MenuSystem.createMenu().width('400px');
-    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newAccessUrl" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
-    MenuSystem.showMenu(menu,function(){});
-    MenuSystem.positionMenuLeftRight(menu, src);
-    var elmts = DOM.bind(menu);
-    elmts.newAccessUrl.val(fairDataPointPostDataset.newAccessUrl).focus().select();
-    elmts.applyButton.click(function() {
-        var newAccessUrl = elmts.newAccessUrl.val();
-        self.fairDataPointPostDistribution._accessUrl = newAccessUrl;
-        if(!newAccessUrl || !newAccessUrl.substring(7)=='http://'){
-            alert('Access URI should start with http://');
-            return;
-        }
-        self._accessUrlSpan.empty().text(newAccessUrl);
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

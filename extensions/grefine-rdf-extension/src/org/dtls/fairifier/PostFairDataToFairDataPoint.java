@@ -144,10 +144,10 @@ public class PostFairDataToFairDataPoint extends Command{
             
             datasetMetadata.setUri( f.createIRI( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" + dataset.getString("_identifier") ));
             
-            distributionMetadata.setAccessURL( f.createIRI(distribution.getString("_accessUrl")) );
+            distributionMetadata.setAccessURL(f.createIRI("ftp://" + jsonObject.getString("username") + ":" + jsonObject.getString("password") + "@" + jsonObject.getString("ftpHost") + jsonObject.getString("directory") + "FAIRdistribution_" + distribution.getString("_identifier") + ".ttl") );
 //          optional
             try{
-                distributionMetadata.setMediaType(f.createLiteral(distribution.getString("_mediatype")) );
+                distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
             }catch(Exception e){}
             distributionMetadata.setTitle(f.createLiteral(distribution.getString("_title")) );
             distributionMetadata.setParentURI( f.createIRI( jsonObject.getString("baseUri") +"/dataset/" + dataset.getString("_identifier") ));
@@ -172,9 +172,14 @@ public class PostFairDataToFairDataPoint extends Command{
 //            System.out.println(catalogString);
 //            System.out.println(datasetString);
 //            System.out.println(distributionString);
-            
-            String catalogPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/catalog?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
-            String datasetPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/dataset?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
+            String catalogPost = null;
+            String datasetPost = null;
+            if (!catalog.getBoolean("_exists")){
+                catalogPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/catalog?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
+            }
+            if (!dataset.getBoolean("_exists")){
+                datasetPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/dataset?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
+            }
             String distributionPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/distribution?distributionID=" + distribution.getString("_identifier"), distributionString).getContent(),"UTF-8");
 
             RdfExporter exporter = new RdfExporter(ctxt, org.openrdf.rio.RDFFormat.TURTLE);
@@ -187,7 +192,7 @@ public class PostFairDataToFairDataPoint extends Command{
                     jsonObject.getString("username"), 
                     jsonObject.getString("password"), 
                     jsonObject.getString("directory"),
-                    "FAIRdistribution - " + distribution.getString("_identifier") + ".rdf");
+                    "FAIRdistribution_" + distribution.getString("_identifier") + ".ttl");
             r.setFairData(data);
             adapter.setResource(r);
             adapter.push();
@@ -197,8 +202,12 @@ public class PostFairDataToFairDataPoint extends Command{
             JSONWriter writer = new JSONWriter(res.getWriter());
             writer.object();
             writer.key("code"); writer.value("ok");
-            writer.key("catalogPost"); writer.value(catalogPost);
-            writer.key("datasetPost"); writer.value(datasetPost);
+            if (!catalog.getBoolean("_exists")){
+                writer.key("catalogPost"); writer.value(catalogPost);
+            }
+            if (!dataset.getBoolean("_exists")){
+                writer.key("datasetPost"); writer.value(datasetPost);
+            }
             writer.key("distributionPost"); writer.value(distributionPost);
             writer.endObject();
 
