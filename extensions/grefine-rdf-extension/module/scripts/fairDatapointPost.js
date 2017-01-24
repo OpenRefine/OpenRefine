@@ -68,7 +68,7 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
 fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
-    $('<button></button>').addClass('button').html("&nbsp;&nbsp;OK&nbsp;&nbsp;").click(function() {
+    $('<button></button>').addClass('button').html("OK").click(function() {
 //        self.fairDataPointPost.baseUri = "http://localhost:8084/fdp";
 //        self.fairDataPointPost.ftpHost = '127.0.0.1';
 //        self.fairDataPointPost.directory = '/home/citroen';
@@ -80,6 +80,7 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
 //        
         
         $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost), project: theProject.id},function(data){
+            console.log(JSON.stringify(data));
             alert("Metadata successfully posted to FAIR Data Point");
         });
     }).appendTo(footer);
@@ -238,7 +239,6 @@ getFairDatasets = function(url, self){
                 data.content.forEach(function(element){
                     themes=[];
                     keywords=[];
-                    console.log(element);
                     for (var i = 0; i < element.themes.length; i++) themes.push(element.themes[i].namespace+element.themes[i].localname) ;
                     for (var i = 0; i < element.keywords.length; i++) themes.push(element.keywords[i].namespace+element.keywords[i].localname) ;
                     if (element.identifier.identifier.label == $('select.datasets option:selected').val()){

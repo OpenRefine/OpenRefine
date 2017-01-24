@@ -10,7 +10,6 @@ function fairDataPointPostDistributionDialog(callback){
     this._createDialog();
     this._callback = callback;
     this.fairDataPointPostDistribution = fairDataPointPostDistribution;
-    this.fairDataPointPostDistribution._accessUrl = "http://";
 };
 
 fairDataPointPostDistributionDialog.prototype._createDialog = function() {
@@ -108,11 +107,8 @@ fairDataPointPostDistributionDialog.prototype._editIdentifier = function(src){
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {
-            MenuSystem.dismissAll();
-    });        if(!newAccessUrl || !newAccessUrl.substring(7)=='http://'){
-        alert('Access URI should start with http://');
-        return;
-    }
+        MenuSystem.dismissAll();
+    });
 };
 
 fairDataPointPostDistributionDialog.prototype._editTitle = function(src){
