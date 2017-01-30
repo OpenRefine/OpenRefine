@@ -6,3 +6,6 @@
 	path = metadata-form
 	url = https://github.com/kburger/metadata-form
 	branch = develop
+[submodule "extensions/grefine-rdf-extension"]
+	path = extensions/grefine-rdf-extension
+	url = https://github.com/fadmaa/grefine-rdf-extension.git

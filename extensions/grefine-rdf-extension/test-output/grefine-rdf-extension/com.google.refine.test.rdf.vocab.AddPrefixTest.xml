@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.google.refine.test.rdf.vocab.AddPrefixTest" failures="0" tests="1" time="0.11" errors="0">
-  <properties/>
-  <testcase name="testAddNewPrefix" time="0.094" classname="com.google.refine.test.rdf.vocab.AddPrefixTest"/>
-</testsuite>

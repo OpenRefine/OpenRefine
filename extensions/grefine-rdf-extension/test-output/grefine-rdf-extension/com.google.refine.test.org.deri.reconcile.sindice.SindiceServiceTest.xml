@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.google.refine.test.org.deri.reconcile.sindice.SindiceServiceTest" failures="0" tests="4" time="0.812" errors="0">
-  <properties/>
-  <testcase name="reconcileTest" time="0.031" classname="com.google.refine.test.org.deri.reconcile.sindice.SindiceServiceTest"/>
-  <testcase name="reconcileTestWithDomain" time="0.0" classname="com.google.refine.test.org.deri.reconcile.sindice.SindiceServiceTest"/>
-  <testcase name="reconcileTestWithEnoughResults" time="0.0" classname="com.google.refine.test.org.deri.reconcile.sindice.SindiceServiceTest"/>
-  <testcase name="reconcileTestWithType" time="0.0" classname="com.google.refine.test.org.deri.reconcile.sindice.SindiceServiceTest"/>
-</testsuite>
