@@ -60,12 +60,12 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    static private String ASSIGNED_VERSION = "2.6";
+    static private String ASSIGNED_VERSION = "Alpha";
     
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
-    static public String FULLNAME = "OpenRefine ";
+    static public String FULLNAME = "FAIRifier ";
 
 
     static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
