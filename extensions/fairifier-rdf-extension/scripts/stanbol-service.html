@@ -1,0 +1,54 @@
+
+<div class="dialog-header">
+
+    Stanbol's EntityHub pre-registration
+
+</div>
+
+<div class="dialog-body" id="stanbol-service">
+
+  <p>
+    This allows you to register new reconciliation services based on Apache Stanbol's EntityHub.
+  </p>
+
+  <form>
+
+      <table>
+        <tr>
+          <th>
+      	    <label for="stanbol-uri">Stanbol URI:</label>
+      	  </th>
+      	  <td>
+      	    <input type="text" name="stanbol-uri" id="stanbol-uri" />
+      	  </td>
+      	</tr>
+      	<!-- select to allow local filtering -->
+      </table>
+
+  </form>
+  
+  <div class="registering" style="display:none;">
+    <dl id="stanbol-registering"></dl>
+  </div>
+  
+  <p id="stanbol-help">
+    So you'd just need to know the URI where Stanbol is running with the necessary indexes for your concrete
+    data, and this process will automatically fetch and register all available reconciliation services. 
+  </p>    
+
+  <p>
+    Read more about 
+    <a href="http://incubator.apache.org/stanbol/">Apache Stanbol</a>'s
+    <a href="http://incubator.apache.org/stanbol/docs/trunk/entityhub/">EntityHub</a>.
+  </p>
+
+</div>
+
+<div class="dialog-footer">
+
+    <button class="button" id="cancel">Cancel</button>
+
+    <button class="button" id="register">Register</button>
+
+</div>
+
