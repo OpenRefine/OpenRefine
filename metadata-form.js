@@ -28,10 +28,6 @@ form.directive('metadataForm', function() {
     controller: 'FormController'
   };
 });
-angular.module('metadata.form').run(['$templateCache', function($templateCache) {$templateCache.put('field/field-multiple.tpl.html','<span>multiple</span>\n<metadata-field-base ng-repeat="value in model[field.url] track by $index"></metadata-field-base>');
-$templateCache.put('field/field-nested.tpl.html','<span>nested</span>');
-$templateCache.put('field/field.tpl.html','<label ng-attr-for="{{id}}">\n    <span>{{field.name}}</span>\n</label>\n\n<input class="form-control"\n    ng-attr-name="{{id}}"\n    ng-attr-type="{{field.type}}"\n    ng-attr-id="{{id}}"\n    ng-focus=""\n    ng-required="{{field.required}}"\n    metadata-field-decorator/>');
-$templateCache.put('form/form.tpl.html','<form>\n    <metadata-field ng-repeat="(id,field) in components">\n    </metadata-field>\n    <button type="submit">Test</button>\n</form>');}]);
 form.controller('FormController', ["$scope", "$window", function($scope, $window) {
   $scope.model = {};
 
@@ -78,6 +74,10 @@ form.controller('FormController', ["$scope", "$window", function($scope, $window
   $scope.model[$scope.components.homepage.url] = ['']
   $scope.model[$scope.components.keyword.url] = [''];
 }]);
+angular.module('metadata.form').run(['$templateCache', function($templateCache) {$templateCache.put('field/field-multiple.tpl.html','<span>multiple</span>\n<metadata-field-base ng-repeat="value in model[field.url] track by $index"></metadata-field-base>');
+$templateCache.put('field/field-nested.tpl.html','<span>nested</span>');
+$templateCache.put('field/field.tpl.html','<label ng-attr-for="{{id}}">\n    <span>{{field.name}}</span>\n</label>\n\n<input class="form-control"\n    ng-attr-name="{{id}}"\n    ng-attr-type="{{field.type}}"\n    ng-attr-id="{{id}}"\n    ng-focus=""\n    ng-required="{{field.required}}"\n    metadata-field-decorator/>');
+$templateCache.put('form/form.tpl.html','<form>\n    <metadata-field ng-repeat="(id,field) in components">\n    </metadata-field>\n    <button type="submit">Test</button>\n</form>');}]);
 form.directive('metadataField', function() {
   return {
     restrict: 'EA',

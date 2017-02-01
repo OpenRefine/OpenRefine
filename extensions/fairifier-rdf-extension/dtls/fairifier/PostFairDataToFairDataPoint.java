@@ -77,18 +77,19 @@ public class PostFairDataToFairDataPoint extends Command{
         DatasetMetadata datasetMetadata = new DatasetMetadata();
         DistributionMetadata distributionMetadata = new DistributionMetadata();
         
-        Engine engine = null;
-        Project project = getProject(req);
         try{
-            engine = getEngine(req, project);
-        }catch(Exception ex){}
-        ApplicationContext ctxt = new ApplicationContext(); 
-        
-        try{
-            JSONObject jsonObject = new JSONObject(req.getParameter("fdp"));
-            JSONObject catalog = jsonObject.getJSONObject("catalog");
-            JSONObject dataset = jsonObject.getJSONObject("dataset");
-            JSONObject distribution = jsonObject.getJSONObject("distribution");
+            StringBuffer jb = new StringBuffer();
+            String line = null;
+            try {
+              BufferedReader reader = req.getReader();
+              while ((line = reader.readLine()) != null)
+                jb.append(line);
+            } catch (Exception e) { }
+
+            JSONObject fdp = new JSONObject(jb.toString().split("#%SPLITHERE%#")[0]);
+            JSONObject catalog = fdp.getJSONObject("catalog");
+            JSONObject dataset = fdp.getJSONObject("dataset");
+            JSONObject distribution = fdp.getJSONObject("distribution");
 //          optional
             try{
                 catalogMetadata.setHomepage(f.createIRI(catalog.getString("_homepage")));
@@ -97,14 +98,14 @@ public class PostFairDataToFairDataPoint extends Command{
             catalogMetadata.setThemeTaxonomy(catalogThemes);
             catalogMetadata.setTitle(f.createLiteral(catalog.getString("_title")));
             identifier.setIdentifier(f.createLiteral(catalog.getString("_identifier")));
-            identifier.setUri( f.createIRI(jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier")));
+            identifier.setUri( f.createIRI(fdp.getString("baseUri") + "/" + catalog.getString("_identifier")));
             catalogMetadata.setIdentifier(identifier);
-            agent.setUri( f.createIRI(jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier")));
+            agent.setUri( f.createIRI(fdp.getString("baseUri") + "/" + catalog.getString("_identifier")));
             agent.setName( f.createLiteral(catalog.getString("_publisher")) );
             catalogMetadata.setPublisher(agent);
             
             catalogMetadata.setVersion(f.createLiteral(catalog.getString("_version")));
-            catalogMetadata.setUri(f.createIRI(jsonObject.getString("baseUri")));
+            catalogMetadata.setUri(f.createIRI(fdp.getString("baseUri")));
             catalogMetadata.setIssued(f.createLiteral(date));
             catalogMetadata.setModified(f.createLiteral(date));
 //          optional
@@ -115,6 +116,7 @@ public class PostFairDataToFairDataPoint extends Command{
             datasetMetadata.setThemes(datasetThemes);
 //          optional
             try{
+
                 String[] keywordArray = dataset.getString("_keyword").split(",");
                 for (String keyword : keywordArray){
                     keyWords.add(f.createLiteral(keyword) );
@@ -125,7 +127,7 @@ public class PostFairDataToFairDataPoint extends Command{
             datasetMetadata.setTitle(f.createLiteral(dataset.getString("_title")));
             identifier = new Identifier();
             identifier.setIdentifier(f.createLiteral(dataset.getString("_identifier")));
-            identifier.setUri( f.createIRI(jsonObject.getString("baseUri") + "/datasetID/" + dataset.getString("_identifier")));
+            identifier.setUri( f.createIRI(fdp.getString("baseUri") + "/datasetID/" + dataset.getString("_identifier")));
             datasetMetadata.setIdentifier(identifier);
             datasetMetadata.setIssued( f.createLiteral(date) );
             datasetMetadata.setModified( f.createLiteral(date) );
@@ -134,33 +136,33 @@ public class PostFairDataToFairDataPoint extends Command{
             try{
                 datasetMetadata.setDescription(f.createLiteral(dataset.getString("_description")) );
             }catch(Exception e){}
-            String cUri = jsonObject.getString("baseUri") + "/catalog/" + catalog.getString("_identifier"); 
+            String cUri = fdp.getString("baseUri") + "/catalog/" + catalog.getString("_identifier"); 
 //            System.out.println("cUri : " + cUri);
             datasetMetadata.setParentURI( f.createIRI(cUri) );
             agent = new Agent();
-            agent.setUri( f.createIRI(jsonObject.getString("baseUri") + "/datasetAgent/" + dataset.getString("_identifier")));
+            agent.setUri( f.createIRI(fdp.getString("baseUri") + "/datasetAgent/" + dataset.getString("_identifier")));
             agent.setName( f.createLiteral(dataset.getString("_publisher")) );
             datasetMetadata.setPublisher(agent);
             
-            datasetMetadata.setUri( f.createIRI( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" + dataset.getString("_identifier") ));
+            datasetMetadata.setUri( f.createIRI( fdp.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" + dataset.getString("_identifier") ));
             
-            distributionMetadata.setAccessURL(f.createIRI("ftp://" + jsonObject.getString("username") + ":" + jsonObject.getString("password") + "@" + jsonObject.getString("ftpHost") + jsonObject.getString("directory") + "FAIRdistribution_" + distribution.getString("_identifier") + ".ttl") );
+            distributionMetadata.setAccessURL(f.createIRI("ftp://" + fdp.getString("username") + ":" + fdp.getString("password") + "@" + fdp.getString("ftpHost") + fdp.getString("directory") + "FAIRdistribution_" + distribution.getString("_identifier") + ".ttl") );
 //          optional
             try{
                 distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
             }catch(Exception e){}
             distributionMetadata.setTitle(f.createLiteral(distribution.getString("_title")) );
-            distributionMetadata.setParentURI( f.createIRI( jsonObject.getString("baseUri") +"/dataset/" + dataset.getString("_identifier") ));
+            distributionMetadata.setParentURI( f.createIRI( fdp.getString("baseUri") +"/dataset/" + dataset.getString("_identifier") ));
             identifier = new Identifier();
             identifier.setIdentifier(f.createLiteral(distribution.getString("_identifier")));
-            identifier.setUri( f.createIRI(jsonObject.getString("baseUri") + "/distributionID/" + distribution.getString("_identifier") ));
+            identifier.setUri( f.createIRI(fdp.getString("baseUri") + "/distributionID/" + distribution.getString("_identifier") ));
             distributionMetadata.setIdentifier(identifier);
             distributionMetadata.setVersion(f.createLiteral(distribution.getString("_version")) );
 //          optional
             try{
                 distributionMetadata.setLicense(f.createIRI(distribution.getString("_license")));
             }catch (Exception e){}
-            distributionMetadata.setUri( f.createIRI( jsonObject.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "/" + distribution.getString("_identifier") ));
+            distributionMetadata.setUri( f.createIRI( fdp.getString("baseUri") + "/" + catalog.getString("_identifier") + "/" +  dataset.getString("_identifier") + "/" + distribution.getString("_identifier") ));
             distributionMetadata.setIssued(f.createLiteral(date));
             distributionMetadata.setModified(f.createLiteral(date));
             
@@ -175,23 +177,20 @@ public class PostFairDataToFairDataPoint extends Command{
             String catalogPost = null;
             String datasetPost = null;
             if (!catalog.getBoolean("_exists")){
-                catalogPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/catalog?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
+                catalogPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/catalog?catalogID=" + catalog.getString("_identifier"), catalogString).getContent(), "UTF-8");
             }
             if (!dataset.getBoolean("_exists")){
-                datasetPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/dataset?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
+                datasetPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/dataset?datasetID=" + dataset.getString("_identifier"), datasetString).getContent(),"UTF-8");
             }
-            String distributionPost = IOUtils.toString(HttpUtils.post(jsonObject.getString("baseUri") + "/distribution?distributionID=" + distribution.getString("_identifier"), distributionString).getContent(),"UTF-8");
-
-            RdfExporter exporter = new RdfExporter(ctxt, org.openrdf.rio.RDFFormat.TURTLE);
-            StringWriter stringwriter = new StringWriter();
-            exporter.export(project, null, engine, stringwriter);
-            String data = stringwriter.toString();
+            String distributionPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/distribution?distributionID=" + distribution.getString("_identifier"), distributionString).getContent(),"UTF-8");
+            
+            String data = jb.toString().split("#%SPLITHERE%#")[1];
             PushFairDataToResourceAdapter adapter = new PushFairDataToResourceAdapter();
             Resource r = new FtpResource(
-                    jsonObject.getString("ftpHost"), 
-                    jsonObject.getString("username"), 
-                    jsonObject.getString("password"), 
-                    jsonObject.getString("directory"),
+                    fdp.getString("ftpHost"), 
+                    fdp.getString("username"), 
+                    fdp.getString("password"), 
+                    fdp.getString("directory"),
                     "FAIRdistribution_" + distribution.getString("_identifier") + ".ttl");
             r.setFairData(data);
             adapter.setResource(r);

@@ -68,6 +68,13 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
 fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
     
+    function progressHandlerFunction(event){
+        $(".progress").width((event.loaded/event.total) * 100);
+    }
+
+    $('<span style="height:4%;background-color:grey; position:absolute;visibility:visible;margin-left: 100px "></span>').addClass("progress").appendTo(footer);
+    
+    
     $('<button></button>').addClass('button').html("OK").click(function() {
 //        self.fairDataPointPost.baseUri = "http://localhost:8084/fdp";
 //        self.fairDataPointPost.ftpHost = '127.0.0.1';
@@ -77,16 +84,39 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
 //        self.fairDataPointPost.catalog = {_identifier:"test",_title:"test",_version:"test",_theme:"http://test.nl",_publisher:"test"};
 //        self.fairDataPointPost.dataset = {_identifier:"test",_title:"test",_publisher:'test',_theme:"http://test.nl",_version:"test"};
 //        self.fairDataPointPost.distribution = {_identifier:"test",_title:"test",_version:"test",_accessUrl:"http://test.nl"};
-//        
-        
-        $.post("command/rdf-extension/post-fdp-info", {fdp: JSON.stringify(self.fairDataPointPost), project: theProject.id},function(data){
-            console.log(JSON.stringify(data));
-            alert("Metadata successfully posted to FAIR Data Point");
+//
+       var rdf = '';
+        $.ajax({
+            type: "POST",
+            url : "command/rdf-extension/get-project-rdf",
+            data: {project: theProject.id},
+            dataTYpe:"json",
+            async: false,
+            success : function(text)
+            {
+                rdf = text.data;
+            }
         });
+        var fairdatapoint = self.fairDataPointPost;
+        $.ajax({
+            type: "POST",
+            url :"command/rdf-extension/post-fdp-info",
+            data: JSON.stringify(fairdatapoint)+"#%SPLITHERE%#"+rdf,
+            dataType: "json",
+            contentType: "application/json",
+            xhr: function() {
+                var myXhr = $.ajaxSettings.xhr();
+                if(myXhr.upload){
+                    myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
+                }
+                return myXhr;
+            }
+       })
     }).appendTo(footer);
     
+    
     $('<button></button>').addClass('button').text("Cancel").click(function() {
-        DialogSystem.dismissUntil(self._level - 1);
+        DialogSystem.dismissUntil(self._level100 - 1);
     }).appendTo(footer);
 };
 

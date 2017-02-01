@@ -127,11 +127,11 @@ function init() {
     RefineServlet.registerCommand(module, "save-baseURI", new SaveBaseURICommand(ctxt));
     RefineServlet.registerCommand(module, "preview-rdf-expression", new PreviewRdfValueExpressionCommand());
     //FAIRifier commands
-    RefineServlet.registerCommand(module, "push-data", new PushFairDataToFtpCommand());
     RefineServlet.registerCommand(module, "get-languages", new LanguageGetterCommand());
     RefineServlet.registerCommand(module, "get-fdp-info", new GetFairDataPointInfoCommand());
     RefineServlet.registerCommand(module, "post-fdp-info", new PostFairDataToFairDataPoint());
     RefineServlet.registerCommand(module, "get-licenses", new LicenseGetterCommand());
+    RefineServlet.registerCommand(module, "get-project-rdf", new GetRDFCommand());
     //Vocabs commands
     RefineServlet.registerCommand(module, "save-prefixes", new SavePrefixesCommand(ctxt));
     RefineServlet.registerCommand(module, "get-default-prefixes", new GetDefaultPrefixesCommand(ctxt));
