@@ -2,19 +2,51 @@
 
 Depenencies:
   - Java 8
+  - npm
+  - gulp
+  - bower
   - Apache Ant
 
 
 Building
 ========
-  - To buld run ant in the folder FAIRifier.
-  - Then run ant in FAIRifier/extensions.
-  - Then run ant in FAIRifier/extensions/grefine-rdf-extension.
-  
+install npm
+
+```
+sudo apt-get install nodejs-legacy npm
+
+```
+install gulp
+```
+sudo npm install -g gulp
+
+```
+install bower
+```
+sudo npm install -g bower
+
+```
+download the git repository
+```
+git clone --recursive https://github.com/DTL-FAIRData/FAIRifier.git
+```
+cd to the directory of the git repo
+```
+cd FAIRifier/
+```
+and now build
+```
+ant build
+```
 
 Running
 ==========
-To run run refine file in the project root.
+Run the ./refine file
+```
+./refine
+```
+
+
 
 
 
