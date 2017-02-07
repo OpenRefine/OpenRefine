@@ -140,10 +140,28 @@ ReconciliationManager.save = function(f) {
 };
 
 (function() {
-  ReconciliationManager.customServices.push({
-    "name" : $.i18n._('core-recon')["fb-recon"],
-    "ui" : { "handler" : "ReconFreebaseQueryPanel" }
-  });
+  var lang = $.i18n._('core-recon')["wd-recon-lang"];
+  ReconciliationManager.customServices.push(
+	 {"suggest":
+		{"property":
+			{"service_url": "https://tools.wmflabs.org/openrefine-wikidata",
+			 "service_path": "/"+lang+"/suggest/property"},
+		 "type":
+			{"service_url": "https://tools.wmflabs.org/openrefine-wikidata",
+			 "service_path": "/"+lang+"/suggest/type"},
+		 "entity": {"service_url": "https://tools.wmflabs.org/openrefine-wikidata",
+			    "service_path": "/"+lang+"/suggest/entity"}},
+          "view":
+		{"url": "https://www.wikidata.org/wiki/{{id}}"},
+          "preview":
+		{"height": 90,
+                 "url": "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/preview?id={{id}}",
+		 "width": 320},
+	 "name": $.i18n._('core-recon')["wd-recon"],
+	 "url" : "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api",
+	 "ui" : { "handler": "ReconStandardServicePanel" },
+	});
+  var cs = ReconciliationManager.customServices;
 
   $.ajax({
     async: false,
