@@ -80,16 +80,17 @@ public class PostFairDataToFairDataPoint extends Command{
         try{
             StringBuffer jb = new StringBuffer();
             String line = null;
-            try {
-              BufferedReader reader = req.getReader();
-              while ((line = reader.readLine()) != null)
-                jb.append(line);
-            } catch (Exception e) { }
-
+            BufferedReader reader = req.getReader();
+            while ((line = reader.readLine()) != null)
+            jb.append(line);
+   
             JSONObject fdp = new JSONObject(jb.toString().split("#%SPLITHERE%#")[0]);
             JSONObject catalog = fdp.getJSONObject("catalog");
+
             JSONObject dataset = fdp.getJSONObject("dataset");
+
             JSONObject distribution = fdp.getJSONObject("distribution");
+           
 //          optional
             try{
                 catalogMetadata.setHomepage(f.createIRI(catalog.getString("_homepage")));

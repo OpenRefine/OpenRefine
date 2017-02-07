@@ -10,7 +10,7 @@ Depenencies:
 
 Building
 ========
-install depedencies (assuming java 8 is installed)
+install depedencies (assuming Java 8 is installed)
 
 ```
 sudo apt-get install nodejs-legacy npm ant

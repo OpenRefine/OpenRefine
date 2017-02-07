@@ -92,26 +92,32 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
             data: {project: theProject.id},
             dataTYpe:"json",
             async: false,
-            success : function(text)
-            {
+            success : function(text){
                 rdf = text.data;
             }
         });
         var fairdatapoint = self.fairDataPointPost;
-        $.ajax({
-            type: "POST",
-            url :"command/rdf-extension/post-fdp-info",
-            data: JSON.stringify(fairdatapoint)+"#%SPLITHERE%#"+rdf,
-            dataType: "json",
-            contentType: "application/json",
-            xhr: function() {
-                var myXhr = $.ajaxSettings.xhr();
-                if(myXhr.upload){
-                    myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
-                }
-                return myXhr;
-            }
-       })
+        if ((fairdatapointpost.ftpHost != null) && (fairdatapointpost.directory != null)){
+	        $.ajax({
+	            type: "POST",
+	            url :"command/rdf-extension/post-fdp-info",
+	            data: JSON.stringify(fairdatapoint)+"#%SPLITHERE%#"+rdf,
+	            dataType: "json",
+	            contentType: "application/json",
+	            xhr: function() {
+	                var myXhr = $.ajaxSettings.xhr();
+	                if(myXhr.upload){
+	                    myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
+	                }
+	                return myXhr;
+	            },
+	  			success: function(data){ 
+	            	alert("FAIR data pushed"); DialogSystem.dismissAll();
+	            }
+	       });
+       }else{
+       		alert("upload error");
+       }
     }).appendTo(footer);
     
     
