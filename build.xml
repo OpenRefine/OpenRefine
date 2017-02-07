@@ -154,17 +154,25 @@
     		<arg value="install"/>
     	</exec>
     	<exec dir="metadata-form" executable="gulp"></exec>
- 		<copydir src="metadata-form/dist" dest="."/>
-    	<copy file="extensions/fairifier-rdf-extension/scripts/externals/angular.min.js" tofile="extensions/grefine-rdf-extension/module/scripts/externals/angular.min.js"/>
-    	<copy file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-catalog.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-catalog.js" />
-    	<copy file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-dataset.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-dataset.js" />
-    	<copy file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-distribution.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-distribution.js" />
-    	<copy file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost.js" />
-    	<copy file="extensions/fairifier-rdf-extension/controller.js" tofile="extensions/grefine-rdf-extension/module/MOD-INF/controller.js" />
- 		<copydir src="extensions/fairifier-rdf-extension/dtls" dest="extensions/grefine-rdf-extension/src/org"/>
- 		<copydir src="extensions/fairifier-rdf-extension/lib" dest="extensions/grefine-rdf-extension/module/MOD-INF/lib"/>
-    	<copy file="extensions/fairifier-rdf-extension/HttpUtils.java" tofile="extensions/grefine-rdf-extension/src/org/deri/grefine/rdf/utils/HttpUtils.java" />
-    	<copy file="extensions/fairifier-rdf-extension/menu-bar-extensions.js" tofile="extensions/grefine-rdf-extension/module/scripts/menu-bar-extensions.js" />
+ 		<copy overwrite="true" todir="extensions/grefine-rdf-extension/module/scripts/">
+            <fileset dir="metadata-form/dist/"/>
+        </copy>
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/externals/angular.min.js" tofile="extensions/grefine-rdf-extension/module/scripts/externals/angular.min.js"/>
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-catalog.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-catalog.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-dataset.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-dataset.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-distribution.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-distribution.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/controller.js" tofile="extensions/grefine-rdf-extension/module/MOD-INF/controller.js" />
+        <copy todir="extensions/fairifier-rdf-extension/dtls/">
+            <fileset dir="extensions/grefine-rdf-extension/src/org/"/>
+        </copy>
+        <copy overwrite="true" todir="extensions/fairifier-rdf-extension/lib/">
+            <fileset dir="extensions/grefine-rdf-extension/module/MOD-INF/lib/"/>
+        </copy>
+
+
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/HttpUtils.java" tofile="extensions/grefine-rdf-extension/src/org/deri/grefine/rdf/utils/HttpUtils.java" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/menu-bar-extensions.js" tofile="extensions/grefine-rdf-extension/module/scripts/menu-bar-extensions.js" />
 
     	<ant dir="extensions/" target="build" />
     </target>
