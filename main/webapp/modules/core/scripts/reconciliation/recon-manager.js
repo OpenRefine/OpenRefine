@@ -141,27 +141,6 @@ ReconciliationManager.save = function(f) {
 
 (function() {
   var lang = $.i18n._('core-recon')["wd-recon-lang"];
-  ReconciliationManager.customServices.push(
-	 {"suggest":
-		{"property":
-			{"service_url": "https://tools.wmflabs.org/openrefine-wikidata",
-			 "service_path": "/"+lang+"/suggest/property"},
-		 "type":
-			{"service_url": "https://tools.wmflabs.org/openrefine-wikidata",
-			 "service_path": "/"+lang+"/suggest/type"},
-		 "entity": {"service_url": "https://tools.wmflabs.org/openrefine-wikidata",
-			    "service_path": "/"+lang+"/suggest/entity"}},
-          "view":
-		{"url": "https://www.wikidata.org/wiki/{{id}}"},
-          "preview":
-		{"height": 90,
-                 "url": "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/preview?id={{id}}",
-		 "width": 320},
-	 "name": $.i18n._('core-recon')["wd-recon"],
-	 "url" : "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api",
-	 "ui" : { "handler": "ReconStandardServicePanel" },
-	});
-  var cs = ReconciliationManager.customServices;
 
   $.ajax({
     async: false,
@@ -169,15 +148,13 @@ ReconciliationManager.save = function(f) {
       name: "reconciliation.standardServices" 
     }),
     success: function(data) {
-      if (data.value && data.value != "null") {
+      if (data.value && data.value != "null" && data.value != "[]") {
         ReconciliationManager.standardServices = JSON.parse(data.value);
         ReconciliationManager._rebuildMap();
       } else {
-      // FIXME: Standard recon service needs to be replaced
-//        ReconciliationManager.registerStandardService(
-//            "http://reconcile.freebaseapps.com/reconcile"
-//            "http://standard-reconcile.freebaseapps.com/reconcile"
-//            );
+         ReconciliationManager.registerStandardService(
+	      "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api"
+              );
       }
     },
     dataType: "json"

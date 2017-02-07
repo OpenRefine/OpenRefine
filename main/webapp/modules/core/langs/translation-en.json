@@ -350,7 +350,6 @@
 		"as-property": "As Property",
 		"contact-service": "Contacting reconciliation service",
 		"error-contact": "Error contacting recon service",
-		"wd-recon": "Wikidata Reconciliation",
 		"wd-recon-lang": "en",
 		"recon-col": "Reconcile column",
 		"pick-service": "Pick a Service or Extension on Left",
