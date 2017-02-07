@@ -10,10 +10,10 @@ Depenencies:
 
 Building
 ========
-install npm
+install depedencies (assuming java 8 is installed)
 
 ```
-sudo apt-get install nodejs-legacy npm
+sudo apt-get install nodejs-legacy npm 
 
 ```
 install gulp
