@@ -116,7 +116,7 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     
     
     $('<button></button>').addClass('button').text("Cancel").click(function() {
-        DialogSystem.dismissUntil(self._level100 - 1);
+        DialogSystem.dismissAll();
     }).appendTo(footer);
 };
 
