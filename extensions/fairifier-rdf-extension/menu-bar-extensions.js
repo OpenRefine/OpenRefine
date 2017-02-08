@@ -437,12 +437,12 @@ $(function(){
 				"submenu" : [
 					{
 						"id": "rdf/edit-rdf-schema",
-						label: "Edit RDF Skeleton...",
+						label: "Edit Semantic Model...",
 						click: function() { RdfExporterMenuBar.editRdfSchema(false); }
 					},
 					{
 						"id": "rdf/reset-rdf-schema",
-						label: "Reset RDF Skeleton...",
+						label: "Reset Semantic Model...",
 						click: function() { RdfExporterMenuBar.editRdfSchema(true); }
 					},
 					{},
@@ -460,11 +460,11 @@ $(function(){
 			                    	 label:"Based on RDF file...",
 			                    	 click: function() { RdfReconciliationManager.newRdfService(); }        	 
 			                     },
-			                     {
-			                    	 "id" : "rdf/reconcile/sindice",
-			                    	 label: "Based on a Sindice site search...",
-			                    	 click: function() { RdfReconciliationManager.newSindiceService(); }        	 
-			                     },
+			                     // {
+			                    	//  "id" : "rdf/reconcile/sindice",
+			                    	//  label: "Based on a Sindice site search...",
+			                    	//  click: function() { RdfReconciliationManager.newSindiceService(); }        	 
+			                     // },
 			                     {
 			                    	 "id" : "rdf/reconcile/stanbol",
 			                    	 label: "Based on a Apache Stanbol EntityHub...",

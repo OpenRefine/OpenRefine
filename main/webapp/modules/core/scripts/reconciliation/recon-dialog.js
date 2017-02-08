@@ -107,7 +107,7 @@ ReconDialog.prototype._populateDialog = function() {
           service: service,
           handler: null
       };
-
+      /*
       record.selector = $('<a>')
       .attr("href", "javascript:{}")
       .addClass("recon-dialog-service-selector")
@@ -117,7 +117,7 @@ ReconDialog.prototype._populateDialog = function() {
     	self._toggleServices();
         self._selectService(record);
       });
-
+      */
       $('<a>')
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
