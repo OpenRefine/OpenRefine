@@ -350,7 +350,7 @@
 		"as-property": "Comme propriété",
 		"contact-service": "Connexion au service de réconciliation",
 		"error-contact": "Erreur lors de la connexion au service de réconciliation",
-		"fb-recon": "Réconciliation basée sur des requêtes Freebase",
+		"wd-recon-lang": "fr",
 		"recon-col": "Réconcilier la colonne",
 		"pick-service": "Choisir un service ou une extension à gauche",
 		"add-recon-srv": "Ajouter un service de réconciliation avec un espace de noms",

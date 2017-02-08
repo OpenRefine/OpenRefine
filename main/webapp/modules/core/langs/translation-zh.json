@@ -350,7 +350,7 @@
         "as-property": "作为属性",
         "contact-service": "正在访问搭配服务",
         "error-contact": "在访问搭配服务时出现异常",
-        "fb-recon": "基于query的Freebase搭配",
+        "wd-recon-lang": "zh",
         "recon-col": "搭配列",
         "pick-service": "在左侧选择一个服务或扩展",
         "add-recon-srv": "添加具命名空间的搭配服务",

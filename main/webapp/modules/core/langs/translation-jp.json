@@ -350,7 +350,7 @@
 		"as-property": "プロパティ",
 		"contact-service": "名寄せサービスにコンタクト中",
 		"error-contact": "名寄せサービスのコンタクトにエラー",
-		"fb-recon": "Freebase Query-based Reconciliation",
+		"wd-recon-lang": "jp",
 		"recon-col": "カラムを名寄せ",
 		"pick-service": "左からサービスかエクステンションを選択",
 		"add-recon-srv": "名前空間名寄せサービスを追加",
