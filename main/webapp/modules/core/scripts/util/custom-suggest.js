@@ -33,16 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var CustomSuggest = {};
 
-// Default API key for Refine to use for freebase suggest widget
-//CustomSuggest.setFreebaseAPIKey("AIzaSyBBTAtJ31v_jlg_ImbQuBNnAaAyrHzRyW8"); // Google key
-CustomSuggest.FREEBASE_API_KEY = "AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M"; // OpenRefine default key
-
-CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
-  $.suggest.suggest.defaults.key = freebaseAPIKey;
-  $.suggest.suggestT.defaults.key = freebaseAPIKey;
-  $.suggest.suggestP.defaults.key = freebaseAPIKey;
-};
-
 (function() {
 
   /*
@@ -168,18 +158,4 @@ CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
     }
   );
   
-  // Use Freebase API Key
-  $.ajax("command/core/get-preference", 
-    {
-      async: false,
-      data: {name: "freebase.api.key"},
-      success: function(data) {
-        if (data.value && data.value != "null") {
-          CustomSuggest.setFreebaseAPIKey(data.value);
-        } else {
-          CustomSuggest.setFreebaseAPIKey(CustomSuggest.FREEBASE_API_KEY);
-        }
-      }
-    }
-  );
 })();

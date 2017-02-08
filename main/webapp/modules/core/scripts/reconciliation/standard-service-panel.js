@@ -222,8 +222,6 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     suggestOptions.key = null;
     suggestOptions.query_param_name = "prefix";
     input.suggestT(suggestOptions);
-  } else if (this._isInFreebaseSchemaSpace()) {
-    input.suggestT({ filter : '(all type:/type/type)' });
   }
 
   input.bind("fb-select", function(e, data) {
@@ -251,20 +249,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
       suggestOptions.ac_param = { schema: typeof type == "string" ? type : type.id };
     }
     inputs.suggestP(suggestOptions);
-  } else if (this._isInFreebaseSchemaSpace()) {
-    var namespace = (type) ? (typeof type == "string" ? type : type.id) : "/common/topic"
-    inputs.suggestP({
-      filter : '(should (any namespace:/type/object namespace:' + namespace + '))'
-    });
   }
-};
-
-ReconStandardServicePanel.prototype._isInFreebaseIdentifierSpace = function() {
-  return ReconciliationManager.isFreebaseIdOrMid(this._service.identifierSpace);
-};
-
-ReconStandardServicePanel.prototype._isInFreebaseSchemaSpace = function() {
-  return ReconciliationManager.isFreebaseId(this._service.schemaSpace);
 };
 
 ReconStandardServicePanel.prototype.start = function() {
