@@ -88,12 +88,11 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
                 rdf = text.data;
             }
         });
-        var fairdatapoint = self.fairDataPointPost;
-        if ((fairdatapointpost.ftpHost != null) && (fairdatapointpost.directory != null)){
+        if ((self.fairDataPointPost.ftpHost != null) && (self.fairDataPointPost.directory != null)){
           $.ajax({
               type: "POST",
               url :"command/rdf-extension/post-fdp-info",
-              data: JSON.stringify(fairdatapoint)+"#%SPLITHERE%#"+rdf,
+              data: JSON.stringify(self.fairDataPointPost)+"#%SPLITHERE%#"+rdf,
               dataType: "json",
               contentType: "application/json",
               xhr: function() {
@@ -202,17 +201,26 @@ getFairCatalogs = function(rootUrl, self){
            self._pushtoFtpDiv.html('');
            if (self.hasCatalogs){
                data.content.forEach(function(element){
-                   themes=[];
-                   for (var i = 0; i < element.themeTaxonomy.length; i++) themes.push(element.themeTaxonomy[i].namespace+element.themeTaxonomy[i].localname) ;
                    if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
+                       console.log(element);
                        self.fairDataPointPost.catalog = {
-                               _identifier: element.identifier.identifier.label,
-                               _title: element.title.label,
-                               _version: element.title.label,
-                               _publisher: element.publisher.name.label,
-                               _theme: themes,
-                               _homepage: element.homepage.namespace + element.homepage.localName,
-                               _exists: true
+                              'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.identifier.identifier,
+                              'http://purl.org/dc/terms/title': element.title,
+                              'http://purl.org/dc/terms/hasVersion': element.title,
+                              'http://purl.org/dc/terms/publisher': element.publisher,
+                              'http://www.w3.org/ns/dcat#themeTaxonomy': element.themeTaxonomy,
+                              'http://xmlns.com/foaf/0.1/homepage': element.homepage,
+                              'http://xmlns.com/foaf/0.1/description': element.homepage,
+                              'http://purl.org/dc/terms/issued':null,
+                              'http://purl.org/dc/terms/language':null,
+                              'http://purl.org/dc/terms/license':null,
+                              'http://purl.org/dc/terms/modified':null,
+                              'http://purl.org/dc/terms/rights':null,
+                              'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued':null,
+                              'http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified':null,
+                              'http://www.w3.org/2000/01/rdf-schema#label':null,
+                              'http://www.w3.org/ns/dcat#dataset':null,
+                              _exists: true
                        };   
                    }
                });
@@ -261,20 +269,28 @@ getFairDatasets = function(url, self){
             self._pushtoFtpDiv.html('');
             if(self.hasDatasets){
                 data.content.forEach(function(element){
-                    themes=[];
-                    keywords=[];
-                    for (var i = 0; i < element.themes.length; i++) themes.push(element.themes[i].namespace+element.themes[i].localname) ;
-                    for (var i = 0; i < element.keywords.length; i++) themes.push(element.keywords[i].namespace+element.keywords[i].localname) ;
                     if (element.identifier.identifier.label == $('select.datasets option:selected').val()){
                         self.fairDataPointPost.dataset = {
-                                _identifier : element.identifier.identifier.label,
-                                _title : element.title.label,
-                                _version : element.title.label,
-                                _decription : element.description.label,
-                                _keywords : keywords,
-                                _landingpage : element.landingPage.namespace+element.landingPage.localName,
-                            _publisher : element.publisher.name.label,
-                            _theme : themes, 
+                            'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.identifier.identifier,
+                            'http://purl.org/dc/terms/title' : element.title,
+                            'http://purl.org/dc/terms/hasVersion' : element.title,
+                            'http://purl.org/dc/terms/description' : element.description,
+                            "http://www.w3.org/ns/dcat#keyword" : elment.keywords,
+                            "http://www.w3.org/ns/dcat#landingPage" : element.landingPage,
+                            "http://purl.org/dc/terms/publisher" : element.publisher,
+                            "http://www.w3.org/2000/01/rdf-schema#label":null,
+                            "http://www.w3.org/ns/dcat#theme": null, 
+                            "http://purl.org/dc/terms/issued":null,
+                            "http://purl.org/dc/terms/language":null,
+                            "http://purl.org/dc/terms/license":null,
+                            "http://purl.org/dc/terms/modified":null,
+                            "http://purl.org/dc/terms/rights":null,
+                            "http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier":null,
+                            "http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued":null,
+                            "http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified":null,
+                            "http://www.w3.org/2000/01/rdf-schema#label":null,
+                            "http://www.w3.org/ns/dcat#contactPoint":null,
+                            "http://www.w3.org/ns/dcat#distribution":null,
                             _exists : true
                         }
                     }

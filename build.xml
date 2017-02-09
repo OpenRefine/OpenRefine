@@ -165,11 +165,11 @@
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-distribution.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-distribution.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/controller.js" tofile="extensions/grefine-rdf-extension/module/MOD-INF/controller.js" />
-        <copy todir="extensions/fairifier-rdf-extension/dtls">
-            <fileset dir="extensions/grefine-rdf-extension/src/org"/>
+        <copy overwrite="true" todir="extensions/grefine-rdf-extension/src/org">
+            <fileset dir="extensions/fairifier-rdf-extension/dtls"/>
         </copy>
-        <copy overwrite="true" todir="extensions/fairifier-rdf-extension/lib">
-            <fileset dir="extensions/grefine-rdf-extension/module/MOD-INF/lib"/>
+        <copy overwrite="true" todir="extensions/grefine-rdf-extension/module/MOD-INF/lib">
+            <fileset dir="extensions/fairifier-rdf-extension/lib"/>
         </copy>
 
 
