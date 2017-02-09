@@ -28,7 +28,7 @@ sudo npm install -g bower
 ```
 download the git repository
 ```
-git clone --recursive https://github.com/DTL-FAIRData/FAIRifier.git
+git clone --recursive -b development https://github.com/DTL-FAIRData/FAIRifier.git
 ```
 cd to the directory of the git repo
 ```

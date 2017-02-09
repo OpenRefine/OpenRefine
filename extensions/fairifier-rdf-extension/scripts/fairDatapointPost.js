@@ -5,6 +5,9 @@
  */
 
 var fairDataPointPost = {};
+var fairDataPointPostCatalogDialog = null;
+var fairDataPointPostDatasetDialog = null;
+var fairDataPointPostDistributionDialog = null;
 var project = theProject;
 
 function fairDataPointPostDialog(schema){
@@ -40,17 +43,6 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
     '</p>').appendTo(body);
     
     var html = $('<p class="base-uri-space"><span class="emphasized">Base URI </span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
-//    var html = $('     <div id="metadata-target" ng-app="metadata.form">' +
-//            '<metadata-form></metadata-form>'+
-//            '<button id="my-btn">Submit</button>'+
-//        '</div>' +
-//
-//        '<script>' +
-//            ' angular.bootstrap($("div#metadata-target"), ["metadata.form"] );'+
-//        '</script>'
-//        '<script src="https://code.angularjs.org/1.6.1/angular.min.js"></script>'+
-//        '<script src="metadata-form.js"></script>
-//        ).appendTo(body);
     
     var elmts = DOM.bind(html);
     this._baseUriSpan = elmts.baseUriSpan;
@@ -60,8 +52,8 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
     this._pushtoFtpDiv = $('<div></div>');
     elmts.baseUriSpan.text(fairDataPointPost.baseUri);
     elmts.editBaseUriLink.click(function(evt){
-    	evt.preventDefault();
-    	self._editBaseUri($(evt.target));
+      evt.preventDefault();
+      self._editBaseUri($(evt.target));
     });
 };
 
@@ -98,25 +90,25 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
         });
         var fairdatapoint = self.fairDataPointPost;
         if ((fairdatapointpost.ftpHost != null) && (fairdatapointpost.directory != null)){
-	        $.ajax({
-	            type: "POST",
-	            url :"command/rdf-extension/post-fdp-info",
-	            data: JSON.stringify(fairdatapoint)+"#%SPLITHERE%#"+rdf,
-	            dataType: "json",
-	            contentType: "application/json",
-	            xhr: function() {
-	                var myXhr = $.ajaxSettings.xhr();
-	                if(myXhr.upload){
-	                    myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
-	                }
-	                return myXhr;
-	            },
-	  			success: function(data){ 
-	            	alert("FAIR data pushed"); DialogSystem.dismissAll();
-	            }
-	       });
+          $.ajax({
+              type: "POST",
+              url :"command/rdf-extension/post-fdp-info",
+              data: JSON.stringify(fairdatapoint)+"#%SPLITHERE%#"+rdf,
+              dataType: "json",
+              contentType: "application/json",
+              xhr: function() {
+                  var myXhr = $.ajaxSettings.xhr();
+                  if(myXhr.upload){
+                      myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
+                  }
+                  return myXhr;
+              },
+          success: function(data){ 
+                alert("FAIR data pushed"); DialogSystem.dismissAll();
+              }
+         });
        }else{
-       		alert("upload error");
+          alert("upload error");
        }
     }).appendTo(footer);
     
@@ -128,18 +120,18 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
 
 
 fairDataPointPostDialog.prototype._editBaseUri = function(src){
-	var self = this;
-	var menu = MenuSystem.createMenu().width('400px');
-	menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newBaseUri" size="50"><br/>'+
-			'<button class="button" bind="applyButton">Apply</button>' + 
-			'<button class="button" bind="cancelButton">Cancel</button></div>'
+  var self = this;
+  var menu = MenuSystem.createMenu().width('400px');
+  menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newBaseUri" size="50"><br/>'+
+      '<button class="button" bind="applyButton">Apply</button>' + 
+      '<button class="button" bind="cancelButton">Cancel</button></div>'
                 );
-	MenuSystem.showMenu(menu,function(){});
-	MenuSystem.positionMenuLeftRight(menu, src);
-	var elmts = DOM.bind(menu);
-	elmts.newBaseUri.val(fairDataPointPost.baseUri).focus().select();
-	elmts.applyButton.click(function() {
-	    var newBaseUri = elmts.newBaseUri.val();
+  MenuSystem.showMenu(menu,function(){});
+  MenuSystem.positionMenuLeftRight(menu, src);
+  var elmts = DOM.bind(menu);
+  elmts.newBaseUri.val(fairDataPointPost.baseUri).focus().select();
+  elmts.applyButton.click(function() {
+      var newBaseUri = elmts.newBaseUri.val();
             if(!newBaseUri || !newBaseUri.substring(7)=='http://'){
                 alert('Base URI should start with http://');
                 return;
@@ -155,7 +147,7 @@ fairDataPointPostDialog.prototype._editBaseUri = function(src){
             MenuSystem.dismissAll();
             self._replaceBaseUri(newBaseUri,false);
         });
-	elmts.cancelButton.click(function() {
+  elmts.cancelButton.click(function() {
                 MenuSystem.dismissAll();
         });
 };
@@ -193,16 +185,14 @@ getFairCatalogs = function(rootUrl, self){
         
         elmts.addCatalog.click(function(evt){
             evt.preventDefault();
-            new fairDataPointPostCatalogDialog(function(catalog){
-               if (catalog._title && catalog._identifier){
-                   $('<option></option>').attr('value',catalog._identifier).text(catalog._identifier+" - "+catalog._title).appendTo(add_cat_available_html); 
-                   self._datasetDiv.html('');
-                   self._distributionDiv.html('');
-                   self._pushtoFtpDiv.html('');
-                   catalog._exists = false;
-                   self.fairDataPointPost.catalog = catalog;
-                   getFairDatasets(self.fairDataPointPost.baseUri + "/catalog/" + catalog._identifier, self);
-               }
+            fairDataPointPostCatalogDialog = new FairDataPointPostCatalogDialog(function(catalog){
+                $('<option></option>').attr('value',catalog['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url).text(catalog['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url+" - "+catalog['http://purl.org/dc/terms/title']).appendTo(add_cat_available_html); 
+                self._datasetDiv.html('');
+                self._distributionDiv.html('');
+                self._pushtoFtpDiv.html('');
+                catalog._exists = false;
+                self.fairDataPointPost.catalog = catalog;
+                getFairDatasets(catalog['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url, self);
             });
         });
         
@@ -254,21 +244,19 @@ getFairDatasets = function(url, self){
                 self.hasDatasets = true;
         });
 
-        elmts.addDataset.click(function(evt){
-            evt.preventDefault();
-            new fairDataPointPostDatasetDialog(function(dataset){
-                if (dataset._title && dataset._identifier && dataset._version){
-                    $('<option></option>').attr('value',dataset._identifier).text(dataset._identifier+" - "+dataset._title).appendTo(add_dat_available_html); 
-                    self._distributionDiv.html('');
-                    self._pushtoFtpDiv.html('');
-                    dataset._exists = false;
-                    self.fairDataPointPost.dataset = dataset;
-                    addFairDistribution(self);
-                };
-            });
-        });
-    
-        add_dat_available_html.click(function(){
+      elmts.addDataset.click(function(evt){
+          evt.preventDefault();
+          fairDataPointPostDatasetDialog = new FairDataPointPostDatasetDialog(function(dataset){
+              $('<option></option>').attr('value',dataset['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url).text(dataset['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url+" - "+dataset['http://purl.org/dc/terms/title']).appendTo(add_dat_available_html); 
+              self._distributionDiv.html('');
+              self._pushtoFtpDiv.html('');
+              dataset._exists = false;
+              self.fairDataPointPost.dataset = dataset;
+              addFairDistribution(self);
+          });
+      });
+
+      add_dat_available_html.click(function(){
             self._distributionDiv.html('');
             self._pushtoFtpDiv.html('');
             if(self.hasDatasets){
@@ -311,11 +299,11 @@ addFairDistribution = function(self){
     var elmts = DOM.bind(add_dist_html);
     elmts.addDistribution.click(function(evt){
         evt.preventDefault();
-        new fairDataPointPostDistributionDialog(function(distribution){
-            elmts.distribution.text(distribution._identifier + " - " + distribution._title);
-            self._pushtoFtpDiv.html('');
-            self.fairDataPointPost.distribution = distribution;
-            pushFairdataToFtp(self);
+        fairDataPointPostDistributionDialog = new FairDataPointPostDistributionDialog(function(distribution){
+          elmts.distribution.text(distribution['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url + " - " + distribution['http://purl.org/dc/terms/title']);
+          self._pushtoFtpDiv.html('');
+          self.fairDataPointPost.distribution = distribution;
+          pushFairdataToFtp(self);
         });
     });
     add_dist_html.appendTo(self._distributionDiv);
@@ -332,6 +320,7 @@ pushFairdataToFtp = function(self){
         self._editFtpHost($(evt.target));
     });
     
+
     var ftp_host_html = $('<p><span>directory</span> <span bind="directorySpan" ></span> <a href="#" bind="editDirectory">edit</a></p>').appendTo(self._pushtoFtpDiv);
     var elmts = DOM.bind(ftp_host_html);
     self._directorySpan = elmts.directorySpan;

@@ -167,7 +167,12 @@ function init() {
             "scripts/fairDatapointPost-dataset.js",
             "scripts/fairDatapointPost-distribution.js",
             "scripts/externals/rdfstore_min.js",
+            "scripts/externals/bootstrap.js",
             "scripts/externals/angular.min.js",
+            "scripts/externals/ui-bootstrap.js",
+            "scripts/externals/ui-bootstrap-tpls-2.5.0.min.js",
+            "/../../../metadata-form/bower_components/angular-bootstrap/ui-bootstrap.min.js",
+            "/../../../metadata-form/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
             "scripts/metadata-form.js",
             
             "scripts/rdf-data-table-view.js",

@@ -154,20 +154,22 @@
     		<arg value="install"/>
     	</exec>
     	<exec dir="metadata-form" executable="gulp"></exec>
- 		<copy overwrite="true" todir="extensions/grefine-rdf-extension/module/scripts/">
-            <fileset dir="metadata-form/dist/"/>
+ 		<copy overwrite="true" todir="extensions/grefine-rdf-extension/module/scripts">
+            <fileset dir="metadata-form/dist"/>
         </copy>
-    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/externals/angular.min.js" tofile="extensions/grefine-rdf-extension/module/scripts/externals/angular.min.js"/>
+    	<copy overwrite="true" todir="extensions/grefine-rdf-extension/module/scripts/externals">
+            <fileset dir="extensions/fairifier-rdf-extension/scripts/externals"/>
+        </copy>
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-catalog.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-catalog.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-dataset.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-dataset.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-distribution.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-distribution.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/controller.js" tofile="extensions/grefine-rdf-extension/module/MOD-INF/controller.js" />
-        <copy todir="extensions/fairifier-rdf-extension/dtls/">
-            <fileset dir="extensions/grefine-rdf-extension/src/org/"/>
+        <copy todir="extensions/fairifier-rdf-extension/dtls">
+            <fileset dir="extensions/grefine-rdf-extension/src/org"/>
         </copy>
-        <copy overwrite="true" todir="extensions/fairifier-rdf-extension/lib/">
-            <fileset dir="extensions/grefine-rdf-extension/module/MOD-INF/lib/"/>
+        <copy overwrite="true" todir="extensions/fairifier-rdf-extension/lib">
+            <fileset dir="extensions/grefine-rdf-extension/module/MOD-INF/lib"/>
         </copy>
 
 
