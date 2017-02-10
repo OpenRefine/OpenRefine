@@ -49,12 +49,10 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.servicePanelMessage.html($.i18n._('core-recon')["pick-service"]);
   this._elmts.serviceListTitle.html($.i18n._('core-recon')["service-title"]);
   this._elmts.addStandardServiceButton.html($.i18n._('core-buttons')["add-std-svc"]+"...");
-  this._elmts.addNamespacedServiceButton.html($.i18n._('core-buttons')["add-named-svc"]+"...");
   this._elmts.reconcileButton.html($.i18n._('core-buttons')["start-recon"]);
   this._elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
 
   this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
-  this._elmts.addNamespacedServiceButton.click(function() { self._onAddNamespacedService(); });
 
   this._elmts.reconcileButton.click(function() { self._onOK(); });
   this._elmts.cancelButton.click(function() { self._dismiss(); });
@@ -227,46 +225,4 @@ ReconDialog.prototype._onAddStandardService = function() {
   elmts.input.focus().select();
 };
 
-ReconDialog.prototype._onAddNamespacedService = function() {
-  var self = this;
-  var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-namespaced-service-dialog.html"));
-  var elmts = DOM.bind(dialog);
 
-  elmts.dialogHeader.html($.i18n._('core-recon')["add-recon-srv"]);
-  elmts.or_recon_namespace.html($.i18n._('core-recon')["namespace"]+":");
-  elmts.or_recon_entType.html($.i18n._('core-recon')["ent-type"]+":");
-  elmts.addButton.html($.i18n._('core-buttons')["add-service"]);
-  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-  
-  var level = DialogSystem.showDialog(dialog);
-  var dismiss = function() {
-    DialogSystem.dismissUntil(level - 1);
-  };
-
-  elmts.namespaceInput
-  .suggest({ filter : '(all type:/type/namespace)' })
-  .bind("fb-select", function(e, data) {
-    elmts.typeInput.focus();
-  });
-
-  elmts.typeInput.suggestT({ filter : '(all type:/type/type)' });
-
-  elmts.cancelButton.click(dismiss);
-  elmts.addButton.click(function() {
-    var namespaceData = elmts.namespaceInput.data("data.suggest");
-    var typeData = elmts.typeInput.data("data.suggest");
-    if (namespaceData) {
-      var url = "http://reconcile.freebaseapps.com/namespace_reconcile?namespace="
-        + encodeURIComponent(namespaceData.id);
-      if (typeData) {
-        url += "&type=" + typeData.id;
-      }
-
-      ReconciliationManager.registerStandardService(url, function(index) {
-        self._refresh(index);
-      });
-    }
-    dismiss();
-  });
-  elmts.namespaceInput.focus().data("suggest").textchange();
-};
