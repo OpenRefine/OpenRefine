@@ -634,6 +634,7 @@
 		"pick-record": "Sélectionner les éléments des entrées",
 		"merge-cluster": "Fusionner la sélection & regrouper",
 		"merge-close": "Fusionner la sélection & fermer",
+		"export-cluster": "Exporter les groupes",
 		"close": "Fermer",
 		"reset-template": "Réinitialiser le modèle",
 		"export": "Exporter",

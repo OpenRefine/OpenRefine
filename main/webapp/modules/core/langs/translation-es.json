@@ -634,6 +634,7 @@
 		"pick-record": "Escojer elementos del registro",
 		"merge-cluster": "Unir seleccionados y reagrupar",
 		"merge-close": "Unir seleccionados y cerrar",
+		"export-cluster": "Exportar agrupaciones",
 		"close": "Cerrar",
 		"reset-template": "Restablecer la plantilla",
 		"export": "Exportar",

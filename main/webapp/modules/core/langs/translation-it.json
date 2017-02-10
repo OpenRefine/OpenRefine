@@ -634,6 +634,7 @@
 		"pick-record": "Seleziona gli elementi del record",
 		"merge-cluster": "Unisci i selezionati &amp; Ri-Cluster",
 		"merge-close": "Unisci i selezionati &amp; Chiudi",
+		"export-cluster": "Esporta cluster",
 		"close": "Chiudi",
 		"reset-template": "Resetta Template",
 		"export": "Esporta",

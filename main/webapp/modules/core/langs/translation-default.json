@@ -634,7 +634,7 @@
 		"pick-record": "Pick Record Elements",
 		"merge-cluster": "Merge Selected &amp; Re-Cluster",
 		"merge-close": "Merge Selected &amp; Close",
-    "export-cluster": "Export Clusters",
+		"export-cluster": "Export Clusters",
 		"close": "Close",
 		"reset-template": "Reset Template",
 		"export": "Export",
