@@ -37,18 +37,6 @@ var ReconciliationManager = {
   _urlMap : {}
 };
 
-ReconciliationManager.isFreebaseId = function(s) {
-  return s == "http://rdf.freebase.com/ns/type.object.id";
-};
-
-ReconciliationManager.isFreebaseMid = function(s) {
-  return s == "http://rdf.freebase.com/ns/type.object.mid";
-};
-
-ReconciliationManager.isFreebaseIdOrMid = function(s) {
-  return ReconciliationManager.isFreebaseMid(s) || ReconciliationManager.isFreebaseId(s);
-};
-
 ReconciliationManager._rebuildMap = function() {
   var map = {};
   $.each(ReconciliationManager.getAllServices(), function(i, service) {
@@ -140,10 +128,7 @@ ReconciliationManager.save = function(f) {
 };
 
 (function() {
-  ReconciliationManager.customServices.push({
-    "name" : $.i18n._('core-recon')["fb-recon"],
-    "ui" : { "handler" : "ReconFreebaseQueryPanel" }
-  });
+  var lang = $.i18n._('core-recon')["wd-recon-lang"];
 
   $.ajax({
     async: false,
@@ -151,15 +136,13 @@ ReconciliationManager.save = function(f) {
       name: "reconciliation.standardServices" 
     }),
     success: function(data) {
-      if (data.value && data.value != "null") {
+      if (data.value && data.value != "null" && data.value != "[]") {
         ReconciliationManager.standardServices = JSON.parse(data.value);
         ReconciliationManager._rebuildMap();
       } else {
-      // FIXME: Standard recon service needs to be replaced
-//        ReconciliationManager.registerStandardService(
-//            "http://reconcile.freebaseapps.com/reconcile"
-//            "http://standard-reconcile.freebaseapps.com/reconcile"
-//            );
+         ReconciliationManager.registerStandardService(
+	      "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api"
+              );
       }
     },
     dataType: "json"

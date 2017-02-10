@@ -104,7 +104,7 @@ public class TextSearchFacet implements Facet {
                             _query, 
                             _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
-                    e.printStackTrace();
+                    throw new JSONException(e);
                 }
             } else if (!_caseSensitive) {
                 _query = _query.toLowerCase();
