@@ -397,7 +397,9 @@ ClusteringDialog.prototype._export = function() {
     var link = document.createElement('a');
     link.href = 'data:' + data;
     link.download = "clusters_" + projectName + "_" + columnName + "_" + timeStamp + ".json";
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
 };
 
 ClusteringDialog.prototype._dismiss = function() {
