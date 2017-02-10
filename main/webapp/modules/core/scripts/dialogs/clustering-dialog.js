@@ -336,7 +336,7 @@ ClusteringDialog.prototype._onApplyReCluster = function() {
 };
 
 ClusteringDialog.prototype._onExportCluster = function() {
-    var self = this;        
+    var self = this;
     self._export();
 };
 
@@ -391,12 +391,12 @@ ClusteringDialog.prototype._export = function() {
         'timeStamp': timeStamp,
         'clusterMethod': this._method,
         'keyingFunction': this._function,
-        'clusters': clusters,
+        'clusters': clusters
     };
     var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-    var link=document.createElement('a');
-    link.href='data:' + data;
-    link.download="clusters_" + projectName + "_" + columnName + "_" + timeStamp + ".json";
+    var link = document.createElement('a');
+    link.href = 'data:' + data;
+    link.download = "clusters_" + projectName + "_" + columnName + "_" + timeStamp + ".json";
     link.click();
 };
 
