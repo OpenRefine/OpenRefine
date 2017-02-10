@@ -634,6 +634,7 @@
 		"pick-record": "レコード要素を選択",
 		"merge-cluster": "Merge Selected &amp; Re-Cluster",
 		"merge-close": "Merge Selected &amp; Close",
+		"export-cluster": "クラスタを出力",
 		"close": "閉じる",
 		"reset-template": "テンプレートをリセット",
 		"export": "出力",

@@ -635,6 +635,7 @@
         "pick-record": "选择记录",
         "merge-cluster": "合并选中 &amp; 重新簇集",
         "merge-close": "合并选中 &amp; 关闭",
+        "export-cluster": "导出簇",
         "close": "关闭",
         "reset-template": "重置模板",
         "export": "导出",
