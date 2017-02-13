@@ -1,5 +1,6 @@
 package org.dtls.fairifier;
 
+import java.lang.Thread;
 import java.lang.IllegalArgumentException;
 import java.net.URL;
 import java.io.File;
@@ -8,8 +9,10 @@ import java.net.URLConnection;
 import java.io.IOException;
 import java.net.SocketException;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import  java.io.BufferedOutputStream;
+
 /**
  * @author Shamanou van Leeuwen
  * @date 13-12-2016
@@ -23,13 +26,22 @@ public class FtpResource extends Resource{
     private String host;
     private String location;
     private String filename;
-    
+    private ProgressThread progressThread = new ProgressThread();
+
     public FtpResource(String host, String username, String password, String location, String filename){
         this.host = host;
         this.password = password;
         this.username = username;
         this.location = location;
         this.filename = filename;
+    }
+
+    public void setProgressThread(ProgressThread progressThread){
+        this.progressThread = progressThread;
+    }
+
+    public ProgressThread getProgressThread(){
+        return this.progressThread;
     }
     
     public void push(){
@@ -45,12 +57,15 @@ public class FtpResource extends Resource{
             ftp.changeWorkingDirectory(this.location);
             ftp.setFileTransferMode(ftp.BINARY_FILE_TYPE);
             ftp.enterLocalPassiveMode();//Switch to passive mode
-            ftp.storeFile(this.filename, new ByteArrayInputStream(this.out.getBytes()));
+            
+            InputStream stSource = new ByteArrayInputStream(this.out.getBytes());
+
+            ftp.storeFile(this.filename, stSource);
             ftp.completePendingCommand();
             ftp.logout();
             ftp.disconnect();
-        } catch (Exception ex){
-            System.out.println(ex.getMessage());
+        }catch(IOException ex){
+            System.out.println(ex.toString());
         }
     }
 }

@@ -59,12 +59,8 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
 
 fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
-    
-    function progressHandlerFunction(event){
-        $(".progress").width((event.loaded/event.total) * 100);
-    }
 
-    $('<span style="height:4%;background-color:grey; position:absolute;visibility:visible;margin-left: 100px "></span>').addClass("progress").appendTo(footer);
+    $('<span style="height:4%; position:absolute;visibility:visible;margin-left: 100px "></span>').addClass("progress").appendTo(footer);
     
     
     $('<button></button>').addClass('button').html("OK").click(function() {
@@ -89,25 +85,20 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
             }
         });
         if ((self.fairDataPointPost.ftpHost != null) && (self.fairDataPointPost.directory != null)){
-          $.ajax({
-              type: "POST",
-              url :"command/rdf-extension/post-fdp-info",
-              data: JSON.stringify(self.fairDataPointPost)+"#%SPLITHERE%#"+rdf,
-              dataType: "json",
-              contentType: "application/json",
-              xhr: function() {
-                  var myXhr = $.ajaxSettings.xhr();
-                  if(myXhr.upload){
-                      myXhr.upload.addEventListener('progress',progressHandlerFunction, false);
-                  }
-                  return myXhr;
-              },
-          success: function(data){ 
-                alert("FAIR data pushed"); DialogSystem.dismissAll();
-              }
-         });
-       }else{
-          alert("upload error");
+          var xhr = new XMLHttpRequest();
+          xhr.upload.addEventListener("progress", function(e){ $(".progress").text("pushing data.."); }, false);
+
+          xhr.addEventListener('load', function(e) {
+            var ret = JSON.parse(this.responseText);
+            if (ret.code === "ok"){
+              alert("FAIR data pushed"); 
+              DialogSystem.dismissAll();
+            } else{
+              alert("upload error");
+            }
+          });
+          xhr.open('post', "command/rdf-extension/post-fdp-info", true);
+          xhr.send(JSON.stringify({'metadata':self.fairDataPointPost, 'data':rdf}));
        }
     }).appendTo(footer);
     
@@ -178,7 +169,7 @@ getFairCatalogs = function(rootUrl, self){
         self.hasCatalogs = false;
         
         data.content.forEach(function(element){
-            $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label + " - " + element.title.label).appendTo(add_cat_available_html);
+            $('<option></option>').attr('value',element.identifier.identifier.label).text(element.uri.namespace + element.uri.localName + " - " + element.title.label).appendTo(add_cat_available_html);
             self.hasCatalogs = true;
         });
         
@@ -202,24 +193,20 @@ getFairCatalogs = function(rootUrl, self){
            if (self.hasCatalogs){
                data.content.forEach(function(element){
                    if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
-                       console.log(element);
                        self.fairDataPointPost.catalog = {
-                              'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.identifier.identifier,
-                              'http://purl.org/dc/terms/title': element.title,
-                              'http://purl.org/dc/terms/hasVersion': element.title,
-                              'http://purl.org/dc/terms/publisher': element.publisher,
-                              'http://www.w3.org/ns/dcat#themeTaxonomy': element.themeTaxonomy,
-                              'http://xmlns.com/foaf/0.1/homepage': element.homepage,
-                              'http://xmlns.com/foaf/0.1/description': element.homepage,
-                              'http://purl.org/dc/terms/issued':null,
-                              'http://purl.org/dc/terms/language':null,
-                              'http://purl.org/dc/terms/license':null,
-                              'http://purl.org/dc/terms/modified':null,
-                              'http://purl.org/dc/terms/rights':null,
-                              'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued':null,
-                              'http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified':null,
-                              'http://www.w3.org/2000/01/rdf-schema#label':null,
-                              'http://www.w3.org/ns/dcat#dataset':null,
+                              // 'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.uri.namespace + element.uri.localName,
+                              // 'http://purl.org/dc/terms/title': element.title.label,
+                              // 'http://purl.org/dc/terms/hasVersion': element.version.label,
+                              // 'http://purl.org/dc/terms/publisher': element.publisher,
+                              // 'http://www.w3.org/ns/dcat#themeTaxonomy': element.themeTaxonomy,
+                              // 'http://xmlns.com/foaf/0.1/homepage': element.homepage,
+                              // 'http://xmlns.com/foaf/0.1/description': element.homepage,
+                              // 'http://purl.org/dc/terms/issued':element.catalogIssued,
+                              // 'http://purl.org/dc/terms/language':element.language,
+                              // 'http://purl.org/dc/terms/license':element.license,
+                              // 'http://purl.org/dc/terms/modified':element.modified.label,
+                              // 'http://purl.org/dc/terms/rights':element.rights.localName,
+                              // 'http://www.w3.org/ns/dcat#dataset':element.datasets,
                               _exists: true
                        };   
                    }
@@ -248,7 +235,7 @@ getFairDatasets = function(url, self){
         self.hasDatasets = false;
 
        data.content.forEach(function(element){
-                $('<option></option>').attr('value',element.identifier.identifier.label).text(element.identifier.identifier.label + " - " + element.title.label).appendTo(add_dat_available_html);
+                $('<option></option>').attr('value',element.identifier.identifier.label).text(element.uri.namespace + element.uri.localName + " - " + element.title.label).appendTo(add_dat_available_html);
                 self.hasDatasets = true;
         });
 
@@ -269,32 +256,25 @@ getFairDatasets = function(url, self){
             self._pushtoFtpDiv.html('');
             if(self.hasDatasets){
                 data.content.forEach(function(element){
-                    if (element.identifier.identifier.label == $('select.datasets option:selected').val()){
-                        self.fairDataPointPost.dataset = {
-                            'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.identifier.identifier,
-                            'http://purl.org/dc/terms/title' : element.title,
-                            'http://purl.org/dc/terms/hasVersion' : element.title,
-                            'http://purl.org/dc/terms/description' : element.description,
-                            "http://www.w3.org/ns/dcat#keyword" : elment.keywords,
-                            "http://www.w3.org/ns/dcat#landingPage" : element.landingPage,
-                            "http://purl.org/dc/terms/publisher" : element.publisher,
-                            "http://www.w3.org/2000/01/rdf-schema#label":null,
-                            "http://www.w3.org/ns/dcat#theme": null, 
-                            "http://purl.org/dc/terms/issued":null,
-                            "http://purl.org/dc/terms/language":null,
-                            "http://purl.org/dc/terms/license":null,
-                            "http://purl.org/dc/terms/modified":null,
-                            "http://purl.org/dc/terms/rights":null,
-                            "http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier":null,
-                            "http://rdf.biosemantics.org/ontologies/fdp-o#metadataIssued":null,
-                            "http://rdf.biosemantics.org/ontologies/fdp-o#metadataModified":null,
-                            "http://www.w3.org/2000/01/rdf-schema#label":null,
-                            "http://www.w3.org/ns/dcat#contactPoint":null,
-                            "http://www.w3.org/ns/dcat#distribution":null,
-                            _exists : true
-                        }
-                    }
-                });
+                  self.fairDataPointPost.dataset = {
+                      // 'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.uri.namespace + element.uri.localName,
+                      'http://purl.org/dc/terms/title' : element.title.label,
+                      'http://purl.org/dc/terms/hasVersion' : element.version.label,
+                      // 'http://purl.org/dc/terms/description' : element.description,
+                      // "http://www.w3.org/ns/dcat#keyword" : element.keywords,
+                      // "http://www.w3.org/ns/dcat#landingPage" : element.landingPage,
+                      // "http://purl.org/dc/terms/publisher" : element.publisher,
+                      // "http://www.w3.org/ns/dcat#theme": element.themes, 
+                      // "http://purl.org/dc/terms/issued": element.datasetIssued,
+                      // "http://purl.org/dc/terms/language": element.language,
+                      // "http://purl.org/dc/terms/license": element.license,
+                      // "http://purl.org/dc/terms/modified": element.datasetModified,
+                      // "http://purl.org/dc/terms/rights": element.rights,
+                      // "http://www.w3.org/ns/dcat#contactPoint": element.contactPoint,
+                      // "http://www.w3.org/ns/dcat#distribution": element.distribution,
+                      _exists : true
+                  }
+              });
             }
             addFairDistribution(self);            
         }).change();
