@@ -8,7 +8,7 @@ the web. All with the comfort and privacy of your own computer.
 
 Download
 -----------------------
-* [Latest Beta 2.6 rc2 - Recommended](https://github.com/OpenRefine/OpenRefine/releases)
+* [Latest Beta 2.7 rc1 - Recommended](https://github.com/OpenRefine/OpenRefine/releases)
 * [Latest Stable 2.5](https://github.com/OpenRefine/OpenRefine/releases/latest)
 
 Documentation and Videos
