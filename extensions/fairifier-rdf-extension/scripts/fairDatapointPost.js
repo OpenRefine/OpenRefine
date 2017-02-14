@@ -37,13 +37,34 @@ fairDataPointPostDialog.prototype._createDialog = function() {
 };
 
 fairDataPointPostDialog.prototype._constructBody = function(body) {
+  var css = document.createElement("style");
+  css.type = "text/css";
+  css.innerHTML = ""+
+  '.progress {'+
+    'border: 16px solid #f3f3f3; /* Light grey */'+
+    'border-top: 16px solid #3498db; /* Blue */'+
+    'border-radius: 50%;'+
+    'width: 120px;'+
+    'height: 120px;'+
+    'animation: spin 2s linear infinite;'+
+  '}'+
+
+  '@keyframes spin {'+
+    '0% { transform: rotate(0deg); }'+
+    '100% { transform: rotate(360deg); }'+
+  '}';
+
+  document.body.appendChild(css);
+
+
     var self = this;
     $('<p>' +
         'The created RDF schema provided can now be uploaded to a Fair Data Point. ' +
     '</p>').appendTo(body);
     
     var html = $('<p class="base-uri-space"><span class="emphasized">Base URI </span> <span bind="baseUriSpan" ></span> <a href="#" bind="editBaseUriLink">edit</a></p>').appendTo(body);
-    
+
+
     var elmts = DOM.bind(html);
     this._baseUriSpan = elmts.baseUriSpan;
     this._catalogDiv = $('<div></div>');
@@ -60,7 +81,7 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
 fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     var self = this;
 
-    $('<span style="height:4%; position:absolute;visibility:visible;margin-left: 100px "></span>').addClass("progress").appendTo(footer);
+    $('<div style="hposition:absolute;visibility:visible;margin-left: 100px "></div>').addClass("progress").hide().appendTo(footer);
     
     
     $('<button></button>').addClass('button').html("OK").click(function() {
@@ -86,14 +107,16 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
         });
         if ((self.fairDataPointPost.ftpHost != null) && (self.fairDataPointPost.directory != null)){
           var xhr = new XMLHttpRequest();
-          xhr.upload.addEventListener("progress", function(e){ $(".progress").text("pushing data.."); }, false);
+          xhr.upload.addEventListener("progress", function(e){ $(".progress").show(); }, false);
 
           xhr.addEventListener('load', function(e) {
             var ret = JSON.parse(this.responseText);
             if (ret.code === "ok"){
+              $(".progress").hide();
               alert("FAIR data pushed"); 
               DialogSystem.dismissAll();
             } else{
+              $(".progress").hide();
               alert("upload error");
             }
           });
