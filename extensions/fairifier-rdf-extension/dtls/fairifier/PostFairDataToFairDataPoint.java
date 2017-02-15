@@ -116,17 +116,25 @@ public class PostFairDataToFairDataPoint extends Command{
             }
             if (!dataset.getBoolean("_exists")){
     //          optional
-                datasetMetadata.setLandingPage(f.createIRI(dataset.getString("http://www.w3.org/ns/dcat#landingPage")));
+                try{
+                    datasetMetadata.setLandingPage(f.createIRI(dataset.getString("http://www.w3.org/ns/dcat#landingPage")));
+                }catch(Exception ex){}
+
                 for (int i = 0; i <  dataset.getJSONArray("http://www.w3.org/ns/dcat#theme").length(); i++){
                     datasetThemes.add(f.createIRI(dataset.getJSONArray("http://www.w3.org/ns/dcat#theme").getString(i)));
                 }
                 datasetMetadata.setThemes(datasetThemes);
     //          optional
-                for (int i = 0; i < dataset.getJSONArray("http://www.w3.org/ns/dcat#keyword").length(); i++){
-                    keyWords.add(f.createLiteral(dataset.getJSONArray("http://www.w3.org/ns/dcat#keyword").getString(i)));
-                }
-                datasetMetadata.setKeywords(keyWords);
-                datasetMetadata.setContactPoint(f.createIRI(dataset.getString("http://www.w3.org/ns/dcat#contactPoint")));
+                try{
+                    for (int i = 0; i < dataset.getJSONArray("http://www.w3.org/ns/dcat#keyword").length(); i++){
+                        keyWords.add(f.createLiteral(dataset.getJSONArray("http://www.w3.org/ns/dcat#keyword").getString(i)));
+                    }
+                    datasetMetadata.setKeywords(keyWords);
+                }catch(Exception ex){}
+//optional
+                try{
+                    datasetMetadata.setContactPoint(f.createIRI(dataset.getString("http://www.w3.org/ns/dcat#contactPoint")));
+                }catch(Exception ex){}      
                 datasetMetadata.setTitle(f.createLiteral(dataset.getString("http://purl.org/dc/terms/title")));
                 identifier = new Identifier();
                 identifier.setIdentifier(f.createLiteral(dataset.getString("http://purl.org/dc/terms/title")+"_"+dataset.getString("http://purl.org/dc/terms/hasVersion")));
@@ -135,10 +143,16 @@ public class PostFairDataToFairDataPoint extends Command{
                 datasetMetadata.setIssued( f.createLiteral(date));
                 datasetMetadata.setModified( f.createLiteral(date) );
                 datasetMetadata.setVersion(f.createLiteral(dataset.getString("http://purl.org/dc/terms/hasVersion")) );
-                datasetMetadata.setLanguage(f.createIRI(dataset.getJSONArray("http://purl.org/dc/terms/language").getString(0))); 
-                datasetMetadata.setRights(f.createIRI(dataset.getString("http://purl.org/dc/terms/rights")));
+                try{
+                    datasetMetadata.setLanguage(f.createIRI(dataset.getJSONArray("http://purl.org/dc/terms/language").getString(0))); 
+                }catch(Exception ex){}
+                try{      
+                    datasetMetadata.setRights(f.createIRI(dataset.getString("http://purl.org/dc/terms/rights")));
+                }catch(Exception ex){}
     //          optional
-                datasetMetadata.setDescription(f.createLiteral(dataset.getString("http://purl.org/dc/terms/description")) );
+                try{
+                    datasetMetadata.setDescription(f.createLiteral(dataset.getString("http://purl.org/dc/terms/description")) );
+                }catch(Exception ex){}
                 datasetMetadata.setParentURI( f.createIRI(fdp.getString("baseUri") + "/catalog/" + catalog.getString("http://purl.org/dc/terms/title")+"_"+catalog.getString("http://purl.org/dc/terms/hasVersion")) );
                 agent = new Agent();
                 agent.setUri( f.createIRI(fdp.getString("baseUri") + "/datasetAgent/" + dataset.getString("http://purl.org/dc/terms/title")+"_"+dataset.getString("http://purl.org/dc/terms/hasVersion")));
@@ -149,9 +163,11 @@ public class PostFairDataToFairDataPoint extends Command{
             }            
 
 
-            distributionMetadata.setAccessURL(f.createIRI("ftp://" + fdp.getString("username") + ":" + fdp.getString("password") + "@" + fdp.getString("ftpHost") + fdp.getString("directory") + "FAIRdistribution_" + distribution.getString("http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier") + ".ttl") );
+            distributionMetadata.setAccessURL(f.createIRI("ftp://" + fdp.getString("username") + ":" + fdp.getString("password") + "@" + fdp.getString("ftpHost") + fdp.getString("directory") + "FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl") );
 //          optional
-            distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
+            try{
+                distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
+            }catch(Exception ex){}
             distributionMetadata.setTitle(f.createLiteral(distribution.getString("http://purl.org/dc/terms/title")) );
             distributionMetadata.setParentURI( f.createIRI( fdp.getString("baseUri") +"/dataset/" + dataset.getString("http://purl.org/dc/terms/title")+"_"+dataset.getString("http://purl.org/dc/terms/hasVersion") ));
             identifier = new Identifier();
@@ -160,12 +176,16 @@ public class PostFairDataToFairDataPoint extends Command{
             distributionMetadata.setIdentifier(identifier);
             distributionMetadata.setVersion(f.createLiteral(distribution.getString("http://purl.org/dc/terms/hasVersion")) );
 //          optional
-            distributionMetadata.setLicense(f.createIRI(distribution.getString("http://purl.org/dc/terms/license")));
+            try{
+                distributionMetadata.setLicense(f.createIRI(distribution.getString("http://purl.org/dc/terms/license")));
+            }catch(Exception ex){}
             distributionMetadata.setUri( f.createIRI( "http://base/catalog/dataset/distribution"));
             distributionMetadata.setIssued(f.createLiteral(date));
             distributionMetadata.setModified(f.createLiteral(date));
-            distributionMetadata.setDescription(f.createLiteral(distribution.getString("http://purl.org/dc/terms/description")) );
-
+//          optional
+            try{
+                distributionMetadata.setDescription(f.createLiteral(distribution.getString("http://purl.org/dc/terms/description")) );
+            }catch(Exception ex){}
             distributionString = MetadataUtils.getString(distributionMetadata, RDFFormat.TURTLE).replaceAll("\\<" + distributionMetadata.getUri() + "\\>","<>");
 //            
 //            System.out.println(catalogString);

@@ -52,6 +52,7 @@ public class FtpResource extends Resource{
         }
         try{
             FTPClient ftp = new FTPClient();
+            ftp.setBufferSize(1024000);
             ftp.connect(this.host);
             ftp.login(this.username, this.password);
             ftp.changeWorkingDirectory(this.location);

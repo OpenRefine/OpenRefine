@@ -85,15 +85,6 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
     
     
     $('<button></button>').addClass('button').html("OK").click(function() {
-//        self.fairDataPointPost.baseUri = "http://localhost:8084/fdp";
-//        self.fairDataPointPost.ftpHost = '127.0.0.1';
-//        self.fairDataPointPost.directory = '/home/citroen';
-//        self.fairDataPointPost.username = 'citroen';
-//        self.fairDataPointPost.password = "";
-//        self.fairDataPointPost.catalog = {_identifier:"test",_title:"test",_version:"test",_theme:"http://test.nl",_publisher:"test"};
-//        self.fairDataPointPost.dataset = {_identifier:"test",_title:"test",_publisher:'test',_theme:"http://test.nl",_version:"test"};
-//        self.fairDataPointPost.distribution = {_identifier:"test",_title:"test",_version:"test",_accessUrl:"http://test.nl"};
-//
        var rdf = '';
         $.ajax({
             type: "POST",
@@ -119,7 +110,7 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
               $(".progress").hide();
               alert("upload error");
             }
-          });
+          }, false);
           xhr.open('post', "command/rdf-extension/post-fdp-info", true);
           xhr.send(JSON.stringify({'metadata':self.fairDataPointPost, 'data':rdf}));
        }
