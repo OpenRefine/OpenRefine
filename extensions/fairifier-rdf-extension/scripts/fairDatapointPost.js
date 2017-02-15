@@ -183,7 +183,7 @@ getFairCatalogs = function(rootUrl, self){
         self.hasCatalogs = false;
         
         data.content.forEach(function(element){
-            $('<option></option>').attr('value',element.identifier.identifier.label).text(element.uri.namespace + element.uri.localName + " - " + element.title.label).appendTo(add_cat_available_html);
+            $('<option></option>').attr('value',element.uri.namespace + element.uri.localName).text(element.uri.namespace + element.uri.localName + " - " + element.title.label).appendTo(add_cat_available_html);
             self.hasCatalogs = true;
         });
         

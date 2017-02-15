@@ -163,7 +163,7 @@ public class PostFairDataToFairDataPoint extends Command{
             }            
 
 
-            distributionMetadata.setAccessURL(f.createIRI("ftp://" + fdp.getString("username") + ":" + fdp.getString("password") + "@" + fdp.getString("ftpHost") + fdp.getString("directory") + "FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl") );
+            distributionMetadata.setAccessURL(f.createIRI("ftp://" + fdp.getString("ftpHost") + fdp.getString("directory") + "FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl") );
 //          optional
             try{
                 distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
