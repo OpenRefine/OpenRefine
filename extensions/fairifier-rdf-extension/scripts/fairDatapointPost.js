@@ -206,7 +206,7 @@ getFairCatalogs = function(rootUrl, self){
            self._pushtoFtpDiv.html('');
            if (self.hasCatalogs){
                data.content.forEach(function(element){
-                   if (element.identifier.identifier.label == $('select.catalogs option:selected').val()){
+                   if (element.identifier.identifier.url == $('select.catalogs option:selected').val()){
                        self.fairDataPointPost.catalog = {
                               // 'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.uri.namespace + element.uri.localName,
                               // 'http://purl.org/dc/terms/title': element.title.label,
@@ -226,7 +226,7 @@ getFairCatalogs = function(rootUrl, self){
                    }
                });
            }
-           getFairDatasets(self.fairDataPointPost.baseUri + "/catalog/" + $('select.catalogs option:selected').val(), self);
+           getFairDatasets($('select.catalogs option:selected').val(), self);
        }).change();
        
        add_cat_available_html.appendTo(self._catalogDiv);
