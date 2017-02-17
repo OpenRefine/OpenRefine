@@ -12,11 +12,11 @@ function FairDataPointPostDatasetDialog(callback){
 FairDataPointPostDatasetDialog.prototype._createDialog = function() {
     var frame = DialogSystem.createDialog();
     this._level = DialogSystem.showDialog(frame);
+    self = this;
     frame.width("900px");
     
     $('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>').prependTo("head");
-
-    var header = $('<div></div>').addClass("dialog-header").text("Add new dataset to FAIR Data Point").appendTo(frame);
+    var header = $('<div class="dialog-header">Add new dataset to FAIR Data Point<p style="float:right;font-size:1em" bind="close">[close]</p></div>').appendTo(frame);    
     var body = $('<div id="metadata-target"><metadata-form view="dataset"></metadata-form></div>').appendTo(frame);
 
     $('<script>\n' +
@@ -28,6 +28,13 @@ FairDataPointPostDatasetDialog.prototype._createDialog = function() {
             "});\n"+
         '})();\n'+
     '</script>').appendTo("body");
+
+    var elmts = DOM.bind(frame);
+    elmts.close.click(function(evt){
+        evt.preventDefault();
+        DialogSystem.dismissUntil(self._level - 1);
+    });
+
 };
 
 FairDataPointPostDatasetDialog.prototype._setModel = function(model) {
