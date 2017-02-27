@@ -1,6 +1,5 @@
 package org.dtls.fairifier;
 
-import java.lang.Thread;
 import java.lang.IllegalArgumentException;
 import java.net.URL;
 import java.io.File;
@@ -11,7 +10,7 @@ import java.net.SocketException;
 import org.apache.commons.net.ftp.FTPClient;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import  java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
 
 /**
  * @author Shamanou van Leeuwen
@@ -26,7 +25,6 @@ public class FtpResource extends Resource{
     private String host;
     private String location;
     private String filename;
-    private ProgressThread progressThread = new ProgressThread();
 
     public FtpResource(String host, String username, String password, String location, String filename){
         this.host = host;
@@ -34,14 +32,6 @@ public class FtpResource extends Resource{
         this.username = username;
         this.location = location;
         this.filename = filename;
-    }
-
-    public void setProgressThread(ProgressThread progressThread){
-        this.progressThread = progressThread;
-    }
-
-    public ProgressThread getProgressThread(){
-        return this.progressThread;
     }
     
     public void push(){
@@ -57,14 +47,8 @@ public class FtpResource extends Resource{
             ftp.login(this.username, this.password);
             ftp.changeWorkingDirectory(this.location);
             ftp.setFileTransferMode(ftp.BINARY_FILE_TYPE);
-            ftp.enterLocalPassiveMode();//Switch to passive mode
-            
-            InputStream stSource = new ByteArrayInputStream(this.out.getBytes());
-
-            ftp.storeFile(this.filename, stSource);
-            ftp.completePendingCommand();
+            ftp.storeFile(this.filename, new BufferedInputStream(new ByteArrayInputStream(this.out.getBytes())));
             ftp.logout();
-            ftp.disconnect();
         }catch(IOException ex){
             System.out.println(ex.toString());
         }

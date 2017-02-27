@@ -70,7 +70,7 @@ fairDataPointPostDialog.prototype._constructBody = function(body) {
     this._catalogDiv = $('<div></div>');
     this._datasetDiv = $('<div></div>');
     this._distributionDiv = $('<div></div>');
-    this._pushtoFtpDiv = $('<div></div>');
+    this._pushtoResourceDiv = $('<div></div>');
     elmts.baseUriSpan.text(fairDataPointPost.baseUri);
     elmts.editBaseUriLink.click(function(evt){
       evt.preventDefault();
@@ -96,24 +96,22 @@ fairDataPointPostDialog.prototype._constructFooter = function(footer) {
                 rdf = text.data;
             }
         });
-        if ((self.fairDataPointPost.ftpHost != null) && (self.fairDataPointPost.directory != null)){
-          var xhr = new XMLHttpRequest();
-          xhr.upload.addEventListener("progress", function(e){ $(".progress").show(); }, false);
+	      var xhr = new XMLHttpRequest();
+	      xhr.upload.addEventListener("progress", function(e){ $(".progress").show(); }, false);
 
-          xhr.addEventListener('load', function(e) {
-            var ret = JSON.parse(this.responseText);
-            if (ret.code === "ok"){
-              $(".progress").hide();
-              alert("FAIR data pushed"); 
-              DialogSystem.dismissAll();
-            } else{
-              $(".progress").hide();
-              alert("upload error");
-            }
-          }, false);
-          xhr.open('post', "command/rdf-extension/post-fdp-info", true);
-          xhr.send(JSON.stringify({'metadata':self.fairDataPointPost, 'data':rdf}));
-       }
+	      xhr.addEventListener('load', function(e) {
+	        var ret = JSON.parse(this.responseText);
+	        if (ret.code === "ok"){
+	          $(".progress").hide();
+	          alert("FAIR data pushed"); 
+	          DialogSystem.dismissAll();
+	        } else{
+	          $(".progress").hide();
+	          alert("upload error");
+	        }
+	      }, false);
+	      xhr.open('post', "command/rdf-extension/post-fdp-info", true);
+	      xhr.send(JSON.stringify({'metadata':self.fairDataPointPost, 'data':rdf}));
     }).appendTo(footer);
     
     
@@ -143,7 +141,7 @@ fairDataPointPostDialog.prototype._editBaseUri = function(src){
                 self._catalogDiv.html('');
                 self._datasetDiv.html('');
                 self._distributionDiv.html('');
-                self._pushtoFtpDiv.html('');
+                self._pushtoResourceDiv.html('');
                 self.uri = self._baseUriSpan.text();
                 getFairCatalogs(self._baseUriSpan.text(), self);
                 return;
@@ -193,7 +191,7 @@ getFairCatalogs = function(rootUrl, self){
                 $('<option></option>').attr('value',catalog['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url).text(catalog['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url+" - "+catalog['http://purl.org/dc/terms/title']).appendTo(add_cat_available_html); 
                 self._datasetDiv.html('');
                 self._distributionDiv.html('');
-                self._pushtoFtpDiv.html('');
+                self._pushtoResourceDiv.html('');
                 catalog._exists = false;
                 self.fairDataPointPost.catalog = catalog;
                 getFairDatasets(catalog['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url, self);
@@ -203,7 +201,7 @@ getFairCatalogs = function(rootUrl, self){
        add_cat_available_html.click(function(){
            self._datasetDiv.html('');
            self._distributionDiv.html('');
-           self._pushtoFtpDiv.html('');
+           self._pushtoResourceDiv.html('');
            if (self.hasCatalogs){
                data.content.forEach(function(element){
                    if (element.identifier.identifier.url == $('select.catalogs option:selected').val()){
@@ -258,7 +256,7 @@ getFairDatasets = function(url, self){
           fairDataPointPostDatasetDialog = new FairDataPointPostDatasetDialog(function(dataset){
               $('<option></option>').attr('value',dataset['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url).text(dataset['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url+" - "+dataset['http://purl.org/dc/terms/title']).appendTo(add_dat_available_html); 
               self._distributionDiv.html('');
-              self._pushtoFtpDiv.html('');
+              self._pushtoResourceDiv.html('');
               dataset._exists = false;
               self.fairDataPointPost.dataset = dataset;
               addFairDistribution(self);
@@ -267,7 +265,7 @@ getFairDatasets = function(url, self){
 
       add_dat_available_html.click(function(){
             self._distributionDiv.html('');
-            self._pushtoFtpDiv.html('');
+            self._pushtoResourceDiv.html('');
             if(self.hasDatasets){
                 data.content.forEach(function(element){
                   self.fairDataPointPost.dataset = {
@@ -305,66 +303,113 @@ getFairDatasets = function(url, self){
 
 addFairDistribution = function(self){
     $('<h2>distribution</h2>').appendTo(self._distributionDiv);
-    var add_dist_html = $('<p><a href="#" bind="addDistribution">+ </a><span>add distribution</span><br><span bind="distribution"></span></p>').appendTo(self._distributionDiv);
+    var add_dist_html = $('<p><a href="#" bind="addDistribution">+ </a><span>add distribution</span><br><span id="distribution" bind="distribution"></span></p>').appendTo(self._distributionDiv);
     var elmts = DOM.bind(add_dist_html);
     elmts.addDistribution.click(function(evt){
         evt.preventDefault();
         fairDataPointPostDistributionDialog = new FairDataPointPostDistributionDialog(function(distribution){
-          elmts.distribution.text(distribution['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url + " - " + distribution['http://purl.org/dc/terms/title']);
-          self._pushtoFtpDiv.html('');
-          self.fairDataPointPost.distribution = distribution;
-          pushFairdataToFtp(self);
-        });
-    });
+			var virtuoso_html = $('<input type="radio" value="virtuoso" class="virtuosoRadio" bind="virtuoso"><span>push FAIRified data to Virtuoso</span><br>').appendTo(self._pushtoResourceDiv);
+			self.virtuoso_form = $("<div class='virtuoso'></div>").appendTo(self._pushtoResourceDiv);
+			var virtuoso_elmts = DOM.bind(virtuoso_html);
+			self.fairDataPointPost.distribution = distribution;
+			var ftp_html = $('<input type="radio" value="ftp" class="ftpRadio" bind="ftp"><span>push FAIRified data to FTP</span><br>').appendTo(self._pushtoResourceDiv); 
+			self.ftp_form = $("<div class='ftp'></div>").appendTo(self._pushtoResourceDiv);
+			var ftp_elmts = DOM.bind(ftp_html);
+
+			var ftp_host_html = $('<p><span>host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self.ftp_form);
+			var elmts = DOM.bind(ftp_host_html);
+			self._ftpHostSpan = elmts.hostSpan;
+			elmts.editFtpHost.click(function(evt){
+			    evt.preventDefault();
+			    self._editFtpHost($(evt.target));
+			});
+
+			var ftp_directory_html = $('<p><span>directory</span> <span bind="directorySpan" ></span> <a href="#" bind="editDirectory">edit</a></p>').appendTo(self.ftp_form);
+			var elmts = DOM.bind(ftp_directory_html);
+			self._directorySpan = elmts.directorySpan;
+			elmts.editDirectory.click(function(evt){
+				evt.preventDefault();
+				self._editDirectory($(evt.target));
+			});
+
+			var ftp_host_html = $('<p><span>username</span> <span bind="usernameSpan" ></span> <a href="#" bind="editUsername">edit</a></p>').appendTo(self.ftp_form);
+			var elmts = DOM.bind(ftp_host_html);
+			self._usernameSpan = elmts.usernameSpan;
+			elmts.editUsername.click(function(evt){
+				evt.preventDefault();
+				self._editUsername($(evt.target));
+			});
+
+			var ftp_host_html = $('<p><span>password</span> <span bind="passwordSpan" ></span> <a href="#" bind="editPassword">edit</a></p>').appendTo(self.ftp_form);
+			var elmts = DOM.bind(ftp_host_html);
+			self._passwordSpan = elmts.passwordSpan;
+			elmts.editPassword.click(function(evt){
+				evt.preventDefault();
+				self._editPassword($(evt.target));
+			});
+
+			self._pushtoResourceDiv.appendTo(self._body);
+
+			var virtuoso_host_html = $('<p><span>host</span> <span bind="hostSpan" ></span> <a href="#" bind="editVirtuosoHost">edit</a></p>').appendTo(self.virtuoso_form);
+			self.fairDataPointPost.uploadtype = "virtuoso";
+			var elmts = DOM.bind(virtuoso_host_html);
+			self._virtuosoHostSpan = elmts.hostSpan;
+			elmts.editVirtuosoHost.click(function(evt){
+				evt.preventDefault();
+				self._editVirtuosoHost($(evt.target));
+			});
+
+			$("#distribution").text(self.fairDataPointPost.distribution['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url + " - " + self.fairDataPointPost.distribution['http://purl.org/dc/terms/title']);
+			var ftpshown = false;
+			var virtuososhown = false;
+			ftp_elmts.ftp.click(function(){
+				$(".virtuoso").hide();
+				$(".ftp").show();
+				self.fairDataPointPost.uploadtype = "ftp";
+			  	$('input.virtuosoRadio').removeAttr('checked');
+			});
+			virtuoso_elmts.virtuoso.click(function(){
+				$(".ftp").hide();
+				$(".virtuoso").show();
+				self.fairDataPointPost.uploadtype = "virtuoso";
+				$('input.ftpRadio').removeAttr('checked');
+			});
+	    });
+   	});
     add_dist_html.appendTo(self._distributionDiv);
     self._distributionDiv.appendTo(self._body);
 };
 
-pushFairdataToFtp = function(self){
-    $('<h2>push FAIRified data to FTP</h2>').appendTo(self._pushtoFtpDiv);
-    var ftp_host_html = $('<p><span>host</span> <span bind="hostSpan" ></span> <a href="#" bind="editFtpHost">edit</a></p>').appendTo(self._pushtoFtpDiv);
-    var elmts = DOM.bind(ftp_host_html);
-    self._ftpHostSpan = elmts.hostSpan;
-    elmts.editFtpHost.click(function(evt){
-        evt.preventDefault();
-        self._editFtpHost($(evt.target));
+fairDataPointPostDialog.prototype._editVirtuosoHost = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newVirtuosoHost" size="50"><br/>'+
+        '<button class="button" bind="applyButton">Apply</button>' + 
+        '<button class="button" bind="cancelButton">Cancel</button></div>'
+    );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newVirtuosoHost.val(self._newVirtuosoost).focus().select();
+    elmts.applyButton.click(function() {
+        var newVirtuosoHost = elmts.newVirtuosoHost.val();
+        self._virtuosoHost = newVirtuosoHost;
+        self._virtuosoHostSpan.empty().text(newVirtuosoHost);
+        self.fairDataPointPost.virtuosoHost = newVirtuosoHost.replace(/(^\w+:|^)\/\//, '');
+        MenuSystem.dismissAll();
     });
-    
-
-    var ftp_host_html = $('<p><span>directory</span> <span bind="directorySpan" ></span> <a href="#" bind="editDirectory">edit</a></p>').appendTo(self._pushtoFtpDiv);
-    var elmts = DOM.bind(ftp_host_html);
-    self._directorySpan = elmts.directorySpan;
-    elmts.editDirectory.click(function(evt){
-        evt.preventDefault();
-        self._editDirectory($(evt.target));
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
     });
-    
-    var ftp_host_html = $('<p><span>username</span> <span bind="usernameSpan" ></span> <a href="#" bind="editUsername">edit</a></p>').appendTo(self._pushtoFtpDiv);
-    var elmts = DOM.bind(ftp_host_html);
-    self._usernameSpan = elmts.usernameSpan;
-    elmts.editUsername.click(function(evt){
-        evt.preventDefault();
-        self._editUsername($(evt.target));
-    });
-    
-    var ftp_host_html = $('<p><span>password</span> <span bind="passwordSpan" ></span> <a href="#" bind="editPassword">edit</a></p>').appendTo(self._pushtoFtpDiv);
-    var elmts = DOM.bind(ftp_host_html);
-    self._passwordSpan = elmts.passwordSpan;
-    elmts.editPassword.click(function(evt){
-        evt.preventDefault();
-        self._editPassword($(evt.target));
-    });
-    
-    self._pushtoFtpDiv.appendTo(self._body);
 };
 
 fairDataPointPostDialog.prototype._editFtpHost = function(src){
     var self = this;
     var menu = MenuSystem.createMenu().width('400px');
     menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newFtpHost" size="50"><br/>'+
-                    '<button class="button" bind="applyButton">Apply</button>' + 
-                    '<button class="button" bind="cancelButton">Cancel</button></div>'
-            );
+        '<button class="button" bind="applyButton">Apply</button>' + 
+        '<button class="button" bind="cancelButton">Cancel</button></div>'
+    );
     MenuSystem.showMenu(menu,function(){});
     MenuSystem.positionMenuLeftRight(menu, src);
     var elmts = DOM.bind(menu);
@@ -373,7 +418,7 @@ fairDataPointPostDialog.prototype._editFtpHost = function(src){
         var newFtpHost = elmts.newFtpHost.val();
         self._ftpHost = newFtpHost;
         self._ftpHostSpan.empty().text(newFtpHost);
-        self.fairDataPointPost.ftpHost = newFtpHost;
+        self.fairDataPointPost.ftpHost = newFtpHost.replace(/(^\w+:|^)\/\//, '');
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

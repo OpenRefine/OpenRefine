@@ -21,10 +21,10 @@ import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.io.InputStream;
-import nl.dtl.fairmetadata.io.*;
-import nl.dtl.fairmetadata.model.*;
+import nl.dtl.fairmetadata4j.io.*;
+import nl.dtl.fairmetadata4j.model.*;
 import java.util.List;
-import nl.dtl.fairmetadata.utils.*;
+import nl.dtl.fairmetadata4j.utils.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.IRI;
@@ -36,7 +36,6 @@ import org.eclipse.rdf4j.model.IRI;
  */
 
 public class GetFairDataPointInfoCommand extends Command{
-    private MetadataParserUtils utils = new MetadataParserUtils();
     private static final ValueFactory f = SimpleValueFactory.getInstance();
     
     @Override
@@ -70,8 +69,8 @@ public class GetFairDataPointInfoCommand extends Command{
         try{
             BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url).getContent()));
             parser.parse(reader, url);
-            CatalogMetadataParser catalogMetadataParser = utils.getCatalogParser();
-            DatasetMetadataParser datasetMetadataParser = utils.getDatasetParser(); 
+            CatalogMetadataParser catalogMetadataParser = MetadataParserUtils.getCatalogParser();
+            DatasetMetadataParser datasetMetadataParser = MetadataParserUtils.getDatasetParser(); 
             List<IRI> datasetUris = catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getDatasets();
             for (IRI u : datasetUris){
                 try{
@@ -95,20 +94,23 @@ public class GetFairDataPointInfoCommand extends Command{
         parser.setRDFHandler(rdfStatementCollector);
         try{
             BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url).getContent()));
-            parser.parse(reader, url);
-            FDPMetadataParser fdpParser = utils.getFdpParser();
-            CatalogMetadataParser catalogMetadataParser = utils.getCatalogParser();
-            List<IRI> catalogUris = fdpParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getCatalogs();
-            for (IRI u : catalogUris){
-                try{
-                    reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString()).getContent()));        
-                    parser.parse(reader, u.toString());
-                    out.add(catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()),u));
-                }catch(Exception e){
-                    throw new LayerUnavailableException("catalogs could not be retrieved");
+            try{
+                parser.parse(reader, url);
+                FDPMetadataParser fdpParser = MetadataParserUtils.getFdpParser();
+                CatalogMetadataParser catalogMetadataParser = MetadataParserUtils.getCatalogParser();
+                List<IRI> catalogUris = fdpParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getCatalogs();
+                for (IRI u : catalogUris){
+                    try{
+                        reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString()).getContent()));        
+                        parser.parse(reader, u.toString());
+                        out.add(catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()),u));
+                    }catch(Exception e){
+                        throw new LayerUnavailableException("catalogs could not be retrieved");
+                    }
                 }
-            }
+            }catch(Exception ex){}
         }catch(Exception e){
+            System.out.println(e.getMessage());
             throw new LayerUnavailableException("fdp could not be retrieved");
         }
         return out;
