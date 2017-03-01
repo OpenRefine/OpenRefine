@@ -20,6 +20,9 @@ import org.apache.http.params.*;
 import java.util.List; 
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.commons.codec.binary.Base64;
+
 
 /**
  * Some HTTP utilities
@@ -53,18 +56,41 @@ public class HttpUtils {
 	
 	public static HttpEntity get(String uri, String accept) throws IOException {
 	    log.debug("GET request over " + uri);
-            HttpGet get = new HttpGet(uri);
-            get.setHeader("Accept", accept);
-            return get(get);
+        HttpGet get = new HttpGet(uri);
+        get.setHeader("Accept", accept);
+        return get(get);
 	}
+
+	public static HttpEntity put(String uri,  String content, String username, String password) throws IOException {
+        log.debug("PUT request over " + uri);
+        String auth = username + ":" + password;
+		String encodedAuth = Base64.encodeBase64String(auth.getBytes());
+        HttpPut put = new HttpPut(uri);
+        put.setHeader("Authorization","Basic "+ encodedAuth);
+        put.setHeader("Content-Type","application/rdf+turtle");
+        put.setEntity(new StringEntity(content));
+        return put(put);
+    }
 	
-	public static HttpEntity post(String uri,  String content) throws IOException {
-            log.debug("POST request over " + uri);
-            HttpPost post = new HttpPost(uri);
-            post.setHeader("Content-Type","text/turtle");
-            post.setEntity(new StringEntity(content));
-            return post(post);
-        }
+	public static HttpEntity post(String uri,  String content, String content_type) throws IOException {
+        log.debug("POST request over " + uri);
+        HttpPost post = new HttpPost(uri);
+        post.setHeader("Content-Type",content_type);
+        post.setEntity(new StringEntity(content));
+        return post(post);
+    }
+
+	private static HttpEntity put(HttpPut put) throws IOException {
+	    HttpClient client = createClient();
+	    HttpResponse response = client.execute(put);
+	    if (201 == response.getStatusLine().getStatusCode()) {
+	        return response.getEntity();
+	    } else {
+	        String msg = "Error performing PUT request: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase();
+	        log.error(msg);
+	        throw new ClientProtocolException(msg);
+	    }
+	}
         
 	private static HttpEntity post(HttpPost post) throws IOException {
 	    HttpClient client = createClient();

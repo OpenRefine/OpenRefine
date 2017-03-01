@@ -204,24 +204,22 @@ getFairCatalogs = function(rootUrl, self){
            self._pushtoResourceDiv.html('');
            if (self.hasCatalogs){
                data.content.forEach(function(element){
-                   if (element.identifier.identifier.url == $('select.catalogs option:selected').val()){
-                       self.fairDataPointPost.catalog = {
-                              // 'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.uri.namespace + element.uri.localName,
-                              // 'http://purl.org/dc/terms/title': element.title.label,
-                              // 'http://purl.org/dc/terms/hasVersion': element.version.label,
-                              // 'http://purl.org/dc/terms/publisher': element.publisher,
-                              // 'http://www.w3.org/ns/dcat#themeTaxonomy': element.themeTaxonomy,
-                              // 'http://xmlns.com/foaf/0.1/homepage': element.homepage,
-                              // 'http://xmlns.com/foaf/0.1/description': element.homepage,
-                              // 'http://purl.org/dc/terms/issued':element.catalogIssued,
-                              // 'http://purl.org/dc/terms/language':element.language,
-                              // 'http://purl.org/dc/terms/license':element.license,
-                              // 'http://purl.org/dc/terms/modified':element.modified.label,
-                              // 'http://purl.org/dc/terms/rights':element.rights.localName,
-                              // 'http://www.w3.org/ns/dcat#dataset':element.datasets,
-                              _exists: true
-                       };   
-                   }
+	               self.fairDataPointPost.catalog = {
+	                      // 'http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier': element.uri.namespace + element.uri.localName,
+	                      // 'http://purl.org/dc/terms/title': element.title.label,
+	                      // 'http://purl.org/dc/terms/hasVersion': element.version.label,
+	                      // 'http://purl.org/dc/terms/publisher': element.publisher,
+	                      // 'http://www.w3.org/ns/dcat#themeTaxonomy': element.themeTaxonomy,
+	                      // 'http://xmlns.com/foaf/0.1/homepage': element.homepage,
+	                      // 'http://xmlns.com/foaf/0.1/description': element.homepage,
+	                      // 'http://purl.org/dc/terms/issued':element.catalogIssued,
+	                      // 'http://purl.org/dc/terms/language':element.language,
+	                      // 'http://purl.org/dc/terms/license':element.license,
+	                      // 'http://purl.org/dc/terms/modified':element.modified.label,
+	                      // 'http://purl.org/dc/terms/rights':element.rights.localName,
+	                      // 'http://www.w3.org/ns/dcat#dataset':element.datasets,
+	                      _exists: true
+	               }; 
                });
            }
            getFairDatasets($('select.catalogs option:selected').val(), self);
@@ -307,6 +305,7 @@ addFairDistribution = function(self){
     var elmts = DOM.bind(add_dist_html);
     elmts.addDistribution.click(function(evt){
         evt.preventDefault();
+        self._pushtoResourceDiv.html('');
         fairDataPointPostDistributionDialog = new FairDataPointPostDistributionDialog(function(distribution){
 			var virtuoso_html = $('<input type="radio" value="virtuoso" class="virtuosoRadio" bind="virtuoso"><span>push FAIRified data to Virtuoso</span><br>').appendTo(self._pushtoResourceDiv);
 			self.virtuoso_form = $("<div class='virtuoso'></div>").appendTo(self._pushtoResourceDiv);
@@ -359,6 +358,22 @@ addFairDistribution = function(self){
 				self._editVirtuosoHost($(evt.target));
 			});
 
+			var virtuoso_host_html = $('<p><span>username</span> <span bind="usernameSpan" ></span> <a href="#" bind="editVirtuosoUsername">edit</a></p>').appendTo(self.virtuoso_form);
+			var elmts = DOM.bind(virtuoso_host_html);
+			self._virtuosoUsernameSpan = elmts.usernameSpan;
+			elmts.editVirtuosoUsername.click(function(evt){
+				evt.preventDefault();
+				self._editVirtuosoUsername($(evt.target));
+			});
+
+			var virtuoso_host_html = $('<p><span>password</span> <span bind="passwordSpan" ></span> <a href="#" bind="editVirtuosoPassword">edit</a></p>').appendTo(self.virtuoso_form);
+			var elmts = DOM.bind(virtuoso_host_html);
+			self._virtuosoPasswordSpan = elmts.passwordSpan;
+			elmts.editVirtuosoPassword.click(function(evt){
+				evt.preventDefault();
+				self._editVirtuosoPassword($(evt.target));
+			});
+
 			$("#distribution").text(self.fairDataPointPost.distribution['http://rdf.biosemantics.org/ontologies/fdp-o#metadataIdentifier'].url + " - " + self.fairDataPointPost.distribution['http://purl.org/dc/terms/title']);
 			var ftpshown = false;
 			var virtuososhown = false;
@@ -396,6 +411,52 @@ fairDataPointPostDialog.prototype._editVirtuosoHost = function(src){
         self._virtuosoHost = newVirtuosoHost;
         self._virtuosoHostSpan.empty().text(newVirtuosoHost);
         self.fairDataPointPost.virtuosoHost = newVirtuosoHost.replace(/(^\w+:|^)\/\//, '');
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostDialog.prototype._editVirtuosoPassword = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="password" bind="newVirtuosoPassword" size="50"><br/>'+
+        '<button class="button" bind="applyButton">Apply</button>' + 
+        '<button class="button" bind="cancelButton">Cancel</button></div>'
+    );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newVirtuosoPassword.val(self._newVirtuosoPassword).focus().select();
+    elmts.applyButton.click(function() {
+        var newVirtuosoPassword = elmts.newVirtuosoPassword.val();
+        self._virtuosoPassword = newVirtuosoPassword;
+        self._virtuosoPasswordSpan.empty().text("******");
+        self.fairDataPointPost.virtuosoPassword = newVirtuosoPassword;
+        MenuSystem.dismissAll();
+    });
+    elmts.cancelButton.click(function() {
+            MenuSystem.dismissAll();
+    });
+};
+
+fairDataPointPostDialog.prototype._editVirtuosoUsername = function(src){
+    var self = this;
+    var menu = MenuSystem.createMenu().width('400px');
+    menu.html('<div class="schema-alignment-link-menu-type-search"><input type="text" bind="newVirtuosoUsername" size="50"><br/>'+
+        '<button class="button" bind="applyButton">Apply</button>' + 
+        '<button class="button" bind="cancelButton">Cancel</button></div>'
+    );
+    MenuSystem.showMenu(menu,function(){});
+    MenuSystem.positionMenuLeftRight(menu, src);
+    var elmts = DOM.bind(menu);
+    elmts.newVirtuosoUsername.val(self._newVirtuosoUsername).focus().select();
+    elmts.applyButton.click(function() {
+        var newVirtuosoUsername = elmts.newVirtuosoUsername.val();
+        self._virtuosoUsername = newVirtuosoUsername;
+        self._virtuosoUsernameSpan.empty().text(newVirtuosoUsername);
+        self.fairDataPointPost.virtuosoUsername = newVirtuosoUsername;
         MenuSystem.dismissAll();
     });
     elmts.cancelButton.click(function() {

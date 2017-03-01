@@ -67,14 +67,14 @@ public class GetFairDataPointInfoCommand extends Command{
         StatementCollector rdfStatementCollector = new StatementCollector();
         parser.setRDFHandler(rdfStatementCollector);
         try{
-            BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url).getContent()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url,"text/turtle").getContent()));
             parser.parse(reader, url);
             CatalogMetadataParser catalogMetadataParser = MetadataParserUtils.getCatalogParser();
             DatasetMetadataParser datasetMetadataParser = MetadataParserUtils.getDatasetParser(); 
             List<IRI> datasetUris = catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getDatasets();
             for (IRI u : datasetUris){
                 try{
-                    reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString()).getContent()));        
+                    reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString(),"text/turtle").getContent()));        
                     parser.parse(reader, u.toString());
                     out.add(datasetMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()), u));
                 }catch(Exception e){
@@ -93,7 +93,7 @@ public class GetFairDataPointInfoCommand extends Command{
         StatementCollector rdfStatementCollector = new StatementCollector();
         parser.setRDFHandler(rdfStatementCollector);
         try{
-            BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url).getContent()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(HttpUtils.get(url,"text/turtle").getContent()));
             try{
                 parser.parse(reader, url);
                 FDPMetadataParser fdpParser = MetadataParserUtils.getFdpParser();
@@ -101,7 +101,7 @@ public class GetFairDataPointInfoCommand extends Command{
                 List<IRI> catalogUris = fdpParser.parse(new ArrayList(rdfStatementCollector.getStatements()), f.createIRI(url)).getCatalogs();
                 for (IRI u : catalogUris){
                     try{
-                        reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString()).getContent()));        
+                        reader = new BufferedReader(new InputStreamReader(HttpUtils.get(u.toString(),"text/turtle").getContent()));        
                         parser.parse(reader, u.toString());
                         out.add(catalogMetadataParser.parse(new ArrayList(rdfStatementCollector.getStatements()),u));
                     }catch(Exception e){

@@ -88,6 +88,7 @@ public class PostFairDataToFairDataPoint extends Command{
             jb.append(line);
    
             JSONObject fdp = new JSONObject(jb.toString()).getJSONObject("metadata");
+            
             JSONObject catalog = fdp.getJSONObject("catalog");
 
             JSONObject dataset = fdp.getJSONObject("dataset");
@@ -167,18 +168,23 @@ public class PostFairDataToFairDataPoint extends Command{
 
             if (fdp.getString("uploadtype").equals("ftp")){
                 distributionMetadata.setAccessURL(f.createIRI("ftp://" + fdp.getString("ftpHost") + fdp.getString("directory") + "FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl") );
+                //          optional
+                try{
+                    distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
+                }catch(Exception ex){}
+                distributionMetadata.setByteSize(f.createLiteral(datasetString.getBytes("UTF-8").length));
             } else if(fdp.getString("uploadtype").equals("virtuoso")){
-                distributionMetadata.setAccessURL(f.createIRI( "http://" + fdp.getString("virtuosoHost") ));
+                try{
+                    distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
+                }catch(Exception ex){}
+                distributionMetadata.setAccessURL(f.createIRI("http://" + fdp.getString("virtuosoHost") + "/rdf_sink/FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl"));
             }
 
-//          optional
-            try{
-                distributionMetadata.setMediaType(f.createLiteral("application/rdf-turtle"));
-            }catch(Exception ex){}
+
             distributionMetadata.setTitle(f.createLiteral(distribution.getString("http://purl.org/dc/terms/title")) );
             distributionMetadata.setParentURI( f.createIRI( fdp.getString("baseUri") +"/dataset/" + dataset.getString("http://purl.org/dc/terms/title")+"_"+dataset.getString("http://purl.org/dc/terms/hasVersion") ));
             identifier = new Identifier();
-            identifier.setIdentifier(f.createLiteral(  fdp.getString("baseUri") + "/distribution/" + catalog.getString("http://purl.org/dc/terms/title")+"_"+catalog.getString("http://purl.org/dc/terms/hasVersion")  ));
+            identifier.setIdentifier(f.createLiteral(  fdp.getString("baseUri") + "/distribution/" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion")  ));
             identifier.setUri( f.createIRI(fdp.getString("baseUri") + "/distributionID/" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") ));
             distributionMetadata.setIdentifier(identifier);
             distributionMetadata.setVersion(f.createLiteral(distribution.getString("http://purl.org/dc/terms/hasVersion")) );
@@ -201,12 +207,12 @@ public class PostFairDataToFairDataPoint extends Command{
             String catalogPost = null;
             String datasetPost = null;
             if (!catalog.getBoolean("_exists")){
-                catalogPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/catalog?id=" + catalog.getString("http://purl.org/dc/terms/title")+"_"+catalog.getString("http://purl.org/dc/terms/hasVersion"), catalogString).getContent(), "UTF-8");
+                catalogPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/catalog?id=" + catalog.getString("http://purl.org/dc/terms/title")+"_"+catalog.getString("http://purl.org/dc/terms/hasVersion"), catalogString, "text/turtle").getContent(), "UTF-8");
             }
             if (!dataset.getBoolean("_exists")){
-                datasetPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/dataset?id=" + dataset.getString("http://purl.org/dc/terms/title")+"_"+dataset.getString("http://purl.org/dc/terms/hasVersion"), datasetString).getContent(),"UTF-8");
+                datasetPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/dataset?id=" + dataset.getString("http://purl.org/dc/terms/title")+"_"+dataset.getString("http://purl.org/dc/terms/hasVersion"), datasetString, "text/turtle").getContent(),"UTF-8");
             }
-            String distributionPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/distribution?id=" +  distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion"), distributionString).getContent(),"UTF-8");
+            String distributionPost = IOUtils.toString(HttpUtils.post(fdp.getString("baseUri") + "/distribution?id=" +  distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion"), distributionString, "text/turtle").getContent(),"UTF-8");
             
             String data = new JSONObject(jb.toString()).getString("data");
             PushFairDataToResourceAdapter adapter = new PushFairDataToResourceAdapter();
@@ -216,9 +222,15 @@ public class PostFairDataToFairDataPoint extends Command{
                     fdp.getString("username"), 
                     fdp.getString("password"), 
                     fdp.getString("directory"),
-                    "FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl");
+                    "FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl"
+                );
             } else if (fdp.getString("uploadtype").equals("virtuoso")){
-                r = new VirtuosoResource(fdp.getString("virtuosoHost"));
+                r = new VirtuosoResource(
+                    fdp.getString("virtuosoHost"), 
+                    "/rdf_sink/FAIRdistribution_" + distribution.getString("http://purl.org/dc/terms/title")+"_"+distribution.getString("http://purl.org/dc/terms/hasVersion") + ".ttl",
+                    fdp.getString("virtuosoUsername"),
+                    fdp.getString("virtuosoPassword")
+                );
             }
             r.setFairData(data);
             adapter.setResource(r);
