@@ -67,7 +67,7 @@ public class HttpUtils {
 		String encodedAuth = Base64.encodeBase64String(auth.getBytes());
         HttpPut put = new HttpPut(uri);
         put.setHeader("Authorization","Basic "+ encodedAuth);
-        put.setHeader("Content-Type","application/rdf+turtle");
+        put.setHeader("Content-Type","text/turtle");
         put.setEntity(new StringEntity(content));
         return put(put);
     }
