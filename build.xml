@@ -164,6 +164,8 @@
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-dataset.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-dataset.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-distribution.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-distribution.js" />
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/rdf-schema-alignment.js" toFile="extensions/grefine-rdf-extension/module/scripts/rdf-schema-alignment.js"/>
+    	
     	<copy overwrite="true" file="extensions/fairifier-rdf-extension/controller.js" tofile="extensions/grefine-rdf-extension/module/MOD-INF/controller.js" />
         <copy overwrite="true" todir="extensions/grefine-rdf-extension/src/org">
             <fileset dir="extensions/fairifier-rdf-extension/dtls"/>
