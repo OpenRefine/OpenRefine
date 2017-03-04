@@ -18,7 +18,7 @@ function RdfSchemaAlignmentDialog(schema){
 	//initialize vocabularyManager
     this._prefixesManager = new RdfPrefixesManager(this,this._schema.prefixes);
     
-    this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace || URL.getHostname()+'/',true);
+    this._replaceBaseUri(RdfSchemaAlignment._defaultNamespace ||window.location.protocol + window.location.host + "/",true);
 };
 
 RdfSchemaAlignmentDialog.prototype._createDialog = function() {
