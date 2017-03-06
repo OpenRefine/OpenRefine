@@ -1,0 +1,93 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "request-progress@0.3.1",
+        "scope": null,
+        "escapedName": "request-progress",
+        "name": "request-progress",
+        "rawSpec": "0.3.1",
+        "spec": "0.3.1",
+        "type": "version"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "request-progress@0.3.1",
+  "_id": "request-progress@0.3.1",
+  "_inCache": true,
+  "_location": "/request-progress",
+  "_npmUser": {
+    "name": "satazor",
+    "email": "andremiguelcruz@msn.com"
+  },
+  "_npmVersion": "1.3.8",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "request-progress@0.3.1",
+    "scope": null,
+    "escapedName": "request-progress",
+    "name": "request-progress",
+    "rawSpec": "0.3.1",
+    "spec": "0.3.1",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/request-progress/-/request-progress-0.3.1.tgz",
+  "_shasum": "0721c105d8a96ac6b2ce8b2c89ae2d5ecfcf6b3a",
+  "_shrinkwrap": null,
+  "_spec": "request-progress@0.3.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "IndigoUnited",
+    "email": "hello@indigounited.com",
+    "url": "http://indigounited.com"
+  },
+  "bugs": {
+    "url": "http://github.com/IndigoUnited/node-request-progress/issues"
+  },
+  "dependencies": {
+    "throttleit": "~0.0.2"
+  },
+  "description": "Tracks the download progress of a request made with mikeal/request",
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.12.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "0721c105d8a96ac6b2ce8b2c89ae2d5ecfcf6b3a",
+    "tarball": "https://registry.npmjs.org/request-progress/-/request-progress-0.3.1.tgz"
+  },
+  "homepage": "https://github.com/IndigoUnited/node-request-progress#readme",
+  "keywords": [
+    "progress",
+    "request",
+    "mikeal",
+    "size",
+    "bytes",
+    "percent",
+    "percentage"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "satazor",
+      "email": "andremiguelcruz@msn.com"
+    }
+  ],
+  "name": "request-progress",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IndigoUnited/node-request-progress.git"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "version": "0.3.1"
+}

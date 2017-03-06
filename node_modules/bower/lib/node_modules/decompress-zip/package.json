@@ -1,0 +1,149 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "decompress-zip@^0.2.1",
+        "scope": null,
+        "escapedName": "decompress-zip",
+        "name": "decompress-zip",
+        "rawSpec": "^0.2.1",
+        "spec": ">=0.2.1 <0.3.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "decompress-zip@>=0.2.1 <0.3.0",
+  "_id": "decompress-zip@0.2.1",
+  "_inCache": true,
+  "_location": "/decompress-zip",
+  "_nodeVersion": "5.9.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/decompress-zip-0.2.1.tgz_1459525500221_0.27215476077981293"
+  },
+  "_npmUser": {
+    "name": "sheerun",
+    "email": "sheerun@sher.pl"
+  },
+  "_npmVersion": "3.7.3",
+  "_phantomChildren": {
+    "core-util-is": "1.0.2",
+    "inherits": "2.0.3",
+    "string_decoder": "0.10.31"
+  },
+  "_requested": {
+    "raw": "decompress-zip@^0.2.1",
+    "scope": null,
+    "escapedName": "decompress-zip",
+    "name": "decompress-zip",
+    "rawSpec": "^0.2.1",
+    "spec": ">=0.2.1 <0.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/decompress-zip/-/decompress-zip-0.2.1.tgz",
+  "_shasum": "5c2a2d06136f26ebb458453c2efb2ead8b593fed",
+  "_shrinkwrap": null,
+  "_spec": "decompress-zip@^0.2.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Bower"
+  },
+  "bin": {
+    "decompress-zip": "bin/decompress-zip"
+  },
+  "bugs": {
+    "url": "https://github.com/bower/decompress-zip/issues"
+  },
+  "dependencies": {
+    "binary": "^0.3.0",
+    "graceful-fs": "^4.1.3",
+    "mkpath": "^0.1.0",
+    "nopt": "^3.0.1",
+    "q": "^1.1.2",
+    "readable-stream": "^1.1.8",
+    "touch": "0.0.3"
+  },
+  "description": "Extract files from a ZIP archive",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "coveralls": "^2.11.2",
+    "fs-jetpack": "~0.5.2",
+    "grunt": "^0.4.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.11.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-exec": "^0.4.2",
+    "grunt-simple-mocha": "^0.4.0",
+    "istanbul": "^0.3.5",
+    "mocha": "^2.1.0",
+    "tmp": "0.0.24"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "5c2a2d06136f26ebb458453c2efb2ead8b593fed",
+    "tarball": "https://registry.npmjs.org/decompress-zip/-/decompress-zip-0.2.1.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "gitHead": "867e4394873d4a940c737f3c0b127522b4586b41",
+  "homepage": "https://github.com/bower/decompress-zip#readme",
+  "keywords": [
+    "zip",
+    "unzip",
+    "tar",
+    "untar",
+    "compress",
+    "decompress",
+    "archive",
+    "extract",
+    "zlib"
+  ],
+  "license": "MIT",
+  "main": "lib/decompress-zip.js",
+  "maintainers": [
+    {
+      "name": "wibblymat",
+      "email": "mat@wibbly.org.uk"
+    },
+    {
+      "name": "paulirish",
+      "email": "paul.irish@gmail.com"
+    },
+    {
+      "name": "sheerun",
+      "email": "sheerun@sher.pl"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "satazor",
+      "email": "andremiguelcruz@msn.com"
+    },
+    {
+      "name": "desandro",
+      "email": "desandrocodes@gmail.com"
+    }
+  ],
+  "name": "decompress-zip",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bower/decompress-zip.git"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "version": "0.2.1"
+}

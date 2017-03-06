@@ -1,0 +1,93 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "deep-extend@~0.2.5",
+        "scope": null,
+        "escapedName": "deep-extend",
+        "name": "deep-extend",
+        "rawSpec": "~0.2.5",
+        "spec": ">=0.2.5 <0.3.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/rc"
+    ]
+  ],
+  "_from": "deep-extend@>=0.2.5 <0.3.0",
+  "_id": "deep-extend@0.2.11",
+  "_inCache": true,
+  "_location": "/rc/deep-extend",
+  "_npmUser": {
+    "name": "unclechu",
+    "email": "lotsmanov89@gmail.com"
+  },
+  "_npmVersion": "1.4.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "deep-extend@~0.2.5",
+    "scope": null,
+    "escapedName": "deep-extend",
+    "name": "deep-extend",
+    "rawSpec": "~0.2.5",
+    "spec": ">=0.2.5 <0.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/rc"
+  ],
+  "_resolved": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.2.11.tgz",
+  "_shasum": "7a16ba69729132340506170494bc83f7076fe08f",
+  "_shrinkwrap": null,
+  "_spec": "deep-extend@~0.2.5",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/rc",
+  "author": {
+    "name": "Viacheslav Lotsmanov",
+    "email": "lotsmanov89@gmail.com",
+    "url": "unclechu"
+  },
+  "bugs": {
+    "url": "https://github.com/unclechu/node-deep-extend/issues"
+  },
+  "contributors": [
+    {
+      "name": "Romain Prieto",
+      "url": "https://github.com/rprieto"
+    }
+  ],
+  "dependencies": {},
+  "description": "Recursive object extending.",
+  "devDependencies": {
+    "mocha": "~1.19.0",
+    "should": "~3.3.2"
+  },
+  "directories": {
+    "test": "./test"
+  },
+  "dist": {
+    "shasum": "7a16ba69729132340506170494bc83f7076fe08f",
+    "tarball": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.2.11.tgz"
+  },
+  "engines": {
+    "node": ">=0.4"
+  },
+  "homepage": "https://github.com/unclechu/node-deep-extend",
+  "license": "MIT",
+  "main": "index",
+  "maintainers": [
+    {
+      "name": "unclechu",
+      "email": "lotsmanov89@gmail.com"
+    }
+  ],
+  "name": "deep-extend",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/unclechu/node-deep-extend.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "version": "0.2.11"
+}

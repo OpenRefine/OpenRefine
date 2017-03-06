@@ -1,0 +1,87 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "resolve@~0.6.1",
+        "scope": null,
+        "escapedName": "resolve",
+        "name": "resolve",
+        "rawSpec": "~0.6.1",
+        "spec": ">=0.6.1 <0.7.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/requireg"
+    ]
+  ],
+  "_from": "resolve@>=0.6.1 <0.7.0",
+  "_id": "resolve@0.6.3",
+  "_inCache": true,
+  "_location": "/requireg/resolve",
+  "_npmUser": {
+    "name": "substack",
+    "email": "mail@substack.net"
+  },
+  "_npmVersion": "1.4.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "resolve@~0.6.1",
+    "scope": null,
+    "escapedName": "resolve",
+    "name": "resolve",
+    "rawSpec": "~0.6.1",
+    "spec": ">=0.6.1 <0.7.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/requireg"
+  ],
+  "_resolved": "https://registry.npmjs.org/resolve/-/resolve-0.6.3.tgz",
+  "_shasum": "dd957982e7e736debdf53b58a4dd91754575dd46",
+  "_shrinkwrap": null,
+  "_spec": "resolve@~0.6.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/requireg",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/node-resolve/issues"
+  },
+  "dependencies": {},
+  "description": "resolve like require.resolve() on behalf of files asynchronously and synchronously",
+  "devDependencies": {
+    "tap": "~0.4.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "dd957982e7e736debdf53b58a4dd91754575dd46",
+    "tarball": "https://registry.npmjs.org/resolve/-/resolve-0.6.3.tgz"
+  },
+  "homepage": "https://github.com/substack/node-resolve",
+  "keywords": [
+    "resolve",
+    "require",
+    "node",
+    "module"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "substack",
+      "email": "mail@substack.net"
+    }
+  ],
+  "name": "resolve",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/node-resolve.git"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "version": "0.6.3"
+}

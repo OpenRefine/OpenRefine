@@ -1,0 +1,96 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "rc@~1.0.0",
+        "scope": null,
+        "escapedName": "rc",
+        "name": "rc",
+        "rawSpec": "~1.0.0",
+        "spec": ">=1.0.0 <1.1.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/requireg"
+    ]
+  ],
+  "_from": "rc@>=1.0.0 <1.1.0",
+  "_id": "rc@1.0.3",
+  "_inCache": true,
+  "_location": "/rc",
+  "_npmUser": {
+    "name": "dominictarr",
+    "email": "dominic.tarr@gmail.com"
+  },
+  "_npmVersion": "1.4.28",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "rc@~1.0.0",
+    "scope": null,
+    "escapedName": "rc",
+    "name": "rc",
+    "rawSpec": "~1.0.0",
+    "spec": ">=1.0.0 <1.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/registry-url",
+    "/requireg"
+  ],
+  "_resolved": "https://registry.npmjs.org/rc/-/rc-1.0.3.tgz",
+  "_shasum": "51bf28d21f13a9324528a9633460161ad9a39f77",
+  "_shrinkwrap": null,
+  "_spec": "rc@~1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/requireg",
+  "author": {
+    "name": "Dominic Tarr",
+    "email": "dominic.tarr@gmail.com",
+    "url": "dominictarr.com"
+  },
+  "bin": {
+    "rc": "./index.js"
+  },
+  "browserify": "browser.js",
+  "bugs": {
+    "url": "https://github.com/dominictarr/rc/issues"
+  },
+  "dependencies": {
+    "deep-extend": "~0.2.5",
+    "ini": "~1.3.0",
+    "minimist": "~0.0.7",
+    "strip-json-comments": "0.1.x"
+  },
+  "description": "hardwired configuration loader",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "51bf28d21f13a9324528a9633460161ad9a39f77",
+    "tarball": "https://registry.npmjs.org/rc/-/rc-1.0.3.tgz"
+  },
+  "gitHead": "2a4f80785efa317eaf38499fa1f9dcd3c60e54e9",
+  "homepage": "https://github.com/dominictarr/rc",
+  "keywords": [
+    "config",
+    "rc",
+    "unix",
+    "defaults"
+  ],
+  "license": "(BSD OR MIT OR Apache2)",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "dominictarr",
+      "email": "dominic.tarr@gmail.com"
+    }
+  ],
+  "name": "rc",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dominictarr/rc.git"
+  },
+  "scripts": {
+    "test": "set -e; node test/test.js; node test/ini.js; node test/nested-env-vars.js"
+  },
+  "version": "1.0.3"
+}

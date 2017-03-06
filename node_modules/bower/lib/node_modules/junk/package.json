@@ -1,0 +1,105 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "junk@^1.0.0",
+        "scope": null,
+        "escapedName": "junk",
+        "name": "junk",
+        "rawSpec": "^1.0.0",
+        "spec": ">=1.0.0 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "junk@>=1.0.0 <2.0.0",
+  "_id": "junk@1.0.3",
+  "_inCache": true,
+  "_location": "/junk",
+  "_nodeVersion": "4.4.2",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/junk-1.0.3.tgz_1466179334077_0.9650743182282895"
+  },
+  "_npmUser": {
+    "name": "sindresorhus",
+    "email": "sindresorhus@gmail.com"
+  },
+  "_npmVersion": "2.15.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "junk@^1.0.0",
+    "scope": null,
+    "escapedName": "junk",
+    "name": "junk",
+    "rawSpec": "^1.0.0",
+    "spec": ">=1.0.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/junk/-/junk-1.0.3.tgz",
+  "_shasum": "87be63488649cbdca6f53ab39bec9ccd2347f592",
+  "_shrinkwrap": null,
+  "_spec": "junk@^1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com"
+  },
+  "bugs": {
+    "url": "https://github.com/sindresorhus/junk/issues"
+  },
+  "dependencies": {},
+  "description": "Filter out OS junk files like .DS_Store and Thumbs.db",
+  "devDependencies": {
+    "ava": "*",
+    "xo": "*"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "87be63488649cbdca6f53ab39bec9ccd2347f592",
+    "tarball": "https://registry.npmjs.org/junk/-/junk-1.0.3.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "gitHead": "2e5b2abf2087c86a92696483ce337c40a360098d",
+  "homepage": "https://github.com/sindresorhus/junk#readme",
+  "keywords": [
+    "junk",
+    "trash",
+    "garbage",
+    "files",
+    "os",
+    "ignore",
+    "exclude",
+    "filter",
+    "temp",
+    "tmp"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    }
+  ],
+  "name": "junk",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sindresorhus/junk.git"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "version": "1.0.3"
+}

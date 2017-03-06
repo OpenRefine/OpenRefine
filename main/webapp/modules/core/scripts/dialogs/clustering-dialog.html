@@ -18,25 +18,25 @@
         <td>
           <div class="binning-controls"><span bind="or_dialog_keying"></span>
           <select bind="keyingFunctionSelector">
-            <option selected="true" bind="or_dialog_fingerprint"></option>
-            <option bind="or_dialog_ngram"></option>
-            <option bind="or_dialog_metaphone"></option>
-            <option bind="or_dialog_phonetic"></option>
+            <option selected="true" bind="or_dialog_fingerprint" value="fingerprint"></option>
+            <option bind="or_dialog_ngram" value="ngram-fingerprint"></option>
+            <option bind="or_dialog_metaphone" value="metaphone3"></option>
+            <option bind="or_dialog_phonetic" value="cologne-phonetic"></option>
           </select></div>
           <div class="knn-controls hidden"><span bind="or_dialog_distance"></span>
           <select bind="distanceFunctionSelector">
-            <option selected="true" bind="or_dialog_leven"></option>
-            <option bind="or_dialog_ppm"></option>
+            <option selected="true" bind="or_dialog_leven" value="levenshtein"></option>
+            <option bind="or_dialog_ppm" value="PPM"></option>
           </select></div>
         </td>
         <td>
           <div id="ngram-fingerprint-params" class="function-params hidden">
             <span bind="or_dialog_ngramSize"></span><input type="text" value="2" bind="ngramSize" name="ngram-size" size="2" class="param" datatype="int">
-          </div> 
+          </div>
           <div class="knn-controls hidden">
             <span style="margin-right: 1em"><span bind="or_dialog_radius"></span><input type="text" value="1.0" bind="radius" name="radius" size="2" class="param" datatype="float"></span>
             <span><span bind="or_dialog_blockChars"></span><input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="2" class="param" datatype="int"></span>
-          </div> 
+          </div>
         </td>
         <td bind="resultSummary" style="text-align:right;">
         </td>
@@ -54,8 +54,9 @@
       <td class="left" style="text-align: left">
         <button class="button" bind="selectAllButton"></button>
         <button class="button" bind="deselectAllButton"></button>
-      </td> 
+      </td>
       <td class="right" style="text-align: right">
+        <button class="button" bind="exportClusterButton"></button>
         <button class="button button-primary" bind="applyReClusterButton"></button>
         <button class="button" bind="applyCloseButton"></button>
         <button class="button" bind="closeButton"></button>

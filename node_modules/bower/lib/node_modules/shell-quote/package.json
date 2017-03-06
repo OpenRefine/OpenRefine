@@ -1,0 +1,119 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "shell-quote@^1.4.2",
+        "scope": null,
+        "escapedName": "shell-quote",
+        "name": "shell-quote",
+        "rawSpec": "^1.4.2",
+        "spec": ">=1.4.2 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "shell-quote@>=1.4.2 <2.0.0",
+  "_id": "shell-quote@1.6.1",
+  "_inCache": true,
+  "_location": "/shell-quote",
+  "_nodeVersion": "5.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/shell-quote-1.6.1.tgz_1466196190331_0.3792361367959529"
+  },
+  "_npmUser": {
+    "name": "substack",
+    "email": "substack@gmail.com"
+  },
+  "_npmVersion": "3.7.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "shell-quote@^1.4.2",
+    "scope": null,
+    "escapedName": "shell-quote",
+    "name": "shell-quote",
+    "rawSpec": "^1.4.2",
+    "spec": ">=1.4.2 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.6.1.tgz",
+  "_shasum": "f4781949cce402697127430ea3b3c5476f481767",
+  "_shrinkwrap": null,
+  "_spec": "shell-quote@^1.4.2",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/node-shell-quote/issues"
+  },
+  "dependencies": {
+    "array-filter": "~0.0.0",
+    "array-map": "~0.0.0",
+    "array-reduce": "~0.0.0",
+    "jsonify": "~0.0.0"
+  },
+  "description": "quote and parse shell commands",
+  "devDependencies": {
+    "tape": "~2.3.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "f4781949cce402697127430ea3b3c5476f481767",
+    "tarball": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.6.1.tgz"
+  },
+  "gitHead": "09935581cd2b300d74a65bda3b1cbeb52779dd16",
+  "homepage": "https://github.com/substack/node-shell-quote#readme",
+  "keywords": [
+    "shell",
+    "command",
+    "quote",
+    "parse"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "karissa",
+      "email": "krmckelv@gmail.com"
+    },
+    {
+      "name": "substack",
+      "email": "substack@gmail.com"
+    }
+  ],
+  "name": "shell-quote",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/substack/node-shell-quote.git"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/6..latest",
+      "firefox/3.5",
+      "firefox/15..latest",
+      "firefox/nightly",
+      "chrome/25..latest",
+      "chrome/canary",
+      "opera/10..latest",
+      "opera/next",
+      "safari/5.1..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest",
+      "android-browser/4.2..latest"
+    ]
+  },
+  "version": "1.6.1"
+}

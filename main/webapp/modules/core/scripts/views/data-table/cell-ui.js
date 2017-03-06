@@ -106,8 +106,6 @@ DataTableCellUI.prototype._render = function() {
 
       if (service && (service.view) && (service.view.url)) {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
-      } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-        a.attr("href", "http://www.freebase.com/view" + match.id);
       }
 
       $('<span> </span>').appendTo(divContent);
@@ -150,17 +148,13 @@ DataTableCellUI.prototype._render = function() {
 
             if ((service) && (service.view) && (service.view.url)) {
               a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
-            } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-              a.attr("href", "http://www.freebase.com/view" + candidate.id);
             }
 
             var preview = null;
-            if ((service) && (service.preview) 
-                && service.preview.url.indexOf("http://www.freebase.com/widget/topic") < 0) {
+            if ((service) && (service.preview)) {
               preview = service.preview;
-            } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-              preview = DataTableCellUI.internalPreview;
             }
+
             if (preview) {
               a.click(function(evt) {
                 if (!evt.metaKey && !evt.ctrlKey) {
@@ -206,8 +200,6 @@ DataTableCellUI.prototype._render = function() {
         var addSuggest = false;
         if ((service) && (service.suggest) && (service.suggest.entity)) {
           suggestOptions = service.suggest.entity;
-          addSuggest = true;
-        } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
           addSuggest = true;
         }
 
@@ -436,6 +428,7 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
   );
 };
 
+// TODO delete this
 DataTableCellUI.internalPreview = {
   srchurl: 'https://www.googleapis.com/freebase/v1/search?filter=(all mid:${id})'
     + '&output=(notable:/client/summary (description citation provenance) type)'

@@ -1,0 +1,95 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "sort-keys-length@^1.0.0",
+        "scope": null,
+        "escapedName": "sort-keys-length",
+        "name": "sort-keys-length",
+        "rawSpec": "^1.0.0",
+        "spec": ">=1.0.0 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/ext-name"
+    ]
+  ],
+  "_from": "sort-keys-length@>=1.0.0 <2.0.0",
+  "_id": "sort-keys-length@1.0.1",
+  "_inCache": true,
+  "_location": "/sort-keys-length",
+  "_nodeVersion": "1.0.3",
+  "_npmUser": {
+    "name": "kevva",
+    "email": "kevinmartensson@gmail.com"
+  },
+  "_npmVersion": "2.2.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "sort-keys-length@^1.0.0",
+    "scope": null,
+    "escapedName": "sort-keys-length",
+    "name": "sort-keys-length",
+    "rawSpec": "^1.0.0",
+    "spec": ">=1.0.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/ext-name"
+  ],
+  "_resolved": "https://registry.npmjs.org/sort-keys-length/-/sort-keys-length-1.0.1.tgz",
+  "_shasum": "9cb6f4f4e9e48155a6aa0671edd336ff1479a188",
+  "_shrinkwrap": null,
+  "_spec": "sort-keys-length@^1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/ext-name",
+  "author": {
+    "name": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva"
+  },
+  "bugs": {
+    "url": "https://github.com/kevva/sort-keys-length/issues"
+  },
+  "dependencies": {
+    "sort-keys": "^1.0.0"
+  },
+  "description": "Sort objecy keys by length",
+  "devDependencies": {
+    "ava": "^0.0.4"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "9cb6f4f4e9e48155a6aa0671edd336ff1479a188",
+    "tarball": "https://registry.npmjs.org/sort-keys-length/-/sort-keys-length-1.0.1.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "gitHead": "745e75f1ca4bcb50f120a899afd1508d0b6c7a31",
+  "homepage": "https://github.com/kevva/sort-keys-length",
+  "keywords": [
+    "length",
+    "object",
+    "sort"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    }
+  ],
+  "name": "sort-keys-length",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevva/sort-keys-length.git"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "version": "1.0.1"
+}

@@ -1,0 +1,92 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "request-replay@^0.2.0",
+        "scope": null,
+        "escapedName": "request-replay",
+        "name": "request-replay",
+        "rawSpec": "^0.2.0",
+        "spec": ">=0.2.0 <0.3.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-registry-client"
+    ]
+  ],
+  "_from": "request-replay@>=0.2.0 <0.3.0",
+  "_id": "request-replay@0.2.0",
+  "_inCache": true,
+  "_location": "/request-replay",
+  "_npmUser": {
+    "name": "satazor",
+    "email": "andremiguelcruz@msn.com"
+  },
+  "_npmVersion": "1.3.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "request-replay@^0.2.0",
+    "scope": null,
+    "escapedName": "request-replay",
+    "name": "request-replay",
+    "rawSpec": "^0.2.0",
+    "spec": ">=0.2.0 <0.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/bower-registry-client"
+  ],
+  "_resolved": "https://registry.npmjs.org/request-replay/-/request-replay-0.2.0.tgz",
+  "_shasum": "9b693a5d118b39f5c596ead5ed91a26444057f60",
+  "_shrinkwrap": null,
+  "_spec": "request-replay@^0.2.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-registry-client",
+  "author": {
+    "name": "IndigoUnited",
+    "email": "hello@indigounited.com",
+    "url": "http://indigounited.com"
+  },
+  "bugs": {
+    "url": "http://github.com/IndigoUnited/node-request-replay/issues"
+  },
+  "dependencies": {
+    "retry": "~0.6.0"
+  },
+  "description": "Replays a request when a network error occurs",
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.12.0",
+    "request": "~2"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "9b693a5d118b39f5c596ead5ed91a26444057f60",
+    "tarball": "https://registry.npmjs.org/request-replay/-/request-replay-0.2.0.tgz"
+  },
+  "homepage": "https://github.com/IndigoUnited/node-request-replay#readme",
+  "keywords": [
+    "retry",
+    "replay",
+    "request",
+    "mikeal",
+    "network"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "satazor",
+      "email": "andremiguelcruz@msn.com"
+    }
+  ],
+  "name": "request-replay",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IndigoUnited/node-request-replay.git"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "version": "0.2.0"
+}

@@ -1,0 +1,105 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ends-with@^0.2.0",
+        "scope": null,
+        "escapedName": "ends-with",
+        "name": "ends-with",
+        "rawSpec": "^0.2.0",
+        "spec": ">=0.2.0 <0.3.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/ext-name"
+    ]
+  ],
+  "_from": "ends-with@>=0.2.0 <0.3.0",
+  "_id": "ends-with@0.2.0",
+  "_inCache": true,
+  "_location": "/ends-with",
+  "_npmUser": {
+    "name": "jonschlinkert",
+    "email": "github@sellside.com"
+  },
+  "_npmVersion": "1.4.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "ends-with@^0.2.0",
+    "scope": null,
+    "escapedName": "ends-with",
+    "name": "ends-with",
+    "rawSpec": "^0.2.0",
+    "spec": ">=0.2.0 <0.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/ext-name"
+  ],
+  "_resolved": "https://registry.npmjs.org/ends-with/-/ends-with-0.2.0.tgz",
+  "_shasum": "2f9da98d57a50cfda4571ce4339000500f4e6b8a",
+  "_shrinkwrap": null,
+  "_spec": "ends-with@^0.2.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/ext-name",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert"
+  },
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/ends-with/issues"
+  },
+  "dependencies": {},
+  "description": "Returns `true` if the given `string` or `array` ends with `suffix` using strict equality for comparisons.",
+  "devDependencies": {
+    "ansi": "^0.3.0",
+    "benchmark": "^1.0.0",
+    "mocha": "*",
+    "should": "^4.0.4",
+    "verb": ">= 0.2.6",
+    "verb-tag-jscomments": ">= 0.2.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "2f9da98d57a50cfda4571ce4339000500f4e6b8a",
+    "tarball": "https://registry.npmjs.org/ends-with/-/ends-with-0.2.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "homepage": "https://github.com/jonschlinkert/ends-with",
+  "keywords": [
+    "array",
+    "end",
+    "ends",
+    "javascript",
+    "js",
+    "string",
+    "suffix",
+    "util",
+    "utility",
+    "utils"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/jonschlinkert/ends-with/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "jonschlinkert",
+      "email": "github@sellside.com"
+    }
+  ],
+  "name": "ends-with",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jonschlinkert/ends-with.git"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "version": "0.2.0"
+}

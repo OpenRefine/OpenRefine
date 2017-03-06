@@ -1,0 +1,134 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "update-notifier@^0.6.0",
+        "scope": null,
+        "escapedName": "update-notifier",
+        "name": "update-notifier",
+        "rawSpec": "^0.6.0",
+        "spec": ">=0.6.0 <0.7.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "update-notifier@>=0.6.0 <0.7.0",
+  "_id": "update-notifier@0.6.3",
+  "_inCache": true,
+  "_location": "/update-notifier",
+  "_nodeVersion": "5.2.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/update-notifier-0.6.3.tgz_1458188611750_0.477853721473366"
+  },
+  "_npmUser": {
+    "name": "sboudrias",
+    "email": "admin@simonboudrias.com"
+  },
+  "_npmVersion": "3.5.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "update-notifier@^0.6.0",
+    "scope": null,
+    "escapedName": "update-notifier",
+    "name": "update-notifier",
+    "rawSpec": "^0.6.0",
+    "spec": ">=0.6.0 <0.7.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/update-notifier/-/update-notifier-0.6.3.tgz",
+  "_shasum": "776dec8daa13e962a341e8a1d98354306b67ae08",
+  "_shrinkwrap": null,
+  "_spec": "update-notifier@^0.6.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com"
+  },
+  "bugs": {
+    "url": "https://github.com/yeoman/update-notifier/issues"
+  },
+  "dependencies": {
+    "boxen": "^0.3.1",
+    "chalk": "^1.0.0",
+    "configstore": "^2.0.0",
+    "is-npm": "^1.0.0",
+    "latest-version": "^2.0.0",
+    "semver-diff": "^2.0.0"
+  },
+  "description": "Update notifications for your CLI app",
+  "devDependencies": {
+    "mocha": "*",
+    "xo": "*"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "776dec8daa13e962a341e8a1d98354306b67ae08",
+    "tarball": "https://registry.npmjs.org/update-notifier/-/update-notifier-0.6.3.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js",
+    "check.js"
+  ],
+  "gitHead": "4896088fe3c03e69ad462e9b27c67abc94e9e8e7",
+  "homepage": "https://github.com/yeoman/update-notifier#readme",
+  "keywords": [
+    "npm",
+    "update",
+    "updater",
+    "notify",
+    "notifier",
+    "check",
+    "checker",
+    "cli",
+    "module",
+    "package",
+    "version"
+  ],
+  "license": "BSD-2-Clause",
+  "maintainers": [
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "addyosmani",
+      "email": "addyosmani@gmail.com"
+    },
+    {
+      "name": "passy",
+      "email": "phartig@rdrei.net"
+    },
+    {
+      "name": "sboudrias",
+      "email": "admin@simonboudrias.com"
+    },
+    {
+      "name": "eddiemonge",
+      "email": "eddie+npm@eddiemonge.com"
+    },
+    {
+      "name": "arthurvr",
+      "email": "contact@arthurverschaeve.be"
+    }
+  ],
+  "name": "update-notifier",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeoman/update-notifier.git"
+  },
+  "scripts": {
+    "test": "xo && mocha --timeout 20000"
+  },
+  "version": "0.6.3"
+}

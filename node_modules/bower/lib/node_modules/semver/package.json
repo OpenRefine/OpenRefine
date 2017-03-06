@@ -1,0 +1,85 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "semver@^2.3.0",
+        "scope": null,
+        "escapedName": "semver",
+        "name": "semver",
+        "rawSpec": "^2.3.0",
+        "spec": ">=2.3.0 <3.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "semver@>=2.3.0 <3.0.0",
+  "_id": "semver@2.3.2",
+  "_inCache": true,
+  "_location": "/semver",
+  "_npmUser": {
+    "name": "isaacs",
+    "email": "i@izs.me"
+  },
+  "_npmVersion": "1.5.0-alpha-4",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "semver@^2.3.0",
+    "scope": null,
+    "escapedName": "semver",
+    "name": "semver",
+    "rawSpec": "^2.3.0",
+    "spec": ">=2.3.0 <3.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/",
+    "/normalize-package-data"
+  ],
+  "_resolved": "https://registry.npmjs.org/semver/-/semver-2.3.2.tgz",
+  "_shasum": "b9848f25d6cf36333073ec9ef8856d42f1233e52",
+  "_shrinkwrap": null,
+  "_spec": "semver@^2.3.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "bin": {
+    "semver": "./bin/semver"
+  },
+  "browser": "semver.browser.js",
+  "bugs": {
+    "url": "https://github.com/isaacs/node-semver/issues"
+  },
+  "dependencies": {},
+  "description": "The semantic version parser used by npm.",
+  "devDependencies": {
+    "tap": "0.x >=0.0.4",
+    "uglify-js": "~2.3.6"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "b9848f25d6cf36333073ec9ef8856d42f1233e52",
+    "tarball": "https://registry.npmjs.org/semver/-/semver-2.3.2.tgz"
+  },
+  "gitHead": "87bcf749b18fd0ce32b1808f60a98eacecd84689",
+  "homepage": "https://github.com/isaacs/node-semver",
+  "license": "BSD",
+  "main": "semver.js",
+  "maintainers": [
+    {
+      "name": "isaacs",
+      "email": "i@izs.me"
+    }
+  ],
+  "min": "semver.min.js",
+  "name": "semver",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/isaacs/node-semver.git"
+  },
+  "scripts": {
+    "prepublish": "make",
+    "test": "tap test/*.js"
+  },
+  "version": "2.3.2"
+}

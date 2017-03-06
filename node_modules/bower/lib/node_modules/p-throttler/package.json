@@ -1,0 +1,93 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "p-throttler@0.1.1",
+        "scope": null,
+        "escapedName": "p-throttler",
+        "name": "p-throttler",
+        "rawSpec": "0.1.1",
+        "spec": "0.1.1",
+        "type": "version"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "p-throttler@0.1.1",
+  "_id": "p-throttler@0.1.1",
+  "_inCache": true,
+  "_location": "/p-throttler",
+  "_npmUser": {
+    "name": "satazor",
+    "email": "andremiguelcruz@msn.com"
+  },
+  "_npmVersion": "1.4.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "p-throttler@0.1.1",
+    "scope": null,
+    "escapedName": "p-throttler",
+    "name": "p-throttler",
+    "rawSpec": "0.1.1",
+    "spec": "0.1.1",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/p-throttler/-/p-throttler-0.1.1.tgz",
+  "_shasum": "15246409d225d3eefca85c50de710a83a78cca6a",
+  "_shrinkwrap": null,
+  "_spec": "p-throttler@0.1.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "IndigoUnited",
+    "email": "hello@indigounited.com",
+    "url": "http://indigounited.com"
+  },
+  "bugs": {
+    "url": "http://github.com/IndigoUnited/node-p-throttler/issues"
+  },
+  "dependencies": {
+    "q": "~0.9.2"
+  },
+  "description": "A promise based throttler capable of limiting execution of parallel tasks",
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.10.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "15246409d225d3eefca85c50de710a83a78cca6a",
+    "tarball": "https://registry.npmjs.org/p-throttler/-/p-throttler-0.1.1.tgz"
+  },
+  "homepage": "https://github.com/IndigoUnited/node-p-throttler",
+  "keywords": [
+    "promise",
+    "throttler",
+    "trottle",
+    "deferred",
+    "worker",
+    "tasks",
+    "parallel"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "satazor",
+      "email": "andremiguelcruz@msn.com"
+    }
+  ],
+  "name": "p-throttler",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IndigoUnited/node-p-throttler.git"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "version": "0.1.1"
+}

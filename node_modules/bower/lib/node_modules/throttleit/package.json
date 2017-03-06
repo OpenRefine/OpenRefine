@@ -1,0 +1,81 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "throttleit@~0.0.2",
+        "scope": null,
+        "escapedName": "throttleit",
+        "name": "throttleit",
+        "rawSpec": "~0.0.2",
+        "spec": ">=0.0.2 <0.1.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/request-progress"
+    ]
+  ],
+  "_from": "throttleit@>=0.0.2 <0.1.0",
+  "_id": "throttleit@0.0.2",
+  "_inCache": true,
+  "_location": "/throttleit",
+  "_npmUser": {
+    "name": "tootallnate",
+    "email": "nathan@tootallnate.net"
+  },
+  "_npmVersion": "1.2.15",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "throttleit@~0.0.2",
+    "scope": null,
+    "escapedName": "throttleit",
+    "name": "throttleit",
+    "rawSpec": "~0.0.2",
+    "spec": ">=0.0.2 <0.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/request-progress"
+  ],
+  "_resolved": "https://registry.npmjs.org/throttleit/-/throttleit-0.0.2.tgz",
+  "_shasum": "cfedf88e60c00dd9697b61fdd2a8343a9b680eaf",
+  "_shrinkwrap": null,
+  "_spec": "throttleit@~0.0.2",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/request-progress",
+  "bugs": {
+    "url": "https://github.com/component/throttle/issues"
+  },
+  "component": {
+    "scripts": {
+      "throttle/index.js": "index.js"
+    }
+  },
+  "dependencies": {},
+  "description": "Throttle a function",
+  "devDependencies": {},
+  "development": {},
+  "directories": {},
+  "dist": {
+    "shasum": "cfedf88e60c00dd9697b61fdd2a8343a9b680eaf",
+    "tarball": "https://registry.npmjs.org/throttleit/-/throttleit-0.0.2.tgz"
+  },
+  "homepage": "https://github.com/component/throttle#readme",
+  "keywords": [],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "tjholowaychuk",
+      "email": "tj@vision-media.ca"
+    },
+    {
+      "name": "tootallnate",
+      "email": "nathan@tootallnate.net"
+    }
+  ],
+  "name": "throttleit",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/component/throttle.git"
+  },
+  "version": "0.0.2"
+}

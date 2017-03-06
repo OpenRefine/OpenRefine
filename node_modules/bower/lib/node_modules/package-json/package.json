@@ -1,0 +1,123 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "package-json@^2.0.0",
+        "scope": null,
+        "escapedName": "package-json",
+        "name": "package-json",
+        "rawSpec": "^2.0.0",
+        "spec": ">=2.0.0 <3.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/latest-version"
+    ]
+  ],
+  "_from": "package-json@>=2.0.0 <3.0.0",
+  "_id": "package-json@2.4.0",
+  "_inCache": true,
+  "_location": "/package-json",
+  "_nodeVersion": "4.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/package-json-2.4.0.tgz_1472158723527_0.22724637226201594"
+  },
+  "_npmUser": {
+    "name": "sindresorhus",
+    "email": "sindresorhus@gmail.com"
+  },
+  "_npmVersion": "2.15.9",
+  "_phantomChildren": {
+    "create-error-class": "3.0.2",
+    "duplexer2": "0.1.4",
+    "is-redirect": "1.0.0",
+    "is-retry-allowed": "1.1.0",
+    "is-stream": "1.1.0",
+    "lowercase-keys": "1.0.0",
+    "node-status-codes": "1.0.0",
+    "parse-json": "2.2.0",
+    "pinkie-promise": "2.0.1",
+    "readable-stream": "2.1.5",
+    "unzip-response": "1.0.2",
+    "url-parse-lax": "1.0.0"
+  },
+  "_requested": {
+    "raw": "package-json@^2.0.0",
+    "scope": null,
+    "escapedName": "package-json",
+    "name": "package-json",
+    "rawSpec": "^2.0.0",
+    "spec": ">=2.0.0 <3.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/latest-version"
+  ],
+  "_resolved": "https://registry.npmjs.org/package-json/-/package-json-2.4.0.tgz",
+  "_shasum": "0d15bd67d1cbbddbb2ca222ff2edb86bcb31a8bb",
+  "_shrinkwrap": null,
+  "_spec": "package-json@^2.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/latest-version",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com"
+  },
+  "bugs": {
+    "url": "https://github.com/sindresorhus/package-json/issues"
+  },
+  "dependencies": {
+    "got": "^5.0.0",
+    "registry-auth-token": "^3.0.1",
+    "registry-url": "^3.0.3",
+    "semver": "^5.1.0"
+  },
+  "description": "Get the package.json of a package from the npm registry",
+  "devDependencies": {
+    "ava": "*",
+    "mock-private-registry": "^1.1.0",
+    "xo": "*"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "0d15bd67d1cbbddbb2ca222ff2edb86bcb31a8bb",
+    "tarball": "https://registry.npmjs.org/package-json/-/package-json-2.4.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "gitHead": "2e77257cec7604cf18d979b1d5c4baa46928d24d",
+  "homepage": "https://github.com/sindresorhus/package-json#readme",
+  "keywords": [
+    "npm",
+    "registry",
+    "package",
+    "pkg",
+    "package.json",
+    "json",
+    "module",
+    "scope",
+    "scoped"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    }
+  ],
+  "name": "package-json",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sindresorhus/package-json.git"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "version": "2.4.0"
+}
