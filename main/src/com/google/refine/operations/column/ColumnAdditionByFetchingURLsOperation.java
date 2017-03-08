@@ -43,8 +43,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,6 +73,9 @@ import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.CacheLoader;
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
@@ -172,7 +175,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         final protected Evaluable     _eval;
         final protected long          _historyEntryID;
         protected int                 _cellIndex;
-        protected Map<String, Serializable> _urlCache;
+        protected LoadingCache<String, Serializable> _urlCache;
 
         public ColumnAdditionByFetchingURLsProcess(
             Project project,
@@ -185,7 +188,28 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             _engine = engine;
             _eval = eval;
             _historyEntryID = HistoryEntry.allocateID();
-            _urlCache = new HashMap<String, Serializable>();
+            _urlCache = CacheBuilder.newBuilder()
+		.maximumSize(2048)
+		.expireAfterWrite(10, TimeUnit.MINUTES)
+		.build(
+		     new CacheLoader<String, Serializable>() {
+			public Serializable load(String urlString) {
+			    Serializable result = fetch(urlString);
+			    try {
+				// Always sleep for the delay, no matter how long the
+				// request took. This is more responsible than substracting
+				// the time spend requesting the URL, because it naturally
+				// slows us down if the server is busy and takes a long time
+				// to reply.
+				if (_delay > 0) {
+				    Thread.sleep(_delay);
+				}
+			    } catch (InterruptedException e) {
+				return null;
+			    }
+			    return result;
+			}
+		     });
         }
 
         @Override
@@ -238,8 +262,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 	        }
             }
 
-	    _urlCache.clear();
-
             if (!_canceled) {
                 HistoryEntry historyEntry = new HistoryEntry(
                     _historyEntryID,
@@ -260,25 +282,10 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 	CellAtRow cachedFetch(CellAtRow urlData) {
 	    String urlString = urlData.cell.value.toString();
 
-	    Serializable cellResult = _urlCache.get(urlString);
-	    if (cellResult == null) {
-		cellResult = fetch(urlString);
-		if (cellResult != null) {
-		    _urlCache.put(urlString, cellResult);
-	 	}
-
-		try {
-		    // Always sleep for the delay, no matter how long the
-		    // request took. This is more responsible than substracting
-		    // the time spend requesting the URL, because it naturally
-		    // slows us down if the server is busy and takes a long time
-		    // to reply.
-		    if (_delay > 0) {
-			Thread.sleep(_delay);
-		    }
-		} catch (InterruptedException e) {
-		    return null;
-		}
+	    Serializable cellResult = null;
+	    try {
+		cellResult = _urlCache.get(urlString);
+	    } catch(ExecutionException e) {
 	    }
 
 	    if (cellResult != null) {

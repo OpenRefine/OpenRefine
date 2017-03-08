@@ -128,12 +128,6 @@ public class UrlFetchingTests extends RefineTest {
             row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
             project.rows.add(row);
         }
-        //engine.getAllRows().accept(project, new CountingRowVisitor(5)) ;
-        //engine.getAllFilteredRows().accept(project, new CountingRowVisitor(4));
-        // Function fc = new FacetCount();
-        // Integer count = (Integer) fc.call(bindings, new Object[] {"a", "value", "Column A"});
-        // Assert.assertEquals(count.intValue(), 4);
-        // EngineDependentOperation op = new RowRemovalOperation(engine_config);
 	EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
 		"fruits",
 		"\"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new&city=\"+value",
