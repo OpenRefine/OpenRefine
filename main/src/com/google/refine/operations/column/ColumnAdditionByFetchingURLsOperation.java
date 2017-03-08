@@ -172,7 +172,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         final protected Evaluable     _eval;
         final protected long          _historyEntryID;
         protected int                 _cellIndex;
-        protected Map<URL, Serializable> _urlCache;
+        protected Map<String, Serializable> _urlCache;
 
         public ColumnAdditionByFetchingURLsProcess(
             Project project,
@@ -185,7 +185,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             _engine = engine;
             _eval = eval;
             _historyEntryID = HistoryEntry.allocateID();
-            _urlCache = new HashMap<URL, Serializable>();
+            _urlCache = new HashMap<String, Serializable>();
         }
 
         @Override
@@ -259,18 +259,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
 	CellAtRow cachedFetch(CellAtRow urlData) {
 	    String urlString = urlData.cell.value.toString();
-	    URL url = null;
-	    try {
-		url = new URL(urlString);
-	    } catch (MalformedURLException e) {
-		return null;
-	    }
 
-	    Serializable cellResult = _urlCache.get(url);
+	    Serializable cellResult = _urlCache.get(urlString);
 	    if (cellResult == null) {
-		cellResult = fetch(url);
+		cellResult = fetch(urlString);
 		if (cellResult != null) {
-		    _urlCache.put(url, cellResult);
+		    _urlCache.put(urlString, cellResult);
 	 	}
 
 		try {
@@ -295,7 +289,14 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 	    return null;
 	}
 
-        Serializable fetch(URL url) {
+        Serializable fetch(String urlString) {
+	    URL url = null;
+	    try {
+		url = new URL(urlString);
+	    } catch (MalformedURLException e) {
+		return null;
+	    }
+
             try {
                 URLConnection urlConnection = url.openConnection();
 //                    urlConnection.setRequestProperty(_headerKey, _headerValue);
