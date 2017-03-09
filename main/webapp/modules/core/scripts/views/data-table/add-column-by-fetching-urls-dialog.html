@@ -12,11 +12,14 @@
         </tr>
         <tr>
           <td width="1%" style="white-space: pre;" bind="or_views_onErr"></td>
-          <td colspan="3">
+          <td>
             <input type="radio" name="dialog-onerror-choice" value="set-to-blank" checked id="$add-column-error-set-to-blank"/>
               <label for="$add-column-error-set-to-blank" bind="or_views_setBlank"></label>
             <input type="radio" name="dialog-onerror-choice" value="store-error" id="$add-column-error-store-error" />
               <label for="$add-column-error-store-error" bind="or_views_storeErr"></label></td>
+	   <td colspan="2">
+	     <input type="checkbox" name="dialog-cache-responses" id="$add-column-cache-responses" checked="checked" />
+		<label for="$add-column-cache-responses" bind="or_views_cacheResponses"></label></td>
         </tr>
         <tr><td colspan="4"><h3><span bind="or_views_urlFetch"></span></h3></td></tr>
         <tr><td colspan="4">$EXPRESSION_PREVIEW_WIDGET$</td></tr>

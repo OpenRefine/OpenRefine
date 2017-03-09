@@ -103,6 +103,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_onErr.text($.i18n._('core-views')["on-error"]);
     elmts.or_views_setBlank.text($.i18n._('core-views')["set-blank"]);
     elmts.or_views_storeErr.text($.i18n._('core-views')["store-err"]);
+    elmts.or_views_cacheResponses.text($.i18n._('core-views')["cache-responses"]);
     elmts.or_views_urlFetch.text($.i18n._('core-views')["url-fetch"]);
     elmts.okButton.html($.i18n._('core-buttons')["ok"]);
     elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
@@ -135,7 +136,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           newColumnName: columnName, 
           columnInsertIndex: columnIndex + 1,
           delay: elmts.throttleDelayInput[0].value,
-          onError: $('input[name="dialog-onerror-choice"]:checked')[0].value
+          onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
+          cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
         },
         null,
         { modelsChanged: true }
