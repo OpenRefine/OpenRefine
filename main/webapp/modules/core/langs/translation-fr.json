@@ -510,6 +510,7 @@
 		"on-error": "En cas d’erreur",
 		"set-blank": "vider la cellule",
 		"store-err": "conserver l’erreur",
+		"cache-responses": "Mettre les réponses en cache",
 		"copy-val": "copier la valeur depuis la colonne originale",
 		"warning-col-name": "Vous devez indiquer un nom de colonne.",
 		"add-col-fetch": "Ajouter une colonne en moissonnant les données depuis les URL d’une colonne",

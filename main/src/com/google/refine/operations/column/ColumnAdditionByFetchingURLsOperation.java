@@ -85,6 +85,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected String     _newColumnName;
     final protected int        _columnInsertIndex;
     final protected int        _delay;
+    final protected boolean    _cacheResponses;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -96,7 +97,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             TextTransformOperation.stringToOnError(obj.getString("onError")),
             obj.getString("newColumnName"),
             obj.getInt("columnInsertIndex"),
-            obj.getInt("delay")
+            obj.getInt("delay"),
+            obj.optBoolean("cacheResponses", false) // false for retro-compatibility
         );
     }
 
@@ -107,7 +109,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         OnError        onError,
         String         newColumnName,
         int            columnInsertIndex,
-        int            delay
+        int            delay,
+        boolean        cacheResponses
     ) {
         super(engineConfig);
 
@@ -119,6 +122,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _columnInsertIndex = columnInsertIndex;
 
         _delay = delay;
+        _cacheResponses = cacheResponses;
     }
 
     @Override
@@ -135,6 +139,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         writer.key("urlExpression"); writer.value(_urlExpression);
         writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
         writer.key("delay"); writer.value(_delay);
+        writer.key("cacheResponses"); writer.value(_cacheResponses);
         writer.endObject();
     }
 
@@ -165,7 +170,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             project,
             engine,
             eval,
-            getBriefDescription(null)
+            getBriefDescription(null),
+            _cacheResponses
         );
     }
 
@@ -181,35 +187,39 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             Project project,
             Engine engine,
             Evaluable eval,
-            String description
+            String description,
+            boolean cacheResponses
         ) throws JSONException {
             super(description);
             _project = project;
             _engine = engine;
             _eval = eval;
             _historyEntryID = HistoryEntry.allocateID();
-            _urlCache = CacheBuilder.newBuilder()
-		.maximumSize(2048)
-		.expireAfterWrite(10, TimeUnit.MINUTES)
-		.build(
-		     new CacheLoader<String, Serializable>() {
-			public Serializable load(String urlString) {
-			    Serializable result = fetch(urlString);
-			    try {
-				// Always sleep for the delay, no matter how long the
-				// request took. This is more responsible than substracting
-				// the time spend requesting the URL, because it naturally
-				// slows us down if the server is busy and takes a long time
-				// to reply.
-				if (_delay > 0) {
-				    Thread.sleep(_delay);
-				}
-			    } catch (InterruptedException e) {
-				return null;
-			    }
-			    return result;
-			}
-		     });
+            _urlCache = null;
+            if (cacheResponses) {
+                _urlCache = CacheBuilder.newBuilder()
+                .maximumSize(2048)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .build(
+                     new CacheLoader<String, Serializable>() {
+                        public Serializable load(String urlString) {
+                            Serializable result = fetch(urlString);
+                            try {
+                                // Always sleep for the delay, no matter how long the
+                                // request took. This is more responsible than substracting
+                                // the time spend requesting the URL, because it naturally
+                                // slows us down if the server is busy and takes a long time
+                                // to reply.
+                                if (_delay > 0) {
+                                    Thread.sleep(_delay);
+                                }
+                            } catch (InterruptedException e) {
+                                return null;
+                            }
+                            return result;
+                        }
+                     });
+            }
         }
 
         @Override
@@ -250,8 +260,20 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(urls.size());
             for (int i = 0; i < urls.size(); i++) {
                 CellAtRow urlData = urls.get(i);
-                CellAtRow cellAtRow = cachedFetch(urlData);
-                if (cellAtRow != null) {
+                String urlString = urlData.cell.value.toString();
+
+                Serializable response = null;
+                if (_urlCache != null) {
+                    response = cachedFetch(urlString);
+                } else {
+                    response = fetch(urlString);
+                }
+
+                if (response != null) {
+                    CellAtRow cellAtRow = new CellAtRow(
+                            urlData.row,
+                            new Cell(response, null));
+
                     responseBodies.add(cellAtRow);
                 }
 
@@ -259,7 +281,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
                 if (_canceled) {
                     break;
-	        }
+                }
             }
 
             if (!_canceled) {
@@ -279,30 +301,21 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
         }
 
-	CellAtRow cachedFetch(CellAtRow urlData) {
-	    String urlString = urlData.cell.value.toString();
-
-	    Serializable cellResult = null;
-	    try {
-		cellResult = _urlCache.get(urlString);
-	    } catch(ExecutionException e) {
-	    }
-
-	    if (cellResult != null) {
-		return new CellAtRow(
-				urlData.row,
-				new Cell(cellResult, null));
-	    }
-	    return null;
-	}
+        Serializable cachedFetch(String urlString) {
+            try {
+                return  _urlCache.get(urlString);
+            } catch(ExecutionException e) {
+                return null;
+            }
+        }
 
         Serializable fetch(String urlString) {
-	    URL url = null;
-	    try {
-		url = new URL(urlString);
-	    } catch (MalformedURLException e) {
-		return null;
-	    }
+            URL url = null;
+            try {
+                url = new URL(urlString);
+            } catch (MalformedURLException e) {
+                return null;
+            }
 
             try {
                 URLConnection urlConnection = url.openConnection();

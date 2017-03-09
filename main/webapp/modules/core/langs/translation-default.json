@@ -510,6 +510,7 @@
 		"on-error": "On error",
 		"set-blank": "set to blank",
 		"store-err": "store error",
+		"cache-responses": "Cache responses",
 		"copy-val": "copy value from original column",
 		"warning-col-name": "You must enter a column name.",
 		"add-col-fetch": "Add column by fetching URLs based on column",

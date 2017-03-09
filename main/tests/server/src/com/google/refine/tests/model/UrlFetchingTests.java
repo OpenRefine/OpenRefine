@@ -134,7 +134,8 @@ public class UrlFetchingTests extends RefineTest {
 		OnError.SetToBlank,
 		"rand",
 		1,
-		500);
+		500,
+		true);
 	ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
 	process.startPerforming(pm);

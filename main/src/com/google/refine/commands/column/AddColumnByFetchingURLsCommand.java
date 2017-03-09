@@ -54,6 +54,7 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
         int delay = Integer.parseInt(request.getParameter("delay"));
         String onError = request.getParameter("onError");
+        boolean cacheResponses = Boolean.parseBoolean(request.getParameter("cacheResponses"));
         
         return new ColumnAdditionByFetchingURLsOperation(
             engineConfig, 
@@ -62,7 +63,8 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
             TextTransformOperation.stringToOnError(onError),
             newColumnName,
             columnInsertIndex,
-            delay
+            delay,
+            cacheResponses
         );
     }
 
