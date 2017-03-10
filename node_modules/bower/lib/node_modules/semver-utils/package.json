@@ -1,0 +1,88 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "semver-utils@^1.1.1",
+        "scope": null,
+        "escapedName": "semver-utils",
+        "name": "semver-utils",
+        "rawSpec": "^1.1.1",
+        "spec": ">=1.1.1 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "semver-utils@>=1.1.1 <2.0.0",
+  "_id": "semver-utils@1.1.1",
+  "_inCache": true,
+  "_location": "/semver-utils",
+  "_nodeVersion": "4.1.0",
+  "_npmUser": {
+    "name": "coolaj86",
+    "email": "coolaj86@gmail.com"
+  },
+  "_npmVersion": "2.14.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "semver-utils@^1.1.1",
+    "scope": null,
+    "escapedName": "semver-utils",
+    "name": "semver-utils",
+    "rawSpec": "^1.1.1",
+    "spec": ">=1.1.1 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/semver-utils/-/semver-utils-1.1.1.tgz",
+  "_shasum": "27d92fec34d27cfa42707d3b40d025ae9855f2df",
+  "_shrinkwrap": null,
+  "_spec": "semver-utils@^1.1.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "AJ ONeal"
+  },
+  "bugs": {
+    "url": "https://github.com/coolaj86/semver-utils/issues"
+  },
+  "dependencies": {},
+  "description": "Tools for manipulating semver strings and objects",
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "27d92fec34d27cfa42707d3b40d025ae9855f2df",
+    "tarball": "https://registry.npmjs.org/semver-utils/-/semver-utils-1.1.1.tgz"
+  },
+  "gitHead": "762536ec245119091f7795c71e8e0061d2e16cf2",
+  "homepage": "https://github.com/coolaj86/semver-utils#readme",
+  "keywords": [
+    "semver",
+    "parse",
+    "parseRange",
+    "range"
+  ],
+  "license": "APACHEv2",
+  "main": "semver-utils.js",
+  "maintainers": [
+    {
+      "name": "coolaj86",
+      "email": "coolaj86@gmail.com"
+    }
+  ],
+  "name": "semver-utils",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/coolaj86/semver-utils.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "version": "1.1.1"
+}

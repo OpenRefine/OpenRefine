@@ -1,0 +1,105 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "bl@~1.0.0",
+        "scope": null,
+        "escapedName": "bl",
+        "name": "bl",
+        "rawSpec": "~1.0.0",
+        "spec": ">=1.0.0 <1.1.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/request"
+    ]
+  ],
+  "_from": "bl@>=1.0.0 <1.1.0",
+  "_id": "bl@1.0.3",
+  "_inCache": true,
+  "_location": "/bl",
+  "_nodeVersion": "5.6.0",
+  "_npmOperationalInternal": {
+    "host": "packages-5-east.internal.npmjs.com",
+    "tmp": "tmp/bl-1.0.3.tgz_1455187279627_0.9823597683571279"
+  },
+  "_npmUser": {
+    "name": "rvagg",
+    "email": "rod@vagg.org"
+  },
+  "_npmVersion": "3.6.0",
+  "_phantomChildren": {
+    "core-util-is": "1.0.2",
+    "inherits": "2.0.3",
+    "isarray": "1.0.0",
+    "process-nextick-args": "1.0.7",
+    "string_decoder": "0.10.31",
+    "util-deprecate": "1.0.2"
+  },
+  "_requested": {
+    "raw": "bl@~1.0.0",
+    "scope": null,
+    "escapedName": "bl",
+    "name": "bl",
+    "rawSpec": "~1.0.0",
+    "spec": ">=1.0.0 <1.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/request",
+    "/tar-stream"
+  ],
+  "_resolved": "https://registry.npmjs.org/bl/-/bl-1.0.3.tgz",
+  "_shasum": "fc5421a28fd4226036c3b3891a66a25bc64d226e",
+  "_shrinkwrap": null,
+  "_spec": "bl@~1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/request",
+  "authors": [
+    "Rod Vagg <rod@vagg.org> (https://github.com/rvagg)",
+    "Matteo Collina <matteo.collina@gmail.com> (https://github.com/mcollina)",
+    "Jarett Cruger <jcrugzz@gmail.com> (https://github.com/jcrugzz)"
+  ],
+  "bugs": {
+    "url": "https://github.com/rvagg/bl/issues"
+  },
+  "dependencies": {
+    "readable-stream": "~2.0.5"
+  },
+  "description": "Buffer List: collect buffers and access with a standard readable Buffer interface, streamable too!",
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "hash_file": "~0.1.1",
+    "tape": "~4.4.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "fc5421a28fd4226036c3b3891a66a25bc64d226e",
+    "tarball": "https://registry.npmjs.org/bl/-/bl-1.0.3.tgz"
+  },
+  "gitHead": "906e0dd6e811c9989a2c1d46fcca22c8da9f8f5b",
+  "homepage": "https://github.com/rvagg/bl",
+  "keywords": [
+    "buffer",
+    "buffers",
+    "stream",
+    "awesomesauce"
+  ],
+  "license": "MIT",
+  "main": "bl.js",
+  "maintainers": [
+    {
+      "name": "rvagg",
+      "email": "rod@vagg.org"
+    }
+  ],
+  "name": "bl",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rvagg/bl.git"
+  },
+  "scripts": {
+    "test": "node test/test.js | faucet"
+  },
+  "version": "1.0.3"
+}

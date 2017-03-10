@@ -1,0 +1,116 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "stringify-object@^1.0.0",
+        "scope": null,
+        "escapedName": "stringify-object",
+        "name": "stringify-object",
+        "rawSpec": "^1.0.0",
+        "spec": ">=1.0.0 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "stringify-object@>=1.0.0 <2.0.0",
+  "_id": "stringify-object@1.0.1",
+  "_inCache": true,
+  "_location": "/stringify-object",
+  "_nodeVersion": "0.12.0",
+  "_npmUser": {
+    "name": "sindresorhus",
+    "email": "sindresorhus@gmail.com"
+  },
+  "_npmVersion": "2.5.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "stringify-object@^1.0.0",
+    "scope": null,
+    "escapedName": "stringify-object",
+    "name": "stringify-object",
+    "rawSpec": "^1.0.0",
+    "spec": ">=1.0.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/stringify-object/-/stringify-object-1.0.1.tgz",
+  "_shasum": "86d35e7dbfbce9aa45637d7ecdd7847e159db8a2",
+  "_shrinkwrap": null,
+  "_spec": "stringify-object@^1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "http://sindresorhus.com"
+  },
+  "bugs": {
+    "url": "https://github.com/yeoman/stringify-object/issues"
+  },
+  "dependencies": {},
+  "description": "Stringify an object/array like JSON.stringify just without all the double-quotes",
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "86d35e7dbfbce9aa45637d7ecdd7847e159db8a2",
+    "tarball": "https://registry.npmjs.org/stringify-object/-/stringify-object-1.0.1.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "gitHead": "be04e8f11e3339fc7b1a8b6ebd71615bdb0e86e6",
+  "homepage": "https://github.com/yeoman/stringify-object",
+  "keywords": [
+    "object",
+    "stringify",
+    "pretty",
+    "print",
+    "dump",
+    "format"
+  ],
+  "license": "BSD",
+  "maintainers": [
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "addyosmani",
+      "email": "addyosmani@gmail.com"
+    },
+    {
+      "name": "paulirish",
+      "email": "paul.irish@gmail.com"
+    },
+    {
+      "name": "passy",
+      "email": "phartig@rdrei.net"
+    },
+    {
+      "name": "sboudrias",
+      "email": "admin@simonboudrias.com"
+    },
+    {
+      "name": "eddiemonge",
+      "email": "eddie+npm@eddiemonge.com"
+    }
+  ],
+  "name": "stringify-object",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeoman/stringify-object.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "version": "1.0.1"
+}

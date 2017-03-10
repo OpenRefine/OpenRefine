@@ -2,18 +2,18 @@
 
 <!--+
     |
-    |  OpenRefine Build File
+    |  FAIRifier Build File
     |
     +-->
     
-<project name="openrefine" default="build" basedir=".">
+<project name="FAIRifier" default="build" basedir=".">
 
     <!-- Properties are immutable, so anything set in this file takes priority-->
     <property file="build.properties"/>
     
     <property environment="env"/>
 
-    <property name="version" value="trunk"/>
+    <property name="version" value="development"/>
     <property name="full_version" value="0.0.0.0"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
@@ -24,7 +24,7 @@
     <property name="appengine.version" value="1"/>
     <property name="appengine.sdk.dir" value="/opt/appengine"/>
         
-    <property name="fullname" value="openrefine-${version}" />
+    <property name="fullname" value="FAIRifier-${version}" />
     
     <property name="main.dir" value="${basedir}/main" />
 
@@ -62,7 +62,7 @@
     <property name="built.broker.webapp.dir" value="${build.dir}/broker" />
 
     <property name="mac.dir" value="${build.dir}/mac" />
-    <property name="release.name" value="openrefine-${version}" />
+    <property name="release.name" value="FAIRifier-${version}" />
     <property name="windows.dir" value="${build.dir}/windows/${release.name}" />
     <property name="linux.dir" value="${build.dir}/linux/${release.name}" />
     
@@ -147,7 +147,38 @@
     </target>
     
     <target name="build_extensions">
-      <ant dir="extensions/" target="build" />
+    	<exec dir="metadata-form" executable="npm">
+    		<arg value="install"/>
+    	</exec>
+    	<exec dir="metadata-form" executable="bower">
+    		<arg value="install"/>
+    	</exec>
+    	<exec dir="metadata-form" executable="gulp"></exec>
+ 		<copy overwrite="true" todir="extensions/grefine-rdf-extension/module/scripts">
+            <fileset dir="metadata-form/dist"/>
+        </copy>
+    	<copy overwrite="true" todir="extensions/grefine-rdf-extension/module/scripts/externals">
+            <fileset dir="extensions/fairifier-rdf-extension/scripts/externals"/>
+        </copy>
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-catalog.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-catalog.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-dataset.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-dataset.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost-distribution.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost-distribution.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/fairDatapointPost.js" tofile="extensions/grefine-rdf-extension/module/scripts/fairDatapointPost.js" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/scripts/rdf-schema-alignment.js" toFile="extensions/grefine-rdf-extension/module/scripts/rdf-schema-alignment.js"/>
+    	
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/controller.js" tofile="extensions/grefine-rdf-extension/module/MOD-INF/controller.js" />
+        <copy overwrite="true" todir="extensions/grefine-rdf-extension/src/org">
+            <fileset dir="extensions/fairifier-rdf-extension/dtls"/>
+        </copy>
+        <copy overwrite="true" todir="extensions/grefine-rdf-extension/module/MOD-INF/lib">
+            <fileset dir="extensions/fairifier-rdf-extension/lib"/>
+        </copy>
+
+
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/HttpUtils.java" tofile="extensions/grefine-rdf-extension/src/org/deri/grefine/rdf/utils/HttpUtils.java" />
+    	<copy overwrite="true" file="extensions/fairifier-rdf-extension/menu-bar-extensions.js" tofile="extensions/grefine-rdf-extension/module/scripts/menu-bar-extensions.js" />
+
+    	<ant dir="extensions/" target="build" />
     </target>
 
     <target name="build" depends="build_server, build_webapp, build_extensions"/>
@@ -240,8 +271,8 @@
              classpath="${appbundler.dir}/appbundler-1.0.jar" />
 
         <bundleapp outputdirectory="${mac.dir}"
-            name="OpenRefine"
-            displayname="OpenRefine ${version}"
+            name="FAIRifier"
+            displayname="FAIRifier ${version}"
             icon="${graphics.dir}/icon/openrefine.icns"
             identifier="com.google.refine.Refine"
 	    shortversion="${version}"
@@ -300,13 +331,12 @@
             <versionInfo
                 fileVersion="${full_version}"
                 txtFileVersion="${version}"
-                fileDescription="openrefine"
-                copyright="Copyright (c) 2013 OpenRefine contributors, 2010, Google, Inc."
+                fileDescription="FAIRifier"
                 productVersion="${full_version}"
                 txtProductVersion="${version}"
-                productName="OpenRefine"
-                companyName="OpenRefine team"
-                internalName="openrefine"
+                productName="FAIRifier"
+                companyName="DTLS team"
+                internalName="FAIRifier"
                 originalFilename="openrefine.exe" 
             />
           </config>
@@ -566,5 +596,4 @@
         <delete dir="${dist.dir}" />
         <delete dir="${tools.dir}" />
     </target>
-
 </project>

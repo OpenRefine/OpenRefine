@@ -1,0 +1,75 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "traverse@>=0.3.0 <0.4",
+        "scope": null,
+        "escapedName": "traverse",
+        "name": "traverse",
+        "rawSpec": ">=0.3.0 <0.4",
+        "spec": ">=0.3.0 <0.4.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/chainsaw"
+    ]
+  ],
+  "_defaultsLoaded": true,
+  "_engineSupported": true,
+  "_from": "traverse@>=0.3.0 <0.4.0",
+  "_id": "traverse@0.3.9",
+  "_inCache": true,
+  "_location": "/traverse",
+  "_nodeVersion": "v0.5.0-pre",
+  "_npmVersion": "1.0.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "traverse@>=0.3.0 <0.4",
+    "scope": null,
+    "escapedName": "traverse",
+    "name": "traverse",
+    "rawSpec": ">=0.3.0 <0.4",
+    "spec": ">=0.3.0 <0.4.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/chainsaw"
+  ],
+  "_resolved": "https://registry.npmjs.org/traverse/-/traverse-0.3.9.tgz",
+  "_shasum": "717b8f220cc0bb7b44e40514c22b2e8bbc70d8b9",
+  "_shrinkwrap": null,
+  "_spec": "traverse@>=0.3.0 <0.4",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/chainsaw",
+  "author": {
+    "name": "James Halliday"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/js-traverse/issues"
+  },
+  "dependencies": {},
+  "description": "Traverse and transform objects by visiting every node on a recursive walk",
+  "devDependencies": {
+    "expresso": "0.7.x"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "717b8f220cc0bb7b44e40514c22b2e8bbc70d8b9",
+    "tarball": "https://registry.npmjs.org/traverse/-/traverse-0.3.9.tgz"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "https://github.com/substack/js-traverse#readme",
+  "license": "MIT/X11",
+  "main": "./index",
+  "name": "traverse",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/js-traverse.git"
+  },
+  "scripts": {
+    "test": "expresso"
+  },
+  "version": "0.3.9"
+}

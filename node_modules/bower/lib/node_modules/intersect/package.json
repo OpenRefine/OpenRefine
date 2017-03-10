@@ -1,0 +1,99 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "intersect@^1.0.1",
+        "scope": null,
+        "escapedName": "intersect",
+        "name": "intersect",
+        "rawSpec": "^1.0.1",
+        "spec": ">=1.0.1 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-json"
+    ]
+  ],
+  "_from": "intersect@>=1.0.1 <2.0.0",
+  "_id": "intersect@1.0.1",
+  "_inCache": true,
+  "_location": "/intersect",
+  "_nodeVersion": "0.10.36",
+  "_npmUser": {
+    "name": "juliangruber",
+    "email": "julian@juliangruber.com"
+  },
+  "_npmVersion": "2.6.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "intersect@^1.0.1",
+    "scope": null,
+    "escapedName": "intersect",
+    "name": "intersect",
+    "rawSpec": "^1.0.1",
+    "spec": ">=1.0.1 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/bower-json"
+  ],
+  "_resolved": "https://registry.npmjs.org/intersect/-/intersect-1.0.1.tgz",
+  "_shasum": "332650e10854d8c0ac58c192bdc27a8bf7e7a30c",
+  "_shrinkwrap": null,
+  "_spec": "intersect@^1.0.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-json",
+  "author": {
+    "name": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com"
+  },
+  "bugs": {
+    "url": "https://github.com/juliangruber/intersect/issues"
+  },
+  "dependencies": {},
+  "description": "Find the intersection of two arrays",
+  "devDependencies": {
+    "tape": "~2.3.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "332650e10854d8c0ac58c192bdc27a8bf7e7a30c",
+    "tarball": "https://registry.npmjs.org/intersect/-/intersect-1.0.1.tgz"
+  },
+  "gitHead": "0a48f9fa15a8cba97a2e381984042a8f4c392d8a",
+  "homepage": "https://github.com/juliangruber/intersect",
+  "keywords": [
+    "intersect",
+    "array"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "juliangruber",
+      "email": "julian@juliangruber.com"
+    }
+  ],
+  "name": "intersect",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/juliangruber/intersect.git"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/20..latest",
+      "firefox/10..latest",
+      "safari/5.0.5..latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6"
+    ]
+  },
+  "version": "1.0.1"
+}

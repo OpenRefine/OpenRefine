@@ -1,3 +1,56 @@
+<<<<<<< HEAD
+#FAIRifier
+
+Depenencies:
+  - Java 8
+  - npm
+  - gulp
+  - bower
+  - Apache Ant
+
+
+Building
+========
+install depedencies (assuming Java 8 is installed)
+
+```
+sudo apt-get install nodejs-legacy npm ant
+
+```
+install gulp
+```
+sudo npm install -g gulp
+
+```
+install bower
+```
+sudo npm install -g bower
+
+```
+download the git repository
+```
+git clone --recursive -b development https://github.com/DTL-FAIRData/FAIRifier.git
+```
+cd to the directory of the git repo
+```
+cd FAIRifier/
+```
+and now build
+```
+ant build
+```
+
+Running
+==========
+Run the ./refine file
+```
+./refine
+```
+
+
+
+
+=======
 #OpenRefine
 
 [![Build Status](https://travis-ci.org/OpenRefine/OpenRefine.png?branch=master)](https://travis-ci.org/OpenRefine/OpenRefine) [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=32795)](https://www.bountysource.com/trackers/32795-open-refine?utm_source=32795&utm_medium=shield&utm_campaign=TRACKER_BADGE)
@@ -59,4 +112,5 @@ This is the full list of contributors (in chronological order):
  - Rod Salazar <rodrod.salazar@gmail.com>
  - pxb <pxb1988@gmail.com>
  - Qi <jackyq2015@gmail.com>
+>>>>>>> upstream/master
 

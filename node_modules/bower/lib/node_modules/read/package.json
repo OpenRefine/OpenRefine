@@ -1,0 +1,91 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "read@~1.0.4",
+        "scope": null,
+        "escapedName": "read",
+        "name": "read",
+        "rawSpec": "~1.0.4",
+        "spec": ">=1.0.4 <1.1.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/promptly"
+    ]
+  ],
+  "_from": "read@>=1.0.4 <1.1.0",
+  "_id": "read@1.0.7",
+  "_inCache": true,
+  "_location": "/read",
+  "_nodeVersion": "2.2.1",
+  "_npmUser": {
+    "name": "isaacs",
+    "email": "isaacs@npmjs.com"
+  },
+  "_npmVersion": "3.2.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "read@~1.0.4",
+    "scope": null,
+    "escapedName": "read",
+    "name": "read",
+    "rawSpec": "~1.0.4",
+    "spec": ">=1.0.4 <1.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/promptly"
+  ],
+  "_resolved": "https://registry.npmjs.org/read/-/read-1.0.7.tgz",
+  "_shasum": "b3da19bd052431a97671d44a42634adf710b40c4",
+  "_shrinkwrap": null,
+  "_spec": "read@~1.0.4",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/promptly",
+  "author": {
+    "name": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/"
+  },
+  "bugs": {
+    "url": "https://github.com/isaacs/read/issues"
+  },
+  "dependencies": {
+    "mute-stream": "~0.0.4"
+  },
+  "description": "read(1) for node programs",
+  "devDependencies": {
+    "tap": "^1.2.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "b3da19bd052431a97671d44a42634adf710b40c4",
+    "tarball": "https://registry.npmjs.org/read/-/read-1.0.7.tgz"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "files": [
+    "lib/read.js"
+  ],
+  "gitHead": "b14516b9236c40140fd0666567f5d0c588a09a62",
+  "homepage": "https://github.com/isaacs/read#readme",
+  "license": "ISC",
+  "main": "lib/read.js",
+  "maintainers": [
+    {
+      "name": "isaacs",
+      "email": "i@izs.me"
+    }
+  ],
+  "name": "read",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/isaacs/read.git"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "version": "1.0.7"
+}

@@ -1,0 +1,112 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "requireg@^0.1.5",
+        "scope": null,
+        "escapedName": "requireg",
+        "name": "requireg",
+        "rawSpec": "^0.1.5",
+        "spec": ">=0.1.5 <0.2.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "requireg@>=0.1.5 <0.2.0",
+  "_id": "requireg@0.1.6",
+  "_inCache": true,
+  "_location": "/requireg",
+  "_nodeVersion": "6.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/requireg-0.1.6.tgz_1474139677120_0.5425133486278355"
+  },
+  "_npmUser": {
+    "name": "h2non",
+    "email": "tomas@aparicio.me"
+  },
+  "_npmVersion": "3.10.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "requireg@^0.1.5",
+    "scope": null,
+    "escapedName": "requireg",
+    "name": "requireg",
+    "rawSpec": "^0.1.5",
+    "spec": ">=0.1.5 <0.2.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/requireg/-/requireg-0.1.6.tgz",
+  "_shasum": "205052aec2eaa2d8eb128abacf833b6a380a99b6",
+  "_shrinkwrap": null,
+  "_spec": "requireg@^0.1.5",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "bugs": {
+    "url": "https://github.com/h2non/requireg/issues"
+  },
+  "contributors": [
+    {
+      "name": "Tomas Aparicio",
+      "email": "tomas@aparicio.me"
+    },
+    {
+      "name": "Eugene Sharygin",
+      "url": "https://github.com/eush77"
+    }
+  ],
+  "dependencies": {
+    "rc": "~1.0.0",
+    "resolve": "~0.6.1"
+  },
+  "description": "Require and resolve global modules like a boss",
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.15.1",
+    "rewire": "~2.3.1",
+    "semver": "~2.2.1"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "dist": {
+    "shasum": "205052aec2eaa2d8eb128abacf833b6a380a99b6",
+    "tarball": "https://registry.npmjs.org/requireg/-/requireg-0.1.6.tgz"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "gitHead": "d7f4339ff5af321e8d80b2746b579cbe04ce39f1",
+  "homepage": "http://github.com/h2non/requireg",
+  "keywords": [
+    "global",
+    "npm",
+    "modules",
+    "module",
+    "require",
+    "import",
+    "resolve"
+  ],
+  "licenses": "MIT",
+  "main": "lib/requireg",
+  "maintainers": [
+    {
+      "name": "h2non",
+      "email": "tomas@aparicio.me"
+    }
+  ],
+  "name": "requireg",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h2non/requireg.git"
+  },
+  "scripts": {
+    "test": "mocha -u tdd --ui exports --reporter spec --slow 2000ms --bail"
+  },
+  "version": "0.1.6"
+}

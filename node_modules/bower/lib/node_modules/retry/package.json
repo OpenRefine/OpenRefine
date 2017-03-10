@@ -1,0 +1,84 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "retry@0.6.1",
+        "scope": null,
+        "escapedName": "retry",
+        "name": "retry",
+        "rawSpec": "0.6.1",
+        "spec": "0.6.1",
+        "type": "version"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "retry@0.6.1",
+  "_id": "retry@0.6.1",
+  "_inCache": true,
+  "_location": "/retry",
+  "_npmUser": {
+    "name": "tim-kos",
+    "email": "tim@debuggable.com"
+  },
+  "_npmVersion": "1.4.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "retry@0.6.1",
+    "scope": null,
+    "escapedName": "retry",
+    "name": "retry",
+    "rawSpec": "0.6.1",
+    "spec": "0.6.1",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/",
+    "/request-replay"
+  ],
+  "_resolved": "https://registry.npmjs.org/retry/-/retry-0.6.1.tgz",
+  "_shasum": "fdc90eed943fde11b893554b8cc63d0e899ba918",
+  "_shrinkwrap": null,
+  "_spec": "retry@0.6.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Tim Koschützki",
+    "email": "tim@debuggable.com",
+    "url": "http://debuggable.com/"
+  },
+  "bugs": {
+    "url": "https://github.com/tim-kos/node-retry/issues"
+  },
+  "dependencies": {},
+  "description": "Abstraction for exponential and custom retry strategies for failed operations.",
+  "devDependencies": {
+    "fake": "0.2.0",
+    "far": "0.0.1"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "dist": {
+    "shasum": "fdc90eed943fde11b893554b8cc63d0e899ba918",
+    "tarball": "https://registry.npmjs.org/retry/-/retry-0.6.1.tgz"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "https://github.com/tim-kos/node-retry",
+  "main": "index",
+  "maintainers": [
+    {
+      "name": "tim-kos",
+      "email": "tim@debuggable.com"
+    }
+  ],
+  "name": "retry",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tim-kos/node-retry.git"
+  },
+  "version": "0.6.1"
+}

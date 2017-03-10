@@ -1,0 +1,100 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "cardinal@0.4.4",
+        "scope": null,
+        "escapedName": "cardinal",
+        "name": "cardinal",
+        "rawSpec": "0.4.4",
+        "spec": "0.4.4",
+        "type": "version"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "cardinal@0.4.4",
+  "_id": "cardinal@0.4.4",
+  "_inCache": true,
+  "_location": "/cardinal",
+  "_npmUser": {
+    "name": "thlorenz",
+    "email": "thlorenz@gmx.de"
+  },
+  "_npmVersion": "1.3.22",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "cardinal@0.4.4",
+    "scope": null,
+    "escapedName": "cardinal",
+    "name": "cardinal",
+    "rawSpec": "0.4.4",
+    "spec": "0.4.4",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cardinal/-/cardinal-0.4.4.tgz",
+  "_shasum": "ca5bb68a5b511b90fe93b9acea49bdee5c32bfe2",
+  "_shrinkwrap": null,
+  "_spec": "cardinal@0.4.4",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Thorsten Lorenz",
+    "email": "thlorenz@gmx.de",
+    "url": "thlorenz.com"
+  },
+  "bin": {
+    "cdl": "./bin/cdl.js"
+  },
+  "bugs": {
+    "url": "https://github.com/thlorenz/cardinal/issues"
+  },
+  "dependencies": {
+    "ansicolors": "~0.2.1",
+    "redeyed": "~0.4.0"
+  },
+  "description": "Syntax highlights JavaScript code with ANSI colors to be printed to the terminal.",
+  "devDependencies": {
+    "readdirp": "~0.2.1",
+    "tap": "~0.3.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "ca5bb68a5b511b90fe93b9acea49bdee5c32bfe2",
+    "tarball": "https://registry.npmjs.org/cardinal/-/cardinal-0.4.4.tgz"
+  },
+  "homepage": "https://github.com/thlorenz/cardinal",
+  "keywords": [
+    "syntax",
+    "highlight",
+    "theme",
+    "javascript",
+    "json",
+    "terminal",
+    "console",
+    "print",
+    "output"
+  ],
+  "license": "MIT",
+  "main": "cardinal.js",
+  "maintainers": [
+    {
+      "name": "thlorenz",
+      "email": "thlorenz@gmx.de"
+    }
+  ],
+  "name": "cardinal",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thlorenz/cardinal.git"
+  },
+  "scripts": {
+    "demo": "node examples/highlight-string.js; node examples/highlight-self; node examples/highlight-self-hide-semicolons;",
+    "test": "tap ./test/*.js"
+  },
+  "version": "0.4.4"
+}

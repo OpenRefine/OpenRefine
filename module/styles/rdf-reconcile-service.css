@@ -1,0 +1,102 @@
+div.rdf-reconcile-details-section{
+	border-bottom: solid 1px #EEEEEE;
+	padding-bottom:0.5em;
+	padding-top:2px;
+}
+
+div.rdf-reconcile-field-details{
+	font-size:85%;
+	padding-bottom:0.3em;
+}
+.rdf-reconcile-spaced{
+	padding:0 0 0.5em 0.2em;
+}
+
+fieldset.rdf-reconcile-fieldset{
+	border:solid 1px #BBCCFF;
+	padding: 0.2em 0 0.5em 0.2em;
+	margin-top:1.5em;
+}
+
+fieldset.rdf-reconcile-fieldset legend{
+	font-weight:bold;
+}
+
+fieldset.rdf-reconcile-fieldset table,fieldset.rdf-reconcile-fieldset  div.rdf-reconcile-content{
+	margin:0 1em 0 1em;
+	}
+
+fieldset.rdf-reconcile-fieldset td{
+	padding:0 0 0.5em 0.2em;
+}
+fieldset.rdf-reconcile-fieldset input{
+	padding-bottom:0;
+	}
+	
+div.rdf-reconcile-content span{
+	margin-bottom:1em;
+	}	
+div.rdf-reconcile-label-option{
+	float:left;
+	font-family:monospace;
+	font-size:120%;
+	padding-right:2em;
+}
+
+div.rdf-reconcile-label-last-option{
+	clear:left;
+	font-family:Arial,sans-serif;
+	margin-top:0.5em;
+	
+	}
+
+div.rdf-flyout-content{
+	color:#000;
+	}
+div.rdf-flyout-content div.rdf-header{
+	font-weight:bold;
+	margin:4px;
+	}	
+	
+div.dialog-body p {
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
+}
+
+div.dialog-body img.validation {
+    margin-left: 0.5em;
+}
+
+div.dialog-body input[type=text], div.dialog-body input[type=password] {
+    width: 300px;
+    margin-left: 1em;
+    padding: 3px;
+    font-size: 1em;
+    font-family: inherit;
+    border: #CCC 1px solid;
+    border-top: #888 1px solid;
+    vertical-align: baseline;
+}
+
+div#stanbol-service {
+    background-image: url(../images/stanbol.png); 
+    background-repeat: no-repeat; 
+    background-position: right bottom; 
+}
+	
+div.registering {
+    border: 1px solid #F8DCBB;
+    margin: 1em;
+    padding: 1em;
+    background-color: #F8F8F8;
+    font-size: 90%;
+    overflow: auto;
+}
+
+div.registering dl dd {
+    margin-left: 2em;
+}
+
+div.dialog-body input[type=text].error {
+    border: solid 1px red;
+}

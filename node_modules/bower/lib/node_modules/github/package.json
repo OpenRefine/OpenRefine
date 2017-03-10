@@ -1,0 +1,103 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "github@^0.2.3",
+        "scope": null,
+        "escapedName": "github",
+        "name": "github",
+        "rawSpec": "^0.2.3",
+        "spec": ">=0.2.3 <0.3.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "github@>=0.2.3 <0.3.0",
+  "_id": "github@0.2.4",
+  "_inCache": true,
+  "_location": "/github",
+  "_npmUser": {
+    "name": "mikedeboer",
+    "email": "info@mikedeboer.nl"
+  },
+  "_npmVersion": "1.4.21",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "github@^0.2.3",
+    "scope": null,
+    "escapedName": "github",
+    "name": "github",
+    "rawSpec": "^0.2.3",
+    "spec": ">=0.2.3 <0.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/github/-/github-0.2.4.tgz",
+  "_shasum": "24fa7f0e13fa11b946af91134c51982a91ce538b",
+  "_shrinkwrap": null,
+  "_spec": "github@^0.2.3",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Mike de Boer",
+    "email": "info@mikedeboer.nl"
+  },
+  "bugs": {
+    "url": "https://github.com/mikedeboer/node-github/issues"
+  },
+  "contributors": [
+    {
+      "name": "Mike de Boer",
+      "email": "info@mikedeboer.nl"
+    },
+    {
+      "name": "Fabian Jakobs",
+      "email": "fabian@c9.io"
+    }
+  ],
+  "dependencies": {
+    "mime": "^1.2.11"
+  },
+  "description": "NodeJS wrapper for the GitHub API",
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "oauth": "~0.9.7",
+    "optimist": "~0.6.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "24fa7f0e13fa11b946af91134c51982a91ce538b",
+    "tarball": "https://registry.npmjs.org/github/-/github-0.2.4.tgz"
+  },
+  "engine": {
+    "node": ">=0.4.0"
+  },
+  "gitHead": "29dedb3022649c27ac1dad79326270b6b2a48047",
+  "homepage": "http://github.com/mikedeboer/node-github",
+  "licenses": [
+    {
+      "type": "The MIT License",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "main": ".",
+  "maintainers": [
+    {
+      "name": "mikedeboer",
+      "email": "info@mikedeboer.nl"
+    }
+  ],
+  "name": "github",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mikedeboer/node-github.git"
+  },
+  "scripts": {
+    "test": "node ./test/all.js"
+  },
+  "version": "0.2.4"
+}

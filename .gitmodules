@@ -1,0 +1,11 @@
+[submodule "extensions/grefine-rdf-extension/module/scripts/FAIR-metadata-editor"]
+	path = extensions/grefine-rdf-extension/module/scripts/FAIR-metadata-editor
+	url = https://github.com/DTL-FAIRData/FAIR-metadata-editor.git
+	branch = ng-rewrite
+[submodule "metadata-form"]
+	path = metadata-form
+	url = https://github.com/kburger/metadata-form
+	branch = develop
+[submodule "extensions/grefine-rdf-extension"]
+	path = extensions/grefine-rdf-extension
+	url = https://github.com/fadmaa/grefine-rdf-extension.git

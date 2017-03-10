@@ -1,0 +1,95 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "read-all-stream@^2.0.0",
+        "scope": null,
+        "escapedName": "read-all-stream",
+        "name": "read-all-stream",
+        "rawSpec": "^2.0.0",
+        "spec": ">=2.0.0 <3.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/got"
+    ]
+  ],
+  "_from": "read-all-stream@>=2.0.0 <3.0.0",
+  "_id": "read-all-stream@2.2.0",
+  "_inCache": true,
+  "_location": "/read-all-stream",
+  "_nodeVersion": "2.3.0",
+  "_npmUser": {
+    "name": "floatdrop",
+    "email": "floatdrop@gmail.com"
+  },
+  "_npmVersion": "2.11.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "read-all-stream@^2.0.0",
+    "scope": null,
+    "escapedName": "read-all-stream",
+    "name": "read-all-stream",
+    "rawSpec": "^2.0.0",
+    "spec": ">=2.0.0 <3.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/got"
+  ],
+  "_resolved": "https://registry.npmjs.org/read-all-stream/-/read-all-stream-2.2.0.tgz",
+  "_shasum": "6b83370546c55ab6ade2bf75e83c66e45989bbf0",
+  "_shrinkwrap": null,
+  "_spec": "read-all-stream@^2.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/got",
+  "author": {
+    "name": "Vsevolod Strukchinsky",
+    "email": "floatdrop@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/floatdrop/read-all-stream/issues"
+  },
+  "dependencies": {
+    "readable-stream": "^2.0.0"
+  },
+  "description": "Read all stream content and pass it to callback",
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "6b83370546c55ab6ade2bf75e83c66e45989bbf0",
+    "tarball": "https://registry.npmjs.org/read-all-stream/-/read-all-stream-2.2.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "gitHead": "7f687315d2ff8081a87735f9c7fcc33be041142e",
+  "homepage": "https://github.com/floatdrop/read-all-stream",
+  "keywords": [
+    "stream",
+    "read",
+    "buffer",
+    "callback"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "floatdrop",
+      "email": "floatdrop@gmail.com"
+    }
+  ],
+  "name": "read-all-stream",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/floatdrop/read-all-stream.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "version": "2.2.0"
+}

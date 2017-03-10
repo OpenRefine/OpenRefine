@@ -1,0 +1,14 @@
+{
+    "command": "version",
+    "description": "Creates an empty version commit and tag, and fail if the repo is not clean.\n\nThe <version> argument should be a valid semver string, or one of following:\nbuild, patch, minor, major.\n\nIf supplied with --message (shorthand: -m) config option, bower will use it\nas a commit message when creating a version commit. If the message config\ncontains %s then that will be replaced with the resulting version number.\n\nFor example:\n\n    bower version patch -m \"Upgrade to %s for reasons\"",
+    "usage": [
+        "version [<version> | major | minor | patch]"
+    ],
+    "options": [
+        {
+            "shorthand":   "-m",
+            "flag":        "--message",
+            "description": "Custom git commit and tag message"
+        }
+    ]
+}

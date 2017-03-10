@@ -1,0 +1,68 @@
+<div>
+  <table>
+    <tr>
+      <th>
+  	    <label for="service-name">Name:</label>
+  	  </th>
+  	  <td class="rdf-reconcile-spaced">
+  	    <input type="text" bind="service_name" id="service-name"/>
+  	    <div class="rdf-reconcile-field-details">A human readable name</div>
+  	  </td>
+  	</tr>
+  </table>
+  <fieldset class="rdf-reconcile-fieldset">
+    <legend>Endpoint details</legend>
+    <table>
+      <tr>
+         <td><label for="endpoint-url">Endpoint URL:</label></td>
+         <td><input type="text" bind="endpoint_url" id="endpoint-url" size="32"/></td>
+      </tr>
+      <tr>
+         <td>
+           <label for="endpoint-url">Graph URI:</label>
+         </td>
+         <td>
+           <input type="text" bind="graph_uri"  size="32"/>
+           <div class="rdf-reconcile-field-details">Leave empty to use the default graph</div>
+         </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="endpoint-url">Type:</label>
+        </td>
+        <td>
+          <select id="endpoint-type" bind="endpoint_type">
+            <option value="plain">Generic SPARQL (poor performance)</option>
+            <option value="virtuoso">Virtuoso</option>
+            <option value="jena-text">Jena Text (Lucene+ARQ)</option>
+            <option value="bigowlim">BigOWLIM</option>
+          </select>
+          <div class="rdf-reconcile-field-details">This determines the syntax that will be used for search</div>
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+  
+  <fieldset class="rdf-reconcile-fieldset">
+    <legend>Label properties</legend>
+    <div class="rdf-reconcile-content">
+      <span>Select properties that are used to label resources in the endpoint. These properties will be used to match resources:</span>
+      <div style="clear:both;height:10px;"></div>
+      <div bind="label_prop_container">
+        <div class="rdf-reconcile-label-option" title="http://www.w3.org/2000/01/rdf-schema#label"><input name="label_prop" type="checkbox" value="http://www.w3.org/2000/01/rdf-schema#label" checked="checked"/>rdfs:label</div>
+        <div class="rdf-reconcile-label-option" title="http://www.w3.org/2004/02/skos/core#prefLabel"><input name="label_prop" type="checkbox" value="http://www.w3.org/2004/02/skos/core#prefLabel" />skos:prefLabel</div>
+        <div class="rdf-reconcile-label-option" title="http://purl.org/dc/terms/title" ><input name="label_prop" type="checkbox" value="http://purl.org/dc/terms/title" />dcterms:title</div>
+        <div class="rdf-reconcile-label-option" title="http://purl.org/dc/elements/1.1/title"><input name="label_prop" type="checkbox" value="http://purl.org/dc/elements/1.1/title" />dc:title</div>
+        <div class="rdf-reconcile-label-option" title="http://xmlns.com/foaf/0.1/name"><input name="label_prop" type="checkbox" value="http://xmlns.com/foaf/0.1/name" />foaf:name</div>
+        <div class="rdf-reconcile-label-option rdf-reconcile-label-last-option"><input type="checkbox" bind="other_label_chk" />Other...</div>
+        <div style="clear:both;"></div>
+      </div>
+      <div bind="other_properties">
+        <textarea rows="3" cols="42" bind="other_properties_textarea"></textarea>
+        <div class="rdf-reconcile-field-details">Full URIs; separate multiple URIs with whitespace</div>
+      </div>
+      
+    </div>    
+  </fieldset>
+  
+</div>

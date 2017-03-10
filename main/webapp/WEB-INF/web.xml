@@ -5,8 +5,8 @@
     "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 
 <web-app>
-    <display-name>OpenRefine</display-name>
-    <description>OpenRefine Webapp</description>
+    <display-name>FAIRifier</display-name>
+    <description>FAIRifier Webapp</description>
 
     <!--+
         | This forces all the session cookies to default to the root path.

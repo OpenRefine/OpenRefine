@@ -1,0 +1,85 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "mkdirp@^0.3.5",
+        "scope": null,
+        "escapedName": "mkdirp",
+        "name": "mkdirp",
+        "rawSpec": "^0.3.5",
+        "spec": ">=0.3.5 <0.4.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-registry-client"
+    ]
+  ],
+  "_from": "mkdirp@>=0.3.5 <0.4.0",
+  "_id": "mkdirp@0.3.5",
+  "_inCache": true,
+  "_location": "/bower-registry-client/mkdirp",
+  "_npmUser": {
+    "name": "substack",
+    "email": "mail@substack.net"
+  },
+  "_npmVersion": "1.2.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "mkdirp@^0.3.5",
+    "scope": null,
+    "escapedName": "mkdirp",
+    "name": "mkdirp",
+    "rawSpec": "^0.3.5",
+    "spec": ">=0.3.5 <0.4.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/bower-registry-client"
+  ],
+  "_resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz",
+  "_shasum": "de3e5f8961c88c787ee1368df849ac4413eca8d7",
+  "_shrinkwrap": null,
+  "_spec": "mkdirp@^0.3.5",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-registry-client",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/node-mkdirp/issues"
+  },
+  "dependencies": {},
+  "description": "Recursively mkdir, like `mkdir -p`",
+  "devDependencies": {
+    "tap": "~0.4.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "de3e5f8961c88c787ee1368df849ac4413eca8d7",
+    "tarball": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz"
+  },
+  "homepage": "https://github.com/substack/node-mkdirp#readme",
+  "keywords": [
+    "mkdir",
+    "directory"
+  ],
+  "license": "MIT",
+  "main": "./index",
+  "maintainers": [
+    {
+      "name": "substack",
+      "email": "mail@substack.net"
+    }
+  ],
+  "name": "mkdirp",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/substack/node-mkdirp.git"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "version": "0.3.5"
+}

@@ -1,0 +1,64 @@
+<span>This is a simple example showing how RDF can be extracted from a sample <a href="downloads/example/high-earners-pay.csv">CSV file</a> (you can download the whole <a href="downloads/example/high-earners-pay.google-refine.tar.gz">project</a> and then directly import it in Google Refine)</span>
+
+<ul class="steps">
+<li class="step step1">
+  Create a Google Refine project based on the <a href="http://www.direct.gov.uk/prod_consum_dg/groups/dg_digitalassets/@dg/@en/documents/digitalasset/dg_188112.csv">highest-earning senior civil servants in UK</a> as published by the Cabinet Office on 1 June 2010. 
+  The first few lines of the <a href="downloads/example/high-earners-pay.csv">sample CSV file</a> is shown in the figure below. 
+  <p>
+    <img src="files/export/screenshots/earners.png" border="1" width="600"/>
+  </p>
+  <p>
+  The intended RDF we want to export should look like (for the first line):
+	<pre>
+	  <code>
+&lt;http://lab.linkeddata.deri.ie/person/0&gt; 
+        a foaf:Person ; 
+        foaf:name "Stephan Wilcke" ; 
+        foaf:title "Chief Executive Officer"@en .
+        &lt;http://lab.linkeddata.deri.ie/annualPayRate&gt; "150,000 - 154,999" . 
+
+&lt;http://lab.linkeddata.deri.ie/organization/asset-protection-agency&gt;  
+        a foaf:Organization ; 
+        foaf:name "Asset Protection Agency"@en . 
+        foaf:member &lt;http://lab.linkeddata.deri.ie/person/0&gt;  ;
+	  </code>
+	</pre>
+  </p>
+</li>
+<li class="step step2">
+Using <em>Edit RDF Skeleton...</em> command available under the <em>RDF</em> menu, we design the following skeleton:
+<p>
+  <img src="files/export/screenshots/schema.png" />
+</p>
+<ul>
+  <li><div>we set the base URI at the top of the dialog to http://lab.linkeddata.deri.ie/test/ </div></li>
+  <li><div>Prefixs can be managed by the <em>Add Prefix</em> and <em>Manage vocabularies</em> </div></li>
+  <li><div>We created the skeleton by repeatedly using <em>add rdf:type</em> and <em>add property</em></div></li>
+  <li><div>We created a new property <em>annualPayRate</em> which will be defined within the default namespace specified by the base URI</div></li>
+</ul>
+<p>
+The figure below shows an example of a node dialog (the <em>organization URI</em> node)
+<div class="image">
+  <img src="files/export/screenshots/node.png" alt="Node configuration Example" />
+</div>
+</p>
+<div class="note">
+Notice the custom expression used to define the URI. The <em>preview/edit</em> shows sample values of the first 10 rows as shown below
+<p>
+  <img src="files/export/screenshots/preview.png" alt="Node configuration Example" />
+</p>
+</div>
+</li>
+<li class="step step3">
+Saving the skeleton by clicking <em>OK</em>. Notice that a "Save RDF schema skeleton" operation is added to the history panel of Google Refine. As other operation, this can be undone/redone and exported/re-applied.
+<p>
+  <img src="files/export/screenshots/operation.png" border="1" />
+</p>
+</li>
+<li class="step step4">
+ Export RDF data as RDF/XML or Turtle from the <em>Export</em> menu.
+ <p>
+  <img src="files/export/screenshots/export.png" alt="Export" border="1"/>
+</p>
+</li>
+</ul>

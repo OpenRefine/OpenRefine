@@ -1,0 +1,102 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "binary@^0.3.0",
+        "scope": null,
+        "escapedName": "binary",
+        "name": "binary",
+        "rawSpec": "^0.3.0",
+        "spec": ">=0.3.0 <0.4.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/decompress-zip"
+    ]
+  ],
+  "_defaultsLoaded": true,
+  "_engineSupported": true,
+  "_from": "binary@>=0.3.0 <0.4.0",
+  "_id": "binary@0.3.0",
+  "_inCache": true,
+  "_location": "/binary",
+  "_nodeVersion": "v0.6.11",
+  "_npmUser": {
+    "name": "substack",
+    "email": "mail@substack.net"
+  },
+  "_npmVersion": "1.1.19",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "binary@^0.3.0",
+    "scope": null,
+    "escapedName": "binary",
+    "name": "binary",
+    "rawSpec": "^0.3.0",
+    "spec": ">=0.3.0 <0.4.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/decompress-zip"
+  ],
+  "_resolved": "https://registry.npmjs.org/binary/-/binary-0.3.0.tgz",
+  "_shasum": "9f60553bc5ce8c3386f3b553cff47462adecaa79",
+  "_shrinkwrap": null,
+  "_spec": "binary@^0.3.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/decompress-zip",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/node-binary/issues"
+  },
+  "dependencies": {
+    "buffers": "~0.1.1",
+    "chainsaw": "~0.1.0"
+  },
+  "description": "Unpack multibyte binary values from buffers",
+  "devDependencies": {
+    "seq": "~0.2.5",
+    "tap": "~0.2.4"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "9f60553bc5ce8c3386f3b553cff47462adecaa79",
+    "tarball": "https://registry.npmjs.org/binary/-/binary-0.3.0.tgz"
+  },
+  "engine": {
+    "node": ">=0.4.0"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "https://github.com/substack/node-binary#readme",
+  "keywords": [
+    "binary",
+    "decode",
+    "endian",
+    "unpack",
+    "signed",
+    "unsigned"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "maintainers": [
+    {
+      "name": "substack",
+      "email": "mail@substack.net"
+    }
+  ],
+  "name": "binary",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/node-binary.git"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "version": "0.3.0"
+}

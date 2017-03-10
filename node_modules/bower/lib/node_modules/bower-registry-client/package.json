@@ -1,0 +1,128 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "bower-registry-client@^1.0.0",
+        "scope": null,
+        "escapedName": "bower-registry-client",
+        "name": "bower-registry-client",
+        "rawSpec": "^1.0.0",
+        "spec": ">=1.0.0 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "bower-registry-client@>=1.0.0 <2.0.0",
+  "_id": "bower-registry-client@1.0.0",
+  "_inCache": true,
+  "_location": "/bower-registry-client",
+  "_nodeVersion": "0.12.7",
+  "_npmUser": {
+    "name": "sheerun",
+    "email": "sheerun@sher.pl"
+  },
+  "_npmVersion": "2.11.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "bower-registry-client@^1.0.0",
+    "scope": null,
+    "escapedName": "bower-registry-client",
+    "name": "bower-registry-client",
+    "rawSpec": "^1.0.0",
+    "spec": ">=1.0.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/bower-registry-client/-/bower-registry-client-1.0.0.tgz",
+  "_shasum": "697c3499067549a106b49f26d03e6dd1017a9241",
+  "_shrinkwrap": null,
+  "_spec": "bower-registry-client@^1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Twitter"
+  },
+  "bugs": {
+    "url": "https://github.com/bower/registry-client/issues"
+  },
+  "dependencies": {
+    "async": "^0.2.8",
+    "graceful-fs": "^4.0.0",
+    "lru-cache": "^2.3.0",
+    "mkdirp": "^0.3.5",
+    "request": "^2.51.0",
+    "request-replay": "^0.2.0",
+    "rimraf": "^2.2.0"
+  },
+  "description": "Provides easy interaction with the Bower registry",
+  "devDependencies": {
+    "bower-config": "^1.1.2",
+    "expect.js": "~0.2.0",
+    "grunt": "~0.4.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-watch": "~0.5.0",
+    "grunt-simple-mocha": "~0.4.0",
+    "mocha": "~1.12.0",
+    "nock": "~0.22.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "697c3499067549a106b49f26d03e6dd1017a9241",
+    "tarball": "https://registry.npmjs.org/bower-registry-client/-/bower-registry-client-1.0.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "lib",
+    "Client.js"
+  ],
+  "gitHead": "901133489379dab9fd59e56f134260319a5adc6f",
+  "homepage": "https://github.com/bower/registry-client#readme",
+  "license": "MIT",
+  "main": "Client",
+  "maintainers": [
+    {
+      "name": "satazor",
+      "email": "andremiguelcruz@msn.com"
+    },
+    {
+      "name": "svnlto",
+      "email": "me@svenlito.com"
+    },
+    {
+      "name": "wibblymat",
+      "email": "mat@wibbly.org.uk"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "sheerun",
+      "email": "sheerun@sher.pl"
+    },
+    {
+      "name": "paulirish",
+      "email": "paul.irish@gmail.com"
+    },
+    {
+      "name": "desandro",
+      "email": "desandrocodes@gmail.com"
+    }
+  ],
+  "name": "bower-registry-client",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bower/registry-client.git"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "version": "1.0.0"
+}

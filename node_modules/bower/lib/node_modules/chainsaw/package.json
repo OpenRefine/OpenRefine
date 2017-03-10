@@ -1,0 +1,85 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "chainsaw@~0.1.0",
+        "scope": null,
+        "escapedName": "chainsaw",
+        "name": "chainsaw",
+        "rawSpec": "~0.1.0",
+        "spec": ">=0.1.0 <0.2.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/binary"
+    ]
+  ],
+  "_defaultsLoaded": true,
+  "_engineSupported": true,
+  "_from": "chainsaw@>=0.1.0 <0.2.0",
+  "_id": "chainsaw@0.1.0",
+  "_inCache": true,
+  "_location": "/chainsaw",
+  "_nodeVersion": "v0.5.0-pre",
+  "_npmVersion": "1.0.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "chainsaw@~0.1.0",
+    "scope": null,
+    "escapedName": "chainsaw",
+    "name": "chainsaw",
+    "rawSpec": "~0.1.0",
+    "spec": ">=0.1.0 <0.2.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/binary"
+  ],
+  "_resolved": "https://registry.npmjs.org/chainsaw/-/chainsaw-0.1.0.tgz",
+  "_shasum": "5eab50b28afe58074d0d58291388828b5e5fbc98",
+  "_shrinkwrap": null,
+  "_spec": "chainsaw@~0.1.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/binary",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/node-chainsaw/issues"
+  },
+  "dependencies": {
+    "traverse": ">=0.3.0 <0.4"
+  },
+  "description": "Build chainable fluent interfaces the easy way... with a freakin' chainsaw!",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "5eab50b28afe58074d0d58291388828b5e5fbc98",
+    "tarball": "https://registry.npmjs.org/chainsaw/-/chainsaw-0.1.0.tgz"
+  },
+  "engine": {
+    "node": ">=0.4.0"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "homepage": "https://github.com/substack/node-chainsaw#readme",
+  "keywords": [
+    "chain",
+    "fluent",
+    "interface",
+    "monad",
+    "monadic"
+  ],
+  "license": "MIT/X11",
+  "main": "./index.js",
+  "name": "chainsaw",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/node-chainsaw.git"
+  },
+  "scripts": {},
+  "version": "0.1.0"
+}

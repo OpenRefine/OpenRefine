@@ -1,0 +1,104 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "esprima@~1.0.4",
+        "scope": null,
+        "escapedName": "esprima",
+        "name": "esprima",
+        "rawSpec": "~1.0.4",
+        "spec": ">=1.0.4 <1.1.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/redeyed"
+    ]
+  ],
+  "_from": "esprima@>=1.0.4 <1.1.0",
+  "_id": "esprima@1.0.4",
+  "_inCache": true,
+  "_location": "/esprima",
+  "_npmUser": {
+    "name": "ariya",
+    "email": "ariya.hidayat@gmail.com"
+  },
+  "_npmVersion": "1.1.61",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "esprima@~1.0.4",
+    "scope": null,
+    "escapedName": "esprima",
+    "name": "esprima",
+    "rawSpec": "~1.0.4",
+    "spec": ">=1.0.4 <1.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/redeyed"
+  ],
+  "_resolved": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz",
+  "_shasum": "9f557e08fc3b4d26ece9dd34f8fbf476b62585ad",
+  "_shrinkwrap": null,
+  "_spec": "esprima@~1.0.4",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/redeyed",
+  "bin": {
+    "esparse": "./bin/esparse.js",
+    "esvalidate": "./bin/esvalidate.js"
+  },
+  "bugs": {
+    "url": "https://github.com/ariya/esprima/issues"
+  },
+  "dependencies": {},
+  "description": "ECMAScript parsing infrastructure for multipurpose analysis",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "9f557e08fc3b4d26ece9dd34f8fbf476b62585ad",
+    "tarball": "https://registry.npmjs.org/esprima/-/esprima-1.0.4.tgz"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "files": [
+    "bin",
+    "test/run.js",
+    "test/runner.js",
+    "test/test.js",
+    "test/compat.js",
+    "test/reflect.js",
+    "esprima.js"
+  ],
+  "homepage": "http://esprima.org",
+  "keywords": [
+    "ast",
+    "ecmascript",
+    "javascript",
+    "parser",
+    "syntax"
+  ],
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "http://github.com/ariya/esprima/raw/master/LICENSE.BSD"
+    }
+  ],
+  "main": "esprima.js",
+  "maintainers": [
+    {
+      "name": "ariya",
+      "email": "ariya.hidayat@gmail.com"
+    }
+  ],
+  "name": "esprima",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ariya/esprima.git"
+  },
+  "scripts": {
+    "benchmark": "node test/benchmarks.js",
+    "benchmark-quick": "node test/benchmarks.js quick",
+    "test": "node test/run.js"
+  },
+  "version": "1.0.4"
+}

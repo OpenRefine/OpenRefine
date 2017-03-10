@@ -1,0 +1,86 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "buffers@~0.1.1",
+        "scope": null,
+        "escapedName": "buffers",
+        "name": "buffers",
+        "rawSpec": "~0.1.1",
+        "spec": ">=0.1.1 <0.2.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/binary"
+    ]
+  ],
+  "_defaultsLoaded": true,
+  "_engineSupported": true,
+  "_from": "buffers@>=0.1.1 <0.2.0",
+  "_id": "buffers@0.1.1",
+  "_inCache": true,
+  "_location": "/buffers",
+  "_nodeVersion": "v0.4.12",
+  "_npmJsonOpts": {
+    "file": "/home/substack/.npm/buffers/0.1.1/package/package.json",
+    "wscript": false,
+    "contributors": false,
+    "serverjs": false
+  },
+  "_npmVersion": "1.0.30",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "buffers@~0.1.1",
+    "scope": null,
+    "escapedName": "buffers",
+    "name": "buffers",
+    "rawSpec": "~0.1.1",
+    "spec": ">=0.1.1 <0.2.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/binary"
+  ],
+  "_resolved": "https://registry.npmjs.org/buffers/-/buffers-0.1.1.tgz",
+  "_shasum": "b24579c3bed4d6d396aeee6d9a8ae7f5482ab7bb",
+  "_shrinkwrap": null,
+  "_spec": "buffers@~0.1.1",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/binary",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "bugs": {
+    "url": "https://github.com/substack/node-buffers/issues"
+  },
+  "dependencies": {},
+  "description": "Treat a collection of Buffers as a single contiguous partially mutable Buffer.",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "b24579c3bed4d6d396aeee6d9a8ae7f5482ab7bb",
+    "tarball": "https://registry.npmjs.org/buffers/-/buffers-0.1.1.tgz"
+  },
+  "engines": {
+    "node": ">=0.2.0"
+  },
+  "homepage": "https://github.com/substack/node-buffers#readme",
+  "main": "./index",
+  "maintainers": [
+    {
+      "name": "substack",
+      "email": "mail@substack.net"
+    }
+  ],
+  "name": "buffers",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/node-buffers.git"
+  },
+  "scripts": {
+    "test": "expresso"
+  },
+  "version": "0.1.1"
+}

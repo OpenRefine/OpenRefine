@@ -1,0 +1,83 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "touch@0.0.3",
+        "scope": null,
+        "escapedName": "touch",
+        "name": "touch",
+        "rawSpec": "0.0.3",
+        "spec": "0.0.3",
+        "type": "version"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/decompress-zip"
+    ]
+  ],
+  "_from": "touch@0.0.3",
+  "_id": "touch@0.0.3",
+  "_inCache": true,
+  "_location": "/touch",
+  "_npmUser": {
+    "name": "isaacs",
+    "email": "i@izs.me"
+  },
+  "_npmVersion": "1.3.25",
+  "_phantomChildren": {
+    "abbrev": "1.0.9"
+  },
+  "_requested": {
+    "raw": "touch@0.0.3",
+    "scope": null,
+    "escapedName": "touch",
+    "name": "touch",
+    "rawSpec": "0.0.3",
+    "spec": "0.0.3",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/decompress-zip"
+  ],
+  "_resolved": "https://registry.npmjs.org/touch/-/touch-0.0.3.tgz",
+  "_shasum": "51aef3d449571d4f287a5d87c9c8b49181a0db1d",
+  "_shrinkwrap": null,
+  "_spec": "touch@0.0.3",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/decompress-zip",
+  "author": {
+    "name": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/"
+  },
+  "bugs": {
+    "url": "https://github.com/isaacs/node-touch/issues"
+  },
+  "dependencies": {
+    "nopt": "~1.0.10"
+  },
+  "description": "like touch(1) in node",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "51aef3d449571d4f287a5d87c9c8b49181a0db1d",
+    "tarball": "https://registry.npmjs.org/touch/-/touch-0.0.3.tgz"
+  },
+  "engines": {
+    "node": ">=0.6"
+  },
+  "homepage": "https://github.com/isaacs/node-touch",
+  "license": "ISC",
+  "main": "touch.js",
+  "maintainers": [
+    {
+      "name": "isaacs",
+      "email": "i@izs.me"
+    }
+  ],
+  "name": "touch",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/isaacs/node-touch.git"
+  },
+  "version": "0.0.3"
+}

@@ -1,0 +1,96 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "is-root@^1.0.0",
+        "scope": null,
+        "escapedName": "is-root",
+        "name": "is-root",
+        "rawSpec": "^1.0.0",
+        "spec": ">=1.0.0 <2.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX"
+    ]
+  ],
+  "_from": "is-root@>=1.0.0 <2.0.0",
+  "_id": "is-root@1.0.0",
+  "_inCache": true,
+  "_location": "/is-root",
+  "_npmUser": {
+    "name": "sindresorhus",
+    "email": "sindresorhus@gmail.com"
+  },
+  "_npmVersion": "1.4.14",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "is-root@^1.0.0",
+    "scope": null,
+    "escapedName": "is-root",
+    "name": "is-root",
+    "rawSpec": "^1.0.0",
+    "spec": ">=1.0.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/is-root/-/is-root-1.0.0.tgz",
+  "_shasum": "07b6c233bc394cd9d02ba15c966bd6660d6342d5",
+  "_shrinkwrap": null,
+  "_spec": "is-root@^1.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "http://sindresorhus.com"
+  },
+  "bugs": {
+    "url": "https://github.com/sindresorhus/is-root/issues"
+  },
+  "dependencies": {},
+  "description": "Check if the process is running as root user, eg. started with `sudo`.",
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "07b6c233bc394cd9d02ba15c966bd6660d6342d5",
+    "tarball": "https://registry.npmjs.org/is-root/-/is-root-1.0.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "gitHead": "6afc5207f2eb1cedb3c0e2f62e4adcfdba6f1455",
+  "homepage": "https://github.com/sindresorhus/is-root",
+  "keywords": [
+    "sudo",
+    "root",
+    "user",
+    "permissions",
+    "uid",
+    "process",
+    "posix"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    }
+  ],
+  "name": "is-root",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sindresorhus/is-root.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "version": "1.0.0"
+}

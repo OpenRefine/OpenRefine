@@ -1,4 +1,10 @@
 *~
+<<<<<<< HEAD
+*.class
+*.lock
+*.DS_Store
+module/MOD-INF/classes/*
+=======
 \#*#
 .*.swp
 *.DS_Store
@@ -25,3 +31,4 @@ broker/core/test-output/
 tmp/
 /test-output
 /bin
+>>>>>>> origin/master

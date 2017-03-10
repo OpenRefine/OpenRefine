@@ -1,0 +1,102 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ext-name@^3.0.0",
+        "scope": null,
+        "escapedName": "ext-name",
+        "name": "ext-name",
+        "rawSpec": "^3.0.0",
+        "spec": ">=3.0.0 <4.0.0",
+        "type": "range"
+      },
+      "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-json"
+    ]
+  ],
+  "_from": "ext-name@>=3.0.0 <4.0.0",
+  "_id": "ext-name@3.0.0",
+  "_inCache": true,
+  "_location": "/ext-name",
+  "_nodeVersion": "1.6.2",
+  "_npmUser": {
+    "name": "kevva",
+    "email": "kevinmartensson@gmail.com"
+  },
+  "_npmVersion": "2.7.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "ext-name@^3.0.0",
+    "scope": null,
+    "escapedName": "ext-name",
+    "name": "ext-name",
+    "rawSpec": "^3.0.0",
+    "spec": ">=3.0.0 <4.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/bower-json"
+  ],
+  "_resolved": "https://registry.npmjs.org/ext-name/-/ext-name-3.0.0.tgz",
+  "_shasum": "07e4418737cb1f513c32c6ea48d8b8c8e0471abb",
+  "_shrinkwrap": null,
+  "_spec": "ext-name@^3.0.0",
+  "_where": "/private/var/folders/22/xz6_9gpx3jggts_8j68_25g80000gn/T/tmp-148203vm6WXLT8cAX/node_modules/bower-json",
+  "author": {
+    "name": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva"
+  },
+  "bin": {
+    "ext-name": "cli.js"
+  },
+  "bugs": {
+    "url": "https://github.com/kevva/ext-name/issues"
+  },
+  "dependencies": {
+    "ends-with": "^0.2.0",
+    "ext-list": "^2.0.0",
+    "meow": "^3.1.0",
+    "sort-keys-length": "^1.0.0"
+  },
+  "description": "Get the file extension and MIME type from a file",
+  "devDependencies": {
+    "ava": "^0.0.4"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "07e4418737cb1f513c32c6ea48d8b8c8e0471abb",
+    "tarball": "https://registry.npmjs.org/ext-name/-/ext-name-3.0.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "cli.js",
+    "index.js"
+  ],
+  "gitHead": "5c636230352126f78cc317b5c07196724a7e5151",
+  "homepage": "https://github.com/kevva/ext-name",
+  "keywords": [
+    "ext",
+    "extname",
+    "mime"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    }
+  ],
+  "name": "ext-name",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevva/ext-name.git"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "version": "3.0.0"
+}
