@@ -93,7 +93,7 @@ public class RowFlagChange implements Change {
             } else if ("oldFlagged".equals(field)) {
                 oldFlagged = Boolean.parseBoolean(value);
             } else if ("newFlagged".equals(field)) {
-                oldFlagged = Boolean.parseBoolean(value);
+                newFlagged = Boolean.parseBoolean(value);
             }
         }
         
