@@ -59,4 +59,5 @@ This is the full list of contributors (in chronological order):
  - Rod Salazar <rodrod.salazar@gmail.com>
  - pxb <pxb1988@gmail.com>
  - Qi <jackyq2015@gmail.com>
+ - Antonin Delpeuch <antonin@delpeuch.eu>
 
