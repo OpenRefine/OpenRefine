@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
+import com.google.refine.importing.EncodingGuesser;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
@@ -71,7 +72,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             List<JSONObject> fileRecords, String format) {
         JSONObject options = new JSONObject();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
-        
+        EncodingGuesser.guessInitialEncoding(fileRecords, options);
         return options;
     }
     
