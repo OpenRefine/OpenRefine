@@ -50,6 +50,8 @@ This is the full list of contributors (in chronological order):
  - Gabriel Sjoberg <GabrielSjoberg@gmail.com>
  - Rod Salazar <rodrod.salazar@gmail.com>
  - pxb <pxb1988@gmail.com>
+ - Qi <jackyq2015@gmail.com>
+ - Antonin Delpeuch <antonin@delpeuch.eu>
  
  We welcome additional contributors if you'd like to help out.
                                 - o -
