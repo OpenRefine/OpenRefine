@@ -38,10 +38,10 @@ public class Xor implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
+        if (args.length >= 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
             return (Boolean) args[0] ^ (Boolean) args[1];
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 booleans");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 or more booleans");
     }
 
     @Override
@@ -50,7 +50,7 @@ public class Xor implements Function {
 
         writer.object();
         writer.key("description");
-        writer.value("XORs two boolean values");
+        writer.value("XORs two or more boolean values");
         writer.key("params");
         writer.value("boolean a, boolean b");
         writer.key("returns");
