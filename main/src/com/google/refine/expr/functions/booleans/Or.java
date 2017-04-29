@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -46,7 +46,7 @@ public class Or implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
+        if (args.length >= 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
             for (Object o : args) {
                 if (Not.objectToBoolean(o)) {
                     return true;
@@ -54,15 +54,15 @@ public class Or implements Function {
             }
             return false;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two booleans");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two or more booleans");
     }
-    
+
     @Override
     public void write(JSONWriter writer, Properties options)
         throws JSONException {
-    
+
         writer.object();
-        writer.key("description"); writer.value("Returns a OR b");
+        writer.key("description"); writer.value("OR two or more booleans to yield a boolean");
         writer.key("params"); writer.value("boolean a, boolean b");
         writer.key("returns"); writer.value("boolean");
         writer.endObject();
