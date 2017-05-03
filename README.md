@@ -1,10 +1,12 @@
-#OpenRefine
+# OpenRefine
 
 [![Build Status](https://travis-ci.org/OpenRefine/OpenRefine.png?branch=master)](https://travis-ci.org/OpenRefine/OpenRefine) [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=32795)](https://www.bountysource.com/trackers/32795-open-refine?utm_source=32795&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 
 OpenRefine is a power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
 the web. All with the comfort and privacy of your own computer.
+
+[<img src="https://github.com/OpenRefine/OpenRefine/blob/master/graphics/icon/open-refine-256px.png" align="right">](http://openrefine.org)
 
 Download
 -----------------------
