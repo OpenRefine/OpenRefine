@@ -164,16 +164,20 @@ abstract public class ImportingParserBase implements ImportingParser {
     
     protected static int addFilenameColumn(Project project) {
         String fileNameColumnName = "File";
-        assert project.columnModel.getColumnByName(fileNameColumnName) == null;
-        try {
-            project.columnModel.addColumn(
-                0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+        if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
+            try {
+                project.columnModel.addColumn(
+                    0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+
+                return 0;
+            } catch (ModelException e) {
+                // Shouldn't happen: We already checked for duplicate name.
+                logger.error("ModelException adding Filename column",e);
+            }
+            return -1;
+        } else {
             return 0;
-        } catch (ModelException e) {
-            // Shouldn't happen: We already checked for duplicate name.
-            logger.error("ModelException adding Filename column",e);
         }
-        return -1;
     }
 
 }
