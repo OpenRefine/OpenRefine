@@ -47,7 +47,7 @@ import com.google.refine.model.Row;
  * context rows and dependent rows if configured so.
  */
 public class ConjunctiveFilteredRows implements FilteredRows {
-    final protected List<RowFilter> _rowFilters = new LinkedList<RowFilter>();
+    final protected List<RowFilter> _rowFilters = new LinkedList<>();
     
     public void add(RowFilter rowFilter) {
         _rowFilters.add(rowFilter);

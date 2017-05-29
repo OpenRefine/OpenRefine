@@ -151,7 +151,7 @@ public class JythonEvaluable implements Evaluable {
         } else if (po.isSequenceType()) {
             Iterator<PyObject> i = po.asIterable().iterator();
             
-            List<Object> list = new ArrayList<Object>();
+            List<Object> list = new ArrayList<>();
             while (i.hasNext()) {
                 list.add(unwrap((Object) i.next()));
             }

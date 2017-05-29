@@ -62,11 +62,11 @@ public class BinningClusterer extends Clusterer {
 
     private Keyer _keyer;
     
-    static final protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
+    static final protected Map<String, Keyer> _keyers = new HashMap<>();
 
     final static Logger logger = LoggerFactory.getLogger("binning_clusterer");
     
-    List<Map<String,Integer>> _clusters;
+     List<Map<String,Integer>> _clusters;
      
     static {
         _keyers.put("fingerprint", new FingerprintKeyer());
@@ -84,7 +84,7 @@ public class BinningClusterer extends Clusterer {
         Object[] _params;
         JSONObject _config;
         
-        Map<String,Map<String,Integer>> _map = new HashMap<String,Map<String,Integer>>();
+         Map<String,Map<String,Integer>> _map = new HashMap<>();
         
         public BinningRowVisitor(Keyer k, JSONObject o) {
             _keyer = k;
@@ -126,7 +126,7 @@ public class BinningClusterer extends Clusterer {
                         m.put(s,1);
                     }
                 } else {
-                    Map<String,Integer> m = new TreeMap<String,Integer>();
+                    Map<String,Integer> m = new TreeMap<>();
                     m.put(s,1);
                     _map.put(key, m);
                 }
@@ -194,7 +194,7 @@ public class BinningClusterer extends Clusterer {
         for (Map<String,Integer> m : _clusters) {
             if (m.size() > 1) {
                 writer.array();        
-                List<Entry<String,Integer>> entries = new ArrayList<Entry<String,Integer>>(m.entrySet());
+                List<Entry<String,Integer>> entries = new ArrayList<>(m.entrySet());
                 Collections.sort(entries,c);
                 for (Entry<String,Integer> e : entries) {
                     writer.object();

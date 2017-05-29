@@ -70,7 +70,7 @@ public class Engine implements Jsonizable {
     public final static String MODE_RECORD_BASED = "record-based";
 
     protected Project _project;
-    protected List<Facet> _facets = new LinkedList<Facet>();
+    protected List<Facet> _facets = new LinkedList<>();
     protected Mode _mode = Mode.RowBased;
 
     static public String modeToString(Mode mode) {

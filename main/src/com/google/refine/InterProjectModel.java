@@ -55,7 +55,7 @@ public class InterProjectModel {
         final public String toProjectColumnName;
         
         final public Map<Object, List<Integer>> valueToRowIndices = 
-            new HashMap<Object, List<Integer>>();
+            new HashMap<>();
         
         ProjectJoin(
             long   fromProjectID,
@@ -86,7 +86,7 @@ public class InterProjectModel {
         }
     }
     
-    protected Map<String, ProjectJoin> _joins = new HashMap<String, ProjectJoin>();
+    protected Map<String, ProjectJoin> _joins = new HashMap<>();
     
     public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn) {
         String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;

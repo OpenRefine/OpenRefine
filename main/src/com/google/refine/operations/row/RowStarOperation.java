@@ -93,7 +93,7 @@ public class RowStarOperation extends EngineDependentOperation {
 protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
-        List<Change> changes = new ArrayList<Change>(project.rows.size());
+        List<Change> changes = new ArrayList<>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, changes));
@@ -109,7 +109,7 @@ protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) 
 
     protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
         return new RowVisitor() {
-            List<Change> changes;
+             List<Change> changes;
             
             public RowVisitor init(List<Change> changes) {
                 this.changes = changes;
