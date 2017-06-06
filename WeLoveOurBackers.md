@@ -4,5 +4,5 @@ Want to help also?  Visit https://salt.bountysource.com/teams/openrefine
 
 1. OWEN STEPHENS - Wiki contributor, extension author, and supporting you in our mailing list.
 2. PaulZH -
-3. jwillmer -
+3. Jens Willmer -
 4. mroswell -
