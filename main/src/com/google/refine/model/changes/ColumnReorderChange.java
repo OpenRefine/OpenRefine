@@ -48,10 +48,10 @@ import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
 public class ColumnReorderChange extends ColumnChange {
-    final protected List<String>    _columnNames;
-    protected List<Column>          _oldColumns;
-    protected List<Column>          _newColumns;
-    protected List<ColumnGroup>     _oldColumnGroups;
+    final protected List<String> _columnNames;
+    protected List<Column> _oldColumns;
+    protected List<Column> _newColumns;
+    protected List<ColumnGroup> _oldColumnGroups;
     
     public ColumnReorderChange(List<String> columnNames) {
         _columnNames = columnNames;
@@ -117,9 +117,9 @@ public class ColumnReorderChange extends ColumnChange {
     }
     
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
-        List<String> columnNames = new ArrayList<String>();
-        List<Column> oldColumns = new ArrayList<Column>();
-        List<Column> newColumns = new ArrayList<Column>();
+        List<String> columnNames = new ArrayList<>();
+        List<Column> oldColumns = new ArrayList<>();
+        List<Column> newColumns = new ArrayList<>();
         List<ColumnGroup> oldColumnGroups = null;
         
         String line;

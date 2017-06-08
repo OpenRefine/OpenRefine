@@ -758,7 +758,7 @@ public class ImportingUtilities {
      */
     static public String autoSelectFiles(ImportingJob job, JSONObject retrievalRecord, JSONArray fileSelectionIndexes) {
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
-        List<String> formats = new ArrayList<String>();
+        List<String> formats = new ArrayList<>();
         
         JSONArray fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         int count = fileRecords.length();
@@ -813,7 +813,7 @@ public class ImportingUtilities {
         JSONObject retrievalRecord = job.getRetrievalRecord();
         
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
-        List<String> formats = new ArrayList<String>();
+        List<String> formats = new ArrayList<>();
         
         JSONArray fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         int count = fileSelectionIndexes.length();
@@ -891,7 +891,7 @@ public class ImportingUtilities {
         boolean download = bestFormat == null ? true :
             ImportingManager.formatToRecord.get(bestFormat).download;
         
-        List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
+        List<String> formats = new ArrayList<>(ImportingManager.formatToRecord.keySet().size());
         for (String format : ImportingManager.formatToRecord.keySet()) {
             Format record = ImportingManager.formatToRecord.get(format);
             if (record.uiClass != null && record.parser != null && record.download == download) {

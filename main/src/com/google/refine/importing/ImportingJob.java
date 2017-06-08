@@ -141,7 +141,7 @@ public class ImportingJob implements Jsonizable {
     
     
     public List<JSONObject> getSelectedFileRecords() {
-        List<JSONObject> results = new ArrayList<JSONObject>();
+        List<JSONObject> results = new ArrayList<>();
         
         JSONObject retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
         if (retrievalRecord != null) {

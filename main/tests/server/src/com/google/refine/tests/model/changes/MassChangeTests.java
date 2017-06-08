@@ -56,7 +56,7 @@ public class MassChangeTests extends RefineTest {
     @Test
     public void testWrongReverseOrder()
             throws Exception {
-        List<Change> changes = new ArrayList<Change>();
+        List<Change> changes = new ArrayList<>();
         changes.add(new ColumnAdditionChange("a", 0, new ArrayList<CellAtRow>()));
         changes.add(new ColumnAdditionChange("b", 1, new ArrayList<CellAtRow>()));
         MassChange massChange = new MassChange(changes, false);

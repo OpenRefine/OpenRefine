@@ -113,7 +113,7 @@ public class ProcessManager implements Jsonizable {
     }
     
     public void onFailedProcess(Process p, Exception exception) {
-        List<Exception> exceptions = new LinkedList<Exception>();
+        List<Exception> exceptions = new LinkedList<>();
         exceptions.add(exception);
         onFailedProcess(p, exceptions);
     }

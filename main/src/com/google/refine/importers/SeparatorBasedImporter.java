@@ -126,7 +126,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)
         throws IOException{
         
-        ArrayList<Object> cells = new ArrayList<Object>();
+        ArrayList<Object> cells = new ArrayList<>();
         String[] tokens = parser.parseLineMulti(line);
         cells.addAll(Arrays.asList(tokens));
         while (parser.isPending()) {
@@ -176,8 +176,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             LineNumberReader lineNumberReader = new LineNumberReader(reader);
 
             try {
-                List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
-                Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
+                List<Separator> separators = new ArrayList<>();
+                Map<Character, Separator> separatorMap = new HashMap<>();
                 
                 int totalChars = 0;
                 int lineCount = 0;

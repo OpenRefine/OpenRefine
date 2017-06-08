@@ -180,7 +180,7 @@ public class DefaultImportingController implements ImportingController {
             JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                     request.getParameter("options"));
             
-            List<Exception> exceptions = new LinkedList<Exception>();
+            List<Exception> exceptions = new LinkedList<>();
             
             ImportingUtilities.previewParse(job, format, optionObj, exceptions);
             
@@ -262,7 +262,7 @@ public class DefaultImportingController implements ImportingController {
             JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                     request.getParameter("options"));
             
-            List<Exception> exceptions = new LinkedList<Exception>();
+            List<Exception> exceptions = new LinkedList<>();
             
             ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
             

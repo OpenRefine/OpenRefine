@@ -220,7 +220,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
             throw new RuntimeException("The request needs to contain the '" + DELEGATED_OAUTH_HEADER + "' header set to obtain user identity via Freebase.");
         }
         
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        List<NameValuePair> formparams = new ArrayList<>();
         Map<String,String> params = (Map<String,String>) request.getParameterMap();
         for (Entry<String,String> e : params.entrySet()) {
             formparams.add(new BasicNameValuePair((String) e.getKey(), (String) e.getValue()));
@@ -232,7 +232,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
         httpRequest.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "OpenRefine Broker");
         httpRequest.setEntity(entity);
                 
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        ResponseHandler<String> responseHandler = new BasicResponseHandler<>();
         String responseBody = httpclient.execute(httpRequest, responseHandler);
         JSONObject o = new JSONObject(responseBody);
         
@@ -252,7 +252,7 @@ public abstract class RefineBroker extends ButterflyModuleImpl {
     static protected List<String> getList(HttpServletRequest request, String name) throws ServletException, JSONException {
         String param = getParameter(request, name);
         JSONArray a = new JSONArray(param);
-        List<String> result = new ArrayList<String>(a.length());
+        List<String> result = new ArrayList<>(a.length());
         for (int i = 0; i < a.length(); i++) {
             result.add(a.getString(i));
         }

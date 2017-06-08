@@ -43,7 +43,7 @@ import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
     static public Template parse(String s) throws ParsingException {
-        List<Fragment> fragments = new ArrayList<Fragment>();
+        List<Fragment> fragments = new ArrayList<>();
 
         int start = 0, current = 0;
         while (current < s.length() - 1) {

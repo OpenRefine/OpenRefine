@@ -10,7 +10,7 @@ import com.google.refine.model.Cell;
  *
  */
 public class ImportRecord {
-    public List<List<Cell>> rows = new BasedList<List<Cell>>();
+    public List<List<Cell>> rows = new BasedList<>();
 
     
     /**
