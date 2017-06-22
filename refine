@@ -679,6 +679,10 @@ run() {
         add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
     fi
 
+    if [ "$REFINE_AUTOSAVE_PERIOD" ] ; then
+        add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
+    fi
+
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
@@ -912,7 +916,10 @@ add_option "$JAVA_OPTIONS"
 if [ -z "$REFINE_MEMORY" ] ; then
     REFINE_MEMORY="1024M"
 fi
-add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
+if [ -z "$REFINE_MIN_MEMORY" ] ; then
+    REFINE_MIN_MEMORY="256M"
+fi
+add_option "-Xms$REFINE_MIN_MEMORY -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"

@@ -285,11 +285,13 @@ class RefineServer extends Server {
     // inject configuration parameters in the servlets
     // NOTE: this is done *after* starting the server because jetty might override the init
     // parameters if we set them in the webapp context upon reading the web.xml file    
+
     static private void configure(WebAppContext context) throws Exception {
         ServletHolder servlet = context.getServletHandler().getServlet("refine");
         if (servlet != null) {
             servlet.setInitParameter("refine.data", getDataDir());
             servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
+            servlet.setInitParameter("refine.autosave", Configurations.get("refine.autosave"));
             servlet.setInitOrder(1);
             servlet.doStart();
         }
