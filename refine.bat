@@ -135,8 +135,10 @@ set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%REFINE_MEMORY%" == "" goto gotMemory
 set REFINE_MEMORY=1024M
+if not "%REFINE_MIN_MEMORY%" == "" goto gotMemory
+set REFINE_MIN_MEMORY=256M
 :gotMemory
-set OPTS=%OPTS% -Xms256M -Xmx%REFINE_MEMORY% -Drefine.memory=%REFINE_MEMORY%
+set OPTS=%OPTS% -Xms%REFINE_MIN_MEMORY% -Xmx%REFINE_MEMORY% -Drefine.memory=%REFINE_MEMORY%
 
 if not "%REFINE_MAX_FORM_CONTENT_SIZE%" == "" goto gotMaxFormContentSize
 set REFINE_MAX_FORM_CONTENT_SIZE=1048576

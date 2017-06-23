@@ -85,7 +85,7 @@ public class RefineServlet extends Butterfly {
 
     static final Logger logger = LoggerFactory.getLogger("refine");
 
-    static final protected long AUTOSAVE_PERIOD = 5; // 5 minutes
+    static protected long AUTOSAVE_PERIOD = 5; // default: 5 minutes
     
     static protected class AutoSaveTimerTask implements Runnable {
         @Override
@@ -130,6 +130,8 @@ public class RefineServlet extends Butterfly {
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
+
+	AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
 
         service.scheduleWithFixedDelay(new AutoSaveTimerTask(), AUTOSAVE_PERIOD, 
                 AUTOSAVE_PERIOD, TimeUnit.MINUTES);
