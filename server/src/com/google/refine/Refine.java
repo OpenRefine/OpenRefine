@@ -291,7 +291,7 @@ class RefineServer extends Server {
         if (servlet != null) {
             servlet.setInitParameter("refine.data", getDataDir());
             servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
-            servlet.setInitParameter("refine.autosave", Configurations.get("refine.autosave"));
+            servlet.setInitParameter("refine.autosave", Configurations.get("refine.autosave", "5")); // default: 5 minutes
             servlet.setInitOrder(1);
             servlet.doStart();
         }
