@@ -166,6 +166,21 @@ public class GrelTests extends RefineTest {
             parseEval(bindings, test);
         }
     }
+    
+    // to demonstrate bug fixing for #1204
+    @Test
+    public void testCrossFunctionEval() {
+            String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
+            
+            try {
+                Evaluable eval = MetaParser.parse("grel:" + test);
+                Object result = eval.evaluate(bindings);
+                Assert.assertTrue(result instanceof EvalError );
+            } catch (ParsingException e) {
+                Assert.fail("Unexpected parse failure for cross function: " + test);                
+            }
+    }
+    
     private void parseEval(Properties bindings, String[] test)
             throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
