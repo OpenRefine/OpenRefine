@@ -88,6 +88,15 @@ public class InterProjectModel {
     
     protected Map<String, ProjectJoin> _joins = new HashMap<String, ProjectJoin>();
     
+    /**
+     * Compute the ProjectJoin based on combination key, return the cached one from the HashMap if already computed
+     * 
+     * @param fromProject
+     * @param fromColumn
+     * @param toProject
+     * @param toColumn
+     * @return
+     */
     public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn) {
         String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;
         if (!_joins.containsKey(key)) {
