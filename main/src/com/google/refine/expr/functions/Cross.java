@@ -79,7 +79,7 @@ public class Cross implements Function {
         throws JSONException {
     
         writer.object();
-        writer.key("description"); writer.value("join with anothe project by column");
+        writer.key("description"); writer.value("join with another project by column");
         writer.key("params"); writer.value("cell c, string projectName, string columnName");
         writer.key("returns"); writer.value("array");
         writer.endObject();
