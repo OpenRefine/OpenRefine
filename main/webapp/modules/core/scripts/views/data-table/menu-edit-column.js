@@ -146,6 +146,74 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     });
   };
 
+  var doAddColumnByReconciliation = function() {
+    var columnIndex = Refine.columnNameToColumnIndex(column.name);
+    var o = DataTableView.sampleVisibleRows(column);
+    new ExtendReconciledDataPreviewDialog(
+      column, 
+      columnIndex, 
+      o.rowIndices,
+      function(extension) {
+        Refine.postProcess(
+            "core",
+            "extend-data", 
+            {
+              baseColumnName: column.name,
+              columnInsertIndex: columnIndex + 1
+            },
+            {
+              extension: JSON.stringify(extension)
+            },
+            { rowsChanged: true, modelsChanged: true }
+        );
+      }
+    ); */
+  };
+
+/*
+  var doAddColumnByReconciliation = function() {
+    var frame = $(
+        DOM.loadHTML("core", "scripts/views/data-table/add-column-by-reconciliation.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n._('core-views')["add-by-recon"]);
+    
+    elmts.suggestedPropertyHeader.html('Suggested properties');
+    elmts.previewHeader.html('Preview');
+    elmts.addPropertyHeader.html('Add property');
+    elmts.okButton.html($.i18n._('core-buttons')["ok"]);
+    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
+      var columnName = $.trim(elmts.columnNameInput[0].value);
+      if (!columnName.length) {
+        alert($.i18n._('core-views')["warning-col-name"]);
+        return;
+      }
+
+      Refine.postCoreProcess(
+        "add-column-by-fetching-urls", 
+        {
+          baseColumnName: column.name, 
+          urlExpression: previewWidget.getExpression(true), 
+          newColumnName: columnName, 
+          columnInsertIndex: columnIndex + 1,
+          delay: elmts.throttleDelayInput[0].value,
+          onError: $('input[name="dialog-onerror-choice"]:checked')[0].value,
+          cacheResponses: $('input[name="dialog-cache-responses"]')[0].checked,
+        },
+        null,
+        { modelsChanged: true }
+      );
+      dismiss();
+    });
+  };
+*/
+
   var doRemoveColumn = function() {
     Refine.postCoreProcess(
       "remove-column", 
@@ -297,6 +365,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         id: "core/add-column-by-fetching-urls",
         label: $.i18n._('core-views')["add-by-urls"]+"...",
         click: doAddColumnByFetchingURLs
+      },
+      {
+        id: "core/add-column-by-reconciliation",
+        label: $.i18n._('core-views')["add-by-recon"]+"...",
+        click: doAddColumnByReconciliation
       },
       {},
       {
