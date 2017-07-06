@@ -55,11 +55,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-// import com.google.refine.freebase.FreebaseType;
+import com.google.refine.model.ReconType;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.expr.functions.ToDate;
 
 public class ReconciledDataExtensionJob {
     static public class DataExtension {
@@ -71,28 +72,24 @@ public class ReconciledDataExtensionJob {
     }
     
     static public class ColumnInfo {
-        final public List<String> names;
-        final public List<String> path;
-        // final public FreebaseType expectedType;
-        // TODO
+        final public String name;
+        final public String id;
+        final public ReconType expectedType;
         
-        protected ColumnInfo(List<String> names, List<String> path /*, FreebaseType expectedType */) {
-            this.names = names;
-            this.path = path;
-            // this.expectedType = expectedType;
+        protected ColumnInfo(String name, String id, ReconType expectedType) {
+            this.name = name;
+            this.id = id;
+            this.expectedType = expectedType;
         }
     }
     
     final public JSONObject         extension;
     final public String             endpoint;
-    final public int                columnCount;
     final public List<ColumnInfo>   columns = new ArrayList<ColumnInfo>();
     
     public ReconciledDataExtensionJob(JSONObject obj, String endpoint) throws JSONException {
         this.extension = obj;
         this.endpoint = endpoint;
-        this.columnCount = (obj.has("properties") && !obj.isNull("properties")) ?
-                countColumns(obj.getJSONArray("properties"), columns, new ArrayList<String>(), new ArrayList<String>()) : 0;
     }
     
     public Map<String, ReconciledDataExtensionJob.DataExtension> extend(
@@ -102,35 +99,30 @@ public class ReconciledDataExtensionJob {
         StringWriter writer = new StringWriter();
         formulateQuery(ids, extension, writer);
 
-	// Extract the order of properties
-	JSONArray origProperties = extension.getJSONArray("properties");
-	List<String> properties = new ArrayList<String>();
-	int l = origProperties.length();
-	for (int i = 0; i < l; i++) {
-	    properties.add(origProperties.getJSONObject(i).getString("id"));
-	}
-        
         String query = writer.toString();
         InputStream is = performQuery(this.endpoint, query);
         try {
             String s = ParsingUtilities.inputStreamToString(is);
             JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
-            
+          
+	    // Extract the column metadata
+	    gatherColumnInfo(o.getJSONArray("meta"), columns);    
+	  
             Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
             if (o.has("rows")){
                 JSONObject records = o.getJSONObject("rows");
                 
-		// for each identifier
+                // for each identifier
                 for (String id : ids) {
-		    if (records.has(id)) {
-			JSONObject record = records.getJSONObject(id);
-			
-			ReconciledDataExtensionJob.DataExtension ext = collectResult(record, properties, reconCandidateMap);
-			
-			if (ext != null) {
-			    map.put(id, ext);
-			}
-		    }
+                    if (records.has(id)) {
+                        JSONObject record = records.getJSONObject(id);
+                        
+                        ReconciledDataExtensionJob.DataExtension ext = collectResult(record, reconCandidateMap);
+                        
+                        if (ext != null) {
+                            map.put(id, ext);
+                        }
+                    }
                 }
             }
             
@@ -166,65 +158,65 @@ public class ReconciledDataExtensionJob {
     
     protected ReconciledDataExtensionJob.DataExtension collectResult(
         JSONObject record,
-	List<String> properties,
         Map<String, ReconCandidate> reconCandidateMap
     ) throws JSONException {
         List<Object[]> rows = new ArrayList<Object[]>();
 
-	// for each property
-	int colindex = 0;
-	for(String pid : properties) {
-	    JSONArray values = record.getJSONArray(pid);	
-	    if (values == null) {
-		continue;
-	    }
+        // for each property
+        int colindex = 0;
+        for(ColumnInfo ci : columns) {
+	    String pid = ci.id;
+            JSONArray values = record.getJSONArray(pid);        
+            if (values == null) {
+                continue;
+            }
 
-	    // for each value
-	    for(int rowindex = 0; rowindex < values.length(); rowindex++) {
-		JSONObject val = values.getJSONObject(rowindex);
-		// store a reconciled value
-                if(val.has("id")) {
-		    storeCell(rows, rowindex, colindex, val, reconCandidateMap);
-		} else if(val.has("str")) {
-		// store a bare string
-		    String str = val.getString("str");
-		    storeStr(rows, rowindex, colindex, str); 
+            // for each value
+            for(int rowindex = 0; rowindex < values.length(); rowindex++) {
+                JSONObject val = values.getJSONObject(rowindex);
+                // store a reconciled value
+                if (val.has("id")) {
+                    storeCell(rows, rowindex, colindex, val, reconCandidateMap);
+                } else if (val.has("str")) {
+                // store a bare string
+                    String str = val.getString("str");
+                    storeCell(rows, rowindex, colindex, str); 
+                } else if (val.has("float")) {
+                    float v = Float.parseFloat(val.getString("float"));
+                    storeCell(rows, rowindex, colindex, v);
+                } else if (val.has("int")) {
+                    int v = Integer.parseInt(val.getString("int"));
+                    storeCell(rows, rowindex, colindex, v);
+                } else if (val.has("date")) {
+                    ToDate td = new ToDate();
+                    String[] args = new String[1];
+                    args[0] = val.getString("date");
+                    Object v = td.call(null, args);
+                    storeCell(rows, rowindex, colindex, v);
+                } else if(val.has("bool")) {
+                    boolean v = val.getString("bool") == "true";
+                    storeCell(rows, rowindex, colindex, v);
                 }
-		// TODO other cases for other types of values (dates, booleans, …)
-	    }
-	    colindex++;
-	}
+            }
+            colindex++;
+        }
 
        
-        // collectResult(rows, extension.getJSONArray("properties"), obj, 0, 0, reconCandidateMap);
         
-        Object[][] data = new Object[rows.size()][columnCount];
+        Object[][] data = new Object[rows.size()][columns.size()];
         rows.toArray(data);
         
         return new DataExtension(data);
     }
 
-    protected void storeStr(
-            List<Object[]>  rows, 
-            int row,
-            int col,
-            String str
-        ) throws JSONException {
-        while (row >= rows.size()) {
-            rows.add(new Object[columnCount]);
-        }
-        rows.get(row)[col] = str;
-    }
-    
     protected void storeCell(
         List<Object[]>  rows, 
         int row,
         int col,
-        Object value,
-        Map<String, ReconCandidate> reconCandidateMap
+        Object value
     ) {
         while (row >= rows.size()) {
-            rows.add(new Object[columnCount]);
+            rows.add(new Object[columns.size()]);
         }
         rows.get(row)[col] = value;
     }
@@ -251,128 +243,8 @@ public class ReconciledDataExtensionJob {
             reconCandidateMap.put(id, rc);
         }
         
-        storeCell(rows, row, col, rc, reconCandidateMap);
+        storeCell(rows, row, col, rc);
     }
-    /*
-    protected int[] collectResult(
-        List<Object[]>  rows, 
-        JSONObject      extNode, 
-        JSONObject      resultNode, 
-        int             startRowIndex,
-        int             startColumnIndex,
-        Map<String, ReconCandidate> reconCandidateMap
-    ) throws JSONException {
-        String propertyID = extNode.getString("id");
-        // String expectedTypeID = extNode.getJSONObject("expected").getString("id");
-        
-        JSONArray a = resultNode != null && resultNode.has(propertyID) && !resultNode.isNull(propertyID) ?
-            resultNode.getJSONArray(propertyID) : null;
-
-        if ("/type/key".equals(expectedTypeID)) {
-            if (a != null) {
-                int l = a.length();
-                for (int r = 0; r < l; r++) {
-                    Object o = a.isNull(r) ? null : a.get(r);
-                    if (o instanceof JSONObject) {
-                        storeStr(rows, startRowIndex++, startColumnIndex, (JSONObject) o, reconCandidateMap);
-                    }
-                }
-            }
-            
-            // note that we still take up a column even if we don't have any data
-            return new int[] { startRowIndex, startColumnIndex + 1 };
-        } else if (expectedTypeID.startsWith("/type/")) {
-            if (a != null) {
-                int l = a.length();
-                for (int r = 0; r < l; r++) {
-                    Object o = a.isNull(r) ? null : a.get(r);
-                    if (o instanceof Serializable) {
-                        storeCell(rows, startRowIndex++, startColumnIndex, o, reconCandidateMap);
-                    }
-                }
-            }
-            
-            // note that we still take up a column even if we don't have any data
-            return new int[] { startRowIndex, startColumnIndex + 1 };
-        } else {
-            boolean hasSubProperties = (extNode.has("properties") && !extNode.isNull("properties")); 
-            boolean isOwnColumn = !hasSubProperties || (extNode.has("included") && extNode.getBoolean("included"));
-            
-            if (a != null && a.length() > 0) {
-                int maxColIndex = startColumnIndex;
-                
-                int l = a.length();
-                for (int r = 0; r < l; r++) {
-                    Object v = a.isNull(r) ? null : a.get(r);
-                    JSONObject o = v != null && v instanceof JSONObject ? (JSONObject) v : null;
-                    
-                    int startColumnIndex2 = startColumnIndex;
-                    int startRowIndex2 = startRowIndex;
-                    
-                    if (isOwnColumn) {
-                        if (o != null) {
-                            storeCell(rows, startRowIndex2++, startColumnIndex2++, o, reconCandidateMap);
-                        } else {
-                            storeCell(rows, startRowIndex2++, startColumnIndex2++, v, reconCandidateMap);
-                        }
-                    }
-                    
-                    if (hasSubProperties && o != null) {
-                        int[] rowcol = collectResult(
-                            rows,
-                            extNode.getJSONArray("properties"),
-                            o,
-                            startRowIndex,
-                            startColumnIndex2,
-                            reconCandidateMap
-                        );
-                        
-                        startRowIndex2 = rowcol[0];
-                        startColumnIndex2 = rowcol[1];
-                    }
-                    
-                    startRowIndex = startRowIndex2;
-                    maxColIndex = Math.max(maxColIndex, startColumnIndex2);
-                }
-                
-                return new int[] { startRowIndex, maxColIndex };
-            } else {
-                return new int[] {
-                    startRowIndex,
-                    startColumnIndex + countColumns(extNode, null, new ArrayList<String>(), new ArrayList<String>())
-                };
-            }
-        }
-    }
-    
-    protected int[] collectResult(
-        List<Object[]>  rows, 
-        JSONArray       subProperties, 
-        JSONObject      resultNode, 
-        int             startRowIndex,
-        int             startColumnIndex,
-        Map<String, ReconCandidate> reconCandidateMap
-    ) throws JSONException {
-        int maxStartRowIndex = startRowIndex;
-        
-        int k = subProperties.length();
-        for (int c = 0; c < k; c++) {
-            int[] rowcol = collectResult(
-                rows, 
-                subProperties.getJSONObject(c),
-                resultNode,
-                startRowIndex,
-                startColumnIndex,
-                reconCandidateMap
-            );
-            
-            maxStartRowIndex = Math.max(maxStartRowIndex, rowcol[0]);
-            startColumnIndex = rowcol[1];
-        }
-        
-        return new int[] { maxStartRowIndex, startColumnIndex };
-    }*/
-
 
     
     static protected void formulateQuery(Set<String> ids, JSONObject node, Writer writer) throws JSONException {
@@ -380,74 +252,46 @@ public class ReconciledDataExtensionJob {
         
         jsonWriter.object();
 
-	jsonWriter.key("ids");
-	    jsonWriter.array();
-	    for (String id : ids) {
-		if (id != null) {
-		    jsonWriter.value(id);
-		}
-	    }
-	    jsonWriter.endArray();
+        jsonWriter.key("ids");
+            jsonWriter.array();
+            for (String id : ids) {
+                if (id != null) {
+                    jsonWriter.value(id);
+                }
+            }
+            jsonWriter.endArray();
 
         jsonWriter.key("properties");
-	    jsonWriter.array();
-	    JSONArray properties = node.getJSONArray("properties");
-	    int l = properties.length();
+            jsonWriter.array();
+            JSONArray properties = node.getJSONArray("properties");
+            int l = properties.length();
         
-	    for (int i = 0; i < l; i++) {
-		JSONObject property = properties.getJSONObject(i);
-		jsonWriter.object();
-		jsonWriter.key("id");
-		jsonWriter.value(property.getString("id"));
-		// TODO translate constraints as below
-		jsonWriter.endObject();
-	    }
-	    jsonWriter.endArray();
+            for (int i = 0; i < l; i++) {
+                JSONObject property = properties.getJSONObject(i);
+                jsonWriter.object();
+                jsonWriter.key("id");
+                jsonWriter.value(property.getString("id"));
+                // TODO translate constraints as below
+                jsonWriter.endObject();
+            }
+            jsonWriter.endArray();
         jsonWriter.endObject();
     }
     
-  
-    static protected int countColumns(JSONObject obj, List<ColumnInfo> columns, List<String> names, List<String> path) throws JSONException {
-        String name = obj.getString("name");
-        
-        List<String> names2 = null;
-        List<String> path2 = null;
-        if (columns != null) {
-            names2 = new ArrayList<String>(names);
-            names2.add(name);
-            
-            path2 = new ArrayList<String>(path);
-            path2.add(obj.getString("id"));
-        }
-        
-        if (obj.has("properties") && !obj.isNull("properties")) {
-            boolean included = (obj.has("included") && obj.getBoolean("included"));
-            if (included && columns != null) {
-                // JSONObject expected = obj.getJSONObject("expected");
-                
-                columns.add(new ColumnInfo(names2, path2 
-                   /* new FreebaseType(expected.getString("id"), expected.getString("name")) */));
-            }
-            
-            return (included ? 1 : 0) + 
-                countColumns(obj.getJSONArray("properties"), columns, names2, path2);
-        } else {
-            if (columns != null) {
-                // JSONObject expected = obj.getJSONObject("expected");
-                
-                columns.add(new ColumnInfo(names2, path2
-                  /*  new FreebaseType(expected.getString("id"), expected.getString("name")) */ ));
-            }
-            return 1;
-        }
-    }
-    
-    static protected int countColumns(JSONArray a, List<ColumnInfo> columns, List<String> names, List<String> path) throws JSONException {
-        int c = 0;
-        int l = a.length();
-        for (int i = 0; i < l; i++) {
-            c += countColumns(a.getJSONObject(i), columns, names, path);
-        }
-        return c;
-    }
+    static protected void gatherColumnInfo(JSONArray meta, List<ColumnInfo> columns) throws JSONException {
+	for(int i = 0; i < meta.length(); i++) {
+	    JSONObject col = meta.getJSONObject(i);
+
+	    ReconType expectedType = null;
+	    if(col.has("type")) {
+		JSONObject expectedObj = col.getJSONObject("type");
+		expectedType = new ReconType(expectedObj.getString("id"), expectedObj.getString("name"));
+	    }
+	
+	    columns.add(new ColumnInfo(
+		col.getString("name"),
+		col.getString("id"),
+		expectedType));	
+	}
+   }
 }

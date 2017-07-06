@@ -31,37 +31,49 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.commands.recon;
+package com.google.refine.model;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Properties;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
-import com.google.refine.commands.EngineDependentCommand;
-import com.google.refine.operations.recon.ExtendDataOperation;
-import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.Jsonizable;
 
-public class ExtendDataCommand extends EngineDependentCommand {
-    @Override
-    protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
-        
-        String baseColumnName = request.getParameter("baseColumnName");
-        int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
-        String endpoint = request.getParameter("endpoint");
-        
-        String jsonString = request.getParameter("extension");
-        JSONObject extension = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-        
-        return new ExtendDataOperation(
-            engineConfig, 
-            baseColumnName, 
-	    endpoint,
-            extension,
-            columnInsertIndex
-        );
+/**
+ * This represents a type from the reconciliation
+ * service. It is used when extending data to
+ * store the (expected) types of new columns.
+ */
+public class ReconType implements Jsonizable {
+    public String id;
+    public String name;
+
+    public ReconType(String id, String name) {
+	this.id = id;
+	this.name = name;
     }
-
+    
+    @Override
+    public void write(JSONWriter writer, Properties options)
+        throws JSONException {
+    
+        writer.object();
+        writer.key("id"); writer.value(id);
+        writer.key("name"); writer.value(name);
+        writer.endObject();
+    }
+    
+    static public ReconType load(JSONObject obj) throws Exception {
+        if (obj == null) {
+            return null;
+        }
+        
+        ReconType type = new ReconType(
+            obj.getString("id"),
+            obj.getString("name")
+        );
+        return type;
+    }
 }

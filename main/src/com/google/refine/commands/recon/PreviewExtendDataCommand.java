@@ -133,19 +133,11 @@ public class PreviewExtendDataCommand extends Command {
                 writer.array();
                 for (ColumnInfo info : job.columns) {
                     writer.object();
-                    writer.key("names");
-                        writer.array();
-                        for (String name : info.names) {
-                            writer.value(name);
-                        }
-                        writer.endArray();
-                    writer.key("path");
-                        writer.array();
-                        for (String id : info.path) {
-                            writer.value(id);
-                        }
-                        writer.endArray();
-                    writer.endObject();
+                    writer.key("name");
+		    writer.value(info.name);
+                    writer.key("id");
+		    writer.value(info.id);
+		    writer.endObject();
                 }
                 writer.endArray();
             

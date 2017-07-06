@@ -52,7 +52,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
       alert("Please add some properties first.");
     } else {
       DialogSystem.dismissUntil(self._level - 1);
-      self._onDone(self._extension);
+      self._onDone(self._extension, self._service);
     }
   });
   this._elmts.cancelButton.click(function() {
@@ -67,6 +67,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   this._serviceMetadata = null;
   if ("reconConfig" in column) {
     var service = column.reconConfig.service;
+    this._service = service;
     var serviceMetadata = ReconciliationManager.getServiceFromUrl(service);
     this._serviceMetadata = serviceMetadata;
     if ("extend" in serviceMetadata) {
@@ -258,7 +259,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
   var renderColumnHeader = function(column) {
     var th = $('<th>').appendTo(trHead);
 
-    $('<span>').html(column.names.join(" &raquo; ")).appendTo(th);
+    $('<span>').html(column.name).appendTo(th);
     $('<br>').appendTo(th);
 
     $('<a href="javascript:{}"></a>')
@@ -266,15 +267,15 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     .addClass("action")
     .attr("title", "Remove this column")
     .click(function() {
-      self._removeProperty(column.path);
+      self._removeProperty(column.id);
     }).appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text("constrain")
+    .text("configure")
     .addClass("action")
-    .attr("title", "Add constraints to this column")
+    .attr("title", "Configure this column")
     .click(function() {
-      self._constrainProperty(column.path);
+      self._constrainProperty(column.id);
     }).appendTo(th);
   };
   for (var c = 0; c < data.columns.length; c++) {
@@ -301,56 +302,25 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
   container.append(table);
 };
 
-ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(path) {
-  var removeFromList = function(path, index, properties) {
-    var id = path[index];
-
-    for (var i = properties.length - 1; i >= 0; i--) {
-      var property = properties[i];
-      if (property.id == id) {
-        if (index === path.length - 1) {
-          if ("included" in property) {
-            delete property.included;
-          }
-        } else if ("properties" in property && property.properties.length > 0) {
-          removeFromList(path, index + 1, property.properties);
-        }
-
-        if (!("properties" in property) || property.properties.length === 0) {
-          properties.splice(i, 1);
-        }
-
-        return;
-      }
+ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(id) {
+  for(var i = this._extension.properties.length - 1; i >= 0; i--) {
+    var property = this._extension.properties[i];
+    if (property.id == id) {
+       this._extension.properties.splice(i, 1);
     }
-  };
-
-  removeFromList(path, 0, this._extension.properties);
-
+  }
   this._update();
 };
 
-ExtendReconciledDataPreviewDialog.prototype._findProperty = function(path) {
-  var find = function(path, index, properties) {
-    var id = path[index];
-
-    for (var i = properties.length - 1; i >= 0; i--) {
-      var property = properties[i];
-      if (property.id == id) {
-        if (index === path.length - 1) {
-          return property;
-        } else if ("properties" in property && property.properties.length > 0) {
-          return find(path, index + 1, property.properties);
-        }
-        break;
-      }
+ExtendReconciledDataPreviewDialog.prototype._findProperty = function(id) {
+  var properties = this._extension.properties;
+  for(var i = properties.length - 1; i >= 0; i--) {
+    if (properties[i].id == path) {
+       return properties[i];
     }
-
-    return null;
-  };
-
-  return find(path, 0, this._extension.properties);
-};
+  }
+  return null;
+}
 
 ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(path) {
   var self = this;

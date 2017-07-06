@@ -47,9 +47,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-// import com.google.refine.freebase.FreebaseType;
+import com.google.refine.model.ReconType;
 import com.google.refine.model.recon.DataExtensionReconConfig;
-import com.google.refine.model.recon.FreebaseDataExtensionJob.DataExtension;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -65,10 +65,11 @@ import com.google.refine.util.Pool;
 
 public class DataExtensionChange implements Change {
     final protected String              _baseColumnName;
+    final protected String              _service;
     final protected int                 _columnInsertIndex;
     
     final protected List<String>        _columnNames;
-    final protected List<FreebaseType>  _columnTypes;
+    final protected List<ReconType>  _columnTypes;
     
     final protected List<Integer>       _rowIndices;
     final protected List<DataExtension> _dataExtensions;
@@ -79,15 +80,17 @@ public class DataExtensionChange implements Change {
     protected List<Row>                 _newRows;
     
     public DataExtensionChange(
-        String baseColumnName, 
+        String baseColumnName,
+        String service,
         int columnInsertIndex, 
         List<String> columnNames,
-        List<FreebaseType> columnTypes,
+        List<ReconType> columnTypes,
         List<Integer> rowIndices,
         List<DataExtension> dataExtensions,
         long historyEntryID
     ) {
         _baseColumnName = baseColumnName;
+        _service = service;
         _columnInsertIndex = columnInsertIndex;
         
         _columnNames = columnNames;
@@ -101,10 +104,11 @@ public class DataExtensionChange implements Change {
 
     protected DataExtensionChange(
         String              baseColumnName, 
+        String              service,
         int                 columnInsertIndex,
         
         List<String>        columnNames,
-        List<FreebaseType> columnTypes,
+        List<ReconType> columnTypes,
         
         List<Integer>       rowIndices,
         List<DataExtension> dataExtensions,
@@ -113,6 +117,7 @@ public class DataExtensionChange implements Change {
         List<Row>           newRows
     ) {
         _baseColumnName = baseColumnName;
+        _service = service;
         _columnInsertIndex = columnInsertIndex;
         
         _columnNames = columnNames;
@@ -204,7 +209,11 @@ public class DataExtensionChange implements Change {
                 int cellIndex = _firstNewCellIndex + i;
                 
                 Column column = new Column(cellIndex, name);
-                column.setReconConfig(new DataExtensionReconConfig(_columnTypes.get(i)));
+                column.setReconConfig(new DataExtensionReconConfig(
+			_service,
+			"", // TODO retrieve service by URL and fill this
+			"",
+			_columnTypes.get(i)));
                 column.setReconStats(ReconStats.create(project, cellIndex));
                 
                 try {
@@ -275,17 +284,21 @@ public class DataExtensionChange implements Change {
     @Override
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("baseColumnName="); writer.write(_baseColumnName); writer.write('\n');
+        writer.write("service="); writer.write(_service); writer.write('\n');
         writer.write("columnInsertIndex="); writer.write(Integer.toString(_columnInsertIndex)); writer.write('\n');
         writer.write("columnNameCount="); writer.write(Integer.toString(_columnNames.size())); writer.write('\n');
         for (String name : _columnNames) {
             writer.write(name); writer.write('\n');
         }
         writer.write("columnTypeCount="); writer.write(Integer.toString(_columnTypes.size())); writer.write('\n');
-        for (FreebaseType type : _columnTypes) {
+        for (ReconType type : _columnTypes) {
             try {
-                JSONWriter jsonWriter = new JSONWriter(writer);
-                
-                type.write(jsonWriter, options);
+                if(type == null) {
+                    writer.write("null");
+                } else { 
+                    JSONWriter jsonWriter = new JSONWriter(writer);
+                    type.write(jsonWriter, options);
+		}
             } catch (JSONException e) {
                 // ???
             }
@@ -342,10 +355,11 @@ public class DataExtensionChange implements Change {
     
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String baseColumnName = null;
+	String service = null;
         int columnInsertIndex = -1;
         
         List<String> columnNames = null;
-        List<FreebaseType> columnTypes = null;
+        List<ReconType> columnTypes = null;
         
         List<Integer> rowIndices = null;
         List<DataExtension> dataExtensions = null;
@@ -363,6 +377,8 @@ public class DataExtensionChange implements Change {
             
             if ("baseColumnName".equals(field)) {
                 baseColumnName = value;
+            } else if ("service".equals(field)) {
+                service = value;
             } else if ("columnInsertIndex".equals(field)) {
                 columnInsertIndex = Integer.parseInt(value);
             } else if ("firstNewCellIndex".equals(field)) {
@@ -390,10 +406,12 @@ public class DataExtensionChange implements Change {
             } else if ("columnTypeCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                columnTypes = new ArrayList<FreebaseType>(count);
+                columnTypes = new ArrayList<ReconType>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-                    columnTypes.add(FreebaseType.load(ParsingUtilities.evaluateJsonStringToObject(line)));
+		    if (line != null) {
+			columnTypes.add(ReconType.load(ParsingUtilities.evaluateJsonStringToObject(line)));
+		    }
                 }
             } else if ("dataExtensionCount".equals(field)) {
                 int count = Integer.parseInt(value);
@@ -453,6 +471,7 @@ public class DataExtensionChange implements Change {
         
         DataExtensionChange change = new DataExtensionChange(
             baseColumnName, 
+	    service,
             columnInsertIndex, 
             columnNames,
             columnTypes,

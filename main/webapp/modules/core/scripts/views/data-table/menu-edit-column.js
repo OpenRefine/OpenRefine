@@ -153,12 +153,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       column, 
       columnIndex, 
       o.rowIndices,
-      function(extension) {
+      function(extension, endpoint) {
         Refine.postProcess(
             "core",
             "extend-data", 
             {
               baseColumnName: column.name,
+	      endpoint: endpoint,
               columnInsertIndex: columnIndex + 1
             },
             {
@@ -167,7 +168,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             { rowsChanged: true, modelsChanged: true }
         );
       }
-    ); */
+    );
   };
 
 /*
