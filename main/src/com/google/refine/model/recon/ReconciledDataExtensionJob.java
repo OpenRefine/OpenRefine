@@ -273,7 +273,11 @@ public class ReconciledDataExtensionJob {
                 jsonWriter.object();
                 jsonWriter.key("id");
                 jsonWriter.value(property.getString("id"));
-                // TODO translate constraints as below
+		if (property.has("settings")) {
+		    JSONObject settings = property.getJSONObject("settings");
+		    jsonWriter.key("settings");
+	            jsonWriter.value(settings);
+		}
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();

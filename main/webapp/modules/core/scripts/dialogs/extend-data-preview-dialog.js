@@ -183,6 +183,7 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
       columnName: this._column.name
   };
 
+  console.log(this._extension);
   $.post(
     "command/core/preview-extend-data?" + $.param(params), 
     {
@@ -320,26 +321,72 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var frame = DialogSystem.createDialog();
   frame.width("500px");
 
-  var header = $('<div></div>').addClass("dialog-header").text("Constrain " + id).appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text("Settings for " + id).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
-  body.html(
-    '<div class="grid-layout layout-normal layout-full"><table>' +
+  // by default we display an area where the user can input JSON
+  var form = (
     '<tr><td>' +
-    'Enter MQL query constraints as JSON' +
+    'Enter query settings as JSON' +
     '</td></tr>' +
     '<tr><td>' +
     '<textarea style="width: 100%; height: 300px; font-family: monospace;" bind="textarea"></textarea>' +
-    '</td></tr>' +
-    '</table></div>'
+    '</td></tr>');
+
+  // If the service metadata specifies fields, we build a proper form to make it more user-friendly
+  var fields = self._serviceMetadata.extend.property_settings;
+  if (fields != null) {
+     form = '';
+     for(var i = 0; i < fields.length; i++) {
+	var field = fields[i];
+        var fieldHTML = '';
+	var currentValue = field.default;
+        if (property.settings != null && property.settings[field.name] != null) {
+            currentValue = property.settings[field.name];
+        }
+	if (field.type == 'select') {
+	   fieldHTML += '<span class="property-config-select-label">'+field.label+':</span><br/>';
+	   for(var j = 0; j < field.choices.length; j++) {
+		var choice = field.choices[j];
+		fieldHTML += '<label for="'+field.name+'_'+choice.value+'">';
+		fieldHTML += '<input type="radio" name="'+field.name+'" '+
+			'value="'+choice.value+'" id="'+field.name+'_'+choice.value+'" ';
+		if (choice.value == currentValue) {
+		    fieldHTML += 'checked="checked"';
+		}
+		fieldHTML += ' /> '+choice.name+'</label><br />';
+	   }
+	} else if (field.type == 'checkbox') {
+	   fieldHTML += '<label for="'+field.name+'"><input type="checkbox" name="'+field.name+'" ';
+	   if (currentValue == 'on') {
+	       fieldHTML += 'checked="checked"'
+	   }
+	   fieldHTML += ' /> '+field.label+'</label>'
+        } else if (field.type == 'number') {
+	   fieldHTML += '<label for="'+field.name+'">'+field.label+': <input type="number" name="'+field.name+'" ';
+	   fieldHTML += 'value="'+currentValue+'" /></label>';
+	}
+        if(fieldHTML != '') {
+	  form += '<tr><td title="'+field.help_text+'">'+fieldHTML+'</td>';
+	  form += '</tr>';
+        }
+     }    
+  }
+
+  body.html(
+    '<div class="grid-layout layout-normal layout-full"><form class="data-extension-property-config" bind="form"><table>' +
+    form +
+    '</table></form></div>'
   );
   var bodyElmts = DOM.bind(body);
 
-  if ("constraints" in property) {
-    bodyElmts.textarea[0].value = JSON.stringify(property.constraints, null, 2);
-  } else {
-    bodyElmts.textarea[0].value = JSON.stringify({ "limit" : 10 }, null, 2);
+  if (fields == null) {
+    if ("settings" in property) {
+	bodyElmts.textarea[0].value = JSON.stringify(property.settings, null, 2);
+    } else {
+	bodyElmts.textarea[0].value = JSON.stringify({ "limit" : 10 }, null, 2);
+    }
   }
 
   footer.html(
@@ -356,21 +403,33 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   footerElmts.cancelButton.click(dismiss);
   footerElmts.okButton.click(function() {
     try {
-      var o = JSON.parse(bodyElmts.textarea[0].value);
-      if (o === undefined) {
-        alert("Please ensure that the JSON you enter is valid.");
-        return;
-      }
+      if (fields == null) {
+	var o = JSON.parse(bodyElmts.textarea[0].value);
+	if (o === undefined) {
+	    alert("Please ensure that the JSON you enter is valid.");
+	    return;
+	}
 
-      if ($.isArray(o) && o.length == 1) {
-        o = o[0];
-      }
-      if (!$.isPlainObject(o)) {
-        alert("The JSON you enter must be an object, that is, it is of this form { ... }.");
-        return;
-      }
+	if ($.isArray(o) && o.length == 1) {
+	    o = o[0];
+	}
+	if (!$.isPlainObject(o)) {
+	    alert("The JSON you enter must be an object, that is, it is of this form { ... }.");
+	    return;
+	}
 
-      property.constraints = o;
+	property.settings = o;
+      } else {
+          var elem = $(bodyElmts.form[0]);
+	  var ar = elem.serializeArray();
+	  var settings = {};
+          for(var i = 0; i < ar.length; i++) {
+              settings[ar[i].name] = ar[i].value;
+	  }
+	  console.log(ar);
+	  property.settings = settings;
+	  console.log(settings);
+      }
 
       dismiss();
 
@@ -380,6 +439,6 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
     }
   });
 
-  bodyElmts.textarea.focus();
+  //bodyElmts.textarea.focus();
 };
 
