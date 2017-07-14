@@ -79,10 +79,6 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
 	   var endpoint = extend.propose_properties;
            this._proposePropertiesUrl = endpoint.service_url + endpoint.service_path;
        }
-       if ("fetch_column" in extend) {
-           var endpoint = extend.fetch_column;
-           this._fetchColumnUrl = endpoint.service_url + endpoint.service_path;
-       }
      }
   }
 
