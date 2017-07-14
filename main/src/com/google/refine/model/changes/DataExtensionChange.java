@@ -293,9 +293,7 @@ public class DataExtensionChange implements Change {
         writer.write("columnTypeCount="); writer.write(Integer.toString(_columnTypes.size())); writer.write('\n');
         for (ReconType type : _columnTypes) {
             try {
-                if(type == null) {
-                    writer.write("null");
-                } else { 
+                if(type != null) {
                     JSONWriter jsonWriter = new JSONWriter(writer);
                     type.write(jsonWriter, options);
 		}
@@ -409,7 +407,9 @@ public class DataExtensionChange implements Change {
                 columnTypes = new ArrayList<ReconType>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
-		    if (line != null) {
+		    if (line == null || line.length() == 0) {
+			columnTypes.add(null);
+		    } else {
 			columnTypes.add(ReconType.load(ParsingUtilities.evaluateJsonStringToObject(line)));
 		    }
                 }

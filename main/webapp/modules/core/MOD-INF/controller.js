@@ -478,7 +478,8 @@ function init() {
       "styles/dialogs/custom-tabular-exporter-dialog.less",
 
       "styles/reconciliation/recon-dialog.less",
-      "styles/reconciliation/standard-service-panel.less"
+      "styles/reconciliation/standard-service-panel.less",
+      "styles/reconciliation/extend-data-preview-dialog.less",
     ]
   );
 

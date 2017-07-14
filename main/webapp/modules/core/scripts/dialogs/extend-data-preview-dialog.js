@@ -165,28 +165,18 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
   var suggestConfig = $.extend({}, this._serviceMetadata.suggest.property);
   suggestConfig.key = null;
   suggestConfig.query_param_name = "prefix";
-  /* var suggestConfig = {
-      filter: '(all type:/type/property)'
-  };
-  if ((this._column.reconConfig) && (this._column.reconConfig.type)) {
-    suggestConfig.filter = '(all type:/type/property (any namespace:/type/object namespace:' + this._column.reconConfig.type.id + '))';
-  } */
 
   this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-    var expected = data.expected_type;
     self._addProperty({
       id : data.id,
       name: data.name,
-      /* expected: {
-        id: expected.id,
-        name: expected.name
-      } */
     });
   });
 };
 
 ExtendReconciledDataPreviewDialog.prototype._update = function() {
-  this._elmts.previewContainer.empty().text("Querying THE service...");
+  this._elmts.previewContainer.empty().html(
+	'<div bind="progressPanel" class="extend-data-preview-progress"><img src="images/large-spinner.gif" /></div>');
 
   var self = this;
   var params = {
@@ -291,7 +281,9 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
       var cell = row[c];
       if (cell !== null) {
         if ($.isPlainObject(cell)) {
-          $('<a>').attr("href", "http://www.freebase.com/view" + cell.id).text(cell.name).appendTo(td);
+          $('<a>').attr("href",
+		this._serviceMetadata.identifierSpace + cell.id
+		).attr("target", "_blank").text(cell.name).appendTo(td);
         } else {
           $('<span>').text(cell).appendTo(td);
         }
@@ -315,21 +307,21 @@ ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(id) {
 ExtendReconciledDataPreviewDialog.prototype._findProperty = function(id) {
   var properties = this._extension.properties;
   for(var i = properties.length - 1; i >= 0; i--) {
-    if (properties[i].id == path) {
+    if (properties[i].id == id) {
        return properties[i];
     }
   }
   return null;
 }
 
-ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(path) {
+ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var self = this;
-  var property = this._findProperty(path);
+  var property = this._findProperty(id);
 
   var frame = DialogSystem.createDialog();
   frame.width("500px");
 
-  var header = $('<div></div>').addClass("dialog-header").text("Constrain " + path.join(" > ")).appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text("Constrain " + id).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 

@@ -105,8 +105,10 @@ public class ReconciledDataExtensionJob {
             String s = ParsingUtilities.inputStreamToString(is);
             JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
           
-	    // Extract the column metadata
-	    gatherColumnInfo(o.getJSONArray("meta"), columns);    
+	    if(columns.size() == 0) {
+		// Extract the column metadata
+		gatherColumnInfo(o.getJSONArray("meta"), columns);    
+	    }
 	  
             Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
             if (o.has("rows")){
