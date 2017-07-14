@@ -70,6 +70,8 @@ import com.google.refine.process.Process;
 public class ExtendDataOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
     final protected String     _endpoint;
+    final protected String     _identifierSpace;
+    final protected String     _schemaSpace;
     final protected JSONObject _extension;
     final protected int        _columnInsertIndex;
     
@@ -80,6 +82,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
             engineConfig,
             obj.getString("baseColumnName"),
             obj.getString("endpoint"),
+            obj.getString("identifierSpace"),
+            obj.getString("schemaSpace"),
             obj.getJSONObject("extension"),
             obj.getInt("columnInsertIndex")
         );
@@ -89,6 +93,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
         JSONObject     engineConfig,
         String         baseColumnName,
 	String         endpoint,
+        String         identifierSpace,
+        String         schemaSpace,
         JSONObject     extension,
         int            columnInsertIndex 
     ) {
@@ -96,6 +102,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
         
         _baseColumnName = baseColumnName;
         _endpoint = endpoint;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
         _extension = extension;
         _columnInsertIndex = columnInsertIndex;
     }
@@ -111,6 +119,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
         writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
         writer.key("baseColumnName"); writer.value(_baseColumnName);
 	writer.key("endpoint"); writer.value(_endpoint);
+	writer.key("identifierSpace"); writer.value(_identifierSpace);
+	writer.key("schemaSpace"); writer.value(_schemaSpace);
         writer.key("extension"); writer.value(_extension);
         writer.endObject();
     }
@@ -305,6 +315,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     new DataExtensionChange(
                         _baseColumnName,
 			_endpoint,
+		        _identifierSpace,
+		        _schemaSpace,
                         _columnInsertIndex,
                         columnNames,
                         columnTypes,

@@ -52,7 +52,10 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
       alert("Please add some properties first.");
     } else {
       DialogSystem.dismissUntil(self._level - 1);
-      self._onDone(self._extension, self._service);
+      self._onDone(self._extension,
+                  self._service,
+                  self._serviceMetadata.identifierSpace,
+		  self._serviceMetadata.schemaSpace);
     }
   });
   this._elmts.cancelButton.click(function() {

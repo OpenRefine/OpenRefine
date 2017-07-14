@@ -153,13 +153,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       column, 
       columnIndex, 
       o.rowIndices,
-      function(extension, endpoint) {
+      function(extension, endpoint, identifierSpace, schemaSpace) {
         Refine.postProcess(
             "core",
             "extend-data", 
             {
               baseColumnName: column.name,
 	      endpoint: endpoint,
+              identifierSpace: identifierSpace,
+              schemaSpace: schemaSpace,
               columnInsertIndex: columnIndex + 1
             },
             {

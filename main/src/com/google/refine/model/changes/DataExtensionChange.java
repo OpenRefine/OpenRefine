@@ -66,6 +66,8 @@ import com.google.refine.util.Pool;
 public class DataExtensionChange implements Change {
     final protected String              _baseColumnName;
     final protected String              _service;
+    final protected String              _identifierSpace;
+    final protected String              _schemaSpace;
     final protected int                 _columnInsertIndex;
     
     final protected List<String>        _columnNames;
@@ -82,6 +84,8 @@ public class DataExtensionChange implements Change {
     public DataExtensionChange(
         String baseColumnName,
         String service,
+        String identifierSpace,
+        String schemaSpace,
         int columnInsertIndex, 
         List<String> columnNames,
         List<ReconType> columnTypes,
@@ -91,6 +95,8 @@ public class DataExtensionChange implements Change {
     ) {
         _baseColumnName = baseColumnName;
         _service = service;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
         _columnInsertIndex = columnInsertIndex;
         
         _columnNames = columnNames;
@@ -105,6 +111,8 @@ public class DataExtensionChange implements Change {
     protected DataExtensionChange(
         String              baseColumnName, 
         String              service,
+        String              identifierSpace,
+        String              schemaSpace,
         int                 columnInsertIndex,
         
         List<String>        columnNames,
@@ -118,6 +126,8 @@ public class DataExtensionChange implements Change {
     ) {
         _baseColumnName = baseColumnName;
         _service = service;
+        _identifierSpace = identifierSpace;
+        _schemaSpace = schemaSpace;
         _columnInsertIndex = columnInsertIndex;
         
         _columnNames = columnNames;
@@ -211,8 +221,8 @@ public class DataExtensionChange implements Change {
                 Column column = new Column(cellIndex, name);
                 column.setReconConfig(new DataExtensionReconConfig(
 			_service,
-			"", // TODO retrieve service by URL and fill this
-			"",
+			_identifierSpace,
+			_schemaSpace,
 			_columnTypes.get(i)));
                 column.setReconStats(ReconStats.create(project, cellIndex));
                 
@@ -247,9 +257,9 @@ public class DataExtensionChange implements Change {
                 if (reconMap.containsKey(rc.id)) {
                     recon = reconMap.get(rc.id);
                 } else {
-                    recon = Recon.makeFreebaseRecon(_historyEntryID);
+                    recon = new Recon(_historyEntryID, _identifierSpace, _schemaSpace);
                     recon.addCandidate(rc);
-                    recon.service = "mql";
+                    recon.service = _service;
                     recon.match = rc;
                     recon.matchRank = 0;
                     recon.judgment = Judgment.Matched;
@@ -285,6 +295,8 @@ public class DataExtensionChange implements Change {
     public void save(Writer writer, Properties options) throws IOException {
         writer.write("baseColumnName="); writer.write(_baseColumnName); writer.write('\n');
         writer.write("service="); writer.write(_service); writer.write('\n');
+        writer.write("identifierSpace="); writer.write(_identifierSpace); writer.write('\n');
+        writer.write("schemaSpace="); writer.write(_schemaSpace); writer.write('\n');
         writer.write("columnInsertIndex="); writer.write(Integer.toString(_columnInsertIndex)); writer.write('\n');
         writer.write("columnNameCount="); writer.write(Integer.toString(_columnNames.size())); writer.write('\n');
         for (String name : _columnNames) {
@@ -354,6 +366,8 @@ public class DataExtensionChange implements Change {
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
         String baseColumnName = null;
 	String service = null;
+	String identifierSpace = null;
+	String schemaSpace = null;
         int columnInsertIndex = -1;
         
         List<String> columnNames = null;
@@ -377,6 +391,10 @@ public class DataExtensionChange implements Change {
                 baseColumnName = value;
             } else if ("service".equals(field)) {
                 service = value;
+            } else if ("identifierSpace".equals(field)) {
+                identifierSpace = value;
+            } else if ("schemaSpace".equals(field)) {
+                schemaSpace = value;
             } else if ("columnInsertIndex".equals(field)) {
                 columnInsertIndex = Integer.parseInt(value);
             } else if ("firstNewCellIndex".equals(field)) {
@@ -472,6 +490,8 @@ public class DataExtensionChange implements Change {
         DataExtensionChange change = new DataExtensionChange(
             baseColumnName, 
 	    service,
+	    identifierSpace,
+	    schemaSpace,
             columnInsertIndex, 
             columnNames,
             columnTypes,

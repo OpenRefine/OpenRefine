@@ -51,6 +51,8 @@ public class ExtendDataCommand extends EngineDependentCommand {
         String baseColumnName = request.getParameter("baseColumnName");
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
         String endpoint = request.getParameter("endpoint");
+        String identifierSpace = request.getParameter("identifierSpace");
+	String schemaSpace = request.getParameter("schemaSpace");
         
         String jsonString = request.getParameter("extension");
         JSONObject extension = ParsingUtilities.evaluateJsonStringToObject(jsonString);
@@ -59,6 +61,8 @@ public class ExtendDataCommand extends EngineDependentCommand {
             engineConfig, 
             baseColumnName, 
 	    endpoint,
+	    identifierSpace,
+            schemaSpace,
             extension,
             columnInsertIndex
         );
