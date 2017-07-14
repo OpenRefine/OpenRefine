@@ -219,12 +219,15 @@ public class DataExtensionChange implements Change {
                 int cellIndex = _firstNewCellIndex + i;
                 
                 Column column = new Column(cellIndex, name);
+                ReconType columnType = _columnTypes.get(i);
                 column.setReconConfig(new DataExtensionReconConfig(
 			_service,
 			_identifierSpace,
 			_schemaSpace,
-			_columnTypes.get(i)));
-                column.setReconStats(ReconStats.create(project, cellIndex));
+			columnType));
+		if (columnType != null) {
+                    column.setReconStats(ReconStats.create(project, cellIndex));
+		}
                 
                 try {
                     project.columnModel.addColumn(_columnInsertIndex + i, column, true);
