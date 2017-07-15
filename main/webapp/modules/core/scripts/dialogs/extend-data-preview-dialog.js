@@ -183,7 +183,6 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
       columnName: this._column.name
   };
 
-  console.log(this._extension);
   $.post(
     "command/core/preview-extend-data?" + $.param(params), 
     {
@@ -253,17 +252,17 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<br>').appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text($.i18n("core-views")["remove-prop"])
+    .text($.i18n._("core-views")["remove-prop"])
     .addClass("action")
-    .attr("title", $.i18n("core-views")["remove-col"])
+    .attr("title", $.i18n._("core-views")["remove-col"])
     .click(function() {
       self._removeProperty(column.id);
     }).appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text($.i18n("core-views")["configure-prop"])
+    .text($.i18n._("core-views")["configure-prop"])
     .addClass("action")
-    .attr("title", $.i18n("core-views")["configure-col"])
+    .attr("title", $.i18n._("core-views")["configure-col"])
     .click(function() {
       self._constrainProperty(column.id);
     }).appendTo(th);
@@ -325,19 +324,9 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
-  // by default we display an area where the user can input JSON
-  var form = (
-    '<tr><td>' +
-    'Enter query settings as JSON' +
-    '</td></tr>' +
-    '<tr><td>' +
-    '<textarea style="width: 100%; height: 300px; font-family: monospace;" bind="textarea"></textarea>' +
-    '</td></tr>');
-
-  // If the service metadata specifies fields, we build a proper form to make it more user-friendly
   var fields = self._serviceMetadata.extend.property_settings;
+  var table = $('<table></table>');
   if (fields != null) {
-     form = '';
      for(var i = 0; i < fields.length; i++) {
 	var field = fields[i];
         var fieldHTML = '';
@@ -345,57 +334,60 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
         if (property.settings != null && property.settings[field.name] != null) {
             currentValue = property.settings[field.name];
         }
+	var tr = $('<tr></tr>');
+	var td = $('<td></td>').attr('title', field.help_text).appendTo(tr);
 	if (field.type == 'select') {
-	   fieldHTML += '<span class="property-config-select-label">'+field.label+':</span><br/>';
+	   var fieldLabel = $('<span></span>').text(field.label+':').appendTo(td);
+	   td.append($('<br/>'));
 	   for(var j = 0; j < field.choices.length; j++) {
 		var choice = field.choices[j];
-		fieldHTML += '<label for="'+field.name+'_'+choice.value+'">';
-		fieldHTML += '<input type="radio" name="'+field.name+'" '+
-			'value="'+choice.value+'" id="'+field.name+'_'+choice.value+'" ';
-		if (choice.value == currentValue) {
-		    fieldHTML += 'checked="checked"';
-		}
-		fieldHTML += ' /> '+choice.name+'</label><br />';
-	   }
-	} else if (field.type == 'checkbox') {
-	   fieldHTML += '<label for="'+field.name+'"><input type="checkbox" name="'+field.name+'" ';
-	   if (currentValue == 'on') {
-	       fieldHTML += 'checked="checked"'
-	   }
-	   fieldHTML += ' /> '+field.label+'</label>'
-        } else if (field.type == 'number') {
-	   fieldHTML += '<label for="'+field.name+'">'+field.label+': <input type="number" name="'+field.name+'" ';
-	   fieldHTML += 'value="'+currentValue+'" /></label>';
-	}
-        if(fieldHTML != '') {
-	  form += '<tr><td title="'+field.help_text+'">'+fieldHTML+'</td>';
-	  form += '</tr>';
-        }
-     }    
+		var labelElem = $('<label></label>').attr('for', field.name+'_'+choice.value).appendTo(td);
+		var inputElem = $('<input type="radio" />').attr(
+				'id', field.name+'_'+choice.value).attr(
+				'value', choice.value).attr(
+				'name', field.name).appendTo(labelElem);
 
-     if (form == '') {
-	form = '<tr><td>'+$.i18n('core-views')['no-settings']+'</td></tr>'
-     }
+		if (choice.value == currentValue) {
+		    inputElem.attr('checked', 'checked');
+		}
+                labelElem.append(' '+choice.name);
+                td.append('<br/>');
+	   }
+	   td.append(fieldHTML);
+	} else if (field.type == 'checkbox') {
+	   var label = $('<label></label>').attr('for', field.name).appendTo(td);
+	   var input = $('<input type="checkbox" />').attr('name', field.name).appendTo(label);
+	   if (currentValue == 'on') {
+	       input.attr('checked','checked');
+	   }
+	   label.append(' '+field.label);
+        } else if (field.type == 'number' || field.type == 'text') {
+	   var label = $('<label></label>').attr('for', field.name).appendTo(td);
+	   label.append(field.label+': ');
+	   var input = $('<input />').attr(
+		'name', field.name).attr(
+		'type', field.type).attr(
+		'value', currentValue).appendTo(label);
+	} 
+	if (tr.children().length > 0) {
+	    table.append(tr);
+	}
+     }    
   }
 
-  body.html(
-    '<div class="grid-layout layout-normal layout-full"><form class="data-extension-property-config" bind="form"><table>' +
-    form +
-    '</table></form></div>'
-  );
+  if (table.children().length == 0)  {
+     var tr = $('<tr></tr>').appendTo(table);
+     $('<td></td>').text($.i18n._('core-views')['no-settings']).appendTo(tr);
+   }
+
+  var form = $('<form class="data-extension-property-config" bind="form"></form>').append(table);
+  var gridLayout = $('<div class="grid-layout layout-normal layout-full"></div>').append(form);
+  body.append(gridLayout);
   var bodyElmts = DOM.bind(body);
 
-  if (fields == null) {
-    if ("settings" in property) {
-	bodyElmts.textarea[0].value = JSON.stringify(property.settings, null, 2);
-    } else {
-	bodyElmts.textarea[0].value = JSON.stringify({ "limit" : 10 }, null, 2);
-    }
-  }
-
   footer.html(
-    '<button class="button" bind="okButton">'+$.i18n('core-buttons')['ok']+'</button>' +
-    '<button class="button" bind="cancelButton">'+$.i18n('core-buttons')['cancel']+'</button>'
+    '<button class="button" bind="okButton">'+$.i18n._('core-buttons')['ok']+'</button>' +
+    '<button class="button" bind="cancelButton">'+$.i18n._('core-buttons')['cancel']+'</button>'
   );
   var footerElmts = DOM.bind(footer);
 
@@ -407,32 +399,14 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   footerElmts.cancelButton.click(dismiss);
   footerElmts.okButton.click(function() {
     try {
-      if (fields == null) {
-	var o = JSON.parse(bodyElmts.textarea[0].value);
-	if (o === undefined) {
-	    alert("Please ensure that the JSON you enter is valid.");
-	    return;
-	}
-
-	if ($.isArray(o) && o.length == 1) {
-	    o = o[0];
-	}
-	if (!$.isPlainObject(o)) {
-	    alert("The JSON you enter must be an object, that is, it is of this form { ... }.");
-	    return;
-	}
-
-	property.settings = o;
-      } else {
+      if (fields != null) {
           var elem = $(bodyElmts.form[0]);
 	  var ar = elem.serializeArray();
 	  var settings = {};
           for(var i = 0; i < ar.length; i++) {
               settings[ar[i].name] = ar[i].value;
 	  }
-	  console.log(ar);
 	  property.settings = settings;
-	  console.log(settings);
       }
 
       dismiss();
