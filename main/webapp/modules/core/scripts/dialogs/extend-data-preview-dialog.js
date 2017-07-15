@@ -41,7 +41,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   var self = this;
   this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.html("Add columns by reconciled column " + column.name);
+  this._elmts.dialogHeader.html($.i18n._('core-views')["add-col-recon-col"]+" "+column.name);
   this._elmts.resetButton.click(function() {
     self._extension.properties = [];
     self._update();
@@ -49,7 +49,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
 
   this._elmts.okButton.click(function() {
     if (self._extension.properties.length === 0) {
-      alert("Please add some properties first.");
+      alert($.i18n._('core-views')["warning-no-property"]);
     } else {
       DialogSystem.dismissUntil(self._level - 1);
       self._onDone(self._extension,
@@ -253,17 +253,17 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<br>').appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text("remove")
+    .text($.i18n("core-views")["remove-prop"])
     .addClass("action")
-    .attr("title", "Remove this column")
+    .attr("title", $.i18n("core-views")["remove-col"])
     .click(function() {
       self._removeProperty(column.id);
     }).appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text("configure")
+    .text($.i18n("core-views")["configure-prop"])
     .addClass("action")
-    .attr("title", "Configure this column")
+    .attr("title", $.i18n("core-views")["configure-col"])
     .click(function() {
       self._constrainProperty(column.id);
     }).appendTo(th);
@@ -372,6 +372,10 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 	  form += '</tr>';
         }
      }    
+
+     if (form == '') {
+	form = '<tr><td>'+$.i18n('core-views')['no-settings']+'</td></tr>'
+     }
   }
 
   body.html(
@@ -390,8 +394,8 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   }
 
   footer.html(
-    '<button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>' +
-    '<button class="button" bind="cancelButton">Cancel</button>'
+    '<button class="button" bind="okButton">'+$.i18n('core-buttons')['ok']+'</button>' +
+    '<button class="button" bind="cancelButton">'+$.i18n('core-buttons')['cancel']+'</button>'
   );
   var footerElmts = DOM.bind(footer);
 

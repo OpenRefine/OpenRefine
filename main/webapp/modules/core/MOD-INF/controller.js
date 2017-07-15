@@ -182,6 +182,7 @@ function registerOperations() {
   OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
   OR.registerOperation(module, "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
   OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
+  OR.registerOperation(module, "extend-reconciled-data", Packages.com.google.refine.operations.recon.ExtendDataOperation);
 }
 
 function registerImporting() {
