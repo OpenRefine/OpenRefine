@@ -105,11 +105,11 @@ public class ReconciledDataExtensionJob {
             String s = ParsingUtilities.inputStreamToString(is);
             JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
           
-	    if(columns.size() == 0) {
-		// Extract the column metadata
-		gatherColumnInfo(o.getJSONArray("meta"), columns);    
-	    }
-	  
+            if(columns.size() == 0) {
+                // Extract the column metadata
+                gatherColumnInfo(o.getJSONArray("meta"), columns);    
+            }
+          
             Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
             if (o.has("rows")){
                 JSONObject records = o.getJSONObject("rows");
@@ -167,7 +167,7 @@ public class ReconciledDataExtensionJob {
         // for each property
         int colindex = 0;
         for(ColumnInfo ci : columns) {
-	    String pid = ci.id;
+            String pid = ci.id;
             JSONArray values = record.getJSONArray(pid);        
             if (values == null) {
                 continue;
@@ -273,11 +273,11 @@ public class ReconciledDataExtensionJob {
                 jsonWriter.object();
                 jsonWriter.key("id");
                 jsonWriter.value(property.getString("id"));
-		if (property.has("settings")) {
-		    JSONObject settings = property.getJSONObject("settings");
-		    jsonWriter.key("settings");
-	            jsonWriter.value(settings);
-		}
+                if (property.has("settings")) {
+                    JSONObject settings = property.getJSONObject("settings");
+                    jsonWriter.key("settings");
+                    jsonWriter.value(settings);
+                }
                 jsonWriter.endObject();
             }
             jsonWriter.endArray();
@@ -285,19 +285,19 @@ public class ReconciledDataExtensionJob {
     }
     
     static protected void gatherColumnInfo(JSONArray meta, List<ColumnInfo> columns) throws JSONException {
-	for(int i = 0; i < meta.length(); i++) {
-	    JSONObject col = meta.getJSONObject(i);
+        for(int i = 0; i < meta.length(); i++) {
+            JSONObject col = meta.getJSONObject(i);
 
-	    ReconType expectedType = null;
-	    if(col.has("type")) {
-		JSONObject expectedObj = col.getJSONObject("type");
-		expectedType = new ReconType(expectedObj.getString("id"), expectedObj.getString("name"));
-	    }
-	
-	    columns.add(new ColumnInfo(
-		col.getString("name"),
-		col.getString("id"),
-		expectedType));	
-	}
+            ReconType expectedType = null;
+            if(col.has("type")) {
+                JSONObject expectedObj = col.getJSONObject("type");
+                expectedType = new ReconType(expectedObj.getString("id"), expectedObj.getString("name"));
+            }
+        
+            columns.add(new ColumnInfo(
+                col.getString("name"),
+                col.getString("id"),
+                expectedType));        
+        }
    }
 }

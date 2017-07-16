@@ -56,31 +56,31 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     
     static public ReconConfig reconstruct(JSONObject obj) throws Exception {
         JSONObject type = obj.getJSONObject("type");
-	
-	ReconType typ = null;
-	if(obj.has("id")) {
-	    typ = new ReconType(obj.getString("id"),
-			obj.has("name") ? obj.getString("name") : obj.getString("id"));
-	}
+        
+        ReconType typ = null;
+        if(obj.has("id")) {
+            typ = new ReconType(obj.getString("id"),
+                        obj.has("name") ? obj.getString("name") : obj.getString("id"));
+        }
 
         return new DataExtensionReconConfig(
             obj.getString("service"),
             obj.has("identifierSpace") ? obj.getString("identifierSpace") : null,
             obj.has("schemaSpace") ? obj.getString("schemaSpace") : null,
-	    typ);
+            typ);
     }
     
     public DataExtensionReconConfig(
-	String service,
+        String service,
         String identifierSpace,
-	String schemaSpace,
-	ReconType type) {
-	super(
-	    service,
-	    identifierSpace,
+        String schemaSpace,
+        ReconType type) {
+        super(
+            service,
+            identifierSpace,
             schemaSpace,
             type != null ? type.id : null, 
-	    type != null ? type.name : null,
+            type != null ? type.name : null,
             true,
             new ArrayList<ColumnDetail>());
         this.type = type;

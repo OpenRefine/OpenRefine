@@ -92,7 +92,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
     public ExtendDataOperation(
         JSONObject     engineConfig,
         String         baseColumnName,
-	String         endpoint,
+        String         endpoint,
         String         identifierSpace,
         String         schemaSpace,
         JSONObject     extension,
@@ -118,9 +118,9 @@ public class ExtendDataOperation extends EngineDependentOperation {
         writer.key("engineConfig"); writer.value(getEngineConfig());
         writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
         writer.key("baseColumnName"); writer.value(_baseColumnName);
-	writer.key("endpoint"); writer.value(_endpoint);
-	writer.key("identifierSpace"); writer.value(_identifierSpace);
-	writer.key("schemaSpace"); writer.value(_schemaSpace);
+        writer.key("endpoint"); writer.value(_endpoint);
+        writer.key("identifierSpace"); writer.value(_identifierSpace);
+        writer.key("schemaSpace"); writer.value(_schemaSpace);
         writer.key("extension"); writer.value(_extension);
         writer.endObject();
     }
@@ -314,9 +314,9 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     ExtendDataOperation.this, 
                     new DataExtensionChange(
                         _baseColumnName,
-			_endpoint,
-		        _identifierSpace,
-		        _schemaSpace,
+                        _endpoint,
+                        _identifierSpace,
+                        _schemaSpace,
                         _columnInsertIndex,
                         columnNames,
                         columnTypes,
