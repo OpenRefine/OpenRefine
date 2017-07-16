@@ -75,7 +75,7 @@ import com.google.refine.tests.util.TestUtils;
 public class DataExtensionTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}}";
-    static final String RECON_SERVICE = "http://localhost:8000/en/api"; //"https://tools.wmflabs.org/openrefine-wikidata/en/api";
+    static final String RECON_SERVICE = "https://tools.wmflabs.org/openrefine-wikidata/en/api";
     static final String RECON_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
     static final String RECON_SCHEMA_SPACE = "http://www.wikidata.org/prop/direct/";
 
