@@ -146,6 +146,33 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     });
   };
 
+  var doAddColumnByReconciliation = function() {
+    var columnIndex = Refine.columnNameToColumnIndex(column.name);
+    var o = DataTableView.sampleVisibleRows(column);
+    new ExtendReconciledDataPreviewDialog(
+      column, 
+      columnIndex, 
+      o.rowIndices,
+      function(extension, endpoint, identifierSpace, schemaSpace) {
+        Refine.postProcess(
+            "core",
+            "extend-data", 
+            {
+              baseColumnName: column.name,
+	      endpoint: endpoint,
+              identifierSpace: identifierSpace,
+              schemaSpace: schemaSpace,
+              columnInsertIndex: columnIndex + 1
+            },
+            {
+              extension: JSON.stringify(extension)
+            },
+            { rowsChanged: true, modelsChanged: true }
+        );
+      }
+    );
+  };
+
   var doRemoveColumn = function() {
     Refine.postCoreProcess(
       "remove-column", 
@@ -297,6 +324,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         id: "core/add-column-by-fetching-urls",
         label: $.i18n._('core-views')["add-by-urls"]+"...",
         click: doAddColumnByFetchingURLs
+      },
+      {
+        id: "core/add-column-by-reconciliation",
+        label: $.i18n._('core-views')["add-col-recon-val"]+"...",
+        click: doAddColumnByReconciliation
       },
       {},
       {
