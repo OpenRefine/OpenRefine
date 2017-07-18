@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests/server/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry exported="true" kind="lib" path="webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-codec-1.6.jar" sourcepath="webapp/WEB-INF/lib-src/commons-codec-1.6-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
@@ -18,9 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar" sourcepath="webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar" sourcepath="webapp/WEB-INF/lib-src/slf4j-log4j12-1.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="webapp/WEB-INF/lib/log4j-1.2.15.jar" sourcepath="webapp/WEB-INF/lib-src/log4j-1.2.15-sources.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-3.8-20120326.jar" sourcepath="webapp/WEB-INF/lib-src/poi-src-3.8.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-ooxml-3.8-20120326.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-ooxml-schemas-3.8-20120326.jar"/>
 	<classpathentry exported="true" kind="lib" path="webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/clojure-1.5.1-slim.jar"/>
@@ -41,6 +38,9 @@
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/odfdom-java-0.8.7.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/guava-18.0.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/guava-13.0.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-3.13-20150929.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-ooxml-3.13-20150929.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/poi-ooxml-schemas-3.13-20150929.jar"/>
 	<classpathentry kind="output" path="webapp/WEB-INF/classes"/>
 </classpath>
