@@ -1,0 +1,7 @@
+Starting OpenRefine at 'http://192.168.2.219:3333/'
+
+17:28:11.505 [            refine_server] Starting Server bound to '192.168.2.219:3333' (0ms)
+17:28:11.507 [            refine_server] refine.memory size: 1400M JVM Max heap: 1407188992 (2ms)
+17:28:11.517 [            refine_server] Initializing context: '/' from '/home/knodus/Documents/OpenRefine/main/webapp' (10ms)
+17:28:11.579 [            refine_server] Starting autoreloading scanner...  (62ms)
+17:28:11.975 [                   refine] Starting OpenRefine 2.7 [TRUNK]... (396ms)
