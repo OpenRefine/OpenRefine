@@ -51,13 +51,13 @@ public class Cross implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3) {
-            // from project is implied
-            
-            Object v = args[0]; // from cell
+            // 1st argument can take either value or cell(for backward compatibility)
+            Object v = args[0];
             Object toProjectName = args[1];
             Object toColumnName = args[2];
             
-            if (v != null && v instanceof String &&
+            if (v != null && 
+                ( v instanceof String || v instanceof WrappedCell ) &&
                 toProjectName != null && toProjectName instanceof String &&
                 toColumnName != null && toColumnName instanceof String) {
                 
@@ -68,10 +68,12 @@ public class Cross implements Function {
                         (String) toColumnName
                         );
                 
-                return join.getRows((String)v);
+                String srcValue = v instanceof String ? (String)v : (String)((WrappedCell) v).cell.value;
+                        
+                return join.getRows(srcValue);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string, a project name to join with, and a column name in that project");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
     }
     
     @Override
