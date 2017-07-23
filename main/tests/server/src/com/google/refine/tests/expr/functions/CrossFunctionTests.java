@@ -157,21 +157,21 @@ public class CrossFunctionTests extends RefineTest {
     public void crossFunctionMatchNotFoundTest() throws Exception {
         Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
     }
-    
+     
     /**
      *  
-     *  rest of cells shows "Error: cross expects a string, a project name to join with, and a column name in that project"
+     *  rest of cells shows "Error: cross expects a string or cell, a project name to join with, and a column name in that project"
      */
     @Test
     public void crossFunctionNonLiteralValue() throws Exception {
         Assert.assertEquals(((EvalError) invoke("cross", 1, "My Address Book", "friend")).message, 
-                "cross expects a string, a project name to join with, and a column name in that project");
+                "cross expects a string or cell, a project name to join with, and a column name in that project");
         
         Assert.assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message, 
-                "cross expects a string, a project name to join with, and a column name in that project");
+                "cross expects a string or cell, a project name to join with, and a column name in that project");
         
         Assert.assertEquals(((EvalError) invoke("cross", Calendar.getInstance(), "My Address Book", "friend")).message, 
-                "cross expects a string, a project name to join with, and a column name in that project");
+                "cross expects a string or cell, a project name to join with, and a column name in that project");
     }
     
     /**
