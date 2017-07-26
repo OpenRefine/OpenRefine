@@ -98,13 +98,6 @@ public class KeyValueColumnizeTests extends RefineTest {
         pm.setName("KeyValueColumnize test");
         ProjectManager.singleton.registerProject(project, pm);
         options = mock(JSONObject.class);
-/*
-        int index = project.columnModel.allocateNewCellIndex();
-        Column column1 = new Column(index,"Column1");
-        Column column2 = new Column(index,"Column2");
-        project.columnModel.addColumn(index, column1, true);
-        project.columnModel.addColumn(index, column2, true);
-*/
 
         job = ImportingManager.createJob();
 	importer = new SeparatorBasedImporter(); 
@@ -121,59 +114,47 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     /**
-     * Test for issue #1214:
+     * Test to demonstrate the intended behaviour of the function, for issue #1214
      * https://github.com/OpenRefine/OpenRefine/issues/1214
      */
 
     @Test
     public void testKeyValueColumnize() throws Exception {
-	String csv = "Column1;Column2\n"
-		+ "SourceFile1;2\n"
-		+ "SourceFile1;3\n"
-		+ "SourceFile1;-1\n"
-		+ "SourceFile2;3\n"
-		+ "SourceFile2;4\n"
-		+ "SourceFile2;6\n"
-		+ "SourceFile3;-3\n"
-		+ "SourceFile3;4\n"
-		+ "SourceFile3;1\n";
-	prepareOptions(";", 20, 0, 0, 1, false, false);
+	String csv = "Key,Value\n"
+		+ "merchant,Katie\n"
+		+ "fruit,apple\n"
+		+ "price,1.2\n"
+		+ "fruit,pear\n"
+		+ "price,1.5\n"
+		+ "merchant,John\n"
+		+ "fruit,banana\n"
+		+ "price,3.1\n";
+	prepareOptions(",", 20, 0, 0, 1, false, false);
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
         ProjectManager.singleton.registerProject(project, pm);
 
-	for (int i = 0; i < 9; i++) {
-	    for (int j = 0; j < 2; j++) {
-		Object val = project.rows.get(i).getCellValue(j);
-		if (val != null) {
-		System.out.println(String.format("%d %d %s", i, j, val.toString()));
-		}
-	    }
-	}
-	
 	AbstractOperation op = new KeyValueColumnizeOperation(
-		"Column1",
-		"Column2",
+		"Key",
+		"Value",
 		null);
         Process process = op.createProcess(project, new Properties());
         HistoryEntry historyEntry = process.performImmediate();
- 
-	for (int i = 0; i < 3; i++) {
-	    for (int j = 0; j < 3; j++) {
-		Object val = project.rows.get(i).getCellValue(j);
-		if (val != null) {
-		System.out.println(String.format("%d %d %s", i, j, val.toString()));
-		}
-	    }
-	}
-		
-	for (int i = 0; i < 3; i++) {
-	    for (int j = 0; j < 3; j++) {
-		
-		Assert.assertTrue(project.rows.get(i).getCellValue(j) != null);
-             }
-        }
+
+	int merchantCol = project.columnModel.getColumnByName("merchant").getCellIndex();
+	int fruitCol = project.columnModel.getColumnByName("fruit").getCellIndex();
+	int priceCol = project.columnModel.getColumnByName("price").getCellIndex();
+	
+	Assert.assertEquals(project.rows.get(0).getCellValue(merchantCol), "Katie");
+	Assert.assertEquals(project.rows.get(1).getCellValue(merchantCol), null);
+	Assert.assertEquals(project.rows.get(2).getCellValue(merchantCol), "John");
+	Assert.assertEquals(project.rows.get(0).getCellValue(fruitCol), "apple");
+	Assert.assertEquals(project.rows.get(1).getCellValue(fruitCol), "pear");
+	Assert.assertEquals(project.rows.get(2).getCellValue(fruitCol), "banana");
+	Assert.assertEquals(project.rows.get(0).getCellValue(priceCol), "1.2");
+	Assert.assertEquals(project.rows.get(1).getCellValue(priceCol), "1.5");
+	Assert.assertEquals(project.rows.get(2).getCellValue(priceCol), "3.1");
     }
 
     private void prepareOptions(
