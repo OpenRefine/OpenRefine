@@ -25,3 +25,4 @@ broker/core/test-output/
 tmp/
 /test-output
 /bin
+open-refine.log
