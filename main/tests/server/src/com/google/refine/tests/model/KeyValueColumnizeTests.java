@@ -56,6 +56,7 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.grel.Function;
+import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -70,6 +71,7 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.cell.KeyValueColumnizeOperation;
+import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
@@ -83,6 +85,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     // dependencies
+    RefineServlet servlet;
     Project project;
     ProjectMetadata pm;
     JSONObject options;
@@ -91,6 +94,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {
+	servlet = new RefineServletStub();
         File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir);
         project = new Project();
@@ -99,6 +103,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         ProjectManager.singleton.registerProject(project, pm);
         options = mock(JSONObject.class);
 
+	ImportingManager.initialize(servlet);
         job = ImportingManager.createJob();
 	importer = new SeparatorBasedImporter(); 
     }
