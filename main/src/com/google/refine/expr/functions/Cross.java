@@ -82,7 +82,7 @@ public class Cross implements Function {
     
         writer.object();
         writer.key("description"); writer.value("join with another project by column");
-        writer.key("params"); writer.value("cell c, string projectName, string columnName");
+        writer.key("params"); writer.value("cell c or string value, string projectName, string columnName");
         writer.key("returns"); writer.value("array");
         writer.endObject();
     }
