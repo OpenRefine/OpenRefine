@@ -202,7 +202,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .build(
                      new CacheLoader<String, Serializable>() {
-                        public Serializable load(String urlString) {
+                        public Serializable load(String urlString) throws Exception {
                             Serializable result = fetch(urlString);
                             try {
                                 // Always sleep for the delay, no matter how long the
@@ -214,8 +214,13 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                     Thread.sleep(_delay);
                                 }
                             } catch (InterruptedException e) {
-                                return null;
+                                result = null;
                             }
+
+			    if (result == null) {
+				// the load method should not return any null value
+				throw new Exception("null result returned by fetch");
+			    }
                             return result;
                         }
                      });
@@ -304,7 +309,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         Serializable cachedFetch(String urlString) {
             try {
                 return  _urlCache.get(urlString);
-            } catch(ExecutionException e) {
+            } catch(Exception e) {
                 return null;
             }
         }
