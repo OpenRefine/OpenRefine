@@ -51,7 +51,7 @@
     <property name="server.tests.classes.dir" value="${server.tests.dir}/classes" />
     <property name="server.tests.report.dir" value="${build.dir}/report"/>
     <property name="server.tests.report.html.dir" value="${server.tests.report.dir}/html"/>
-    <property name="server.tests.report.xml.path" value="${server.tests.report.dir}/report.xml"/>
+    <property name="server.tests.report.xml.path" value="${server.tests.report.dir}/jacoco.xml"/>
     
     <property name="graphics.dir" value="${basedir}/graphics" />
     <property name="conf.dir" value="${basedir}/conf" />
