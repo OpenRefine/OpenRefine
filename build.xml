@@ -187,9 +187,6 @@
              <xmlfileset file="${server.tests.dir}/conf/tests.xml"/>
             </testng>
 	</jacoco:coverage>
-	<!-- </target>
-
-    <target name="server_coverage" depends="server_test"> -->
         <jacoco:report>
            <executiondata>
 		   <file file="${server.tests.report.dir}/jacoco.exec"/>
@@ -207,8 +204,6 @@
 	    <xml destfile="${server.tests.report.xml.path}"/>
         </jacoco:report>
     </target>
-
-
 
     <!-- ================================================================== -->
 
