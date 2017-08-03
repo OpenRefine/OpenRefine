@@ -53,23 +53,15 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.browsing.RowVisitor;
-import com.google.refine.history.HistoryEntry;
-import com.google.refine.grel.Function;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
-import com.google.refine.operations.OnError;
 import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
@@ -77,20 +69,20 @@ import com.google.refine.tests.util.TestUtils;
 
 
 public class KeyValueColumnizeTests extends RefineTest {
+    // dependencies
+    private RefineServlet servlet;
+    private Project project;
+    private ProjectMetadata pm;
+    private JSONObject options;
+    private ImportingJob job;
+    private SeparatorBasedImporter importer;
+
 
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-
-    // dependencies
-    RefineServlet servlet;
-    Project project;
-    ProjectMetadata pm;
-    JSONObject options;
-    ImportingJob job;
-    SeparatorBasedImporter importer;
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {
@@ -145,7 +137,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 		"Value",
 		null);
         Process process = op.createProcess(project, new Properties());
-        HistoryEntry historyEntry = process.performImmediate();
+        process.performImmediate();
 
 	int merchantCol = project.columnModel.getColumnByName("merchant").getCellIndex();
 	int fruitCol = project.columnModel.getColumnByName("fruit").getCellIndex();
