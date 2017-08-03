@@ -6,7 +6,7 @@
     |
     +-->
     
-<project name="openrefine" default="build" basedir=".">
+<project name="openrefine" default="build" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
 
     <!-- Properties are immutable, so anything set in this file takes priority-->
     <property file="build.properties"/>
@@ -49,6 +49,9 @@
     <property name="server.tests.lib.dir" value="${server.tests.dir}/lib" />
     <property name="server.tests.src.dir" value="${server.tests.dir}/src" />
     <property name="server.tests.classes.dir" value="${server.tests.dir}/classes" />
+    <property name="server.tests.report.dir" value="${build.dir}/report"/>
+    <property name="server.tests.report.html.dir" value="${server.tests.report.dir}/html"/>
+    <property name="server.tests.report.xml.path" value="${server.tests.report.dir}/report.xml"/>
     
     <property name="graphics.dir" value="${basedir}/graphics" />
     <property name="conf.dir" value="${basedir}/conf" />
@@ -171,14 +174,41 @@
     <target name="build_broker" depends="build_broker_core, build_broker_appengine"/>
 
     <taskdef resource="testngtasks" classpath="${server.tests.lib.dir}/testng-6.8.jar"/>
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="${server.tests.lib.dir}/jacocoant.jar"/>
+    </taskdef>
+
     <mkdir dir="${build.dir}/server_tests"/>
     <target name="server_test" depends="build_tests">
-    	<testng verbose="2" haltOnFailure="true" workingdir="${build.dir}/server_tests"
-    		listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
-    		classpathref="tests.class.path">
-    	  <xmlfileset file="${server.tests.dir}/conf/tests.xml"/>
-    	</testng>
+	<jacoco:coverage destfile="${server.tests.report.dir}/jacoco.exec">
+            <testng verbose="2" haltOnFailure="true" workingdir="${build.dir}/server_tests"
+                listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
+                classpathref="tests.class.path">
+             <xmlfileset file="${server.tests.dir}/conf/tests.xml"/>
+            </testng>
+	</jacoco:coverage>
+	<!-- </target>
+
+    <target name="server_coverage" depends="server_test"> -->
+        <jacoco:report>
+           <executiondata>
+		   <file file="${server.tests.report.dir}/jacoco.exec"/>
+           </executiondata>
+
+           <structure name="OpenRefine server">
+               <classfiles>
+		       <fileset dir="${webapp.classes.dir}"/>
+               </classfiles>
+                <sourcefiles encoding="UTF-8">
+	            <fileset dir="${server.src.dir}"/>
+                </sourcefiles>
+            </structure>
+	    <html destdir="${server.tests.report.html.dir}"/>
+	    <xml destfile="${server.tests.report.xml.path}"/>
+        </jacoco:report>
     </target>
+
+
 
     <!-- ================================================================== -->
 
