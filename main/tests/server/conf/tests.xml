@@ -2,13 +2,13 @@
  
 <suite name="Refine Unit Tests">
   <test name="tests">
-    <packages>
-      <package name="com.google.refine.tests.*"/>
-    </packages>
     <groups>
       <run>
         <exclude name="broken" />
       </run>
     </groups>
+    <packages>
+      <package name="com.google.refine.tests.*"/>
+    </packages>
   </test>
 </suite>

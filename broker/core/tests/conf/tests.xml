@@ -2,13 +2,13 @@
  
 <suite name="OpenRefine Broker Unit Tests">
   <test name="tests">
-    <packages>
-      <package name="com.google.refine.broker.tests.*"/>
-    </packages>
     <groups>
       <run>
         <exclude name="broken" />
       </run>
     </groups>
+    <packages>
+      <package name="com.google.refine.broker.tests.*"/>
+    </packages>
   </test>
 </suite>
