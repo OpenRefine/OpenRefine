@@ -155,7 +155,8 @@ public class RecordModel implements Jsonizable {
                 for (int g = 0; g < groupCount; g++) {
                     KeyedGroup group = keyedGroups.get(g);
 
-                    if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
+                    if (!ExpressionUtils.isNonBlankData(row.getCellValue(keyedGroups.get(0).keyCellIndex)) &&
+                        !ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
                         int contextRowIndex = lastNonBlankRowsByGroup[g];
                         if (contextRowIndex >= 0) {
                             for (int dependentCellIndex : group.cellIndices) {
