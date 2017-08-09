@@ -39,6 +39,7 @@ public class LoadLanguageCommand extends Command {
         doPost(request, response);
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -55,14 +56,14 @@ public class LoadLanguageCommand extends Command {
             }
         }
         
-        // TODO: Switch this to just use English as the default language so we
-        // so we don't have to maintain a separate redundant file.
+        // Default language is English
         langs = Arrays.copyOf(langs, langs.length+1);
-        langs[langs.length-1] = "default";
+        langs[langs.length-1] = "en";
 
         JSONObject json = null;
         boolean loaded = false;
         for (String lang : langs) {
+            if (lang == null) continue;
             json = loadLanguage(this.servlet, modname, lang);
             if (json != null) {
                 response.setCharacterEncoding("UTF-8");
