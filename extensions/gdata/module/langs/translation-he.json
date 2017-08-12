@@ -1,0 +1,56 @@
+{
+    "gdata-import": {
+		"preparing": "הכנה ...",
+		"creating": "יצירת פרוייקט ...",
+		"title": "מסמכים ציבוריים",
+		"import-by-url": "יבוא גליון נתונים של גוגל או פיוזן מסמך <em>ציבורי </em> לפי כתובת:",
+		"next->": "הבא &raquo;",
+		"auth-doc": "מסמכים מאושרים",
+		"please": "בבקשה",
+		"sign-in": "התחברו ואשרו",
+		"sign-out": "התנתקות",
+		"access-data": "גשו לנתוני הגוגל שלכם",
+		"retrieving": "אחזור מסמכי גוגל ...",
+		"re-sign-in": "התחברו מחדש",
+		"another-account": "עם חשבון אחר"
+    },
+	"gdata-parsing": {
+		"start-over": "&laquo; התחל שוב",
+		"conf-pars": "Configure Parsing Options",
+		"proj-name": "שם&nbsp;פרוייקט",
+		"create-proj": "צור פרוייקט &raquo;",
+		"updating-preview": "מעדכן את הצפיה המקדימה ...",
+		"worksheet": "גיליונות עבודה",
+		"option": "אפשרויות",
+		"preview-button": "עדכן&nbsp;צפיה מקדימה",
+		"ignore-first": "Ignore first",
+		"ignore": "שורה(ות) aבתחילת הקובץ",
+		"parse-next": "Parse next",
+		"parse": "שורה(ות) ככותרת טור",
+		"discard-next": "Discard initial",
+		"discard": "row(s) of data",
+		"limit-next": "Load at most",
+		"limit": "row(s) of data",
+		"store-row": "Store blank rows",
+		"store-cell": "Store blank cells as nulls"		
+	},
+	"gdata-source": {
+		"alert-url": "יש לציין כתובת אינטרנט (URL) כדי לייבא.",
+		"type": "סוג",
+		"title": "כותרת",
+		"authors": "מחברים",
+		"updated": "מעודכן"
+	},
+	"gdata-exporter": {
+		"uploading": "מעלה...",
+		"upload-error": "שגיאת העלאה: ",
+		"new-spreadsheet": "גיליון חישוב חדש של גוגל",
+		"enter-spreadsheet": "הכנס שם לגיליון חישוב גוגל החדש",
+		"new-fusion": "טבלת מיזוג גוגל חדשה",
+		"enter-fusion": "הכנס שם לטבלת מיזוג גוגל חדשה"
+	},
+	"gdata-auth": {
+		"authorize-label": "OpenRefine - Authorization",
+		"authorized-label": "תהליך האישור הסתיים. סגור חלון זה וחזור ל- OpenRefine."
+	}
+}
