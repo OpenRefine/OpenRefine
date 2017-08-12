@@ -1,5 +1,5 @@
 {
-    "name" : "简体中文",
+    "name": "简体中文",
     "core-index": {
         "slogan": "凌乱数据处理利器",
         "help": "帮助",
@@ -19,7 +19,7 @@
         "delete": "删除",
         "new-proj-name": "项目新名称:",
         "error-rename": "重命名项目失败:",
-        "no-proj": "没有已存在的项目.选择左侧的 '新建项目' 来创建一个新项目",
+        "no-proj": "没有已存在的项目.选择左侧的 \"新建项目\" 来创建一个新项目",
         "try-these": "如果你暂时没有合适的数据，可以试试这些",
         "sample-data": "示例数据集"
     },
@@ -84,7 +84,7 @@
         "char-encoding": "字符编码"
     },
     "core-index-open": {
-        "open-proj" : "打开项目",
+        "open-proj": "打开项目",
         "name": "项目名称",
         "rename": "重命名",
         "last-mod": "上次修改时间",
@@ -102,7 +102,7 @@
         "send-req": "修改语言",
         "page-reload": "将会刷新页面来应用这些更改."
     },
-    "core-index-parser":{
+    "core-index-parser": {
         "ignore-first": "忽略文件首部的前",
         "lines-beg": "行",
         "parse-next": "将其次的下",
@@ -160,7 +160,7 @@
         "phonetic": "cologne-phonetic算法",
         "distance-fun": "距离算法",
         "leven": "levenshtein算法",
-        "ppm" : "PPM算法",
+        "ppm": "PPM算法",
         "ngram-size": "Ngram&nbsp;大小&nbsp;",
         "ngram-radius": "半径（距离)",
         "block-chars": "块字符数",
@@ -308,7 +308,7 @@
         "comma-sep": "以逗号分隔的值",
         "html-table": "HTML表格",
         "excel": "Excel (.xls)",
-		"excel-xml": "Excel 2007+ (.xlsx)",
+        "excel-xml": "Excel 2007+ (.xlsx)",
         "odf": "ODF 电子表格",
         "triple-loader": "Triple loader",
         "mqlwrite": "MQLWrite",
@@ -355,9 +355,8 @@
         "pick-service": "在左侧选择一个服务或扩展",
         "enter-url": "键入一个服务的URL",
         "cell-contains": "各个包含以下内容的单元格:",
-        "max-candidates" : "最大候选服务返回数量",
+        "max-candidates": "最大候选服务返回数量",
         "service-title": "Services"
-        
     },
     "core-util-enc": {
         "select-enc": "选择编码",
@@ -375,12 +374,12 @@
         "year-ago": "1年前",
         "years-ago": "年前",
         "working": "工作副本",
-        "invalid-date": "日期字符串格式错误"       
+        "invalid-date": "日期字符串格式错误"
     },
     "core-views": {
         "edit-cell": "编辑这个单元格",
         "choose-match": "选择新的匹配",
-        "match-all-cells": "",
+        "match-all-cells": "将这个主题匹配到这个和所有相同的单元格",
         "match-this-cell": "搭配这个主题和此单元格",
         "create-topic-cells": "为该单元格及与其相同的单元格创建主题",
         "create-topic-cell": "为这个单元格创建新主题",
@@ -565,7 +564,7 @@
         "transform": "转换",
         "common-transform": "常用转换",
         "trim-all": "移除首尾空白",
-        "collapse-white": "收起连续空白",    
+        "collapse-white": "收起连续空白",
         "unescape-html": "反转义HTML字符",
         "titlecase": "首字母大写",
         "uppercase": "全大写",
@@ -614,7 +613,8 @@
         "ctrl-enter": "Ctrl-Enter",
         "rows": "行",
         "records": "记录",
-        "show": "显示"
+        "show": "显示",
+        "cache-responses": "缓存响应"
     },
     "core-buttons": {
         "cancel": "取消",
