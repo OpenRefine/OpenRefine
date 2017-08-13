@@ -510,6 +510,8 @@
         "remove-prop": "remove",
         "configure-prop": "configure",
         "no-settings": "No settings are available for this property.",
+	"extend-not-reconciled": "This operation is only available on reconciled columns.",
+	"extend-not-supported": "This reconciliation service does not support data extension. Try removing the service and adding it again. If the problem persists, contact the service provider.",
         "add-col-fetch": "Add column by fetching URLs based on column",
         "throttle-delay": "Throttle delay",
         "milli": "milliseconds",

@@ -55,37 +55,44 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
       self._onDone(self._extension,
                   self._service,
                   self._serviceMetadata.identifierSpace,
-		  self._serviceMetadata.schemaSpace);
+                  self._serviceMetadata.schemaSpace);
     }
   });
   this._elmts.cancelButton.click(function() {
     DialogSystem.dismissUntil(self._level - 1);
   });
 
-  var dismissBusy = DialogSystem.showBusy();
   var type = (column.reconConfig) && (column.reconConfig.type) ? column.reconConfig.type.id : "";
 
   this._proposePropertiesUrl = null;
   this._fetchColumnUrl = null;
   this._serviceMetadata = null;
+  var extend = null;
   if ("reconConfig" in column) {
     var service = column.reconConfig.service;
     this._service = service;
     var serviceMetadata = ReconciliationManager.getServiceFromUrl(service);
     this._serviceMetadata = serviceMetadata;
     if ("extend" in serviceMetadata) {
-       var extend = serviceMetadata.extend;
+       extend = serviceMetadata.extend;
        if ("propose_properties" in extend) {
-	   var endpoint = extend.propose_properties;
+           var endpoint = extend.propose_properties;
            this._proposePropertiesUrl = endpoint.service_url + endpoint.service_path;
        }
      }
   }
 
-  ExtendReconciledDataPreviewDialog.getAllProperties(this._proposePropertiesUrl, type, function(properties) {
-    dismissBusy();
-    self._show(properties);
-  });
+  if (this._serviceMetadata === null) {
+     alert($.i18n._('core-views')["extend-not-reconciled"]);
+  } else if(extend === null) {
+     alert($.i18n._('core-views')["extend-not-supported"]);
+  } else {
+    var dismissBusy = DialogSystem.showBusy();
+    ExtendReconciledDataPreviewDialog.getAllProperties(this._proposePropertiesUrl, type, function(properties) {
+      dismissBusy();
+      self._show(properties);
+    });
+  }
 }
 
 ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDone) {
@@ -94,42 +101,32 @@ ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDon
   } else {
     var done = false;
     $.getJSON(
-	url +"?type=" + typeID + "&callback=?",
-	null,
-	function(data) {
-	if (done) return;
-	done = true;
+        url +"?type=" + typeID + "&callback=?",
+        null,
+        function(data) {
+        if (done) return;
+        done = true;
 
-	var allProperties = [];
-	for (var i = 0; i < data.properties.length; i++) {
-	    var property = data.properties[i];
-	    var property2 = {
-		id: property.id,
-		name: property.name
-	    };
-	    /*if ("id2" in property) {
-	    property2.expected = property.schema2;
-	    property2.properties = [{
-		id: property.id2,
-		name: property.name2,
-		expected: property.expects
-	    }];
-	    } else {
-	    property2.expected = property.expects;
-	    } */
-	    allProperties.push(property2);
-	}
-	allProperties.sort(function(a, b) { return a.name.localeCompare(b.name); });
+        var allProperties = [];
+        for (var i = 0; i < data.properties.length; i++) {
+            var property = data.properties[i];
+            var property2 = {
+                id: property.id,
+                name: property.name
+            };
+            allProperties.push(property2);
+        }
+        allProperties.sort(function(a, b) { return a.name.localeCompare(b.name); });
 
-	onDone(allProperties);
-	}
+        onDone(allProperties);
+        }
     );
 
     window.setTimeout(function() {
-	if (done) return;
+        if (done) return;
 
-	done = true;
-	onDone([]);
+        done = true;
+        onDone([]);
     }, 7000); // time to give up?
   }
 };
@@ -175,7 +172,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
 
 ExtendReconciledDataPreviewDialog.prototype._update = function() {
   this._elmts.previewContainer.empty().html(
-	'<div bind="progressPanel" class="extend-data-preview-progress"><img src="images/large-spinner.gif" /></div>');
+        '<div bind="progressPanel" class="extend-data-preview-progress"><img src="images/large-spinner.gif" /></div>');
 
   var self = this;
   var params = {
@@ -183,19 +180,25 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
       columnName: this._column.name
   };
 
-  $.post(
-    "command/core/preview-extend-data?" + $.param(params), 
-    {
-      rowIndices: JSON.stringify(this._rowIndices),
-      extension: JSON.stringify(this._extension)
-    },
-    function(data) {
-      self._renderPreview(data);
-    },
-    "json"
-  ).fail(function(data) {
-	console.log(data);
-  });
+  if(this._extension.properties.length === 0) {
+    // if the column selection is empty, reset the view
+    this._elmts.previewContainer.empty();
+  } else {
+    // otherwise, refresh the preview
+    $.post(
+        "command/core/preview-extend-data?" + $.param(params),
+        {
+        rowIndices: JSON.stringify(this._rowIndices),
+        extension: JSON.stringify(this._extension)
+        },
+        function(data) {
+        self._renderPreview(data);
+        },
+        "json"
+    ).fail(function(data) {
+        alert($.i18n._("core-views")["internal-err"]);
+    });
+  }
 };
 
 ExtendReconciledDataPreviewDialog.prototype._addProperty = function(p) {
@@ -281,8 +284,8 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
       if (cell !== null) {
         if ($.isPlainObject(cell)) {
           $('<a>').attr("href",
-		this._serviceMetadata.identifierSpace + cell.id
-		).attr("target", "_blank").text(cell.name).appendTo(td);
+                this._serviceMetadata.identifierSpace + cell.id
+                ).attr("target", "_blank").text(cell.name).appendTo(td);
         } else {
           $('<span>').text(cell).appendTo(td);
         }
@@ -296,7 +299,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
 ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(id) {
   for(var i = this._extension.properties.length - 1; i >= 0; i--) {
     var property = this._extension.properties[i];
-    if (property.id == id) {
+    if (property.id === id) {
        this._extension.properties.splice(i, 1);
     }
   }
@@ -306,7 +309,7 @@ ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(id) {
 ExtendReconciledDataPreviewDialog.prototype._findProperty = function(id) {
   var properties = this._extension.properties;
   for(var i = properties.length - 1; i >= 0; i--) {
-    if (properties[i].id == id) {
+    if (properties[i].id === id) {
        return properties[i];
     }
   }
@@ -328,54 +331,54 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var table = $('<table></table>');
   if (fields != null) {
      for(var i = 0; i < fields.length; i++) {
-	var field = fields[i];
+        var field = fields[i];
         var fieldHTML = '';
-	var currentValue = field.default;
+        var currentValue = field.default;
         if (property.settings != null && property.settings[field.name] != null) {
             currentValue = property.settings[field.name];
         }
-	var tr = $('<tr></tr>');
-	var td = $('<td></td>').attr('title', field.help_text).appendTo(tr);
-	if (field.type == 'select') {
-	   var fieldLabel = $('<span></span>').text(field.label+':').appendTo(td);
-	   td.append($('<br/>'));
-	   for(var j = 0; j < field.choices.length; j++) {
-		var choice = field.choices[j];
-		var labelElem = $('<label></label>').attr('for', field.name+'_'+choice.value).appendTo(td);
-		var inputElem = $('<input type="radio" />').attr(
-				'id', field.name+'_'+choice.value).attr(
-				'value', choice.value).attr(
-				'name', field.name).appendTo(labelElem);
+        var tr = $('<tr></tr>');
+        var td = $('<td></td>').attr('title', field.help_text).appendTo(tr);
+        if (field.type === 'select') {
+           var fieldLabel = $('<span></span>').text(field.label+':').appendTo(td);
+           td.append($('<br/>'));
+           for(var j = 0; j < field.choices.length; j++) {
+                var choice = field.choices[j];
+                var labelElem = $('<label></label>').attr('for', field.name+'_'+choice.value).appendTo(td);
+                var inputElem = $('<input type="radio" />').attr(
+                                'id', field.name+'_'+choice.value).attr(
+                                'value', choice.value).attr(
+                                'name', field.name).appendTo(labelElem);
 
-		if (choice.value == currentValue) {
-		    inputElem.attr('checked', 'checked');
-		}
+                if (choice.value === currentValue) {
+                    inputElem.attr('checked', 'checked');
+                }
                 labelElem.append(' '+choice.name);
                 td.append('<br/>');
-	   }
-	   td.append(fieldHTML);
-	} else if (field.type == 'checkbox') {
-	   var label = $('<label></label>').attr('for', field.name).appendTo(td);
-	   var input = $('<input type="checkbox" />').attr('name', field.name).appendTo(label);
-	   if (currentValue == 'on') {
-	       input.attr('checked','checked');
-	   }
-	   label.append(' '+field.label);
-        } else if (field.type == 'number' || field.type == 'text') {
-	   var label = $('<label></label>').attr('for', field.name).appendTo(td);
-	   label.append(field.label+': ');
-	   var input = $('<input />').attr(
-		'name', field.name).attr(
-		'type', field.type).attr(
-		'value', currentValue).appendTo(label);
-	} 
-	if (tr.children().length > 0) {
-	    table.append(tr);
-	}
+           }
+           td.append(fieldHTML);
+        } else if (field.type === 'checkbox') {
+           var label = $('<label></label>').attr('for', field.name).appendTo(td);
+           var input = $('<input type="checkbox" />').attr('name', field.name).appendTo(label);
+           if (currentValue === 'on') {
+               input.attr('checked','checked');
+           }
+           label.append(' '+field.label);
+        } else if (field.type === 'number' || field.type == 'text') {
+           var label = $('<label></label>').attr('for', field.name).appendTo(td);
+           label.append(field.label+': ');
+           var input = $('<input />').attr(
+                'name', field.name).attr(
+                'type', field.type).attr(
+                'value', currentValue).appendTo(label);
+        } 
+        if (tr.children().length > 0) {
+            table.append(tr);
+        }
      }    
   }
 
-  if (table.children().length == 0)  {
+  if (table.children().length === 0)  {
      var tr = $('<tr></tr>').appendTo(table);
      $('<td></td>').text($.i18n._('core-views')['no-settings']).appendTo(tr);
    }
@@ -401,19 +404,19 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
     try {
       if (fields != null) {
           var elem = $(bodyElmts.form[0]);
-	  var ar = elem.serializeArray();
-	  var settings = {};
+          var ar = elem.serializeArray();
+          var settings = {};
           for(var i = 0; i < ar.length; i++) {
               settings[ar[i].name] = ar[i].value;
-	  }
-	  property.settings = settings;
+          }
+          property.settings = settings;
       }
 
       dismiss();
 
       self._update();
     } catch (e) {
-      //console.log(e);
+        alert($.i18n._("core-views")["internal-err"]);
     }
   });
 
