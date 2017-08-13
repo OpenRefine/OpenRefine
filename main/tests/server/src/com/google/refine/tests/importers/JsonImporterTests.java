@@ -368,7 +368,7 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void testComplexJsonStructure() throws IOException{
         String fileName = "grid_small.json";
-        RunTest(getComplexJSON(fileName));
+        RunComplexJSONTest(getComplexJSON(fileName));
 
         log(project);
         logger.info("************************ columnu number:" + project.columnModel.columns.size() + 
@@ -413,14 +413,13 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
     
-    private static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser) {
+    private static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector) {
         JSONObject options = parser.createParserUIInitializationData(
                 job, new LinkedList<JSONObject>(), "text/json");
         
         JSONArray path = new JSONArray();
         JSONUtilities.append(path, JsonImporter.ANONYMOUS);
-        JSONUtilities.append(path, "institutes");
-//        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.append(path, pathSelector);
         
         JSONUtilities.safePut(options, "recordPath", path);
         JSONUtilities.safePut(options, "trimStrings", false);
@@ -510,7 +509,11 @@ public class JsonImporterTests extends ImporterTest {
     
 
     private void RunTest(String testString) {
-        RunTest(testString, getOptions(job, SUT));
+        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
+    }
+    
+    private void RunComplexJSONTest(String testString) {
+        RunTest(testString, getOptions(job, SUT, "institutes"));
     }
     
     private void RunTest(String testString, JSONObject options) {
