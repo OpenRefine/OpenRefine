@@ -35,6 +35,7 @@ package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
@@ -363,6 +364,21 @@ public class JsonImporterTests extends ImporterTest {
         // TODO: check data types
     }
 
+
+    @Test
+    public void testComplexJsonStructure() throws IOException{
+        String fileName = "grid_small.json";
+        RunTest(getComplexJSON(fileName));
+
+        log(project);
+        logger.info("************************ columnu number:" + project.columnModel.columns.size() + 
+                ". \tcolumn groups number:" + project.columnModel.columnGroups.size() + 
+                ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount()) ;
+        
+        
+        assertProjectCreated(project, 63, 63, 8);
+    }   
+    
     //------------helper methods---------------
 
     private static String getTypicalElement(int id){
@@ -403,7 +419,8 @@ public class JsonImporterTests extends ImporterTest {
         
         JSONArray path = new JSONArray();
         JSONUtilities.append(path, JsonImporter.ANONYMOUS);
-        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.append(path, "institutes");
+//        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
         
         JSONUtilities.safePut(options, "recordPath", path);
         JSONUtilities.safePut(options, "trimStrings", false);
@@ -508,5 +525,13 @@ public class JsonImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail();
         }
+    }
+    
+    private String getComplexJSON(String fileName) throws IOException {
+        InputStream in = this.getClass().getClassLoader()
+                .getResourceAsStream(fileName);
+        String content = org.apache.commons.io.IOUtils.toString(in);
+        
+        return content;
     }
 }
