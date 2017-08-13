@@ -1,0 +1,20 @@
+{
+    "name": "Deutsch",
+    "core-index": {
+        "help": "Hilfe",
+        "version": "Version",
+        "new-version": "Neue Version!",
+        "download": "Herunterladen",
+        "now": "jetzt",
+        "preferences": "Einstellungen",
+        "edit": "Ändern",
+        "delete": "Löschen"
+    },
+    "core-index-create": {
+        "done": "Fertig.",
+        "almost-done": "fast fertig…"
+    },
+    "core-index-import": {
+        "import-proj": "Projekt importieren"
+    }
+}
