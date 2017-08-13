@@ -62,19 +62,19 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
     DialogSystem.dismissUntil(self._level - 1);
   });
 
-  var dismissBusy = DialogSystem.showBusy();
   var type = (column.reconConfig) && (column.reconConfig.type) ? column.reconConfig.type.id : "";
 
   this._proposePropertiesUrl = null;
   this._fetchColumnUrl = null;
   this._serviceMetadata = null;
+  var extend = null;
   if ("reconConfig" in column) {
     var service = column.reconConfig.service;
     this._service = service;
     var serviceMetadata = ReconciliationManager.getServiceFromUrl(service);
     this._serviceMetadata = serviceMetadata;
     if ("extend" in serviceMetadata) {
-       var extend = serviceMetadata.extend;
+       extend = serviceMetadata.extend;
        if ("propose_properties" in extend) {
 	   var endpoint = extend.propose_properties;
            this._proposePropertiesUrl = endpoint.service_url + endpoint.service_path;
@@ -82,10 +82,17 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
      }
   }
 
-  ExtendReconciledDataPreviewDialog.getAllProperties(this._proposePropertiesUrl, type, function(properties) {
-    dismissBusy();
-    self._show(properties);
-  });
+  if (this._serviceMetadata === null) {
+     alert($.i18n._('core-views')["extend-not-reconciled"]);
+  } else if(extend === null) {
+     alert($.i18n._('core-views')["extend-not-supported"]);
+  } else {
+    var dismissBusy = DialogSystem.showBusy();
+    ExtendReconciledDataPreviewDialog.getAllProperties(this._proposePropertiesUrl, type, function(properties) {
+      dismissBusy();
+      self._show(properties);
+    });
+  }
 }
 
 ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDone) {
@@ -189,7 +196,7 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
 	},
 	"json"
     ).fail(function(data) {
-	    console.log(data);
+	alert($.i18n._("core-views")["internal-err"]);
     });
   }
 };
@@ -292,7 +299,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
 ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(id) {
   for(var i = this._extension.properties.length - 1; i >= 0; i--) {
     var property = this._extension.properties[i];
-    if (property.id == id) {
+    if (property.id === id) {
        this._extension.properties.splice(i, 1);
     }
   }
@@ -302,7 +309,7 @@ ExtendReconciledDataPreviewDialog.prototype._removeProperty = function(id) {
 ExtendReconciledDataPreviewDialog.prototype._findProperty = function(id) {
   var properties = this._extension.properties;
   for(var i = properties.length - 1; i >= 0; i--) {
-    if (properties[i].id == id) {
+    if (properties[i].id === id) {
        return properties[i];
     }
   }
@@ -332,7 +339,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
         }
 	var tr = $('<tr></tr>');
 	var td = $('<td></td>').attr('title', field.help_text).appendTo(tr);
-	if (field.type == 'select') {
+	if (field.type === 'select') {
 	   var fieldLabel = $('<span></span>').text(field.label+':').appendTo(td);
 	   td.append($('<br/>'));
 	   for(var j = 0; j < field.choices.length; j++) {
@@ -343,21 +350,21 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 				'value', choice.value).attr(
 				'name', field.name).appendTo(labelElem);
 
-		if (choice.value == currentValue) {
+		if (choice.value === currentValue) {
 		    inputElem.attr('checked', 'checked');
 		}
                 labelElem.append(' '+choice.name);
                 td.append('<br/>');
 	   }
 	   td.append(fieldHTML);
-	} else if (field.type == 'checkbox') {
+	} else if (field.type === 'checkbox') {
 	   var label = $('<label></label>').attr('for', field.name).appendTo(td);
 	   var input = $('<input type="checkbox" />').attr('name', field.name).appendTo(label);
-	   if (currentValue == 'on') {
+	   if (currentValue === 'on') {
 	       input.attr('checked','checked');
 	   }
 	   label.append(' '+field.label);
-        } else if (field.type == 'number' || field.type == 'text') {
+        } else if (field.type === 'number' || field.type == 'text') {
 	   var label = $('<label></label>').attr('for', field.name).appendTo(td);
 	   label.append(field.label+': ');
 	   var input = $('<input />').attr(
@@ -371,7 +378,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
      }    
   }
 
-  if (table.children().length == 0)  {
+  if (table.children().length === 0)  {
      var tr = $('<tr></tr>').appendTo(table);
      $('<td></td>').text($.i18n._('core-views')['no-settings']).appendTo(tr);
    }
@@ -409,7 +416,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 
       self._update();
     } catch (e) {
-      //console.log(e);
+	alert($.i18n._("core-views")["internal-err"]);
     }
   });
 
