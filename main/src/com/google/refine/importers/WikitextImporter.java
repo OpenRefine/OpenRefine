@@ -1,20 +1,15 @@
 package com.google.refine.importers;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.io.CharStreams;
 import de.fau.cs.osr.ptk.common.AstVisitor;
-import de.fau.cs.osr.ptk.common.ParserCommon;
 
 import org.sweble.wikitext.parser.ParserConfig;
 import org.sweble.wikitext.parser.utils.SimpleParserConfig;
@@ -32,7 +27,6 @@ import org.sweble.wikitext.parser.nodes.WtTableRow;
 import org.sweble.wikitext.parser.nodes.WtTableCell;
 import org.sweble.wikitext.parser.nodes.WtParsedWikitextPage;
 import org.sweble.wikitext.parser.nodes.WtBody;
-import org.sweble.wikitext.parser.parser.LinkTargetException;
 
 import org.sweble.wikitext.parser.WikitextEncodingValidator;
 import org.sweble.wikitext.parser.WikitextPreprocessor;
@@ -52,7 +46,7 @@ import com.google.refine.util.JSONUtilities;
 
 
 public class WikitextImporter extends TabularImportingParserBase {
-    static final Logger logger = LoggerFactory.getLogger(WikitextImporter.class);
+    static final private Logger logger = LoggerFactory.getLogger(WikitextImporter.class);
     
     public WikitextImporter() {
         super(false);
@@ -73,28 +67,25 @@ public class WikitextImporter extends TabularImportingParserBase {
         public List<String> header;
         public List<List<String>> rows;
         private List<String> currentRow;
-        private StringBuilder currentCellString;
+        private StringBuilder currentStringBuilder;
         private String currentInternalLink;
         private String currentExternalLink;
         
         public WikitextTableVisitor() {
-            header = null;
+            header = new ArrayList<String>();
             rows = new ArrayList<List<String>>();
-            currentCellString = null;
+            currentStringBuilder = null;
             currentInternalLink = null;
             currentExternalLink = null;
         }
         
         @Override
-        protected boolean before(WtNode node) {
+        protected WtNode before(WtNode node) {
             return super.before(node);
         }
         
         public void visit(WtNode e) {
-            /*
-            System.out.println("ignoring node:");
-            System.out.println(e.getNodeTypeName());
-            */
+            // Ignore other nodes
         }
         
         public void visit(WtParsedWikitextPage e) {
@@ -110,10 +101,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
         
         public void visit(WtTableHeader e) {
-            currentRow = new ArrayList<String>();
-            iterate(e);
-            header = currentRow;
-            currentRow = null;
+            header.add(renderAsString(e));
         }
  
         public void visit(WtTableRow e)
@@ -131,24 +119,30 @@ public class WikitextImporter extends TabularImportingParserBase {
         public void visit(WtTableCell e)
         {
             if (currentRow != null) {
-                currentCellString = new StringBuilder();
-                iterate(e);
-                String cellValue = currentCellString.toString().trim();
-                currentRow.add(cellValue);
-                currentCellString = null;
+                currentRow.add(renderAsString(e));
             }
+        }
+        
+        public String renderAsString(WtNode e) {
+            currentStringBuilder = new StringBuilder();
+            iterate(e);
+            String value = currentStringBuilder.toString().trim();
+            currentStringBuilder = null;
+            return value;
         }
         
         
         public void visit(WtText text) {
-            currentCellString.append(text.getContent());
+            if (currentStringBuilder != null) {
+                currentStringBuilder.append(text.getContent());
+            }
         }
         
         public void visit(WtNoLinkTitle e) {
             if (currentInternalLink != null) {
-                currentCellString.append(currentInternalLink);
+                currentStringBuilder.append(currentInternalLink);
             } else if (currentExternalLink != null) {
-                currentCellString.append(currentExternalLink);
+                currentStringBuilder.append(currentExternalLink);
             }
         }
         
@@ -175,6 +169,36 @@ public class WikitextImporter extends TabularImportingParserBase {
             return rows;
         }
     }
+    
+    public class WikiTableDataReader implements TableDataReader {
+        private int currentRow = -1;
+        private WikitextTableVisitor visitor = null;
+    
+        public WikiTableDataReader(WikitextTableVisitor visitor) {
+            this.visitor = visitor;
+            currentRow = -1;
+        }
+        
+        @Override
+        public List<Object> getNextRowOfCells() throws IOException {
+            List<Object> row = null;
+            List<String> origRow = null;
+            if (currentRow == -1) {
+                origRow = this.visitor.header;
+            } else if(currentRow < this.visitor.rows.size()) {
+                origRow = this.visitor.rows.get(currentRow);
+            }
+            currentRow++;
+            
+            if (origRow != null) {
+                row = new ArrayList<Object>();
+                for (int i = 0; i < origRow.size(); i++) {
+                    row.add(origRow.get(i));
+                }
+            }
+            return row;
+        }
+    }
 
     @Override
     public void parseOneFile(
@@ -187,33 +211,6 @@ public class WikitextImporter extends TabularImportingParserBase {
         JSONObject options,
         List<Exception> exceptions
     ) {
-        /*
-        final List<Object> columnNames;
-        if (options.has("columnNames")) {
-            columnNames = new ArrayList<Object>();
-            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
-            for (String s : strings) {
-                columnNames.add(s);
-            }
-            JSONUtilities.safePut(options, "headerLines", 1);
-        } else {
-            columnNames = null;
-            JSONUtilities.safePut(options, "headerLines", 0);
-        }
-        
-        final LineNumberReader lnReader = new LineNumberReader(reader);
-        
-        try {
-            int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
-            while (skip > 0) {
-                lnReader.readLine();
-                skip--;
-            }
-        } catch (IOException e) {
-            logger.error("Error reading line-based file", e);
-        }
-        JSONUtilities.safePut(options, "ignoreLines", -1); */
-        
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
         
@@ -227,14 +224,12 @@ public class WikitextImporter extends TabularImportingParserBase {
             ValidatedWikitext validated = v.validate(parserConfig, wikitext, title);
 
             // Pre-processing
-
             WikitextPreprocessor prep = new WikitextPreprocessor(parserConfig);
 
             WtPreproWikitextPage prepArticle =
                             (WtPreproWikitextPage) prep.parseArticle(validated, title, false);
 
             // Parsing
-
             PreprocessedWikitext ppw = PreprocessorToParserTransformer
                             .transform(prepArticle);
 
@@ -247,25 +242,9 @@ public class WikitextImporter extends TabularImportingParserBase {
             final WikitextTableVisitor vs = new WikitextTableVisitor();
             vs.go(parsedArticle);
             
-            TableDataReader dataReader = new TableDataReader() {
-                private int currentRow = 0;
-                @Override
-                public List<Object> getNextRowOfCells() throws IOException {
-                    List<Object> row = null;
-                    if(currentRow < vs.rows.size()) {
-                        List<String> origRow = vs.rows.get(currentRow);
-                        row = new ArrayList<Object>();
-                        for (int i = 0; i < origRow.size(); i++) {
-                            row.add(origRow.get(i));
-                        }
-                        currentRow++;
-                    }
-                    return row;
-                }
-            };
-            int headerLines = vs.header != null ? 1 : 0;
+            TableDataReader dataReader = new WikiTableDataReader(vs);
             
-            JSONUtilities.safePut(options, "headerLines", headerLines);
+            JSONUtilities.safePut(options, "headerLines", 1);
             
             TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
         } catch (IOException e1) {

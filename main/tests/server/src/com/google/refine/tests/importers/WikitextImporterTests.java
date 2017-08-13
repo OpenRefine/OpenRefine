@@ -44,24 +44,19 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.WikitextImporter;
 
 public class WikitextImporterTests extends ImporterTest {
-
+    //System Under Test
+    private WikitextImporter importer = null;
+    
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-
-    //constants
-    String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
-
-    //System Under Test
-    WikitextImporter importer = null;
 
     @Override
     @BeforeMethod
@@ -88,7 +83,7 @@ public class WikitextImporterTests extends ImporterTest {
 		+ "|-\n"
 		+ "|}\n";
     	try {
-    	        prepareOptions(0, 0, 0, 0, true);
+    	        prepareOptions(0, 0, 0, true);
     		parse(input);
     	} catch (Exception e) {
     		Assert.fail("Parsing failed", e);
@@ -110,12 +105,12 @@ public class WikitextImporterTests extends ImporterTest {
             +"|-\n"
             +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
             +"|-\n"
-            +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/]\n"
+            +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
             +"|-\n"
             +"|}\n";
 
         try {
-                prepareOptions(0, 0, 0, 0, true);
+                prepareOptions(0, 0, 0, true);
                 parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
@@ -124,9 +119,11 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Cedefop");
+        Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
+        Assert.assertEquals(project.rows.get(2).cells.get(2).value, "europa.eu");
     }
-/*
+
     @Test
     public void readStyledTableWithHeader() {
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
@@ -149,17 +146,19 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-                prepareOptions(0, 0, 0, 0, true);
+                prepareOptions(-1, 0, -1, true);
                 parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 7);
-        Assert.assertEquals(project.rows.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 7);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Offizieller Name");
+        Assert.assertEquals(project.columnModel.columns.get(6).getName(), "Anmerkungen");
+        Assert.assertEquals(project.rows.get(0).cells.size(), 7);
+        
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
-    }*/
+    }
 
     //--helpers--
     
@@ -169,12 +168,12 @@ public class WikitextImporterTests extends ImporterTest {
 
     private void prepareOptions(
         int limit, int skip, int ignoreLines,
-        int headerLines, boolean guessValueType) {
+        boolean guessValueType) {
         
         whenGetIntegerOption("limit", options, limit);
         whenGetIntegerOption("skipDataLines", options, skip);
         whenGetIntegerOption("ignoreLines", options, ignoreLines);
-        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetIntegerOption("headerLines", options, 1);
         whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
     }
@@ -185,7 +184,6 @@ public class WikitextImporterTests extends ImporterTest {
             verify(options, times(1)).getInt("limit");
             verify(options, times(1)).getInt("skipDataLines");
             verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
             verify(options, times(1)).getBoolean("guessCellValueTypes");
             verify(options, times(1)).getBoolean("processQuotes");
             verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
