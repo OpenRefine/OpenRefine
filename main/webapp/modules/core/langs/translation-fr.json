@@ -19,7 +19,7 @@
         "delete": "Supprimer",
         "new-proj-name": "Nom du nouveau projet :",
         "error-rename": "Échec du renommage du projet :",
-        "no-proj": "Aucun projet n’existe. Cliquer sur 'Créer un projet' sur la gauche pour créer un nouveau projet",
+        "no-proj": "Aucun projet n’existe. Cliquer sur 'Créer un projet' sur la gauche pour créer un nouveau projet.",
         "try-these": "Si vous ne disposez d’aucun jeu de données, vous pouvez essayer ces",
         "sample-data": "jeux de données d'exemple"
     },
@@ -621,7 +621,9 @@
         "ctrl-enter": "Ctrl-Entrée",
         "rows": "lignes",
         "records": "entrées",
-        "show": "Afficher"
+        "show": "Afficher",
+        "extend-not-reconciled": "Cette opération n'est disponible que pour des colonnes réconciliées.",
+        "extend-not-supported": "Ce service de réconciliation de supporte pas l'extension de données. Essayez de supprimer le service et de l'ajouter à nouveau. Si le problème persiste, contactez le fournisseur de service."
     },
     "core-buttons": {
         "cancel": "Annuler",
