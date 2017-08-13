@@ -93,6 +93,7 @@
         <path refid="server.class.path"/>
     	<pathelement location="${server.tests.classes.dir}"/>
         <pathelement location="${server.tests.lib.dir}/testng-6.8.jar"/>
+    	<pathelement location="${tests.dir}/data" />
         <fileset dir="${server.tests.lib.dir}">
             <include name="**/*.jar" />
         </fileset>
