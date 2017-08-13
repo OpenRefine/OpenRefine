@@ -7,7 +7,6 @@
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
 	<classpathentry kind="src" path="main/tests/server/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
@@ -84,5 +83,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="extensions/jython/module/MOD-INF/lib/jython-standalone-2.7.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/swc-parser-lazy-2.0.0.jar" sourcepath="main/webapp/WEB-INF/lib-src/ptk-common-3.0.6-sources.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
