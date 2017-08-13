@@ -370,7 +370,6 @@ function init() {
 
       "styles/index/default-importing-sources.less",
       "styles/views/data-table-view.less", // for the preview table's styles
-      "styles/views/extend-data-preview-dialog.less",
       "styles/index/fixed-width-parser-ui.less",
       "styles/index/xml-parser-ui.less",
       "styles/index/json-parser-ui.less"

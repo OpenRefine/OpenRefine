@@ -107,16 +107,6 @@ ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDon
 		id: property.id,
 		name: property.name
 	    };
-	    /*if ("id2" in property) {
-	    property2.expected = property.schema2;
-	    property2.properties = [{
-		id: property.id2,
-		name: property.name2,
-		expected: property.expects
-	    }];
-	    } else {
-	    property2.expected = property.expects;
-	    } */
 	    allProperties.push(property2);
 	}
 	allProperties.sort(function(a, b) { return a.name.localeCompare(b.name); });
@@ -183,19 +173,25 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
       columnName: this._column.name
   };
 
-  $.post(
-    "command/core/preview-extend-data?" + $.param(params), 
-    {
-      rowIndices: JSON.stringify(this._rowIndices),
-      extension: JSON.stringify(this._extension)
-    },
-    function(data) {
-      self._renderPreview(data);
-    },
-    "json"
-  ).fail(function(data) {
-	console.log(data);
-  });
+  if(this._extension.properties.length == 0) {
+    // if the column selection is empty, reset the view
+    this._elmts.previewContainer.empty();
+  } else {
+    // otherwise, refresh the preview
+    $.post(
+	"command/core/preview-extend-data?" + $.param(params),
+	{
+	rowIndices: JSON.stringify(this._rowIndices),
+	extension: JSON.stringify(this._extension)
+	},
+	function(data) {
+	self._renderPreview(data);
+	},
+	"json"
+    ).fail(function(data) {
+	    console.log(data);
+    });
+  }
 };
 
 ExtendReconciledDataPreviewDialog.prototype._addProperty = function(p) {
