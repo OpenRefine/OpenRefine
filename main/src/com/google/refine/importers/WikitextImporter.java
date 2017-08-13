@@ -16,19 +16,16 @@ import com.google.common.io.CharStreams;
 import de.fau.cs.osr.ptk.common.AstVisitor;
 import de.fau.cs.osr.ptk.common.ParserCommon;
 
-/*
-import org.sweble.wikitext.engine.PageId;
-import org.sweble.wikitext.engine.PageTitle;
-import org.sweble.wikitext.engine.WtEngineImpl;
-import org.sweble.wikitext.engine.EngineException;
-import org.sweble.wikitext.engine.config.WikiConfig;
-import org.sweble.wikitext.engine.nodes.EngProcessedPage;
-import org.sweble.wikitext.engine.utils.DefaultConfigEnWp; */
 import org.sweble.wikitext.parser.ParserConfig;
 import org.sweble.wikitext.parser.utils.SimpleParserConfig;
 import org.sweble.wikitext.parser.WikitextParser;
 import org.sweble.wikitext.parser.nodes.WtNode;
 import org.sweble.wikitext.parser.nodes.WtText;
+import org.sweble.wikitext.parser.nodes.WtInternalLink;
+import org.sweble.wikitext.parser.nodes.WtExternalLink;
+import org.sweble.wikitext.parser.nodes.WtLinkTitle;
+import org.sweble.wikitext.parser.nodes.WtLinkTitle.WtNoLinkTitle;
+import org.sweble.wikitext.parser.nodes.WtUrl;
 import org.sweble.wikitext.parser.nodes.WtTable;
 import org.sweble.wikitext.parser.nodes.WtTableHeader;
 import org.sweble.wikitext.parser.nodes.WtTableRow;
@@ -77,13 +74,15 @@ public class WikitextImporter extends TabularImportingParserBase {
         public List<List<String>> rows;
         private List<String> currentRow;
         private StringBuilder currentCellString;
-        // private String currentCellLink;
+        private String currentInternalLink;
+        private String currentExternalLink;
         
         public WikitextTableVisitor() {
             header = null;
             rows = new ArrayList<List<String>>();
             currentCellString = null;
-            // currentCellLink = null;
+            currentInternalLink = null;
+            currentExternalLink = null;
         }
         
         @Override
@@ -143,6 +142,31 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         public void visit(WtText text) {
             currentCellString.append(text.getContent());
+        }
+        
+        public void visit(WtNoLinkTitle e) {
+            if (currentInternalLink != null) {
+                currentCellString.append(currentInternalLink);
+            } else if (currentExternalLink != null) {
+                currentCellString.append(currentExternalLink);
+            }
+        }
+        
+        public void visit(WtLinkTitle e) {
+            iterate(e);
+        }
+        
+        public void visit(WtInternalLink e) {
+            currentInternalLink = e.getTarget().getAsString();
+            iterate(e);
+            currentInternalLink = null;
+        }
+        
+        public void visit(WtExternalLink e) {
+            WtUrl url = e.getTarget();
+            currentExternalLink = url.getProtocol() + ":" + url.getPath();
+            iterate(e);
+            currentExternalLink = null;
         }
         
         @Override

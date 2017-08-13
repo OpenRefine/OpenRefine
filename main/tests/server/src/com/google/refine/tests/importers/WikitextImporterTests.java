@@ -99,7 +99,67 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "a");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
+    
+    @Test
+    public void readTableWithLinks() {
+        // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
+        String input = "\n"
+            +"{|\n"
+            +"|-\n"
+            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || [http://www.cedefop.europa.eu/]\n"
+            +"|-\n"
+            +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
+            +"|-\n"
+            +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/]\n"
+            +"|-\n"
+            +"|}\n";
 
+        try {
+                prepareOptions(0, 0, 0, 0, true);
+                parse(input);
+        } catch (Exception e) {
+                Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Cedefop");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
+    }
+/*
+    @Test
+    public void readStyledTableWithHeader() {
+        // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
+        String input = "\n"
+            +"{| class=\"wikitable sortable\"\n"
+            +"! style=\"text-align:left; width: 60em\" | Offizieller Name\n"
+            +"! style=\"text-align:left; width: 9em\" | Abkürzung\n"
+            +"! style=\"text-align:left; width: 6em\" | Website\n"
+            +"! style=\"text-align:left; width: 15em\" | Standort\n"
+            +"! style=\"text-align:left; width: 18em\" | Staat\n"
+            +"! style=\"text-align:left; width: 6em\" | Gründung\n"
+            +"! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
+            +"|-\n"
+            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || Cedefop || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
+            +"|-\n"
+            +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
+            +"|-\n"
+            +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
+            +"|-\n"
+            +"|}\n";
+
+        try {
+                prepareOptions(0, 0, 0, 0, true);
+                parse(input);
+        } catch (Exception e) {
+                Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 7);
+        Assert.assertEquals(project.rows.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 7);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
+    }*/
 
     //--helpers--
     
