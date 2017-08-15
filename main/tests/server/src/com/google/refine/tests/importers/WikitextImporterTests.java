@@ -185,8 +185,8 @@ public class WikitextImporterTests extends ImporterTest {
                 Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 6);
-        Assert.assertEquals(project.rows.get(1).cells.get(2), null);
-        Assert.assertEquals(project.rows.get(1).cells.get(3), null);
+        Assert.assertNull(project.rows.get(1).cells.get(2).value);
+        Assert.assertNull(project.rows.get(1).cells.get(3).value);
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "Butter");
     }
     //--helpers--
