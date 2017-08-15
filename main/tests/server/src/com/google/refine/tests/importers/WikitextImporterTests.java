@@ -83,7 +83,7 @@ public class WikitextImporterTests extends ImporterTest {
 		+ "|-\n"
 		+ "|}\n";
     	try {
-    	        prepareOptions(0, 0, 0, true);
+    	        prepareOptions(0, true, true);
     		parse(input);
     	} catch (Exception e) {
     		Assert.fail("Parsing failed", e);
@@ -110,7 +110,7 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-                prepareOptions(0, 0, 0, true);
+                prepareOptions(0, true, true);
                 parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
@@ -146,7 +146,7 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-                prepareOptions(-1, 0, -1, true);
+                prepareOptions(-1, true, true);
                 parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
@@ -160,6 +160,35 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
     }
 
+    @Test
+    public void readTableWithSpanningCells() {
+        // inspired from https://www.mediawiki.org/wiki/Help:Tables
+        String input = "{| class=\"wikitable\"\n"
+        +"!colspan=\"6\"|Shopping List\n"
+        +"|-\n"
+        +"|Bread & Butter\n"
+        +"|Pie\n"
+        +"|Buns\n"
+        +"|rowspan=\"2\"|Danish\n"
+        +"|colspan=\"2\"|Croissant\n"
+        +"|-\n"
+        +"|Cheese\n"
+        +"|colspan=\"2\"|Ice cream\n"
+        +"|Butter\n"
+        +"|Yogurt\n"
+        +"|}\n";
+        
+        try {
+            prepareOptions(-1, true, true);
+            parse(input);
+        } catch (Exception e) {
+                Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 6);
+        Assert.assertEquals(project.rows.get(1).cells.get(2), null);
+        Assert.assertEquals(project.rows.get(1).cells.get(3), null);
+        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "Butter");
+    }
     //--helpers--
     
     private void parse(String wikitext) {
@@ -167,26 +196,22 @@ public class WikitextImporterTests extends ImporterTest {
     }
 
     private void prepareOptions(
-        int limit, int skip, int ignoreLines,
+        int limit, boolean blankSpanningCells,
         boolean guessValueType) {
         
         whenGetIntegerOption("limit", options, limit);
-        whenGetIntegerOption("skipDataLines", options, skip);
-        whenGetIntegerOption("ignoreLines", options, ignoreLines);
-        whenGetIntegerOption("headerLines", options, 1);
         whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("blankSpanningCells", options, blankSpanningCells);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+        whenGetIntegerOption("headerLines", options, 1);
     }
 
     private void verifyOptions() {
         try {
-            verify(options, times(1)).getString("separator");
             verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("ignoreLines");
             verify(options, times(1)).getBoolean("guessCellValueTypes");
-            verify(options, times(1)).getBoolean("processQuotes");
             verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
+            verify(options, times(1)).getBoolean("blankSpanningCells");
         } catch (JSONException e) {
             Assert.fail("JSON exception",e);
         }

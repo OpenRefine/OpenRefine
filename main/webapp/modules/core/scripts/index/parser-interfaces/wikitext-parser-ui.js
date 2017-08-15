@@ -62,20 +62,8 @@ Refine.WikitextParserUI.prototype.confirmReadyToCreateProject = function() {
 
 Refine.WikitextParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
   };
   
-  switch (this._optionContainer.find("input[name='column-separator']:checked")[0].value) {
-  case 'comma':
-    options.separator = ",";
-    break;
-  case 'tab':
-    options.separator = "\\t";
-    break;
-  default:
-    options.separator = this._optionContainerElmts.columnSeparatorInput[0].value;
-  }
-
   var parseIntDefault = function(s, def) {
     try {
       var n = parseInt(s,10);
@@ -87,30 +75,15 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
     }
     return def;
   };
-  if (this._optionContainerElmts.ignoreCheckbox[0].checked) {
-    options.ignoreLines = parseIntDefault(this._optionContainerElmts.ignoreInput[0].value, -1);
-  } else {
-    options.ignoreLines = -1;
-  }
-  if (this._optionContainerElmts.headerLinesCheckbox[0].checked) {
-    options.headerLines = parseIntDefault(this._optionContainerElmts.headerLinesInput[0].value, 0);
-  } else {
-    options.headerLines = 0;
-  }
-  if (this._optionContainerElmts.skipCheckbox[0].checked) {
-    options.skipDataLines = parseIntDefault(this._optionContainerElmts.skipInput[0].value, 0);
-  } else {
-    options.skipDataLines = 0;
-  }
   if (this._optionContainerElmts.limitCheckbox[0].checked) {
     options.limit = parseIntDefault(this._optionContainerElmts.limitInput[0].value, -1);
   } else {
     options.limit = -1;
   }
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
+  options.blankSpanningCells = this._optionContainerElmts.blankSpanningCellsCheckbox[0].checked;
 
   options.guessCellValueTypes = this._optionContainerElmts.guessCellValueTypesCheckbox[0].checked;
-  options.processQuotes = this._optionContainerElmts.processQuoteMarksCheckbox[0].checked;
 
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
@@ -120,35 +93,23 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
 
 Refine.WikitextParserUI.prototype._initialize = function() {
   var self = this;
-  console.log('wikitext ui initialize');
 
   this._optionContainer.unbind().empty().html(
-      DOM.loadHTML("core", "scripts/index/parser-interfaces/separator-based-parser-ui.html"));
+      DOM.loadHTML("core", "scripts/index/parser-interfaces/wikitext-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
   
   this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
-  $('#or-import-encoding').html($.i18n._('core-index-import')["char-encoding"]);
-  $('#or-import-colsep').html($.i18n._('core-index-parser')["col-separated-by"]);
-  $('#or-import-commas').html($.i18n._('core-index-parser')["commas"]);
-  $('#or-import-tabs').html($.i18n._('core-index-parser')["tabs"]);
-  $('#or-import-custom').html($.i18n._('core-index-parser')["custom"]);
-  $('#or-import-escape').html($.i18n._('core-index-parser')["escape"]);
   
-  $('#or-import-ignore').text($.i18n._('core-index-parser')["ignore-first"]);
-  $('#or-import-lines').text($.i18n._('core-index-parser')["lines-beg"]);
-  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
-  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
-  $('#or-import-discard').text($.i18n._('core-index-parser')["discard-initial"]);
-  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
   $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
-  $('#or-import-quote').html($.i18n._('core-index-parser')["quotation-mark"]);
+  $('#or-import-blankSpanningCells').text($.i18n._('core-index-parser')["blank-spanning-cells"]);
   $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
   $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
   $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
 
+/*
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
     .click(function() {
@@ -156,38 +117,24 @@ Refine.WikitextParserUI.prototype._initialize = function() {
         self._updatePreview();
       });
     });
+*/
+  console.log(this._config);
   
-  var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
-    ((this._config.separator == "\\t") ? 'tab' : 'custom');
-  this._optionContainer.find(
-      "input[name='column-separator'][value='" + columnSeparatorValue + "']").prop("checked", true);
-  this._optionContainerElmts.columnSeparatorInput[0].value = this._config.separator;
-
-  if (this._config.ignoreLines > 0) {
-    this._optionContainerElmts.ignoreCheckbox.prop("checked", true);
-    this._optionContainerElmts.ignoreInput[0].value = this._config.ignoreLines.toString();
-  }
-  if (this._config.headerLines > 0) {
-    this._optionContainerElmts.headerLinesCheckbox.prop("checked", true);
-    this._optionContainerElmts.headerLinesInput[0].value = this._config.headerLines.toString();
-  }
-  if (this._config.limit > 0) {
+   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
   }
-  if (this._config.skipDataLines > 0) {
-    this._optionContainerElmts.skipCheckbox.prop("checked", true);
-    this._optionContainerElmts.skipInput.value[0].value = this._config.skipDataLines.toString();
+
+  if (this._config.blankSpanningCells) {
+    this._optionContainerElmts.blankSpanningCellsCheckbox.prop("checked", true);
   }
+
   if (this._config.storeBlankRows) {
     this._optionContainerElmts.storeBlankRowsCheckbox.prop("checked", true);
   }
 
   if (this._config.guessCellValueTypes) {
     this._optionContainerElmts.guessCellValueTypesCheckbox.prop("checked", true);
-  }
-  if (this._config.processQuotes) {
-    this._optionContainerElmts.processQuoteMarksCheckbox.prop("checked", true);
   }
 
   if (this._config.storeBlankCellsAsNulls) {
@@ -205,7 +152,6 @@ Refine.WikitextParserUI.prototype._initialize = function() {
 };
 
 Refine.WikitextParserUI.prototype._scheduleUpdatePreview = function() {
-  console.log('scheduleUpdatePreview');
   if (this._timerID !== null) {
     window.clearTimeout(this._timerID);
     this._timerID = null;
@@ -222,10 +168,8 @@ Refine.WikitextParserUI.prototype._updatePreview = function() {
   var self = this;
 
   this._progressContainer.show();
-  console.log('updatePreview');
 
   this._controller.updateFormatAndOptions(this.getOptions(), function(result) {
-    console.log(result.status);
     if (result.status == "ok") {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();

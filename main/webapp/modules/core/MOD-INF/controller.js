@@ -212,7 +212,7 @@ function registerImporting() {
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
-  IM.registerFormat("text/wiki", "Wikitext files", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
+  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
 
   IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
 
