@@ -1,9 +1,11 @@
-<div class="grid-layout layout-tightest"><table>
+<div class="grid-layout layout-loose"><table>
       <tr><td colspan="2" id="or-import-colsep"></td></tr>
          
+      <tr><td width="1%"><input type="checkbox" bind="wikiCheckbox" id="$reconcileWiki" /></td><td><label for="$reconcileWiki" id="or-import-wiki-base-url"></label>
+        <input bind="wikiUrlInput" type="text" class="lightweight" size="30" id="$wikiUrl" /></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
-        <td><label for="$limit" id="or-import-load"></label></td>
-        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+        <td><label for="$limit" id="or-import-load"></label>
+          <input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
           <label for="$limit" id="or-import-rows2"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="guessCellValueTypesCheckbox" id="$guess" /></td>
         <td><label for="$guess" id="or-import-parseCell"></label></td></tr>
@@ -19,7 +21,7 @@
         <td><label for="$include-file-sources" id="or-import-source"></label></td></tr>
 
       <tr>
-        <td style="text-align: right;">&nbsp;</td>
-        <td width="1%"><button class="button" bind="previewButton"></button></td>
+        <td width="1%"></td>
+        <td><button class="button" bind="previewButton"></button></td>
       </tr>
 </table></div>

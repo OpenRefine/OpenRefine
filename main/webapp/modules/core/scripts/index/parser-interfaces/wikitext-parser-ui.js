@@ -75,6 +75,11 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
     }
     return def;
   };
+  if (this._optionContainerElmts.wikiCheckbox[0].checked) {
+    options.wikiUrl = this._optionContainerElmts.wikiUrlInput[0].value;
+  } else {
+    options.wikiUrl = null;
+  }
   if (this._optionContainerElmts.limitCheckbox[0].checked) {
     options.limit = parseIntDefault(this._optionContainerElmts.limitInput[0].value, -1);
   } else {
@@ -101,6 +106,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   
   this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
   
+  $('#or-import-wiki-base-url').text($.i18n._('core-index-parser')["wiki-base-url"]);
   $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
   $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
@@ -118,8 +124,13 @@ Refine.WikitextParserUI.prototype._initialize = function() {
       });
     });
 */
-  console.log(this._config);
   
+  var wikiUrl = this._config.wikiUrl.toString();
+  if (wikiUrl != null) {
+    this._optionContainerElmts.wikiUrlInput[0].value = wikiUrl;
+    this._optionContainerElmts.wikiCheckbox.prop("checked", true);
+  }
+
    if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();

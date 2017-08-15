@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -45,9 +46,15 @@ import xtc.parser.ParseException;
 
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
+import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.ReconStats;
+import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.util.JSONUtilities;
-
+import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.model.recon.ReconJob;
 
 
 public class WikitextImporter extends TabularImportingParserBase {
@@ -64,23 +71,42 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "blankSpanningCells", true);
+        JSONUtilities.safePut(options, "wikiUrl", "https://en.wikipedia.org/wiki/");
         
         return options;
     }
     
     private class SpanningCell {
         public String value;
+        public String reconciled;
         public int colspan;
         public int rowspan;
         public int row;
         public int col;
         
-        SpanningCell(String value, int row, int col, int rowspan, int colspan) {
+        SpanningCell(String value, String reconciled, int row, int col, int rowspan, int colspan) {
             this.value = value;
+            this.reconciled = reconciled;
             this.row = row;
             this.col = col;
             this.rowspan = rowspan;
             this.colspan = colspan;
+        }
+    }
+    
+    private class WikilinkedCell {
+        public String internalLink;
+        public int row;
+        public int col;
+        
+        WikilinkedCell(String internalLink, int row, int col) {
+            this.internalLink = internalLink;
+            this.row = row;
+            this.col = col;
+        }
+        
+        public String toURL(String wikiBaseUrl) {
+            return wikiBaseUrl + internalLink;
         }
     }
     
@@ -89,6 +115,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         public String caption;
         public List<String> header;
         public List<List<String>> rows;
+        public List<WikilinkedCell> wikilinkedCells;
         private List<String> currentRow;
         
         private boolean blankSpanningCells;
@@ -103,12 +130,14 @@ public class WikitextImporter extends TabularImportingParserBase {
         private int colspan;
         private int rowspan;
         private int spanningCellIdx;
+        private List<String> internalLinksInCell;
         
         public WikitextTableVisitor(boolean blankSpanningCells) {
             this.blankSpanningCells = blankSpanningCells;
             caption = null;
             header = new ArrayList<String>();
             rows = new ArrayList<List<String>>();
+            wikilinkedCells = new ArrayList<WikilinkedCell>();
             spanningCells = new ArrayList<SpanningCell>();
             cellStringBuilder = null;
             xmlAttrStringBuilder = null;
@@ -118,6 +147,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             rowspan = 0;
             rowId = -1;
             spanningCellIdx = 0;
+            internalLinksInCell = new ArrayList<String>();
         }
         
         @Override
@@ -181,14 +211,29 @@ public class WikitextImporter extends TabularImportingParserBase {
             if (currentRow != null) {
                 rowspan = 1;
                 colspan = 1;
+                internalLinksInCell.clear();
                 String value = renderCellAsString(e);
+                
+                int colId = currentRow.size();
+                
+                // Add the cell to the row we are currently building
                 currentRow.add(value);
+                
+                // Reconcile it if we found exactly one link in the cell
+                String reconciled = null;
+                if (internalLinksInCell.size() == 1) {
+                    reconciled = internalLinksInCell.get(0);
+                    wikilinkedCells.add(new WikilinkedCell(reconciled, rowId, colId));
+                }
+                
+                // Mark it as spanning if we found the tags
                 if (colspan > 1 || rowspan > 1) {
                     SpanningCell spanningCell = new SpanningCell(
-                        value, rowId, currentRow.size()-1, rowspan, colspan);
+                        value, reconciled, rowId, colId, rowspan, colspan);
                     spanningCells.add(spanningCellIdx, spanningCell);
                 }
                 
+                // Add all spanning cells that need to be inserted after this one.
                 addSpanningCells();
             }
         }
@@ -208,6 +253,9 @@ public class WikitextImporter extends TabularImportingParserBase {
                             currentRow.add(null);
                         } else {
                             currentRow.add(cell.value);
+                            if (cell.reconciled != null) {
+                                wikilinkedCells.add(new WikilinkedCell(cell.reconciled, rowId, currentRow.size()-1));
+                            }
                         }
                     }
                 }
@@ -230,13 +278,12 @@ public class WikitextImporter extends TabularImportingParserBase {
                 iterate(e);
                 try {
                     int attrValue = Integer.parseInt(xmlAttrStringBuilder.toString());
-                    if (currentXmlAttr.equals("colspan")) {
+                    if ("colspan".equals(currentXmlAttr)) {
                         colspan = attrValue;
-                    } else if (currentXmlAttr.equals("rowspan")) {
+                    } else if ("rowspan".equals(currentXmlAttr)) {
                         rowspan = attrValue;
                     }
                 } catch (NumberFormatException _) {
-                    ;
                 }
                 currentXmlAttr = null;
                 xmlAttrStringBuilder = null;
@@ -286,6 +333,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         public void visit(WtInternalLink e) {
             currentInternalLink = e.getTarget().getAsString();
+            internalLinksInCell.add(currentInternalLink);
             iterate(e);
             currentInternalLink = null;
         }
@@ -307,10 +355,13 @@ public class WikitextImporter extends TabularImportingParserBase {
     public class WikiTableDataReader implements TableDataReader {
         private int currentRow = -1;
         private WikitextTableVisitor visitor = null;
+        private List<List<Recon>> reconList = null;
+        private List<Boolean> columnReconciled = null;
     
         public WikiTableDataReader(WikitextTableVisitor visitor) {
             this.visitor = visitor;
             currentRow = -1;
+            reconList = null;
         }
         
         @Override
@@ -322,15 +373,73 @@ public class WikitextImporter extends TabularImportingParserBase {
             } else if(currentRow < this.visitor.rows.size()) {
                 origRow = this.visitor.rows.get(currentRow);
             }
-            currentRow++;
             
             if (origRow != null) {
                 row = new ArrayList<Object>();
                 for (int i = 0; i < origRow.size(); i++) {
-                    row.add(origRow.get(i));
+                    Recon recon = null;
+                    if (currentRow >= 0 && reconList != null) {
+                        recon = reconList.get(currentRow).get(i);
+                    }
+                    row.add(new Cell(origRow.get(i), recon));
                 }
             }
+            currentRow++;
             return row;
+        }
+        
+        private void reconcileToQids(String wikiBaseUrl) {
+            if("null".equals(wikiBaseUrl)) {
+                return; // TODO: more thorough URL validation instead
+            }
+            
+            // Init the list of recons
+            reconList = new ArrayList<List<Recon>>();
+            columnReconciled = new ArrayList<Boolean>();
+            for (int i = 0; i < this.visitor.rows.size(); i++) {
+                int rowSize = this.visitor.rows.get(i).size();
+                List<Recon> recons = new ArrayList<Recon>(rowSize);
+                for (int j = 0; j < rowSize; j++) {
+                    recons.add(null);
+                }
+                reconList.add(recons);
+                columnReconciled.add(false);
+            }
+            
+            // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
+            StandardReconConfig cfg = new StandardReconConfig(
+                    "https://tools.wmflabs.org/openrefine-wikidata/en/api",
+                    "http://www.wikidata.org/entity/",
+                    "http://www.wikidata.org/prop/direct/",
+                    "", 
+                    "entity",
+                    true,
+                    new ArrayList<ColumnDetail>(),
+                    1
+                );
+            
+            int batchSize = 50;
+            int i = 0;
+            int totalSize = this.visitor.wikilinkedCells.size();
+            while (i < totalSize) {
+                List<ReconJob> jobs = new ArrayList<ReconJob>();
+                int batchStart = i;
+                while (i < batchStart + batchSize && i < totalSize) {
+                    WikilinkedCell cell = this.visitor.wikilinkedCells.get(i);
+                    jobs.add(cfg.createSimpleJob(cell.toURL(wikiBaseUrl)));
+                    i++;
+                }
+                
+                List<Recon> recons = cfg.batchRecon(jobs, 0);
+                for (int j = batchStart; j < batchStart + batchSize && j < totalSize; j++) {
+                    WikilinkedCell cell = this.visitor.wikilinkedCells.get(j);
+                    Recon recon = recons.get(j - batchStart);
+                    if (recon != null) {
+                        reconList.get(cell.row).set(cell.col, recon);
+                        columnReconciled.set(cell.col, true);
+                    }
+                }
+            }        
         }
     }
 
@@ -377,7 +486,13 @@ public class WikitextImporter extends TabularImportingParserBase {
             final WikitextTableVisitor vs = new WikitextTableVisitor(blankSpanningCells);
             vs.go(parsedArticle);
             
-            TableDataReader dataReader = new WikiTableDataReader(vs);
+            WikiTableDataReader dataReader = new WikiTableDataReader(vs);
+            
+            // Reconcile if needed
+            String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
+            if (wikiUrl != null) {
+                dataReader.reconcileToQids(wikiUrl);
+            }
             
             JSONUtilities.safePut(options, "headerLines", 1);
             
@@ -386,8 +501,17 @@ public class WikitextImporter extends TabularImportingParserBase {
                 metadata.setName(vs.caption);
                 // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
             }
-            
+
             TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+            
+            // Add reconciliation statistics
+            if (dataReader.columnReconciled != null) {
+                for(int i = 0; i != dataReader.columnReconciled.size(); i++) {
+                    if (dataReader.columnReconciled.get(i)) {
+                        project.columnModel.columns.get(i).setReconStats(ReconStats.create(project, i));
+                    }
+                }
+            }
         } catch (IOException e1) {
             e1.printStackTrace();
         } catch (ParseException e1) {
@@ -395,4 +519,6 @@ public class WikitextImporter extends TabularImportingParserBase {
             e1.printStackTrace();
         }
     }
+    
+
 }

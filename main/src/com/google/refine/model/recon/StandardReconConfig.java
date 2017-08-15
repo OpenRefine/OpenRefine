@@ -232,6 +232,30 @@ public class StandardReconConfig extends ReconConfig {
     public String getBriefDescription(Project project, String columnName) {
         return "Reconcile cells in column " + columnName + " to type " + typeID;
     }
+    
+    public ReconJob createSimpleJob(String query) {
+        /* Same as createJob, but for simpler queries
+         * without any properties. This is much easier
+         * to generate as there is no need for a Project,
+         * Row and Cell: this means the job can be created
+         * outside the usual context of reconciliation (e.g.
+         * in an importer).
+         */
+        StandardReconJob job = new StandardReconJob();
+        try {
+            StringWriter stringWriter = new StringWriter();
+            JSONWriter jsonWriter = new JSONWriter(stringWriter);
+            jsonWriter.object();
+            jsonWriter.key("query");
+            jsonWriter.value(query);
+            jsonWriter.endObject();
+            job.text = query;
+            job.code = stringWriter.toString();
+            return job;
+        } catch (JSONException _) {
+            return null;
+        }
+    }
 
     @Override
     public ReconJob createJob(Project project, int rowIndex, Row row,

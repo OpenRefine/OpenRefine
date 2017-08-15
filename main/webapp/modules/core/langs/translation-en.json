@@ -114,6 +114,7 @@
 		"store-blank": "Store blank rows",
 		"store-nulls": "Store blank cells as nulls",
                 "blank-spanning-cells": "Pad cells spanning over multiple rows or columns with nulls",
+                "wiki-base-url": "Reconcile to wiki with base URL:",
 		"store-source": "Store file source <br/>(file names, URLs)<br/>in each row",
 		"preserve-empty": "Preserve empty strings",
 		"trim": "Trim leading &amp; trailing whitespace from strings",
