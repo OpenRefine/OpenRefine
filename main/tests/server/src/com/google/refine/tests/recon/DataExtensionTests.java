@@ -172,13 +172,13 @@ public class DataExtensionTests extends RefineTest {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
 
         // Inspect rows
-        Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)));
-        Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)));
-        Assert.assertTrue("TJ".equals(project.rows.get(2).getCellValue(1)));
-        Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)));
+        Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
+        Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
+        Assert.assertTrue("TJ".equals(project.rows.get(2).getCellValue(1)), "Bad country code for Tajikistan.");
+        Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)
         Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
@@ -190,7 +190,7 @@ public class DataExtensionTests extends RefineTest {
 
     @Test
     public void testFetchCounts() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\"}}]}");
+        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -208,11 +208,11 @@ public class DataExtensionTests extends RefineTest {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
 
         // Test to be updated as countries change currencies!
-        Assert.assertTrue(Math.round((float)project.rows.get(2).getCellValue(1)) == 2);
-        Assert.assertTrue(Math.round((float)project.rows.get(3).getCellValue(1)) == 1);
+        Assert.assertTrue(Math.round((float)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
+        Assert.assertTrue(Math.round((float)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)
         Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
@@ -262,7 +262,7 @@ public class DataExtensionTests extends RefineTest {
      */
     @Test
     public void testFetchRecord() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\"}]}");
+        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -280,7 +280,7 @@ public class DataExtensionTests extends RefineTest {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
 
         /*
           * Tajikistan has one "preferred" currency and one "normal" one
@@ -288,8 +288,8 @@ public class DataExtensionTests extends RefineTest {
           * The second currency is fetched as well, which creates a record
           * (the cell to the left of it is left blank).
           */
-        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
-        Assert.assertTrue("Tajikistani ruble".equals(project.rows.get(3).getCellValue(1)));
+        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)), "Bad currency name for Tajikistan");
+        Assert.assertTrue("Tajikistani ruble".equals(project.rows.get(3).getCellValue(1)), "Bad currency name for Tajikistan");
         Assert.assertTrue(null == project.rows.get(3).getCellValue(0));
 
         // Make sure all the values are reconciled
