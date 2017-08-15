@@ -346,7 +346,9 @@ function init() {
       "scripts/index/parser-interfaces/xml-parser-ui.js",
       "scripts/index/parser-interfaces/json-parser-ui.js",
       "scripts/index/parser-interfaces/rdf-triples-parser-ui.js",
-      "scripts/index/parser-interfaces/wikitext-parser-ui.js"
+      "scripts/index/parser-interfaces/wikitext-parser-ui.js",
+
+      "scripts/reconciliation/recon-manager.js" // so that reconciliation functions are available to importers
     ]
   );
 

@@ -93,6 +93,8 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
 
+  options.reconService = ReconciliationManager.ensureDefaultServicePresent();
+
   return options;
 };
 

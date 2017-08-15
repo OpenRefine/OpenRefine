@@ -204,6 +204,7 @@ public class WikitextImporterTests extends ImporterTest {
         whenGetBooleanOption("blankSpanningCells", options, blankSpanningCells);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
         whenGetIntegerOption("headerLines", options, 1);
+        whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
     }
 
     private void verifyOptions() {

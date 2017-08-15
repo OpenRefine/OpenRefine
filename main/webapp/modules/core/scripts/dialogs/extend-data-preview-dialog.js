@@ -73,7 +73,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
     this._service = service;
     var serviceMetadata = ReconciliationManager.getServiceFromUrl(service);
     this._serviceMetadata = serviceMetadata;
-    if ("extend" in serviceMetadata) {
+    if (serviceMetadata != null && "extend" in serviceMetadata) {
        var extend = serviceMetadata.extend;
        if ("propose_properties" in extend) {
 	   var endpoint = extend.propose_properties;

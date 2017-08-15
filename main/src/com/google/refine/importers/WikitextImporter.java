@@ -47,6 +47,7 @@ import xtc.parser.ParseException;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
@@ -388,7 +389,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             return row;
         }
         
-        private void reconcileToQids(String wikiBaseUrl) {
+        private void reconcileToQids(String wikiBaseUrl, StandardReconConfig cfg) {
             if("null".equals(wikiBaseUrl)) {
                 return; // TODO: more thorough URL validation instead
             }
@@ -405,18 +406,6 @@ public class WikitextImporter extends TabularImportingParserBase {
                 reconList.add(recons);
                 columnReconciled.add(false);
             }
-            
-            // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
-            StandardReconConfig cfg = new StandardReconConfig(
-                    "https://tools.wmflabs.org/openrefine-wikidata/en/api",
-                    "http://www.wikidata.org/entity/",
-                    "http://www.wikidata.org/prop/direct/",
-                    "", 
-                    "entity",
-                    true,
-                    new ArrayList<ColumnDetail>(),
-                    1
-                );
             
             int batchSize = 50;
             int i = 0;
@@ -490,8 +479,13 @@ public class WikitextImporter extends TabularImportingParserBase {
             
             // Reconcile if needed
             String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
+            // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
+            String reconUrl = JSONUtilities.getString(options, "reconService",
+                  "https://tools.wmflabs.org/openrefine-wikidata/en/api");
+            StandardReconConfig cfg = getReconConfig(reconUrl);
+
             if (wikiUrl != null) {
-                dataReader.reconcileToQids(wikiUrl);
+                dataReader.reconcileToQids(wikiUrl, cfg);
             }
             
             JSONUtilities.safePut(options, "headerLines", 1);
@@ -508,7 +502,9 @@ public class WikitextImporter extends TabularImportingParserBase {
             if (dataReader.columnReconciled != null) {
                 for(int i = 0; i != dataReader.columnReconciled.size(); i++) {
                     if (dataReader.columnReconciled.get(i)) {
-                        project.columnModel.columns.get(i).setReconStats(ReconStats.create(project, i));
+                        Column col = project.columnModel.columns.get(i);
+                        col.setReconStats(ReconStats.create(project, i));
+                        col.setReconConfig(cfg);
                     }
                 }
             }
@@ -520,5 +516,18 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
     }
     
+    private StandardReconConfig getReconConfig(String url) {
+        StandardReconConfig cfg = new StandardReconConfig(
+            url,
+            "http://www.wikidata.org/entity/",
+            "http://www.wikidata.org/prop/direct/",
+            "", 
+            "entity",
+            true,
+            new ArrayList<ColumnDetail>(),
+            1
+        );
+        return cfg;
+    }
 
 }
