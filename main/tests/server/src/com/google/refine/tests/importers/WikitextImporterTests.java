@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
 import com.google.refine.importers.WikitextImporter;
 
 public class WikitextImporterTests extends ImporterTest {
-    //System Under Test
+
     private WikitextImporter importer = null;
     
     @Override
@@ -83,7 +83,7 @@ public class WikitextImporterTests extends ImporterTest {
 		+ "|-\n"
 		+ "|}\n";
     	try {
-    	        prepareOptions(0, true, true);
+    	        prepareOptions(0, true, true, null);
     		parse(input);
     	} catch (Exception e) {
     		Assert.fail("Parsing failed", e);
@@ -101,7 +101,7 @@ public class WikitextImporterTests extends ImporterTest {
         String input = "\n"
             +"{|\n"
             +"|-\n"
-            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || [http://www.cedefop.europa.eu/]\n"
+            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
             +"|-\n"
             +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
             +"|-\n"
@@ -110,7 +110,7 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-                prepareOptions(0, true, true);
+                prepareOptions(0, true, true, "https://de.wikipedia.org/wiki/");
                 parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
@@ -118,16 +118,25 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Cedefop");
+        
+        // Reconciled cells
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).recon, null);
         Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
+        Assert.assertEquals(project.rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
+        
+        // various ways to input external links
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
-        Assert.assertEquals(project.rows.get(2).cells.get(2).value, "europa.eu");
+        Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
+        // Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://www.cedefop.europa.eu/");
+        // unfortunately the above does not seem to be supported by the parser (parsed as blank instead)
     }
 
     @Test
     public void readStyledTableWithHeader() {
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
+            +"==Agenturen==\n"
             +"{| class=\"wikitable sortable\"\n"
             +"! style=\"text-align:left; width: 60em\" | Offizieller Name\n"
             +"! style=\"text-align:left; width: 9em\" | Abkürzung\n"
@@ -137,27 +146,27 @@ public class WikitextImporterTests extends ImporterTest {
             +"! style=\"text-align:left; width: 6em\" | Gründung\n"
             +"! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
             +"|-\n"
-            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || Cedefop || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
+            +"| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
             +"|-\n"
-            +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
+            +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
             +"|-\n"
             +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
             +"|-\n"
             +"|}\n";
 
         try {
-                prepareOptions(-1, true, true);
+                prepareOptions(-1, true, true, null);
                 parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 7);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "EUROFOUND");
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Offizieller Name");
         Assert.assertEquals(project.columnModel.columns.get(6).getName(), "Anmerkungen");
-        Assert.assertEquals(project.rows.get(0).cells.size(), 7);
-        
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
+        Assert.assertEquals(project.rows.get(0).cells.size(), 7);  
     }
 
     @Test
@@ -179,7 +188,7 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-            prepareOptions(-1, true, true);
+            prepareOptions(-1, true, true, null);
             parse(input);
         } catch (Exception e) {
                 Assert.fail("Parsing failed", e);
@@ -197,12 +206,13 @@ public class WikitextImporterTests extends ImporterTest {
 
     private void prepareOptions(
         int limit, boolean blankSpanningCells,
-        boolean guessValueType) {
+        boolean guessValueType, String wikiUrl) {
         
         whenGetIntegerOption("limit", options, limit);
         whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
         whenGetBooleanOption("blankSpanningCells", options, blankSpanningCells);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+        whenGetStringOption("wikiUrl", options, wikiUrl);
         whenGetIntegerOption("headerLines", options, 1);
         whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
     }

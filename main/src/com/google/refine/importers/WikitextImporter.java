@@ -15,7 +15,10 @@ import de.fau.cs.osr.ptk.common.AstVisitor;
 import org.sweble.wikitext.parser.ParserConfig;
 import org.sweble.wikitext.parser.utils.SimpleParserConfig;
 import org.sweble.wikitext.parser.WikitextParser;
+import org.sweble.wikitext.parser.nodes.WtBold;
+import org.sweble.wikitext.parser.nodes.WtItalics;
 import org.sweble.wikitext.parser.nodes.WtNode;
+import org.sweble.wikitext.parser.nodes.WtSection;
 import org.sweble.wikitext.parser.nodes.WtText;
 import org.sweble.wikitext.parser.nodes.WtInternalLink;
 import org.sweble.wikitext.parser.nodes.WtExternalLink;
@@ -156,18 +159,14 @@ public class WikitextImporter extends TabularImportingParserBase {
             return super.before(node);
         }
         
+        /* Default handler */
+        
         public void visit(WtNode e) {
             // Ignore other nodes
             // System.out.println(e.getNodeName());
         }
         
-        public void visit(WtParsedWikitextPage e) {
-            iterate(e);
-        }
-        
-        public void visit(WtBody e) {
-            iterate(e);
-        }
+        /* Table handling */
         
         public void visit(WtTable e) {
             iterate(e);
@@ -239,6 +238,28 @@ public class WikitextImporter extends TabularImportingParserBase {
             }
         }
         
+        public String renderCellAsString(WtNode e) {
+            cellStringBuilder = new StringBuilder();
+            iterate(e);
+            String value = cellStringBuilder.toString();
+            if (value == null) {
+                value = "";
+            }
+            value = value.trim();
+            cellStringBuilder = null;
+            return value;
+        }
+        
+        public void visit(WtText text) {
+            if (xmlAttrStringBuilder != null) {
+                xmlAttrStringBuilder.append(text.getContent());
+            } else if (cellStringBuilder != null) {
+                cellStringBuilder.append(text.getContent());
+            }
+        }
+        
+        /* Spanning cell helpers */
+        
         private SpanningCell spanningCell() {
             return spanningCells.get(spanningCellIdx);
         }
@@ -268,6 +289,8 @@ public class WikitextImporter extends TabularImportingParserBase {
                 }
             }
         }
+        
+        /* XML attributes : useful for colspan and rowspan */
         
         public void visit(WtXmlAttributes e) {
             iterate(e);
@@ -299,38 +322,8 @@ public class WikitextImporter extends TabularImportingParserBase {
             iterate(e);
         }
         
-        public String renderCellAsString(WtNode e) {
-            cellStringBuilder = new StringBuilder();
-            iterate(e);
-            String value = cellStringBuilder.toString();
-            if (value == null) {
-                value = "";
-            }
-            value = value.trim();
-            cellStringBuilder = null;
-            return value;
-        }
+        /* Link management */
         
-        
-        public void visit(WtText text) {
-            if (xmlAttrStringBuilder != null) {
-                xmlAttrStringBuilder.append(text.getContent());
-            } else if (cellStringBuilder != null) {
-                cellStringBuilder.append(text.getContent());
-            }
-        }
-        
-        public void visit(WtNoLinkTitle e) {
-            if (currentInternalLink != null) {
-                cellStringBuilder.append(currentInternalLink);
-            } else if (currentExternalLink != null) {
-                cellStringBuilder.append(currentExternalLink);
-            }
-        }
-        
-        public void visit(WtLinkTitle e) {
-            iterate(e);
-        }
         
         public void visit(WtInternalLink e) {
             currentInternalLink = e.getTarget().getAsString();
@@ -341,9 +334,60 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         public void visit(WtExternalLink e) {
             WtUrl url = e.getTarget();
-            currentExternalLink = url.getProtocol() + ":" + url.getPath();
+            String externalLink = url.getProtocol() + ":" + url.getPath();
+            if (cellStringBuilder != null) {
+                if(rowId >= 0) {
+                    // We are inside the table: all hyperlinks
+                    // should be converted to their URLs regardless of
+                    // their label.
+                    cellStringBuilder.append(externalLink);
+                } else {
+                    // We are in the header: keep the labels instead
+                    currentExternalLink = externalLink;
+                    iterate(e);
+                    currentExternalLink = null;
+                }
+            }
+        }
+        
+        public void visit(WtNoLinkTitle e) {
+            if (cellStringBuilder != null) {
+                if (currentInternalLink != null) {
+                    cellStringBuilder.append(currentInternalLink);
+                } else if (currentExternalLink != null) {
+                    cellStringBuilder.append(currentExternalLink);
+                }
+            }
+        }
+        
+        public void visit(WtLinkTitle e) {
             iterate(e);
-            currentExternalLink = null;
+        }
+        
+        public void visit(WtUrl e) {
+            // already handled, in WtExternalLink, added here for clarity
+        }
+        
+        /* Content blocks */
+        
+        public void visit(WtParsedWikitextPage e) {
+            iterate(e);
+        }
+        
+        public void visit(WtSection e) {
+            iterate(e);
+        }
+        
+        public void visit(WtBody e) {
+            iterate(e);
+        }
+        
+        public void visit(WtItalics e) {
+            iterate(e);
+        }
+        
+        public void visit(WtBold e) {
+            iterate(e);
         }
         
         @Override
@@ -402,9 +446,11 @@ public class WikitextImporter extends TabularImportingParserBase {
                 List<Recon> recons = new ArrayList<Recon>(rowSize);
                 for (int j = 0; j < rowSize; j++) {
                     recons.add(null);
+                    if (i == 0)
+                        columnReconciled.add(false);
                 }
                 reconList.add(recons);
-                columnReconciled.add(false);
+                
             }
             
             int batchSize = 50;

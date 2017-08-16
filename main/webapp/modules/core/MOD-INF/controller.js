@@ -377,7 +377,8 @@ function init() {
       "styles/views/extend-data-preview-dialog.less",
       "styles/index/fixed-width-parser-ui.less",
       "styles/index/xml-parser-ui.less",
-      "styles/index/json-parser-ui.less"
+      "styles/index/json-parser-ui.less",
+      "styles/index/wikitext-parser-ui.less",
     ]
   );
 
