@@ -16,6 +16,7 @@ import org.sweble.wikitext.parser.utils.SimpleParserConfig;
 import org.sweble.wikitext.parser.WikitextParser;
 import org.sweble.wikitext.parser.nodes.WtBold;
 import org.sweble.wikitext.parser.nodes.WtItalics;
+import org.sweble.wikitext.parser.nodes.WtNewline;
 import org.sweble.wikitext.parser.nodes.WtNode;
 import org.sweble.wikitext.parser.nodes.WtSection;
 import org.sweble.wikitext.parser.nodes.WtText;
@@ -35,6 +36,9 @@ import org.sweble.wikitext.parser.nodes.WtName;
 import org.sweble.wikitext.parser.nodes.WtValue;
 import org.sweble.wikitext.parser.nodes.WtParsedWikitextPage;
 import org.sweble.wikitext.parser.nodes.WtBody;
+import org.sweble.wikitext.parser.nodes.WtXmlEmptyTag;
+import org.sweble.wikitext.parser.nodes.WtXmlEndTag;
+import org.sweble.wikitext.parser.nodes.WtXmlStartTag;
 
 import org.sweble.wikitext.parser.WikitextEncodingValidator;
 import org.sweble.wikitext.parser.WikitextPreprocessor;
@@ -60,7 +64,7 @@ import com.google.refine.model.recon.ReconJob;
 
 
 public class WikitextImporter extends TabularImportingParserBase {
-    static final private Logger logger = LoggerFactory.getLogger(WikitextImporter.class);
+    // static final private Logger logger = LoggerFactory.getLogger(WikitextImporter.class);
     
     public WikitextImporter() {
         super(false);
@@ -249,10 +253,36 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
         
         public void visit(WtText text) {
+            writeText(text.getContent());
+        }
+        
+        public void visit(WtNewline e) {
+            writeText("\n");
+        }
+        
+        public void visit(WtXmlEmptyTag tag) {
+            if("br".equals(tag.getName())) {
+                writeText("\n");
+            }
+        }
+        
+        public void visit(WtXmlStartTag tag) {
+            if("br".equals(tag.getName())) {
+                writeText("\n");
+            }
+        }
+        
+        public void visit(WtXmlEndTag tag) {
+            if("br".equals(tag.getName())) {
+                writeText("\n");
+            }
+        }
+        
+        public void writeText(String text) {
             if (xmlAttrStringBuilder != null) {
-                xmlAttrStringBuilder.append(text.getContent());
+                xmlAttrStringBuilder.append(text);
             } else if (cellStringBuilder != null) {
-                cellStringBuilder.append(text.getContent());
+                cellStringBuilder.append(text);
             }
         }
         

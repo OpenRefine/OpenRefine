@@ -33,12 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.importers;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.io.StringReader;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -77,9 +74,9 @@ public class WikitextImporterTests extends ImporterTest {
     	String input = "\n"
 		+ "{|\n"
 		+ "|-\n"
-		+ "| a || b || c \n"
+		+ "| a || b<br/>2 || c \n"
 		+ "|-\n"
-		+ "| d || e || f\n"
+		+ "| d || e || f<br>\n"
 		+ "|-\n"
 		+ "|}\n";
     	try {
@@ -92,6 +89,7 @@ public class WikitextImporterTests extends ImporterTest {
     	Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "a");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b\n2");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
     
