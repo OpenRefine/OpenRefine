@@ -216,16 +216,4 @@ public class WikitextImporterTests extends ImporterTest {
         whenGetIntegerOption("headerLines", options, 1);
         whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
     }
-
-    private void verifyOptions() {
-        try {
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getBoolean("guessCellValueTypes");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-            verify(options, times(1)).getBoolean("blankSpanningCells");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
-        }
-
-    }
 }

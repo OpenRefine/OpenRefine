@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -53,7 +52,6 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconStats;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.util.JSONUtilities;

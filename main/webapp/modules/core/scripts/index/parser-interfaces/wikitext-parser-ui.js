@@ -183,7 +183,7 @@ Refine.WikitextParserUI.prototype._updatePreview = function() {
   this._progressContainer.show();
 
   this._controller.updateFormatAndOptions(this.getOptions(), function(result) {
-    if (result.status == "ok") {
+    if (result.status === "ok") {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
         var container = self._dataContainer.unbind().empty();

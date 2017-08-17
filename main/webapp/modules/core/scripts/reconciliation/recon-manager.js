@@ -132,7 +132,7 @@ ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
    if (service == null) {
       ReconciliationManager.registerStandardService(url, function(idx) {
           ReconciliationManager.save(function() {
-              f(ReconciliationManager.standardServices[i]);
+              f(ReconciliationManager.standardServices[idx]);
           });
       });
    } else {
@@ -141,10 +141,9 @@ ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
 };
 
 ReconciliationManager.ensureDefaultServicePresent = function() {
-   console.log('ensureDefaultServicePresent');
    var lang = $.i18n._('core-recon')["wd-recon-lang"];
    var url = "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api";
-   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { ; });
+   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { });
    return url;
 };
 
