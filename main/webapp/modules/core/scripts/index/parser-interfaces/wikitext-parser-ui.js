@@ -87,6 +87,7 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
   }
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
   options.blankSpanningCells = this._optionContainerElmts.blankSpanningCellsCheckbox[0].checked;
+  options.includeRawTemplates = this._optionContainerElmts.includeRawTemplatesCheckbox[0].checked;
 
   options.guessCellValueTypes = this._optionContainerElmts.guessCellValueTypesCheckbox[0].checked;
 
@@ -113,6 +114,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
   $('#or-import-blankSpanningCells').text($.i18n._('core-index-parser')["blank-spanning-cells"]);
+  $('#or-import-includeRawTemplates').text($.i18n._('core-index-parser')["include-raw-templates"]);
   $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
   $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
   $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
@@ -140,6 +142,10 @@ Refine.WikitextParserUI.prototype._initialize = function() {
 
   if (this._config.blankSpanningCells) {
     this._optionContainerElmts.blankSpanningCellsCheckbox.prop("checked", true);
+  }
+
+  if (this._config.includeRawTemplates) {
+    this._optionContainerElmts.includeRawTemplatesCheckbox.prop("checked", true);
   }
 
   if (this._config.storeBlankRows) {

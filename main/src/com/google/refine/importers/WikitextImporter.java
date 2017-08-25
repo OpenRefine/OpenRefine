@@ -19,6 +19,9 @@ import org.sweble.wikitext.parser.nodes.WtItalics;
 import org.sweble.wikitext.parser.nodes.WtNewline;
 import org.sweble.wikitext.parser.nodes.WtNode;
 import org.sweble.wikitext.parser.nodes.WtSection;
+import org.sweble.wikitext.parser.nodes.WtTemplate;
+import org.sweble.wikitext.parser.nodes.WtTemplateArgument;
+import org.sweble.wikitext.parser.nodes.WtTemplateArguments;
 import org.sweble.wikitext.parser.nodes.WtText;
 import org.sweble.wikitext.parser.nodes.WtInternalLink;
 import org.sweble.wikitext.parser.nodes.WtExternalLink;
@@ -77,6 +80,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "blankSpanningCells", true);
+        JSONUtilities.safePut(options, "includeRawTemplates", false);
         JSONUtilities.safePut(options, "wikiUrl", "https://en.wikipedia.org/wiki/");
         
         return options;
@@ -125,6 +129,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         private List<String> currentRow;
         
         private boolean blankSpanningCells;
+        private boolean includeRawTemplates;
         
         private int rowId;
         private List<SpanningCell> spanningCells;
@@ -138,8 +143,9 @@ public class WikitextImporter extends TabularImportingParserBase {
         private int spanningCellIdx;
         private List<String> internalLinksInCell;
         
-        public WikitextTableVisitor(boolean blankSpanningCells) {
+        public WikitextTableVisitor(boolean blankSpanningCells, boolean includeRawTemplates) {
             this.blankSpanningCells = blankSpanningCells;
+            this.includeRawTemplates = includeRawTemplates;
             caption = null;
             header = new ArrayList<String>();
             rows = new ArrayList<List<String>>();
@@ -165,7 +171,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         public void visit(WtNode e) {
             // Ignore other nodes
-            // System.out.println(e.getNodeName());
+            System.out.println(e.getNodeName());
         }
         
         /* Table handling */
@@ -343,7 +349,11 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
         
         public void visit(WtName e) {
-            currentXmlAttr = e.getAsString();
+            try {
+                currentXmlAttr = e.getAsString();
+            } catch (UnsupportedOperationException _) {
+                currentXmlAttr = null;
+            }
         }
         
         public void visit(WtValue e) {
@@ -351,7 +361,6 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
         
         /* Link management */
-        
         
         public void visit(WtInternalLink e) {
             currentInternalLink = e.getTarget().getAsString();
@@ -394,6 +403,29 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         public void visit(WtUrl e) {
             // already handled, in WtExternalLink, added here for clarity
+        }
+        
+        /* Templates */
+        
+        public void visit(WtTemplate e) {
+            if (includeRawTemplates) {
+                writeText("{{"+e.getName().getAsString());
+                WtTemplateArguments args = e.getArgs();
+                for (int i = 0; i != args.size(); i++) {
+                    writeText("|");
+                    iterate(args.get(i));
+                }
+                writeText("}}");
+            }
+        }
+        
+        public void visit(WtTemplateArgument e) {
+            writeText("|");
+            if(e.hasName()) {
+                writeText(e.getName().getAsString());
+                writeText("=");
+            }
+            iterate(e.getValue());
         }
         
         /* Content blocks */
@@ -546,7 +578,8 @@ public class WikitextImporter extends TabularImportingParserBase {
             
             // Compile the retrieved page
             boolean blankSpanningCells = JSONUtilities.getBoolean(options, "blankSpanningCells", true);
-            final WikitextTableVisitor vs = new WikitextTableVisitor(blankSpanningCells);
+            boolean includeRawTemplates = JSONUtilities.getBoolean(options, "includeRawTemplates", false);
+            final WikitextTableVisitor vs = new WikitextTableVisitor(blankSpanningCells, includeRawTemplates);
             vs.go(parsedArticle);
             
             WikiTableDataReader dataReader = new WikiTableDataReader(vs);
