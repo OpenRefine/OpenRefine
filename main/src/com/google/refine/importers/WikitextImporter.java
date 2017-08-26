@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.google.common.io.CharStreams;
 import de.fau.cs.osr.ptk.common.AstVisitor;
 
