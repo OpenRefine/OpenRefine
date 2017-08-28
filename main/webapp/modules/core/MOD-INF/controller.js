@@ -212,6 +212,7 @@ function registerImporting() {
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
+  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
 
   IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
 
@@ -344,7 +345,10 @@ function init() {
       "scripts/index/parser-interfaces/excel-parser-ui.js",
       "scripts/index/parser-interfaces/xml-parser-ui.js",
       "scripts/index/parser-interfaces/json-parser-ui.js",
-      "scripts/index/parser-interfaces/rdf-triples-parser-ui.js"
+      "scripts/index/parser-interfaces/rdf-triples-parser-ui.js",
+      "scripts/index/parser-interfaces/wikitext-parser-ui.js",
+
+      "scripts/reconciliation/recon-manager.js" // so that reconciliation functions are available to importers
     ]
   );
 
@@ -372,7 +376,8 @@ function init() {
       "styles/views/data-table-view.less", // for the preview table's styles
       "styles/index/fixed-width-parser-ui.less",
       "styles/index/xml-parser-ui.less",
-      "styles/index/json-parser-ui.less"
+      "styles/index/json-parser-ui.less",
+      "styles/index/wikitext-parser-ui.less",
     ]
   );
 

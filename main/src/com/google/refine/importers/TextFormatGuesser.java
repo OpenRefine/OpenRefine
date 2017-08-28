@@ -24,6 +24,8 @@ public class TextFormatGuesser implements FormatGuesser {
                 int closeBraces = 0;
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
+                int wikiTableBegin = 0;
+                int wikiTableRow = 0;
                 int trailingPeriods = 0;
                 
                 char firstChar = ' ';
@@ -37,6 +39,8 @@ public class TextFormatGuesser implements FormatGuesser {
                     closeBraces += countSubstrings(chunk, "}");
                     openAngleBrackets += countSubstrings(chunk, "<");
                     closeAngleBrackets += countSubstrings(chunk, ">");
+                    wikiTableBegin += countSubstrings(chunk, "{|");
+                    wikiTableRow += countSubstrings(chunk, "|-");
                     trailingPeriods += countLineSuffix(chunk, ".");
                     
                     if (!foundFirstChar) {
@@ -50,7 +54,9 @@ public class TextFormatGuesser implements FormatGuesser {
                 }
                 
                 if (foundFirstChar) {
-                    if ((firstChar == '{' || firstChar == '[') &&
+                    if (wikiTableBegin >= 1 && wikiTableRow >= 2) {
+                        return "text/wiki";
+                    } if ((firstChar == '{' || firstChar == '[') &&
                         openBraces >= 5 && closeBraces >= 5) {
                         return "text/json";
                     } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {

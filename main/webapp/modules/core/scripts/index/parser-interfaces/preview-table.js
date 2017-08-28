@@ -83,8 +83,13 @@ Refine.PreviewTable.prototype._render = function() {
         $('<span>').html("&nbsp;").appendTo(divContent);
       } else if ("e" in cell) {
         $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
-      } else if (!("r" in cell) || !cell.r) {
-        if (typeof cell.v !== "string") {
+      } else {
+        if ("r" in cell && cell.ri !== null) {
+          $('<a>')
+          .attr("href", "#") // we don't have access to the reconciliation data here
+          .text(cell.v)
+          .appendTo(divContent);
+        } else if (typeof cell.v !== "string") {
           if (typeof cell.v == "number") {
             divContent.addClass("data-table-cell-content-numeric");
           }

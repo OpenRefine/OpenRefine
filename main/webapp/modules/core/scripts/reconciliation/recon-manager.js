@@ -127,8 +127,27 @@ ReconciliationManager.save = function(f) {
   });
 };
 
+ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
+   var service = ReconciliationManager.getServiceFromUrl(url);
+   if (service == null) {
+      ReconciliationManager.registerStandardService(url, function(idx) {
+          ReconciliationManager.save(function() {
+              f(ReconciliationManager.standardServices[idx]);
+          });
+      });
+   } else {
+      f(service);
+   }  
+};
+
+ReconciliationManager.ensureDefaultServicePresent = function() {
+   var lang = $.i18n._('core-recon')["wd-recon-lang"];
+   var url = "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api";
+   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { });
+   return url;
+};
+
 (function() {
-  var lang = $.i18n._('core-recon')["wd-recon-lang"];
 
   $.ajax({
     async: false,
@@ -140,9 +159,7 @@ ReconciliationManager.save = function(f) {
         ReconciliationManager.standardServices = JSON.parse(data.value);
         ReconciliationManager._rebuildMap();
       } else {
-         ReconciliationManager.registerStandardService(
-	      "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api"
-              );
+        ReconciliationManager.ensureDefaultServicePresent();
       }
     },
     dataType: "json"

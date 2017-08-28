@@ -60,6 +60,7 @@ licenses/apache2.0.LICENSE.txt
     signpost
     opencsv
     textng
+    swc-parser-lazy
 
 Apache License 1.1
 ------------------
