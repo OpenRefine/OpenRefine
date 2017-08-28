@@ -1,10 +1,10 @@
 package org.openrefine.wikidata.schema;
 
-import com.google.refine.Jsonizable;
 
-
-public interface WbChangeExpr extends Jsonizable {
+public abstract class WbChangeExpr extends BiJsonizable {
     /* Represents a change on an item: adding a statement,
      * adding a label, adding a sitelink…
      */
+    
+
 }

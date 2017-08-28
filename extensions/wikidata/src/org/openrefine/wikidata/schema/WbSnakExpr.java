@@ -3,6 +3,7 @@ package org.openrefine.wikidata.schema;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -31,6 +32,24 @@ public class WbSnakExpr implements Jsonizable {
         writer.key("value");
         valueExpr.write(writer, options);
         writer.endObject();
+    }
+    
+    public static WbSnakExpr fromJSON(JSONObject obj) throws JSONException {
+        JSONObject propObj = obj.getJSONObject("prop");
+        WbPropExpr propExpr = WbPropConstant.fromJSON(propObj);
+        JSONObject valueObj = obj.getJSONObject("value");
+        String type = valueObj.getString(WbValueExpr.jsonTypeKey);
+        WbValueExpr valueExpr = null;
+        if (WbPropConstant.jsonType.equals(type)) {
+            valueExpr = WbPropConstant.fromJSON(valueObj);
+        } else if (WbItemConstant.jsonType.equals(type)) {
+            valueExpr = WbItemConstant.fromJSON(valueObj);
+        } else if (WbItemVariable.jsonType.equals(type)) {
+            valueExpr = WbItemVariable.fromJSON(valueObj);
+        } else if (WbStringConstant.jsonType.equals(type)) {
+            valueExpr = WbStringConstant.fromJSON(valueObj);
+        }
+        return new WbSnakExpr(propExpr, valueExpr);
     }
     
     public Snak evaluate(ExpressionContext ctxt) {

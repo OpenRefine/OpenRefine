@@ -3,13 +3,16 @@ package org.openrefine.wikidata.schema;
 import java.util.Properties;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 
-public class WbPropConstant implements WbPropExpr {
+public class WbPropConstant extends WbPropExpr {
     /* A constant property, that does not change depending on the row */
+    
+    public static final String jsonType = "wbpropconstant";
     
     private String pid;
     
@@ -18,12 +21,14 @@ public class WbPropConstant implements WbPropExpr {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeFields(JSONWriter writer, Properties options)
             throws JSONException {
-        writer.object();
         writer.key("pid");
         writer.value(pid);
-        writer.endObject();
+    }
+    
+    public static WbPropConstant fromJSON(JSONObject obj) throws JSONException {
+        return new WbPropConstant(obj.getString("pid"));
     }
 
     @Override
