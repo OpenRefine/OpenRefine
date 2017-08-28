@@ -129,7 +129,8 @@
         "blank-spanning-cells": "Remplir les cellules s'étendant sur plusieurs lignes ou colonnes avec des nulls",
         "include-raw-templates": "Inclure les modèles an tant que wikicode brut",
         "wiki-base-url": "Réconcilier au wiki ayant pour URL de base :",
-        "invalid-wikitext": "Aucun tableau n'a pu être extrait. Êtes-vous sûr·e que c'est un wiki-tableau valide ?"
+        "invalid-wikitext": "Aucun tableau n'a pu être extrait. Êtes-vous sûr·e que c'est un wiki-tableau valide ?",
+        "parse-references": "Extraire les références dans des colonnes supplémentaires"
     },
     "core-dialogs": {
         "cluster-edit": "Regrouper & éditer une colonne",
