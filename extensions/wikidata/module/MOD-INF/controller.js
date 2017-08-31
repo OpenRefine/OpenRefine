@@ -45,6 +45,11 @@ function init() {
     
     ExporterRegistry.registerExporter("qsv2", new QSV2());
    */
+
+    /*
+     * Commands
+     */
+    RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
      
     /*
      * Resources
