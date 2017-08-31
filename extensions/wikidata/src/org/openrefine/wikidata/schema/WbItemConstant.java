@@ -13,6 +13,8 @@ public class WbItemConstant extends WbItemExpr {
     /* Represents an item that does not vary,
      * it is independent of the row. */
     
+    public static final String jsonType = "wbitemconstant";
+    
     private String qid;
     private String label;
     
@@ -38,5 +40,8 @@ public class WbItemConstant extends WbItemExpr {
     public ItemIdValue evaluate(ExpressionContext ctxt) {
         return ItemIdValueImpl.create(qid, ctxt.getBaseIRI());
     }
-
+    
+    public String getJsonType() {
+        return jsonType;
+    }
 }

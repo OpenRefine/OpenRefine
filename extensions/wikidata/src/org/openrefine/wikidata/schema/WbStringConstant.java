@@ -35,4 +35,7 @@ public class WbStringConstant extends WbValueExpr {
         return Datamodel.makeStringValue(value);
     }
 
+    public String getJsonType() {
+        return jsonType;
+    }
 }

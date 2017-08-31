@@ -14,6 +14,8 @@ import com.google.refine.model.ReconCandidate;
 public class WbItemVariable extends WbItemExpr {
     /* An item that depends on a reconciled value in a column */
     
+    public static final String jsonType = "wbitemvariable";
+    
     private String columnName;
     
     public WbItemVariable(String columnName) {
@@ -41,4 +43,7 @@ public class WbItemVariable extends WbItemExpr {
         return null;
     }
 
+    public String getJsonType() {
+        return jsonType;
+    }
 }

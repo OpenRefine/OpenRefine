@@ -15,7 +15,8 @@ public abstract class WbItemExpr extends WbValueExpr {
             return WbItemConstant.fromJSON(obj);
         } else if (WbItemVariable.jsonType.equals(type)) {
             return WbItemVariable.fromJSON(obj);
+        } else {
+            throw new JSONException("unknown type for WbItemExpr");
         }
-        return null;
     }
 }

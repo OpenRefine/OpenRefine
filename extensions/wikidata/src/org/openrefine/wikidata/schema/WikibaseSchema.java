@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/*
-import org.deri.grefine.rdf.ResourceNode.RdfType;
-import org.deri.grefine.rdf.app.ApplicationContext;
-import org.deri.grefine.rdf.vocab.PrefixExistException;
-import org.deri.grefine.rdf.vocab.Vocabulary;
-import org.deri.grefine.rdf.vocab.VocabularyIndexException; */
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +56,7 @@ public class WikibaseSchema implements OverlayModel {
         JSONArray changeArr = o.getJSONArray("changes");
         WikibaseSchema schema = new WikibaseSchema();
         for (int i = 0; i != changeArr.length(); i++) {
-            WbChangeExpr changeExpr = WbClaimExpr.fromJSON(changeArr.getJSONObject(i));
+            WbChangeExpr changeExpr = WbItemStatementsExpr.fromJSON(changeArr.getJSONObject(i));
             schema.changeExprs.add(changeExpr);
         }
         return schema;
@@ -71,11 +65,14 @@ public class WikibaseSchema implements OverlayModel {
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
+        writer.object();
+        writer.key("changes");
         writer.array();
         for (WbChangeExpr changeExpr : changeExprs) {
             changeExpr.write(writer, options);
         }
         writer.endArray();
+        writer.endObject();
     }
     
     static public WikibaseSchema load(Project project, JSONObject obj) throws Exception {
