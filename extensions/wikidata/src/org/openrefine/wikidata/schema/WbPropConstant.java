@@ -15,9 +15,11 @@ public class WbPropConstant extends WbPropExpr {
     public static final String jsonType = "wbpropconstant";
     
     private String pid;
+    private String label;
     
-    public WbPropConstant(String pid) {
+    public WbPropConstant(String pid, String label) {
         this.pid = pid;
+        this.label = label;
     }
 
     @Override
@@ -25,14 +27,20 @@ public class WbPropConstant extends WbPropExpr {
             throws JSONException {
         writer.key("pid");
         writer.value(pid);
+        writer.key("label");
+        writer.value(label);
     }
     
     public static WbPropConstant fromJSON(JSONObject obj) throws JSONException {
-        return new WbPropConstant(obj.getString("pid"));
+        return new WbPropConstant(obj.getString("pid"), obj.getString("label"));
     }
 
     @Override
     public PropertyIdValue evaluate(ExpressionContext ctxt) {
         return PropertyIdValueImpl.create(pid, ctxt.getBaseIRI());
+    }
+    
+    public String getJsonType() {
+        return jsonType;
     }
 }

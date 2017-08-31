@@ -38,17 +38,7 @@ public class WbSnakExpr implements Jsonizable {
         JSONObject propObj = obj.getJSONObject("prop");
         WbPropExpr propExpr = WbPropConstant.fromJSON(propObj);
         JSONObject valueObj = obj.getJSONObject("value");
-        String type = valueObj.getString(WbValueExpr.jsonTypeKey);
-        WbValueExpr valueExpr = null;
-        if (WbPropConstant.jsonType.equals(type)) {
-            valueExpr = WbPropConstant.fromJSON(valueObj);
-        } else if (WbItemConstant.jsonType.equals(type)) {
-            valueExpr = WbItemConstant.fromJSON(valueObj);
-        } else if (WbItemVariable.jsonType.equals(type)) {
-            valueExpr = WbItemVariable.fromJSON(valueObj);
-        } else if (WbStringConstant.jsonType.equals(type)) {
-            valueExpr = WbStringConstant.fromJSON(valueObj);
-        }
+        WbValueExpr valueExpr = WbValueExpr.fromJSON(valueObj);
         return new WbSnakExpr(propExpr, valueExpr);
     }
     

@@ -171,19 +171,18 @@ SchemaAlignmentDialog.launch = function(onDone) {
   this._hasUnsavedChanges = false;
 
   this._createDialog();
-  // this._reset(schema, true);
+  this._reset(theProject.overlayModels.wikibaseSchema, true);
 }
 
-SchemaAlignmentDialog._reset = function(protograph, initial) {
-  this._originalProtograph = protograph || { rootNodes: [] };
-  this._protograph = cloneDeep(this._originalProtograph); // this is what can be munched on
+SchemaAlignment
 
-  if (!this._protograph.rootNodes.length) {
-    this._protograph.rootNodes.push(SchemaAlignment.createNewRootNode());
-  }
+SchemaAlignmentDialog._reset = function(schema, initial) {
+  this._originalSchema = schema || { changes: [] };
+  this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
 
-  $(this._nodeTable).empty();
+  $('#schema-alignment-statements-container').empty();
 
+  /*
   this._nodeUIs = [];
   for (var i = 0; i < this._protograph.rootNodes.length; i++) {
     this._nodeUIs.push(new SchemaAlignmentDialog.UINode(
@@ -195,9 +194,13 @@ SchemaAlignmentDialog._reset = function(protograph, initial) {
         mustBeCellTopic: true
       }
     ));
-  }
+  }*/
+  // TODO
 
-  this.preview(initial);
+  if (!this._schema.changes.length) {
+    // this._addItem();
+  }
+  // this.preview(initial);
 };
 
 SchemaAlignmentDialog._save = function(onDone) {
@@ -312,8 +315,8 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
         lst.push(SchemaAlignmentDialog._statementGroupToJSON($(this)));
     });
     var inputContainer = item.find(".wbs-item-input").first();
-    return {item: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
-            values: lst}; 
+    return {subject: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
+            statementGroups: lst}; 
 };
 
 SchemaAlignmentDialog._addStatementGroup = function(item) {
@@ -337,8 +340,8 @@ SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
     lst.push(SchemaAlignmentDialog._statementToJSON($(this)));
     });
     var inputContainer = statementGroup.find(".wbs-prop-input").first();
-    return {prop: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
-            values: lst};
+    return {property: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
+            statements: lst};
 };
 
 
@@ -360,7 +363,10 @@ SchemaAlignmentDialog._addStatement = function(statementGroup) {
 
 SchemaAlignmentDialog._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
-    return SchemaAlignmentDialog._inputContainerToJSON(inputContainer);
+    return {
+        value:SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
+        qualifiers:[],
+    };
 };
 
 SchemaAlignmentDialog._initField = function(inputContainer, mode) {
@@ -370,19 +376,28 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode) {
     var endpoint = null;
     if (mode === "item" || mode === "target") {
       endpoint = this._reconService.suggest.entity;
-    } else if (mode == "property") {
+    } else if (mode === "property") {
       endpoint = this._reconService.suggest.property;
     }
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
+    
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        inputContainer.data("jsonValue", {
-            type : "wbitemconstant",
-            id : data.id,
-            name: data.name,
-        });
+        if (mode ===  "item") {
+            inputContainer.data("jsonValue", {
+                type : "wbitemconstant",
+                qid : data.id,
+                label: data.name,
+            });
+        } else if (mode === "property") {
+            inputContainer.data("jsonValue", {
+                type : "wbpropconstant",
+                pid : data.id,
+                label: data.name,
+            });
+        }
     });
   }
 
@@ -407,7 +422,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode) {
         });
         inputContainer.data("jsonValue", {
             type : "wbitemvariable",
-            name: ui.draggable.text(),
+            columnName: ui.draggable.text(),
         });
         return true; 
     }).on("dropactivate", function(evt, ui) {
@@ -448,7 +463,7 @@ SchemaAlignmentDialog.getJSON = function() {
      list.push(SchemaAlignmentDialog._itemToJSON($(this)));
   });
   return {
-        'items': list,
+        'changes': list,
         'wikibasePrefix': this._wikibasePrefix,
   };
 };

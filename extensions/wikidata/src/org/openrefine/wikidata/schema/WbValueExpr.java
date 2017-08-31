@@ -1,5 +1,7 @@
 package org.openrefine.wikidata.schema;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 
@@ -15,4 +17,21 @@ public abstract class WbValueExpr extends BiJsonizable {
      * returns a wikibase value suitable to be the target of a claim.
      */
     public abstract Value evaluate(ExpressionContext ctxt);
+    
+    public static WbValueExpr fromJSON(JSONObject obj) throws JSONException {
+        String type = obj.getString(WbValueExpr.jsonTypeKey);
+        WbValueExpr valueExpr = null;
+        if (WbPropConstant.jsonType.equals(type)) {
+            valueExpr = WbPropConstant.fromJSON(obj);
+        } else if (WbItemConstant.jsonType.equals(type)) {
+            valueExpr = WbItemConstant.fromJSON(obj);
+        } else if (WbItemVariable.jsonType.equals(type)) {
+            valueExpr = WbItemVariable.fromJSON(obj);
+        } else if (WbStringConstant.jsonType.equals(type)) {
+            valueExpr = WbStringConstant.fromJSON(obj);
+        } else {
+            throw new JSONException("unknown type for WbValueExpr");
+        }
+        return valueExpr;
+    }
 }

@@ -13,35 +13,34 @@ import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 
-public class WbClaimExpr extends WbChangeExpr {
+public class WbStatementExpr extends BiJsonizable {
     
-    public static String jsonType = "wbclaimexpr";
+    public static final String jsonType = "wbstatementexpr";
     
-    private WbItemExpr subjectExpr;
-    private WbSnakExpr mainSnakExpr;
+    private WbValueExpr mainSnakValueExpr;
     private List<WbSnakExpr> qualifierExprs;
     // TODO: references
     
-    public WbClaimExpr(WbItemExpr subjectExpr,
-                       WbSnakExpr mainSnakExpr,
+    public WbStatementExpr(WbValueExpr mainSnakValueExpr,
                        List<WbSnakExpr> qualifierExprs) {
-        this.subjectExpr = subjectExpr;
-        this.mainSnakExpr = mainSnakExpr;
+        this.mainSnakValueExpr = mainSnakValueExpr;
         this.qualifierExprs = qualifierExprs;
     }
 
     @Override
     public void writeFields(JSONWriter writer, Properties options)
             throws JSONException {
-        writer.key("subject");
-        subjectExpr.write(writer, options);
-        writer.key("mainsnak");
-        mainSnakExpr.write(writer, options);
+        writer.key("value");
+        mainSnakValueExpr.write(writer, options);
         writer.key("qualifiers");
         writer.array();
         for (WbSnakExpr expr : qualifierExprs) {
@@ -50,17 +49,15 @@ public class WbClaimExpr extends WbChangeExpr {
         writer.endArray();
     }
     
-    public static WbClaimExpr fromJSON(JSONObject obj) throws JSONException {
-        JSONObject subjObj = obj.getJSONObject("subject");
-        JSONObject mainSnakObj = obj.getJSONObject("mainsnak");
+    public static WbStatementExpr fromJSON(JSONObject obj) throws JSONException {
+        JSONObject mainSnakObj = obj.getJSONObject("value");
         JSONArray qualifiersArr = obj.getJSONArray("qualifiers");
         List<WbSnakExpr> qualifierExprs = new ArrayList<WbSnakExpr>();
         for (int i = 0; i != qualifiersArr.length(); i++) {
             qualifierExprs.add(WbSnakExpr.fromJSON(qualifiersArr.getJSONObject(i)));
         }
-        return new WbClaimExpr(
-                WbItemExpr.fromJSON(subjObj),
-                WbSnakExpr.fromJSON(mainSnakObj),
+        return new WbStatementExpr(
+                WbValueExpr.fromJSON(mainSnakObj),
                 qualifierExprs);
     }
     
@@ -80,12 +77,18 @@ public class WbClaimExpr extends WbChangeExpr {
         return snakGroups;
     }
     
-    public Claim evaluate(ExpressionContext ctxt) {
-        ItemIdValue subject = subjectExpr.evaluate(ctxt);
-        Snak mainSnak = mainSnakExpr.evaluate(ctxt);
+    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) {
+        Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
+        Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         List<Snak> qualifiers = new ArrayList<Snak>(qualifierExprs.size());
         List<SnakGroup> groupedQualifiers = groupSnaks(qualifiers);
-        return Datamodel.makeClaim(subject, mainSnak, groupedQualifiers);
+        Claim claim = Datamodel.makeClaim(subject, mainSnak, groupedQualifiers);
+        List<Reference> references = new ArrayList<Reference>();
+        StatementRank rank = StatementRank.NORMAL;
+        return Datamodel.makeStatement(claim, references, rank, "");
     }
 
+    public String getJsonType() {
+        return jsonType;
+    }
 }

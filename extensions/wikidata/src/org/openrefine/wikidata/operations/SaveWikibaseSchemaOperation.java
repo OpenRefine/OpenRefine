@@ -38,7 +38,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         writer.key("op");
         writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description");
-        writer.value("Save RDF schema skeleton");
+        writer.value("Save Wikibase schema skeleton");
         writer.key("schema");
         _schema.write(writer, options);
         writer.endObject();

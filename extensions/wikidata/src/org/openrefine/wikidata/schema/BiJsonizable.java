@@ -10,8 +10,9 @@ import com.google.refine.Jsonizable;
 
 public abstract class BiJsonizable implements Jsonizable {
     
-    public static String jsonType;
-    public static final String jsonTypeKey = "@type";
+    // public static String jsonType;
+    public static String jsonType = null;
+    public static final String jsonTypeKey = "type";
     
     public abstract void writeFields(JSONWriter writer, Properties options)
             throws JSONException;
@@ -20,9 +21,10 @@ public abstract class BiJsonizable implements Jsonizable {
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key(jsonTypeKey);
-        writer.value(jsonType);
+        writer.value(getJsonType());
         writeFields(writer, options);
         writer.endObject();
     }
-
+    
+    public abstract String getJsonType();
 }
