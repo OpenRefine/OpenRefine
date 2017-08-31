@@ -51,25 +51,43 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 5px;
 }
 
-.schema-alignment-draggable-column {
+.wbs-draggable-column {
     border: 1px solid #aaa;
     padding: 2px;
     margin: 2px;
     background-color: #eee;
     display: inline-block;
+    padding-bottom: 3px;
+}
+
+.wbs-reconciled-column {
+    border-bottom: 3px solid #282;
+    padding-bottom: 1px;
+}
+
+.wbs-accepting-input {
+    box-shadow: inset 0 0 10px #a7cdff;
 }
 
 .wbs-item-input, .wbs-prop-input, .wbs-target-input {
     width: 160px;
     height: 20px;
-    border: 1px solid #a2a9b1;
+    /* border: 1px solid #a2a9b1; */
     display: inline-block;
-    background: white;
+    /* background: white; */
     margin: 5px;
 }
 
 .wbs-prop-input {
     width: 120px;
+}
+
+.wbs-item-input input, .wbs-prop-input input, .wbs-target-input input {
+    width: 100%;
+}
+
+.wbs-draggable-column img {
+    float: right;
 }
 
 .wbs-toolbar {
