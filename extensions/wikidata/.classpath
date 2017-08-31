@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="/OpenRefine/server/lib/servlet-api-2.5.jar" sourcepath="/OpenRefine/server/lib-src/servlet-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="/OpenRefine/main/webapp/WEB-INF/lib-src/butterfly-trunk.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/tests/server/lib/testng-6.8.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/velocity-1.5.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/server/lib/jetty-6.1.22.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/server/lib/jetty-util-6.1.22.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/tests/server/lib/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/OpenRefine"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/wdtk-datamodel-0.8.0-SNAPSHOT-jar-with-dependencies.jar" sourcepath="module/MOD-INF/lib-src/wdtk-datamodel-0.8.0-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+</classpath>
