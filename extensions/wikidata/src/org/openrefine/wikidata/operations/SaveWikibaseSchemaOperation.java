@@ -63,11 +63,11 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     static public class WikibaseSchemaChange implements Change {
         final protected WikibaseSchema _newSchema;
-        protected WikibaseSchema _oldSchema;
+        protected WikibaseSchema _oldSchema = null;
         public final static String overlayModelKey = "wikibaseSchema";
         
-        public WikibaseSchemaChange(WikibaseSchema schema) {
-            _newSchema = schema;
+        public WikibaseSchemaChange(WikibaseSchema newSchema) {
+            _newSchema = newSchema;
         }
         
         public void apply(Project project) {

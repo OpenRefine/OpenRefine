@@ -39,12 +39,10 @@ function init() {
     /*
      *  Exporters
      */
-   /*
     var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
-    var QSV2Exporter = Packages.org.openrefine.wikidata.exporters.QuickStatements2Exporter;
+    var QSExporter = Packages.org.openrefine.wikidata.exporters.QuickStatementsExporter;
     
-    ExporterRegistry.registerExporter("qsv2", new QSV2());
-   */
+    ExporterRegistry.registerExporter("quickstatements", new QSExporter());
 
     /*
      * Commands

@@ -82,86 +82,8 @@ SchemaAlignment.autoAlign = function() {
   }
 };
 
-SchemaAlignment._batchSearch = function(queries, onDone) {
-  var keys = [];
-  for (var n in queries) {
-    if (queries.hasOwnProperty(n)) {
-      keys.push(n);
-    }
-  }
-
-  var result = {};
-  var args = [];
-  var makeBatch = function(keyBatch) {
-    var batch = {};
-    for (var k = 0; k < keyBatch.length; k++) {
-      var key = keyBatch[k];
-      batch[key] = queries[key];
-    }
-
-    args.push("http://api.freebase.com/api/service/search?" + 
-        $.param({ "queries" : JSON.stringify(batch) }) + "&callback=?");
-
-    args.push(null); // no data
-    args.push(function(data) {
-      for (var k = 0; k < keyBatch.length; k++) {
-        var key = keyBatch[k];
-        result[key] = data[key];
-      }
-    });
-  };
-
-  for (var i = 0; i < keys.length; i += 10) {
-    makeBatch(keys.slice(i, i + 10));
-  }
-
-  args.push(function() {
-    onDone(result);
-  });
-
-  Ajax.chainGetJSON.apply(null, args);
-};
-
 SchemaAlignment._cleanName = function(s) {
   return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
-};
-
-SchemaAlignment.createNewRootNode = function() {
-  var rootNode = null;
-  var links = [];
-  var columns = theProject.columnModel.columns;
-  for (var i = 0; i < columns.length; i++) {
-    var column = columns[i];
-    var target = {
-        nodeType: "cell-as-topic",
-        columnName: column.name,
-        createForNoReconMatch: true
-    };
-    if ((column.reconConfig) && 
-        ReconciliationManager.isFreebaseIdOrMid(column.reconConfig.identifierSpace) &&
-        ReconciliationManager.isFreebaseId(column.reconConfig.schemaSpace) &&
-        (column.reconConfig.type)) {
-
-      target.type = {
-        id: column.reconConfig.type.id,
-        name: column.reconConfig.type.name
-      };
-    }
-
-    if (column.name == theProject.columnModel.keyColumnName) {
-      rootNode = target;
-    } else {
-      links.push({
-        property: null,
-        target: target
-      });
-    }
-  }
-
-  rootNode = rootNode || { nodeType: "cell-as-topic" };
-  rootNode.links = links;
-
-  return rootNode;
 };
 
 var SchemaAlignmentDialog = {};
@@ -174,28 +96,17 @@ SchemaAlignmentDialog.launch = function(onDone) {
   this._reset(theProject.overlayModels.wikibaseSchema, true);
 }
 
-SchemaAlignment
-
 SchemaAlignmentDialog._reset = function(schema, initial) {
   this._originalSchema = schema || { changes: [] };
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
 
   $('#schema-alignment-statements-container').empty();
 
-  /*
-  this._nodeUIs = [];
-  for (var i = 0; i < this._protograph.rootNodes.length; i++) {
-    this._nodeUIs.push(new SchemaAlignmentDialog.UINode(
-      this,
-      this._protograph.rootNodes[i], 
-      this._nodeTable, 
-      {
-        expanded: true,
-        mustBeCellTopic: true
-      }
-    ));
-  }*/
-  // TODO
+  if (this._schema && this._schema.changes) {
+    for(var i = 0; i != this._schema.changes.length; i++) {
+      this._addItem(this._schema.changes[i]);
+    }
+  }
 
   if (!this._schema.changes.length) {
     // this._addItem();
@@ -227,6 +138,16 @@ SchemaAlignmentDialog._save = function(onDone) {
   );
 };
 
+SchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
+  var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
+  if (reconciled) {
+    cell.addClass('wbs-reconciled-column');
+  } else {
+    cell.addClass('wbs-unreconciled-column');
+  }
+  return cell;
+}
+
 SchemaAlignmentDialog._createDialog = function() {
   var self = this;
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/schema-alignment-dialog.html"));
@@ -241,13 +162,8 @@ SchemaAlignmentDialog._createDialog = function() {
   for (var i = 0; i < columns.length; i++) {
      var column = columns[i];
      var reconConfig = column.reconConfig;
-     var cell = $("<div></div>").addClass('wbs-draggable-column').text(columns[i].name);
-     console.log(column.reconStats);
-     if (reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats) {
-         cell.addClass('wbs-reconciled-column');
-     } else {
-         cell.addClass('wbs-unreconciled-column');
-     }
+     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name, 
+        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
   }
 
@@ -294,18 +210,33 @@ SchemaAlignmentDialog._createDialog = function() {
   SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
 };
 
-SchemaAlignmentDialog._addItem = function() {
+SchemaAlignmentDialog._addItem = function(json) {
+  console.log('addItem')
+  console.log(json);
+  var subject = null;
+  var statementGroups = null;
+  if (json) {
+     subject = json.subject;
+     statementGroups = json.statementGroups;
+  }
+
   var item = $('<div></div>').addClass('wbs-item');
   var inputContainer = $('<div></div>').addClass('wbs-item-input').appendTo(item);
-  SchemaAlignmentDialog._initField(inputContainer, "item");
+  SchemaAlignmentDialog._initField(inputContainer, "item", subject);
   var right = $('<div></div>').addClass('wbs-right').appendTo(item);
   $('<div></div>').addClass('wbs-statement-group-container').appendTo(right);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   $('<a></a>').addClass('wbs-add-statement-group').text('add statement').click(function() {
-     SchemaAlignmentDialog._addStatementGroup(item);
+     SchemaAlignmentDialog._addStatementGroup(item, null);
   }).appendTo(toolbar);
 
-  SchemaAlignmentDialog._addStatementGroup(item);
+  if (statementGroups) {
+     for(var i = 0; i != statementGroups.length; i++) {
+        SchemaAlignmentDialog._addStatementGroup(item, statementGroups[i]);
+     }
+  } else {
+     SchemaAlignmentDialog._addStatementGroup(item);
+  }
   $('#schema-alignment-statements-container').append(item);
 }
 
@@ -319,19 +250,35 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
             statementGroups: lst}; 
 };
 
-SchemaAlignmentDialog._addStatementGroup = function(item) {
+SchemaAlignmentDialog._addStatementGroup = function(item, json) {
+  console.log('addStatementGroup')
+  console.log(json);
+  var property = null;
+  var statements = null;
+  if (json) {
+     property = json.property;
+     statements = json.statements;
+  }
+
   var container = item.find('.wbs-statement-group-container').first();
   var statementGroup = $('<div></div>').addClass('wbs-statement-group');
   var inputContainer = $('<div></div>').addClass('wbs-prop-input').appendTo(statementGroup);
-  SchemaAlignmentDialog._initField(inputContainer, "property");
+  SchemaAlignmentDialog._initField(inputContainer, "property", property);
   var right = $('<div></div>').addClass('wbs-right').appendTo(statementGroup);
   $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   $('<a></a>').addClass('wbs-add-statement').text('add value').click(function() {
-     SchemaAlignmentDialog._addStatement(statementGroup);
+     SchemaAlignmentDialog._addStatement(statementGroup, null);
   }).appendTo(toolbar);
   container.append(statementGroup);
-  SchemaAlignmentDialog._addStatement(statementGroup);
+
+  if (statements) {
+     for (var i = 0; i != statements.length; i++) {
+        SchemaAlignmentDialog._addStatement(statementGroup, statements[i]);
+     }
+  } else {
+     SchemaAlignmentDialog._addStatement(statementGroup, null);
+  }
 }
 
 SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
@@ -345,7 +292,16 @@ SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
 };
 
 
-SchemaAlignmentDialog._addStatement = function(statementGroup) {
+SchemaAlignmentDialog._addStatement = function(statementGroup, json) {
+  var qualifiers = null;
+  var value = null;
+  console.log('add statement');
+  console.log(json);
+  if (json) {
+    qualifiers = json.qualifiers;
+    value = json.value;
+  }
+ 
   var container = statementGroup.find('.wbs-statement-container').first();
   var statement = $('<div></div>').addClass('wbs-statement');
   var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
@@ -353,7 +309,7 @@ SchemaAlignmentDialog._addStatement = function(statementGroup) {
      SchemaAlignmentDialog._removeStatement(statement);
   }).appendTo(toolbar1);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
-  SchemaAlignmentDialog._initField(inputContainer, "target");
+  SchemaAlignmentDialog._initField(inputContainer, "target", value);
   var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
   $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
   var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
@@ -366,10 +322,11 @@ SchemaAlignmentDialog._statementToJSON = function (statement) {
     return {
         value:SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
         qualifiers:[],
+        references:[],
     };
 };
 
-SchemaAlignmentDialog._initField = function(inputContainer, mode) {
+SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) {
   var input = $('<input></input>').appendTo(inputContainer);
 
   if (this._reconService !== null) {
@@ -401,25 +358,31 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode) {
     });
   }
 
+  var acceptDraggableColumn = function(column) {
+    input.hide();
+    var columnDiv = $('<div></div>').appendTo(inputContainer);
+    column.appendTo(columnDiv);
+    var deleteButton = $('&nbsp;<img src="images/close.png" />').addClass('wbs-delete-column-button').appendTo(column);
+    deleteButton.attr('alt', 'remove column');
+    deleteButton.click(function () {
+        columnDiv.remove();
+        input.show();
+    });
+  };
+
   // If it isn't a property, make it droppable
   if (mode !== "property") {
     var acceptClass = ".wbs-draggable-column";
     if (mode === "item") {
         acceptClass = ".wbs-reconciled-column";
     }
-        
+
+       
     inputContainer.droppable({
         accept: acceptClass,
     }).on("drop", function (evt, ui) {
-        input.hide();
-        var columnDiv = $('<div></div>').appendTo(inputContainer);
-        var column = ui.draggable.clone().appendTo(columnDiv);
-        var deleteButton = $('&nbsp;<img src="images/close.png" />').addClass('wbs-delete-column-button').appendTo(column);
-        deleteButton.attr('alt', 'remove column');
-        deleteButton.click(function () {
-            columnDiv.remove();
-            input.show();
-        });
+        var column = ui.draggable.clone();
+        acceptDraggableColumn(column);
         inputContainer.data("jsonValue", {
             type : "wbitemvariable",
             columnName: ui.draggable.text(),
@@ -430,6 +393,20 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode) {
     }).on("dropdeactivate", function(evt, ui) {
         input.removeClass("wbs-accepting-input");
     });
+  }
+
+  // Init with the provided initial value.
+  console.log('initField');
+  if (initialValue) {
+     console.log(initialValue);
+     console.log(initialValue.type);
+     if (initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
+        input.val(initialValue.label);
+     } else if (initialValue.type == "wbitemvariable") {
+        var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, true);
+        acceptDraggableColumn(cell);
+     }
+     inputContainer.data("jsonValue", initialValue);
   }
 }
 

@@ -28,12 +28,15 @@ public class WbStatementExpr extends BiJsonizable {
     
     private WbValueExpr mainSnakValueExpr;
     private List<WbSnakExpr> qualifierExprs;
+    private List<WbReferenceExpr> referenceExprs;
     // TODO: references
     
     public WbStatementExpr(WbValueExpr mainSnakValueExpr,
-                       List<WbSnakExpr> qualifierExprs) {
+                       List<WbSnakExpr> qualifierExprs,
+                       List<WbReferenceExpr> referenceExprs) {
         this.mainSnakValueExpr = mainSnakValueExpr;
         this.qualifierExprs = qualifierExprs;
+        this.referenceExprs = referenceExprs;
     }
 
     @Override
@@ -51,14 +54,26 @@ public class WbStatementExpr extends BiJsonizable {
     
     public static WbStatementExpr fromJSON(JSONObject obj) throws JSONException {
         JSONObject mainSnakObj = obj.getJSONObject("value");
-        JSONArray qualifiersArr = obj.getJSONArray("qualifiers");
+        
         List<WbSnakExpr> qualifierExprs = new ArrayList<WbSnakExpr>();
-        for (int i = 0; i != qualifiersArr.length(); i++) {
-            qualifierExprs.add(WbSnakExpr.fromJSON(qualifiersArr.getJSONObject(i)));
+        if (obj.has("qualifiers")) {
+            JSONArray qualifiersArr = obj.getJSONArray("qualifiers");
+            for (int i = 0; i != qualifiersArr.length(); i++) {
+                qualifierExprs.add(WbSnakExpr.fromJSON(qualifiersArr.getJSONObject(i)));
+            }
+        }
+        
+        List<WbReferenceExpr> referenceExprs = new ArrayList<WbReferenceExpr>();
+        if (obj.has("references")) {
+            JSONArray referencesArr = obj.getJSONArray("references");
+            for (int i = 0; i != referencesArr.length(); i++) {
+                referenceExprs.add(WbReferenceExpr.fromJSON(referencesArr.getJSONObject(i)));
+            }
         }
         return new WbStatementExpr(
                 WbValueExpr.fromJSON(mainSnakObj),
-                qualifierExprs);
+                qualifierExprs,
+                referenceExprs);
     }
     
     public static List<SnakGroup> groupSnaks(List<Snak> snaks) {

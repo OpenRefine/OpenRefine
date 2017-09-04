@@ -41,7 +41,7 @@ public class WbSnakExpr implements Jsonizable {
         WbValueExpr valueExpr = WbValueExpr.fromJSON(valueObj);
         return new WbSnakExpr(propExpr, valueExpr);
     }
-    
+   
     public Snak evaluate(ExpressionContext ctxt) {
         PropertyIdValue propertyId = propExpr.evaluate(ctxt);
         Value value = valueExpr.evaluate(ctxt);
