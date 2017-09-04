@@ -92,7 +92,7 @@ public class WbStatementExpr extends BiJsonizable {
         return snakGroups;
     }
     
-    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) {
+    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) throws SkipStatementException {
         Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         List<Snak> qualifiers = new ArrayList<Snak>(qualifierExprs.size());

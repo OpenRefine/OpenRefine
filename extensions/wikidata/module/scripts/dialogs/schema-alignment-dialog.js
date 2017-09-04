@@ -111,7 +111,7 @@ SchemaAlignmentDialog._reset = function(schema, initial) {
   if (!this._schema.changes.length) {
     // this._addItem();
   }
-  // this.preview(initial);
+  this.preview(initial);
 };
 
 SchemaAlignmentDialog._save = function(onDone) {
@@ -130,6 +130,7 @@ SchemaAlignmentDialog._save = function(onDone) {
         theProject.overlayModels.wikibaseSchema = schema;
 
         self._elmts.statusIndicator.hide();
+        $('.invalid-schema-warning').hide();
         self._hasUnsavedChanges = false;
 
         if (onDone) onDone();
@@ -208,6 +209,7 @@ SchemaAlignmentDialog._createDialog = function() {
 
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
+  this.preview();
 };
 
 SchemaAlignmentDialog._addItem = function(json) {
@@ -342,7 +344,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        if (mode ===  "item") {
+        if (mode ===  "item" || mode === "target") {
             inputContainer.data("jsonValue", {
                 type : "wbitemconstant",
                 qid : data.id,
@@ -355,6 +357,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
                 label: data.name,
             });
         }
+        SchemaAlignmentDialog._hasChanged();
     });
   }
 
@@ -367,6 +370,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     deleteButton.click(function () {
         columnDiv.remove();
         input.show();
+        SchemaAlignmentDialog._hasChanged();
     });
   };
 
@@ -387,6 +391,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
             type : "wbitemvariable",
             columnName: ui.draggable.text(),
         });
+        SchemaAlignmentDialog._hasChanged();
         return true; 
     }).on("dropactivate", function(evt, ui) {
         input.addClass("wbs-accepting-input");
@@ -421,6 +426,7 @@ SchemaAlignmentDialog._removeStatement = function(statement) {
   if (remainingStatements === 0) {
       statementGroup.remove();
   }
+  SchemaAlignmentDialog._hasChanged();
 }
 /*
 SchemaAlignmentDialog._addStatement = function() {
@@ -445,25 +451,33 @@ SchemaAlignmentDialog.getJSON = function() {
   };
 };
 
+SchemaAlignmentDialog._hasChanged = function() {
+  this._hasUnsavedChanges = true;
+  SchemaAlignmentDialog.preview(false);
+}
+
 SchemaAlignmentDialog.preview = function(initial) {
   var self = this;
 
+  $('.invalid-schema-warning').hide();
   this._previewPanes.empty();
+/*
   if (!(initial)) {
     this._elmts.statusIndicator.show().text("There are unsaved changes.");
     this._hasUnsavedChanges = true;
   }
+*/
 
-  var protograph = this.getJSON();
+  var schema = this.getJSON();
   $.post(
-    "command/freebase/preview-protograph?" + $.param({ project: theProject.id }),
-    { protograph: JSON.stringify(protograph), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+    "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
+    { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
-      if ("mqllike" in data) {
-        $(self._previewPanes[0]).text(JSON.stringify(data.mqllike, null, 2));
+      if ("quickstatements" in data) {
+        $(self._previewPanes[0]).text(data.quickstatements);
       }
-      if ("tripleloader" in data) {
-        $(self._previewPanes[1]).text(data.tripleloader);
+      if ("code" in data && data.code === "error") {
+         $('.invalid-schema-warning').show();
       }
     },
     "json"
@@ -472,7 +486,7 @@ SchemaAlignmentDialog.preview = function(initial) {
 
 SchemaAlignmentDialog._findColumn = function(cellIndex) {
   var columns = theProject.columnModel.columns;
-  for (var i = 0; i < columns.length; i++) {
+    for (var i = 0; i < columns.length; i++) {
     var column = columns[i];
     if (column.cellIndex == cellIndex) {
       return column;

@@ -48,6 +48,7 @@ function init() {
      * Commands
      */
     RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
+    RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
      
     /*
      * Resources

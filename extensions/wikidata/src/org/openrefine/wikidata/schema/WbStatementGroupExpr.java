@@ -56,7 +56,7 @@ public class WbStatementGroupExpr extends BiJsonizable {
                 claimExprs);
     }
 
-    public StatementGroup evaluate(ExpressionContext ctxt, ItemIdValue subject) {
+    public StatementGroup evaluate(ExpressionContext ctxt, ItemIdValue subject) throws SkipStatementException {
         PropertyIdValue propertyId = propertyExpr.evaluate(ctxt);
         List<Statement> statements = new ArrayList<Statement>(claimExprs.size());
         for(WbStatementExpr expr : claimExprs) {

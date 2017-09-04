@@ -7,7 +7,7 @@ import org.openrefine.wikidata.schema.WbValueExpr;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 public abstract class WbItemExpr extends WbValueExpr {
-    public abstract ItemIdValue evaluate(ExpressionContext ctxt);
+    public abstract ItemIdValue evaluate(ExpressionContext ctxt) throws SkipStatementException;
     
     public static WbItemExpr fromJSON(JSONObject obj) throws JSONException {
         String type = obj.getString(jsonTypeKey);

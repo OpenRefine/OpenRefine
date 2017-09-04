@@ -59,7 +59,12 @@ public class WikibaseSchema implements OverlayModel {
         List<StatementGroup> result = new ArrayList<StatementGroup>();
         for (WbChangeExpr changeExpr : changeExprs) {
             WbItemStatementsExpr expr = (WbItemStatementsExpr)changeExpr;
-            result.addAll(expr.evaluate(ctxt));
+            
+            try {
+                result.addAll(expr.evaluate(ctxt));
+            } catch (SkipStatementException e) {
+                continue;
+            }
         }
         return result;
     }
