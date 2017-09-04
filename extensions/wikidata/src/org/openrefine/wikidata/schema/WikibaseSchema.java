@@ -10,9 +10,12 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
+import org.openrefine.wikidata.schema.ExpressionContext;
 
 public class WikibaseSchema implements OverlayModel {
 
@@ -20,7 +23,7 @@ public class WikibaseSchema implements OverlayModel {
 	
     final protected List<WbChangeExpr> changeExprs = new ArrayList<WbChangeExpr>();
     
-    protected String baseUri;
+    protected String baseUri = "http://www.wikidata.org/entity/";
 
     @Override
     public void onBeforeSave(Project project) {
@@ -50,6 +53,24 @@ public class WikibaseSchema implements OverlayModel {
 
     public List<WbChangeExpr> getChangeExpressions() {
         return changeExprs;
+    }
+    
+    public List<StatementGroup> evaluate(ExpressionContext ctxt) {
+        List<StatementGroup> result = new ArrayList<StatementGroup>();
+        for (WbChangeExpr changeExpr : changeExprs) {
+            WbItemStatementsExpr expr = (WbItemStatementsExpr)changeExpr;
+            result.addAll(expr.evaluate(ctxt));
+        }
+        return result;
+    }
+    
+    public List<StatementGroup> evaluate(Project project) {
+        List<StatementGroup> result = new ArrayList<StatementGroup>();
+        for (Row row : project.rows)  {
+            ExpressionContext ctxt = new ExpressionContext(baseUri, row, project.columnModel);
+            result.addAll(evaluate(ctxt));
+        }
+        return result;
     }
 
     static public WikibaseSchema reconstruct(JSONObject o) throws JSONException {

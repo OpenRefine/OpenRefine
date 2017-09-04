@@ -30,7 +30,7 @@ public abstract class WbValueExpr extends BiJsonizable {
         } else if (WbStringConstant.jsonType.equals(type)) {
             valueExpr = WbStringConstant.fromJSON(obj);
         } else {
-            throw new JSONException("unknown type for WbValueExpr");
+            throw new JSONException("unknown type '"+type+"' for WbValueExpr");
         }
         return valueExpr;
     }
