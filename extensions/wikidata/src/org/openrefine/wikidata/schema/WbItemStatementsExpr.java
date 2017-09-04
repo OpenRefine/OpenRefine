@@ -49,7 +49,7 @@ public class WbItemStatementsExpr extends WbChangeExpr {
                 statementExprs);
     }
     
-    public List<StatementGroup> evaluate(ExpressionContext ctxt) {
+    public List<StatementGroup> evaluate(ExpressionContext ctxt) throws SkipStatementException {
         List<StatementGroup> results = new ArrayList<StatementGroup>(statementGroupExprs.size());
         ItemIdValue subjectId = subjectExpr.evaluate(ctxt);
         for(WbStatementGroupExpr expr : statementGroupExprs) {

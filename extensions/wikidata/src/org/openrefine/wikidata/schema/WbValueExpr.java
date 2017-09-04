@@ -11,12 +11,11 @@ public abstract class WbValueExpr extends BiJsonizable {
      * of a statement.
      */
     
- 
     /*
      * Evaluates the value expression in a given context,
      * returns a wikibase value suitable to be the target of a claim.
      */
-    public abstract Value evaluate(ExpressionContext ctxt);
+    public abstract Value evaluate(ExpressionContext ctxt) throws SkipStatementException;
     
     public static WbValueExpr fromJSON(JSONObject obj) throws JSONException {
         String type = obj.getString(WbValueExpr.jsonTypeKey);

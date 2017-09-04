@@ -43,7 +43,7 @@ public class WbReferenceExpr extends BiJsonizable {
         return new WbReferenceExpr(lst);
     }
     
-    public Reference evaluate(ExpressionContext ctxt) {
+    public Reference evaluate(ExpressionContext ctxt) throws SkipStatementException {
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
         for (WbSnakExpr expr : snakExprs) {
             List<Snak> snakList = new ArrayList<Snak>(1);

@@ -42,7 +42,7 @@ public class WbSnakExpr implements Jsonizable {
         return new WbSnakExpr(propExpr, valueExpr);
     }
    
-    public Snak evaluate(ExpressionContext ctxt) {
+    public Snak evaluate(ExpressionContext ctxt) throws SkipStatementException {
         PropertyIdValue propertyId = propExpr.evaluate(ctxt);
         Value value = valueExpr.evaluate(ctxt);
         return Datamodel.makeValueSnak(propertyId, value);

@@ -34,13 +34,13 @@ public class WbItemVariable extends WbItemExpr {
     }
 
     @Override
-    public ItemIdValue evaluate(ExpressionContext ctxt) {
+    public ItemIdValue evaluate(ExpressionContext ctxt) throws SkipStatementException {
         Cell cell = ctxt.getCellByName(columnName);
         if (cell != null && cell.recon != null && cell.recon.match != null) {
             ReconCandidate match = cell.recon.match;
             return ItemIdValueImpl.create(match.id, ctxt.getBaseIRI());
         }
-        return null;
+        throw new SkipStatementException();
     }
 
     public String getJsonType() {
