@@ -24,6 +24,9 @@ When reporting a bug please provide the following information to help reproduce 
 
 You don't need to be coder to contribute to OpenRefine. Did you wrote a tutorial or article about OpenRefine on your blog or site? Are you organizing a workshop or presentation OpenRefine in your city? Let us know via our [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) or twitter account ([@OpenRefine](http://twitter.com/OpenRefine)). We will share the news via our monthly update and via our twitter handle. 
 
+## Contributing translations
+
+You can help us [translate OpenRefine](https://github.com/OpenRefine/OpenRefine/wiki/Translate-OpenRefine) in as many languages as possible [via Weblate](https://hosted.weblate.org/engage/openrefine/?utm_source=widget).
 
 ##  Contributing code 
 
@@ -43,7 +46,7 @@ If you make trivial changes, you can send them directly via a pull request. **Pl
 
 We want to keep the quality of the trunk at a very high level, since this is ultimately where the Stable Releases are built from after bugs are fixed. Please take the time to test your changes (including travis-ci) before sending a pull request.
 
-OpenRefine is volunteer supported. Pull Request are reviewed and merged by [Tom Morris (@tfmorris)](https://github.com/tfmorris). All Pull Request will be answered, however it may take some time to get back to you. Thank you in advance for your patience.
+OpenRefine is volunteer supported. Pull Request are reviewed and merged by volunteers. All Pull Request will be answered, however it may take some time to get back to you. Thank you in advance for your patience.
 
 If you don't where to start and are looking for a bug to fix, please see our [issue list](https://github.com/OpenRefine/OpenRefine/issues). 
 
