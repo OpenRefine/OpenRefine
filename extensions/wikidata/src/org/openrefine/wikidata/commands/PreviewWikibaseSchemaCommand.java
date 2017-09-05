@@ -34,8 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.wikidata.commands;
 
 import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,8 +61,6 @@ public class PreviewWikibaseSchemaCommand extends Command {
         
         try {
             Project project = getProject(request);
-            Engine engine = getEngine(request, project);
-            FilteredRows filteredRows = engine.getAllFilteredRows();
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
@@ -78,6 +77,18 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 StringWriter stringWriter = new StringWriter();
                 QuickStatementsExporter exporter = new QuickStatementsExporter();
                 exporter.translateSchema(project, schema, stringWriter);
+                
+                String fullQS = stringWriter.toString();
+                stringWriter = new StringWriter();
+                LineNumberReader reader = new LineNumberReader(new StringReader(fullQS));
+                reader.setLineNumber(0);
+                int maxQSLinesForPreview = 50;
+                for(int i = 0; i != maxQSLinesForPreview; i++) {
+                    stringWriter.write(reader.readLine()+"\n");
+                }
+                if (reader.getLineNumber() == maxQSLinesForPreview) {
+                    stringWriter.write("...");
+                }
                 
                 writer.key("quickstatements");
                 writer.value(stringWriter.toString());
