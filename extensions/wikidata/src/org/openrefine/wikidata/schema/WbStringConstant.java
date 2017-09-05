@@ -6,11 +6,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.implementation.StringValueImpl;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 
-public class WbStringConstant extends WbValueExpr {
+public class WbStringConstant extends WbStringExpr {
     
     public static final String jsonType = "wbstringconstant";
     
@@ -31,7 +30,7 @@ public class WbStringConstant extends WbValueExpr {
     }
 
     @Override
-    public Value evaluate(ExpressionContext ctxt) {
+    public StringValue evaluate(ExpressionContext ctxt) {
         return Datamodel.makeStringValue(value);
     }
 
