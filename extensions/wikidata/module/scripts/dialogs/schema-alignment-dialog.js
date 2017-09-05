@@ -117,7 +117,6 @@ SchemaAlignmentDialog._reset = function(schema, initial) {
 SchemaAlignmentDialog._save = function(onDone) {
   var self = this;
   var schema = this.getJSON();
-  console.log(schema);
 
   Refine.postProcess(
     "wikidata",
@@ -213,8 +212,6 @@ SchemaAlignmentDialog._createDialog = function() {
 };
 
 SchemaAlignmentDialog._addItem = function(json) {
-  console.log('addItem')
-  console.log(json);
   var subject = null;
   var statementGroups = null;
   if (json) {
@@ -224,7 +221,7 @@ SchemaAlignmentDialog._addItem = function(json) {
 
   var item = $('<div></div>').addClass('wbs-item');
   var inputContainer = $('<div></div>').addClass('wbs-item-input').appendTo(item);
-  SchemaAlignmentDialog._initField(inputContainer, "item", subject);
+  SchemaAlignmentDialog._initField(inputContainer, "wikibase-item", subject);
   var right = $('<div></div>').addClass('wbs-right').appendTo(item);
   $('<div></div>').addClass('wbs-statement-group-container').appendTo(right);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
@@ -253,8 +250,6 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
 };
 
 SchemaAlignmentDialog._addStatementGroup = function(item, json) {
-  console.log('addStatementGroup')
-  console.log(json);
   var property = null;
   var statements = null;
   if (json) {
@@ -265,22 +260,24 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
   var container = item.find('.wbs-statement-group-container').first();
   var statementGroup = $('<div></div>').addClass('wbs-statement-group');
   var inputContainer = $('<div></div>').addClass('wbs-prop-input').appendTo(statementGroup);
-  SchemaAlignmentDialog._initField(inputContainer, "property", property);
   var right = $('<div></div>').addClass('wbs-right').appendTo(statementGroup);
-  $('<div></div>').addClass('wbs-statement-container').appendTo(right);
+  var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
+  SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-statement').text('add value').click(function() {
-     SchemaAlignmentDialog._addStatement(statementGroup, null);
-  }).appendTo(toolbar);
+  var addValueButton = $('<a></a>').addClass('wbs-add-statement').text('add value').click(function() {
+     var datatype = inputContainer.data("jsonValue").datatype;
+     SchemaAlignmentDialog._addStatement(statementContainer, datatype, null);
+  }).appendTo(toolbar).hide();
+
   container.append(statementGroup);
 
   if (statements) {
      for (var i = 0; i != statements.length; i++) {
-        SchemaAlignmentDialog._addStatement(statementGroup, statements[i]);
+        SchemaAlignmentDialog._addStatement(statementContainer, property.datatype, statements[i]);
+        addValueButton.show();
      }
-  } else {
-     SchemaAlignmentDialog._addStatement(statementGroup, null);
   }
+     
 }
 
 SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
@@ -294,24 +291,23 @@ SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
 };
 
 
-SchemaAlignmentDialog._addStatement = function(statementGroup, json) {
+SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
+  console.log('addStatement');
+  console.log(datatype);
   var qualifiers = null;
   var value = null;
-  console.log('add statement');
-  console.log(json);
   if (json) {
     qualifiers = json.qualifiers;
     value = json.value;
   }
  
-  var container = statementGroup.find('.wbs-statement-container').first();
   var statement = $('<div></div>').addClass('wbs-statement');
   var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
   $('<img src="images/close.png" />').attr('alt', 'remove statement').click(function() {
      SchemaAlignmentDialog._removeStatement(statement);
   }).appendTo(toolbar1);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
-  SchemaAlignmentDialog._initField(inputContainer, "target", value);
+  SchemaAlignmentDialog._initField(inputContainer, datatype, value);
   var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
   $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
   var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
@@ -328,36 +324,93 @@ SchemaAlignmentDialog._statementToJSON = function (statement) {
     };
 };
 
-SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) {
+SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
+  $.ajax({
+      url:'https://www.wikidata.org/w/api.php',
+      data: {
+        action: "wbgetentities",
+        format: "json",
+        ids: pid,
+        props: "datatype",
+     },
+     dataType: "jsonp",
+     success: function(data) {
+        callback(data.entities[pid].datatype);
+     }});
+}
+
+SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContainer, initialValue) {
   var input = $('<input></input>').appendTo(inputContainer);
 
   if (this._reconService !== null) {
+    endpoint = this._reconService.suggest.property;
+    var suggestConfig = $.extend({}, endpoint);
+    suggestConfig.key = null;
+    suggestConfig.query_param_name = "prefix";
+
+    input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
+        // Fetch the type of this property and add the appropriate target value type
+        var statementGroup = inputContainer.parents(".wbs-statement-group").first();
+        SchemaAlignmentDialog._getPropertyType(data.id, function(datatype) {
+          inputContainer.data("jsonValue", {
+            type : "wbpropconstant",
+            pid : data.id,
+            label: data.name,
+            datatype: datatype,
+          });
+          SchemaAlignmentDialog._addStatement(targetContainer, datatype, null);
+          var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
+          addValueButtons.show();
+        });
+        SchemaAlignmentDialog._hasChanged();
+    }).bind("fb-textchange", function(evt, data) {
+        inputContainer.data("jsonValue", null);
+        targetContainer.find('.wbs-statement').remove();
+        var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
+        addValueButtons.hide();
+    });
+  }
+
+  // Init with the provided initial value.
+  if (initialValue) {
+     if (initialValue.type === "wbpropconstant") {
+        input.val(initialValue.label);
+     } 
+     inputContainer.data("jsonValue", initialValue);
+  }
+
+}
+
+SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) {
+  var input = $('<input></input>').appendTo(inputContainer);
+
+  if (this._reconService !== null && mode === "wikibase-item") {
     var endpoint = null;
-    if (mode === "item" || mode === "target") {
-      endpoint = this._reconService.suggest.entity;
-    } else if (mode === "property") {
-      endpoint = this._reconService.suggest.property;
-    }
+    endpoint = this._reconService.suggest.entity;
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
     
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        if (mode ===  "item" || mode === "target") {
-            inputContainer.data("jsonValue", {
-                type : "wbitemconstant",
-                qid : data.id,
-                label: data.name,
-            });
-        } else if (mode === "property") {
-            inputContainer.data("jsonValue", {
-                type : "wbpropconstant",
-                pid : data.id,
-                label: data.name,
-            });
-        }
+        inputContainer.data("jsonValue", {
+            type : "wbitemconstant",
+            qid : data.id,
+            label: data.name,
+        });
         SchemaAlignmentDialog._hasChanged();
+    });
+  } else if (mode === "external-id") {
+    var propagateValue = function(val) {
+        inputContainer.data("jsonValue", {
+           type: "wbstringconstant",
+           value: val,
+        });
+    };
+    propagateValue("");
+    input.change(function() {
+      propagateValue($(this).val());
+      SchemaAlignmentDialog._hasChanged();
     });
   }
 
@@ -374,41 +427,43 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     });
   };
 
-  // If it isn't a property, make it droppable
-  if (mode !== "property") {
-    var acceptClass = ".wbs-draggable-column";
-    if (mode === "item") {
-        acceptClass = ".wbs-reconciled-column";
-    }
-
-       
-    inputContainer.droppable({
-        accept: acceptClass,
-    }).on("drop", function (evt, ui) {
-        var column = ui.draggable.clone();
-        acceptDraggableColumn(column);
-        inputContainer.data("jsonValue", {
-            type : "wbitemvariable",
-            columnName: ui.draggable.text(),
-        });
-        SchemaAlignmentDialog._hasChanged();
-        return true; 
-    }).on("dropactivate", function(evt, ui) {
-        input.addClass("wbs-accepting-input");
-    }).on("dropdeactivate", function(evt, ui) {
-        input.removeClass("wbs-accepting-input");
-    });
+  // Make it droppable
+  var acceptClass = ".wbs-draggable-column";
+  var wbVariableType = "wbstringvariable";
+  if (mode === "wikibase-item") {
+      acceptClass = ".wbs-reconciled-column";
+      wbVariableType = "wbitemvariable";
   }
 
+      
+  inputContainer.droppable({
+      accept: acceptClass,
+  }).on("drop", function (evt, ui) {
+      var column = ui.draggable.clone();
+      acceptDraggableColumn(column);
+      inputContainer.data("jsonValue", {
+          type : wbVariableType,
+          columnName: ui.draggable.text(),
+      });
+      SchemaAlignmentDialog._hasChanged();
+      return true; 
+  }).on("dropactivate", function(evt, ui) {
+      input.addClass("wbs-accepting-input");
+  }).on("dropdeactivate", function(evt, ui) {
+      input.removeClass("wbs-accepting-input");
+  });
+
   // Init with the provided initial value.
-  console.log('initField');
   if (initialValue) {
-     console.log(initialValue);
-     console.log(initialValue.type);
-     if (initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
+     if (initialValue.type === "wbitemconstant") {
         input.val(initialValue.label);
      } else if (initialValue.type == "wbitemvariable") {
         var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, true);
+        acceptDraggableColumn(cell);
+     } else if (initialValue.type == "wbstringconstant") {
+        input.val(initialValue.value);
+     } else if (initialValue.type == "wbstringvariable") {
+        var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, false);
         acceptDraggableColumn(cell);
      }
      inputContainer.data("jsonValue", initialValue);

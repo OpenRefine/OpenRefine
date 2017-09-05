@@ -16,10 +16,12 @@ public class WbPropConstant extends WbPropExpr {
     
     private String pid;
     private String label;
+    private String datatype;
     
-    public WbPropConstant(String pid, String label) {
+    public WbPropConstant(String pid, String label, String datatype) {
         this.pid = pid;
         this.label = label;
+        this.datatype = datatype;
     }
 
     @Override
@@ -29,10 +31,15 @@ public class WbPropConstant extends WbPropExpr {
         writer.value(pid);
         writer.key("label");
         writer.value(label);
+        writer.key("datatype");
+        writer.value(datatype);
     }
     
     public static WbPropConstant fromJSON(JSONObject obj) throws JSONException {
-        return new WbPropConstant(obj.getString("pid"), obj.getString("label"));
+        return new WbPropConstant(
+                obj.getString("pid"),
+                obj.getString("label"),
+                obj.getString("datatype"));
     }
 
     @Override
