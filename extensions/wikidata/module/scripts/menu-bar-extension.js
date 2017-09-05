@@ -1,18 +1,18 @@
 /*
 ExporterManager.MenuItems.push({});//add separator
 ExporterManager.MenuItems.push(
-		{
-			"id" : "exportRdfXml",
-          	"label":"RDF as RDF/XML",
-          	"click": function() { RdfExporterMenuBar.exportRDF("rdf", "rdf");}
-		}
+        {
+            "id" : "exportRdfXml",
+              "label":"RDF as RDF/XML",
+              "click": function() { RdfExporterMenuBar.exportRDF("rdf", "rdf");}
+        }
 );
 ExporterManager.MenuItems.push(
-		{
-			"id" : "exportRdfTurtle",
-        	"label":"RDF as Turtle",
-        	"click": function() { RdfExporterMenuBar.exportRDF("Turtle", "ttl"); }
-		}
+        {
+            "id" : "exportRdfTurtle",
+            "label":"RDF as Turtle",
+            "click": function() { RdfExporterMenuBar.exportRDF("Turtle", "ttl"); }
+        }
 );
 
 RdfExporterMenuBar = {};
@@ -62,12 +62,13 @@ RdfExporterMenuBar.editRdfSchema = function(reset) {
 };
 */
 
+ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
-		{
-			"id" : "exportQuickStatements",
-        	"label":"QuickStatements",
-        	"click": function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
-		}
+        {
+            "id" : "exportQuickStatements",
+            "label":"QuickStatements",
+            "click": function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
+        }
 );
 
 WikibaseExporterMenuBar = {};
@@ -102,18 +103,23 @@ WikibaseExporterMenuBar.exportTo = function(format) {
 //extend the column header menu
 $(function(){
     
-	ExtensionBar.MenuItems.push(
-			{
-				"id":"reconcile",
-				"label": "Wikidata",
-				"submenu" : [
-					{
-						"id": "wikidata/edit-schema",
-						label: "Edit Wikibase schema...",
-						click: function() { SchemaAlignmentDialog.launch(false); }
-					},
-			    ]
-		        }
-        );
+    ExtensionBar.MenuItems.push(
+        {
+            "id":"reconcile",
+                "label": "Wikidata",
+                "submenu" : [
+                    {
+                        "id": "wikidata/edit-schema",
+                        label: "Edit Wikibase schema...",
+                        click: function() { SchemaAlignmentDialog.launch(false); }
+                    },
+                    {               
+                        "id":"wikidata/export-qs",
+                        "label": "Export to QuickStatements",
+                        "click": function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
+                    }
+                ]
+        }
+    );
 });
 

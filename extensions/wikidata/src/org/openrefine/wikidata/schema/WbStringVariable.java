@@ -36,7 +36,7 @@ public class WbStringVariable extends WbStringExpr {
         writer.value(columnName);
     }
     
-    public static WbStringVariable fromJSON2(JSONObject obj) throws JSONException {
+    public static WbStringExpr fromJSON(JSONObject obj) throws JSONException {
         return new WbStringVariable(obj.getString("columnName"));
     }
 

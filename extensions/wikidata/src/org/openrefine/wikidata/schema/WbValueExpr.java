@@ -27,7 +27,7 @@ public abstract class WbValueExpr extends BiJsonizable {
         } else if (WbItemVariable.jsonType.equals(type)) {
             valueExpr = WbItemVariable.fromJSON(obj);
         } else if (WbStringVariable.jsonType.equals(type)) {
-            valueExpr = WbStringVariable.fromJSON2(obj);
+            valueExpr = WbStringVariable.fromJSON(obj);
         } else if (WbStringConstant.jsonType.equals(type)) {
             valueExpr = WbStringConstant.fromJSON(obj);
         } else {
