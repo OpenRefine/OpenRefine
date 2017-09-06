@@ -47,11 +47,11 @@ public class QuickStatementsExporter implements WriterExporter {
         if (schema == null) {
             return;
         }
-        translateSchema(project, schema, writer);
+        translateSchema(project, engine, schema, writer);
     }
     
-    public void translateSchema(Project project, WikibaseSchema schema, Writer writer) throws IOException {
-        List<ItemDocument> items = schema.evaluate(project);
+    public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer) throws IOException {
+        List<ItemDocument> items = schema.evaluate(project, engine);
         for (ItemDocument item : items) {
             translateItem(item, writer);
         }

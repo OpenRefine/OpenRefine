@@ -11,8 +11,10 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.FilteredRows;
+import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -69,13 +71,35 @@ public class WikibaseSchema implements OverlayModel {
         return result;
     }
     
-    public List<ItemDocument> evaluate(Project project) {
+    public List<ItemDocument> evaluate(Project project, Engine engine) {
         List<ItemDocument> result = new ArrayList<ItemDocument>();
-        for (Row row : project.rows)  {
+        FilteredRows filteredRows = engine.getAllFilteredRows();
+        filteredRows.accept(project, new EvaluatingRowVisitor(result));
+        return result;
+    }
+    
+    protected class EvaluatingRowVisitor implements RowVisitor {
+        private List<ItemDocument> result;
+        public EvaluatingRowVisitor(List<ItemDocument> result) {
+            this.result = result;
+        }
+        
+        @Override
+        public void start(Project project) {
+            ; 
+        }
+
+        @Override
+        public boolean visit(Project project, int rowIndex, Row row) {
             ExpressionContext ctxt = new ExpressionContext(baseUri, row, project.columnModel);
             result.addAll(evaluate(ctxt));
+            return false;
         }
-        return result;
+
+        @Override
+        public void end(Project project) {
+            ;
+        }
     }
 
     static public WikibaseSchema reconstruct(JSONObject o) throws JSONException {
