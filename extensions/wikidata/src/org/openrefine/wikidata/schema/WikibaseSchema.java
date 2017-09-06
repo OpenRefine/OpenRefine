@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import com.google.refine.model.OverlayModel;
@@ -21,7 +22,7 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 	
-    final protected List<WbChangeExpr> changeExprs = new ArrayList<WbChangeExpr>();
+    final protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
     
     protected String baseUri = "http://www.wikidata.org/entity/";
 
@@ -51,17 +52,16 @@ public class WikibaseSchema implements OverlayModel {
         return baseUri;
     }
 
-    public List<WbChangeExpr> getChangeExpressions() {
-        return changeExprs;
+    public List<WbItemDocumentExpr> getItemDocumentExpressions() {
+        return itemDocumentExprs;
     }
     
-    public List<StatementGroup> evaluate(ExpressionContext ctxt) {
-        List<StatementGroup> result = new ArrayList<StatementGroup>();
-        for (WbChangeExpr changeExpr : changeExprs) {
-            WbItemStatementsExpr expr = (WbItemStatementsExpr)changeExpr;
+    public List<ItemDocument> evaluate(ExpressionContext ctxt) {
+        List<ItemDocument> result = new ArrayList<ItemDocument>();
+        for (WbItemDocumentExpr expr : itemDocumentExprs) {
             
             try {
-                result.addAll(expr.evaluate(ctxt));
+                result.add(expr.evaluate(ctxt));
             } catch (SkipStatementException e) {
                 continue;
             }
@@ -69,8 +69,8 @@ public class WikibaseSchema implements OverlayModel {
         return result;
     }
     
-    public List<StatementGroup> evaluate(Project project) {
-        List<StatementGroup> result = new ArrayList<StatementGroup>();
+    public List<ItemDocument> evaluate(Project project) {
+        List<ItemDocument> result = new ArrayList<ItemDocument>();
         for (Row row : project.rows)  {
             ExpressionContext ctxt = new ExpressionContext(baseUri, row, project.columnModel);
             result.addAll(evaluate(ctxt));
@@ -79,11 +79,11 @@ public class WikibaseSchema implements OverlayModel {
     }
 
     static public WikibaseSchema reconstruct(JSONObject o) throws JSONException {
-        JSONArray changeArr = o.getJSONArray("changes");
+        JSONArray changeArr = o.getJSONArray("itemDocuments");
         WikibaseSchema schema = new WikibaseSchema();
         for (int i = 0; i != changeArr.length(); i++) {
-            WbChangeExpr changeExpr = WbItemStatementsExpr.fromJSON(changeArr.getJSONObject(i));
-            schema.changeExprs.add(changeExpr);
+            WbItemDocumentExpr changeExpr = WbItemDocumentExpr.fromJSON(changeArr.getJSONObject(i));
+            schema.itemDocumentExprs.add(changeExpr);
         }
         return schema;
     }
@@ -92,9 +92,9 @@ public class WikibaseSchema implements OverlayModel {
     public void write(JSONWriter writer, Properties options)
             throws JSONException {
         writer.object();
-        writer.key("changes");
+        writer.key("itemDocuments");
         writer.array();
-        for (WbChangeExpr changeExpr : changeExprs) {
+        for (WbItemDocumentExpr changeExpr : itemDocumentExprs) {
             changeExpr.write(writer, options);
         }
         writer.endArray();

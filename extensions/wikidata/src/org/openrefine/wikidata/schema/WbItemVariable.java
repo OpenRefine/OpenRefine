@@ -5,10 +5,12 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.google.refine.model.Cell;
+import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 
 public class WbItemVariable extends WbItemExpr {
@@ -36,9 +38,14 @@ public class WbItemVariable extends WbItemExpr {
     @Override
     public ItemIdValue evaluate(ExpressionContext ctxt) throws SkipStatementException {
         Cell cell = ctxt.getCellByName(columnName);
-        if (cell != null && cell.recon != null && cell.recon.match != null) {
-            ReconCandidate match = cell.recon.match;
-            return ItemIdValueImpl.create(match.id, ctxt.getBaseIRI());
+        if (cell != null && cell.recon != null) {
+            Recon recon = cell.recon;
+            if (recon.judgment == Recon.Judgment.Matched && cell.recon.match != null) {
+                ReconCandidate match = cell.recon.match;
+                return Datamodel.makeItemIdValue(match.id, ctxt.getBaseIRI());
+            } else if (recon.judgment == Recon.Judgment.New) {
+                return ItemIdValue.NULL;
+            }
         }
         throw new SkipStatementException();
     }

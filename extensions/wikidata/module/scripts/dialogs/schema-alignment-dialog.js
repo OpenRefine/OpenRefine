@@ -97,18 +97,18 @@ SchemaAlignmentDialog.launch = function(onDone) {
 }
 
 SchemaAlignmentDialog._reset = function(schema, initial) {
-  this._originalSchema = schema || { changes: [] };
+  this._originalSchema = schema || { itemDocuments: [] };
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
 
   $('#schema-alignment-statements-container').empty();
 
-  if (this._schema && this._schema.changes) {
-    for(var i = 0; i != this._schema.changes.length; i++) {
-      this._addItem(this._schema.changes[i]);
+  if (this._schema && this._schema.itemDocuments) {
+    for(var i = 0; i != this._schema.itemDocuments.length; i++) {
+      this._addItem(this._schema.itemDocuments[i]);
     }
   }
 
-  if (!this._schema.changes.length) {
+  if (!this._schema.itemDocuments.length) {
     // this._addItem();
   }
   this.preview(initial);
@@ -501,7 +501,7 @@ SchemaAlignmentDialog.getJSON = function() {
      list.push(SchemaAlignmentDialog._itemToJSON($(this)));
   });
   return {
-        'changes': list,
+        'itemDocuments': list,
         'wikibasePrefix': this._wikibasePrefix,
   };
 };
