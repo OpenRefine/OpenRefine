@@ -46,7 +46,6 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.FilteredRows;
 import com.google.refine.commands.Command;
 
 import org.openrefine.wikidata.exporters.QuickStatementsExporter;
@@ -76,15 +75,19 @@ public class PreviewWikibaseSchemaCommand extends Command {
             {
                 StringWriter stringWriter = new StringWriter();
                 QuickStatementsExporter exporter = new QuickStatementsExporter();
-                exporter.translateSchema(project, schema, stringWriter);
+                Engine engine = getEngine(request, project);
+                exporter.translateSchema(project, engine, schema, stringWriter);
                 
                 String fullQS = stringWriter.toString();
                 stringWriter = new StringWriter();
                 LineNumberReader reader = new LineNumberReader(new StringReader(fullQS));
-                reader.setLineNumber(0);
+                
                 int maxQSLinesForPreview = 50;
-                for(int i = 0; i != maxQSLinesForPreview; i++) {
-                    stringWriter.write(reader.readLine()+"\n");
+                reader.setLineNumber(0);
+                String line = reader.readLine();
+                for(int i = 1; i != maxQSLinesForPreview && line != null; i++) {
+                    stringWriter.write(line+"\n");
+                    line = reader.readLine();
                 }
                 if (reader.getLineNumber() == maxQSLinesForPreview) {
                     stringWriter.write("...");
