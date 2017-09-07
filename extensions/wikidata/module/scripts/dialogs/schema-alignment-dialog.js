@@ -282,7 +282,7 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
 
 SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
     var lst = new Array();
-    statementGroup.find('.wbs-statement').each(function () {
+    statementGroup.find('.wbs-statement-container').first().children('.wbs-statement').each(function () {
     lst.push(SchemaAlignmentDialog._statementToJSON($(this)));
     });
     var inputContainer = statementGroup.find(".wbs-prop-input").first();
@@ -339,8 +339,10 @@ SchemaAlignmentDialog._statementToJSON = function (statement) {
 
 SchemaAlignmentDialog._addQualifier = function(container, json) {
   var property = null;
+  var value = null;
   if (json) {
-    property = json.property;
+    property = json.prop;
+    value = json.value;
   }
 
   var qualifier = $('<div></div>').addClass('wbs-qualifier').appendTo(container);
@@ -349,6 +351,10 @@ SchemaAlignmentDialog._addQualifier = function(container, json) {
   var right = $('<div></div>').addClass('wbs-right').appendTo(qualifier);
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
+  console.log(json);
+  if (value && property) {
+    SchemaAlignmentDialog._addStatement(statementContainer, property.datatype, {value:value});
+  }
 }
 
 SchemaAlignmentDialog._removeQualifier = function(qualifier) {
@@ -528,17 +534,6 @@ SchemaAlignmentDialog._removeStatement = function(statement) {
   }
   SchemaAlignmentDialog._hasChanged();
 }
-/*
-SchemaAlignmentDialog._addStatement = function() {
-  var newStatement = $('<div></div>').addClass('schema-alignment-statement');
-  var subject = $('<div></div>').addClass('schema-alignment-subject').appendTo(newStatement);
-  var prop = $('<div></div>').addClass('schema-alignment-prop').appendTo(newStatement);
-  var target = $('<div></div>').addClass('schema-alignment-target').appendTo(newStatement);
-  var qualifiersArea = $('<div></div>').addClass('schema-alignment-qualifiers').appendTo(newStatement);
-  var addQualifier = $('<p></p>').addClass('schema-alignment-add-qualifier').text('Add qualifier').appendTo(newStatement);
-  $('#schema-alignment-statements-container').append(newStatement);
-}
-*/
 
 SchemaAlignmentDialog.getJSON = function() {
   var list = new Array();
