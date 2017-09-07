@@ -96,6 +96,9 @@ public class WbStatementExpr extends BiJsonizable {
         Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         List<Snak> qualifiers = new ArrayList<Snak>(qualifierExprs.size());
+        for (WbSnakExpr qExpr : qualifierExprs) {
+            qualifiers.add(qExpr.evaluate(ctxt));
+        }
         List<SnakGroup> groupedQualifiers = groupSnaks(qualifiers);
         Claim claim = Datamodel.makeClaim(subject, mainSnak, groupedQualifiers);
         List<Reference> references = new ArrayList<Reference>();

@@ -82,6 +82,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 120px;
 }
 
+.wbs-qualifier .wbs-prop-input, .wbs-reference .wbs-prop-input {
+    width: 85px;
+}
+
 .wbs-item-input input, .wbs-prop-input input, .wbs-target-input input {
     width: 100%;
 }
@@ -107,7 +111,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     overflow: auto;
 }
 
-.wbs-item, .wbs-statement-group, .wbs-statement {
+.wbs-item, .wbs-statement-group, .wbs-statement, .wbs-qualifier {
     display: block;
     overflow: auto;
 }
@@ -123,7 +127,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .wbs-right {
     float: right;
+    width: 75%;
+}
+
+.wbs-statement-group .wbs-right {
     width: 70%;
+}
+
+.wbs-statement .wbs-right {
+    width: 90%;
+}
+
+.wbs-qualifier, .wbs-reference {
+    position: relative;
+}
+
+.wbs-qualifier .wbs-right, .wbs-reference .wbs-right {
+    width: 70%;
+    position: absolute;
+    top: 0px;
+    margin-left: 100px;
+}
+
+.wbs-qualifier .wbs-target-input {
+    width: 90px;
+}
+
+.wbs-qualifier .wbs-statement {
+    overflow: hidden;
 }
 
 .schema-alignment-columns-header {

@@ -292,8 +292,6 @@ SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
 
 
 SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
-  console.log('addStatement');
-  console.log(datatype);
   var qualifiers = null;
   var value = null;
   if (json) {
@@ -309,20 +307,62 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignmentDialog._initField(inputContainer, datatype, value);
   var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
-  $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
-  var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-qualifier').text('add qualifier').appendTo(toolbar2);
+  
+  // If we are in a mainsnak, add qualifiers and references
+  if (container.parents('.wbs-statement').length == 0) {
+    var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
+    var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+    $('<a></a>').addClass('wbs-add-qualifier').text('add qualifier').click(function() {
+        SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
+    }).appendTo(toolbar2);
+    if (qualifiers) {
+       for (var i = 0; i != qualifiers.length; i++) {
+         SchemaAlignmentDialog._addQualifier(qualifierContainer, qualifiers[i]);
+       }
+    }
+  }
   container.append(statement);
 }
 
 SchemaAlignmentDialog._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
+    var qualifiersList = new Array();
+    statement.find('.wbs-qualifier').each(function () {
+        qualifiersList.push(SchemaAlignmentDialog._qualifierToJSON($(this)));
+    });
     return {
         value:SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
-        qualifiers:[],
+        qualifiers: qualifiersList,
         references:[],
     };
 };
+
+SchemaAlignmentDialog._addQualifier = function(container, json) {
+  var property = null;
+  if (json) {
+    property = json.property;
+  }
+
+  var qualifier = $('<div></div>').addClass('wbs-qualifier').appendTo(container);
+  var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(qualifier);
+  var inputContainer = $('<div></div>').addClass('wbs-prop-input').appendTo(qualifier);
+  var right = $('<div></div>').addClass('wbs-right').appendTo(qualifier);
+  var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
+  SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
+}
+
+SchemaAlignmentDialog._removeQualifier = function(qualifier) {
+  qualifier.remove();
+}
+
+SchemaAlignmentDialog._qualifierToJSON = function(elem) {
+  var prop = elem.find(".wbs-prop-input").first();
+  var target = elem.find(".wbs-target-input").first();
+  return {
+      prop: SchemaAlignmentDialog._inputContainerToJSON(prop),
+      value: SchemaAlignmentDialog._inputContainerToJSON(target),
+  };
+}
 
 SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
   $.ajax({
@@ -350,7 +390,7 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         // Fetch the type of this property and add the appropriate target value type
-        var statementGroup = inputContainer.parents(".wbs-statement-group").first();
+        var statementGroup = inputContainer.parents(".wbs-statement-group, .wbs-qualifier").first();
         SchemaAlignmentDialog._getPropertyType(data.id, function(datatype) {
           inputContainer.data("jsonValue", {
             type : "wbpropconstant",
@@ -400,7 +440,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
         });
         SchemaAlignmentDialog._hasChanged();
     });
-  } else if (mode === "external-id") {
+  } else { /* if (mode === "external-id") { */
     var propagateValue = function(val) {
         inputContainer.data("jsonValue", {
            type: "wbstringconstant",
@@ -471,11 +511,16 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
 }
 
 SchemaAlignmentDialog._inputContainerToJSON = function (inputContainer) {
-    return inputContainer.data().jsonValue;
+    var data = inputContainer.data();
+    if (data) {
+       return data.jsonValue;
+    } else {
+       return null;
+    }
 };
 
 SchemaAlignmentDialog._removeStatement = function(statement) {
-  var statementGroup = statement.parents('.wbs-statement-group').first();
+  var statementGroup = statement.parents('.wbs-statement-group, .wbs-qualifier').first();
   statement.remove();
   var remainingStatements = statementGroup.find('.wbs-statement').length;
   if (remainingStatements === 0) {
