@@ -20,6 +20,8 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
@@ -83,7 +85,30 @@ public class QuickStatementsExporter implements WriterExporter {
         ValueVisitor<String> vv = new ValuePrinter();
         String targetValue = val.accept(vv);
         if (targetValue != null) {
-           writer.write(qid + "\t" + pid + "\t" + targetValue + "\n");
+           writer.write(qid + "\t" + pid + "\t" + targetValue);
+           for(SnakGroup q : claim.getQualifiers()) {
+               translateSnakGroup(q, false, writer);
+           }
+           writer.write("\n");
+        }
+    }
+    
+    protected void translateSnakGroup(SnakGroup sg, boolean reference, Writer writer) throws IOException {
+        for(Snak s : sg.getSnaks()) {
+            translateSnak(s, reference, writer);
+        }
+    }
+    
+    protected void translateSnak(Snak s, boolean reference, Writer writer) throws IOException {
+        String pid = s.getPropertyId().getId();
+        if (reference) {
+            pid = pid.replace('P', 'S');
+        }
+        Value val = s.getValue();
+        ValueVisitor<String> vv = new ValuePrinter();
+        String valStr = val.accept(vv);
+        if(valStr != null) {
+            writer.write("\t" + pid + "\t" + valStr);
         }
     }
    
