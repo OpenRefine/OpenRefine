@@ -15,7 +15,6 @@
     <ant dir="pc-axis/" target="build" />
     <ant dir="database/" target="build" />
     <ant dir="wikidata/" target="build" />
-    <ant dir="rdf-extension/" target="build" />
   </target>
 
   <target name="clean">
@@ -26,7 +25,6 @@
     <ant dir="pc-axis/" target="clean" />
     <ant dir="database/" target="clean" />
     <ant dir="wikidata/" target="clean" />
-    <ant dir="rdf-extension/" target="clean" />
   </target>
 
   <target name="test">
