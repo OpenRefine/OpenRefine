@@ -20,6 +20,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -88,6 +89,12 @@ public class QuickStatementsExporter implements WriterExporter {
            writer.write(qid + "\t" + pid + "\t" + targetValue);
            for(SnakGroup q : claim.getQualifiers()) {
                translateSnakGroup(q, false, writer);
+           }
+           for(Reference r : statement.getReferences()) {
+               for(SnakGroup g : r.getSnakGroups()) {
+                   translateSnakGroup(g, true, writer);
+               }
+               break; // QS only supports one reference
            }
            writer.write("\n");
         }

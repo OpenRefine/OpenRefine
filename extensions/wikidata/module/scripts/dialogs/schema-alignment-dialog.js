@@ -211,6 +211,10 @@ SchemaAlignmentDialog._createDialog = function() {
   this.preview();
 };
 
+/**************/
+/*** ITEMS ****/
+/**************/
+
 SchemaAlignmentDialog._addItem = function(json) {
   var subject = null;
   var statementGroups = null;
@@ -248,6 +252,10 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
     return {subject: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
             statementGroups: lst}; 
 };
+
+/********************
+ * STATEMENT GROUPS *
+ ********************/
 
 SchemaAlignmentDialog._addStatementGroup = function(item, json) {
   var property = null;
@@ -290,12 +298,17 @@ SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
             statements: lst};
 };
 
+/**************
+ * STATEMENTS *
+ **************/
 
 SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
   var qualifiers = null;
+  var references = null;
   var value = null;
   if (json) {
     qualifiers = json.qualifiers;
+    references = json.references;
     value = json.value;
   }
  
@@ -306,10 +319,12 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
   }).appendTo(toolbar1);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignmentDialog._initField(inputContainer, datatype, value);
-  var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
   
-  // If we are in a mainsnak, add qualifiers and references
+  // If we are in a mainsnak...
   if (container.parents('.wbs-statement').length == 0) {
+
+    // add qualifiers...
+    var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
     var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
     var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
     $('<a></a>').addClass('wbs-add-qualifier').text('add qualifier').click(function() {
@@ -320,6 +335,27 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
          SchemaAlignmentDialog._addQualifier(qualifierContainer, qualifiers[i]);
        }
     }
+
+    // and references
+    var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(statement);
+    var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
+    right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+    var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
+    referencesToggle.click(function () {
+        referenceContainer.toggle(100);
+    });
+    var right2 = $('<div></div>').addClass('wbs-right').appendTo(right);
+    var toolbar3 = $('<div></div>').addClass('wbs-toolbar').appendTo(right2);
+    $('<a></a>').addClass('wbs-add-reference').text('add reference').click(function() {
+        SchemaAlignmentDialog._addReference(referenceContainer, null);
+        SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
+    }).appendTo(toolbar3);
+    if (references) {
+        for (var i = 0; i != references.length; i++) {
+          SchemaAlignmentDialog._addReference(referenceContainer, references[i]);
+        }
+    }
+    SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
   }
   container.append(statement);
 }
@@ -327,15 +363,23 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
 SchemaAlignmentDialog._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
     var qualifiersList = new Array();
-    statement.find('.wbs-qualifier').each(function () {
+    var referencesList = new Array();
+    statement.find('.wbs-qualifier-container').first().children().each(function () {
         qualifiersList.push(SchemaAlignmentDialog._qualifierToJSON($(this)));
+    });
+    statement.find('.wbs-reference-container').first().children().each(function () {
+        referencesList.push(SchemaAlignmentDialog._referenceToJSON($(this)));
     });
     return {
         value:SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
         qualifiers: qualifiersList,
-        references:[],
+        references: referencesList,
     };
 };
+
+/**************
+ * QUALIFIERS *
+ **************/
 
 SchemaAlignmentDialog._addQualifier = function(container, json) {
   var property = null;
@@ -351,7 +395,6 @@ SchemaAlignmentDialog._addQualifier = function(container, json) {
   var right = $('<div></div>').addClass('wbs-right').appendTo(qualifier);
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
-  console.log(json);
   if (value && property) {
     SchemaAlignmentDialog._addStatement(statementContainer, property.datatype, {value:value});
   }
@@ -369,6 +412,61 @@ SchemaAlignmentDialog._qualifierToJSON = function(elem) {
       value: SchemaAlignmentDialog._inputContainerToJSON(target),
   };
 }
+
+/**************
+ * REFERENCES *
+ **************/
+
+SchemaAlignmentDialog._addReference = function(container, json) {
+  var snaks = null;
+  if (json) {
+     snaks = json.snaks;
+  }
+
+  var reference = $('<div></div>').addClass('wbs-reference').appendTo(container);
+  var referenceHeader = $('<div></div>').addClass('wbs-reference-header').appendTo(reference);
+  var toolbarRef = $('<div></div>').addClass('wbs-toolbar').appendTo(referenceHeader);
+  $('<img src="images/close.png" />').attr('alt', 'remove reference').click(function() {
+     reference.remove();
+     SchemaAlignmentDialog._updateReferencesNumber(container);
+  }).appendTo(toolbarRef);
+  var right = $('<div></div>').addClass('wbs-right').appendTo(reference);
+  var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
+  var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+  $('<a></a>').addClass('wbs-add-qualifier').text('add').click(function() {
+      SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
+  }).appendTo(toolbar2);
+
+  if (snaks) {
+     for (var i = 0; i != snaks.length; i++) {
+        SchemaAlignmentDialog._addQualifier(qualifierContainer, snaks[i]);
+     }
+  } else {
+     SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
+  }
+}
+
+SchemaAlignmentDialog._referenceToJSON = function(reference) {
+  var snaks = reference.find('.wbs-qualifier-container').first().children();
+  var snaksList = new Array();
+  snaks.each(function () {
+      snaksList.push(SchemaAlignmentDialog._qualifierToJSON($(this)));
+  });
+  return {snaks:snaksList};
+}
+
+SchemaAlignmentDialog._updateReferencesNumber = function(container) {
+  var childrenCount = container.children().length;
+  var statement = container.parents('.wbs-statement');
+  console.log(statement);
+  var a = statement.find('.wbs-references-toggle a').first();
+  console.log(a);
+  a.html(childrenCount+'&nbsp;references');
+}
+
+/************************
+ * FIELD INITIALIZATION *
+ ************************/
 
 SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
   $.ajax({

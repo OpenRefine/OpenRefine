@@ -50,6 +50,12 @@ public class WbStatementExpr extends BiJsonizable {
             expr.write(writer, options);
         }
         writer.endArray();
+        writer.key("references");
+        writer.array();
+        for (WbReferenceExpr expr : referenceExprs) {
+            expr.write(writer, options);
+        }
+        writer.endArray();
     }
     
     public static WbStatementExpr fromJSON(JSONObject obj) throws JSONException {
@@ -95,13 +101,21 @@ public class WbStatementExpr extends BiJsonizable {
     public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) throws SkipStatementException {
         Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+        
+        // evaluate qualifiers
         List<Snak> qualifiers = new ArrayList<Snak>(qualifierExprs.size());
         for (WbSnakExpr qExpr : qualifierExprs) {
             qualifiers.add(qExpr.evaluate(ctxt));
         }
         List<SnakGroup> groupedQualifiers = groupSnaks(qualifiers);
         Claim claim = Datamodel.makeClaim(subject, mainSnak, groupedQualifiers);
+        
+        // evaluate references
         List<Reference> references = new ArrayList<Reference>();
+        for (WbReferenceExpr rExpr : referenceExprs) {
+            references.add(rExpr.evaluate(ctxt));
+        }
+        
         StatementRank rank = StatementRank.NORMAL;
         return Datamodel.makeStatement(claim, references, rank, "");
     }

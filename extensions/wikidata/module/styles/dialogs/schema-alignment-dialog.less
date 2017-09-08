@@ -82,7 +82,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 120px;
 }
 
-.wbs-qualifier .wbs-prop-input, .wbs-reference .wbs-prop-input {
+.wbs-qualifier .wbs-prop-input {
     width: 85px;
 }
 
@@ -100,18 +100,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: 2px;
 }
 
-.wbs-add-item, .wbs-add-statement-group, .wbs-add-statement, .wbs-add-qualifier {
+.wbs-add-item, .wbs-add-statement-group, .wbs-add-statement, .wbs-add-qualifier, .wbs-add-reference {
     color: #0645ad !important;
     font-size: 0.9em;
 }
 
-.wbs-statement-group-container, .wbs-statement-container, .wbs-qualifier-container {
+.wbs-statement-group-container, .wbs-statement-container, .wbs-qualifier-container, .wbs-reference-container {
     width: 100%;
     display: block;
     overflow: auto;
 }
 
-.wbs-item, .wbs-statement-group, .wbs-statement, .wbs-qualifier {
+.wbs-item, .wbs-statement-group, .wbs-statement, .wbs-qualifier, .wbs-reference {
     display: block;
     overflow: auto;
 }
@@ -142,11 +142,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     position: relative;
 }
 
-.wbs-qualifier .wbs-right, .wbs-reference .wbs-right {
+.wbs-qualifier .wbs-right {
     width: 70%;
     position: absolute;
     top: 0px;
     margin-left: 100px;
+}
+
+.wbs-reference > .wbs-right {
+    width: 100%;
+}
+
+.wbs-references-toggle {
+    width: 12em;
+    margin: 5px;
+}
+
+.wbs-references-toggle a {
+    color: #0645ad !important;
 }
 
 .wbs-qualifier .wbs-target-input {
@@ -156,6 +169,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .wbs-qualifier .wbs-statement {
     overflow: hidden;
 }
+
+.wbs-reference-header {
+    height: 20px;
+    overflow: auto;
+    display: block;
+    background-color: #b6c8ec;
+}
+
+.wbs-reference {
+    background-color: #eaf3ff;
+    margin-bottom: 5px;
+}
+
+.wbs-reference .wbs-statement {
+    background-color: #eaf3ff;
+} 
 
 .schema-alignment-columns-header {
   margin-bottom: 0.3em;
