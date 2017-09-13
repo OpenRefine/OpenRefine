@@ -171,11 +171,13 @@ SchemaAlignmentDialog._createDialog = function() {
      helper: "clone",
      cursor: "crosshair",
      snap: ".wbs-item-input input, .wbs-target-input input",
+     zIndex: 100,
   });
   $('.wbs-unreconciled-column').draggable({
      helper: "clone",
      cursor: "crosshair",
      snap: ".wbs-target-input input",
+     zIndex: 100,
   });
 
 
@@ -485,6 +487,7 @@ SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
 
 SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContainer, initialValue) {
   var input = $('<input></input>').appendTo(inputContainer);
+  input.attr("placeholder", "Wikidata property");
 
   if (this._reconService !== null) {
     endpoint = this._reconService.suggest.property;
@@ -529,6 +532,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
   var input = $('<input></input>').appendTo(inputContainer);
 
   if (this._reconService !== null && mode === "wikibase-item") {
+    input.attr("placeholder", "Wikidata item or reconciled column");
     var endpoint = null;
     endpoint = this._reconService.suggest.entity;
     var suggestConfig = $.extend({}, endpoint);
@@ -654,13 +658,6 @@ SchemaAlignmentDialog.preview = function(initial) {
 
   $('.invalid-schema-warning').hide();
   this._previewPanes.empty();
-/*
-  if (!(initial)) {
-    this._elmts.statusIndicator.show().text("There are unsaved changes.");
-    this._hasUnsavedChanges = true;
-  }
-*/
-
   var schema = this.getJSON();
   $.post(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
@@ -677,13 +674,4 @@ SchemaAlignmentDialog.preview = function(initial) {
   );
 };
 
-SchemaAlignmentDialog._findColumn = function(cellIndex) {
-  var columns = theProject.columnModel.columns;
-    for (var i = 0; i < columns.length; i++) {
-    var column = columns[i];
-    if (column.cellIndex == cellIndex) {
-      return column;
-    }
-  }
-  return null;
-};
+
