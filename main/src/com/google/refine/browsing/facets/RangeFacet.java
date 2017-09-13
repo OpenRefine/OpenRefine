@@ -205,7 +205,7 @@ public class RangeFacet implements Facet {
 
                 @Override
                 protected boolean checkValue(double d) {
-                    return d >= _from && d < _to;
+                    return d >= _from && d <= _to;
                 };
             };
         } else {
