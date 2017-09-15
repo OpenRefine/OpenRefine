@@ -52,15 +52,15 @@ public class WbItemDocumentExpr extends BiJsonizable {
                 statementExprs);
     }
     
-    public ItemDocument evaluate(ExpressionContext ctxt) throws SkipStatementException {
+    public ItemUpdate evaluate(ExpressionContext ctxt) throws SkipStatementException {
         ItemIdValue subjectId = subjectExpr.evaluate(ctxt);
-        ItemDocumentBuilder builder = ItemDocumentBuilder.forItemId(subjectId);
+        ItemUpdate update = new ItemUpdate(subjectId);
         for(WbStatementGroupExpr expr : statementGroupExprs) {
             for(Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {
-                builder.withStatement(s);
+                update.addStatement(s);
             }
         }
-        return builder.build();
+        return update;
     }
     
     public String getJsonType() {

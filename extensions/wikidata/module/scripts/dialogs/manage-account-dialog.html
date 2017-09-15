@@ -1,0 +1,42 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader">Wikidata account</div>
+  <div class="dialog-body" bind="dialogBody">
+    <p class="body-text">
+      Logging in to Wikidata will allow you to perform edits directly from OpenRefine.
+      Your credentials will be stored unencrypted in OpenRefine's preferences.
+    </p>
+        <div class="wikibase-user-management-area">
+          <div class="wikibase-user-login" bind="loginArea">
+            <div bind="invalidCredentials"></div>
+            <form bind="loginForm" class="wikibase-login-form" method="post">
+              <table>
+                <tr>
+                  <td><label for="wb-username">Username:</label></td>
+                  <td><input name="wb-username" placeholder="Enter your username" type="text" /></td>
+                </tr>
+                <tr>
+                  <td><label for="wb-password">Password:</label></td>
+                  <td><input name="wb-password" type="password" placeholder="Enter your password" /></td>
+                </tr>
+              </table>
+            </form>
+            <div class="wikibase-login-buttons">
+                <button class="button button-primary cancel-button">Close</button>
+                <button class="button button-primary" bind="loginButton">Log in</button>
+            </div>
+          </div>
+          <div class="wikibase-user-logout" bind="logoutArea">
+            <p><span bind="loggedInAs">You are logged in as:</span>
+               <span bind="loggedInUsername"></span></p>
+            <form bind="logoutForm" method="post">
+              <input type="hidden" name="wb-username" value="null" />
+              <input name="wb-password" type="hidden" value="null" />
+            </form>
+            <div class="wikibase-login-buttons">
+                <button class="button cancel-button">Cancel</button>
+                <button class="button button-primary" bind="logoutButton">Log out</button>
+            </div>
+          </div>
+        </div>
+  </div>
+</div>
