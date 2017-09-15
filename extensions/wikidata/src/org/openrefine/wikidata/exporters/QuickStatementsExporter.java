@@ -9,6 +9,7 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 
+import org.openrefine.wikidata.schema.ItemUpdate;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
@@ -24,7 +24,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
@@ -54,29 +53,25 @@ public class QuickStatementsExporter implements WriterExporter {
     }
     
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer) throws IOException {
-        List<ItemDocument> items = schema.evaluate(project, engine);
-        for (ItemDocument item : items) {
+        List<ItemUpdate> items = schema.evaluate(project, engine);
+        for (ItemUpdate item : items) {
             translateItem(item, writer);
         }
     }
     
-    protected void translateItem(ItemDocument item, Writer writer) throws IOException {
+    protected void translateItem(ItemUpdate item, Writer writer) throws IOException {
         if (item.getItemId().equals(ItemIdValue.NULL)) {
             writer.write("CREATE\n");
         }
-        for (StatementGroup group : item.getStatementGroups()) {
-            translateStatementGroup(group, writer);
+        for (Statement s : item.getAddedStatements()) {
+            translateStatement(s, s.getClaim().getMainSnak().getPropertyId().getId(), true, writer);
+        }
+        for (Statement s : item.getDeletedStatements()) {
+            translateStatement(s, s.getClaim().getMainSnak().getPropertyId().getId(), false, writer);
         }
     }
     
-    protected void translateStatementGroup(StatementGroup group, Writer writer) throws IOException {
-        String pid = group.getProperty().getId();
-        for(Statement statement : group.getStatements()) {
-            translateStatement(statement, pid, writer);
-        }
-    }
-    
-    protected void translateStatement(Statement statement, String pid, Writer writer) throws IOException {
+    protected void translateStatement(Statement statement, String pid, boolean add, Writer writer) throws IOException {
         Claim claim = statement.getClaim();
         String qid = claim.getSubject().getId();
         if (claim.getSubject().equals(ItemIdValue.NULL)) {
@@ -86,6 +81,9 @@ public class QuickStatementsExporter implements WriterExporter {
         ValueVisitor<String> vv = new ValuePrinter();
         String targetValue = val.accept(vv);
         if (targetValue != null) {
+           if (! add) {
+               writer.write("- ");
+           }
            writer.write(qid + "\t" + pid + "\t" + targetValue);
            for(SnakGroup q : claim.getQualifiers()) {
                translateSnakGroup(q, false, writer);

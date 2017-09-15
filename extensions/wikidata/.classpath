@@ -19,5 +19,6 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenRefine"/>
 	<classpathentry kind="lib" path="module/MOD-INF/lib/wdtk-datamodel-0.8.0-SNAPSHOT-jar-with-dependencies.jar" sourcepath="module/MOD-INF/lib-src/wdtk-datamodel-0.8.0-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/wdtk-wikibaseapi-0.8.0-SNAPSHOT.jar" sourcepath="module/MOD-INF/lib-src/wdtk-wikibaseapi-0.8.0-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="output" path="module/MOD-INF/classes"/>
 </classpath>

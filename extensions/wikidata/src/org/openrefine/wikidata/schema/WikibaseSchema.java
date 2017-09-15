@@ -58,8 +58,8 @@ public class WikibaseSchema implements OverlayModel {
         return itemDocumentExprs;
     }
     
-    public List<ItemDocument> evaluate(ExpressionContext ctxt) {
-        List<ItemDocument> result = new ArrayList<ItemDocument>();
+    public List<ItemUpdate> evaluate(ExpressionContext ctxt) {
+        List<ItemUpdate> result = new ArrayList<ItemUpdate>();
         for (WbItemDocumentExpr expr : itemDocumentExprs) {
             
             try {
@@ -71,16 +71,16 @@ public class WikibaseSchema implements OverlayModel {
         return result;
     }
     
-    public List<ItemDocument> evaluate(Project project, Engine engine) {
-        List<ItemDocument> result = new ArrayList<ItemDocument>();
+    public List<ItemUpdate> evaluate(Project project, Engine engine) {
+        List<ItemUpdate> result = new ArrayList<ItemUpdate>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result));
         return result;
     }
     
     protected class EvaluatingRowVisitor implements RowVisitor {
-        private List<ItemDocument> result;
-        public EvaluatingRowVisitor(List<ItemDocument> result) {
+        private List<ItemUpdate> result;
+        public EvaluatingRowVisitor(List<ItemUpdate> result) {
             this.result = result;
         }
         

@@ -35,6 +35,8 @@ function init() {
      */
     Packages.com.google.refine.operations.OperationRegistry.registerOperation(
         module, "save-wikibase-schema", Packages.org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation);
+    Packages.com.google.refine.operations.OperationRegistry.registerOperation(
+        module, "perform-wikibase-edits", Packages.org.openrefine.wikidata.operations.PerformWikibaseEditsOperation);
     
     /*
      *  Exporters
@@ -49,6 +51,8 @@ function init() {
      */
     RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
+    RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
+    RefineServlet.registerCommand(module, "login", new LoginCommand());
      
     /*
      * Resources
@@ -59,6 +63,8 @@ function init() {
       [
         "scripts/menu-bar-extension.js",
         "scripts/dialogs/schema-alignment-dialog.js",
+        "scripts/dialogs/manage-account-dialog.js",
+        "scripts/dialogs/perform-edits-dialog.js",
       ]);
 
     ClientSideResourceManager.addPaths(
@@ -66,76 +72,8 @@ function init() {
       module,
       [
         "styles/dialogs/schema-alignment-dialog.less",
+        "styles/dialogs/manage-account-dialog.less",
       ]);
    
 }
 
-function process(path, request, response) {
-    // Analyze path and handle this request yourself.
-    /*
-	var loggerFactory = Packages.org.slf4j.LoggerFactory;
-	var logger = loggerFactory.getLogger("rdf_extension");
-    var method = request.getMethod();
-    
-    logger.info('receiving request for ' + path);
-    if(rdfReconcileExtension.isKnownRequestUrl(path)){
-    	var command = rdfReconcileExtension.getCommand(path, request);
-    	logger.info('command is ' + command);
-    	var serviceName = rdfReconcileExtension.getServiceName(path);
-    	logger.info('command is ' + command + ', while service name is ' + serviceName);
-    	if(command && command !== 'unknown'){
-    		var jsonResponse;
-    		if(command==='metadata'){
-    			jsonResponse = GRefineServiceManager.singleton.metadata(serviceName,request);
-    		}else if(command==='multi-reconcile'){
-    			jsonResponse = GRefineServiceManager.singleton.multiReconcile(serviceName,request);
-    		}else if (command==='suggest-type'){
-    			jsonResponse = GRefineServiceManager.singleton.suggestType(serviceName,request);
-    		}else if (command==='flyout-type'){
-    			jsonResponse = GRefineServiceManager.singleton.previewType(serviceName,request);
-    		}else if (command==='suggest-property'){
-    			jsonResponse = GRefineServiceManager.singleton.suggestProperty(serviceName,request);
-    		}else if (command==='flyout-property'){
-    			jsonResponse = GRefineServiceManager.singleton.previewProperty(serviceName,request);
-    		}else if (command==='suggest-entity'){
-    			jsonResponse = GRefineServiceManager.singleton.suggestEntity(serviceName,request);
-    		}else if (command==='flyout-entity'){
-    			jsonResponse = GRefineServiceManager.singleton.previewEntity(serviceName,request);
-    		}else if (command==='preview-resource-template'){
-    			var htmlResponse = GRefineServiceManager.singleton.getHtmlOfResourcePreviewTemplate(serviceName,request);
-    			if(htmlResponse){
-    				butterfly.sendString(request, response, htmlResponse ,"UTF-8", "text/html");
-    			}else{
-    				butterfly.sendError(request, response, 404, "unknown service");
-    			}
-    			return;
-    		}else if (command==='view-resource'){
-    			var id = request.getParameter('id');
-    			butterfly.redirect(request,response,id);
-    			return;
-    		}else if (command ==='preview-resource'){
-    			logger.info("id is " + request.getParameter("id"));
-    			var htmlResponse = GRefineServiceManager.singleton.previewResource(serviceName,request);
-    			if(htmlResponse){
-    				butterfly.sendString(request, response, htmlResponse ,"UTF-8", "text/html");
-    			}else{
-    				butterfly.sendError(request, response, 404, "unknown service");
-    			}
-    			return;
-    		}
-    		
-    		if(jsonResponse){
-    			logger.info(jsonResponse);
-    			butterfly.sendString(request, response, jsonResponse ,"UTF-8", "text/javascript");
-    			return;
-    		}else{
-    			butterfly.sendError(request, response, 404, "unknown service");
-    		}
-    	}
-    	//else it is an unknown command... do nothing
-    }
-    
-    if (path == "/" || path == "") {
-    	butterfly.redirect(request, response, "index.html");
-    } */
-}
