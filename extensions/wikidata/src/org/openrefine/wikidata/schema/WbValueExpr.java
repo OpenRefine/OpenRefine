@@ -30,6 +30,14 @@ public abstract class WbValueExpr extends BiJsonizable {
             valueExpr = WbStringVariable.fromJSON(obj);
         } else if (WbStringConstant.jsonType.equals(type)) {
             valueExpr = WbStringConstant.fromJSON(obj);
+        } else if (WbDateVariable.jsonType.equals(type)) {
+            valueExpr = WbDateVariable.fromJSON(obj);
+        } else if (WbDateConstant.jsonType.equals(type)) {
+            valueExpr = WbDateConstant.fromJSON(obj);
+        } else if (WbLocationVariable.jsonType.equals(type)) {
+            valueExpr = WbLocationVariable.fromJSON(obj);
+        } else if (WbLocationConstant.jsonType.equals(type)) {
+            valueExpr = WbLocationConstant.fromJSON(obj);
         } else {
             throw new JSONException("unknown type '"+type+"' for WbValueExpr");
         }

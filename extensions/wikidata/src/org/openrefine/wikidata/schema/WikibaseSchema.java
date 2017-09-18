@@ -45,7 +45,7 @@ public class WikibaseSchema implements OverlayModel {
         this.baseUri = baseUri;
     }
 
-    public WikibaseSchema(){
+    public WikibaseSchema() {
     	
     }
     
@@ -58,7 +58,12 @@ public class WikibaseSchema implements OverlayModel {
         return itemDocumentExprs;
     }
     
-    public List<ItemUpdate> evaluate(ExpressionContext ctxt) {
+    /**
+     * Evaluates all item documents in a particular expression context.
+     * @param ctxt
+     * @return
+     */
+    public List<ItemUpdate> evaluateItemDocuments(ExpressionContext ctxt) {
         List<ItemUpdate> result = new ArrayList<ItemUpdate>();
         for (WbItemDocumentExpr expr : itemDocumentExprs) {
             
@@ -92,7 +97,7 @@ public class WikibaseSchema implements OverlayModel {
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             ExpressionContext ctxt = new ExpressionContext(baseUri, row, project.columnModel);
-            result.addAll(evaluate(ctxt));
+            result.addAll(evaluateItemDocuments(ctxt));
             return false;
         }
 

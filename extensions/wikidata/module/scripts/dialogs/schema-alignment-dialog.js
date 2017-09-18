@@ -323,6 +323,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
   SchemaAlignmentDialog._initField(inputContainer, datatype, value);
   
   // If we are in a mainsnak...
+  // (see https://www.mediawiki.org/wiki/Wikibase/DataModel#Snaks)
   if (container.parents('.wbs-statement').length == 0) {
 
     // add qualifiers...
@@ -431,6 +432,7 @@ SchemaAlignmentDialog._addReference = function(container, json) {
   $('<img src="images/close.png" />').attr('alt', 'remove reference').click(function() {
      reference.remove();
      SchemaAlignmentDialog._updateReferencesNumber(container);
+     SchemaAlignmentDialog._hasChanged();
   }).appendTo(toolbarRef);
   var right = $('<div></div>').addClass('wbs-right').appendTo(reference);
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
@@ -460,9 +462,7 @@ SchemaAlignmentDialog._referenceToJSON = function(reference) {
 SchemaAlignmentDialog._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
-  console.log(statement);
   var a = statement.find('.wbs-references-toggle a').first();
-  console.log(a);
   a.html(childrenCount+'&nbsp;references');
 }
 
@@ -548,6 +548,32 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
         });
         SchemaAlignmentDialog._hasChanged();
     });
+  } else if (mode === "time") {
+     var propagateValue = function(val) {
+        // TODO add validation here
+        inputContainer.data("jsonValue", {
+           type: "wbdateconstant",
+           value: val,
+        });
+    };
+    propagateValue("");
+    input.change(function() {
+      propagateValue($(this).val());
+      SchemaAlignmentDialog._hasChanged();
+    });
+   } else if (mode === "globecoordinates") {
+     var propagateValue = function(val) {
+        // TODO add validation here
+        inputContainer.data("jsonValue", {
+           type: "wblocationconstant",
+           value: val,
+        });
+    };
+    propagateValue("");
+    input.change(function() {
+      propagateValue($(this).val());
+      SchemaAlignmentDialog._hasChanged();
+    });
   } else { /* if (mode === "external-id") { */
     var propagateValue = function(val) {
         inputContainer.data("jsonValue", {
@@ -581,8 +607,11 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
   if (mode === "wikibase-item") {
       acceptClass = ".wbs-reconciled-column";
       wbVariableType = "wbitemvariable";
+  } else if (mode === "time") {
+      wbVariableType = "wbdatevariable";
+  } else if (mode === "globecoordinates") {
+      wbVariableType = "wblocationvariable";
   }
-
       
   inputContainer.droppable({
       accept: acceptClass,
@@ -608,9 +637,13 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
      } else if (initialValue.type == "wbitemvariable") {
         var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, true);
         acceptDraggableColumn(cell);
-     } else if (initialValue.type == "wbstringconstant") {
+     } else if (initialValue.type == "wbstringconstant" ||
+                initialValue.type == "wbdateconstant" ||
+                initialValue.type == "wblocationconstant") {
         input.val(initialValue.value);
-     } else if (initialValue.type == "wbstringvariable") {
+     } else if (initialValue.type == "wbstringvariable" ||
+                initialValue.type == "wbdatevariable" ||
+                initialValue.type == "wblocationvariable") {
         var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, false);
         acceptDraggableColumn(cell);
      }

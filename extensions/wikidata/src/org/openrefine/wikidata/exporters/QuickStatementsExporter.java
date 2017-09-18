@@ -121,7 +121,8 @@ public class QuickStatementsExporter implements WriterExporter {
 
         @Override
         public String visit(DatatypeIdValue value) {
-            // TODO Auto-generated method stub
+            // unsupported according to
+            // https://tools.wmflabs.org/wikidata-todo/quick_statements.php?
             return null;
         }
 
@@ -135,20 +136,32 @@ public class QuickStatementsExporter implements WriterExporter {
 
         @Override
         public String visit(GlobeCoordinatesValue value) {
-            // TODO Auto-generated method stub
-            return null;
+            return String.format(
+                "@%f/%f",
+                value.getLatitude(),
+                value.getLongitude());
         }
 
         @Override
         public String visit(MonolingualTextValue value) {
-            // TODO Auto-generated method stub
-            return null;
+            return String.format(
+                 "%s:/\"%s\"",
+                 value.getLanguageCode(),
+                 value.getText());
         }
 
         @Override
         public String visit(QuantityValue value) {
-            // TODO Auto-generated method stub
-            return null;
+            String unitPrefix = "http://www.wikidata.org/entity/Q";
+            String unit = value.getUnit();
+            if (!unit.startsWith(unitPrefix))
+                return null; // QuickStatements only accepts Qids as units
+            String unitID = "U"+unit.substring(unitPrefix.length());
+            return String.format(
+                    "[%f,%f]%s",
+                    value.getLowerBound(),
+                    value.getUpperBound(),
+                    unitID);
         }
 
         @Override
@@ -158,8 +171,15 @@ public class QuickStatementsExporter implements WriterExporter {
 
         @Override
         public String visit(TimeValue value) {
-            // TODO Auto-generated method stub
-            return null;
+            return String.format(
+                "+%04d-%02d-%02dT%02d:%02d:%02dZ/%d",
+                value.getYear(),
+                value.getMonth(),
+                value.getDay(),
+                value.getHour(),
+                value.getMinute(),
+                value.getSecond(),
+                value.getPrecision());
         }
         
     }
