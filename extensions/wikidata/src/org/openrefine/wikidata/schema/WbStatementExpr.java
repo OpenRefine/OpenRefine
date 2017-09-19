@@ -83,17 +83,11 @@ public class WbStatementExpr extends BiJsonizable {
     }
     
     public static List<SnakGroup> groupSnaks(List<Snak> snaks) {
-        Map<PropertyIdValue, List<Snak> > map = new HashMap<PropertyIdValue, List<Snak>>();
-        for (Snak snak : snaks) {
-            PropertyIdValue pid = snak.getPropertyId();
-            if (!map.containsKey(pid)) {
-                map.put(pid, new ArrayList<Snak>());
-            }
-            map.get(pid).add(snak);
-        }
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
-        for (List<Snak> snaksGroup : map.values()) {
-            snakGroups.add(Datamodel.makeSnakGroup(snaksGroup));
+        for (Snak snak : snaks) {
+            List<Snak> singleton = new ArrayList<Snak>();
+            singleton.add(snak);
+            snakGroups.add(Datamodel.makeSnakGroup(singleton));
         }
         return snakGroups;
     }
