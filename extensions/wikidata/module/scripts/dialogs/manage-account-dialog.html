@@ -7,7 +7,7 @@
     </p>
         <div class="wikibase-user-management-area">
           <div class="wikibase-user-login" bind="loginArea">
-            <div bind="invalidCredentials"></div>
+            <div bind="invalidCredentials" class="wikibase-invalid-credentials"></div>
             <form bind="loginForm" class="wikibase-login-form" method="post">
               <table>
                 <tr>
@@ -21,7 +21,7 @@
               </table>
             </form>
             <div class="wikibase-login-buttons">
-                <button class="button button-primary cancel-button">Close</button>
+                <button class="button cancel-button">Close</button>
                 <button class="button button-primary" bind="loginButton">Log in</button>
             </div>
           </div>

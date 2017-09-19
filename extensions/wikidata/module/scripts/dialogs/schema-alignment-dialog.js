@@ -347,9 +347,11 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     referencesToggle.click(function () {
         referenceContainer.toggle(100);
     });
+    referenceContainer.hide();
     var right2 = $('<div></div>').addClass('wbs-right').appendTo(right);
     var toolbar3 = $('<div></div>').addClass('wbs-toolbar').appendTo(right2);
     $('<a></a>').addClass('wbs-add-reference').text('add reference').click(function() {
+        referenceContainer.show();
         SchemaAlignmentDialog._addReference(referenceContainer, null);
         SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
     }).appendTo(toolbar3);
@@ -487,7 +489,7 @@ SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
 
 SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContainer, initialValue) {
   var input = $('<input></input>').appendTo(inputContainer);
-  input.attr("placeholder", "Wikidata property");
+  input.attr("placeholder", "property");
 
   if (this._reconService !== null) {
     endpoint = this._reconService.suggest.property;
@@ -505,6 +507,7 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
             label: data.name,
             datatype: datatype,
           });
+          console.log(datatype);
           SchemaAlignmentDialog._addStatement(targetContainer, datatype, null);
           var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
           addValueButtons.show();
@@ -532,7 +535,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
   var input = $('<input></input>').appendTo(inputContainer);
 
   if (this._reconService !== null && mode === "wikibase-item") {
-    input.attr("placeholder", "Wikidata item or reconciled column");
+    input.attr("placeholder", "item or reconciled column");
     var endpoint = null;
     endpoint = this._reconService.suggest.entity;
     var suggestConfig = $.extend({}, endpoint);
@@ -549,6 +552,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
         SchemaAlignmentDialog._hasChanged();
     });
   } else if (mode === "time") {
+     input.attr("placeholder", "YYYY(-MM(-DD))...");
      var propagateValue = function(val) {
         // TODO add validation here
         inputContainer.data("jsonValue", {
@@ -561,7 +565,8 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
       propagateValue($(this).val());
       SchemaAlignmentDialog._hasChanged();
     });
-   } else if (mode === "globecoordinates") {
+   } else if (mode === "globe-coordinate") {
+     input.attr("placeholder", "lat/lon");
      var propagateValue = function(val) {
         // TODO add validation here
         inputContainer.data("jsonValue", {
@@ -609,7 +614,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
       wbVariableType = "wbitemvariable";
   } else if (mode === "time") {
       wbVariableType = "wbdatevariable";
-  } else if (mode === "globecoordinates") {
+  } else if (mode === "globe-coordinate") {
       wbVariableType = "wblocationvariable";
   }
       

@@ -9,20 +9,13 @@ function init() {
     RefineServlet.registerClassMapping(
             "org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange",
             "org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange");
+    RefineServlet.registerClassMapping(
+            "org.openrefine.wikidata.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange",
+            "org.openrefine.wikidata.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange");
     
     RefineServlet.cacheClass(Packages.org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange);
+    RefineServlet.cacheClass(Packages.org.openrefine.wikidata.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange);
 
-    /*
-     * Context Initialization. This is mainly to allow testability. a simple attempt to mimic dependency injection
-     */
-
-    /*
-    var initializer = new Packages.org.deri.grefine.rdf.app.InitilizationCommand();
-    RefineServlet.registerCommand(module, "initialize", initializer);
-    var ctxt = new Packages.org.deri.grefine.rdf.app.ApplicationContext();
-    initializer.initRdfExportApplicationContext(ctxt);
-    */
-    
     /*
      *  Attach a Wikibase schema to each project.
      */
