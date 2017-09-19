@@ -504,7 +504,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 List<Recon> recons = new ArrayList<Recon>(rowSize);
                 for (int j = 0; j < rowSize; j++) {
                     recons.add(null);
-                    if (i == 0)
+                    if (j >= columnReconciled.size())
                         columnReconciled.add(false);
                 }
                 reconList.add(recons);
