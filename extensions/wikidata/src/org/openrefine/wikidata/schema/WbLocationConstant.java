@@ -24,9 +24,22 @@ public class WbLocationConstant extends WbLocationExpr {
     public static GlobeCoordinatesValue parse(String expr) throws ParseException {
         double lat = 0;
         double lng = 0;
-        double precision = 0;
-        return Datamodel.makeGlobeCoordinatesValue(lat, lng, precision,
-                GlobeCoordinatesValue.GLOBE_EARTH);
+        double precision = GlobeCoordinatesValue.PREC_TEN_MICRO_DEGREE;
+        String[] parts = expr.split("[,/]");
+        if (parts.length >= 2 && parts.length <= 3) {
+           try {
+           lat = Double.parseDouble(parts[0]);
+           lng = Double.parseDouble(parts[1]);
+           if (parts.length == 3) {
+               precision = Double.parseDouble(parts[2]);
+           }
+           return Datamodel.makeGlobeCoordinatesValue(lat, lng, precision,
+                   GlobeCoordinatesValue.GLOBE_EARTH);
+           } catch(NumberFormatException e) {
+               ;
+           }
+        }
+        throw new ParseException("Invalid globe coordinates", 0);
     }
 
     @Override

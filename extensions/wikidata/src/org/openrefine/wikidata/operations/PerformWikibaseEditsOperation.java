@@ -94,6 +94,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         writer.value(strategy.name());
         writer.key("duplicate_action");
         writer.value(duplicateAction.name());
+        writer.key("engineConfig");
+        writer.value(getEngineConfig());
         writer.endObject();
     }
     

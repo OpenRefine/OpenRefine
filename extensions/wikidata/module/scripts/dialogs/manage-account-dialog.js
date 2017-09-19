@@ -24,6 +24,7 @@ ManageAccountDialog.launch = function(logged_in_username, callback) {
   });
 
   elmts.loginButton.click(function() {
+    frame.hide();
     $.post(
        "command/wikidata/login",
        elmts.loginForm.serialize(),
@@ -32,6 +33,7 @@ ManageAccountDialog.launch = function(logged_in_username, callback) {
            dismiss();
            callback(data.username);
          } else {
+            frame.show();
             elmts.invalidCredentials.text("Invalid credentials.");
          }
        });

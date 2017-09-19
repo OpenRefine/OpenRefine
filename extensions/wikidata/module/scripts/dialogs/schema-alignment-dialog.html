@@ -9,6 +9,7 @@
     <div id="schema-alignment-tabs" class="refine-tabs">
       <ul>
           <li><a href="#schema-alignment-tabs-schema">Schema</a></li>
+          <li><a href="#schema-alignment-tabs-warnings">Warnings</a></li>
           <li><a href="#schema-alignment-tabs-preview-qs">QuickStatements preview</a></li>
       </ul>
       <div id="schema-alignment-tabs-schema">
@@ -22,6 +23,10 @@
                 <div class="wbs-toolbar"><a class="wbs-add-item" bind="addItemButton">add item</a></div>
             </div>
           </div>
+      </div>
+      <div id="schema-alignment-tabs-warnings" style="display: none;">
+          <div class="invalid-schema-warning">Your schema is incomplete, fix it to see the warnings.</div>
+         <div class="schema-alignment-dialog-warnings"></div>
       </div>
       <div id="schema-alignment-tabs-preview-qs" style="display: none;">
           <div class="invalid-schema-warning">Your schema is incomplete, fix it to see the preview.</div>

@@ -3,6 +3,7 @@ package org.openrefine.wikidata.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import com.google.refine.browsing.Engine;
@@ -137,6 +138,7 @@ public class QuickStatementsExporter implements WriterExporter {
         @Override
         public String visit(GlobeCoordinatesValue value) {
             return String.format(
+                Locale.US,
                 "@%f/%f",
                 value.getLatitude(),
                 value.getLongitude());
@@ -158,6 +160,7 @@ public class QuickStatementsExporter implements WriterExporter {
                 return null; // QuickStatements only accepts Qids as units
             String unitID = "U"+unit.substring(unitPrefix.length());
             return String.format(
+                    Locale.US,
                     "[%f,%f]%s",
                     value.getLowerBound(),
                     value.getUpperBound(),
