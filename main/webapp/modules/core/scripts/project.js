@@ -153,12 +153,8 @@ function initializeUI(uiState) {
   ui.historyPanel = new HistoryPanel(ui.historyPanelDiv, ui.historyTabHeader);
   ui.dataTableView = new DataTableView(ui.viewPanelDiv);
 
-  ui.leftPanelTabs.bind('tabsshow', function(event, tabs) {
-    if (tabs.index === 0) {
-      ui.browsingEngine.resize();
-    } else if (tabs.index === 1) {
-      ui.historyPanel.resize();
-    }
+  ui.leftPanelTabs.bind('tabsactivate', function(event, tabs) {
+    tabs.newPanel.resize();
   });
 
   $(window).bind("resize", resizeAll);
