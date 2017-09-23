@@ -332,7 +332,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 }
 
                 // store the reference for later use
-                if (currentReference != null && currentReferenceName != "") {
+                if (currentReference != null && ! "".equals(currentReferenceName)) {
                     namedReferences.put(currentReferenceName, currentReference);
                 }
             }
