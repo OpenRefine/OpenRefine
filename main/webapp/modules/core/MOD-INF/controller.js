@@ -241,6 +241,8 @@ function registerImporting() {
   IM.registerExtension(".marc", "text/marc");
   IM.registerExtension(".mrc", "text/marc");
 
+  IM.registerExtension(".wiki", "text/wiki");
+
   /*
    *  Mime type to format mappings
    */
