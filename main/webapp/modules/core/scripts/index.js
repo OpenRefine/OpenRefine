@@ -68,28 +68,30 @@ Refine.selectActionArea = function(id) {
 };
 
 $(function() {
-  var isThereNewRelease = function() {
-    // TODO: This eeds to be modified to do checking based solely on version, not revision
-    var thisRevision = OpenRefineVersion.revision;
-    var thisVersion = OpenRefineVersion.version;
-
-    var revision_pattern = /r([0-9]+)/;
-
-    if (!revision_pattern.test(thisRevision)) { // probably "trunk"
+  var isThereNewRelease = function(thisVer,latestVer) {
+    // Assumes Semantic Version numbering format of form X.Y.Z where X, Y, and Z are non-negative integer
+    // Ignores any trailing letters e.g. 2.7.1-rc.1 will be interpreted as equivalent to 2.7.1
+    if(thisVer == latestVer) {
       return false;
     }
+    var thisVerParts = thisVer.split(".");
+    var latestVerParts = latestVer.split(".");
+    while(thisVerParts.length < 3)
+      thisVerParts.push(0);
+    while(latestVerParts.length < 3)
+      latestVersParts.push(0);
 
-    var latestRevision = OpenRefineReleases.releases[0].revision;
-    var latestVersion = OpenRefineReleases.releases[0].version;
-
-    var thisRev = parseInt(revision_pattern.exec(thisRevision)[1],10);
-    var latestRev = parseInt(revision_pattern.exec(OpenRefineReleases.releases[0].revision)[1],10);
-
-    // Parser version into main version and suffix which follows dash
-    // Parse version from dot separated string into array of integers
-    
-    // compare left to right, including suffix
-    return latestRev > thisRev;
+    for(var i=0; i<3; i++) {
+      console.log(parseInt(latestVerParts[i],10));
+      if(parseInt(thisVerParts[i],10) == parseInt(latestVerParts[i],10)) {
+        continue;
+      } else if (parseInt(thisVerParts[i],10) > parseInt(latestVerParts[i],10)) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return false;
   };
 
   var showVersion = function() {
@@ -100,31 +102,20 @@ $(function() {
           OpenRefineVersion = data;
 
           $("#openrefine-version").text($.i18n._('core-index')["version"]+" " + OpenRefineVersion.full_version);
-
-          // Format of releases.js fetched from server
-//          var releases = {
-//              "homepage" : "http://code.google.com/p/google-refine/wiki/Downloads",
-//              "releases" : [
-//        {
-//        "description": "OpenRefine 2.6",
-//        "version": "2.6-alpha1",
-//    },
-//                  {
-//                      "description": "Google Refine 2.5",
-//                      "version": "2.5",
-//                      "revision": "r2407"
-//                  },
-//                  ]
-//          }
           
-          var script = $('<script></script>')
-          .attr("src", "http://google-refine.googlecode.com/svn/support/releases.js")
-          .attr("type", "text/javascript");
-          document.body.appendChild(script[0]);
 
-          var poll = function() {
-            if ("releases" in window) {
-              if (isThereNewRelease()) {
+            $.getJSON( "https://api.github.com/repos/openrefine/openrefine/releases/latest",
+             function( data ) {
+              var latestVersion = data.tag_name;
+              var latestVersionName = data.name;
+              var latestVersionUrl = data.html_url;
+              var thisVersion = OpenRefineVersion.version;
+
+              if(latestVersion.startsWith("v")) {
+                latestVersion = latestVersion.substr(1);
+              }
+
+              if (isThereNewRelease(thisVersion,latestVersion)) {
                 var container = $('<div id="notification-container">')
                 .appendTo(document.body);
                 var notification = $('<div id="notification">')
@@ -132,15 +123,11 @@ $(function() {
                 .appendTo(container);
                 $('<a>')
                 .addClass('notification-action')
-                .attr("href", releases.homepage)
-                .text($.i18n._('core-index')["download"]+' ' + releases.releases[0].description + ' '+$.i18n._('core-index')["now"]+'.')
+                .attr("href", latestVersionUrl)
+                .text($.i18n._('core-index')["download"]+' ' + latestVersionName + ' '+$.i18n._('core-index')["now"]+'.')
                 .appendTo(notification);
               }
-            } else {
-              window.setTimeout(poll, 1000);
-            }
-          };
-          window.setTimeout(poll, 1000);
+            });
         }
     );
   };
