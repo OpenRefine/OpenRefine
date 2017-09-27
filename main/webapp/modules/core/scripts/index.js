@@ -86,10 +86,8 @@ $(function() {
       var latestVerPartInt = parseInt(latestVerParts[i],10);
       if(thisVerPartInt == latestVerPartInt) {
         continue;
-      } else if (thisVerPartInt > latestVerPartInt) {
-        return false;
       } else {
-        return true;
+        return !(thisVerPartInt > latestVerPartInt);
       }
     }
     return false;
@@ -125,6 +123,7 @@ $(function() {
                 $('<a>')
                 .addClass('notification-action')
                 .attr("href", latestVersionUrl)
+                .attr("target", "_blank")
                 .text($.i18n._('core-index')["download"]+' ' + latestVersionName + ' '+$.i18n._('core-index')["now"]+'.')
                 .appendTo(notification);
               }
