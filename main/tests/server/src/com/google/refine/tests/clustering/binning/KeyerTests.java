@@ -50,6 +50,7 @@ public class KeyerTests extends RefineTest {
     
     private static final String[][] testStrings = {
         {"the multi multi word test","multi test the word"},
+        {" école ÉCole ecoLe ", "ecole"},
         {"a b c d","a b c d"},
         {" d c b a ","a b c d"},
         {"\tABC \t DEF ","abc def"}, // test leading and trailing whitespace
