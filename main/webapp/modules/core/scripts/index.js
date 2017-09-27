@@ -79,13 +79,14 @@ $(function() {
     while(thisVerParts.length < 3)
       thisVerParts.push(0);
     while(latestVerParts.length < 3)
-      latestVersParts.push(0);
+      latestVerParts.push(0);
 
     for(var i=0; i<3; i++) {
-      console.log(parseInt(latestVerParts[i],10));
-      if(parseInt(thisVerParts[i],10) == parseInt(latestVerParts[i],10)) {
+      var thisVerPartInt = parseInt(thisVerParts[i],10);
+      var latestVerPartInt = parseInt(latestVerParts[i],10);
+      if(thisVerPartInt == latestVerPartInt) {
         continue;
-      } else if (parseInt(thisVerParts[i],10) > parseInt(latestVerParts[i],10)) {
+      } else if (thisVerPartInt > latestVerPartInt) {
         return false;
       } else {
         return true;
@@ -104,7 +105,7 @@ $(function() {
           $("#openrefine-version").text($.i18n._('core-index')["version"]+" " + OpenRefineVersion.full_version);
           
 
-            $.getJSON( "https://api.github.com/repos/openrefine/openrefine/releases/latest",
+            $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
              function( data ) {
               var latestVersion = data.tag_name;
               var latestVersionName = data.name;
