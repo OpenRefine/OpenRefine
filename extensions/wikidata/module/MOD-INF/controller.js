@@ -58,6 +58,7 @@ function init() {
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",
+        "scripts/jquery.uls.data.js",
       ]);
 
     ClientSideResourceManager.addPaths(

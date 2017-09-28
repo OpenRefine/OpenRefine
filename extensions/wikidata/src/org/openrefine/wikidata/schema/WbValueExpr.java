@@ -38,6 +38,8 @@ public abstract class WbValueExpr extends BiJsonizable {
             valueExpr = WbLocationVariable.fromJSON(obj);
         } else if (WbLocationConstant.jsonType.equals(type)) {
             valueExpr = WbLocationConstant.fromJSON(obj);
+        } else if (WbMonolingualExpr.jsonType.equals(type)) {
+            valueExpr = WbMonolingualExpr.fromJSON(obj);
         } else {
             throw new JSONException("unknown type '"+type+"' for WbValueExpr");
         }
