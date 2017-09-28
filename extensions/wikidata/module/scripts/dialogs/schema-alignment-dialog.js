@@ -507,7 +507,6 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
             label: data.name,
             datatype: datatype,
           });
-          console.log(datatype);
           SchemaAlignmentDialog._addStatement(targetContainer, datatype, null);
           var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
           addValueButtons.show();
@@ -531,8 +530,12 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
 
 }
 
-SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) {
+SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, changedCallback) {
   var input = $('<input></input>').appendTo(inputContainer);
+ 
+  if (! changedCallback) {
+    changedCallback = SchemaAlignmentDialog._hasChanged;
+  }
 
   if (this._reconService !== null && mode === "wikibase-item") {
     input.attr("placeholder", "item or reconciled column");
@@ -541,7 +544,6 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
-    
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
@@ -549,7 +551,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
             qid : data.id,
             label: data.name,
         });
-        SchemaAlignmentDialog._hasChanged();
+        changedCallback();
     });
   } else if (mode === "time") {
      input.attr("placeholder", "YYYY(-MM(-DD))...");
@@ -563,7 +565,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     propagateValue("");
     input.change(function() {
       propagateValue($(this).val());
-      SchemaAlignmentDialog._hasChanged();
+      changedCallback();
     });
    } else if (mode === "globe-coordinate") {
      input.attr("placeholder", "lat/lon");
@@ -577,9 +579,56 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     propagateValue("");
     input.change(function() {
       propagateValue($(this).val());
-      SchemaAlignmentDialog._hasChanged();
+      changedCallback();
     });
-  } else { /* if (mode === "external-id") { */
+   } else if (mode === "quantity") {
+     alert("not supported yet!");
+   } else if (mode === "language") {
+     var initial_language_width = "20%";
+     var expanded_width = "90px";
+     var animation_duration = 50;
+     input.attr("placeholder", "lang");
+     inputContainer.width(initial_language_width);
+     input.langsuggest().bind("fb-select", function(evt, data) {
+        inputContainer.data("jsonValue", {
+            type: "wblanguageconstant",
+            id: data.id,
+            label: data.name,
+        });
+        changedCallback();
+        inputContainer.animate({ width: initial_language_width, duration: animation_duration });
+     }).bind("focus.suggest", function(e) {
+        inputContainer.animate({ width: expanded_width, duration: animation_duration });
+     });
+   } else if (mode === "monolingualtext") {
+     input.remove();
+     var inputContainerLanguage = $('<div></div>')
+     .addClass('wbs-monolingual-container')
+     .appendTo(inputContainer);
+     var inputContainerValue = $('<div></div>')
+     .addClass('wbs-monolingual-container')
+     .width('80%')
+     .appendTo(inputContainer);
+
+     var langValue = null;
+     var strValue = null;
+     if (initialValue) {
+         langValue = initialValue.language;
+         strValue = initialValue.value;
+     }
+
+     var propagateValue = function() {
+        inputContainer.data("jsonValue", {
+           type: "wbmonolingualexpr",
+           language: inputContainerLanguage.data("jsonValue"),
+           value: inputContainerValue.data("jsonValue"),
+        });
+        changedCallback();
+     }
+
+     SchemaAlignmentDialog._initField(inputContainerLanguage, "language", langValue, propagateValue);
+     SchemaAlignmentDialog._initField(inputContainerValue, "external-id", strValue, propagateValue);
+   } else { /* if (mode === "external-id") { */
     var propagateValue = function(val) {
         inputContainer.data("jsonValue", {
            type: "wbstringconstant",
@@ -589,7 +638,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     propagateValue("");
     input.change(function() {
       propagateValue($(this).val());
-      SchemaAlignmentDialog._hasChanged();
+      changedCallback();
     });
   }
 
@@ -602,7 +651,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
     deleteButton.click(function () {
         columnDiv.remove();
         input.show();
-        SchemaAlignmentDialog._hasChanged();
+        changedCallback();
     });
   };
 
@@ -616,24 +665,30 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
       wbVariableType = "wbdatevariable";
   } else if (mode === "globe-coordinate") {
       wbVariableType = "wblocationvariable";
-  }
+  } else if (mode === "monolingualtext") {
+      wbVariableType = null; // not droppable directly
+  } else if (mode === "language") {
+      wbVariableType = "wblanguagevariable";
+  } 
       
-  inputContainer.droppable({
-      accept: acceptClass,
-  }).on("drop", function (evt, ui) {
-      var column = ui.draggable.clone();
-      acceptDraggableColumn(column);
-      inputContainer.data("jsonValue", {
-          type : wbVariableType,
-          columnName: ui.draggable.text(),
-      });
-      SchemaAlignmentDialog._hasChanged();
-      return true; 
-  }).on("dropactivate", function(evt, ui) {
-      input.addClass("wbs-accepting-input");
-  }).on("dropdeactivate", function(evt, ui) {
-      input.removeClass("wbs-accepting-input");
-  });
+  if (wbVariableType) {
+    inputContainer.droppable({
+        accept: acceptClass,
+    }).on("drop", function (evt, ui) {
+        var column = ui.draggable.clone();
+        acceptDraggableColumn(column);
+        inputContainer.data("jsonValue", {
+            type : wbVariableType,
+            columnName: ui.draggable.text(),
+        });
+        changedCallback();
+        return true; 
+    }).on("dropactivate", function(evt, ui) {
+        input.addClass("wbs-accepting-input");
+    }).on("dropdeactivate", function(evt, ui) {
+        input.removeClass("wbs-accepting-input");
+    });
+  }
 
   // Init with the provided initial value.
   if (initialValue) {
@@ -642,13 +697,16 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue) 
      } else if (initialValue.type == "wbitemvariable") {
         var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, true);
         acceptDraggableColumn(cell);
-     } else if (initialValue.type == "wbstringconstant" ||
-                initialValue.type == "wbdateconstant" ||
-                initialValue.type == "wblocationconstant") {
+     } else if (initialValue.type === "wbstringconstant" ||
+                initialValue.type === "wbdateconstant" ||
+                initialValue.type === "wblocationconstant") {
         input.val(initialValue.value);
-     } else if (initialValue.type == "wbstringvariable" ||
-                initialValue.type == "wbdatevariable" ||
-                initialValue.type == "wblocationvariable") {
+     } else if (initialValue.type === "wblanguageconstant") {
+        input.val(initialValue.id);
+     } else if (initialValue.type === "wbstringvariable" ||
+                initialValue.type === "wbdatevariable" ||
+                initialValue.type === "wblocationvariable" ||
+                initialValue.type === "wblanguagevariable") {
         var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, false);
         acceptDraggableColumn(cell);
      }
@@ -712,4 +770,56 @@ SchemaAlignmentDialog.preview = function(initial) {
   );
 };
 
+/********************
+ * LANGUAGE SUGGEST *
+ ********************/
 
+$.suggest("langsuggest", {
+  _init: function() {
+    this.api_url = "https://www.wikidata.org/w/api.php";
+    this._status.SELECT = "Select a language from the list:";
+  },
+
+  request: function(val, cursor) {
+    var self = this;
+    var ajax_options = {
+      url: self.api_url,
+      data: {   action: "languagesearch",
+                search: val,
+                format: "json", },
+      success: function(data) {
+         self.response(self.convertResults(data));
+      },
+      dataType: "jsonp",
+     };
+    $.ajax(ajax_options); 
+  },
+  
+  convertResults: function(data) {
+    var array = [];
+    for (var key in data.languagesearch) {
+      if (data.languagesearch.hasOwnProperty(key)) {
+           array.push({ id: key, name: key, search_name: data.languagesearch[key] });
+      }
+    }
+    return array;
+  },
+
+  create_item: function(data, response_data) {
+    var css = this.options.css;
+    var li = $("<li>").addClass(css.item);
+    var type = $("<div>").addClass("fbs-item-type").text(data.id);
+    var native_name = this.get_native_name(data.id);
+    var full_name = native_name ? native_name : data.search_name;
+    var label = $("<label>").text(full_name);
+    li.append($("<div>").addClass(css.item_name).append(type).append(label));
+    return li;
+  },
+ 
+  get_native_name: function(lang_code) {
+    var language = $.uls.data.languages[lang_code];
+    if (language) {
+        return language[2];
+    }
+  },
+});

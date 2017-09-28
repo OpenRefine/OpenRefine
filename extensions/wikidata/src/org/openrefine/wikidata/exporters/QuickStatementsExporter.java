@@ -147,7 +147,7 @@ public class QuickStatementsExporter implements WriterExporter {
         @Override
         public String visit(MonolingualTextValue value) {
             return String.format(
-                 "%s:/\"%s\"",
+                 "%s:\"%s\"",
                  value.getLanguageCode(),
                  value.getText());
         }
