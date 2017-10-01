@@ -60,24 +60,39 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
     
-    protected void translateItem(ItemUpdate item, Writer writer) throws IOException {
-        if (item.getItemId().equals(ItemIdValue.NULL)) {
-            writer.write("CREATE\n");
-        }
-        for (Statement s : item.getAddedStatements()) {
-            translateStatement(s, s.getClaim().getMainSnak().getPropertyId().getId(), true, writer);
-        }
-        for (Statement s : item.getDeletedStatements()) {
-            translateStatement(s, s.getClaim().getMainSnak().getPropertyId().getId(), false, writer);
+    protected void translateNameDescr(String qid, List<MonolingualTextValue> values, String prefix, ItemIdValue id, Writer writer) throws IOException {
+        for (MonolingualTextValue value : values) {
+            writer.write(qid+"\t");
+            writer.write(prefix);
+            writer.write(value.getLanguageCode());
+            writer.write("\t\"");
+            writer.write(value.getText());
+            writer.write("\"\n");
         }
     }
     
-    protected void translateStatement(Statement statement, String pid, boolean add, Writer writer) throws IOException {
-        Claim claim = statement.getClaim();
-        String qid = claim.getSubject().getId();
-        if (claim.getSubject().equals(ItemIdValue.NULL)) {
+    protected void translateItem(ItemUpdate item, Writer writer) throws IOException {
+        String qid = item.getItemId().getId();
+        if (item.getItemId().equals(ItemIdValue.NULL)) {
+            writer.write("CREATE\n");
             qid = "LAST";
         }
+        
+        translateNameDescr(qid, item.getLabels(), "L", item.getItemId(), writer);
+        translateNameDescr(qid, item.getDescriptions(), "D", item.getItemId(), writer);
+        translateNameDescr(qid, item.getAliases(), "A", item.getItemId(), writer);
+        
+        for (Statement s : item.getAddedStatements()) {
+            translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), true, writer);
+        }
+        for (Statement s : item.getDeletedStatements()) {
+            translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), false, writer);
+        }
+    }
+    
+    protected void translateStatement(String qid, Statement statement, String pid, boolean add, Writer writer) throws IOException {
+        Claim claim = statement.getClaim();
+
         Value val = claim.getValue();
         ValueVisitor<String> vv = new ValuePrinter();
         String targetValue = val.accept(vv);

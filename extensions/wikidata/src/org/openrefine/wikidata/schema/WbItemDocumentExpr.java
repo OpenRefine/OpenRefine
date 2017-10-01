@@ -20,10 +20,14 @@ public class WbItemDocumentExpr extends BiJsonizable {
     public static final String jsonType = "wbitemdocument";
 
     private WbItemExpr subjectExpr;
+    private List<WbNameDescExpr> nameDescExprs;
     private List<WbStatementGroupExpr> statementGroupExprs;
     
-    public WbItemDocumentExpr(WbItemExpr subjectExpr, List<WbStatementGroupExpr> statementGroupExprs) {
+    public WbItemDocumentExpr(WbItemExpr subjectExpr,
+            List<WbNameDescExpr> nameDescExprs,
+            List<WbStatementGroupExpr> statementGroupExprs) {
         this.subjectExpr = subjectExpr;
+        this.nameDescExprs = nameDescExprs;
         this.statementGroupExprs = statementGroupExprs;
     }
     
@@ -32,6 +36,12 @@ public class WbItemDocumentExpr extends BiJsonizable {
             throws JSONException {
         writer.key("subject");
         subjectExpr.write(writer, options);
+        writer.key("nameDescs");
+        writer.array();
+        for(WbNameDescExpr expr : nameDescExprs) {
+            expr.write(writer, options);
+        }
+        writer.endArray();
         writer.key("statementGroups");
         writer.array();
         for(WbStatementGroupExpr expr : statementGroupExprs) {
@@ -47,8 +57,16 @@ public class WbItemDocumentExpr extends BiJsonizable {
         for (int i = 0; i != statementsArr.length(); i++) {
             statementExprs.add(WbStatementGroupExpr.fromJSON(statementsArr.getJSONObject(i)));
         }
+        List<WbNameDescExpr> nameDescExprs = new ArrayList<WbNameDescExpr>();
+        if (obj.has("nameDescs")) { // for compatibility with earlier versions
+            JSONArray nameDescArr = obj.getJSONArray("nameDescs");
+            for (int i = 0; i != nameDescArr.length(); i++) {
+                nameDescExprs.add(WbNameDescExpr.fromJSON(nameDescArr.getJSONObject(i)));
+            }
+        }
         return new WbItemDocumentExpr(
                 WbItemExpr.fromJSON(subjectObj),
+                nameDescExprs,
                 statementExprs);
     }
     
@@ -59,6 +77,9 @@ public class WbItemDocumentExpr extends BiJsonizable {
             for(Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {
                 update.addStatement(s);
             }
+        }
+        for(WbNameDescExpr expr : nameDescExprs) {
+            expr.contributeTo(update, ctxt);
         }
         return update;
     }
