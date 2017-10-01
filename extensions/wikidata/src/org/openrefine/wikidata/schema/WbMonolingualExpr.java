@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 
 public class WbMonolingualExpr extends WbValueExpr {

@@ -220,40 +220,109 @@ SchemaAlignmentDialog._createDialog = function() {
 SchemaAlignmentDialog._addItem = function(json) {
   var subject = null;
   var statementGroups = null;
+  var nameDescs = null;
   if (json) {
      subject = json.subject;
      statementGroups = json.statementGroups;
+     nameDescs = json.nameDescs;
   }
 
   var item = $('<div></div>').addClass('wbs-item');
+  $('#schema-alignment-statements-container').append(item);
   var inputContainer = $('<div></div>').addClass('wbs-item-input').appendTo(item);
   SchemaAlignmentDialog._initField(inputContainer, "wikibase-item", subject);
   var right = $('<div></div>').addClass('wbs-right').appendTo(item);
+  $('<div></div>').addClass('wbs-namedesc-container').appendTo(right);
+  var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+  $('<a></a>').addClass('wbs-add-namedesc').text('add name/description').click(function() {
+     SchemaAlignmentDialog._addNameDesc(item, null);
+  }).appendTo(toolbar);
   $('<div></div>').addClass('wbs-statement-group-container').appendTo(right);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   $('<a></a>').addClass('wbs-add-statement-group').text('add statement').click(function() {
      SchemaAlignmentDialog._addStatementGroup(item, null);
   }).appendTo(toolbar);
-
+   
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
         SchemaAlignmentDialog._addStatementGroup(item, statementGroups[i]);
      }
-  } else {
+  } else if (!nameDescs) {
      SchemaAlignmentDialog._addStatementGroup(item);
   }
-  $('#schema-alignment-statements-container').append(item);
+  
+  if (nameDescs) {
+     for(var i = 0; i != nameDescs.length; i++) {
+        SchemaAlignmentDialog._addNameDesc(item, nameDescs[i]);
+     }
+  }
 }
 
 SchemaAlignmentDialog._itemToJSON = function (item) {
-    var lst = new Array();
+    var statementGroupLst = new Array();
     item.find('.wbs-statement-group').each(function () {
-        lst.push(SchemaAlignmentDialog._statementGroupToJSON($(this)));
+        statementGroupLst.push(SchemaAlignmentDialog._statementGroupToJSON($(this)));
+    });
+    var nameDescLst = new Array();
+    item.find('.wbs-namedesc').each(function () {
+        nameDescLst.push(SchemaAlignmentDialog._nameDescToJSON($(this)));
     });
     var inputContainer = item.find(".wbs-item-input").first();
     return {subject: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
-            statementGroups: lst}; 
+            statementGroups: statementGroupLst,
+            nameDescs: nameDescLst}; 
 };
+
+/**************************
+ * NAMES AND DESCRIPTIONS *
+ **************************/
+
+SchemaAlignmentDialog._addNameDesc = function(item, json) {
+  var type = 'ALIAS';
+  var value = null;
+  if (json) {
+     type = json.name_type;
+     value = json.value;
+  } 
+
+  var container = item.find('.wbs-namedesc-container').first();
+  var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
+  var type_container = $('<div></div>').addClass('wbs-namedesc-type').appendTo(namedesc);
+  var type_input = $('<select></select>').appendTo(type_container);
+  $('<option></option>')
+  .attr('value', 'LABEL')
+  .text('Label')
+  .appendTo(type_input);
+  $('<option></option>')
+  .attr('value', 'DESCRIPTION')
+  .text('Description')
+  .appendTo(type_input);
+  $('<option></option>')
+  .attr('value', 'ALIAS')
+  .text('Alias')
+  .appendTo(type_input);
+
+  var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(namedesc);
+  $('<img src="images/close.png" />').attr('alt', 'remove name/description').click(function() {
+     namedesc.remove();
+  }).appendTo(toolbar);
+
+  var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);
+  var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
+  SchemaAlignmentDialog._initField(value_container, "monolingualtext", value); 
+
+}
+
+SchemaAlignmentDialog._nameDescToJSON = function (namedesc) {
+  var type = namedesc.find('select').first().val();
+  var value = namedesc.find('.wbs-namedesc-value').first().data("jsonValue");
+  return {
+    type: "wbnamedescexpr",    
+    name_type: type,
+    value: value,
+  }
+}
+  
 
 /********************
  * STATEMENT GROUPS *
@@ -588,6 +657,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      var expanded_width = "90px";
      var animation_duration = 50;
      input.attr("placeholder", "lang");
+     input.addClass("wbs-language-input");
      inputContainer.width(initial_language_width);
      input.langsuggest().bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
@@ -618,6 +688,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      }
 
      var propagateValue = function() {
+        console.log('propagateValue in monolingualtext')
         inputContainer.data("jsonValue", {
            type: "wbmonolingualexpr",
            language: inputContainerLanguage.data("jsonValue"),
