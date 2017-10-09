@@ -39,9 +39,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
