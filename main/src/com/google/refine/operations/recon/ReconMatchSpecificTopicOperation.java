@@ -128,7 +128,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     
     @Override
     protected String getBriefDescription(Project project) {
-        return "Match specific topic " +
+        return "Match specific item " +
             match.name + " (" + 
             match.id + ") to cells in column " + _columnName;
     }
@@ -136,7 +136,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        return "Match specific topic " + 
+        return "Match specific item " + 
             match.name + " (" + 
             match.id + ") to " + cellChanges.size() + 
             " cells in column " + column.getName();

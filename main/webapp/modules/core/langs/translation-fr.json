@@ -471,7 +471,7 @@
         "add-col-recon-col": "Ajouter des colonnes à partir de la colonne",
         "reorder-perma": "Retrier les lignes de façon permanente",
         "new": "nouveau",
-        "match-fb": "Apparier les cellules de cette colonne aux sujets de Freebase",
+        "reconcile-tooltip": "Apparier les cellules de cette colonne aux entrées de bases de données externes",
         "qa-facets": "Facettes AQ",
         "log-length-facet": "Facette logarithmique par longueur du texte",
         "custom-numeric": "Personnaliser la facette numérique",

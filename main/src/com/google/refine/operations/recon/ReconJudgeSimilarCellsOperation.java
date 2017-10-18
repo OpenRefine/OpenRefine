@@ -142,14 +142,14 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 _similarValue + "\" in column " + _columnName;
         } else if (_judgment == Judgment.New) {
             if (_shareNewTopics) {
-                return "Mark to create one single new topic for all cells containing \"" +
+                return "Mark to create one single new item for all cells containing \"" +
                     _similarValue + "\" in column " + _columnName;
             } else {
-                return "Mark to create one new topic for each cell containing \"" +
+                return "Mark to create one new item for each cell containing \"" +
                     _similarValue + "\" in column " + _columnName;
             }
         } else if (_judgment == Judgment.Matched) {
-            return "Match topic " + 
+            return "Match item " + 
                 _match.name +  " (" +
                 _match.id + ") for cells containing \"" +
                 _similarValue + "\" in column " + _columnName;
@@ -166,14 +166,14 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
                 _similarValue + "\" in column " + _columnName;
         } else if (_judgment == Judgment.New) {
             if (_shareNewTopics) {
-                return "Mark to create one single new topic for " + cellChanges.size() + " cells containing \"" +
+                return "Mark to create one single new item for " + cellChanges.size() + " cells containing \"" +
                     _similarValue + "\" in column " + _columnName;
             } else {
-                return "Mark to create one new topic for each of " + cellChanges.size() + " cells containing \"" +
+                return "Mark to create one new item for each of " + cellChanges.size() + " cells containing \"" +
                     _similarValue + "\" in column " + _columnName;
             }
         } else if (_judgment == Judgment.Matched) {
-            return "Match topic " + 
+            return "Match item " + 
                 _match.name + " (" +
                 _match.id + ") for " +
                 cellChanges.size() + " cells containing \"" +

@@ -89,21 +89,21 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
     
     @Override
     protected String getBriefDescription(Project project) {
-        return "Mark to create new topics for cells in column " + _columnName +
+        return "Mark to create new items for cells in column " + _columnName +
             (_shareNewTopics ? 
-                ", one topic for each group of similar cells" : 
-                ", one topic for each cell");
+                ", one item for each group of similar cells" : 
+                ", one item for each cell");
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Mark to create new topics for " + cellChanges.size() + 
+        return "Mark to create new items for " + cellChanges.size() + 
             " cells in column " + column.getName() +
             (_shareNewTopics ? 
-                ", one topic for each group of similar cells" : 
-                ", one topic for each cell");
+                ", one item for each group of similar cells" : 
+                ", one item for each cell");
     }
 
     @Override

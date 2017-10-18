@@ -406,7 +406,6 @@
 		"collapse-left": "Contraer todas las columnas a la izquierda",
 		"collapse-right": "Contraer todas las columnas a la derecha",
 		"reconcile": "Cotejar",
-		"match-fb": "Coincidir las celdas de esta columna con valores de Freebase",
 		"reverse": "Invertir",
 		"remove-sort": "Quitar orden",
 		"sort-by": "Ordenar por",
