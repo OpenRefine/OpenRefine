@@ -2,10 +2,16 @@ package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
+import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 
 /**
@@ -102,5 +108,52 @@ public class ItemUpdate {
     
     public List<MonolingualTextValue> getAliases() {
         return aliases;
+    }
+    
+    /**
+     * Group added statements in StatementGroups: useful if the
+     * item is new.
+     * 
+     * @return a grouped version of getAddedStatements()
+     */
+    public List<StatementGroup> getAddedStatementGroups() {
+        Map<PropertyIdValue, List<Statement>> map = new HashMap<>();
+        for(Statement statement : getAddedStatements()) {
+            PropertyIdValue propertyId = statement.getClaim().getMainSnak().getPropertyId();
+            if (!map.containsKey(propertyId)) {
+                map.put(propertyId, new ArrayList<Statement>());
+            }
+            map.get(propertyId).add(statement);
+        }
+        List<StatementGroup> result = new ArrayList<>();
+        for(Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
+            result.add(new StatementGroupImpl(entry.getValue()));
+        }
+        return result;
+    }
+
+    /**
+     * Group a list of ItemUpdates by subject: this is useful to make one single edit
+     * per item.
+     * 
+     * @param itemDocuments
+     * @return a map from item ids to merged ItemUpdate for that id
+     */
+    public static Map<EntityIdValue, ItemUpdate> groupBySubject(List<ItemUpdate> itemDocuments) {
+        Map<EntityIdValue, ItemUpdate> map = new HashMap<EntityIdValue, ItemUpdate>();
+        for(ItemUpdate update : itemDocuments) {
+            if (update.isNull()) {
+                continue;
+            }
+            
+            ItemIdValue qid = update.getItemId();
+            if (map.containsKey(qid)) {
+                ItemUpdate oldUpdate = map.get(qid);
+                oldUpdate.merge(update);
+            } else {
+                map.put(qid, update);
+            }
+        }
+        return map;
     }
 }

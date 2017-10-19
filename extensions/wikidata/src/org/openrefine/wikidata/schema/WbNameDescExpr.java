@@ -31,7 +31,7 @@ public class WbNameDescExpr extends BiJsonizable {
             throws JSONException {
         writer.key("name_type");
         writer.value(_type.name());
-        writer.value("value");
+        writer.key("value");
         _value.write(writer, options);
     }
     

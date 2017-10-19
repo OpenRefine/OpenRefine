@@ -96,7 +96,7 @@ public class WikibaseSchema implements OverlayModel {
 
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
-            ExpressionContext ctxt = new ExpressionContext(baseUri, row, project.columnModel);
+            ExpressionContext ctxt = new ExpressionContext(baseUri, rowIndex, row, project.columnModel);
             result.addAll(evaluateItemDocuments(ctxt));
             return false;
         }

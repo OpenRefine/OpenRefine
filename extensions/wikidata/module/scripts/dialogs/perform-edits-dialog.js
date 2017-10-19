@@ -22,8 +22,10 @@ PerformEditsDialog.launch = function(logged_in_username) {
        "wikidata",
        "perform-wikibase-edits",
        {},
-       elmts.performEditsForm.serialize(),
-       {},
+       { strategy : "SNAK_QUALIFIERS",
+         action: "MERGE",
+       },
+       { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
        { onDone:
           function() {
            dismiss();

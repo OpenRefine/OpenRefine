@@ -11,39 +11,40 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
-import com.google.common.collect.Lists;
 
 import org.openrefine.wikidata.editing.ConnectionManager;
-import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation.WikibaseSchemaChange;
+import org.openrefine.wikidata.editing.NewItemLibrary;
+import org.openrefine.wikidata.editing.CellCoordinates;
+import org.openrefine.wikidata.editing.CellCoordinatesKeyDeserializer;
 import org.openrefine.wikidata.schema.ItemUpdate;
+import org.openrefine.wikidata.schema.NewEntityIdValue;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.wikidata.wdtk.datamodel.helpers.EntityDocumentBuilder;
-import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
-import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
+import org.wikidata.wdtk.datamodel.interfaces.DataObjectFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
-import org.wikidata.wdtk.wikibaseapi.StatementUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
-import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.SiteLink;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
-import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 
@@ -113,27 +114,56 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             "#openrefine"
         );
     }
+    
     static public class PerformWikibaseEditsChange implements Change {
+        
+        private NewItemLibrary newItemLibrary;
+        
+        public PerformWikibaseEditsChange(NewItemLibrary library) {
+            newItemLibrary = library;
+        }
 
         @Override
         public void apply(Project project) {
-            // this does not do anything to the project (we don't re-run changes on Wikidata)
+            // we don't re-run changes on Wikidata
+            newItemLibrary.updateReconciledCells(project, false);
         }
 
         @Override
         public void revert(Project project) {
-            // this does not do anything (we don't revert changes on Wikidata either)
+            // this does not do anything on Wikibase side - 
+            // (we don't revert changes on Wikidata either)
+            newItemLibrary.updateReconciledCells(project, true);
         }
 
         @Override
         public void save(Writer writer, Properties options)
                 throws IOException {
+            if (newItemLibrary != null) {
+                writer.write("newItems=");
+                ObjectMapper mapper = new ObjectMapper();
+                writer.write(mapper.writeValueAsString(newItemLibrary)+"\n");
+            }
             writer.write("/ec/\n"); // end of change
         }
         
         static public Change load(LineNumberReader reader, Pool pool)
                 throws Exception {
-            return new PerformWikibaseEditsChange();
+            NewItemLibrary library = new NewItemLibrary();
+            String line = null;
+            while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
+                int equal = line.indexOf('=');
+                CharSequence field = line.subSequence(0, equal);
+                String value = line.substring(equal + 1);
+                
+                if ("newItems".equals(field)) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    SimpleModule simpleModule = new SimpleModule();
+                    simpleModule.addKeyDeserializer(CellCoordinates.class, new CellCoordinatesKeyDeserializer());
+                    library = mapper.readValue(value, NewItemLibrary.class);
+                }
+            }
+            return new PerformWikibaseEditsChange(library);
         }
         
     }
@@ -175,20 +205,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
             
             // Group statements by item
-            Map<EntityIdValue, ItemUpdate> updates = new HashMap<EntityIdValue, ItemUpdate>();
-            for(ItemUpdate update : itemDocuments) {
-                if (update.isNull()) {
-                    continue;
-                }
-                
-                ItemIdValue qid = update.getItemId();
-                if (updates.containsKey(qid)) {
-                    ItemUpdate oldUpdate = updates.get(qid);
-                    oldUpdate.merge(update);
-                } else {
-                    updates.put(qid, update);
-                }
-            }
+            Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(itemDocuments);
             
             /**
              * TODO:
@@ -197,12 +214,32 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
              */
             
             // Perform edits
+            NewItemLibrary newItemLibrary = new NewItemLibrary();
+            DataObjectFactory factory = new DataObjectFactoryImpl();
             int totalItemUpdates = updates.size();
             int updatesDone = 0;
             for(ItemUpdate update : updates.values()) {
                 try {
-                    wbde.updateStatements(update.getItemId(), update.getAddedStatements(), update.getDeletedStatements(), _summary);
-                    
+                    // New item
+                    if (update.getItemId().getId() == "Q0") {
+                        NewEntityIdValue newCell = (NewEntityIdValue)update.getItemId();
+                        ItemDocument itemDocument = factory.getItemDocument(
+                                update.getItemId(),
+                                update.getLabels(),
+                                update.getDescriptions(),
+                                update.getAliases(),
+                                update.getAddedStatementGroups(),
+                                new HashMap<String,SiteLink>(),
+                                0L);
+                                
+                        ItemDocument createdDoc = wbde.createItemDocument(itemDocument, _summary);
+                        newItemLibrary.setQid(newCell, createdDoc.getItemId().getId());
+                    } else {
+                        // Existing item
+                        wbde.updateStatements(update.getItemId(),
+                                update.getAddedStatements(),
+                                update.getDeletedStatements(), _summary);   
+                    }
                 } catch (MediaWikiApiErrorException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -221,7 +258,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             _progress = 100;
             
             if (!_canceled) {
-                Change change = new PerformWikibaseEditsChange();
+                Change change = new PerformWikibaseEditsChange(newItemLibrary);
                 
                 HistoryEntry historyEntry = new HistoryEntry(
                     _historyEntryID,
