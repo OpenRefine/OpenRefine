@@ -385,11 +385,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             doReconMarkNewTopics(false);
           }
         },
-        {},
         {
           id: "core/match-similar-to-new-topic",
-          label: $.i18n._('core-views')["new-topic"],
-          tooltip: $.i18n._('core-views')["new-topic2"],
+          label: $.i18n._('core-views')["one-topic"],
+          tooltip: $.i18n._('core-views')["one-topic2"],
           click: function() {
             doReconMarkNewTopics(true);
           }
