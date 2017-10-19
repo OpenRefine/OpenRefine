@@ -44,7 +44,8 @@ public class WbItemVariable extends WbItemExpr {
                 ReconCandidate match = cell.recon.match;
                 return Datamodel.makeItemIdValue(match.id, ctxt.getBaseIRI());
             } else if (recon.judgment == Recon.Judgment.New) {
-                return ItemIdValue.NULL;
+                return new NewEntityIdValue(ctxt.getRowId(),
+                        ctxt.getCellIndexByName(columnName));
             }
         }
         throw new SkipStatementException();

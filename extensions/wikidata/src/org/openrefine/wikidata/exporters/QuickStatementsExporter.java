@@ -73,7 +73,7 @@ public class QuickStatementsExporter implements WriterExporter {
     
     protected void translateItem(ItemUpdate item, Writer writer) throws IOException {
         String qid = item.getItemId().getId();
-        if (item.getItemId().equals(ItemIdValue.NULL)) {
+        if (item.getItemId().getId() == "Q0") {
             writer.write("CREATE\n");
             qid = "LAST";
         }
