@@ -193,7 +193,7 @@ public class ReconJudgeOneCellCommand extends Command {
                 newCell.recon.judgment = Recon.Judgment.New;
                 newCell.recon.match = null;
 
-                description = "Mark to create new topic for " + cellDescription;
+                description = "Mark to create new item for " + cellDescription;
             } else {
                 newCell.recon.judgment = Recon.Judgment.Matched;
                 newCell.recon.match = this.match;
