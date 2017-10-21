@@ -474,7 +474,6 @@
         "reorder-perma": "Retrier les lignes de façon permanente",
         "new": "nouveau",
         "reconcile-tooltip": "Apparier les cellules de cette colonne aux entrées de bases de données externes",
-        "qa-facets": "Facettes AQ",
         "custom-numeric-label": "Facette numérique personnalisée sur la colonne",
         "log-length-facet": "Facette logarithmique par longueur du texte",
         "custom-numeric": "Personnaliser la facette numérique",
