@@ -62,7 +62,12 @@ public class ProjectMetadata implements Jsonizable {
     private String         _encoding;
     private int            _encodingConfidence;
     
-    private String _description;
+    private String _creator;
+    private String _contributors;
+    private String _subject;    // Several refine projects may be linked
+    private String _description;                // free form of comment
+    private int _rowNumber;      // at the creation. Essential for cleaning old projects too heavy
+    
     // import options is an array for 1-n data sources
     private JSONArray _importOptionMetaData = new JSONArray();
     
@@ -95,7 +100,12 @@ public class ProjectMetadata implements Jsonizable {
         writer.key("name"); writer.value(_name);
         writer.key("created"); writer.value(ParsingUtilities.dateToString(_created));
         writer.key("modified"); writer.value(ParsingUtilities.dateToString(_modified));
-
+        writer.key("creator"); writer.value(_creator);
+        writer.key("contributors"); writer.value(_contributors);
+        writer.key("subject"); writer.value(_subject);
+        writer.key("description"); writer.value(_description);
+        writer.key("rowNumber"); writer.value(_rowNumber);
+        
         writer.key("customMetadata"); writer.object();
         for (String key : _customMetadata.keySet()) {
             Serializable value = _customMetadata.get(key);
@@ -158,7 +168,13 @@ public class ProjectMetadata implements Jsonizable {
 
         pm._encoding = JSONUtilities.getString(obj, "encoding", "");
         pm._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
-
+        
+        pm._creator = JSONUtilities.getString(obj, "creator", "");
+        pm._contributors = JSONUtilities.getString(obj, "contributors", "");
+        pm._subject = JSONUtilities.getString(obj, "subject", "");
+        pm._description = JSONUtilities.getString(obj, "description", "");
+        pm._rowNumber = JSONUtilities.getInt(obj, "rowNumber", 0);
+        
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
                 pm._preferenceStore.load(obj.getJSONObject("preferences"));
@@ -296,6 +312,61 @@ public class ProjectMetadata implements Jsonizable {
     
     public void appendImportOptionMetaData(JSONObject obj) {
         _importOptionMetaData.put(obj);
+        updateModified();
+    }
+
+    
+    public String get_creator() {
+        return _creator;
+    }
+
+    
+    public void setCreator(String creator) {
+        this._creator = creator;
+        updateModified();
+    }
+
+    
+    public String get_contributors() {
+        return _contributors;
+    }
+
+    
+    public void setContributors(String contributors) {
+        this._contributors = contributors;
+        updateModified();
+    }
+
+    
+    public String get_subject() {
+        return _subject;
+    }
+
+    
+    public void setSubject(String subject) {
+        this._subject = subject;
+        updateModified();
+    }
+
+    
+    public String get_description() {
+        return _description;
+    }
+
+    
+    public void setDescription(String description) {
+        this._description = description;
+        updateModified();
+    }
+
+    
+    public int getRowNumber() {
+        return _rowNumber;
+    }
+
+    
+    public void setRowNumber(int rowNumber) {
+        this._rowNumber = rowNumber;
         updateModified();
     }
     

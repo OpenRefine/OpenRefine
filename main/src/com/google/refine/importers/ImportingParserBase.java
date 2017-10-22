@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -50,7 +49,6 @@ import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
-import com.google.refine.io.ProjectMetadataUtilities;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -147,7 +145,6 @@ abstract public class ImportingParserBase implements ImportingParser {
         JSONObject options,
         List<Exception> exceptions
     ) {
-//        throw new NotImplementedException();
         pushImportingOptions(metadata, fileSource, options);
     }
 
@@ -171,7 +168,6 @@ abstract public class ImportingParserBase implements ImportingParser {
         JSONObject options,
         List<Exception> exceptions
     ) {
-//        throw new NotImplementedException();
         pushImportingOptions(metadata, fileSource, options);
     }
     
