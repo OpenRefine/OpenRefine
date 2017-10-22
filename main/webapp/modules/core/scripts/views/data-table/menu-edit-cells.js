@@ -134,20 +134,83 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doSplitMultiValueCells = function() {
-    var separator = window.prompt($.i18n._('core-views')["what-separator"], ",");
-    if (separator !== null) {
+
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-multi-valued-cells-dialog.html"));
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n._('core-views')["split-cells"]);
+    
+    elmts.or_views_howSplit.text($.i18n._('core-views')["how-split-cells"]);
+    elmts.or_views_bySep.text($.i18n._('core-views')["by-sep"]);
+    elmts.or_views_separator.text($.i18n._('core-views')["separator"]);
+    elmts.or_views_regExp.text($.i18n._('core-views')["reg-exp"]);
+
+    elmts.or_views_fieldLen.text($.i18n._('core-views')["field-len"]);
+    elmts.or_views_listInt.text($.i18n._('core-views')["list-int"]);
+
+    elmts.okButton.html($.i18n._('core-buttons')["ok"]);
+    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
+      var mode = $("input[name='split-by-mode']:checked")[0].value;
+      var config = {
+        columnName: column.name,
+        keyColumnName: theProject.columnModel.keyColumnName,
+        mode: mode
+      };
+      if (mode == "separator") {
+        config.separator = elmts.separatorInput[0].value;
+        if (!(config.separator)) {
+          alert($.i18n._('core-views')["specify-sep"]);
+          return;
+        }
+
+        config.regex = elmts.regexInput[0].checked;
+
+      } else {
+        var s = "[" + elmts.lengthsTextarea[0].value + "]";
+        try {
+          var a = JSON.parse(s);
+
+          var lengths = [];
+          $.each(a, function(i,n) { 
+            if (typeof n == "number") {
+              lengths.push(n); 
+            }
+          });
+
+          if (lengths.length === 0) {
+            alert($.i18n._('core-views')["warning-no-length"]);
+            return;
+          }
+
+          config.fieldLengths = JSON.stringify(lengths);
+          
+        } catch (e) {
+          alert($.i18n._('core-views')["warning-format"]);
+          return;
+        }
+      }
+
       Refine.postCoreProcess(
         "split-multi-value-cells", 
+        config,
+/* Old config
         {
           columnName: column.name,
           keyColumnName: theProject.columnModel.keyColumnName,
           separator: separator,
           mode: "plain"
-        },
+        },*/
         null,
         { rowsChanged: true }
       );
-    }
+
+      dismiss();
+    });
   };
 
   MenuSystem.appendTo(menu, [ "core/edit-cells" ], [
