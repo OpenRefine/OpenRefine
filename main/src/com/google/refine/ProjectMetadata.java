@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -60,6 +61,10 @@ public class ProjectMetadata implements Jsonizable {
 
     private String         _encoding;
     private int            _encodingConfidence;
+    
+    private String _description;
+    // import options is an array for 1-n data sources
+    private JSONArray _importOptionMetaData = new JSONArray();
     
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
@@ -98,6 +103,12 @@ public class ProjectMetadata implements Jsonizable {
             writer.value(value);
         }
         writer.endObject();
+        
+        // write JSONArray to file directly 
+        if (_importOptionMetaData.length() > 0 ) {
+            writer.key("importOptionMetaData"); 
+            writer.value(_importOptionMetaData);
+        }
         
         if ("save".equals(options.getProperty("mode"))) {
             writer.key("password"); writer.value(_password);
@@ -182,6 +193,16 @@ public class ProjectMetadata implements Jsonizable {
                 // ignore
             }
         }
+        
+        if (obj.has("importOptionMetaData") && !obj.isNull("importOptionMetaData")) {
+            try {
+                JSONArray jsonArray = obj.getJSONArray("importOptionMetaData");
+                pm._importOptionMetaData = jsonArray;
+            } catch (JSONException e) {
+                // ignore
+            }
+        }
+        
 
         pm.written = new Date(); // Mark it as not needing writing until modified
         
@@ -263,4 +284,19 @@ public class ProjectMetadata implements Jsonizable {
         }
         updateModified();
     }
+    
+    public JSONArray getImportOptionMetaData() {
+        return _importOptionMetaData;
+    }
+    
+    public void setImportOptionMetaData(JSONArray jsonArray) {
+        _importOptionMetaData = jsonArray;
+        updateModified();
+    }
+    
+    public void appendImportOptionMetaData(JSONObject obj) {
+        _importOptionMetaData.put(obj);
+        updateModified();
+    }
+    
 }

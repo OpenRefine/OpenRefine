@@ -154,4 +154,9 @@ public class ProjectMetadataUtilities {
             reader.close();
         }
     }
+
+    public static void merge(ProjectMetadata metadata, JSONObject options) {
+        // TODO Auto-generated method stub
+        
+    }
 }

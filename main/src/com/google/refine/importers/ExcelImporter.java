@@ -225,6 +225,8 @@ public class ExcelImporter extends TabularImportingParserBase {
                 exceptions
             );
         }
+        
+        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
     
     static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
