@@ -224,6 +224,35 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
     }
+
+    @Test
+    public void readTableWithReferencesTemplates() {
+        // inspired from https://www.mediawiki.org/wiki/Help:Tables
+        String input = "{|\n"
+        +"! price\n"
+        +"! fruit\n"
+        +"! merchant\n"
+        +"|-\n"
+        +"| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
+        +"|-\n"
+        +"| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
+        +"|-\n"
+        +"|}\n";
+        
+        try {
+            prepareOptions(-1, true, true, null);
+            parse(input);
+        } catch (Exception e) {
+                Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 5);
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
+        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
+        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
+    }
+
     //--helpers--
     
     private void parse(String wikitext) {

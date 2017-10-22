@@ -156,7 +156,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         private int spanningCellIdx;
         private List<String> internalLinksInCell;
         
-        private final Pattern urlPattern = Pattern.compile("\\b(https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]",
+        private final Pattern urlPattern = Pattern.compile("\\b(https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_!:,.;]*[-a-zA-Z0-9+&@#/%=~_]",
                 Pattern.CASE_INSENSITIVE);
         
         public WikitextTableVisitor(boolean blankSpanningCells, boolean includeRawTemplates) {

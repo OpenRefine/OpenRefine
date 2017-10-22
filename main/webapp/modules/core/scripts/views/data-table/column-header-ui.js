@@ -187,7 +187,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
     {
       id: "core/reconcile",
       label: $.i18n._('core-views')["reconcile"],
-      tooltip: $.i18n._('core-views')["match-fb"],
+      tooltip: $.i18n._('core-views')["reconcile-tooltip"],
       width: "170px",
       submenu: []
     }
