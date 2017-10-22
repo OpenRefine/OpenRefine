@@ -33,17 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.cell;
 
-  import java.io.IOException;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.process.Process;
 
 public class SplitMultiValueCellsCommand extends Command {
@@ -58,11 +61,33 @@ public class SplitMultiValueCellsCommand extends Command {
             String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
             String mode = request.getParameter("mode");
-            
-            AbstractOperation op = new MultiValuedCellSplitOperation(columnName, keyColumnName, separator, mode);
-            Process process = op.createProcess(project, new Properties());
-            
-            performProcessAndRespond(request, response, project, process);
+            Boolean regex = Boolean.parseBoolean(request.getParameter("regex"));
+
+            if ("separator".equals(mode)) {
+                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
+                                                                         keyColumnName,
+                                                                         separator, 
+                                                                         regex);
+                Process process = op.createProcess(project, new Properties());
+                
+                performProcessAndRespond(request, response, project, process);
+            } else {
+                String s = request.getParameter("fieldLengths");
+                
+                JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
+                int[] fieldLengths = new int[a.length()];
+                
+                for (int i = 0; i < fieldLengths.length; i++) {
+                    fieldLengths[i] = a.getInt(i);
+                }
+                
+                AbstractOperation op = new MultiValuedCellSplitOperation(columnName,
+                                                                         keyColumnName,
+                                                                         fieldLengths);
+                Process process = op.createProcess(project, new Properties());
+                
+                performProcessAndRespond(request, response, project, process);
+            }
         } catch (Exception e) {
             respondException(response, e);
         }
