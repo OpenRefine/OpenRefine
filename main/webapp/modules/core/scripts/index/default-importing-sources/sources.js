@@ -35,7 +35,7 @@ function ThisComputerImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": $.i18n_._('core-index-import')["this-computer"],
+  "label": $.i18n("this-computer"),
   "id": "upload",
   "uiClass": ThisComputerImportingSourceUI
 });
@@ -47,14 +47,14 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts = DOM.bind(bodyDiv);
   
-  $('#or-import-locate-files').text($.i18n_._('core-index-import')["locate-files"]);
-  this._elmts.nextButton.html($.i18n_._('core-buttons')["project-next"]);
+  $('#or-import-locate-files').text($.i18n("locate-files"));
+  this._elmts.nextButton.html($.i18n("project-next"));
   
   this._elmts.nextButton.click(function(evt) {
     if (self._elmts.fileInput[0].files.length === 0) {
-      window.alert($.i18n_._('core-index-import')["warning-data-file-import"]);
+      window.alert($.i18n("warning-data-file-import"));
     } else {
-      self._controller.startImportJob(self._elmts.form, $.i18n_._('core-index-import')["uploading-data"]);
+      self._controller.startImportJob(self._elmts.form, $.i18n("uploading-data"));
     }
   });
 };
@@ -66,7 +66,7 @@ function UrlImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": $.i18n_._('core-index-import')["web-address"],
+  "label": $.i18n("web-address"),
   "id": "download",
   "uiClass": UrlImportingSourceUI
 });
@@ -78,15 +78,15 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts = DOM.bind(bodyDiv);
   
-  $('#or-import-enterurl').text($.i18n_._('core-index-import')["enter-data-url"]);
-  this._elmts.addButton.html($.i18n_._('core-buttons')["add-url"]);
-  this._elmts.nextButton.html($.i18n_._('core-buttons')["project-next"]);
+  $('#or-import-enterurl').text($.i18n("enter-data-url"));
+  this._elmts.addButton.html($.i18n("add-url"));
+  this._elmts.nextButton.html($.i18n("project-next"));
   
   this._elmts.nextButton.click(function(evt) {
     if ($.trim(self._elmts.urlInput[0].value).length === 0) {
-      window.alert($.i18n_._('core-index-import')["warning-web-address"]);
+      window.alert($.i18n("warning-web-address"));
     } else {
-      self._controller.startImportJob(self._elmts.form, $.i18n_._('core-index-import')["downloading-data"]);
+      self._controller.startImportJob(self._elmts.form, $.i18n("downloading-data"));
     }
   });
   this._elmts.addButton.click(function(evt) {
@@ -102,7 +102,7 @@ function ClipboardImportingSourceUI(controller) {
   this._controller = controller;
 }
 Refine.DefaultImportingController.sources.push({
-  "label": $.i18n_._('core-index-import')["clipboard"],
+  "label": $.i18n("clipboard"),
   "id": "clipboard",
   "uiClass": ClipboardImportingSourceUI
 });
@@ -114,14 +114,14 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts = DOM.bind(bodyDiv);
   
-  $('#or-import-clipboard').text($.i18n_._('core-index-import')["clipboard-label"]);
-  this._elmts.nextButton.html($.i18n_._('core-buttons')["project-next"]);
+  $('#or-import-clipboard').text($.i18n("clipboard-label"));
+  this._elmts.nextButton.html($.i18n("project-next"));
   
   this._elmts.nextButton.click(function(evt) {
     if ($.trim(self._elmts.textInput[0].value).length === 0) {
-      window.alert($.i18n_._('core-index-import')["warning-clipboard"]);
+      window.alert($.i18n("warning-clipboard"));
     } else {
-      self._controller.startImportJob(self._elmts.form, $.i18n_._('core-index-import')["uploading-pasted-data"]);
+      self._controller.startImportJob(self._elmts.form, $.i18n("uploading-pasted-data"));
     }
   });
 };

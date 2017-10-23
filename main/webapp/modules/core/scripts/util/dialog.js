@@ -103,7 +103,7 @@ DialogSystem.showBusy = function(message) {
 
   var body = $('<div>').attr('id', 'loading-message').appendTo(frame);
   $('<img>').attr("src", "images/large-spinner.gif").appendTo(body);
-  $('<span>').html(" " + (message || $.i18n_._('core-util-enc')["working"]+"...")).appendTo(body);
+  $('<span>').html(" " + (message || $.i18n("working")+"...")).appendTo(body);
 
   var level = DialogSystem.showDialog(frame);
 

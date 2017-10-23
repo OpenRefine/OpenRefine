@@ -148,23 +148,23 @@ ListFacet.prototype._initializeUI = function() {
   this._div.empty().show().html(
       '<div class="facet-title">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-          '<td width="1%"><a href="javascript:{}" title="'+$.i18n_._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+          '<td width="1%"><a href="javascript:{}" title="'+$.i18n("remove-facet")+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
           '<td>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n_._('core-facets')["reset"]+'</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n_._('core-facets')["invert"]+'</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n_._('core-facets')["change"]+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n("reset")+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n("invert")+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n("change")+'</a>' +
             '<span bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n_._('core-facets')["click-to-edit"]+'"></div>' +
+      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n("click-to-edit")+'"></div>' +
       '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
         '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
-        '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n_._('core-facets')["sort-by"]+': ' +
-          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n_._('core-facets')["name"]+'</a>' +
-          '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n_._('core-facets')["count"]+'</a>' +
+        '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n("sort-by")+': ' +
+          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n("name")+'</a>' +
+          '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n("count")+'</a>' +
         '</span>' +
-        '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n_._('core-facets')["cluster"]+'</button>' +
+        '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n("cluster")+'</button>' +
       '</div>' +
       '<div class="facet-body" bind="bodyDiv">' +
         '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
@@ -173,7 +173,7 @@ ListFacet.prototype._initializeUI = function() {
   this._elmts = DOM.bind(this._div);
 
   this._elmts.titleSpan.text(this._config.name);
-  this._elmts.changeButton.attr("title",$.i18n_._('core-facets')["current-exp"]+": " + this._config.expression).click(function() {
+  this._elmts.changeButton.attr("title",$.i18n("current-exp")+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
       if (self._elmts.expressionDiv.css("display") != "none") {
         self._editExpression();
@@ -223,14 +223,14 @@ ListFacet.prototype._copyChoices = function() {
   var frame = DialogSystem.createDialog();
   frame.width("600px");
 
-  var header = $('<div></div>').addClass("dialog-header").text($.i18n_._('core-facets')["facet-choices"]).appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text($.i18n("facet-choices")).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
   body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
   var elmts = DOM.bind(body);
 
-  $('<button class="button"></button>').text($.i18n_._('core-buttons')["close"]).click(function() {
+  $('<button class="button"></button>').text($.i18n("close")).click(function() {
     DialogSystem.dismissUntil(level - 1);
   }).appendTo(footer);
 
@@ -270,7 +270,7 @@ ListFacet.prototype._update = function(resetScroll) {
     //this._elmts.statusDiv.hide();
     this._elmts.controlsDiv.hide();
     this._elmts.bodyInnerDiv.empty().append(
-        $('<div>').text($.i18n_._('core-facets')["loading"]).addClass("facet-body-message"));
+        $('<div>').text($.i18n("loading")).addClass("facet-body-message"));
 
     return;
   } else if ("error" in this._data) {
@@ -281,12 +281,12 @@ ListFacet.prototype._update = function(resetScroll) {
       this._elmts.bodyInnerDiv.empty();
       
       var messageDiv = $('<div>')
-        .text(this._data.choiceCount + " "+$.i18n_._('core-facets')["too-many-choices"])
+        .text(this._data.choiceCount + " "+$.i18n("too-many-choices"))
         .addClass("facet-body-message")
         .appendTo(this._elmts.bodyInnerDiv);
       $('<br>').appendTo(messageDiv);
       $('<a>')
-      .text($.i18n_._('core-facets')["set-choice-count"])
+      .text($.i18n("set-choice-count"))
       .attr("href", "javascript:{}")
       .addClass("action")
       .addClass("secondary")
@@ -376,7 +376,7 @@ ListFacet.prototype._update = function(resetScroll) {
 
     // edit link
     if (renderEdit) {
-      html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">'+$.i18n_._('core-facets')["edit"]+'</a>');
+      html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">'+$.i18n("edit")+'</a>');
     }
 
     html.push('<a href="javascript:{}" class="facet-choice-label">' + encodeHtml(label) + '</a>');
@@ -479,7 +479,7 @@ ListFacet.prototype._renderBodyControls = function() {
   .appendTo(this._elmts.bodyInnerDiv);
 
   $('<a>')
-  .text($.i18n_._('core-facets')["facet-by-count"])
+  .text($.i18n("facet-by-count"))
   .attr("href", "javascript:{}")
   .addClass("action")
   .addClass("secondary")
@@ -521,12 +521,12 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
       '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
       '<div id="data-table-cell-editor-actions">' +
         '<div class="data-table-cell-editor-action">' +
-          '<button class="button" bind="okButton">'+$.i18n_._('core-buttons')["apply"]+'</button>' +
-          '<div class="data-table-cell-editor-key">'+$.i18n_._('core-buttons')["enter"]+'</div>' +
+          '<button class="button" bind="okButton">'+$.i18n("apply")+'</button>' +
+          '<div class="data-table-cell-editor-key">'+$.i18n("enter")+'</div>' +
         '</div>' +
         '<div class="data-table-cell-editor-action">' +
-          '<button class="button" bind="cancelButton">'+$.i18n_._('core-buttons')["cancel"]+'</button>' +
-          '<div class="data-table-cell-editor-key">'+$.i18n_._('core-buttons')["esc"]+'</div>' +
+          '<button class="button" bind="cancelButton">'+$.i18n("cancel")+'</button>' +
+          '<div class="data-table-cell-editor-key">'+$.i18n("esc")+'</div>' +
         '</div>' +
       '</div>'
   );
@@ -679,8 +679,8 @@ ListFacet.prototype._updateRest = function() {
 ListFacet.prototype._editExpression = function() {
   var self = this;
   var title = (this._config.columnName) ? 
-      ($.i18n_._('core-facets')["edit-based-col"]+" " + this._config.columnName) : 
-    	  $.i18n_._('core-facets')["edit-facet-exp"];
+      ($.i18n("edit-based-col")+" " + this._config.columnName) : 
+    	  $.i18n("edit-facet-exp");
 
   var column = Refine.columnNameToColumn(this._config.columnName);
   var o = DataTableView.sampleVisibleRows(column);
@@ -696,7 +696,7 @@ ListFacet.prototype._editExpression = function() {
         self._config.expression = expr;
 
         self._elmts.expressionDiv.text(self._config.expression);
-        self._elmts.changeButton.attr("title", $.i18n_._('core-facets')["current-exp"]+": " + self._config.expression);
+        self._elmts.changeButton.attr("title", $.i18n("current-exp")+": " + self._config.expression);
         if (self._config.expression == "value" || self._config.expression == "grel:value") {
           self._elmts.clusterLink.show();
         } else {
@@ -713,7 +713,7 @@ ListFacet.prototype._editExpression = function() {
 
 ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
   var limit = Math.ceil(choiceCount / 1000) * 1000;
-  var s = window.prompt($.i18n_._('core-facets')["set-max-choices"], limit);
+  var s = window.prompt($.i18n("set-max-choices"), limit);
   if (s) {
     var n = parseInt(s,10);
 

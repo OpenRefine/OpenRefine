@@ -55,7 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/facet" ], [
     {
       id: "core/text-facet",
-      label: $.i18n_._('core-views')["text-facet"],
+      label: $.i18n("text-facet"),
       click: function() {
         ui.browsingEngine.addFacet(
             "list",
@@ -69,7 +69,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/numeric-facet",
-      label:  $.i18n_._('core-views')["numeric-facet"],
+      label:  $.i18n("numeric-facet"),
       click: function() {
         ui.browsingEngine.addFacet(
             "range",
@@ -84,7 +84,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/time-facet",
-      label: $.i18n_._('core-views')["timeline-facet"],
+      label: $.i18n("timeline-facet"),
       click: function() {
         ui.browsingEngine.addFacet(
             "timerange",
@@ -99,7 +99,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/scatterplot-facet",
-      label: $.i18n_._('core-views')["scatterplot-facet"],
+      label: $.i18n("scatterplot-facet"),
       click: function() {
         new ScatterplotDialog(column.name);
       }
@@ -107,25 +107,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/custom-text-facet",
-      label: $.i18n_._('core-views')["custom-text-facet"]+'...',
+      label: $.i18n("custom-text-facet")+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "list");
       }
     },
     {
       id: "core/custom-numeric-facet",
-      label: $.i18n_._('core-views')["custom-numeric"]+'...',
+      label: $.i18n("custom-numeric")+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "range");
       }
     },
     {
       id: "core/customized-facets",
-      label: $.i18n_._('core-views')["custom-facets"],
+      label: $.i18n("custom-facets"),
       submenu: [
         {
           id: "core/word-facet",
-          label: $.i18n_._('core-views')["word-facet"],
+          label: $.i18n("word-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -140,7 +140,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/duplicates-facet",
-          label: $.i18n_._('core-views')["duplicates-facet"],
+          label: $.i18n("duplicates-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -156,7 +156,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/numeric-log-facet",
-          label: $.i18n_._('core-views')["numeric-log-facet"],
+          label: $.i18n("numeric-log-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -171,7 +171,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/bounded-numeric-log-facet",
-          label: $.i18n_._('core-views')["bounded-log-facet"],
+          label: $.i18n("bounded-log-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -187,7 +187,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/text-length-facet",
-          label: $.i18n_._('core-views')["text-length-facet"],
+          label: $.i18n("text-length-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -202,7 +202,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/log-text-length-facet",
-          label: $.i18n_._('core-views')["log-length-facet"],
+          label: $.i18n("log-length-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -217,7 +217,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/unicode-charcode-facet",
-          label: $.i18n_._('core-views')["unicode-facet"],
+          label: $.i18n("unicode-facet"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -233,7 +233,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/error-facet",
-          label: $.i18n_._('core-views')["facet-error"],
+          label: $.i18n("facet-error"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -247,7 +247,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/blank-facet",
-          label: $.i18n_._('core-views')["facet-blank"],
+          label: $.i18n("facet-blank"),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -265,7 +265,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   MenuSystem.insertAfter(menu, [ "core/facet" ], [
     {
-      label: $.i18n_._('core-views')["text-filter"],
+      label: $.i18n("text-filter"),
       click: function() {
         ui.browsingEngine.addFacet(
             "text", 

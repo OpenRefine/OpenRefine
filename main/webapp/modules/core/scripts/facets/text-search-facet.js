@@ -84,7 +84,7 @@ TextSearchFacet.prototype._initializeUI = function() {
   this._div.empty().show().html(
       '<div class="facet-title">' + 
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="'+$.i18n_._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+      '<td width="1%"><a href="javascript:{}" title="'+$.i18n("remove-facet")+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
       '<td>' +
       '<span>' + this._config.name + '</span>' +
       '</td>' +
@@ -93,8 +93,8 @@ TextSearchFacet.prototype._initializeUI = function() {
       '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
       '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
       '<tr>' +
-      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox" /></td><td><label for="caseSensitiveCheckbox">'+$.i18n_._('core-facets')["case-sensitive"]+'</label></td>' +
-      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox" /></td><td><label for="regexCheckbox">'+$.i18n_._('core-facets')["regular-exp"]+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox" /></td><td><label for="caseSensitiveCheckbox">'+$.i18n("case-sensitive")+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox" /></td><td><label for="regexCheckbox">'+$.i18n("regular-exp")+'</label></td>' +
       '</tr>' +
       '</table></div></div>'
   );

@@ -92,12 +92,12 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   });
   this._parsingPanelElmts.progressPanel.hide();
 
-  this._parsingPanelElmts.startOverButton.html($.i18n_._('core-buttons')["startover"]);
-  this._parsingPanelElmts.nextButton.html($.i18n_._('core-buttons')["create-project"]);
-  $('#or-import-parsopt').text($.i18n_._('core-index-import')["parsing-options"]);
-  $('#or-import-projname').html($.i18n_._('core-index-import')["project-name"]);
-  $('#or-import-updating').text($.i18n_._('core-index-import')["updating-preview"]);
-  $('#or-import-parseas').text($.i18n_._('core-index-import')["parse-as"]);
+  this._parsingPanelElmts.startOverButton.html($.i18n("startover"));
+  this._parsingPanelElmts.nextButton.html($.i18n("create-project"));
+  $('#or-import-parsopt').text($.i18n("parsing-options"));
+  $('#or-import-projname').html($.i18n("project-name"));
+  $('#or-import-updating').text($.i18n("updating-preview"));
+  $('#or-import-parseas').text($.i18n("parse-as"));
   
   this._parsingPanelResizer = function() {
     var elmts = self._parsingPanelElmts;

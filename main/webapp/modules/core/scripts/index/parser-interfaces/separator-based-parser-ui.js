@@ -126,27 +126,27 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
   
-  this._optionContainerElmts.previewButton.html($.i18n_._('core-buttons')["update-preview"]);
-  $('#or-import-encoding').html($.i18n_._('core-index-import')["char-encoding"]);
-  $('#or-import-colsep').html($.i18n_._('core-index-parser')["col-separated-by"]);
-  $('#or-import-commas').html($.i18n_._('core-index-parser')["commas"]);
-  $('#or-import-tabs').html($.i18n_._('core-index-parser')["tabs"]);
-  $('#or-import-custom').html($.i18n_._('core-index-parser')["custom"]);
-  $('#or-import-escape').html($.i18n_._('core-index-parser')["escape"]);
+  this._optionContainerElmts.previewButton.html($.i18n("update-preview"));
+  $('#or-import-encoding').html($.i18n("char-encoding"));
+  $('#or-import-colsep').html($.i18n("col-separated-by"));
+  $('#or-import-commas').html($.i18n("commas"));
+  $('#or-import-tabs').html($.i18n("tabs"));
+  $('#or-import-custom').html($.i18n("custom"));
+  $('#or-import-escape').html($.i18n("escape"));
   
-  $('#or-import-ignore').text($.i18n_._('core-index-parser')["ignore-first"]);
-  $('#or-import-lines').text($.i18n_._('core-index-parser')["lines-beg"]);
-  $('#or-import-parse').text($.i18n_._('core-index-parser')["parse-next"]);
-  $('#or-import-header').text($.i18n_._('core-index-parser')["lines-header"]);
-  $('#or-import-discard').text($.i18n_._('core-index-parser')["discard-initial"]);
-  $('#or-import-rows').text($.i18n_._('core-index-parser')["rows-data"]);
-  $('#or-import-load').text($.i18n_._('core-index-parser')["load-at-most"]);
-  $('#or-import-rows2').text($.i18n_._('core-index-parser')["rows-data"]);
-  $('#or-import-parseCell').html($.i18n_._('core-index-parser')["parse-cell"]);
-  $('#or-import-quote').html($.i18n_._('core-index-parser')["quotation-mark"]);
-  $('#or-import-blank').text($.i18n_._('core-index-parser')["store-blank"]);
-  $('#or-import-null').text($.i18n_._('core-index-parser')["store-nulls"]);
-  $('#or-import-source').html($.i18n_._('core-index-parser')["store-source"]);
+  $('#or-import-ignore').text($.i18n("ignore-first"));
+  $('#or-import-lines').text($.i18n("lines-beg"));
+  $('#or-import-parse').text($.i18n("parse-next"));
+  $('#or-import-header').text($.i18n("lines-header"));
+  $('#or-import-discard').text($.i18n("discard-initial"));
+  $('#or-import-rows').text($.i18n("rows-data"));
+  $('#or-import-load').text($.i18n("load-at-most"));
+  $('#or-import-rows2').text($.i18n("rows-data"));
+  $('#or-import-parseCell').html($.i18n("parse-cell"));
+  $('#or-import-quote').html($.i18n("quotation-mark"));
+  $('#or-import-blank').text($.i18n("store-blank"));
+  $('#or-import-null').text($.i18n("store-nulls"));
+  $('#or-import-source').html($.i18n("store-source"));
 
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')

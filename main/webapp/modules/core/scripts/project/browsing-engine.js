@@ -96,20 +96,20 @@ BrowsingEngine.prototype._initializeUI = function() {
 
   this._div.html(
     '<div class="browsing-panel-help" bind="help">' +
-    '<h1>'+$.i18n_._('core-project')["use-facets"]+'</h1>' +
-    '<p>'+$.i18n_._('core-project')["use-to-select"]+'</p>' +
-    '<p>'+$.i18n_._('core-project')["not-sure"]+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n_._('core-project')["watch-cast"]+'</b></a></p>' +
+    '<h1>'+$.i18n("use-facets")+'</h1>' +
+    '<p>'+$.i18n("use-to-select")+'</p>' +
+    '<p>'+$.i18n("not-sure")+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n("watch-cast")+'</b></a></p>' +
     '</div>' +
     '<div class="browsing-panel-header" bind="header">' +
     '<div class="browsing-panel-indicator" bind="indicator">' +
-    '<img src="images/small-spinner.gif" /> '+$.i18n_._('core-project')["refreshing-facet"]+'' +
+    '<img src="images/small-spinner.gif" /> '+$.i18n("refreshing-facet")+'' +
     '</div>' +
     '<div class="browsing-panel-controls" bind="controls">' +
     '<div class="browsing-panel-controls-refresh">' +
-    '<a href="javascript:{}" bind="refreshLink" class="button" title="'+$.i18n_._('core-project')["update-facets"]+'">'+$.i18n_._('core-buttons')["refresh"]+'</a>' +
+    '<a href="javascript:{}" bind="refreshLink" class="button" title="'+$.i18n("update-facets")+'">'+$.i18n("refresh")+'</a>' +
     '</div>' +              
-    '<a href="javascript:{}" bind="resetLink" class="button button-pill-left" title="'+$.i18n_._('core-project')["clear-selection"]+'">'+$.i18n_._('core-buttons')["reset-all"]+'</a>' +
-    '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="'+$.i18n_._('core-project')["remove-all-facets"]+'">'+$.i18n_._('core-buttons')["remove-all"]+'</a>' +
+    '<a href="javascript:{}" bind="resetLink" class="button button-pill-left" title="'+$.i18n("clear-selection")+'">'+$.i18n("reset-all")+'</a>' +
+    '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="'+$.i18n("remove-all-facets")+'">'+$.i18n("remove-all")+'</a>' +
     '</div>' +
     '</div>' +
     '<ul bind="facets" class="facets-container"></ul>'

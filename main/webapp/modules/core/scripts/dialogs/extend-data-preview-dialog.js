@@ -41,7 +41,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   var self = this;
   this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.html($.i18n_._('core-views')["add-col-recon-col"]+" "+column.name);
+  this._elmts.dialogHeader.html($.i18n("add-col-recon-col")+" "+column.name);
   this._elmts.resetButton.click(function() {
     self._extension.properties = [];
     self._update();
@@ -49,7 +49,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
 
   this._elmts.okButton.click(function() {
     if (self._extension.properties.length === 0) {
-      alert($.i18n_._('core-views')["warning-no-property"]);
+      alert($.i18n("warning-no-property"));
     } else {
       DialogSystem.dismissUntil(self._level - 1);
       self._onDone(self._extension,
@@ -83,9 +83,9 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   }
 
   if (this._serviceMetadata === null) {
-     alert($.i18n_._('core-views')["extend-not-reconciled"]);
+     alert($.i18n("extend-not-reconciled"));
   } else if(extend === null) {
-     alert($.i18n_._('core-views')["extend-not-supported"]);
+     alert($.i18n("extend-not-supported"));
   } else {
     var dismissBusy = DialogSystem.showBusy();
     ExtendReconciledDataPreviewDialog.getAllProperties(this._proposePropertiesUrl, type, function(properties) {
@@ -380,7 +380,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 
   if (table.children().length === 0)  {
      var tr = $('<tr></tr>').appendTo(table);
-     $('<td></td>').text($.i18n_._('core-views')['no-settings']).appendTo(tr);
+     $('<td></td>').text($.i18n('no-settings')).appendTo(tr);
    }
 
   var form = $('<form class="data-extension-property-config" bind="form"></form>').append(table);
@@ -389,8 +389,8 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var bodyElmts = DOM.bind(body);
 
   footer.html(
-    '<button class="button" bind="okButton">'+$.i18n_._('core-buttons')['ok']+'</button>' +
-    '<button class="button" bind="cancelButton">'+$.i18n_._('core-buttons')['cancel']+'</button>'
+    '<button class="button" bind="okButton">'+$.i18n('ok')+'</button>' +
+    '<button class="button" bind="cancelButton">'+$.i18n('cancel')+'</button>'
   );
   var footerElmts = DOM.bind(footer);
 

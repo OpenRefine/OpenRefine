@@ -100,7 +100,7 @@ $(function() {
         function(data) {
           OpenRefineVersion = data;
 
-          $("#openrefine-version").text($.i18n_._('core-index')["version"]+" " + OpenRefineVersion.full_version);
+          $("#openrefine-version").text($.i18n("version")+" " + OpenRefineVersion.full_version);
           
 
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
@@ -118,7 +118,7 @@ $(function() {
                 var container = $('<div id="notification-container">')
                 .appendTo(document.body);
                 var notification = $('<div id="notification">')
-                .text($.i18n_._('core-index')["new-version"]+' ')
+                .text($.i18n("new-version")+' ')
                 .appendTo(container);
                 $('<a>')
                 .addClass('notification-action')
@@ -201,12 +201,12 @@ $(function() {
   }
   Refine.selectActionArea('create-project');
   
-  $("#slogan").text($.i18n_._('core-index')["slogan"]+".");
-  $("#or-index-help").text($.i18n_._('core-index')["help"]);
-  $("#or-index-about").text($.i18n_._('core-index')["about"]);
-  $("#or-index-noProj").text($.i18n_._('core-index')["no-proj"]+".");
-  $("#or-index-try").text($.i18n_._('core-index')["try-these"]);
-  $("#or-index-sample").text($.i18n_._('core-index')["sample-data"]);
+  $("#slogan").text($.i18n("slogan")+".");
+  $("#or-index-help").text($.i18n("help"));
+  $("#or-index-about").text($.i18n("about"));
+  $("#or-index-noProj").text($.i18n("no-proj")+".");
+  $("#or-index-try").text($.i18n("try-these"));
+  $("#or-index-sample").text($.i18n("sample-data"));
 
   showVersion();
 });

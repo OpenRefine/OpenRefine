@@ -31,13 +31,13 @@ ExpressionColumnDialog.prototype._createDialog = function() {
   this._level = DialogSystem.showDialog(this._dialog);
   
   
-  this._elmts.dialogHeader.html($.i18n_._('core-dialogs')["custom-tab-exp"]);
-  this._elmts.or_dialog_content.html($.i18n_._('core-dialogs')["content"]);
-  this._elmts.or_dialog_selAndOrd.html($.i18n_._('core-dialogs')["sel-and-ord"]);
-  this._elmts.selectAllButton.html($.i18n_._('core-buttons')["select-all"]);
-  this._elmts.deselectAllButton.html($.i18n_._('core-buttons')["deselect-all"]);
-  this._elmts.okButton.html($.i18n_._('core-buttons')["ok"]);
-  this._elmts.cancelButton.html($.i18n_._('core-buttons')["cancel"]);
+  this._elmts.dialogHeader.html($.i18n("custom-tab-exp"));
+  this._elmts.or_dialog_content.html($.i18n("content"));
+  this._elmts.or_dialog_selAndOrd.html($.i18n("sel-and-ord"));
+  this._elmts.selectAllButton.html($.i18n("select-all"));
+  this._elmts.deselectAllButton.html($.i18n("deselect-all"));
+  this._elmts.okButton.html($.i18n("ok"));
+  this._elmts.cancelButton.html($.i18n("cancel"));
 
   
   /*

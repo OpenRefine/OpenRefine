@@ -64,7 +64,7 @@ function formatRelativeDate(d) {
   var tomorrow = Date.today().add({ days: 1 });
 
   if (d.between(today, tomorrow)) {
-    return $.i18n_._('core-util-enc')["today"]+" " + d.toString("h:mm tt");
+    return $.i18n("today")+" " + d.toString("h:mm tt");
   } else if (d.between(last_week, today)) {
     var diff = Math.floor(today.getDayOfYear() - d.getDayOfYear());
     return (diff <= 1) ? $.i18n('yesterday-time', d.toString("h:mm tt")) : $.i18n('days-ago', diff);

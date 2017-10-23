@@ -43,7 +43,7 @@ function ProcessPanel(div) {
   this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
   this._elmts = DOM.bind(this._div);
 
-  this._elmts.undoLink.html($.i18n_._('core-project')["undo"]);
+  this._elmts.undoLink.html($.i18n("undo"));
   
   var self = this;
   $(window).keypress(function(evt) {
@@ -150,9 +150,9 @@ ProcessPanel.prototype._render = function(newData) {
       var process = processes[i];
       if (process.status != "pending") {
         // TODO: We should be using formatting, not string concatenation here
-        Refine.setTitle(process.progress + "% "+$.i18n_._('core-project')["complete"]);
+        Refine.setTitle(process.progress + "% "+$.i18n("complete"));
         this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text(process.progress  + '% '+$.i18n_._('core-project')["complete"]);
+        this._elmts.progressSpan.text(process.progress  + '% '+$.i18n("complete"));
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
@@ -167,10 +167,10 @@ ProcessPanel.prototype._render = function(newData) {
     }
     this._elmts.cancelLink
       .unbind()
-      .text(processes.length > 1 ? $.i18n_._('core-project')["cancel-all"] : $.i18n_._('core-project')["cancel"])
+      .text(processes.length > 1 ? $.i18n("cancel-all") : $.i18n("cancel"))
       .click(function() {
         self._cancelAll();
-        $(this).text($.i18n_._('core-project')["canceling"]).unbind();
+        $(this).text($.i18n("canceling")).unbind();
       });
     
     this._div.fadeIn(200);
@@ -193,10 +193,10 @@ ProcessPanel.prototype._render = function(newData) {
     }).join('\n');
     
     if (this._data.processes.length == 0) {
-      window.alert($.i18n_._('core-project')["last-op-er"]+':\n' + messages);
+      window.alert($.i18n("last-op-er")+':\n' + messages);
     } else {
-      if (window.confirm($.i18n_._('core-project')["last-op-er"]+':\n' + messages +
-            '\n\n'+$.i18n_._('core-project')["continue-remaining"]+'?')) {
+      if (window.confirm($.i18n("last-op-er")+':\n' + messages +
+            '\n\n'+$.i18n("continue-remaining")+'?')) {
         $.post(
           "command/core/apply-operations?" + $.param({ project: theProject.id }), 
           { operations: '[]' },

@@ -42,7 +42,7 @@ SummaryBar.prototype._initializeUI = function() {
 
 SummaryBar.prototype.updateResultCount = function() {
   var summaryText;
-  var units = theProject.rowModel.mode == "row-based" ? $.i18n_._('core-views')["rows"] : $.i18n_._('core-views')["records"];
+  var units = theProject.rowModel.mode == "row-based" ? $.i18n("rows") : $.i18n("records");
   if (theProject.rowModel.filtered == theProject.rowModel.total) {
     summaryText = (theProject.rowModel.total) + ' ' + units;
   } else {

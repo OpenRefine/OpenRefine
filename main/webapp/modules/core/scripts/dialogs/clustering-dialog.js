@@ -49,39 +49,39 @@ ClusteringDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/clustering-dialog.html"));
 
     this._elmts = DOM.bind(dialog);
-    this._elmts.dialogHeader.text($.i18n_._('core-dialogs')["cluster-edit-column"]+' "' + this._columnName + '"');
+    this._elmts.dialogHeader.text($.i18n("cluster-edit-column")+' "' + this._columnName + '"');
 
-    this._elmts.or_dialog_descr.html($.i18n_._('core-dialogs')["cluster-descr"]);
-    this._elmts.or_dialog_findMore.html($.i18n_._('core-dialogs')["find-more"]);
-    this._elmts.or_dialog_method.html($.i18n_._('core-dialogs')["method"]);
-    this._elmts.or_dialog_keyCollision.html($.i18n_._('core-dialogs')["key-collision"]);
-    this._elmts.or_dialog_neighbor.html($.i18n_._('core-dialogs')["nearest-neighbor"]);
-    this._elmts.or_dialog_keying.html($.i18n_._('core-dialogs')["keying-function"]);
-    this._elmts.or_dialog_fingerprint.html($.i18n_._('core-dialogs')["fingerprint"]);
-    this._elmts.or_dialog_ngram.html($.i18n_._('core-dialogs')["ngram"]);
-    this._elmts.or_dialog_metaphone.html($.i18n_._('core-dialogs')["metaphone"]);
-    this._elmts.or_dialog_phonetic.html($.i18n_._('core-dialogs')["phonetic"]);
-    this._elmts.or_dialog_distance.html($.i18n_._('core-dialogs')["distance-fun"]);
-    this._elmts.or_dialog_leven.html($.i18n_._('core-dialogs')["leven"]);
-    this._elmts.or_dialog_ppm.html($.i18n_._('core-dialogs')["ppm"]);
-    this._elmts.or_dialog_ngramSize.html($.i18n_._('core-dialogs')["ngram-size"]);
-    this._elmts.or_dialog_radius.html($.i18n_._('core-dialogs')["ngram-radius"]);
-    this._elmts.or_dialog_blockChars.html($.i18n_._('core-dialogs')["block-chars"]);
-    this._elmts.selectAllButton.html($.i18n_._('core-buttons')["select-all"]);
-    this._elmts.deselectAllButton.html($.i18n_._('core-buttons')["unselect-all"]);
-    this._elmts.exportClusterButton.html($.i18n_._('core-buttons')["export-cluster"]);
-    this._elmts.applyReClusterButton.html($.i18n_._('core-buttons')["merge-cluster"]);
-    this._elmts.applyCloseButton.html($.i18n_._('core-buttons')["merge-close"]);
-    this._elmts.closeButton.html($.i18n_._('core-buttons')["close"]);
+    this._elmts.or_dialog_descr.html($.i18n("cluster-descr"));
+    this._elmts.or_dialog_findMore.html($.i18n("find-more"));
+    this._elmts.or_dialog_method.html($.i18n("method"));
+    this._elmts.or_dialog_keyCollision.html($.i18n("key-collision"));
+    this._elmts.or_dialog_neighbor.html($.i18n("nearest-neighbor"));
+    this._elmts.or_dialog_keying.html($.i18n("keying-function"));
+    this._elmts.or_dialog_fingerprint.html($.i18n("fingerprint"));
+    this._elmts.or_dialog_ngram.html($.i18n("ngram"));
+    this._elmts.or_dialog_metaphone.html($.i18n("metaphone"));
+    this._elmts.or_dialog_phonetic.html($.i18n("phonetic"));
+    this._elmts.or_dialog_distance.html($.i18n("distance-fun"));
+    this._elmts.or_dialog_leven.html($.i18n("leven"));
+    this._elmts.or_dialog_ppm.html($.i18n("ppm"));
+    this._elmts.or_dialog_ngramSize.html($.i18n("ngram-size"));
+    this._elmts.or_dialog_radius.html($.i18n("ngram-radius"));
+    this._elmts.or_dialog_blockChars.html($.i18n("block-chars"));
+    this._elmts.selectAllButton.html($.i18n("select-all"));
+    this._elmts.deselectAllButton.html($.i18n("unselect-all"));
+    this._elmts.exportClusterButton.html($.i18n("export-cluster"));
+    this._elmts.applyReClusterButton.html($.i18n("merge-cluster"));
+    this._elmts.applyCloseButton.html($.i18n("merge-close"));
+    this._elmts.closeButton.html($.i18n("close"));
 
     this._elmts.methodSelector.change(function() {
         var selection = $(this).find("option:selected").text();
-        if (selection == $.i18n_._('core-dialogs')["key-collision"]) {
+        if (selection == $.i18n("key-collision")) {
             dialog.find(".binning-controls").show();
             dialog.find(".knn-controls").hide();
             self._method = "binning";
             self._elmts.keyingFunctionSelector.change();
-        } else if (selection === $.i18n_._('core-dialogs')["nearest-neighbor"]) {
+        } else if (selection === $.i18n("nearest-neighbor")) {
             dialog.find(".binning-controls").hide();
             dialog.find(".knn-controls").show();
             self._method = "knn";
@@ -140,11 +140,11 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
         var trHead = table.insertRow(table.rows.length);
         trHead.className = "header";
-        $(trHead.insertCell(0)).text($.i18n_._('core-dialogs')["cluster-size"]);
-        $(trHead.insertCell(1)).text($.i18n_._('core-dialogs')["row-count"]);
-        $(trHead.insertCell(2)).text($.i18n_._('core-dialogs')["cluster-values"]);
-        $(trHead.insertCell(3)).text($.i18n_._('core-dialogs')["merge"]);
-        $(trHead.insertCell(4)).text($.i18n_._('core-dialogs')["new-cell-val"]);
+        $(trHead.insertCell(0)).text($.i18n("cluster-size"));
+        $(trHead.insertCell(1)).text($.i18n("row-count"));
+        $(trHead.insertCell(2)).text($.i18n("cluster-values"));
+        $(trHead.insertCell(3)).text($.i18n("merge"));
+        $(trHead.insertCell(4)).text($.i18n("new-cell-val"));
 
         var renderCluster = function(cluster) {
             var tr = table.insertRow(table.rows.length);
@@ -184,7 +184,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             for (var c = 0; c < choices.length; c++) {
                 var choice = choices[c];
                 var li = $('<li></li>');
-                $('<a href="javascript:{}" title='+$.i18n_._('core-dialogs')["use-this-val"]+'></a>').text(choice.v).click(onClick).appendTo(li);
+                $('<a href="javascript:{}" title='+$.i18n("use-this-val")+'></a>').text(choice.v).click(onClick).appendTo(li);
                 $('<span></span>').text("(" + choice.c + " rows)").addClass("clustering-dialog-entry-count").appendTo(li);
                 rowCount += choice.c;
                 facet.s[c] = {
@@ -206,7 +206,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
             var div = $('<div></div>').addClass("clustering-dialog-value-focus");
 
-            var browseLink = $('<a target="_new" title="'+$.i18n_._('core-dialogs')["browse-only-these"]+'">'+$.i18n_._('core-dialogs')["browse-this-cluster"]+'</a>')
+            var browseLink = $('<a target="_new" title="'+$.i18n("browse-only-these")+'">'+$.i18n("browse-this-cluster")+'</a>')
                 .addClass("clustering-dialog-browse-focus")
                 .attr("href",url)
                 .css("visibility","hidden")
@@ -248,7 +248,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
     } else {
         container.html(
-            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n_._('core-dialogs')["no-cluster-found"]+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n_._('core-dialogs')["try-another-method"]+'</div></div>'
+            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n("no-cluster-found")+'</div><div style="padding-top: 1em; font-size: 110%; color: #888;">'+$.i18n("try-another-method")+'</div></div>'
         );
     }
 };
@@ -257,7 +257,7 @@ ClusteringDialog.prototype._cluster = function() {
     var self = this;
 
     var container = this._elmts.tableContainer.html(
-        '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n_._('core-dialogs')["clustering"]+'<img src="images/small-spinner.gif"></div>'
+        '<div style="margin: 1em; font-size: 130%; color: #888;">'+$.i18n("clustering")+'<img src="images/small-spinner.gif"></div>'
     );
 
     this._elmts.resultSummary.empty();
@@ -376,7 +376,7 @@ ClusteringDialog.prototype._apply = function(onDone) {
             }
         );
     } else {
-        alert($.i18n_._('core-dialogs')["warning-check-boxes"]);
+        alert($.i18n("warning-check-boxes"));
     }
 };
 
@@ -438,10 +438,10 @@ ClusteringDialog.prototype._resetFacets = function() {
     }
     this._facets = [];
 
-    this._createFacet($.i18n_._('core-dialogs')["choices-in-cluster"], "size");
-    this._createFacet($.i18n_._('core-dialogs')["rows-in-cluster"], "rowCount");
-    this._createFacet($.i18n_._('core-dialogs')["choice-avg-length"], "avg");
-    this._createFacet($.i18n_._('core-dialogs')["choice-var-length"], "variance");
+    this._createFacet($.i18n("choices-in-cluster"), "size");
+    this._createFacet($.i18n("rows-in-cluster"), "rowCount");
+    this._createFacet($.i18n("choice-avg-length"), "avg");
+    this._createFacet($.i18n("choice-var-length"), "variance");
 };
 
 ClusteringDialog.prototype._createFacet = function(title, property) {

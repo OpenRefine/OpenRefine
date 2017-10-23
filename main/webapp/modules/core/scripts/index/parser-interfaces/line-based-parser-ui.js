@@ -110,21 +110,21 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
 
-  $('#or-import-encoding').html($.i18n_._('core-index-import')["char-encoding"]);
-  this._optionContainerElmts.previewButton.html($.i18n_._('core-buttons')["update-preview"]);
-  $('#or-import-parseEvery').html($.i18n_._('core-index-parser')["parse-every"]);
-  $('#or-impor-linesIntoRow').html($.i18n_._('core-index-parser')["lines-into-row"]);
-  $('#or-import-blank').text($.i18n_._('core-index-parser')["store-blank"]);
-  $('#or-import-null').text($.i18n_._('core-index-parser')["store-nulls"]);
-  $('#or-import-source').html($.i18n_._('core-index-parser')["store-source"]);
-  $('#or-import-ignore').text($.i18n_._('core-index-parser')["ignore-first"]);
-  $('#or-import-lines').text($.i18n_._('core-index-parser')["lines-beg"]);
-  $('#or-import-parse').text($.i18n_._('core-index-parser')["parse-next"]);
-  $('#or-import-header').text($.i18n_._('core-index-parser')["lines-header"]);
-  $('#or-import-discard').text($.i18n_._('core-index-parser')["discard-initial"]);
-  $('#or-import-rows').text($.i18n_._('core-index-parser')["rows-data"]);
-  $('#or-import-load').text($.i18n_._('core-index-parser')["load-at-most"]);
-  $('#or-import-rows2').text($.i18n_._('core-index-parser')["rows-data"]);
+  $('#or-import-encoding').html($.i18n("char-encoding"));
+  this._optionContainerElmts.previewButton.html($.i18n("update-preview"));
+  $('#or-import-parseEvery').html($.i18n("parse-every"));
+  $('#or-impor-linesIntoRow').html($.i18n("lines-into-row"));
+  $('#or-import-blank').text($.i18n("store-blank"));
+  $('#or-import-null').text($.i18n("store-nulls"));
+  $('#or-import-source').html($.i18n("store-source"));
+  $('#or-import-ignore').text($.i18n("ignore-first"));
+  $('#or-import-lines').text($.i18n("lines-beg"));
+  $('#or-import-parse').text($.i18n("parse-next"));
+  $('#or-import-header').text($.i18n("lines-header"));
+  $('#or-import-discard').text($.i18n("discard-initial"));
+  $('#or-import-rows').text($.i18n("rows-data"));
+  $('#or-import-load').text($.i18n("load-at-most"));
+  $('#or-import-rows2').text($.i18n("rows-data"));
   
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')

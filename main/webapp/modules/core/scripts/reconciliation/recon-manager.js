@@ -63,7 +63,7 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f) {
-  var dismissBusy = DialogSystem.showBusy($.i18n_._('core-recon')["contact-service"]+"...");
+  var dismissBusy = DialogSystem.showBusy($.i18n("contact-service")+"...");
 
   $.ajax(
     url,
@@ -91,7 +91,7 @@ ReconciliationManager.registerStandardService = function(url, f) {
   })
   .error(function(jqXHR, textStatus, errorThrown) {
     dismissBusy(); 
-    alert($.i18n_._('core-recon')["error-contact"]+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+    alert($.i18n("error-contact")+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
   });
 };
 
@@ -141,7 +141,7 @@ ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
 };
 
 ReconciliationManager.ensureDefaultServicePresent = function() {
-   var lang = $.i18n_._('core-recon')["wd-recon-lang"];
+   var lang = $.i18n("wd-recon-lang");
    var url = "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api";
    ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { });
    return url;
