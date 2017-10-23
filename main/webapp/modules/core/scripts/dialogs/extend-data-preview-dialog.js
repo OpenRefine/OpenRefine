@@ -196,7 +196,7 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
         },
         "json"
     ).fail(function(data) {
-        alert($.i18n_._("core-views")["internal-err"]);
+        alert($.i18n("internal-err"));
     });
   }
 };
@@ -255,17 +255,17 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<br>').appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text($.i18n_._("core-views")["remove-prop"])
+    .text($.i18n("remove-prop"))
     .addClass("action")
-    .attr("title", $.i18n_._("core-views")["remove-col"])
+    .attr("title", $.i18n("remove-col"))
     .click(function() {
       self._removeProperty(column.id);
     }).appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text($.i18n_._("core-views")["configure-prop"])
+    .text($.i18n("configure-prop"))
     .addClass("action")
-    .attr("title", $.i18n_._("core-views")["configure-col"])
+    .attr("title", $.i18n("configure-col"))
     .click(function() {
       self._constrainProperty(column.id);
     }).appendTo(th);
@@ -416,7 +416,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 
       self._update();
     } catch (e) {
-        alert($.i18n_._("core-views")["internal-err"]);
+        alert($.i18n("internal-err"));
     }
   });
 
