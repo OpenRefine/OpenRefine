@@ -317,6 +317,11 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -395,6 +400,10 @@ function init() {
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
       "externals/underscore-min.js",
 
       "scripts/project.js",
@@ -502,6 +511,10 @@ function init() {
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
       "scripts/preferences.js",
     ]
   );
