@@ -167,7 +167,6 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
             if("lengths".equals(_mode)) {
-                //do split by lengths
                 if (_fieldLengths.length >= 0 && _fieldLengths[0] > 0) {
                     values = new String[_fieldLengths.length];
                     
@@ -176,9 +175,9 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                     for (int i = 0; i < _fieldLengths.length; i++) {
                         int thisIndex = lastIndex;
                         
-                        Object o2 = _fieldLengths[i];
-                        if (o2 instanceof Number) {
-                            thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o2).intValue()));
+                        Object o = _fieldLengths[i];
+                        if (o instanceof Number) {
+                            thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o).intValue()));
                         }
                         
                         values[i] = s.substring(lastIndex, thisIndex);
