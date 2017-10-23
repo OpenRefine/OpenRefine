@@ -125,7 +125,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {
           columnName: column.name,
           keyColumnName: theProject.columnModel.keyColumnName,
-          separator: separator
+          separator
         },
         null,
         { rowsChanged: true }
@@ -161,7 +161,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         keyColumnName: theProject.columnModel.keyColumnName,
         mode: mode
       };
-      if (mode == "separator") {
+      if (mode === "separator") {
         config.separator = elmts.separatorInput[0].value;
         if (!(config.separator)) {
           alert($.i18n._('core-views')["specify-sep"]);
@@ -198,13 +198,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       Refine.postCoreProcess(
         "split-multi-value-cells", 
         config,
-/* Old config
-        {
-          columnName: column.name,
-          keyColumnName: theProject.columnModel.keyColumnName,
-          separator: separator,
-          mode: "plain"
-        },*/
         null,
         { rowsChanged: true }
       );
