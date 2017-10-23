@@ -41,60 +41,60 @@ ExporterManager.handlers = {};
 ExporterManager.MenuItems = [
   {
     "id" : "core/export-project",
-    "label": $.i18n._('core-project')["export-project"],
+    "label": $.i18n_._('core-project')["export-project"],
     "click": function() { ExporterManager.handlers.exportProject(); }
   },
   {},
   {
     "id" : "core/export-tsv",
-    "label": $.i18n._('core-project')["tab-value"],
+    "label": $.i18n_._('core-project')["tab-value"],
     "click": function() { ExporterManager.handlers.exportRows("tsv", "tsv"); }
   },
   {
     "id" : "core/export-csv",
-    "label": $.i18n._('core-project')["comma-sep"],
+    "label": $.i18n_._('core-project')["comma-sep"],
     "click": function() { ExporterManager.handlers.exportRows("csv", "csv"); }
   },
   {
     "id" : "core/export-html-table",
-    "label": $.i18n._('core-project')["html-table"],
+    "label": $.i18n_._('core-project')["html-table"],
     "click": function() { ExporterManager.handlers.exportRows("html", "html"); }
   },
   {
     "id" : "core/export-excel",
-    "label": $.i18n._('core-project')["excel"],
+    "label": $.i18n_._('core-project')["excel"],
     "click": function() { ExporterManager.handlers.exportRows("xls", "xls"); }
   },
   {
     "id" : "core/export-excel-xml",
-    "label": $.i18n._('core-project')["excel-xml"],
+    "label": $.i18n_._('core-project')["excel-xml"],
     "click": function() { ExporterManager.handlers.exportRows("xlsx", "xlsx"); }
   },
   {
     "id" : "core/export-ods",
-    "label": $.i18n._('core-project')["odf"],
+    "label": $.i18n_._('core-project')["odf"],
     "click": function() { ExporterManager.handlers.exportRows("ods", "ods"); }
   },
   {},
   {
     "id" : "core/export-tripleloader",
-    "label": $.i18n._('core-project')["triple-loader"],
+    "label": $.i18n_._('core-project')["triple-loader"],
     "click": function() { ExporterManager.handlers.exportTripleloader("tripleloader"); }
   },
   {
     "id" : "core/export-mqlwrite",
-    "label": $.i18n._('core-project')["mqlwrite"],
+    "label": $.i18n_._('core-project')["mqlwrite"],
     "click": function() { ExporterManager.handlers.exportTripleloader("mqlwrite"); }
   },
   {},
   {
     "id" : "core/export-custom-tabular",
-    "label": $.i18n._('core-project')["custom-tabular"],
+    "label": $.i18n_._('core-project')["custom-tabular"],
     "click": function() { new CustomTabularExporterDialog(); }
   },
   {
     "id" : "core/export-templating",
-    "label": $.i18n._('core-project')["templating"],
+    "label": $.i18n_._('core-project')["templating"],
     "click": function() { new TemplatingExporterDialog(); }
   }
 ];
@@ -114,7 +114,7 @@ ExporterManager.prototype._initializeUI = function() {
 
 ExporterManager.handlers.exportTripleloader = function(format) {
   if (!theProject.overlayModels.freebaseProtograph) {
-    alert($.i18n._('triple-loader')["warning-align"]);
+    alert($.i18n_._('triple-loader')["warning-align"]);
   } else {
     ExporterManager.handlers.exportRows(format, "txt");
   }

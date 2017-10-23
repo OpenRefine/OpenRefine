@@ -39,15 +39,15 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
 
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n._('core-views')["add-col-col"]+" " + column.name);
+    elmts.dialogHeader.text($.i18n_._('core-views')["add-col-col"]+" " + column.name);
     
-    elmts.or_views_newCol.text($.i18n._('core-views')["new-col-name"]);
-    elmts.or_views_onErr.text($.i18n._('core-views')["addasdasd"]);
-    elmts.or_views_setBlank.text($.i18n._('core-views')["set-blank"]);
-    elmts.or_views_storeErr.text($.i18n._('core-views')["store-err"]);
-    elmts.or_views_copyVal.text($.i18n._('core-views')["copy-val"]);
-    elmts.okButton.html($.i18n._('core-buttons')["ok"]);
-    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+    elmts.or_views_newCol.text($.i18n_._('core-views')["new-col-name"]);
+    elmts.or_views_onErr.text($.i18n_._('core-views')["addasdasd"]);
+    elmts.or_views_setBlank.text($.i18n_._('core-views')["set-blank"]);
+    elmts.or_views_storeErr.text($.i18n_._('core-views')["store-err"]);
+    elmts.or_views_copyVal.text($.i18n_._('core-views')["copy-val"]);
+    elmts.okButton.html($.i18n_._('core-buttons')["ok"]);
+    elmts.cancelButton.text($.i18n_._('core-buttons')["cancel"]);
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -65,7 +65,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.okButton.click(function() {
       var columnName = $.trim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
-        alert($.i18n._('core-views')["warning-col-name"]);
+        alert($.i18n_._('core-views')["warning-col-name"]);
         return;
       }
 
@@ -95,18 +95,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
 
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n._('core-views')["add-col-fetch"]+" " + column.name);
+    elmts.dialogHeader.text($.i18n_._('core-views')["add-col-fetch"]+" " + column.name);
     
-    elmts.or_views_newCol.text($.i18n._('core-views')["new-col-name"]);
-    elmts.or_views_throttle.text($.i18n._('core-views')["throttle-delay"]);
-    elmts.or_views_milli.text($.i18n._('core-views')["milli"]);
-    elmts.or_views_onErr.text($.i18n._('core-views')["on-error"]);
-    elmts.or_views_setBlank.text($.i18n._('core-views')["set-blank"]);
-    elmts.or_views_storeErr.text($.i18n._('core-views')["store-err"]);
-    elmts.or_views_cacheResponses.text($.i18n._('core-views')["cache-responses"]);
-    elmts.or_views_urlFetch.text($.i18n._('core-views')["url-fetch"]);
-    elmts.okButton.html($.i18n._('core-buttons')["ok"]);
-    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+    elmts.or_views_newCol.text($.i18n_._('core-views')["new-col-name"]);
+    elmts.or_views_throttle.text($.i18n_._('core-views')["throttle-delay"]);
+    elmts.or_views_milli.text($.i18n_._('core-views')["milli"]);
+    elmts.or_views_onErr.text($.i18n_._('core-views')["on-error"]);
+    elmts.or_views_setBlank.text($.i18n_._('core-views')["set-blank"]);
+    elmts.or_views_storeErr.text($.i18n_._('core-views')["store-err"]);
+    elmts.or_views_cacheResponses.text($.i18n_._('core-views')["cache-responses"]);
+    elmts.or_views_urlFetch.text($.i18n_._('core-views')["url-fetch"]);
+    elmts.okButton.html($.i18n_._('core-buttons')["ok"]);
+    elmts.cancelButton.text($.i18n_._('core-buttons')["cancel"]);
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -124,7 +124,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.okButton.click(function() {
       var columnName = $.trim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
-        alert($.i18n._('core-views')["warning-col-name"]);
+        alert($.i18n_._('core-views')["warning-col-name"]);
         return;
       }
 
@@ -185,7 +185,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doRenameColumn = function() {
-    var newColumnName = window.prompt($.i18n._('core-views')["enter-col-name"], column.name);
+    var newColumnName = window.prompt($.i18n_._('core-views')["enter-col-name"], column.name);
     if (newColumnName !== null) {
       Refine.postCoreProcess(
         "rename-column", 
@@ -229,21 +229,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doSplitColumn = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-column-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n._('core-views')["split-col"]+" " + column.name + " "+$.i18n._('core-views')["several-col"]);
+    elmts.dialogHeader.text($.i18n_._('core-views')["split-col"]+" " + column.name + " "+$.i18n_._('core-views')["several-col"]);
     
-    elmts.or_views_howSplit.text($.i18n._('core-views')["how-split"]);
-    elmts.or_views_bySep.text($.i18n._('core-views')["by-sep"]);
-    elmts.or_views_separator.text($.i18n._('core-views')["separator"]);
-    elmts.or_views_regExp.text($.i18n._('core-views')["reg-exp"]);
-    elmts.or_views_splitInto.text($.i18n._('core-views')["split-into"]);
-    elmts.or_views_colMost.text($.i18n._('core-views')["col-at-most"]);
-    elmts.or_views_fieldLen.text($.i18n._('core-views')["field-len"]);
-    elmts.or_views_listInt.text($.i18n._('core-views')["list-int"]);
-    elmts.or_views_afterSplit.text($.i18n._('core-views')["after-split"]);
-    elmts.or_views_guessType.text($.i18n._('core-views')["guess-cell"]);
-    elmts.or_views_removeCol.text($.i18n._('core-views')["remove-col"]);
-    elmts.okButton.html($.i18n._('core-buttons')["ok"]);
-    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+    elmts.or_views_howSplit.text($.i18n_._('core-views')["how-split"]);
+    elmts.or_views_bySep.text($.i18n_._('core-views')["by-sep"]);
+    elmts.or_views_separator.text($.i18n_._('core-views')["separator"]);
+    elmts.or_views_regExp.text($.i18n_._('core-views')["reg-exp"]);
+    elmts.or_views_splitInto.text($.i18n_._('core-views')["split-into"]);
+    elmts.or_views_colMost.text($.i18n_._('core-views')["col-at-most"]);
+    elmts.or_views_fieldLen.text($.i18n_._('core-views')["field-len"]);
+    elmts.or_views_listInt.text($.i18n_._('core-views')["list-int"]);
+    elmts.or_views_afterSplit.text($.i18n_._('core-views')["after-split"]);
+    elmts.or_views_guessType.text($.i18n_._('core-views')["guess-cell"]);
+    elmts.or_views_removeCol.text($.i18n_._('core-views')["remove-col"]);
+    elmts.okButton.html($.i18n_._('core-buttons')["ok"]);
+    elmts.cancelButton.text($.i18n_._('core-buttons')["cancel"]);
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -260,7 +260,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       if (mode == "separator") {
         config.separator = elmts.separatorInput[0].value;
         if (!(config.separator)) {
-          alert($.i18n._('core-views')["specify-sep"]);
+          alert($.i18n_._('core-views')["specify-sep"]);
           return;
         }
 
@@ -286,14 +286,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           });
 
           if (lengths.length === 0) {
-            alert($.i18n._('core-views')["warning-no-length"]);
+            alert($.i18n_._('core-views')["warning-no-length"]);
             return;
           }
 
           config.fieldLengths = JSON.stringify(lengths);
           
         } catch (e) {
-          alert($.i18n._('core-views')["warning-format"]);
+          alert($.i18n_._('core-views')["warning-format"]);
           return;
         }
       }
@@ -311,55 +311,55 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-column" ], [
       {
         id: "core/split-column",
-        label: $.i18n._('core-views')["split-into-col"]+"...",
+        label: $.i18n_._('core-views')["split-into-col"]+"...",
         click: doSplitColumn
       },
       {},
       {
         id: "core/add-column",
-        label: $.i18n._('core-views')["add-based-col"]+"...",
+        label: $.i18n_._('core-views')["add-based-col"]+"...",
         click: doAddColumn
       },
       {
         id: "core/add-column-by-fetching-urls",
-        label: $.i18n._('core-views')["add-by-urls"]+"...",
+        label: $.i18n_._('core-views')["add-by-urls"]+"...",
         click: doAddColumnByFetchingURLs
       },
       {
         id: "core/add-column-by-reconciliation",
-        label: $.i18n._('core-views')["add-col-recon-val"]+"...",
+        label: $.i18n_._('core-views')["add-col-recon-val"]+"...",
         click: doAddColumnByReconciliation
       },
       {},
       {
         id: "core/rename-column",
-        label: $.i18n._('core-views')["rename-col"],
+        label: $.i18n_._('core-views')["rename-col"],
         click: doRenameColumn
       },
       {
         id: "core/remove-column",
-        label: $.i18n._('core-views')["remove-col"],
+        label: $.i18n_._('core-views')["remove-col"],
         click: doRemoveColumn
       },
       {},
       {
         id: "core/move-column-to-beginning",
-        label: $.i18n._('core-views')["move-to-beg"],
+        label: $.i18n_._('core-views')["move-to-beg"],
         click: function() { doMoveColumnTo(0); }
       },
       {
         id: "core/move-column-to-end",
-        label: $.i18n._('core-views')["move-to-end"],
+        label: $.i18n_._('core-views')["move-to-end"],
         click: function() { doMoveColumnTo(theProject.columnModel.columns.length - 1); }
       },
       {
         id: "core/move-column-to-left",
-        label: $.i18n._('core-views')["move-to-left"],
+        label: $.i18n_._('core-views')["move-to-left"],
         click: function() { doMoveColumnBy(-1); }
       },
       {
         id: "core/move-column-to-right",
-        label: $.i18n._('core-views')["move-to-right"],
+        label: $.i18n_._('core-views')["move-to-right"],
         click: function() { doMoveColumnBy(1); }
       }
     ]
