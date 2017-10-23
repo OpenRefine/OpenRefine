@@ -161,7 +161,7 @@ ProcessPanel.prototype._render = function(newData) {
     
     if (processes.length > 1) {
       var pending = processes.length - 1;
-      this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' '+$.i18n_._('core-project')["other-processes"]+')' : ' '+$.i18n_._('core-project')["other-process"]+')'));
+      this._elmts.countSpan.text($.i18n('processes-pending', pending));
     } else {
       this._elmts.countSpan.empty();
     }

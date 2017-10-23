@@ -118,7 +118,7 @@ function populatePreferences(prefs) {
   var table = $('<table>')
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th>'+$.i18n_._('core-index')["key"]+'</th><th>'+$.i18n_._('core-index')["value"]+'</th><th></th></tr>')
+  .html('<tr><th>'+$.i18n_._('core-index')["preference-key"]+'</th><th>'+$.i18n_._('core-index')["value"]+'</th><th></th></tr>')
   .appendTo(body)[0];
 
   for (var k in prefs) {

@@ -242,8 +242,8 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
         this._elmts.resultSummary.html(
             (clusters.length === this._clusters.length) ?
-                ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " "+$.i18n_._('core-dialogs')["found"]) :
-                ("<b>" + clusters.length + "</b> cluster" + ((clusters.length != 1) ? "s" : "") + " "+$.i18n_._('core-dialogs')["filtered-from"]+ this._clusters.length +$.i18n_._('core-dialogs')["from-total"] )
+                $.i18n('clusters-found', this._clusters.length) :
+                $.i18n('clusters-filtered', clusters.length, this._clusters.length)
         );
 
     } else {

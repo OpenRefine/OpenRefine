@@ -124,7 +124,7 @@ $(function() {
                 .addClass('notification-action')
                 .attr("href", latestVersionUrl)
                 .attr("target", "_blank")
-                .text($.i18n_._('core-index')["download"]+' ' + latestVersionName + ' '+$.i18n_._('core-index')["now"]+'.')
+                .text($.i18n('download-version-now', latestVersionName))
                 .appendTo(notification);
               }
             });

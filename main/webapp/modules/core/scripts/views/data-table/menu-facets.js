@@ -35,7 +35,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doFilterByExpressionPrompt = function(expression, type) {
     DataTableView.promptExpressionOnVisibleRows(
       column,
-      (type == "list" ? $.i18n_._('core-views')["custom-facet"] : $.i18n_._('core-views')["custom-numeric-label"]) +" "+ column.name, 
+      (type == "list" ? $.i18n('custom-facet', column.name) : $.i18n('custom-numeric-label', column.name)),
       expression,
       function(expression) {
         var config = {

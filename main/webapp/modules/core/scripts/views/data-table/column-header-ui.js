@@ -76,7 +76,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
       var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
       var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
       var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
-      var title = matchPercent + "% "+$.i18n_._('core-views')["matched"]+", " + newPercent + "% "+$.i18n_._('core-views')["new"]+", " + unreconciledPercent + "% "+$.i18n_._('core-views')["to-be-recon"];
+      var title = $.i18n('percent-matched', matchPercent, newPercent, unreconciledPercent);
 
       var whole = $('<div>')
       .addClass("column-header-recon-stats-bar")
