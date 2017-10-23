@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -170,8 +169,6 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             if("lengths".equals(_mode)) {
                 //do split by lengths
                 if (_fieldLengths.length >= 0 && _fieldLengths[0] > 0) {
-                    Object o = _fieldLengths[0];
-                    
                     values = new String[_fieldLengths.length];
                     
                     int lastIndex = 0;
