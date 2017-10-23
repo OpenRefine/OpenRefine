@@ -159,7 +159,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       var config = {
         columnName: column.name,
         keyColumnName: theProject.columnModel.keyColumnName,
-        mode: mode
+        mode
       };
       if (mode === "separator") {
         config.separator = elmts.separatorInput[0].value;
