@@ -112,7 +112,7 @@ function PreferenceUI(tr, key, value) {
 function populatePreferences(prefs) {
   var body = $("#body-info").empty();
 
-  $("#or-proj-starting").text($.i18n_._('core-project')["starting"]+"...");
+  $("#or-proj-starting").text($.i18n_._('core-project')["starting-up"]+"...");
   $('<h1>').text($.i18n_._('core-index')["preferences"]).appendTo(body);
 
   var table = $('<table>')

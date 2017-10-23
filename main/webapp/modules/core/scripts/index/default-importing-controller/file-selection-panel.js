@@ -343,7 +343,7 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
       if (!(data)) {
         self._createProjectUI.showImportJobError($.i18n_._('core-index-import')["unknown-err"]);
       } else if (data.code == "error" || !("job" in data)) {
-        self._createProjectUI.showImportJobError((data.message) ? ($.i18n_._('core-index-import')["error"]+ ' ' + data.message) : $.i18n_._('core-index-import')["unknown-err"]);
+        self._createProjectUI.showImportJobError((data.message) ? ($.i18n_._('core-index-import')["error-follows"]+ ' ' + data.message) : $.i18n_._('core-index-import')["unknown-err"]);
       } else {
         // Different files might be selected. We start over again.
         delete this._parserOptions;

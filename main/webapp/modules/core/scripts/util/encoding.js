@@ -45,7 +45,7 @@ Encoding.selectEncoding = function(input, onDone) {
   elmts.dialogHeader.text($.i18n_._('core-util-enc')["select-enc"]);
   elmts.cancelButton.text($.i18n_._('core-buttons')["cancel"]);
   $('#or-enc-common').text($.i18n_._('core-util-enc')["common"]);
-  $('#or-enc-all').text($.i18n_._('core-util-enc')["all"]);
+  $('#or-enc-all').text($.i18n_._('core-util-enc')["all-encodings"]);
   
   var pickEncoding = function(encoding) {
     input[0].value = encoding.code;

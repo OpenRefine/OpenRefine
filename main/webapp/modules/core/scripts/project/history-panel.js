@@ -78,7 +78,7 @@ HistoryPanel.prototype._render = function() {
   elmts.or_proj_undo.html($.i18n_._('core-project')["undo-history"]);
   elmts.or_proj_mistakes.html($.i18n_._('core-project')["mistakes"]);
   elmts.or_proj_learnMore.html($.i18n_._('core-project')["learn-more"]);
-  elmts.applyLink.html($.i18n_._('core-project')["apply"]);
+  elmts.applyLink.html($.i18n_._('core-project')["project-apply"]);
   elmts.extractLink.html($.i18n_._('core-project')["extract"]);
   elmts.or_proj_mistakes.html($.i18n_._('core-project')["mistakes"]);
   elmts.or_proj_filter.html($.i18n_._('core-project')["filter"]);

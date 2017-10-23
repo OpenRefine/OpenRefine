@@ -312,7 +312,7 @@ Refine.DefaultImportingController.prototype._createProject = function() {
                   document.location = "project?project=" + job.config.projectID;
                 },
                 function(job) {
-                  alert($.i18n_._('core-index-import')["errors"]+'\n' + Refine.CreateProjectUI.composeErrorMessage(job));
+                  alert($.i18n_._('core-index-import')["errors-follow"]+'\n' + Refine.CreateProjectUI.composeErrorMessage(job));
                   self._onImportJobReady();
                 }
             );

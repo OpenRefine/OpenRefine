@@ -314,7 +314,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.or_views_matchOther.html($.i18n_._('core-views')["match-other"]);
   elmts.or_views_matchThis.html($.i18n_._('core-views')["match-this"]);
   elmts.okButton.html($.i18n_._('core-buttons')["match"]);
-  elmts.newButton.html($.i18n_._('core-buttons')["new-topic"]);
+  elmts.newButton.html($.i18n_._('core-buttons')["new-topic-button"]);
   elmts.clearButton.html($.i18n_._('core-buttons')["dont-reconcile"]);
   elmts.cancelButton.html($.i18n_._('core-buttons')["cancel"]);
 

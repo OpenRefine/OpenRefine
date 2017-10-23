@@ -49,7 +49,7 @@ ClusteringDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/clustering-dialog.html"));
 
     this._elmts = DOM.bind(dialog);
-    this._elmts.dialogHeader.text($.i18n_._('core-dialogs')["cluster-edit"]+' "' + this._columnName + '"');
+    this._elmts.dialogHeader.text($.i18n_._('core-dialogs')["cluster-edit-column"]+' "' + this._columnName + '"');
 
     this._elmts.or_dialog_descr.html($.i18n_._('core-dialogs')["cluster-descr"]);
     this._elmts.or_dialog_findMore.html($.i18n_._('core-dialogs')["find-more"]);

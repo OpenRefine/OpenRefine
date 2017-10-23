@@ -126,7 +126,7 @@ function initializeUI(uiState) {
   $("#project-name-button").attr("title",$.i18n_._('core-project')["proj-name"]);
   $("#or-proj-export").text($.i18n_._('core-project')["export"]);
   $("#or-proj-help").text($.i18n_._('core-project')["help"]);
-  $("#or-proj-starting").text($.i18n_._('core-project')["starting"]+"...");
+  $("#or-proj-starting").text($.i18n_._('core-project')["starting-up"]+"...");
   $("#or-proj-facFil").text($.i18n_._('core-project')["facet-filter"]);
   $("#or-proj-undoRedo").text($.i18n_._('core-project')["undo-redo"]);
   $("#or-proj-ext").text($.i18n_._('core-project')["extensions"]+":");

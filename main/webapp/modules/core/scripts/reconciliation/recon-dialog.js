@@ -203,7 +203,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   var elmts = DOM.bind(dialog);
 
   elmts.dialogHeader.html($.i18n_._('core-recon')["add-std-srv"]);
-  elmts.or_recon_enterUrl.html($.i18n_._('core-recon')["enter-url"]+":");
+  elmts.or_recon_enterUrl.html($.i18n_._('core-recon')["enter-service-url"]+":");
   elmts.addButton.html($.i18n_._('core-buttons')["add-service"]);
   elmts.cancelButton.html($.i18n_._('core-buttons')["cancel"]);
   

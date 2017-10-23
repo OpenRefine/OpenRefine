@@ -39,7 +39,7 @@ Refine.ImportProjectUI = function(elmt) {
   
   $('#or-import-locate').text($.i18n_._('core-index-import')["locate"]);
   $('#or-import-file').text($.i18n_._('core-index-import')["file"]);
-  $('#or-import-rename').text($.i18n_._('core-index-import')["rename"]);
+  $('#or-import-rename').text($.i18n_._('core-index-import')["rename-project"]);
   $('#import-project-button').attr("value",$.i18n_._('core-buttons')["import-proj"]);
 };
 

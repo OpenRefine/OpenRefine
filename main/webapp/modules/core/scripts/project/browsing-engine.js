@@ -109,7 +109,7 @@ BrowsingEngine.prototype._initializeUI = function() {
     '<a href="javascript:{}" bind="refreshLink" class="button" title="'+$.i18n_._('core-project')["update-facets"]+'">'+$.i18n_._('core-buttons')["refresh"]+'</a>' +
     '</div>' +              
     '<a href="javascript:{}" bind="resetLink" class="button button-pill-left" title="'+$.i18n_._('core-project')["clear-selection"]+'">'+$.i18n_._('core-buttons')["reset-all"]+'</a>' +
-    '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="'+$.i18n_._('core-project')["remove-all"]+'">'+$.i18n_._('core-buttons')["remove-all"]+'</a>' +
+    '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="'+$.i18n_._('core-project')["remove-all-facets"]+'">'+$.i18n_._('core-buttons')["remove-all"]+'</a>' +
     '</div>' +
     '</div>' +
     '<ul bind="facets" class="facets-container"></ul>'

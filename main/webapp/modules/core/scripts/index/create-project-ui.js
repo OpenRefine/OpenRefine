@@ -51,7 +51,7 @@ Refine.CreateProjectUI = function(elmt) {
   
   $('#or-create-question').text($.i18n_._('core-index-create')["question"]);
   $('#or-create-formats').text($.i18n_._('core-index-create')["formats"]);
-  $('#or-create-from').text($.i18n_._('core-index-create')["from"]);
+  $('#or-create-from').text($.i18n_._('core-index-create')["data-from"]);
   
   $('#create-project-progress-cancel-button').text($.i18n_._('core-buttons')["cancel"]);
   $('#create-project-error-ok-button').html($.i18n_._('core-buttons')["ok"]);
