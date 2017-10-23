@@ -48,10 +48,11 @@ $.ajax({
 //		lang : lang
 	},
 	success : function(data) {
-		dictionary = data;
+		dictionary = data['dictionary'];
+        lang = data['lang'];
 	}
 });
-$.i18n.setDictionary(dictionary);
+$.i18n().load(dictionary, lang);
 // End internationalization
 
 Refine.selectActionArea = function(id) {
