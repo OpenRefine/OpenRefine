@@ -69,7 +69,10 @@ public class LoadLanguageCommand extends Command {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/json");
                 try {
-                    json.write(response.getWriter());
+                    JSONObject fullJson = new JSONObject();
+                    fullJson.put("dictionary", json);
+                    fullJson.put("lang", lang);
+                    fullJson.write(response.getWriter());
                 } catch (JSONException e) {
                     logger.error("Error writing language labels to response stream");
                 }
