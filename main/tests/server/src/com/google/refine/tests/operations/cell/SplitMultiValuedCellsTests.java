@@ -111,7 +111,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     }
 
     /**
-     * Test to demonstrate the intended behaviour of the function, for issue #1214
+     * Test to demonstrate the intended behaviour of the function, for issue #1268
      * https://github.com/OpenRefine/OpenRefine/issues/1268
      */
 
