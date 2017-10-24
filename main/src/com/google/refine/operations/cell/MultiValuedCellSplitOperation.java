@@ -200,14 +200,14 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             // First value goes into the same row
             {
                 Row firstNewRow = oldRow.dup();
-                firstNewRow.setCell(cellIndex, new Cell(values[0].trim(), null));
+                firstNewRow.setCell(cellIndex, new Cell(values[0], null));
                 
                 newRows.add(firstNewRow);
             }
             
             int r2 = r + 1;
             for (int v = 1; v < values.length; v++) {
-                Cell newCell = new Cell(values[v].trim(), null);
+                Cell newCell = new Cell(values[v], null);
                 
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);
