@@ -37,6 +37,7 @@ import com.google.refine.expr.*;
 import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -89,7 +90,11 @@ public class JythonEvaluable implements Evaluable {
         // indent and create a function out of the code
         String[] lines = s.split("\r\n|\r|\n");
         
-        StringBuffer sb = new StringBuffer(1024);
+        StringBuffer sb = new StringBuffer(102400);
+        sb.append("# coding=utf-8\n");
+        sb.append("import sys\n");
+        sb.append("reload(sys)\n");
+        sb.append("sys.setdefaultencoding('utf-8')\n");
         sb.append("def ");
         sb.append(s_functionName);
         sb.append("(value, cell, cells, row, rowIndex):");
@@ -98,7 +103,8 @@ public class JythonEvaluable implements Evaluable {
             sb.append(line);
         }
 
-        _engine.exec(sb.toString());
+        //_engine.exec(sb.toString());
+        _engine.execfile(new ByteArrayInputStream(sb.toString().getBytes()));
     }
     
     @Override

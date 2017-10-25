@@ -358,10 +358,12 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
   }
 
   Refine.setAjaxInProgress();
+  
+  var cont = $.extend({}, body, params);
 
   $.post(
-    "command/" + moduleName + "/" + command + "?" + $.param(params),
-    body,
+    "command/" + moduleName + "/" + command, // + "?" + $.param(params),
+    cont,
     onDone,
     "json"
   );
