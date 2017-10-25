@@ -525,6 +525,7 @@
         "split-col": "Split column",
         "several-col": "into several columns",
         "how-split": "How to Split Column",
+        "how-split-cells": "How to split multi-valued cells",
         "by-sep": "by separator",
         "separator": "Separator",
         "reg-exp": "regular expression",

@@ -33,9 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
@@ -50,32 +51,64 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
 import com.google.refine.operations.OperationRegistry;
+import com.google.refine.util.JSONUtilities;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _columnName;
     final protected String  _keyColumnName;
-    final protected String  _separator;
     final protected String  _mode;
+    final protected String  _separator;
+    final protected boolean _regex;
+    
+    final protected int[]      _fieldLengths;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new MultiValuedCellSplitOperation(
-            obj.getString("columnName"),
-            obj.getString("keyColumnName"),
-            obj.getString("separator"),
-            obj.getString("mode")
-        );
+        String mode = obj.getString("mode");
+
+        if ("separator".equals(mode)) {
+            return new MultiValuedCellSplitOperation(
+                obj.getString("columnName"),
+                obj.getString("keyColumnName"),
+                obj.getString("separator"),
+                obj.getBoolean("regex")
+            );
+        } else {
+            return new MultiValuedCellSplitOperation(
+                obj.getString("columnName"),
+                obj.getString("keyColumnName"),
+                JSONUtilities.getIntArray(obj, "fieldLengths")
+            );
+        }
     }
     
     public MultiValuedCellSplitOperation(
         String      columnName,
         String      keyColumnName,
-        String    separator,
-        String    mode
+        String      separator,
+        boolean     regex
     ) {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
         _separator = separator;
-        _mode = mode;
+        _mode = "separator";
+        _regex = regex;
+        
+        _fieldLengths = null;
+    }
+
+    public MultiValuedCellSplitOperation(
+        String      columnName,
+        String      keyColumnName,
+        int[]       fieldLengths
+    ) {
+        _columnName = columnName;
+        _keyColumnName = keyColumnName;
+
+        _mode = "lengths";
+        _separator = null;
+        _regex = false;
+
+        _fieldLengths = fieldLengths;
     }
 
     @Override
@@ -87,8 +120,17 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("keyColumnName"); writer.value(_keyColumnName);
-        writer.key("separator"); writer.value(_separator);
         writer.key("mode"); writer.value(_mode);
+        if ("separator".equals(_mode)) {
+            writer.key("separator"); writer.value(_separator);
+            writer.key("regex"); writer.value(_regex);
+        } else {
+            writer.key("fieldLengths"); writer.array();
+            for (int l : _fieldLengths) {
+                writer.value(l);
+            }
+            writer.endArray();
+        }
         writer.endObject();
     }
 
@@ -110,7 +152,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();
-        
+
         List<Row> newRows = new ArrayList<Row>();
         
         int oldRowCount = project.rows.size();
@@ -124,8 +166,28 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
-            if (_mode.equals("regex")) {
-                values = s.split(_separator);
+            if("lengths".equals(_mode)) {
+                if (_fieldLengths.length >= 0 && _fieldLengths[0] > 0) {
+                    values = new String[_fieldLengths.length];
+                    
+                    int lastIndex = 0;
+                    
+                    for (int i = 0; i < _fieldLengths.length; i++) {
+                        int thisIndex = lastIndex;
+                        
+                        Object o = _fieldLengths[i];
+                        if (o instanceof Number) {
+                            thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o).intValue()));
+                        }
+                        
+                        values[i] = s.substring(lastIndex, thisIndex);
+                        lastIndex = thisIndex;
+                    }
+                }
+            }
+            else if (_regex) {
+                Pattern pattern = Pattern.compile(_separator);
+                values = pattern.split(s);
             } else {
                 values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);
             }
@@ -138,14 +200,14 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             // First value goes into the same row
             {
                 Row firstNewRow = oldRow.dup();
-                firstNewRow.setCell(cellIndex, new Cell(values[0].trim(), null));
+                firstNewRow.setCell(cellIndex, new Cell(values[0], null));
                 
                 newRows.add(firstNewRow);
             }
             
             int r2 = r + 1;
             for (int v = 1; v < values.length; v++) {
-                Cell newCell = new Cell(values[v].trim(), null);
+                Cell newCell = new Cell(values[v], null);
                 
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);
