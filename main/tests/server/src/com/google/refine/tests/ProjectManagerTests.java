@@ -52,6 +52,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
 import com.google.refine.process.ProcessManager;
@@ -73,6 +74,7 @@ public class ProjectManagerTests extends RefineTest {
     @BeforeMethod
     public void SetUp(){
         pm = new ProjectManagerStub();
+        ProjectManager.singleton = pm;
         SUT = spy(pm);
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
@@ -113,7 +115,7 @@ public class ProjectManagerTests extends RefineTest {
         //assert and verify
         AssertProjectRegistered();
         try {
-            verify(SUT, times(1)).saveMetadata(metadata, project.id);
+            verify(SUT, times(1)).saveMetadata(metadata, project);
         } catch (Exception e) {
             Assert.fail();
         }

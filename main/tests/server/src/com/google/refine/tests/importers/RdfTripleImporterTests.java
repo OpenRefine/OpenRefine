@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -61,7 +62,7 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() throws IOException {
         super.setUp();
         SUT = new RdfTripleImporter();
         JSONUtilities.safePut(options, "base-url", "http://rdf.freebase.com");

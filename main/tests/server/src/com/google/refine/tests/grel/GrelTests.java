@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.grel;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -47,8 +49,10 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 public class GrelTests extends RefineTest {
 
@@ -61,9 +65,11 @@ public class GrelTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-
     @BeforeMethod
-    public void SetUp() {
+    public void SetUp() throws IOException {
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        
         project = new Project();
         bindings = ExpressionUtils.createBindings(project);
     }

@@ -71,7 +71,7 @@ public class XmlImporterTests extends ImporterTest {
     
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() throws IOException {
         super.setUp();
         SUT = new XmlImporter();
     }

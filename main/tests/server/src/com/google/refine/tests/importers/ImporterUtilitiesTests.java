@@ -38,6 +38,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -48,10 +50,12 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.ImporterUtilities;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 public class ImporterUtilitiesTests extends RefineTest {
     
@@ -145,7 +149,10 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void setupColumns(){
+    public void setupColumns() throws IOException {
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        
         Project project = new Project();
         List<String> columnNames = new ArrayList<String>();
         columnNames.add("col1");

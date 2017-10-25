@@ -38,9 +38,9 @@ import java.io.InputStream;
 
 import org.apache.tools.tar.TarOutputStream;
 
+import com.google.refine.ProjectDataStore;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 
 /**
@@ -56,17 +56,12 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
+    public void exportProject(Project project, TarOutputStream tos) throws IOException {
         // empty
     }
-
+    
     @Override
-    public HistoryEntryManager getHistoryEntryManager() {
-        return new HistoryEntryManagerStub();
-    }
-
-    @Override
-    public void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException {
+    public void importProject(Project project, InputStream inputStream, boolean gziped) throws IOException {
         // empty
     }
 
@@ -77,15 +72,14 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public boolean loadProjectMetadata(long projectID) {
+    public boolean loadProjectMetadata(Project project) {
         // empty
         return false;
     }
 
     @Override
-    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(ProjectMetadata metadata, Project project) throws Exception {
         // empty
-
     }
 
     @Override
@@ -102,6 +96,12 @@ public class ProjectManagerStub extends ProjectManager {
     @Override
     protected void saveWorkspace() {
         // empty
+    }
+
+    @Override
+    public ProjectDataStore getProjectDataStore(Project proj) {
+        // empty
+        return null;
     }
 
 }

@@ -82,7 +82,7 @@ public class ExportProjectCommand extends Command {
     protected void tarToOutputStream(Project project, OutputStream os) throws IOException {
         TarOutputStream tos = new TarOutputStream(os);
         try {
-            ProjectManager.singleton.exportProject(project.id, tos);
+            ProjectManager.singleton.exportProject(project, tos);
         } finally {
             tos.close();
         }

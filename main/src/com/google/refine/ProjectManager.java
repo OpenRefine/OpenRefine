@@ -48,7 +48,6 @@ import org.apache.tools.tar.TarOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
@@ -129,10 +128,10 @@ public abstract class ProjectManager {
 
     /**
      * Load project metadata from data storage
-     * @param projectID
+     * @param project
      * @return
      */
-    public abstract boolean loadProjectMetadata(long projectID);
+    public abstract boolean loadProjectMetadata(Project project);
 
     /**
      * Loads a project from the data store into memory
@@ -143,21 +142,20 @@ public abstract class ProjectManager {
 
     /**
      * Import project from a Refine archive
-     * @param projectID
+     * @param project
      * @param inputStream
      * @param gziped
      * @throws IOException
      */
-    public abstract void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException;
+    public abstract void importProject(Project project, InputStream inputStream, boolean gziped) throws IOException;
 
     /**
      * Export project to a Refine archive
-     * @param projectId
+     * @param project
      * @param tos
      * @throws IOException
      */
-    public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
-
+    public abstract void exportProject(Project project, TarOutputStream tos) throws IOException;
 
     /**
      * Saves a project and its metadata to the data store
@@ -165,16 +163,17 @@ public abstract class ProjectManager {
      */
     public void ensureProjectSaved(long id) {
         synchronized(this){
+            Project project = getProject(id);
             ProjectMetadata metadata = this.getProjectMetadata(id);
+            
             if (metadata != null) {
                 try {
-                    saveMetadata(metadata, id);
+                    saveMetadata(metadata, (project != null ? project : new Project(id)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }//FIXME what should be the behaviour if metadata is null? i.e. not found
 
-            Project project = getProject(id);
             if (project != null && metadata != null && metadata.getModified().after(project.getLastSave())) {
                 try {
                     saveProject(project);
@@ -190,10 +189,10 @@ public abstract class ProjectManager {
     /**
      * Save project metadata to the data store
      * @param metadata
-     * @param projectId
+     * @param project
      * @throws Exception
      */
-    protected abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
+    protected abstract void saveMetadata(ProjectMetadata metadata, Project project) throws Exception;
 
     /**
      * Save project to the data store
@@ -370,6 +369,11 @@ public abstract class ProjectManager {
         }
         return -1;
     }
+    
+    /**
+     * Retrieves a new datastore instance for the provided project.
+     */
+    public abstract ProjectDataStore getProjectDataStore(Project proj);
 
 
     /**
@@ -418,12 +422,6 @@ public abstract class ProjectManager {
         return ((TopList) _preferenceStore.get("scripting.expressions")).getList();
     }
 
-    /**
-     * The history entry manager deals with changes
-     * @return manager for handling history
-     */
-    public abstract HistoryEntryManager getHistoryEntryManager();
-
 
     /**
      * Remove the project from the data store
@@ -443,13 +441,18 @@ public abstract class ProjectManager {
      * Removes project from memory
      * @param projectID
      */
-    protected void removeProject(long projectID){
+    protected Project removeProject(long projectID){
+        Project project = null;
+        
         if (_projects.containsKey(projectID)) {
-            _projects.remove(projectID).dispose();
+            project = _projects.remove(projectID);
+            project.dispose();
         }
         if (_projectsMetadata.containsKey(projectID)) {
             _projectsMetadata.remove(projectID);
         }
+        
+        return project;
     }
 
 

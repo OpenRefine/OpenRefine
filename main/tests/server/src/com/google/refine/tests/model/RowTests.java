@@ -36,6 +36,8 @@ package com.google.refine.tests.model;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
 
@@ -46,10 +48,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 public class RowTests extends RefineTest {
 
@@ -65,7 +69,10 @@ public class RowTests extends RefineTest {
     Properties options;
 
     @BeforeMethod
-    public void SetUp() {
+    public void SetUp() throws IOException {
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        
         writer = new StringWriter();
         project = new Project();
         options = mock(Properties.class);
