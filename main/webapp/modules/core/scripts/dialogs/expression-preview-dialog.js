@@ -158,8 +158,8 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     s = this._getLanguage() + ":" + s;
     if (commit) {
         $.post(
-            "command/core/log-expression?" + $.param({ project: theProject.id, expression: s }),
-            null,
+            "command/core/log-expression?" + $.param({ project: theProject.id }),
+            { expression: s },
             function(data) {
             },
             "json"
@@ -390,7 +390,6 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     var expression = this.expression = $.trim(this._elmts.expressionPreviewTextarea[0].value);
     var params = {
         project: theProject.id,
-        expression: this._getLanguage() + ":" + expression,
         cellIndex: this._cellIndex
     };
     this._prepareUpdate(params);
@@ -398,6 +397,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     $.post(
         "command/core/preview-expression?" + $.param(params), 
         {
+        	expression: this._getLanguage() + ":" + expression,
             rowIndices: JSON.stringify(this._rowIndices) 
         },
         function(data) {
@@ -421,10 +421,12 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
     var table = $('<table></table>').appendTo(
         $('<div>').addClass("expression-preview-table-wrapper").appendTo(container))[0];
     
+    var truncExpression = expression.length > 30 ? expression.substring(0, 30) + ' ...' : expression; 
+    
     var tr = table.insertRow(0);
     $(tr.insertCell(0)).addClass("expression-preview-heading").text("row");
     $(tr.insertCell(1)).addClass("expression-preview-heading").text("value");
-    $(tr.insertCell(2)).addClass("expression-preview-heading").text(expression);
+    $(tr.insertCell(2)).addClass("expression-preview-heading").text(truncExpression);
     
     var renderValue = function(td, v) {
         if (v !== null && v !== undefined) {
