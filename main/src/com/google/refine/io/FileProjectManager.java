@@ -215,7 +215,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    protected void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
         ProjectMetadataUtilities.save(metadata, projectDir);
     }

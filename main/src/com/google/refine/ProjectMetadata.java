@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -114,13 +115,13 @@ public class ProjectMetadata implements Jsonizable {
         }
         writer.endObject();
         
-        // write JSONArray to file directly 
+        // write JSONArray directly 
         if (_importOptionMetaData.length() > 0 ) {
             writer.key("importOptionMetaData"); 
             writer.value(_importOptionMetaData);
         }
         
-        if ("save".equals(options.getProperty("mode"))) {
+        if (isSaveMode(options)) {
             writer.key("password"); writer.value(_password);
 
             writer.key("encoding"); writer.value(_encoding);
@@ -131,9 +132,19 @@ public class ProjectMetadata implements Jsonizable {
         
         writer.endObject();
         
-        if ("save".equals(options.getProperty("mode"))) {
+        if (isSaveMode(options)) {
             written = new Date();
         }
+    }
+    
+    public void writeWithoutOption(JSONWriter writer)
+            throws JSONException {
+        write(writer, 
+                new Properties());
+    }
+    
+    private boolean isSaveMode(Properties options) {
+        return "save".equals(options.getProperty("mode"));
     }
 
     public boolean isDirty() {
@@ -368,6 +379,18 @@ public class ProjectMetadata implements Jsonizable {
     public void setRowNumber(int rowNumber) {
         this._rowNumber = rowNumber;
         updateModified();
+    }
+
+    public void setAnyField(String metaName, String valueString)  {
+        Class<? extends ProjectMetadata> metaClass = this.getClass();
+        try {
+            Field metaField = metaClass.getDeclaredField("_" + metaName);
+
+            metaField.set(this, valueString);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            // do nothing
+            e.printStackTrace();
+        }
     }
     
 }

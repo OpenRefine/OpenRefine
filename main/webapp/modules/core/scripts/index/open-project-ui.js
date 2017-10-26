@@ -123,8 +123,23 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<table class="list-table"><tr>' +
       '<th></th>' +
       '<th></th>' +
+      '<th></th>' +
       '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["row-number"]+'</th>' + 
+      (function() {
+          var htmlDisplay = "";
+          for (var n in data.customMetaDataColumns) {
+            if (data.customMetaDataColumns[n].display) {
+              htmlDisplay += '<th>'+ data.customMetaDataColumns[n].name + '</th>';
+            }
+          }
+          
+          return htmlDisplay;
+      })() +     
       '</tr></table>'
     ).appendTo(container)[0];
 
@@ -189,7 +204,19 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       }).appendTo(
         $(tr.insertCell(tr.cells.length)).css('width', '1%')
       );
-
+      
+      var editMetaDataLink = $('<a></a>')
+      .text($.i18n._('core-index-open')["edit-meta-data"])
+      .addClass("secondary")
+      .attr("href", "javascript:{}")
+      .css("visibility", "hidden")
+      .click(function() {
+          new EditMetadataDialog(project);
+      })
+      .appendTo(
+        $(tr.insertCell(tr.cells.length)).css('width', '6%')
+      );
+      
       $('<div></div>')
       .html(formatRelativeDate(project.date))
       .addClass("last-modified")
@@ -205,9 +232,11 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       $(tr).mouseenter(function() {
         renameLink.css("visibility", "visible");
         deleteLink.css("visibility", "visible");
+        editMetaDataLink.css("visibility", "visible");
       }).mouseleave(function() {
         renameLink.css("visibility", "hidden");
         deleteLink.css("visibility", "hidden");
+        editMetaDataLink.css("visibility", "hidden");
       });
     };
 

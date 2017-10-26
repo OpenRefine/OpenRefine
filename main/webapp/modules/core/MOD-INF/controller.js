@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
-var bundle = true;
+var bundle = false;
 
 var templatedFiles = {
   // Requests with last path segments mentioned here 
@@ -68,9 +68,11 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
+  RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetaDataCommand());
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
+  RS.registerCommand(module, "set-project-metadata", new Packages.com.google.refine.commands.project.SetProjectMetaDataCommand());
 
   RS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
   RS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
@@ -350,7 +352,8 @@ function init() {
       "scripts/index/parser-interfaces/rdf-triples-parser-ui.js",
       "scripts/index/parser-interfaces/wikitext-parser-ui.js",
 
-      "scripts/reconciliation/recon-manager.js" // so that reconciliation functions are available to importers
+      "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
+      "scripts/index/edit-metadata-dialog.js"
     ]
   );
 
