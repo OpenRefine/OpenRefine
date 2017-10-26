@@ -69,7 +69,7 @@ public class InterProjectModel {
             this.toProjectColumnName = toProjectColumnName;
         }
 
-        public HasFieldsListImpl getRows(final Object rowKey) {
+        public HasFieldsListImpl getRows(final Object rowKey, String separatorRegexp) {
             Project toProject = ProjectManager.singleton.getProject(toProjectID);
             if (toProject == null) {
                 return null;
@@ -79,8 +79,8 @@ public class InterProjectModel {
 
             if (ExpressionUtils.isNonBlankData(rowKey)) {
                 Object[] rowKeys;
-                if (rowKey instanceof String) {
-                    rowKeys = ((String) rowKey).split(",");
+                if (separatorRegexp != null && !separatorRegexp.isEmpty() && rowKey instanceof String) {
+                    rowKeys = ((String) rowKey).split(separatorRegexp);
                 } else {
                     rowKeys = new Object[]{rowKey};
                 }
@@ -111,9 +111,10 @@ public class InterProjectModel {
      * @param fromColumn
      * @param toProject
      * @param toColumn
+     * @param separatorRegexp
      * @return
      */
-    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn) {
+    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn, String separatorRegexp) {
         String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;
         if (!_joins.containsKey(key)) {
             ProjectJoin join = new ProjectJoin(
@@ -122,8 +123,8 @@ public class InterProjectModel {
                 ProjectManager.singleton.getProjectID(toProject), 
                 toColumn
             );
-            
-            computeJoin(join);
+
+            computeJoin(join, separatorRegexp);
             
             synchronized (_joins) {
                 _joins.put(key, join);
@@ -158,7 +159,7 @@ public class InterProjectModel {
         }
     }
 
-    protected void computeJoin(ProjectJoin join) {
+    protected void computeJoin(ProjectJoin join, String separatorRegexp) {
         if (join.fromProjectID < 0 || join.toProjectID < 0) {
             return;
         }
@@ -179,8 +180,8 @@ public class InterProjectModel {
             Object fromRowKey = fromRow.getCellValue(fromColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(fromRowKey)) {
                 Object[] fromRowKeys;
-                if (fromRowKey instanceof String) {
-                    fromRowKeys = ((String) fromRowKey).split(",");
+                if (separatorRegexp != null && !separatorRegexp.isEmpty() && fromRowKey instanceof String) {
+                    fromRowKeys = ((String) fromRowKey).split(separatorRegexp);
                 } else {
                     fromRowKeys = new Object[]{fromRowKey};
                 }
