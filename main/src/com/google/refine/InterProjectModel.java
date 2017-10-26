@@ -68,22 +68,38 @@ public class InterProjectModel {
             this.toProjectID = toProjectID;
             this.toProjectColumnName = toProjectColumnName;
         }
-        
-        public HasFieldsListImpl getRows(Object value) {
-            if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
-                Project toProject = ProjectManager.singleton.getProject(toProjectID);
-                if (toProject != null) {
-                    HasFieldsListImpl rows = new HasFieldsListImpl();
-                    for (Integer r : valueToRowIndices.get(value)) {
-                        Row row = toProject.rows.get(r);
-                        rows.add(new WrappedRow(toProject, r, row));
+
+        public HasFieldsListImpl getRows(final Object rowKey) {
+            Project toProject = ProjectManager.singleton.getProject(toProjectID);
+            if (toProject == null) {
+                return null;
+            }
+
+            HasFieldsListImpl resultFieldList = null;
+
+            if (ExpressionUtils.isNonBlankData(rowKey)) {
+                Object[] rowKeys;
+                if (rowKey instanceof String) {
+                    rowKeys = ((String) rowKey).split(",");
+                } else {
+                    rowKeys = new Object[]{rowKey};
+                }
+
+                resultFieldList = new HasFieldsListImpl();
+                for (Object k : rowKeys) {
+                    if (valueToRowIndices.containsKey(k)) {
+                        for (Integer rowIndex : valueToRowIndices.get(k)) {
+                            Row row = toProject.rows.get(rowIndex);
+                            resultFieldList.add(new WrappedRow(toProject, rowIndex, row));
+                        }
                     }
-                    
-                    return rows;
                 }
             }
-            return null;
+
+            // Returning null instead of an empty list is expected
+            return resultFieldList.isEmpty() ? null : resultFieldList;
         }
+
     }
     
     protected Map<String, ProjectJoin> _joins = new HashMap<String, ProjectJoin>();
@@ -158,11 +174,21 @@ public class InterProjectModel {
         if (fromColumn == null || toColumn == null) {
             return;
         }
-        
+
         for (Row fromRow : fromProject.rows) {
-            Object value = fromRow.getCellValue(fromColumn.getCellIndex());
-            if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
-                join.valueToRowIndices.put(value, new ArrayList<Integer>());
+            Object fromRowKey = fromRow.getCellValue(fromColumn.getCellIndex());
+            if (ExpressionUtils.isNonBlankData(fromRowKey)) {
+                Object[] fromRowKeys;
+                if (fromRowKey instanceof String) {
+                    fromRowKeys = ((String) fromRowKey).split(",");
+                } else {
+                    fromRowKeys = new Object[]{fromRowKey};
+                }
+                for (Object k : fromRowKeys) {
+                    if (!join.valueToRowIndices.containsKey(k)) {
+                        join.valueToRowIndices.put(k, new ArrayList<Integer>());
+                    }
+                }
             }
         }
         
@@ -176,4 +202,5 @@ public class InterProjectModel {
             }
         }
     }
+
 }
