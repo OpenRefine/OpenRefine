@@ -47,39 +47,33 @@ import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
 
 public class Cross implements Function {
-
-    public static final String EVAL_ERROR_MESSAGE =
-            " expects a string or cell, a project name to join with, and a column name in that project. " +
-                    "Optional accepts a regular expression separator for source values.";
-
+    
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 3) {
+        if (args.length == 3) {
             // 1st argument can take either value or cell(for backward compatibility)
             Object v = args[0];
             Object toProjectName = args[1];
             Object toColumnName = args[2];
-            String separatorRegexp = (args.length > 3) ? String.valueOf(args[3]) : null;
-
-            if (v != null &&
+            
+            if (v != null && 
                 ( v instanceof String || v instanceof WrappedCell ) &&
                 toProjectName != null && toProjectName instanceof String &&
                 toColumnName != null && toColumnName instanceof String) {
-
+                
                 ProjectJoin join = ProjectManager.singleton.getInterProjectModel().getJoin(
                         ProjectManager.singleton.getProjectMetadata(((Project) bindings.get("project")).id).getName(),
                         (String) bindings.get("columnName"), 
-                        (String) toProjectName,
-                        (String) toColumnName,
-                        separatorRegexp
-                );
+                        (String) toProjectName, 
+                        (String) toColumnName
+                        );
                 
                 String srcValue = v instanceof String ? (String)v : (String)((WrappedCell) v).cell.value;
-
-                return join.getRows(srcValue, separatorRegexp);
+                        
+                return join.getRows(srcValue);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + EVAL_ERROR_MESSAGE);
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
     }
     
     @Override
@@ -88,7 +82,7 @@ public class Cross implements Function {
     
         writer.object();
         writer.key("description"); writer.value("join with another project by column");
-        writer.key("params"); writer.value("cell c or string value, string projectName, string columnName(, string separatorRegexp)");
+        writer.key("params"); writer.value("cell c or string value, string projectName, string columnName");
         writer.key("returns"); writer.value("array");
         writer.endObject();
     }
