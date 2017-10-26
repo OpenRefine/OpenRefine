@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 
-import com.google.refine.expr.functions.Cross;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -164,34 +163,17 @@ public class CrossFunctionTests extends RefineTest {
      *  rest of cells shows "Error: cross expects a string or cell, a project name to join with, and a column name in that project"
      */
     @Test
-    public void crossFunctionIntegerValue() throws Exception {
-        String message = ((EvalError) invoke("cross", 1, "My Address Book", "friend")).message;
-        Assert.assertTrue(message.contains(Cross.EVAL_ERROR_MESSAGE),
-                String.format("Message should contain `%s` but is `%s`", Cross.EVAL_ERROR_MESSAGE, message));
+    public void crossFunctionNonLiteralValue() throws Exception {
+        Assert.assertEquals(((EvalError) invoke("cross", 1, "My Address Book", "friend")).message, 
+                "cross expects a string or cell, a project name to join with, and a column name in that project");
+        
+        Assert.assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message, 
+                "cross expects a string or cell, a project name to join with, and a column name in that project");
+        
+        Assert.assertEquals(((EvalError) invoke("cross", Calendar.getInstance(), "My Address Book", "friend")).message, 
+                "cross expects a string or cell, a project name to join with, and a column name in that project");
     }
-
-    /**
-     * rest of cells shows "Error: cross expects a string or cell, a project name to join with, and a column name in
-     * that project"
-     */
-    @Test
-    public void crossFunctionNull() throws Exception {
-        String message = ((EvalError) invoke("cross", null, "My Address Book", "friend")).message;
-        Assert.assertTrue(message.contains(Cross.EVAL_ERROR_MESSAGE),
-                String.format("Message should contain `%s` but is `%s`", Cross.EVAL_ERROR_MESSAGE, message));
-    }
-
-    /**
-     * rest of cells shows "Error: cross expects a string or cell, a project name to join with, and a column name in
-     * that project"
-     */
-    @Test
-    public void crossFunctionCalendarInstance() throws Exception {
-        String message = ((EvalError) invoke("cross", Calendar.getInstance(), "My Address Book", "friend")).message;
-        Assert.assertTrue(message.contains(Cross.EVAL_ERROR_MESSAGE),
-                String.format("Message should contain `%s` but is `%s`", Cross.EVAL_ERROR_MESSAGE, message));
-    }
-
+    
     /**
      * Lookup a control function by name and invoke it with a variable number of args
      */
