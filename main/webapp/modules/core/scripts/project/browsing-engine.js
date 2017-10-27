@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function BrowsingEngine(div, facetConfigs) {
   this._div = div;
-  this._mode = theProject.recordModel.hasRecords ? 'record-based' : 'row-based';
+  this._mode = theProject.recordModel.hasRecords ? "record-based" : "row-based";
 
   this._facets = [];
   this._initializeUI();
@@ -101,6 +101,7 @@ BrowsingEngine.prototype._initializeUI = function() {
     '<p>'+$.i18n._('core-project')["not-sure"]+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n._('core-project')["watch-cast"]+'</b></a></p>' +
     '</div>' +
     '<div class="browsing-panel-header" bind="header">' +
+    '<div class="browsing-panel-errors" bind="errors"></div>' +
     '<div class="browsing-panel-indicator" bind="indicator">' +
     '<img src="images/small-spinner.gif" /> '+$.i18n._('core-project')["refreshing-facet"]+'' +
     '</div>' +
@@ -240,19 +241,31 @@ BrowsingEngine.prototype.update = function(onDone) {
 
   this._elmts.header.show();
   this._elmts.controls.css("visibility", "hidden");
-  this._elmts.indicator.css("visibility", "visible");
+  this._elmts.indicator.css("display", "block");
 
   $.post(
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
     { engine: JSON.stringify(this.getJSON(true)) },
     function(data) {
+      if(data.code === "error") {
+        var clearErr = $('#err-text').remove();
+        var err = $('<div id="err-text">')
+                  .text(data.message)
+                  .appendTo(self._elmts.errors);
+         self._elmts.errors.css("display", "block");
+        if (onDone) {
+          onDone();
+        }
+        return;
+      }
       var facetData = data.facets;
 
       for (var i = 0; i < facetData.length; i++) {
         self._facets[i].facet.updateState(facetData[i]);
       }
 
-      self._elmts.indicator.css("visibility", "hidden");
+      self._elmts.indicator.css("display", "none");
+      self._elmts.errors.css("display", "none");
       if (self._facets.length > 0) {
         self._elmts.header.show();
         self._elmts.controls.css("visibility", "visible");
