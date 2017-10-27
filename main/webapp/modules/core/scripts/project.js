@@ -178,7 +178,7 @@ Refine.reinitializeProjectData = function(f, fError) {
   $.getJSON(
     "command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
     function(data) {
-      if (data.status == 'error') {
+      if (data.status == "error") {
         alert(data.message);
         if (fError) {
           fError();
@@ -220,7 +220,7 @@ Refine._renameProject = function() {
     data: { "project" : theProject.id, "name" : name },
     dataType: "json",
     success: function (data) {
-      if (data && typeof data.code != 'undefined' && data.code == "ok") {
+      if (data && typeof data.code != "undefined" && data.code == "ok") {
         theProject.metadata.name = name;
         Refine.setTitle();
       } else {
@@ -425,9 +425,12 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
   }
 
   $.post(
-    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
+    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
     body,
     function(data) {
+      if(data.code === "error") {
+        data = theProject.rowModel;
+      }
       theProject.rowModel = data;
 
       // Un-pool objects
@@ -445,7 +448,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
         onDone();
       }
     },
-    "jsonp"
+    "json"
   );
 };
 
