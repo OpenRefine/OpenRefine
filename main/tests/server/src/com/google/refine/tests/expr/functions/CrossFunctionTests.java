@@ -125,7 +125,20 @@ public class CrossFunctionTests extends RefineTest {
         importer = null;
     }
 
-    
+    @Test
+    public void crossFunctionLessThanThreeArgumentsTest() throws Exception {
+        Object result = invoke("cross", "1", "2");
+        Assert.assertTrue(result instanceof EvalError, "Calling cross() with less than 3 arguments should return error");
+        Assert.assertTrue(((EvalError) result).message.contains(Cross.EVAL_ERROR_MESSAGE));
+    }
+
+    @Test
+    public void crossFunctionMoreThanFourArgumentsTest() throws Exception {
+        Object result = invoke("cross", "1", "2", "3", "4", "5");
+        Assert.assertTrue(result instanceof EvalError, "Calling cross() with more than 4 arguments should return error");
+        Assert.assertTrue(((EvalError) result).message.contains(Cross.EVAL_ERROR_MESSAGE));
+    }
+
     @Test
     public void crossFunctionOneToOneTest() throws Exception {
         Row row = ((Row)((WrappedRow) ((HasFieldsListImpl) invoke("cross", "mary", "My Address Book", "friend")).get(0)).row);

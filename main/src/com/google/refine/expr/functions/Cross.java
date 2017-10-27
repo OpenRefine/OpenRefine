@@ -54,7 +54,7 @@ public class Cross implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 3) {
+        if (args.length == 3 || args.length == 4) {
             // 1st argument can take either value or cell(for backward compatibility)
             Object v = args[0];
             Object toProjectName = args[1];
