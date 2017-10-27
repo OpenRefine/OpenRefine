@@ -220,7 +220,7 @@ Refine._renameProject = function() {
     data: { "project" : theProject.id, "name" : name },
     dataType: "json",
     success: function (data) {
-      if (data && typeof data.code != 'undefined' && data.code == "ok") {
+      if (data && typeof data.code != "undefined" && data.code == "ok") {
         theProject.metadata.name = name;
         Refine.setTitle();
       } else {
@@ -428,7 +428,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
     "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
     body,
     function(data) {
-      if(data.code === 'error') {
+      if(data.code === "error") {
         data = theProject.rowModel;
       }
       theProject.rowModel = data;
