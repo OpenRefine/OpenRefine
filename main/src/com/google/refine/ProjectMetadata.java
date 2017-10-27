@@ -57,16 +57,16 @@ public class ProjectMetadata implements Jsonizable {
     private final Date     _created;
     private Date           _modified;
     private Date written = null;
-    private String         _name;
-    private String         _password;
+    private String         _name = "";
+    private String         _password = "";
 
-    private String         _encoding;
+    private String         _encoding = "";
     private int            _encodingConfidence;
     
-    private String _creator;
-    private String _contributors;
-    private String _subject;    // Several refine projects may be linked
-    private String _description;                // free form of comment
+    private String _creator = "";
+    private String _contributors = "";
+    private String _subject = "";    // Several refine projects may be linked
+    private String _description = "";                // free form of comment
     private int _rowNumber;      // at the creation. Essential for cleaning old projects too heavy
     
     // import options is an array for 1-n data sources
