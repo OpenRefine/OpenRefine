@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.expr.HasFieldsList;
 import com.google.refine.expr.functions.Cross;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,8 @@ public class CrossFunctionTests extends RefineTest {
         String projectName = "Christmas Gifts";
         String input = "gift;recipient\n"   
                 + "lamp;mary\n"
-                + "clock;john\n";
+                + "clock;john\n"
+                + "wine;anne,mary";
         return createProject(projectName, input);
     }
     
@@ -140,7 +142,19 @@ public class CrossFunctionTests extends RefineTest {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "999 XXXXXX St.");
     }
-    
+
+    @Test
+    public void crossFunctionManyToOneTest() throws Exception {
+        HasFieldsList resultFieldList = (HasFieldsList) invoke("cross", "anne,mary", "My Address Book", "friend", ",");
+        Assert.assertEquals(resultFieldList.length(), 2, "Result field list should have two row entries, one for `anne` and one for `mary`");
+
+        WrappedRow row1 = (WrappedRow) resultFieldList.get(0);
+        WrappedRow row2 = (WrappedRow) resultFieldList.get(1);
+
+        // toString() needed because Cell.equals() doesn't check actual cell value
+        Assert.assertEquals(row1.row.getCell(1).toString(), "17 Morning Crescent", "First row should contain anne's address");
+        Assert.assertEquals(row2.row.getCell(1).toString(), "50 Broadway Ave.", "Second row should contain mary's address");
+    }
 
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
