@@ -247,7 +247,7 @@ BrowsingEngine.prototype.update = function(onDone) {
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
     { engine: JSON.stringify(this.getJSON(true)) },
     function(data) {
-      if(data.code === 'error') {
+      if(data.code === "error") {
         var clearErr = $('#err-text').remove();
         var err = $('<div id="err-text">')
                   .text(data.message)

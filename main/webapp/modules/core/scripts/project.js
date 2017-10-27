@@ -178,7 +178,7 @@ Refine.reinitializeProjectData = function(f, fError) {
   $.getJSON(
     "command/core/get-project-metadata?" + $.param({ project: theProject.id }), null,
     function(data) {
-      if (data.status == 'error') {
+      if (data.status == "error") {
         alert(data.message);
         if (fError) {
           fError();
