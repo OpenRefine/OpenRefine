@@ -16,7 +16,7 @@ function EditMetadataDialog(metaData) {
       var td2 = tr.insertCell(2);
 
       $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
-        var newValue = window.prompt($.i18n._('core-index')["change-value"]+" " + key, value);
+        var newValue = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
         if (newValue !== null) {
           $(td1).text(newValue);
           metaData[key] = newValue;

@@ -21,7 +21,8 @@
         "error-rename": "Failed to rename project:",
         "no-proj": "No existing project. Select 'Create Project' on the left to create a new project.",
         "try-these": "If you have no data to work with, try these",
-        "sample-data": "sample data sets"
+        "sample-data": "sample data sets",
+        "change-metadata-value": "Change value of metadata key"
     },
     "core-index-create": {
         "create-proj": "Create Project",
