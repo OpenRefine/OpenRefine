@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsListImpl;
@@ -68,22 +69,38 @@ public class InterProjectModel {
             this.toProjectID = toProjectID;
             this.toProjectColumnName = toProjectColumnName;
         }
-        
-        public HasFieldsListImpl getRows(Object value) {
-            if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
-                Project toProject = ProjectManager.singleton.getProject(toProjectID);
-                if (toProject != null) {
-                    HasFieldsListImpl rows = new HasFieldsListImpl();
-                    for (Integer r : valueToRowIndices.get(value)) {
-                        Row row = toProject.rows.get(r);
-                        rows.add(new WrappedRow(toProject, r, row));
+
+        public HasFieldsListImpl getRows(final Object rowKey, Pattern splitPattern) {
+            Project toProject = ProjectManager.singleton.getProject(toProjectID);
+            if (toProject == null) {
+                return null;
+            }
+
+            HasFieldsListImpl resultFieldList = null;
+
+            if (ExpressionUtils.isNonBlankData(rowKey)) {
+                Object[] rowKeys;
+                if (splitPattern != null && rowKey instanceof String) {
+                    rowKeys = splitPattern.split((String) rowKey);
+                } else {
+                    rowKeys = new Object[]{rowKey};
+                }
+
+                resultFieldList = new HasFieldsListImpl();
+                for (Object k : rowKeys) {
+                    if (valueToRowIndices.containsKey(k)) {
+                        for (Integer rowIndex : valueToRowIndices.get(k)) {
+                            Row row = toProject.rows.get(rowIndex);
+                            resultFieldList.add(new WrappedRow(toProject, rowIndex, row));
+                        }
                     }
-                    
-                    return rows;
                 }
             }
-            return null;
+
+            // Returning null instead of an empty list is expected
+            return (resultFieldList == null || resultFieldList.isEmpty()) ? null : resultFieldList;
         }
+
     }
     
     protected Map<String, ProjectJoin> _joins = new HashMap<String, ProjectJoin>();
@@ -95,10 +112,11 @@ public class InterProjectModel {
      * @param fromColumn
      * @param toProject
      * @param toColumn
+     * @param splitPattern
      * @return
      */
-    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn) {
-        String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;
+    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn, Pattern splitPattern) {
+        String key = String.format("%s;%s;%s;%s;%s", fromProject, fromColumn, toProject, toColumn, String.valueOf(splitPattern));
         if (!_joins.containsKey(key)) {
             ProjectJoin join = new ProjectJoin(
                 ProjectManager.singleton.getProjectID(fromProject), 
@@ -106,8 +124,8 @@ public class InterProjectModel {
                 ProjectManager.singleton.getProjectID(toProject), 
                 toColumn
             );
-            
-            computeJoin(join);
+
+            computeJoin(join, splitPattern);
             
             synchronized (_joins) {
                 _joins.put(key, join);
@@ -142,7 +160,7 @@ public class InterProjectModel {
         }
     }
 
-    protected void computeJoin(ProjectJoin join) {
+    protected void computeJoin(ProjectJoin join, Pattern splitPattern) {
         if (join.fromProjectID < 0 || join.toProjectID < 0) {
             return;
         }
@@ -158,11 +176,21 @@ public class InterProjectModel {
         if (fromColumn == null || toColumn == null) {
             return;
         }
-        
+
         for (Row fromRow : fromProject.rows) {
-            Object value = fromRow.getCellValue(fromColumn.getCellIndex());
-            if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
-                join.valueToRowIndices.put(value, new ArrayList<Integer>());
+            Object fromRowKey = fromRow.getCellValue(fromColumn.getCellIndex());
+            if (ExpressionUtils.isNonBlankData(fromRowKey)) {
+                Object[] fromRowKeys;
+                if (splitPattern != null && fromRowKey instanceof String) {
+                    fromRowKeys = splitPattern.split((String) fromRowKey);
+                } else {
+                    fromRowKeys = new Object[]{fromRowKey};
+                }
+                for (Object k : fromRowKeys) {
+                    if (!join.valueToRowIndices.containsKey(k)) {
+                        join.valueToRowIndices.put(k, new ArrayList<Integer>());
+                    }
+                }
             }
         }
         
@@ -176,4 +204,5 @@ public class InterProjectModel {
             }
         }
     }
+
 }
