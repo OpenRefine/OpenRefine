@@ -425,9 +425,15 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
   }
 
   $.post(
-    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }) + "&callback=?",
+    "command/core/get-rows?" + $.param({ project: theProject.id, start: start, limit: limit }),
     body,
     function(data) {
+      if(data.code === 'error') {
+        data = theProject.rowModel;
+        //maybe change the data to zero?
+        data.rows = [];
+        data.filtered = 0;
+      }
       theProject.rowModel = data;
 
       // Un-pool objects
@@ -445,7 +451,7 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
         onDone();
       }
     },
-    "jsonp"
+    "json"
   );
 };
 
