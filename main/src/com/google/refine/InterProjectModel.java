@@ -98,7 +98,7 @@ public class InterProjectModel {
             }
 
             // Returning null instead of an empty list is expected
-            return resultFieldList.isEmpty() ? null : resultFieldList;
+            return (resultFieldList == null || resultFieldList.isEmpty()) ? null : resultFieldList;
         }
 
     }
