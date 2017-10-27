@@ -430,9 +430,6 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
     function(data) {
       if(data.code === 'error') {
         data = theProject.rowModel;
-        //maybe change the data to zero?
-        data.rows = [];
-        data.filtered = 0;
       }
       theProject.rowModel = data;
 
