@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsListImpl;
@@ -69,7 +70,7 @@ public class InterProjectModel {
             this.toProjectColumnName = toProjectColumnName;
         }
 
-        public HasFieldsListImpl getRows(final Object rowKey, String separatorRegexp) {
+        public HasFieldsListImpl getRows(final Object rowKey, Pattern splitPattern) {
             Project toProject = ProjectManager.singleton.getProject(toProjectID);
             if (toProject == null) {
                 return null;
@@ -79,8 +80,8 @@ public class InterProjectModel {
 
             if (ExpressionUtils.isNonBlankData(rowKey)) {
                 Object[] rowKeys;
-                if (separatorRegexp != null && !separatorRegexp.isEmpty() && rowKey instanceof String) {
-                    rowKeys = ((String) rowKey).split(separatorRegexp);
+                if (splitPattern != null && rowKey instanceof String) {
+                    rowKeys = splitPattern.split((String) rowKey);
                 } else {
                     rowKeys = new Object[]{rowKey};
                 }
@@ -111,11 +112,11 @@ public class InterProjectModel {
      * @param fromColumn
      * @param toProject
      * @param toColumn
-     * @param separatorRegexp
+     * @param splitPattern
      * @return
      */
-    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn, String separatorRegexp) {
-        String key = String.format("%s;%s;%s;%s;%s", fromProject, fromColumn, toProject, toColumn, separatorRegexp);
+    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn, Pattern splitPattern) {
+        String key = String.format("%s;%s;%s;%s;%s", fromProject, fromColumn, toProject, toColumn, String.valueOf(splitPattern));
         if (!_joins.containsKey(key)) {
             ProjectJoin join = new ProjectJoin(
                 ProjectManager.singleton.getProjectID(fromProject), 
@@ -124,7 +125,7 @@ public class InterProjectModel {
                 toColumn
             );
 
-            computeJoin(join, separatorRegexp);
+            computeJoin(join, splitPattern);
             
             synchronized (_joins) {
                 _joins.put(key, join);
@@ -159,7 +160,7 @@ public class InterProjectModel {
         }
     }
 
-    protected void computeJoin(ProjectJoin join, String separatorRegexp) {
+    protected void computeJoin(ProjectJoin join, Pattern splitPattern) {
         if (join.fromProjectID < 0 || join.toProjectID < 0) {
             return;
         }
@@ -180,8 +181,8 @@ public class InterProjectModel {
             Object fromRowKey = fromRow.getCellValue(fromColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(fromRowKey)) {
                 Object[] fromRowKeys;
-                if (separatorRegexp != null && !separatorRegexp.isEmpty() && fromRowKey instanceof String) {
-                    fromRowKeys = ((String) fromRowKey).split(separatorRegexp);
+                if (splitPattern != null && fromRowKey instanceof String) {
+                    fromRowKeys = splitPattern.split((String) fromRowKey);
                 } else {
                     fromRowKeys = new Object[]{fromRowKey};
                 }

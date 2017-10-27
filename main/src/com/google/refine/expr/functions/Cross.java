@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -59,7 +61,16 @@ public class Cross implements Function {
             Object v = args[0];
             Object toProjectName = args[1];
             Object toColumnName = args[2];
-            String separatorRegexp = (args.length > 3) ? String.valueOf(args[3]) : null;
+
+            Pattern splitPattern = null;
+            if (args.length > 3 && args[3] instanceof String) {
+                try {
+                    splitPattern = Pattern.compile((String) args[3]);
+                } catch (PatternSyntaxException pse) {
+                    return new EvalError(String.format("%s. `%s` is not a valid regular expression",
+                            pse.getDescription(), pse.getPattern()));
+                }
+            }
 
             if (v != null &&
                 ( v instanceof String || v instanceof WrappedCell ) &&
@@ -71,12 +82,12 @@ public class Cross implements Function {
                         (String) bindings.get("columnName"), 
                         (String) toProjectName,
                         (String) toColumnName,
-                        separatorRegexp
+                        splitPattern
                 );
                 
                 String srcValue = v instanceof String ? (String)v : (String)((WrappedCell) v).cell.value;
 
-                return join.getRows(srcValue, separatorRegexp);
+                return join.getRows(srcValue, splitPattern);
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + EVAL_ERROR_MESSAGE);

@@ -157,6 +157,14 @@ public class CrossFunctionTests extends RefineTest {
     }
 
     @Test
+    public void crossFunctionInvalidSplitPatternTest() throws Exception {
+        Object result = invoke("cross", "1", "2", "3", "[]INVALID REGEXP PATTERN");
+        Assert.assertTrue(result instanceof EvalError, "Calling cross() with invalid split pattern should return error");
+        Assert.assertTrue(((EvalError) result).message.contains("[]INVALID REGEXP PATTERN"));
+        Assert.assertTrue(((EvalError) result).message.contains("Unclosed character class"));
+    }
+
+    @Test
     public void crossFunctionManyToOneTest() throws Exception {
         HasFieldsList resultFieldList = (HasFieldsList) invoke("cross", "anne,mary", "My Address Book", "friend", ",");
         Assert.assertEquals(resultFieldList.length(), 2, "Result field list should have two row entries, one for `anne` and one for `mary`");
