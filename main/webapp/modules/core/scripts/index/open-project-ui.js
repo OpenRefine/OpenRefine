@@ -214,7 +214,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
       .appendTo(
-        $(tr.insertCell(tr.cells.length)).css('width', '6%')
+        $(tr.insertCell(tr.cells.length)).css('width', '3%')
       );
       
       $('<div></div>')
@@ -227,7 +227,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .addClass("project-name")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
-      .appendTo(tr.insertCell(tr.cells.length));
+      .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '10%'));
       
       var appendMetaField = function(data, width) {
           var width = width || '1%';
