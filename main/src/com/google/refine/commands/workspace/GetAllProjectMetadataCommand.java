@@ -76,7 +76,7 @@ public class GetAllProjectMetadataCommand extends Command {
                     }
                 }
                 writer.endObject();
-                
+            
             writer.key("customMetaDataColumns");
             JSONArray customMetaDataColumns = new JSONArray(
                     (String)ProjectManager.singleton.getPreferenceStore().get("userMetaData"));

@@ -44,6 +44,8 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
@@ -59,7 +61,9 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
+
 
 public class FileProjectManager extends ProjectManager {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
@@ -355,6 +359,11 @@ public class FileProjectManager extends ProjectManager {
                 reader = new FileReader(file);
                 JSONTokener tokener = new JSONTokener(reader);
                 JSONObject obj = (JSONObject) tokener.nextValue();
+                
+                // load global preferences firstly
+                if (obj.has("preferences") && !obj.isNull("preferences")) {
+                    _preferenceStore.load(obj.getJSONObject("preferences"));
+                }
 
                 JSONArray a = obj.getJSONArray("projectIDs");
                 int count = a.length();
@@ -363,12 +372,10 @@ public class FileProjectManager extends ProjectManager {
 
                     File projectDir = getProjectDir(id);
                     ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+                    
+                    mergeEmptyUserMetadata(metadata);
 
                     _projectsMetadata.put(id, metadata);
-                }
-
-                if (obj.has("preferences") && !obj.isNull("preferences")) {
-                    _preferenceStore.load(obj.getJSONObject("preferences"));
                 }
 
                 if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
@@ -393,6 +400,53 @@ public class FileProjectManager extends ProjectManager {
         }
 
         return found;
+    }
+
+    private void mergeEmptyUserMetadata(ProjectMetadata metadata) {
+        if (metadata == null)
+            return;
+        
+        // place holder
+        JSONArray userMetadataPreference = null;
+        // actual metadata for project
+        JSONArray jsonObjArray = metadata.getUserMetadata();
+        
+        try {
+            userMetadataPreference = new JSONArray((String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY));
+        } catch (JSONException e1) {
+            logger.error(ExceptionUtils.getFullStackTrace(e1));
+        }
+        
+        if (userMetadataPreference == null) {
+            logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
+            return;
+        }
+        
+        for (int index = 0; index < userMetadataPreference.length(); index++) {
+            try {
+                boolean found = false;
+                JSONObject placeHolderJsonObj = userMetadataPreference.getJSONObject(index);
+
+                for (int i = 0; i < jsonObjArray.length(); i++) {
+                    JSONObject jsonObj = jsonObjArray.getJSONObject(i);
+                    if (jsonObj.getString("name").equals(placeHolderJsonObj.getString("name"))) {
+                        found = true;
+                        jsonObj.put("display", placeHolderJsonObj.get("display"));
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    placeHolderJsonObj.put("value", "");
+                    metadata.getUserMetadata().put(placeHolderJsonObj);
+                    logger.info("Put the placeholder {} for project {}",
+                            placeHolderJsonObj.getString("name"),
+                            metadata.getName());
+                } 
+            } catch (JSONException e) {
+                logger.warn("Exception when mergeEmptyUserMetadata",e);
+            }
+        }
     }
 
     protected void recover() {

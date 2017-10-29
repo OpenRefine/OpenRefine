@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,10 +73,13 @@ public class ProjectMetadata implements Jsonizable {
     // import options is an array for 1-n data sources
     private JSONArray _importOptionMetaData = new JSONArray();
     
+    // user metadata
+    private JSONArray _userMetadata = new JSONArray();; 
+    
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
 
-    final Logger logger = LoggerFactory.getLogger("project_metadata");
+    final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
     protected ProjectMetadata(Date date) {
         _created = date;
@@ -119,6 +123,12 @@ public class ProjectMetadata implements Jsonizable {
         if (_importOptionMetaData.length() > 0 ) {
             writer.key("importOptionMetaData"); 
             writer.value(_importOptionMetaData);
+        }
+        
+        // write user metadata in {name, value, display} form:
+        if (_userMetadata.length() > 0) {
+            writer.key(PreferenceStore.USER_METADATA_KEY);
+            writer.value(_userMetadata);
         }
         
         if (isSaveMode(options)) {
@@ -190,7 +200,7 @@ public class ProjectMetadata implements Jsonizable {
             try {
                 pm._preferenceStore.load(obj.getJSONObject("preferences"));
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
         
@@ -199,7 +209,7 @@ public class ProjectMetadata implements Jsonizable {
                 ((TopList) pm._preferenceStore.get("scripting.expressions"))
                     .load(obj.getJSONArray("expressions"));
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
         
@@ -217,7 +227,7 @@ public class ProjectMetadata implements Jsonizable {
                     }
                 }
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
         
@@ -226,11 +236,19 @@ public class ProjectMetadata implements Jsonizable {
                 JSONArray jsonArray = obj.getJSONArray("importOptionMetaData");
                 pm._importOptionMetaData = jsonArray;
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
         
-
+        if (obj.has(PreferenceStore.USER_METADATA_KEY) && !obj.isNull(PreferenceStore.USER_METADATA_KEY)) {
+            try {
+                JSONArray jsonArray = obj.getJSONArray(PreferenceStore.USER_METADATA_KEY);
+                pm._userMetadata = jsonArray;
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+        } 
+        
         pm.written = new Date(); // Mark it as not needing writing until modified
         
         return pm;
@@ -381,15 +399,39 @@ public class ProjectMetadata implements Jsonizable {
         updateModified();
     }
 
+    
+    public JSONArray getUserMetadata() {
+        return _userMetadata;
+    }
+
+    
+    public void setUserMetadata(JSONArray userMetadata) {
+        this._userMetadata = userMetadata;
+    }
+
+    private void updateUserMetadata(String metaName, String valueString)  {
+        for (int i = 0; i < _userMetadata.length(); i++) {
+            try {
+                JSONObject obj = _userMetadata.getJSONObject(i);
+                if (obj.getString("name").equals(metaName)) {
+                    obj.put("value", valueString);
+                }
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+        }
+    }
+    
     public void setAnyField(String metaName, String valueString)  {
         Class<? extends ProjectMetadata> metaClass = this.getClass();
         try {
             Field metaField = metaClass.getDeclaredField("_" + metaName);
 
             metaField.set(this, valueString);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            // do nothing
-            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            updateUserMetadata(metaName, valueString);
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            logger.error(ExceptionUtils.getFullStackTrace(e));
         }
     }
     

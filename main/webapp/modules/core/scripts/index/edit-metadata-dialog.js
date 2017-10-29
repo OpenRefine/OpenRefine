@@ -1,12 +1,11 @@
 
 
-function EditMetadataDialog(metaData) {
+function EditMetadataDialog(metaData, targetRowElem) {
   this._metaDataUIs = [];
   this._metaData = metaData;
   
   this._MetaDataUI = function(tr, key, value, project) {
       var self = this;
-
       var td0 = tr.insertCell(0);
       $(td0).text(key);
 
@@ -14,7 +13,7 @@ function EditMetadataDialog(metaData) {
       $(td1).text((value !== null) ? value : "");
 
       var td2 = tr.insertCell(2);
-
+      
       $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
         var newValue = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
         if (newValue !== null) {
@@ -35,6 +34,8 @@ function EditMetadataDialog(metaData) {
             "json"
           );
         }
+        
+        Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
       });
   }
   
@@ -61,16 +62,32 @@ EditMetadataDialog.prototype._createDialog = function() {
   .html('<tr><th>'+$.i18n._('core-index')["key"]+'</th><th>'+$.i18n._('core-index')["value"]+'</th><th></th></tr>')
   .appendTo(body)[0];
 
-  for (var k in this._metaData) {
+    var flattenObject = function(ob, key) {
+        var toReturn = {};
+        for ( var i in ob) {
+            if (i !== key) {
+                toReturn[i] = ob[i];
+                continue;
+            }
+            for ( var x in ob[i]) {
+                toReturn[ob[i][x].name] = ob[i][x].value;
+            }
+        }
+        return toReturn;
+    };
+    
+  var flatMetaData = flattenObject(this._metaData, "userMetaData");
+      
+  for (var k in flatMetaData) {
     var tr = metadataTable.insertRow(metadataTable.rows.length);
     
-    if (typeof this._metaData[k] === 'string')
-        v = this._metaData[k].replace(/\"/g, "");  
+    if (typeof flatMetaData[k] === 'string')
+        v = flatMetaData[k].replace(/\"/g, "");  
     else
-        v = JSON.stringify(this._metaData[k]);
+        v = JSON.stringify(flatMetaData[k]);
         
     
-    this._metaDataUIs.push(new this._MetaDataUI(tr, k, v, this._metaData.id));
+    this._metaDataUIs.push(new this._MetaDataUI(tr, k, v, flatMetaData.id));
   }
   
 }

@@ -211,7 +211,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("href", "javascript:{}")
       .css("visibility", "hidden")
       .click(function() {
-          new EditMetadataDialog(project);
+          new EditMetadataDialog(project, $(this).parent().parent());
       })
       .appendTo(
         $(tr.insertCell(tr.cells.length)).css('width', '6%')
@@ -222,13 +222,36 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .addClass("last-modified")
       .attr("title", project.date.toString())
       .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '1%'));
-
+      
       var nameLink = $('<a></a>')
       .addClass("project-name")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
       .appendTo(tr.insertCell(tr.cells.length));
-
+      
+      var appendMetaField = function(data, width) {
+          var width = width || '1%';
+          $('<div></div>')
+          .html(data)
+          .appendTo($(tr.insertCell(tr.cells.length)).attr('width', width));
+      };
+      
+      appendMetaField(project.creator);
+      appendMetaField(project.subject);
+      appendMetaField(project.description, '20%');
+      appendMetaField(project.rowNumber);
+      
+      var data = project.userMetaData;
+      for(var i in data)
+      {
+           if (data[i].display === true) {
+               appendMetaField(data[i].value); 
+           }
+      }
+      console.log('===================');
+      console.log(JSON.stringify(project));
+      // END TODO
+      
       $(tr).mouseenter(function() {
         renameLink.css("visibility", "visible");
         deleteLink.css("visibility", "visible");
@@ -275,6 +298,43 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   evt.preventDefault();
   return false;
 };
+
+Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
+    var refreshMetaField = function(data, index) {
+        $('td', tr).eq(index)
+        .html(data);
+    };
+    
+    var index = 5;
+    refreshMetaField(metaData.creator, index); index++;
+    refreshMetaField(metaData.subject,index); index++;
+    refreshMetaField(metaData.description,index); index++;
+    refreshMetaField(metaData.rowNumbe,index); index++;
+    
+    var updateUserMetaData = function(ob) {
+        var userMetaData = ob.userMetaData;
+        
+        for ( var n in ob) {
+            for ( var i in userMetaData) {
+                if (n === userMetaData[i].name) {
+                    userMetaData[i].value = ob[n];
+                    break;
+                }
+            }
+        }
+        
+        ob.userMetaData = userMetaData;
+    };
+    updateUserMetaData(metaData);
+    var data = metaData.userMetaData;
+    for(var i in data)
+    {
+         if (data[i].display === true) {
+             refreshMetaField(data[i].value,index); index++; 
+         }
+    }
+
+}
 
 Refine.actionAreas.push({
   id: "open-project",
