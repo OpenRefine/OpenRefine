@@ -376,11 +376,12 @@ launch4j_prepare() {
 appbundler_prepare() {
     tools_prepare
     
-    APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
-    APPBUNDLER_DIR="."
-    APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
+    cp "$REFINE_TOOLS_DIR/../3rd-party/appbundler-1.0.jar" "$REFINE_TOOLS_DIR"
+    # APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
+    # APPBUNDLER_DIR="."
+    # APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
 
-    tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
+    # tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
 }
    
 virtualenv_prepare() {
