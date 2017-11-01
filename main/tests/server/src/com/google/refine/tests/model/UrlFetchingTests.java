@@ -147,7 +147,7 @@ public class UrlFetchingTests extends RefineTest {
 	    // results. Just to make sure the test passes with plenty of
 	    // net latency we sleep for longer (but still less than
 	    // 50,000ms).
-	    Thread.sleep(5000);
+	    Thread.sleep(8000);
         } catch (InterruptedException e) {
 	    Assert.fail("Test interrupted");
         }
