@@ -1,6 +1,8 @@
 language: java
 jdk:
   - oraclejdk8
+  - oraclejdk9
+  - openjdk8
 
 env:
   # encrypted Codacy key, see https://docs.travis-ci.com/user/encryption-keys/
