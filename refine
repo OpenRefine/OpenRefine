@@ -823,6 +823,22 @@ whitespace() {
     done
 }   
     
+checkJavaMajorVersion() {
+  java_ver=$($JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
+  # Java 6, 7, 8 starts with 1.x
+  if [ ${java_ver:0:2} == "1." ] ; then
+    major=`echo ${java_ver} | sed -E 's/1\.([0-9])[0-9_.]{2,6}/\1/g'`
+  else
+    # Java 9+ starts with x using semver versioning
+    major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
+  fi
+  
+  JAVA_VERSION=$(echo ${major} | egrep '^(6|7|8|9)')
+  if [ -z "$JAVA_VERSION" ] ; then
+    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  fi
+}
+
 # -------------------------- script -----------------------------
     
 # ----- Normalize the current directory -------------------------
@@ -873,10 +889,7 @@ if [ ! -x "$JAVA" ] ; then
     error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
 fi
 
-JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep '^\"1\.(6|7|8|9)'`
-if [ -z "$JAVA_VERSION" ] ; then
-    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
-fi
+checkJavaMajorVersion
 
 # ----- Parse the command line args ------------------------------------------
 

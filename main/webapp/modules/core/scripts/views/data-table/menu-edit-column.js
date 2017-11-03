@@ -72,13 +72,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       Refine.postCoreProcess(
         "add-column", 
         {
-          baseColumnName: column.name, 
-          expression: previewWidget.getExpression(true), 
+          baseColumnName: column.name,  
           newColumnName: columnName, 
           columnInsertIndex: columnIndex + 1,
           onError: $('input[name="create-column-dialog-onerror-choice"]:checked')[0].value
         },
-        null,
+        { expression: previewWidget.getExpression(true) },
         { modelsChanged: true },
         {
           onDone: function(o) {
