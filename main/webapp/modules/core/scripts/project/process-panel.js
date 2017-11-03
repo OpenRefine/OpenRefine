@@ -96,10 +96,13 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
 
   this._latestHistoryEntry = historyEntry;
 
+  truncDescription = historyEntry.description.length > 250 ?
+  	historyEntry.description.substring(0, 250) + " ..." : historyEntry.description  
+
   this._div.stop(true, false);
   this._elmts.progressDiv.hide();
   this._elmts.undoDiv.show();
-  this._elmts.undoDescription.text(historyEntry.description);
+  this._elmts.undoDescription.text( truncDescription );
   this._elmts.undoLink.unbind().click(function() { self.undo(); });
   
   this._div
