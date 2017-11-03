@@ -6,10 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
@@ -35,9 +32,6 @@ public class SetProjectMetaDataCommand extends Command {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            
-            Object o = StringUtils.isEmpty(valueString) ? null : new JSONTokener(valueString).nextValue();
             
             meta.setAnyField(metaName, valueString);
             ProjectManager.singleton.saveMetadata(meta, project.id);

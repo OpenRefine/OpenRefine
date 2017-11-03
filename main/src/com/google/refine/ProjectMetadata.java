@@ -79,7 +79,7 @@ public class ProjectMetadata implements Jsonizable {
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
 
-    final static Logger logger = LoggerFactory.getLogger("project_metadata");
+    private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
     protected ProjectMetadata(Date date) {
         _created = date;

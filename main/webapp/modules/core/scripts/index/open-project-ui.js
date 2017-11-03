@@ -230,7 +230,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '10%'));
       
       var appendMetaField = function(data, width) {
-          var width = width || '1%';
+          width = width || '1%';
           $('<div></div>')
           .html(data)
           .appendTo($(tr.insertCell(tr.cells.length)).attr('width', width));
@@ -248,9 +248,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                appendMetaField(data[i].value); 
            }
       }
-      console.log('===================');
-      console.log(JSON.stringify(project));
-      // END TODO
       
       $(tr).mouseenter(function() {
         renameLink.css("visibility", "visible");
@@ -336,7 +333,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
          }
     }
 
-}
+};
 
 Refine.actionAreas.push({
   id: "open-project",
