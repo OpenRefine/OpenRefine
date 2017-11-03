@@ -345,7 +345,7 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     
-    public String get_creator() {
+    public String getCreator() {
         return _creator;
     }
 
@@ -356,7 +356,7 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     
-    public String get_contributors() {
+    public String getContributors() {
         return _contributors;
     }
 
@@ -367,7 +367,7 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     
-    public String get_subject() {
+    public String getSubject() {
         return _subject;
     }
 
@@ -378,7 +378,7 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     
-    public String get_description() {
+    public String getDescription() {
         return _description;
     }
 
