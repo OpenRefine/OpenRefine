@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
-var bundle = false;
+var bundle = true;
 
 var templatedFiles = {
   // Requests with last path segments mentioned here 
@@ -319,6 +319,7 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/tablesorter/jquery.tablesorter.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -362,6 +363,7 @@ function init() {
     module,
     [
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",

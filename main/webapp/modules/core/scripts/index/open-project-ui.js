@@ -120,7 +120,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     Refine.selectActionArea('open-project');
 
     var table = $(
-      '<table class="list-table"><tr>' +
+      '<table class="tablesorter-blue list-table"><thead><tr>' +
       '<th></th>' +
       '<th></th>' +
       '<th></th>' +
@@ -140,11 +140,11 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           
           return htmlDisplay;
       })() +     
-      '</tr></table>'
+      '</tr></thead><tbody></tbody></table>'
     ).appendTo(container)[0];
 
     var renderProject = function(project) {
-      var tr = table.insertRow(table.rows.length);
+      var tr = table.getElementsByTagName('tbody')[0].insertRow(table.rows.length - 1);
       tr.className = "project";
 
       var deleteLink = $('<a></a>')
@@ -266,6 +266,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     for (var i = 0; i < projects.length; i++) {
       renderProject(projects[i]);
     }
+    
+    $(table).tablesorter();
   }
 };
 

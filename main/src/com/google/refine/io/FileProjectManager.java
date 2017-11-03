@@ -287,6 +287,8 @@ public class FileProjectManager extends ProjectManager {
                 if (metadata != null) {
                     jsonWriter.value(id);
                     if (metadata.isDirty()) {
+                        Project project = ProjectManager.singleton.getProject(id);
+                        metadata.setRowNumber(project.rows.size());
                         ProjectMetadataUtilities.save(metadata, getProjectDir(id));
                         saveWasNeeded = true;
                     }
