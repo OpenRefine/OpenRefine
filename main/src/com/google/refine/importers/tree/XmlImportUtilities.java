@@ -419,7 +419,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             boolean includeFileSources, String fileSource) {
         for (List<Cell> row : record.rows) {
             if (row.size() > 0) {
-                Row realRow = new Row(row.size()); ;
+                Row realRow = new Row(row.size());
                 for (int c = 0; c < row.size(); c++) {
                     if (c == 0 && includeFileSources)  {    // to add the file source:
                         realRow.setCell(
