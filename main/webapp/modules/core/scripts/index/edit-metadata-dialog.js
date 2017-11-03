@@ -37,7 +37,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
         
         Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
       });
-  }
+  };
   
   this._createDialog();
 }
@@ -81,11 +81,11 @@ EditMetadataDialog.prototype._createDialog = function() {
   for (var k in flatMetaData) {
     var tr = metadataTable.insertRow(metadataTable.rows.length);
     
-    if (typeof flatMetaData[k] === 'string')
+    if (typeof flatMetaData[k] === 'string') {
         v = flatMetaData[k].replace(/\"/g, "");  
-    else
+    } else {
         v = JSON.stringify(flatMetaData[k]);
-        
+    }
     
     this._metaDataUIs.push(new this._MetaDataUI(tr, k, v, flatMetaData.id));
   }
