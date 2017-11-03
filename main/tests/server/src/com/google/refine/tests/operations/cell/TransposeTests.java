@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.operations.cell;
+package com.google.refine.tests.operations.cell;
 
 import static org.mockito.Mockito.mock;
 
@@ -57,6 +57,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineServletStub;
