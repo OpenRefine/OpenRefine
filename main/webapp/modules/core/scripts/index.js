@@ -202,6 +202,7 @@ $(function() {
   Refine.selectActionArea('create-project');
   
   $("#slogan").text($.i18n._('core-index')["slogan"]+".");
+  $("#or-index-pref").text($.i18n._('core-index')["preferences"]);
   $("#or-index-help").text($.i18n._('core-index')["help"]);
   $("#or-index-about").text($.i18n._('core-index')["about"]);
   $("#or-index-noProj").text($.i18n._('core-index')["no-proj"]+".");

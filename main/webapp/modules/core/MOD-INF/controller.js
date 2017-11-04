@@ -68,9 +68,11 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
+  RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetaDataCommand());
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
+  RS.registerCommand(module, "set-project-metadata", new Packages.com.google.refine.commands.project.SetProjectMetaDataCommand());
 
   RS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
   RS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
@@ -317,6 +319,7 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/tablesorter/jquery.tablesorter.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -350,7 +353,8 @@ function init() {
       "scripts/index/parser-interfaces/rdf-triples-parser-ui.js",
       "scripts/index/parser-interfaces/wikitext-parser-ui.js",
 
-      "scripts/reconciliation/recon-manager.js" // so that reconciliation functions are available to importers
+      "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
+      "scripts/index/edit-metadata-dialog.js"
     ]
   );
 
@@ -359,6 +363,7 @@ function init() {
     module,
     [
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",

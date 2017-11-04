@@ -160,5 +160,7 @@ public class RdfTripleImporter extends ImportingParserBase {
         } finally {
             triples.iterator().close();
         }
+        
+        super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
     }
 }

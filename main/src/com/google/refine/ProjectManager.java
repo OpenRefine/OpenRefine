@@ -193,7 +193,7 @@ public abstract class ProjectManager {
      * @param projectId
      * @throws Exception
      */
-    protected abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
+    public abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
 
     /**
      * Save project to the data store

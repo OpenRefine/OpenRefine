@@ -120,16 +120,31 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     Refine.selectActionArea('open-project');
 
     var table = $(
-      '<table class="list-table"><tr>' +
+      '<table class="tablesorter-blue list-table"><thead><tr>' +
+      '<th></th>' +
       '<th></th>' +
       '<th></th>' +
       '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
-      '</tr></table>'
+      '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["row-number"]+'</th>' + 
+      (function() {
+          var htmlDisplay = "";
+          for (var n in data.customMetaDataColumns) {
+            if (data.customMetaDataColumns[n].display) {
+              htmlDisplay += '<th>'+ data.customMetaDataColumns[n].name + '</th>';
+            }
+          }
+          
+          return htmlDisplay;
+      })() +     
+      '</tr></thead><tbody></tbody></table>'
     ).appendTo(container)[0];
 
     var renderProject = function(project) {
-      var tr = table.insertRow(table.rows.length);
+      var tr = table.getElementsByTagName('tbody')[0].insertRow(table.rows.length - 1);
       tr.className = "project";
 
       var deleteLink = $('<a></a>')
@@ -189,31 +204,67 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       }).appendTo(
         $(tr.insertCell(tr.cells.length)).css('width', '1%')
       );
-
+      
+      var editMetaDataLink = $('<a></a>')
+      .text($.i18n._('core-index-open')["edit-meta-data"])
+      .addClass("secondary")
+      .attr("href", "javascript:{}")
+      .css("visibility", "hidden")
+      .click(function() {
+          new EditMetadataDialog(project, $(this).parent().parent());
+      })
+      .appendTo(
+        $(tr.insertCell(tr.cells.length)).css('width', '3%')
+      );
+      
       $('<div></div>')
       .html(formatRelativeDate(project.date))
       .addClass("last-modified")
       .attr("title", project.date.toString())
       .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '1%'));
-
+      
       var nameLink = $('<a></a>')
       .addClass("project-name")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
-      .appendTo(tr.insertCell(tr.cells.length));
-
+      .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '10%'));
+      
+      var appendMetaField = function(data, width) {
+          width = width || '1%';
+          $('<div></div>')
+          .html(data)
+          .appendTo($(tr.insertCell(tr.cells.length)).attr('width', width));
+      };
+      
+      appendMetaField(project.creator);
+      appendMetaField(project.subject);
+      appendMetaField(project.description, '20%');
+      appendMetaField(project.rowNumber);
+      
+      var data = project.userMetaData;
+      for(var i in data)
+      {
+           if (data[i].display === true) {
+               appendMetaField(data[i].value); 
+           }
+      }
+      
       $(tr).mouseenter(function() {
         renameLink.css("visibility", "visible");
         deleteLink.css("visibility", "visible");
+        editMetaDataLink.css("visibility", "visible");
       }).mouseleave(function() {
         renameLink.css("visibility", "hidden");
         deleteLink.css("visibility", "hidden");
+        editMetaDataLink.css("visibility", "hidden");
       });
     };
 
     for (var i = 0; i < projects.length; i++) {
       renderProject(projects[i]);
     }
+    
+    $(table).tablesorter();
   }
 };
 
@@ -245,6 +296,43 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 
   evt.preventDefault();
   return false;
+};
+
+Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
+    var refreshMetaField = function(data, index) {
+        $('td', tr).eq(index)
+        .html(data);
+    };
+    
+    var index = 5;
+    refreshMetaField(metaData.creator, index); index++;
+    refreshMetaField(metaData.subject,index); index++;
+    refreshMetaField(metaData.description,index); index++;
+    refreshMetaField(metaData.rowNumbe,index); index++;
+    
+    var updateUserMetaData = function(ob) {
+        var userMetaData = ob.userMetaData;
+        
+        for ( var n in ob) {
+            for ( var i in userMetaData) {
+                if (n === userMetaData[i].name) {
+                    userMetaData[i].value = ob[n];
+                    break;
+                }
+            }
+        }
+        
+        ob.userMetaData = userMetaData;
+    };
+    updateUserMetaData(metaData);
+    var data = metaData.userMetaData;
+    for(var i in data)
+    {
+         if (data[i].display === true) {
+             refreshMetaField(data[i].value,index); index++; 
+         }
+    }
+
 };
 
 Refine.actionAreas.push({

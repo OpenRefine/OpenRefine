@@ -2,11 +2,11 @@ package com.google.refine.importers.tree;
 
 
 public class ImportParameters {
-    boolean trimStrings;
-    boolean storeEmptyStrings;
-    boolean guessDataType;
-    boolean includeFileSources;
-    String fileSource;
+    protected boolean trimStrings;
+    protected boolean storeEmptyStrings;
+    protected boolean guessDataType;
+    protected boolean includeFileSources;
+    protected String fileSource;
     
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
             boolean includeFileSources, String fileSource) {

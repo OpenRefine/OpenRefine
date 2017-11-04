@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -199,5 +200,10 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         } catch (IOException e) {
             exceptions.add(e);
         }
+    }
+
+    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            Reader dataReader, int limit, JSONObject options, List<Exception> exceptions) {
+        super.parseOneFile(project, metadata, job, fileSource, dataReader, limit, options, exceptions);
     }
 }
