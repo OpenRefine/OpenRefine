@@ -80,6 +80,7 @@ EditMetadataDialog.prototype._createDialog = function() {
       
   for (var k in flatMetaData) {
     var tr = metadataTable.insertRow(metadataTable.rows.length);
+    var v;
     
     if (typeof flatMetaData[k] === 'string') {
         v = flatMetaData[k].replace(/\"/g, "");  
@@ -89,8 +90,7 @@ EditMetadataDialog.prototype._createDialog = function() {
     
     this._metaDataUIs.push(new this._MetaDataUI(tr, k, v, flatMetaData.id));
   }
-  
-}
+};
 
 EditMetadataDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);
