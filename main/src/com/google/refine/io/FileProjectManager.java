@@ -413,7 +413,10 @@ public class FileProjectManager extends ProjectManager {
         JSONArray jsonObjArray = metadata.getUserMetadata();
         
         try {
-            userMetadataPreference = new JSONArray((String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY));
+            String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
+            if (userMeta == null)
+                return;
+            userMetadataPreference = new JSONArray(userMeta);
         } catch (JSONException e1) {
             logger.error(ExceptionUtils.getFullStackTrace(e1));
         }
