@@ -88,5 +88,7 @@ public class PCAxisImporter extends TabularImportingParserBase {
         TabularImportingParserBase.readTable(
             project, metadata, job, dataReader,
             fileSource, limit, options, exceptions);
+        
+        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }
 }

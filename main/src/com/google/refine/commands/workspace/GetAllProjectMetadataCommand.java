@@ -42,6 +42,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -62,6 +63,7 @@ public class GetAllProjectMetadataCommand extends Command {
             Properties options = new Properties();
             
             writer.object();
+            
             writer.key("projects");
                 writer.object();
                 Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
@@ -73,6 +75,12 @@ public class GetAllProjectMetadataCommand extends Command {
                     }
                 }
                 writer.endObject();
+            
+            writer.key("customMetaDataColumns");
+            JSONArray customMetaDataColumns = new JSONArray(
+                    (String)ProjectManager.singleton.getPreferenceStore().get("userMetaData"));
+                writer.value(customMetaDataColumns);
+                
             writer.endObject();
         } catch (JSONException e) {
             respondException(response, e);

@@ -34,12 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -55,16 +58,28 @@ public class ProjectMetadata implements Jsonizable {
     private final Date     _created;
     private Date           _modified;
     private Date written = null;
-    private String         _name;
-    private String         _password;
+    private String         _name = "";
+    private String         _password = "";
 
-    private String         _encoding;
+    private String         _encoding = "";
     private int            _encodingConfidence;
+    
+    private String _creator = "";
+    private String _contributors = "";
+    private String _subject = "";    // Several refine projects may be linked
+    private String _description = "";                // free form of comment
+    private int _rowNumber;      // at the creation. Essential for cleaning old projects too heavy
+    
+    // import options is an array for 1-n data sources
+    private JSONArray _importOptionMetaData = new JSONArray();
+    
+    // user metadata
+    private JSONArray _userMetadata = new JSONArray();; 
     
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
 
-    final Logger logger = LoggerFactory.getLogger("project_metadata");
+    private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
     protected ProjectMetadata(Date date) {
         _created = date;
@@ -90,7 +105,12 @@ public class ProjectMetadata implements Jsonizable {
         writer.key("name"); writer.value(_name);
         writer.key("created"); writer.value(ParsingUtilities.dateToString(_created));
         writer.key("modified"); writer.value(ParsingUtilities.dateToString(_modified));
-
+        writer.key("creator"); writer.value(_creator);
+        writer.key("contributors"); writer.value(_contributors);
+        writer.key("subject"); writer.value(_subject);
+        writer.key("description"); writer.value(_description);
+        writer.key("rowNumber"); writer.value(_rowNumber);
+        
         writer.key("customMetadata"); writer.object();
         for (String key : _customMetadata.keySet()) {
             Serializable value = _customMetadata.get(key);
@@ -99,7 +119,19 @@ public class ProjectMetadata implements Jsonizable {
         }
         writer.endObject();
         
-        if ("save".equals(options.getProperty("mode"))) {
+        // write JSONArray directly 
+        if (_importOptionMetaData.length() > 0 ) {
+            writer.key("importOptionMetaData"); 
+            writer.value(_importOptionMetaData);
+        }
+        
+        // write user metadata in {name, value, display} form:
+        if (_userMetadata.length() > 0) {
+            writer.key(PreferenceStore.USER_METADATA_KEY);
+            writer.value(_userMetadata);
+        }
+        
+        if (isSaveMode(options)) {
             writer.key("password"); writer.value(_password);
 
             writer.key("encoding"); writer.value(_encoding);
@@ -110,9 +142,19 @@ public class ProjectMetadata implements Jsonizable {
         
         writer.endObject();
         
-        if ("save".equals(options.getProperty("mode"))) {
+        if (isSaveMode(options)) {
             written = new Date();
         }
+    }
+    
+    public void writeWithoutOption(JSONWriter writer)
+            throws JSONException {
+        write(writer, 
+                new Properties());
+    }
+    
+    private boolean isSaveMode(Properties options) {
+        return "save".equals(options.getProperty("mode"));
     }
 
     public boolean isDirty() {
@@ -147,12 +189,18 @@ public class ProjectMetadata implements Jsonizable {
 
         pm._encoding = JSONUtilities.getString(obj, "encoding", "");
         pm._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
-
+        
+        pm._creator = JSONUtilities.getString(obj, "creator", "");
+        pm._contributors = JSONUtilities.getString(obj, "contributors", "");
+        pm._subject = JSONUtilities.getString(obj, "subject", "");
+        pm._description = JSONUtilities.getString(obj, "description", "");
+        pm._rowNumber = JSONUtilities.getInt(obj, "rowNumber", 0);
+        
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
                 pm._preferenceStore.load(obj.getJSONObject("preferences"));
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
         
@@ -161,7 +209,7 @@ public class ProjectMetadata implements Jsonizable {
                 ((TopList) pm._preferenceStore.get("scripting.expressions"))
                     .load(obj.getJSONArray("expressions"));
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
         
@@ -179,10 +227,28 @@ public class ProjectMetadata implements Jsonizable {
                     }
                 }
             } catch (JSONException e) {
-                // ignore
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
-
+        
+        if (obj.has("importOptionMetaData") && !obj.isNull("importOptionMetaData")) {
+            try {
+                JSONArray jsonArray = obj.getJSONArray("importOptionMetaData");
+                pm._importOptionMetaData = jsonArray;
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+        }
+        
+        if (obj.has(PreferenceStore.USER_METADATA_KEY) && !obj.isNull(PreferenceStore.USER_METADATA_KEY)) {
+            try {
+                JSONArray jsonArray = obj.getJSONArray(PreferenceStore.USER_METADATA_KEY);
+                pm._userMetadata = jsonArray;
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+        } 
+        
         pm.written = new Date(); // Mark it as not needing writing until modified
         
         return pm;
@@ -263,4 +329,110 @@ public class ProjectMetadata implements Jsonizable {
         }
         updateModified();
     }
+    
+    public JSONArray getImportOptionMetaData() {
+        return _importOptionMetaData;
+    }
+    
+    public void setImportOptionMetaData(JSONArray jsonArray) {
+        _importOptionMetaData = jsonArray;
+        updateModified();
+    }
+    
+    public void appendImportOptionMetaData(JSONObject obj) {
+        _importOptionMetaData.put(obj);
+        updateModified();
+    }
+
+    
+    public String getCreator() {
+        return _creator;
+    }
+
+    
+    public void setCreator(String creator) {
+        this._creator = creator;
+        updateModified();
+    }
+
+    
+    public String getContributors() {
+        return _contributors;
+    }
+
+    
+    public void setContributors(String contributors) {
+        this._contributors = contributors;
+        updateModified();
+    }
+
+    
+    public String getSubject() {
+        return _subject;
+    }
+
+    
+    public void setSubject(String subject) {
+        this._subject = subject;
+        updateModified();
+    }
+
+    
+    public String getDescription() {
+        return _description;
+    }
+
+    
+    public void setDescription(String description) {
+        this._description = description;
+        updateModified();
+    }
+
+    
+    public int getRowNumber() {
+        return _rowNumber;
+    }
+
+    
+    public void setRowNumber(int rowNumber) {
+        this._rowNumber = rowNumber;
+        updateModified();
+    }
+
+    
+    public JSONArray getUserMetadata() {
+        return _userMetadata;
+    }
+
+    
+    public void setUserMetadata(JSONArray userMetadata) {
+        this._userMetadata = userMetadata;
+    }
+
+    private void updateUserMetadata(String metaName, String valueString)  {
+        for (int i = 0; i < _userMetadata.length(); i++) {
+            try {
+                JSONObject obj = _userMetadata.getJSONObject(i);
+                if (obj.getString("name").equals(metaName)) {
+                    obj.put("value", valueString);
+                }
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+        }
+    }
+    
+    public void setAnyField(String metaName, String valueString)  {
+        Class<? extends ProjectMetadata> metaClass = this.getClass();
+        try {
+            Field metaField = metaClass.getDeclaredField("_" + metaName);
+
+            metaField.set(this, valueString);
+        } catch (NoSuchFieldException e) {
+            updateUserMetadata(metaName, valueString);
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            logger.error(ExceptionUtils.getFullStackTrace(e));
+        }
+    }
+    
 }

@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +145,17 @@ abstract public class ImportingParserBase implements ImportingParser {
         JSONObject options,
         List<Exception> exceptions
     ) {
-        throw new NotImplementedException();
+        pushImportingOptions(metadata, fileSource, options);
+    }
+
+    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, JSONObject options) {
+        try {
+            options.put("fileSource", fileSource);
+        } catch (JSONException e) {
+            // ignore
+        }
+     // set the import options to metadata:
+        metadata.appendImportOptionMetaData(options);
     }
     
     public void parseOneFile(
@@ -158,7 +168,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         JSONObject options,
         List<Exception> exceptions
     ) {
-        throw new NotImplementedException();
+        pushImportingOptions(metadata, fileSource, options);
     }
     
     

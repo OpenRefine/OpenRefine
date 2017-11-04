@@ -731,6 +731,8 @@ public class WikitextImporter extends TabularImportingParserBase {
             exceptions.add(e1);
             e1.printStackTrace();
         }
+        
+        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }
     
     private StandardReconConfig getReconConfig(String url) {

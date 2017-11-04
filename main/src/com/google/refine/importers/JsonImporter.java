@@ -199,6 +199,8 @@ public class JsonImporter extends TreeImportingParserBase {
         
         parseOneFile(project, metadata, job, fileSource,
             new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
+        
+        super.parseOneFile(project, metadata, job, fileSource, is, rootColumnGroup, limit, options, exceptions);
     }
     
     static public class JSONTreeReader implements TreeReader {
