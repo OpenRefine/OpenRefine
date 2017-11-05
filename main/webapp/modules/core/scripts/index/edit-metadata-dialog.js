@@ -14,29 +14,31 @@ function EditMetadataDialog(metaData, targetRowElem) {
 
       var td2 = tr.insertCell(2);
       
-      $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
-        var newValue = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
-        if (newValue !== null) {
-          $(td1).text(newValue);
-          metaData[key] = newValue;
-          $.post(
-            "command/core/set-metaData",
-            {
-              project : project,
-              name : key,
-              value : newValue
-            },
-            function(o) {
-              if (o.code === "error") {
-                alert(o.message);
-              } 
-            },
-            "json"
-          );
-        }
-        
-        Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
-      });
+      if (key !== "modified" && key !== "rowNumber" && key !== "importOptionMetaData" && key !== "id")  {
+          $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
+            var newValue = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
+            if (newValue !== null) {
+              $(td1).text(newValue);
+              metaData[key] = newValue;
+              $.post(
+                "command/core/set-metaData",
+                {
+                  project : project,
+                  name : key,
+                  value : newValue
+                },
+                function(o) {
+                  if (o.code === "error") {
+                    alert(o.message);
+                  } 
+                },
+                "json"
+              );
+            }
+            
+            Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
+          });
+      }
   };
   
   this._createDialog();
