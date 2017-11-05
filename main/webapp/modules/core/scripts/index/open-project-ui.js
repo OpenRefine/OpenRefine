@@ -218,7 +218,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
       
       $('<div></div>')
-      .html(formatRelativeDate(project.date))
+      .html(project.date.toISOString())
       .addClass("last-modified")
       .attr("title", project.date.toString())
       .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '1%'));
@@ -264,7 +264,14 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       renderProject(projects[i]);
     }
     
-    $(table).tablesorter();
+
+    $(table).tablesorter({
+        headers : {
+            3 : {
+                sorter : "time"
+            }
+        }
+    });
   }
 };
 
