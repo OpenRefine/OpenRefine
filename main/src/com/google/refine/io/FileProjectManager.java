@@ -430,6 +430,11 @@ public class FileProjectManager extends ProjectManager {
             try {
                 boolean found = false;
                 JSONObject placeHolderJsonObj = userMetadataPreference.getJSONObject(index);
+                
+                if (!isValidUserMetaDataDefinition(placeHolderJsonObj)) {
+                    logger.warn("Skipped invalid user metadata definition" + placeHolderJsonObj.toString());
+                    continue;
+                }
 
                 for (int i = 0; i < jsonObjArray.length(); i++) {
                     JSONObject jsonObj = jsonObjArray.getJSONObject(i);
@@ -451,6 +456,17 @@ public class FileProjectManager extends ProjectManager {
                 logger.warn("Exception when mergeEmptyUserMetadata",e);
             }
         }
+    }
+    
+    /**
+     * A valid user meta data definition should have name and display property
+     * @param placeHolderJsonObj
+     * @return
+     */
+    private boolean isValidUserMetaDataDefinition(JSONObject placeHolderJsonObj) {
+        return (placeHolderJsonObj != null &&
+                placeHolderJsonObj.has("name") &&
+            placeHolderJsonObj.has("display"));
     }
 
     protected void recover() {
