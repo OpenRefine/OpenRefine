@@ -90,3 +90,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #metadata-body tr:nth-child(even) {background: #CCC}
 #metadata-body tr:nth-child(odd) {background: #FFF}
 
+#metadata-body > table {
+  table-layout: fixed
+}
+
+#metadata-body > table > tbody > tr > td {
+  word-wrap: break-word;
+}
+
+#metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(2) {
+ width: 80%
+ }
+
+#metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(3) {
+ width: 3%
+ }
+
