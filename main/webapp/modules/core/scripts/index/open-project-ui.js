@@ -264,11 +264,21 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       renderProject(projects[i]);
     }
     
+    $.tablesorter.addParser({
+        id: "isoDateParser",
+        is: function(s) {
+            return (/^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}T\d{2}:\d{2}:\d{2}[\+,\-\.]\d{3}/).test(s);
+        },
+        format: function(s, table) {
+            return $.tablesorter.formatFloat((s !== "") ? (new Date(s).getTime() || "") : "", table);
+        },
+        type: "numeric"
+    });
 
     $(table).tablesorter({
         headers : {
             3 : {
-                sorter : "time"
+                sorter : "isoDateParser"
             }
         }
     });
