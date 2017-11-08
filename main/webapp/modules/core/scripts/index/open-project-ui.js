@@ -108,8 +108,24 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       var project = data.projects[n];
       project.id = n;
       project.date = Date.parseExact(project.modified, "yyyy-MM-ddTHH:mm:ssZ");
-      projects.push(project);
+      for (var n in data.customMetaDataColumns) {
+          var found = false;
+          for(var i = 0; i < project.userMetaData.length; i++) {
+              if (project.userMetaData[i].name === data.customMetaDataColumns[n].name) {
+                  found = true;
+                  break;
+              }
+              if (!found) {
+                  project.userMetaData.push({
+                      name: data.customMetaDataColumns[n].name,
+                      dispay: data.customMetaDataColumns[n].display,
+                      value: ""
+                  });
+              }
+          }
+      }
     }
+    projects.push(project);
   }
   projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
 
@@ -283,7 +299,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             3 : {
                 sorter : "isoDateParser"
             }
-        }
+        },
+        widthFixed: false
     });
   }
 };
