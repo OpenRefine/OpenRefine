@@ -403,7 +403,7 @@ public class FileProjectManager extends ProjectManager {
         return found;
     }
 
-    private void mergeEmptyUserMetadata(ProjectMetadata metadata) {
+    public void mergeEmptyUserMetadata(ProjectMetadata metadata) {
         if (metadata == null)
             return;
         
