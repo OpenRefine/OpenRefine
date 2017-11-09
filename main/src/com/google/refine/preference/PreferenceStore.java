@@ -48,7 +48,7 @@ import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
 
 public class PreferenceStore implements Jsonizable {
-    public static final String USER_METADATA_KEY = "userMetaData";
+    public static final String USER_METADATA_KEY = "userMetadata";
     
     private boolean dirty = false;
     protected Map<String, Object> _prefs = new HashMap<String, Object>();

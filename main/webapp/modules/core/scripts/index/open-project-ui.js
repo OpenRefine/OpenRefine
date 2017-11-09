@@ -108,17 +108,17 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       var project = data.projects[n];
       project.id = n;
       project.date = Date.parseExact(project.modified, "yyyy-MM-ddTHH:mm:ssZ");
-      for (var n in data.customMetaDataColumns) {
+      for (var n in data.customMetadataColumns) {
           var found = false;
-          for(var i = 0; i < project.userMetaData.length; i++) {
-              if (project.userMetaData[i].name === data.customMetaDataColumns[n].name) {
+          for(var i = 0; i < project.userMetadata.length; i++) {
+              if (project.userMetadata[i].name === data.customMetadataColumns[n].name) {
                   found = true;
                   break;
               }
               if (!found) {
-                  project.userMetaData.push({
-                      name: data.customMetaDataColumns[n].name,
-                      dispay: data.customMetaDataColumns[n].display,
+                  project.userMetadata.push({
+                      name: data.customMetadataColumns[n].name,
+                      dispay: data.customMetadataColumns[n].display,
                       value: ""
                   });
               }
@@ -148,9 +148,9 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th>'+$.i18n._('core-index-open')["row-number"]+'</th>' + 
       (function() {
           var htmlDisplay = "";
-          for (var n in data.customMetaDataColumns) {
-            if (data.customMetaDataColumns[n].display) {
-              htmlDisplay += '<th>'+ data.customMetaDataColumns[n].name + '</th>';
+          for (var n in data.customMetadataColumns) {
+            if (data.customMetadataColumns[n].display) {
+              htmlDisplay += '<th>'+ data.customMetadataColumns[n].name + '</th>';
             }
           }
           
@@ -221,7 +221,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $(tr.insertCell(tr.cells.length)).css('width', '1%')
       );
       
-      var editMetaDataLink = $('<a></a>')
+      var editMetadataLink = $('<a></a>')
       .text($.i18n._('core-index-open')["edit-meta-data"])
       .addClass("secondary")
       .attr("href", "javascript:{}")
@@ -257,7 +257,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       appendMetaField(project.description, '20%');
       appendMetaField(project.rowNumber);
       
-      var data = project.userMetaData;
+      var data = project.userMetadata;
       for(var i in data)
       {
            if (data[i].display === true) {
@@ -268,11 +268,11 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       $(tr).mouseenter(function() {
         renameLink.css("visibility", "visible");
         deleteLink.css("visibility", "visible");
-        editMetaDataLink.css("visibility", "visible");
+        editMetadataLink.css("visibility", "visible");
       }).mouseleave(function() {
         renameLink.css("visibility", "hidden");
         deleteLink.css("visibility", "hidden");
-        editMetaDataLink.css("visibility", "hidden");
+        editMetadataLink.css("visibility", "hidden");
       });
     };
 
@@ -347,22 +347,22 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
     refreshMetaField(metaData.description,index); index++;
     refreshMetaField(metaData.rowNumbe,index); index++;
     
-    var updateUserMetaData = function(ob) {
-        var userMetaData = ob.userMetaData;
+    var updateUserMetadata = function(ob) {
+        var userMetadata = ob.userMetadata;
         
         for ( var n in ob) {
-            for ( var i in userMetaData) {
-                if (n === userMetaData[i].name) {
-                    userMetaData[i].value = ob[n];
+            for ( var i in userMetadata) {
+                if (n === userMetadata[i].name) {
+                    userMetadata[i].value = ob[n];
                     break;
                 }
             }
         }
         
-        ob.userMetaData = userMetaData;
+        ob.userMetadata = userMetadata;
     };
-    updateUserMetaData(metaData);
-    var data = metaData.userMetaData;
+    updateUserMetadata(metaData);
+    var data = metaData.userMetadata;
     for(var i in data)
     {
          if (data[i].display === true) {
