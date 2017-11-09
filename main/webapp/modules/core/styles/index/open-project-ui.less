@@ -92,14 +92,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
       
 #projects-container > table thead th:nth-child(1) {
+  border: 0;
   width: 1%
 }
 
 #projects-container > table thead th:nth-child(2) {
+  border: 0;
   width: 3%
 }
 
 #projects-container > table thead th:nth-child(3) {
+  left-border: 0;
   width: 3%
 }
 
@@ -119,7 +122,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   word-wrap: break-word;
 }
 
-#metadata-body tr:nth-child(even) {background: #CCC}
+#metadata-body table {
+  border-collapse:collapse
+}
+
+#metadata-body td {
+    padding: 8px
+}
+
+#metadata-body tr:nth-child(even) {background: #BFDBFF}
 #metadata-body tr:nth-child(odd) {background: #FFF}
 
 #metadata-body > table {

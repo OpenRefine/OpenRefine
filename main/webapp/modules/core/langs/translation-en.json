@@ -22,7 +22,19 @@
         "no-proj": "No existing project. Select 'Create Project' on the left to create a new project.",
         "try-these": "If you have no data to work with, try these",
         "sample-data": "sample data sets",
-        "change-metadata-value": "Change value of metadata key"
+        "change-metadata-value": "Change value of metadata key",
+        "name": "Project Name:",
+        "created": "Create Time:",
+        "modified": "Last Modified Time:",
+        "creator": "Creator:",
+        "contributors": "Contributors:",
+        "subject": "Subject:",
+        "description": "Description:",
+        "rowCount": "Row Count:",
+        "customMetadata": "Custom Metadata(JSON):",
+        "id": "Project Id:",
+        "date": "Date:",
+        "importOptionMetadata": "Import Option Metadata(JSON):"
     },
     "core-index-create": {
         "create-proj": "Create Project",

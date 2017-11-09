@@ -7,7 +7,9 @@ function EditMetadataDialog(metaData, targetRowElem) {
   this._MetadataUI = function(tr, key, value, project) {
       var self = this;
       var td0 = tr.insertCell(0);
-      $(td0).text(key);
+      
+      var keyLable = $.i18n._('core-index')[key] || key;
+      $(td0).text(keyLable);
 
       var td1 = tr.insertCell(1);
       $(td1).text((value !== null) ? value : "");
@@ -92,6 +94,8 @@ EditMetadataDialog.prototype._createDialog = function() {
     
     this._metaDataUIs.push(new this._MetadataUI(tr, k, v, flatMetadata.id));
   }
+  
+  $(".dialog-container").css("top", Math.round(($(".dialog-overlay").height() - $(frame).height()) / 2) + "px");
 };
 
 EditMetadataDialog.prototype._dismiss = function() {
