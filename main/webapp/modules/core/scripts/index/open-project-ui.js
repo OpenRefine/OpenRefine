@@ -145,7 +145,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
-      '<th>'+$.i18n._('core-index-open')["row-number"]+'</th>' + 
+      '<th>'+$.i18n._('core-index-open')["row-count"]+'</th>' + 
       (function() {
           var htmlDisplay = "";
           for (var n in data.customMetadataColumns) {
@@ -255,7 +255,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       appendMetaField(project.creator);
       appendMetaField(project.subject);
       appendMetaField(project.description, '20%');
-      appendMetaField(project.rowNumber);
+      appendMetaField(project.rowCount);
       
       var data = project.userMetadata;
       for(var i in data)
@@ -345,7 +345,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
     refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
     refreshMetaField(metaData.description,index); index++;
-    refreshMetaField(metaData.rowNumbe,index); index++;
+    refreshMetaField(metaData.rowCount,index); index++;
     
     var updateUserMetadata = function(ob) {
         var userMetadata = ob.userMetadata;

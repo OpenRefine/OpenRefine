@@ -93,7 +93,7 @@
         "contributors": "Contributors",
         "subject": "Subject",
         "description": "Description",
-        "row-number": "Row&nbsp;Number",
+        "row-count": "Row&nbsp;Count",
         "last-mod": "Last&nbsp;modified",
         "del-title": "Delete this project",
         "del-body": "Are you sure you want to delete project \"",
