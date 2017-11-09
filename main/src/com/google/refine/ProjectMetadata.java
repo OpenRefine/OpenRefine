@@ -71,7 +71,7 @@ public class ProjectMetadata implements Jsonizable {
     private int _rowNumber;      // at the creation. Essential for cleaning old projects too heavy
     
     // import options is an array for 1-n data sources
-    private JSONArray _importOptionMetaData = new JSONArray();
+    private JSONArray _importOptionMetadata = new JSONArray();
     
     // user metadata
     private JSONArray _userMetadata = new JSONArray();; 
@@ -120,9 +120,9 @@ public class ProjectMetadata implements Jsonizable {
         writer.endObject();
         
         // write JSONArray directly 
-        if (_importOptionMetaData.length() > 0 ) {
-            writer.key("importOptionMetaData"); 
-            writer.value(_importOptionMetaData);
+        if (_importOptionMetadata.length() > 0 ) {
+            writer.key("importOptionMetadata"); 
+            writer.value(_importOptionMetadata);
         }
         
         // write user metadata in {name, value, display} form:
@@ -231,10 +231,10 @@ public class ProjectMetadata implements Jsonizable {
             }
         }
         
-        if (obj.has("importOptionMetaData") && !obj.isNull("importOptionMetaData")) {
+        if (obj.has("importOptionMetadata") && !obj.isNull("importOptionMetadata")) {
             try {
-                JSONArray jsonArray = obj.getJSONArray("importOptionMetaData");
-                pm._importOptionMetaData = jsonArray;
+                JSONArray jsonArray = obj.getJSONArray("importOptionMetadata");
+                pm._importOptionMetadata = jsonArray;
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getFullStackTrace(e));
             }
@@ -330,17 +330,17 @@ public class ProjectMetadata implements Jsonizable {
         updateModified();
     }
     
-    public JSONArray getImportOptionMetaData() {
-        return _importOptionMetaData;
+    public JSONArray getImportOptionMetadata() {
+        return _importOptionMetadata;
     }
     
-    public void setImportOptionMetaData(JSONArray jsonArray) {
-        _importOptionMetaData = jsonArray;
+    public void setImportOptionMetadata(JSONArray jsonArray) {
+        _importOptionMetadata = jsonArray;
         updateModified();
     }
     
-    public void appendImportOptionMetaData(JSONObject obj) {
-        _importOptionMetaData.put(obj);
+    public void appendImportOptionMetadata(JSONObject obj) {
+        _importOptionMetadata.put(obj);
         updateModified();
     }
 

@@ -155,7 +155,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             // ignore
         }
      // set the import options to metadata:
-        metadata.appendImportOptionMetaData(options);
+        metadata.appendImportOptionMetadata(options);
     }
     
     public void parseOneFile(

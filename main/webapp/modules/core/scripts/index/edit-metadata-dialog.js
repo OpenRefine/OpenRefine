@@ -4,7 +4,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
   this._metaDataUIs = [];
   this._metaData = metaData;
   
-  this._MetaDataUI = function(tr, key, value, project) {
+  this._MetadataUI = function(tr, key, value, project) {
       var self = this;
       var td0 = tr.insertCell(0);
       $(td0).text(key);
@@ -14,7 +14,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
 
       var td2 = tr.insertCell(2);
       
-      if (key !== "modified" && key !== "rowNumber" && key !== "importOptionMetaData" && key !== "id")  {
+      if (key !== "modified" && key !== "rowNumber" && key !== "importOptionMetadata" && key !== "id")  {
           $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
             var newValue = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
             if (newValue !== null) {
@@ -78,19 +78,19 @@ EditMetadataDialog.prototype._createDialog = function() {
         return toReturn;
     };
     
-  var flatMetaData = flattenObject(this._metaData, "userMetaData");
+  var flatMetadata = flattenObject(this._metaData, "userMetadata");
       
-  for (var k in flatMetaData) {
+  for (var k in flatMetadata) {
     var tr = metadataTable.insertRow(metadataTable.rows.length);
     var v;
     
-    if (typeof flatMetaData[k] === 'string') {
-        v = flatMetaData[k].replace(/\"/g, "");  
+    if (typeof flatMetadata[k] === 'string') {
+        v = flatMetadata[k].replace(/\"/g, "");  
     } else {
-        v = JSON.stringify(flatMetaData[k]);
+        v = JSON.stringify(flatMetadata[k]);
     }
     
-    this._metaDataUIs.push(new this._MetaDataUI(tr, k, v, flatMetaData.id));
+    this._metaDataUIs.push(new this._MetadataUI(tr, k, v, flatMetadata.id));
   }
 };
 
