@@ -167,7 +167,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .addClass("delete-project")
       .attr("title",$.i18n._('core-index-open')["del-title"])
       .attr("href","")
-      .css("visibility", "hidden")                
       .html("<img src='images/close.png' />")
       .click(function() {
         if (window.confirm($.i18n._('core-index-open')["del-body"] + project.name + "\"?")) {
@@ -192,7 +191,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .text($.i18n._('core-index-open')["rename"])
       .addClass("secondary")
       .attr("href", "javascript:{}")
-      .css("visibility", "hidden")
       .click(function() {
         var name = window.prompt($.i18n._('core-index-open')["new-title"], project.name);
         if (name === null) {
@@ -225,7 +223,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .text($.i18n._('core-index-open')["edit-meta-data"])
       .addClass("secondary")
       .attr("href", "javascript:{}")
-      .css("visibility", "hidden")
       .click(function() {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
@@ -264,16 +261,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                appendMetaField(data[i].value); 
            }
       }
-      
-      $(tr).mouseenter(function() {
-        renameLink.css("visibility", "visible");
-        deleteLink.css("visibility", "visible");
-        editMetadataLink.css("visibility", "visible");
-      }).mouseleave(function() {
-        renameLink.css("visibility", "hidden");
-        deleteLink.css("visibility", "hidden");
-        editMetadataLink.css("visibility", "hidden");
-      });
     };
 
     for (var i = 0; i < projects.length; i++) {
