@@ -13,7 +13,7 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
-public class SetProjectMetaDataCommand extends Command {
+public class SetProjectMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

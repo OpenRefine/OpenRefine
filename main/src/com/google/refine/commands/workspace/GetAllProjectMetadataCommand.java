@@ -76,11 +76,11 @@ public class GetAllProjectMetadataCommand extends Command {
                 }
                 writer.endObject();
             
-            String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetaData");
+            String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
             if (userMeta != null) {
-                writer.key("customMetaDataColumns");
-                JSONArray customMetaDataColumns = new JSONArray(userMeta);
-                writer.value(customMetaDataColumns);
+                writer.key("customMetadataColumns");
+                JSONArray customMetadataColumns = new JSONArray(userMeta);
+                writer.value(customMetadataColumns);
             }
                 
             writer.endObject();

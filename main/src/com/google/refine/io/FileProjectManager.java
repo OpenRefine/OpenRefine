@@ -431,7 +431,7 @@ public class FileProjectManager extends ProjectManager {
                 boolean found = false;
                 JSONObject placeHolderJsonObj = userMetadataPreference.getJSONObject(index);
                 
-                if (!isValidUserMetaDataDefinition(placeHolderJsonObj)) {
+                if (!isValidUserMetadataDefinition(placeHolderJsonObj)) {
                     logger.warn("Skipped invalid user metadata definition" + placeHolderJsonObj.toString());
                     continue;
                 }
@@ -463,7 +463,7 @@ public class FileProjectManager extends ProjectManager {
      * @param placeHolderJsonObj
      * @return
      */
-    private boolean isValidUserMetaDataDefinition(JSONObject placeHolderJsonObj) {
+    private boolean isValidUserMetadataDefinition(JSONObject placeHolderJsonObj) {
         return (placeHolderJsonObj != null &&
                 placeHolderJsonObj.has("name") &&
             placeHolderJsonObj.has("display"));
