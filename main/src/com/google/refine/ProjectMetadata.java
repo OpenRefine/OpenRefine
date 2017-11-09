@@ -68,7 +68,7 @@ public class ProjectMetadata implements Jsonizable {
     private String _contributors = "";
     private String _subject = "";    // Several refine projects may be linked
     private String _description = "";                // free form of comment
-    private int _rowNumber;      // at the creation. Essential for cleaning old projects too heavy
+    private int _rowCount;      // at the creation. Essential for cleaning old projects too heavy
     
     // import options is an array for 1-n data sources
     private JSONArray _importOptionMetadata = new JSONArray();
@@ -109,7 +109,7 @@ public class ProjectMetadata implements Jsonizable {
         writer.key("contributors"); writer.value(_contributors);
         writer.key("subject"); writer.value(_subject);
         writer.key("description"); writer.value(_description);
-        writer.key("rowNumber"); writer.value(_rowNumber);
+        writer.key("rowCount"); writer.value(_rowCount);
         
         writer.key("customMetadata"); writer.object();
         for (String key : _customMetadata.keySet()) {
@@ -194,7 +194,7 @@ public class ProjectMetadata implements Jsonizable {
         pm._contributors = JSONUtilities.getString(obj, "contributors", "");
         pm._subject = JSONUtilities.getString(obj, "subject", "");
         pm._description = JSONUtilities.getString(obj, "description", "");
-        pm._rowNumber = JSONUtilities.getInt(obj, "rowNumber", 0);
+        pm._rowCount = JSONUtilities.getInt(obj, "rowCount", 0);
         
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
@@ -389,13 +389,13 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     
-    public int getRowNumber() {
-        return _rowNumber;
+    public int getRowCount() {
+        return _rowCount;
     }
 
     
-    public void setRowNumber(int rowNumber) {
-        this._rowNumber = rowNumber;
+    public void setRowCount(int rowCount) {
+        this._rowCount = rowCount;
         updateModified();
     }
 
