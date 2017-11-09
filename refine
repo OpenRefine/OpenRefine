@@ -825,7 +825,7 @@ whitespace() {
 }   
     
 checkJavaMajorVersion() {
-  java_ver=$($JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
+  java_ver=$("$JAVA" -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
   # Java 6, 7, 8 starts with 1.x
   if [ ${java_ver:0:2} == "1." ] ; then
     major=`echo ${java_ver} | sed -E 's/1\.([0-9])[0-9_.]{2,6}/\1/g'`
