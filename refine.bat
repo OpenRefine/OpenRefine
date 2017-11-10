@@ -137,8 +137,18 @@ if not "%REFINE_MEMORY%" == "" goto gotMemory
 set REFINE_MEMORY=1024M
 if not "%REFINE_MIN_MEMORY%" == "" goto gotMemory
 set REFINE_MIN_MEMORY=256M
+
 :gotMemory
 set OPTS=%OPTS% -Xms%REFINE_MIN_MEMORY% -Xmx%REFINE_MEMORY% -Drefine.memory=%REFINE_MEMORY%
+
+rem --- Check free memory ---------------------------------------------
+for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
+
+echo You have %freeRam%M of free memory. 
+echo You current configuration will allow to use %REFINE_MEMORY% of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
+echo .
 
 if not "%REFINE_MAX_FORM_CONTENT_SIZE%" == "" goto gotMaxFormContentSize
 set REFINE_MAX_FORM_CONTENT_SIZE=1048576
