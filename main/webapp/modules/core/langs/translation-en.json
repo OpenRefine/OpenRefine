@@ -32,8 +32,7 @@
         "description": "Description:",
         "rowCount": "Row Count:",
         "customMetadata": "Custom Metadata(JSON):",
-        "id": "Project Id:",
-        "date": "Date:",
+        "id": "Project ID:",
         "importOptionMetadata": "Import Option Metadata(JSON):"
     },
     "core-index-create": {
