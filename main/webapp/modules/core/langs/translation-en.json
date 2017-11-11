@@ -23,17 +23,17 @@
         "try-these": "If you have no data to work with, try these",
         "sample-data": "sample data sets",
         "change-metadata-value": "Change value of metadata key",
-        "name": "Project Name:",
-        "created": "Create Time:",
-        "modified": "Last Modified Time:",
+        "name": "Project name:",
+        "created": "Create time:",
+        "modified": "Last modified time:",
         "creator": "Creator:",
         "contributors": "Contributors:",
         "subject": "Subject:",
         "description": "Description:",
-        "rowCount": "Row Count:",
-        "customMetadata": "Custom Metadata(JSON):",
+        "rowCount": "Row count:",
+        "customMetadata": "Custom metadata(JSON):",
         "id": "Project ID:",
-        "importOptionMetadata": "Import Option Metadata(JSON):"
+        "importOptionMetadata": "Import option metadata(JSON):"
     },
     "core-index-create": {
         "create-proj": "Create Project",
@@ -98,7 +98,7 @@
     "core-index-open": {
         "open-proj": "Open Project",
         "name": "Name",
-        "rename": "rename",
+        "rename": "Rename",
         "edit-meta-data": "About",
         "creator": "Creator",
         "contributors": "Contributors",
