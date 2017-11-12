@@ -107,7 +107,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     if (data.projects.hasOwnProperty(n)) {
       var project = data.projects[n];
       project.id = n;
-      project.date = Date.parseExact(project.modified, "yyyy-MM-ddTHH:mm:ssZ");
+      project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
       for (var n in data.customMetadataColumns) {
           var found = false;
           for(var i = 0; i < project.userMetadata.length; i++) {
@@ -127,7 +127,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     }
     projects.push(project);
   }
-  projects.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
 
   var container = $("#projects-container").empty();
   if (!projects.length) {
@@ -231,9 +230,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       );
       
       $('<div></div>')
-      .html(project.date.toISOString())
+      .html(project.date)
       .addClass("last-modified")
-      .attr("title", project.date.toString())
       .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '1%'));
       
       var nameLink = $('<a></a>')
@@ -266,27 +264,15 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     for (var i = 0; i < projects.length; i++) {
       renderProject(projects[i]);
     }
-    
-    $.tablesorter.addParser({
-        id: "isoDateParser",
-        is: function(s) {
-            return (/^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}T\d{2}:\d{2}:\d{2}[\+,\-\.]\d{3}/).test(s);
-        },
-        format: function(s, table) {
-            return $.tablesorter.formatFloat((s !== "") ? (new Date(s).getTime() || "") : "", table);
-        },
-        type: "numeric"
-    });
 
     $(table).tablesorter({
         headers : {
             0: { sorter: false },
             1: { sorter: false },
             2: { sorter: false },
-            3 : {
-                sorter : "isoDateParser"
-            }
+            3: { sorter: "text" }
         },
+        sortList: [[3,1]],
         widthFixed: false
     });
   }
@@ -324,11 +310,17 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
     var refreshMetaField = function(data, index) {
-        $('td', tr).eq(index)
-        .html(data);
+        if (index === 4) {
+            $('a', $('td', tr).eq(index))
+            .text(data);
+        } else {
+            $('td', tr).eq(index)
+            .text(data);
+        }
     };
     
-    var index = 5;
+    var index = 4;
+    refreshMetaField(metaData.name, index); index++;
     refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
     refreshMetaField(metaData.description,index); index++;
