@@ -320,6 +320,7 @@ function init() {
       "externals/date.js",
       "externals/jquery.i18n.js",
       "externals/tablesorter/jquery.tablesorter.min.js",
+      "externals/moment-with-locales.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
