@@ -138,7 +138,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<table class="tablesorter-blue list-table"><thead><tr>' +
       '<th></th>' +
       '<th></th>' +
-      '<th></th>' +
       '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
@@ -183,41 +182,9 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         }
         return false;
       }).appendTo(
-        $(tr.insertCell(tr.cells.length)).css('width', '1%')
+        $(tr.insertCell(tr.cells.length))
       );
 
-      var renameLink = $('<a></a>')
-      .text($.i18n._('core-index-open')["rename"])
-      .addClass("secondary")
-      .attr("href", "javascript:{}")
-      .click(function() {
-        var name = window.prompt($.i18n._('core-index-open')["new-title"], project.name);
-        if (name === null) {
-          return;
-        }
-
-        name = $.trim(name);
-        if (project.name == name || name.length === 0) {
-          return;
-        }
-
-        $.ajax({
-          type: "POST",
-          url: "command/core/rename-project",
-          data: { "project" : project.id, "name" : name },
-          dataType: "json",
-          success: function (data) {
-            if (data && typeof data.code != 'undefined' && data.code == "ok") {
-              nameLink.text(name);
-            } else {
-              alert($.i18n._('core-index-open')["warning-rename"]+" " + data.message);
-            }
-          }
-        });
-      }).appendTo(
-        $(tr.insertCell(tr.cells.length)).css('width', '1%')
-      );
-      
       var editMetadataLink = $('<a></a>')
       .text($.i18n._('core-index-open')["edit-meta-data"])
       .addClass("secondary")
@@ -226,25 +193,24 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
       .appendTo(
-        $(tr.insertCell(tr.cells.length)).css('width', '3%')
+        $(tr.insertCell(tr.cells.length))
       );
       
       $('<div></div>')
       .html(project.date)
       .addClass("last-modified")
-      .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '1%'));
+      .appendTo($(tr.insertCell(tr.cells.length)));
       
       var nameLink = $('<a></a>')
       .addClass("project-name")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
-      .appendTo($(tr.insertCell(tr.cells.length)).attr('width', '10%'));
+      .appendTo($(tr.insertCell(tr.cells.length)));
       
-      var appendMetaField = function(data, width) {
-          width = width || '1%';
+      var appendMetaField = function(data) {
           $('<div></div>')
           .html(data)
-          .appendTo($(tr.insertCell(tr.cells.length)).attr('width', width));
+          .appendTo($(tr.insertCell(tr.cells.length)));
       };
       
       appendMetaField(project.creator);
@@ -269,10 +235,9 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         headers : {
             0: { sorter: false },
             1: { sorter: false },
-            2: { sorter: false },
-            3: { sorter: "text" }
+            2: { sorter: "text" }
         },
-        sortList: [[3,1]],
+        sortList: [[2,1]],
         widthFixed: false
     });
   }
@@ -310,7 +275,7 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
     var refreshMetaField = function(data, index) {
-        if (index === 4) {
+        if (index === 3) {
             $('a', $('td', tr).eq(index))
             .text(data);
         } else {
@@ -319,7 +284,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
         }
     };
     
-    var index = 4;
+    var index = 3;
     refreshMetaField(metaData.name, index); index++;
     refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
