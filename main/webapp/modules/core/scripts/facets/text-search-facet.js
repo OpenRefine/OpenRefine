@@ -159,6 +159,8 @@ TextSearchFacet.prototype.render = function() {
 
 TextSearchFacet.prototype._reset = function() {
   this._query = null;
+  this._config.mode = "text";
+  this._config.caseSensitive = false;
   this._elmts.input.val([]);
   this._elmts.caseSensitiveCheckbox.prop("checked", false);
   this._elmts.regexCheckbox.prop("checked", false);
