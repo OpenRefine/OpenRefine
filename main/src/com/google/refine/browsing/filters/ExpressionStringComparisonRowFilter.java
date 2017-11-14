@@ -76,16 +76,16 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
                 Object[] a = (Object[]) value;
                 for (Object v : a) {
                     if (checkValue(v instanceof String ? ((String) v) : v.toString())) {
-                        return (invert) ? false : true;
+                        return !invert;
                     }
                 }
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     if (checkValue(v.toString())) {
-                        return (invert) ? false : true;
+                        return !invert;
                     }
                 }
-                return (invert) ? true : false;
+                return invert;
             } else if (value instanceof JSONArray) {
                 JSONArray a = (JSONArray) value;
                 int l = a.length();
@@ -93,20 +93,20 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
                 for (int i = 0; i < l; i++) {
                     try {
                         if (checkValue(a.get(i).toString())) {
-                            return (invert) ? false : true;
+                            return !invert;
                         }
                     } catch (JSONException e) {
                         // ignore
                     }
                 }
-                return (invert) ? true : false;
+                return invert;
             } else {
                 if (checkValue(value instanceof String ? ((String) value) : value.toString())) {
-                    return (invert) ? false : true;
+                    return !invert;
                 }
             }
         }
-        return (invert) ? true : false;
+        return invert;
     }
     
     abstract protected boolean checkValue(String s);
