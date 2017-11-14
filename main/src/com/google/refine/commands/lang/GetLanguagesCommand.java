@@ -89,7 +89,7 @@ public class GetLanguagesCommand extends Command {
                 String lang = file.getName().split("-")[1].split("\\.")[0];
                 if (!"en".equals(lang) && !"default".equals(lang)) {
                     JSONObject json = LoadLanguageCommand.loadLanguage(this.servlet, "core", lang);
-                    if (json != null) {
+                    if (json != null && json.has("name")) {
                         String label = json.getString("name");
                         writeLangData(writer, lang, label);
                     }
