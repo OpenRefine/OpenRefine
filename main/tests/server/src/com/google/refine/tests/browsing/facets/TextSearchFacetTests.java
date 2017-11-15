@@ -68,15 +68,15 @@ import com.google.refine.tests.util.TestUtils;
 
 public class TextSearchFacetTests extends RefineTest {
     // dependencies
-    RefineServlet servlet;
-    Project project;
-    ProjectMetadata pm;
-    JSONObject options;
-    ImportingJob job;
-    SeparatorBasedImporter importer;
-    TextSearchFacet textfilter;
-    JSONObject textsearchfacet;
-    RowFilter rowfilter;
+    private RefineServlet servlet;
+    private Project project;
+    private ProjectMetadata pm;
+    private JSONObject options;
+    private ImportingJob job;
+    private SeparatorBasedImporter importer;
+    private TextSearchFacet textfilter;
+    private JSONObject textsearchfacet;
+    private RowFilter rowfilter;
 
     @Override
     @BeforeTest
