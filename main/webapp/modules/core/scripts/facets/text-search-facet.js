@@ -113,7 +113,7 @@ TextSearchFacet.prototype._initializeUI = function() {
   if (this._config.caseSensitive) {
     this._elmts.caseSensitiveCheckbox.attr("checked", "true");
   }
-  if (this._config.mode == "regex") {
+  if (this._config.mode === "regex") {
     this._elmts.regexCheckbox.attr("checked", "true");
   }
 
@@ -192,7 +192,7 @@ TextSearchFacet.prototype._update = function () {
     this._elmts.facetTitle.removeClass("facet-title-inverted");
     this._elmts.invertButton.removeClass("facet-mode-inverted");
   }
-}
+};
 
 TextSearchFacet.prototype._scheduleUpdate = function() {
   if (!this._timerID) {
