@@ -87,38 +87,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   opacity: 0.2;
   }
 
-#projects-container > table {
-  table-layout: fixed
-}
-      
 #projects-container > table thead th:nth-child(1) {
   border: 0;
-  width: 1.5%
 }
 
 #projects-container > table thead th:nth-child(2) {
   left-border: 0;
-  width: 3%
 }
 
 #projects-container > table thead th:nth-child(3) {
-  width: 8%
+  white-space: nowrap;
 }
 
-#projects-container > table thead th:nth-child(4) {
-  width: 15%
+/* Name */
+#projects-container > table td:nth-child(4) {
+  white-space: nowrap;
 }
 
-#projects-container > table thead th:nth-child(5) {
-  width: 6%
-}
-
-#projects-container > table thead th:nth-child(7) {
-  width: 38%
-}
-
-#projects-container > table thead th:nth-child(8) {
-  width: 5%
+/* Subject */
+#projects-container > table td:nth-child(6) {
+  white-space: nowrap;
 }
 
 #projects-container > table > tbody > tr > td {
@@ -137,7 +125,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #metadata-body tr:nth-child(odd) {background: #FFF}
 
 #metadata-body > table {
-  table-layout: fixed
+  table-layout: fixed;
 }
 
 #metadata-body > table > tbody > tr > td {
@@ -149,6 +137,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  }
 
 #metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(3) {
- width: 3%
+ width: 4%
  }
-
