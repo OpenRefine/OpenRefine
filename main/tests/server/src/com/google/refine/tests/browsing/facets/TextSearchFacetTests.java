@@ -38,7 +38,6 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -58,7 +57,6 @@ import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.browsing.RowFilter;
@@ -70,15 +68,15 @@ import com.google.refine.tests.util.TestUtils;
 
 public class TextSearchFacetTests extends RefineTest {
     // dependencies
-    private RefineServlet servlet;
-    private Project project;
-    private ProjectMetadata pm;
-    private JSONObject options;
-    private ImportingJob job;
-    private SeparatorBasedImporter importer;
-    private TextSearchFacet textfilter;
-    private JSONObject textsearchfacet;
-    private RowFilter rowfilter;
+    RefineServlet servlet;
+    Project project;
+    ProjectMetadata pm;
+    JSONObject options;
+    ImportingJob job;
+    SeparatorBasedImporter importer;
+    TextSearchFacet textfilter;
+    JSONObject textsearchfacet;
+    RowFilter rowfilter;
 
     @Override
     @BeforeTest
@@ -87,7 +85,7 @@ public class TextSearchFacetTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void setUp() throws JSONException, IOException, ModelException {
         servlet = new RefineServletStub();
         File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir);
@@ -114,7 +112,7 @@ public class TextSearchFacetTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown() {
+    public void tearDown() {
         ImportingManager.disposeJob(job.id);
         ProjectManager.singleton.deleteProject(project.id);
         job = null;
