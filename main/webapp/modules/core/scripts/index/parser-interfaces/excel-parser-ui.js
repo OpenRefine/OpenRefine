@@ -76,10 +76,12 @@ Refine.ExcelParserUI.prototype.getOptions = function() {
     }
     return def;
   };
-
+  
+  var self = this;
+  
   this._optionContainerElmts.sheetRecordContainer.find('input').each(function() {
     if (this.checked) {
-      options.sheets.push(parseInt(this.getAttribute('index'),10));
+        options.sheets.push(self._config.sheetRecords[parseInt(this.getAttribute('index'))]);
     }
   });
 
