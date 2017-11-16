@@ -508,6 +508,7 @@ function init() {
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/underscore-min.js",
       "scripts/preferences.js",
     ]
   );
