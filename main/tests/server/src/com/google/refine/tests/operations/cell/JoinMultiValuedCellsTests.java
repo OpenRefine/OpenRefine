@@ -70,7 +70,6 @@ import com.google.refine.tests.util.TestUtils;
 
 public class JoinMultiValuedCellsTests extends RefineTest {
     // dependencies
-    private RefineServlet servlet;
     private Project project;
     private ProjectMetadata pm;
     private JSONObject options;
@@ -86,17 +85,17 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() throws JSONException, IOException, ModelException {
-        servlet = new RefineServletStub();
-            File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-            FileProjectManager.initialize(dir);
-            project = new Project();
-            pm = new ProjectMetadata();
-            pm.setName("JoinMultiValuedCells test");
-            ProjectManager.singleton.registerProject(project, pm);
-            options = mock(JSONObject.class);
+        RefineServlet servlet = new RefineServletStub();
+        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+        FileProjectManager.initialize(dir);
+        project = new Project();
+        pm = new ProjectMetadata();
+        pm.setName("JoinMultiValuedCells test");
+        ProjectManager.singleton.registerProject(project, pm);
+        options = mock(JSONObject.class);
 
         ImportingManager.initialize(servlet);
-            job = ImportingManager.createJob();
+        job = ImportingManager.createJob();
         importer = new SeparatorBasedImporter(); 
     }
 
@@ -105,9 +104,9 @@ public class JoinMultiValuedCellsTests extends RefineTest {
         ImportingManager.disposeJob(job.id);
         ProjectManager.singleton.deleteProject(project.id);
         job = null;
-            project = null;
+        project = null;
         pm = null;
-            options = null;
+        options = null;
     }
 
     /**
@@ -122,17 +121,17 @@ public class JoinMultiValuedCellsTests extends RefineTest {
             + ",three\n"
             + ",four\n";
         prepareOptions(",", 10, 0, 0, 1, false, false);
-            List<Exception> exceptions = new ArrayList<Exception>();
-            importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-            project.update();
-            ProjectManager.singleton.registerProject(project, pm);
+        List<Exception> exceptions = new ArrayList<Exception>();
+        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
+        project.update();
+        ProjectManager.singleton.registerProject(project, pm);
 
         AbstractOperation op = new MultiValuedCellJoinOperation(
             "Value",
             "Key",
             ",");
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -149,17 +148,17 @@ public class JoinMultiValuedCellsTests extends RefineTest {
             + ",three\n"
             + ",four\n";
         prepareOptions(",", 10, 0, 0, 1, false, false);
-            List<Exception> exceptions = new ArrayList<Exception>();
-            importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-            project.update();
-            ProjectManager.singleton.registerProject(project, pm);
+        List<Exception> exceptions = new ArrayList<Exception>();
+        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
+        project.update();
+        ProjectManager.singleton.registerProject(project, pm);
 
         AbstractOperation op = new MultiValuedCellJoinOperation(
             "Value",
             "Key",
             ",     ,");
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -169,19 +168,18 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     }
 
     private void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-            
-            whenGetStringOption("separator", options, sep);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-        }
-
+        String sep, int limit, int skip, int ignoreLines,
+        int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        
+        whenGetStringOption("separator", options, sep);
+        whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("skipDataLines", options, skip);
+        whenGetIntegerOption("ignoreLines", options, ignoreLines);
+        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+    }
 
 }
 
