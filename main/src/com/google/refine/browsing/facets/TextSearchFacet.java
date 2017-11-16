@@ -60,6 +60,7 @@ public class TextSearchFacet implements Facet {
     protected String     _query;
     protected String     _mode;
     protected boolean    _caseSensitive;
+    protected boolean    _invert;
     
     /*
      *  Derived configuration
@@ -80,6 +81,7 @@ public class TextSearchFacet implements Facet {
         writer.key("query"); writer.value(_query);
         writer.key("mode"); writer.value(_mode);
         writer.key("caseSensitive"); writer.value(_caseSensitive);
+        writer.key("invert"); writer.value(_invert);
         writer.endObject();
     }
 
@@ -110,6 +112,7 @@ public class TextSearchFacet implements Facet {
                 _query = _query.toLowerCase();
             }
         }
+        _invert = o.has("invert") && o.getBoolean("invert");
     }
 
     @Override
@@ -123,14 +126,14 @@ public class TextSearchFacet implements Facet {
         Evaluable eval = new VariableExpr("value");
         
         if ("regex".equals(_mode)) {
-            return new ExpressionStringComparisonRowFilter(eval, _columnName, _cellIndex) {
+            return new ExpressionStringComparisonRowFilter(eval, _invert, _columnName, _cellIndex) {
                 @Override
                 protected boolean checkValue(String s) {
                     return _pattern.matcher(s).find();
                 };
             };
         } else {
-            return new ExpressionStringComparisonRowFilter(eval, _columnName, _cellIndex) {
+            return new ExpressionStringComparisonRowFilter(eval, _invert, _columnName, _cellIndex) {
                 @Override
                 protected boolean checkValue(String s) {
                     return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
