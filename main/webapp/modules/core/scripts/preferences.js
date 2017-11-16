@@ -51,7 +51,7 @@ $.i18n.setDictionary(dictionary);
 //End internationalization
 
 function deDupUserMetaData(arrObj)  {
-    result = _.uniq(JSON.parse(arrObj), function(x){
+    var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
     });
     
