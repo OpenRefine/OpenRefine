@@ -44,7 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
@@ -59,8 +61,8 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 
 
@@ -81,28 +83,29 @@ public class OdsImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
-            JSONObject firstFileRecord = fileRecords.get(0);
-            File file = ImportingUtilities.getFile(job, firstFileRecord);
-            InputStream is = new FileInputStream(file);
-            odfDoc = OdfDocument.loadDocument(is);
-            List<OdfTable> tables = odfDoc.getTableList();
-            int sheetCount = tables.size();
-
-            boolean hasData = false;
-            for (int i = 0; i < sheetCount; i++) {
-                OdfTable sheet = tables.get(i);
-                int rows = sheet.getRowCount();
-
-                JSONObject sheetRecord = new JSONObject();
-                JSONUtilities.safePut(sheetRecord, "name", sheet.getTableName());
-                JSONUtilities.safePut(sheetRecord, "rows", rows);
-                if (hasData) {
-                    JSONUtilities.safePut(sheetRecord, "selected", false);
-                } else if (rows > 0) {
-                    JSONUtilities.safePut(sheetRecord, "selected", true);
-                    hasData = true;
+            for (int index = 0;index < fileRecords.size();index++) {
+                JSONObject fileRecord = fileRecords.get(index);
+                File file = ImportingUtilities.getFile(job, fileRecord);
+                InputStream is = new FileInputStream(file);
+                odfDoc = OdfDocument.loadDocument(is);
+                List<OdfTable> tables = odfDoc.getTableList();
+                int sheetCount = tables.size();
+    
+                for (int i = 0; i < sheetCount; i++) {
+                    OdfTable sheet = tables.get(i);
+                    int rows = sheet.getRowCount();
+    
+                    JSONObject sheetRecord = new JSONObject();
+                    JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
+                    JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
+                    JSONUtilities.safePut(sheetRecord, "rows", rows);
+                    if (rows > 0) {
+                        JSONUtilities.safePut(sheetRecord, "selected", true);
+                    } else {
+                        JSONUtilities.safePut(sheetRecord, "selected", false);
+                    }
+                    JSONUtilities.append(sheetRecords, sheetRecord);
                 }
-                JSONUtilities.append(sheetRecords, sheetRecord);
             }
         } catch (FileNotFoundException e) {
             logger.info("File not found",e);
@@ -139,9 +142,21 @@ public class OdsImporter extends TabularImportingParserBase {
 
         List<OdfTable> tables = odfDoc.getTableList();
 
-        int[] sheets = JSONUtilities.getIntArray(options, "sheets");
-        for (int sheetIndex : sheets) {
-            final OdfTable table = tables.get(sheetIndex);
+        JSONArray sheets = JSONUtilities.getArray(options, "sheets");
+        for(int i=0;i<sheets.length();i++)  {
+            String[] fileNameAndSheetIndex = new String[2];
+            try {
+                JSONObject sheetObj = sheets.getJSONObject(i);
+                // value is fileName#sheetIndex
+                fileNameAndSheetIndex = sheetObj.getString("fileNameAndSheetIndex").split("#");
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+            
+            if (!fileNameAndSheetIndex[0].equals(fileSource))
+                continue;
+            
+            final OdfTable table = tables.get(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = table.getRowCount();
 
             TableDataReader dataReader = new TableDataReader() {
