@@ -55,6 +55,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -100,12 +101,11 @@ public class ExcelImporterTests extends ImporterTest {
     
     //---------------------read tests------------------------
     @Test
-    public void readXls() throws FileNotFoundException{
+    public void readXls() throws FileNotFoundException, JSONException{
 
         JSONArray sheets = new JSONArray();
-        JSONUtilities.append(sheets, 0);
-//        JSONUtilities.append(sheets, 1);
-//        JSONUtilities.append(sheets, 2);
+        JSONUtilities.append(sheets, 
+                new JSONObject("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
         
         whenGetIntegerOption("ignoreLines", options, 0);
