@@ -7,8 +7,9 @@ function EditMetadataDialog(metaData, targetRowElem) {
   this._MetadataUI = function(tr, key, value, project) {
       var self = this;
       
-      if (key === "date")
+      if (key === "date") {
           return;
+      }
       
       var td0 = tr.insertCell(0);
       
