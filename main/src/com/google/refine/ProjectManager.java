@@ -403,12 +403,8 @@ public abstract class ProjectManager {
                 return;
             userMetadataPreference = new JSONArray(userMeta);
         } catch (JSONException e1) {
-            logger.error(ExceptionUtils.getFullStackTrace(e1));
-        }
-        
-        if (userMetadataPreference == null) {
             logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
-            return;
+            logger.error(ExceptionUtils.getFullStackTrace(e1));
         }
         
         for (int index = 0; index < userMetadataPreference.length(); index++) {
