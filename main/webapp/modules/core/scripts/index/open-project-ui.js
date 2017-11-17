@@ -108,19 +108,22 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       var project = data.projects[n];
       project.id = n;
       project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
-      for (var n in data.customMetadataColumns) {
-          var found = false;
-          for(var i = 0; i < project.userMetadata.length; i++) {
-              if (project.userMetadata[i].name === data.customMetadataColumns[n].name) {
-                  found = true;
-                  break;
-              }
-              if (!found) {
-                  project.userMetadata.push({
-                      name: data.customMetadataColumns[n].name,
-                      dispay: data.customMetadataColumns[n].display,
-                      value: ""
-                  });
+      
+      if (typeof project.userMetadata !== "undefined")  {
+          for (var n in data.customMetadataColumns) {
+              var found = false;
+              for(var i = 0; i < project.userMetadata.length; i++) {
+                  if (project.userMetadata[i].name === data.customMetadataColumns[n].name) {
+                      found = true;
+                      break;
+                  }
+                  if (!found) {
+                      project.userMetadata.push({
+                          name: data.customMetadataColumns[n].name,
+                          dispay: data.customMetadataColumns[n].display,
+                          value: ""
+                      });
+                  }
               }
           }
       }
