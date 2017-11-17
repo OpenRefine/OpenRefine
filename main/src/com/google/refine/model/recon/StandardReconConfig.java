@@ -252,7 +252,7 @@ public class StandardReconConfig extends ReconConfig {
             job.text = query;
             job.code = stringWriter.toString();
             return job;
-        } catch (JSONException _) {
+        } catch (JSONException je) {
             return null;
         }
     }

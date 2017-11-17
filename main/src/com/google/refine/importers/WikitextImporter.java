@@ -414,7 +414,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                     } else if ("name".equals(currentXmlAttr)) {
                         currentReferenceName = xmlAttrStringBuilder.toString();
                     }
-                } catch (NumberFormatException _) {
+                } catch (NumberFormatException nfe) {
                 }
                 currentXmlAttr = null;
                 xmlAttrStringBuilder = null;
@@ -425,7 +425,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             try {
                 currentXmlAttr = e.getAsString();
                
-            } catch (UnsupportedOperationException _) {
+            } catch (UnsupportedOperationException soe) {
                 currentXmlAttr = null;
             }
         }

@@ -50,6 +50,13 @@ dictionary = data;
 $.i18n.setDictionary(dictionary);
 //End internationalization
 
+function deDupUserMetaData(arrObj)  {
+    var result = _.uniq(JSON.parse(arrObj), function(x){
+        return x.name;
+    });
+    
+    return JSON.stringify(result).replace(/"/g, '\"');
+}
 
 function PreferenceUI(tr, key, value) {
   var self = this;
@@ -65,7 +72,11 @@ function PreferenceUI(tr, key, value) {
   $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
     var newValue = window.prompt($.i18n._('core-index')["change-value"]+" " + key, value);
     if (newValue !== null) {
+      if (key === "userMetadata")  {
+          newValue = deDupUserMetaData(newValue);
+      }
       $(td1).text(newValue);
+      
       $.post(
         "command/core/set-preference",
         {
@@ -137,7 +148,11 @@ function populatePreferences(prefs) {
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));
-
+        
+        if (key === "userMetadata")  {
+            value = deDupUserMetaData(value);
+        }
+        
         $.post(
           "command/core/set-preference",
           {
