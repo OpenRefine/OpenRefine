@@ -145,7 +145,7 @@ rem --- Check free memory ---------------------------------------------
 for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
 
 echo You have %freeRam%M of free memory. 
-echo Your current configuration will allow to use %REFINE_MEMORY% of memory.
+echo Your current configuration is set to use %REFINE_MEMORY% of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
 echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
 echo.
