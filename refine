@@ -376,11 +376,12 @@ launch4j_prepare() {
 appbundler_prepare() {
     tools_prepare
     
-    APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
-    APPBUNDLER_DIR="."
-    APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
+    cp "$REFINE_TOOLS_DIR/../3rd-party/appbundler-1.0.jar" "$REFINE_TOOLS_DIR"
+    # APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
+    # APPBUNDLER_DIR="."
+    # APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
 
-    tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
+    # tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
 }
    
 virtualenv_prepare() {
@@ -824,7 +825,7 @@ whitespace() {
 }   
     
 checkJavaMajorVersion() {
-  java_ver=$($JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
+  java_ver=$("$JAVA" -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
   # Java 6, 7, 8 starts with 1.x
   if [ ${java_ver:0:2} == "1." ] ; then
     major=`echo ${java_ver} | sed -E 's/1\.([0-9])[0-9_.]{2,6}/\1/g'`
@@ -942,7 +943,7 @@ elif [ "$OS" = "linux" ] ; then
 fi
 
 echo You have "$freeRam"M of free memory. 
-echo Your current configuration will allow to use $REFINE_MEMORY of memory.
+echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
 echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
 
