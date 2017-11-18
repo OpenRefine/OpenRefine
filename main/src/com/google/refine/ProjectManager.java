@@ -44,7 +44,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.tools.tar.TarOutputStream;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -370,13 +374,95 @@ public abstract class ProjectManager {
         }
         return -1;
     }
+    
+    /**
+     * A valid user meta data definition should have name and display property
+     * @param placeHolderJsonObj
+     * @return
+     */
+    private boolean isValidUserMetadataDefinition(JSONObject placeHolderJsonObj) {
+        return (placeHolderJsonObj != null &&
+                placeHolderJsonObj.has("name") &&
+            placeHolderJsonObj.has("display"));
+    }
+    
+    public void mergeEmptyUserMetadata(ProjectMetadata metadata) {
+        if (metadata == null)
+            return;
+        
+        // place holder
+        JSONArray userMetadataPreference = null;
+        // actual metadata for project
+        JSONArray jsonObjArray = metadata.getUserMetadata();
+        
+        initDisplay(jsonObjArray);
+        
+        try {
+            String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
+            if (userMeta == null)
+                return;
+            userMetadataPreference = new JSONArray(userMeta);
+        } catch (JSONException e1) {
+            logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
+            logger.error(ExceptionUtils.getFullStackTrace(e1));
+        }
+        
+        for (int index = 0; index < userMetadataPreference.length(); index++) {
+            try {
+                boolean found = false;
+                JSONObject placeHolderJsonObj = userMetadataPreference.getJSONObject(index);
+                
+                if (!isValidUserMetadataDefinition(placeHolderJsonObj)) {
+                    logger.warn("Skipped invalid user metadata definition" + placeHolderJsonObj.toString());
+                    continue;
+                }
 
+                for (int i = 0; i < jsonObjArray.length(); i++) {
+                    JSONObject jsonObj = jsonObjArray.getJSONObject(i);
+                    if (jsonObj.getString("name").equals(placeHolderJsonObj.getString("name"))) {
+                        found = true;
+                        jsonObj.put("display", placeHolderJsonObj.get("display"));
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    placeHolderJsonObj.put("value", "");
+                    metadata.getUserMetadata().put(placeHolderJsonObj);
+                    logger.info("Put the placeholder {} for project {}",
+                            placeHolderJsonObj.getString("name"),
+                            metadata.getName());
+                } 
+            } catch (JSONException e) {
+                logger.warn("Exception when mergeEmptyUserMetadata",e);
+            }
+        }
+    }
+    
+    /**
+     * honor the meta data preference
+     * @param jsonObjArray
+     */
+    private void initDisplay(JSONArray jsonObjArray) {
+        for (int index = 0; index < jsonObjArray.length(); index++) {
+            try {
+                JSONObject projectMetaJsonObj = jsonObjArray.getJSONObject(index);
+                projectMetaJsonObj.put("display", false);
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getFullStackTrace(e));
+            }
+        }
+    }
 
     /**
-     * Gets all the project Metadata currently held in memory
+     * Gets all the project Metadata currently held in memory.
      * @return
      */
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
+        for(Project project : _projects.values()) {
+            mergeEmptyUserMetadata(project.getMetadata());
+        }
+            
         return _projectsMetadata;
     }
 

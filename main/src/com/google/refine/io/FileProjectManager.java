@@ -44,7 +44,6 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
@@ -60,7 +59,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
-import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
 
@@ -401,72 +399,6 @@ public class FileProjectManager extends ProjectManager {
         }
 
         return found;
-    }
-
-    public void mergeEmptyUserMetadata(ProjectMetadata metadata) {
-        if (metadata == null)
-            return;
-        
-        // place holder
-        JSONArray userMetadataPreference = null;
-        // actual metadata for project
-        JSONArray jsonObjArray = metadata.getUserMetadata();
-        
-        try {
-            String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
-            if (userMeta == null)
-                return;
-            userMetadataPreference = new JSONArray(userMeta);
-        } catch (JSONException e1) {
-            logger.error(ExceptionUtils.getFullStackTrace(e1));
-        }
-        
-        if (userMetadataPreference == null) {
-            logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
-            return;
-        }
-        
-        for (int index = 0; index < userMetadataPreference.length(); index++) {
-            try {
-                boolean found = false;
-                JSONObject placeHolderJsonObj = userMetadataPreference.getJSONObject(index);
-                
-                if (!isValidUserMetadataDefinition(placeHolderJsonObj)) {
-                    logger.warn("Skipped invalid user metadata definition" + placeHolderJsonObj.toString());
-                    continue;
-                }
-
-                for (int i = 0; i < jsonObjArray.length(); i++) {
-                    JSONObject jsonObj = jsonObjArray.getJSONObject(i);
-                    if (jsonObj.getString("name").equals(placeHolderJsonObj.getString("name"))) {
-                        found = true;
-                        jsonObj.put("display", placeHolderJsonObj.get("display"));
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    placeHolderJsonObj.put("value", "");
-                    metadata.getUserMetadata().put(placeHolderJsonObj);
-                    logger.info("Put the placeholder {} for project {}",
-                            placeHolderJsonObj.getString("name"),
-                            metadata.getName());
-                } 
-            } catch (JSONException e) {
-                logger.warn("Exception when mergeEmptyUserMetadata",e);
-            }
-        }
-    }
-    
-    /**
-     * A valid user meta data definition should have name and display property
-     * @param placeHolderJsonObj
-     * @return
-     */
-    private boolean isValidUserMetadataDefinition(JSONObject placeHolderJsonObj) {
-        return (placeHolderJsonObj != null &&
-                placeHolderJsonObj.has("name") &&
-            placeHolderJsonObj.has("display"));
     }
 
     protected void recover() {
