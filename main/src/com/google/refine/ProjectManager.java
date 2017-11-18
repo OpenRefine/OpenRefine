@@ -395,7 +395,7 @@ public abstract class ProjectManager {
         // actual metadata for project
         JSONArray jsonObjArray = metadata.getUserMetadata();
         
-        initDispaly(jsonObjArray);
+        initDisplay(jsonObjArray);
         
         try {
             String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
@@ -443,7 +443,7 @@ public abstract class ProjectManager {
      * honor the meta data preference
      * @param jsonObjArray
      */
-    private void initDispaly(JSONArray jsonObjArray) {
+    private void initDisplay(JSONArray jsonObjArray) {
         for (int index = 0; index < jsonObjArray.length(); index++) {
             try {
                 JSONObject projectMetaJsonObj = jsonObjArray.getJSONObject(index);
