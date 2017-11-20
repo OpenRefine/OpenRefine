@@ -10,8 +10,7 @@ the web. All with the comfort and privacy of your own computer.
 
 Download
 -----------------------
-* [OpenRefine 2.8](https://github.com/OpenRefine/OpenRefine/releases/tag/2.8)
-* [OpenRefine 2.7](https://github.com/OpenRefine/OpenRefine/releases/tag/2.7)
+* [OpenRefine Releases](https://github.com/OpenRefine/OpenRefine/releases)
 
 Documentation and Videos
 -------------------------
