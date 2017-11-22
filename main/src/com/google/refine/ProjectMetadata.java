@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -54,7 +55,7 @@ import com.google.refine.preference.TopList;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-public class ProjectMetadata implements Jsonizable {
+public class ProjectMetadata implements Jsonizable, IMetadata {
     private final Date     _created;
     private Date           _modified;
     private Date written = null;
@@ -98,7 +99,7 @@ public class ProjectMetadata implements Jsonizable {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
 
         writer.object();
@@ -137,7 +138,7 @@ public class ProjectMetadata implements Jsonizable {
             writer.key("encoding"); writer.value(_encoding);
             writer.key("encodingConfidence"); writer.value(_encodingConfidence);
 
-            writer.key("preferences"); _preferenceStore.write(writer, options);
+            writer.key("preferences"); _preferenceStore.writeToJSON(writer, options);
         }
         
         writer.endObject();
@@ -149,7 +150,7 @@ public class ProjectMetadata implements Jsonizable {
     
     public void writeWithoutOption(JSONWriter writer)
             throws JSONException {
-        write(writer, 
+        writeToJSON(writer, 
                 new Properties());
     }
     
@@ -175,11 +176,11 @@ public class ProjectMetadata implements Jsonizable {
             Properties options = new Properties();
             options.setProperty("mode", "save");
 
-            write(jsonWriter, options);
+            writeToJSON(jsonWriter, options);
         }
     }
     
-    static public ProjectMetadata loadFromJSON(JSONObject obj) {
+     public ProjectMetadata loadFromJSON(JSONObject obj) {
         // TODO: Is this correct?  It's using modified date for creation date
         ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
 
@@ -433,6 +434,20 @@ public class ProjectMetadata implements Jsonizable {
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
         }
+    }
+
+
+
+    @Override
+    public ProjectMetadata loadFromFile(File metadataFile) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void writeToFile(File metadataFile) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

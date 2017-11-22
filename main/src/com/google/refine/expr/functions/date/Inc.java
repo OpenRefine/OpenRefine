@@ -91,7 +91,7 @@ public class Inc implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("description"); writer.value("Returns a date changed by the given amount in the given unit of time");
         writer.key("params"); writer.value("date d, number value, string unit (default to 'hour')");

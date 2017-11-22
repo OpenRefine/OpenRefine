@@ -78,7 +78,7 @@ public class Cell implements HasFields, Jsonizable {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         if (ExpressionUtils.isError(value)) {
             writer.key("e");
@@ -121,7 +121,7 @@ public class Cell implements HasFields, Jsonizable {
     public void save(Writer writer, Properties options) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, options);
+            writeToJSON(jsonWriter, options);
         } catch (JSONException e) {
             e.printStackTrace();
         }

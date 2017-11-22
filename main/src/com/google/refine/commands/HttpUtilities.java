@@ -72,7 +72,7 @@ abstract public class HttpUtilities {
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
     
-        o.write(writer, options);
+        o.writeToJSON(writer, options);
         w.flush();
         w.close();
     }

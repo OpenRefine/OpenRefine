@@ -91,8 +91,8 @@ public class GetModelsCommand extends Command {
             JSONWriter writer = new JSONWriter(response.getWriter());
             
             writer.object();
-            writer.key("columnModel"); project.columnModel.write(writer, options);
-            writer.key("recordModel"); project.recordModel.write(writer, options);
+            writer.key("columnModel"); project.columnModel.writeToJSON(writer, options);
+            writer.key("recordModel"); project.recordModel.writeToJSON(writer, options);
             
             writer.key("overlayModels"); writer.object();
             for (String modelName : project.overlayModels.keySet()) {
@@ -100,7 +100,7 @@ public class GetModelsCommand extends Command {
                 if (overlayModel != null) {
                     writer.key(modelName);
                     
-                    project.overlayModels.get(modelName).write(writer, options);
+                    project.overlayModels.get(modelName).writeToJSON(writer, options);
                 }
             }
             writer.endObject();

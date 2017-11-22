@@ -111,9 +111,9 @@ public class ReconJudgeOneCellCommand extends Command {
 
                 writer.object();
                 writer.key("code"); writer.value("ok");
-                writer.key("historyEntry"); historyEntry.write(writer, options);
-                writer.key("cell"); process.newCell.write(writer, options);
-                writer.key("pool"); pool.write(writer, options);
+                writer.key("historyEntry"); historyEntry.writeToJSON(writer, options);
+                writer.key("cell"); process.newCell.writeToJSON(writer, options);
+                writer.key("pool"); pool.writeToJSON(writer, options);
                 writer.endObject();
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");

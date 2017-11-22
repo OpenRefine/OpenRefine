@@ -71,7 +71,7 @@ public class GetAllProjectMetadataCommand extends Command {
                     ProjectMetadata pm = e.getValue();
                     if (pm != null) {
                         writer.key(e.getKey().toString());
-                        pm.write(writer, options);
+                        pm.writeToJSON(writer, options);
                     }
                 }
                 writer.endObject();

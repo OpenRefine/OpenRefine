@@ -106,7 +106,7 @@ public class RecordModel implements Jsonizable {
     }
 
     @Override
-    synchronized public void write(JSONWriter writer, Properties options)
+    synchronized public void writeToJSON(JSONWriter writer, Properties options)
     throws JSONException {
 
         writer.object();

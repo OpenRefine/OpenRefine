@@ -191,7 +191,7 @@ public class StandardReconConfig extends ReconConfig {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();

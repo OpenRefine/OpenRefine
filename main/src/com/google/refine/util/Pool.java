@@ -115,7 +115,7 @@ public class Pool implements Jsonizable {
         for (Recon recon : recons2) {
             JSONWriter jsonWriter = new JSONWriter(writer);
             try {
-                recon.write(jsonWriter, options);
+                recon.writeToJSON(jsonWriter, options);
                 
                 writer.write('\n');
             } catch (JSONException e) {
@@ -169,7 +169,7 @@ public class Pool implements Jsonizable {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -177,7 +177,7 @@ public class Pool implements Jsonizable {
             writer.object();
             for (Entry<String, Recon> entry : recons.entrySet()) {
                 writer.key(entry.getKey().toString());
-                entry.getValue().write(writer, options);
+                entry.getValue().writeToJSON(writer, options);
             }
             writer.endObject();
         writer.endObject();

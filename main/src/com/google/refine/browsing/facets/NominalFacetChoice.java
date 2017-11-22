@@ -55,10 +55,10 @@ public class NominalFacetChoice implements Jsonizable {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         writer.object();
-        writer.key("v"); decoratedValue.write(writer, options);
+        writer.key("v"); decoratedValue.writeToJSON(writer, options);
         writer.key("c"); writer.value(count);
         writer.key("s"); writer.value(selected);
         writer.endObject();

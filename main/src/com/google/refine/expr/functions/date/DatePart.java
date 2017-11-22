@@ -95,7 +95,7 @@ public class DatePart implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("description"); writer.value("Returns part of a date");
         writer.key("params"); writer.value("date d, string part");

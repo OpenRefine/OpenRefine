@@ -103,7 +103,7 @@ public class HistoryEntry implements Jsonizable {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
 
         writer.object();
@@ -111,7 +111,7 @@ public class HistoryEntry implements Jsonizable {
         writer.key("description"); writer.value(description);
         writer.key("time"); writer.value(ParsingUtilities.dateToString(time));
         if ("save".equals(options.getProperty("mode")) && operation != null) {
-            writer.key(OPERATION); operation.write(writer, options);
+            writer.key(OPERATION); operation.writeToJSON(writer, options);
         }
         writer.endObject();
     }

@@ -280,7 +280,7 @@ public class DefaultImportingController implements ImportingController {
         try {
             writer.object();
             writer.key("code"); writer.value("ok");
-            writer.key("job"); job.write(writer, new Properties());
+            writer.key("job"); job.writeToJSON(writer, new Properties());
             writer.endObject();
         } catch (JSONException e) {
             throw new ServletException(e);

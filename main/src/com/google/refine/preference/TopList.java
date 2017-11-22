@@ -74,7 +74,7 @@ public class TopList implements Jsonizable, Iterable<String> {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("class"); writer.value(this.getClass().getName());
         

@@ -94,7 +94,7 @@ public class ListFacet implements Facet {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -111,7 +111,7 @@ public class ListFacet implements Facet {
         } else {
             writer.key("choices"); writer.array();
             for (NominalFacetChoice choice : _choices) {
-                choice.write(writer, options);
+                choice.writeToJSON(writer, options);
             }
             writer.endArray();
             

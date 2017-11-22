@@ -218,7 +218,7 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
-        ProjectMetadataUtilities.save(metadata, projectDir);
+        ProjectMetadataUtilities.save(_projects.get(projectId), metadata, projectDir);
     }
 
     @Override
@@ -286,7 +286,7 @@ public class FileProjectManager extends ProjectManager {
                     if (metadata.isDirty()) {
                         Project project = ProjectManager.singleton.getProject(id);
                         metadata.setRowCount(project.rows.size());
-                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
+                        ProjectMetadataUtilities.save(project, metadata, getProjectDir(id));
                         saveWasNeeded = true;
                     }
                 }
@@ -296,7 +296,7 @@ public class FileProjectManager extends ProjectManager {
 
             jsonWriter.key("preferences");
             saveWasNeeded |= _preferenceStore.isDirty();
-            _preferenceStore.write(jsonWriter, new Properties());
+            _preferenceStore.writeToJSON(jsonWriter, new Properties());
 
             jsonWriter.endObject();
         } finally {

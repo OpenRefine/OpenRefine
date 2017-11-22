@@ -187,7 +187,7 @@ public class BinningClusterer extends Clusterer {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         EntriesComparator c = new EntriesComparator();
         
         writer.array();        

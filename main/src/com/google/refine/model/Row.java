@@ -161,7 +161,7 @@ public class Row implements HasFields, Jsonizable {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -171,7 +171,7 @@ public class Row implements HasFields, Jsonizable {
         writer.key("cells"); writer.array();
         for (Cell cell : cells) {
             if (cell != null) {
-                cell.write(writer, options);
+                cell.writeToJSON(writer, options);
             } else {
                 writer.value(null);
             }
@@ -207,7 +207,7 @@ public class Row implements HasFields, Jsonizable {
     public void save(Writer writer, Properties options) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, options);
+            writeToJSON(jsonWriter, options);
         } catch (JSONException e) {
             e.printStackTrace();
         }

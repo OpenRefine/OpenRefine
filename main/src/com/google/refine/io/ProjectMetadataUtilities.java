@@ -40,7 +40,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
@@ -50,14 +52,27 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectMetadata;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+
+import io.frictionlessdata.tableschema.Field;
+import io.frictionlessdata.tableschema.Schema;
 
 
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
+    
+    final static IMetadata projectMetaData = new ProjectMetadata();
 
-    public static void save(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+    public static void save(Project project, ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+        saveProjectMetadata(projectMeta, projectDir);
+        
+        saveTableSchema(project, projectDir);
+    }
+    
+    public static void saveProjectMetadata(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
 
@@ -74,7 +89,49 @@ public class ProjectMetadataUtilities {
 
         tempFile.renameTo(file);
     }
+    
+    public static void saveTableSchema(Project project, File projectDir) throws JSONException, IOException  {
+        File tempFile = new File(projectDir, "table-schema.temp.json");
+//        saveToFile(project, tempFile);
+        
+        // TODO: 1. build schema and write to file
+        Map<Column, Field> columnToSchemaMap = new HashMap<Column, Field>();
+//        columnToSchemaMap.put(arg0, arg1)
+        
+        Schema schema = new Schema();
+        for (Column col : project.columnModel.columns)  {
+            /**
+            Field intField = new Field("id", Field.FIELD_TYPE_INTEGER, Field.FIELD_FORMAT_DEFAULT, null, null, intFieldConstraints);
+            createdSchema.addField(intField);
+            */
+            
+            Map stringFieldConstraints = null;
+            Field field = new Field(col.getName(), 
+                    Field.FIELD_TYPE_STRING, 
+                    Field.FIELD_FORMAT_DEFAULT, 
+                    "the title", 
+                    "the description", 
+                    stringFieldConstraints);
+            
+            schema.addField(field);
+        }
+        schema.save(tempFile.getAbsolutePath());
+        // END OF TODO
+        
+        File file = new File(projectDir, "table-schema.json");
+        File oldFile = new File(projectDir, "table-schema.old.json");
 
+        if (oldFile.exists()) {
+            oldFile.delete();
+        }
+        
+        if (file.exists()) {
+            file.renameTo(oldFile);
+        }
+
+        tempFile.renameTo(file);
+    }
+    
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
@@ -149,7 +206,7 @@ public class ProjectMetadataUtilities {
             JSONTokener tokener = new JSONTokener(reader);
             JSONObject obj = (JSONObject) tokener.nextValue();
 
-            return ProjectMetadata.loadFromJSON(obj);
+            return projectMetaData.loadFromJSON(obj);
         } finally {
             reader.close();
         }

@@ -125,7 +125,7 @@ abstract public class ReconConfig implements Jsonizable {
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
+            writeToJSON(jsonWriter, new Properties());
         } catch (JSONException e) {
            LOGGER.error("Save failed",e);
         }

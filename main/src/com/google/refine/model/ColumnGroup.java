@@ -61,7 +61,7 @@ public class ColumnGroup implements Jsonizable {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -73,7 +73,7 @@ public class ColumnGroup implements Jsonizable {
         if (!"save".equals(options.get("mode")) && (subgroups != null) && (subgroups.size() > 0)) {
             writer.key("subgroups"); writer.array();
             for (ColumnGroup g : subgroups) {
-                g.write(writer, options);
+                g.writeToJSON(writer, options);
             }
             writer.endArray();
         }
@@ -88,7 +88,7 @@ public class ColumnGroup implements Jsonizable {
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
+            writeToJSON(jsonWriter, new Properties());
         } catch (JSONException e) {
             e.printStackTrace();
         }

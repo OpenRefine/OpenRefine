@@ -45,5 +45,5 @@ import org.json.JSONWriter;
  * @author dfhuynh
  */
 public interface Jsonizable {
-    public void write(JSONWriter writer, Properties options) throws JSONException;
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException;
 }

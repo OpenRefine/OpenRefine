@@ -94,7 +94,7 @@ public class Column implements Jsonizable {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -103,11 +103,11 @@ public class Column implements Jsonizable {
         writer.key("name"); writer.value(_name);
         if (_reconConfig != null) {
             writer.key("reconConfig");
-            _reconConfig.write(writer, options);
+            _reconConfig.writeToJSON(writer, options);
         }
         if (_reconStats != null) {
             writer.key("reconStats");
-            _reconStats.write(writer, options);
+            _reconStats.writeToJSON(writer, options);
         }
         writer.endObject();
     }
@@ -143,7 +143,7 @@ public class Column implements Jsonizable {
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
+            writeToJSON(jsonWriter, new Properties());
         } catch (JSONException e) {
             e.printStackTrace();
         }

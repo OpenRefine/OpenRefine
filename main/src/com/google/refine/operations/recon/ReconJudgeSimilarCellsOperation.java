@@ -117,7 +117,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
+    public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -128,7 +128,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         writer.key("similarValue"); writer.value(_similarValue);
         writer.key("judgment"); writer.value(Recon.judgmentToString(_judgment));
         if (_match != null) {
-            writer.key("match"); _match.write(writer, options);
+            writer.key("match"); _match.writeToJSON(writer, options);
         }
         writer.key("shareNewTopics"); writer.value(_shareNewTopics);
         

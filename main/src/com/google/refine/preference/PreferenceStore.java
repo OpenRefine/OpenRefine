@@ -71,7 +71,7 @@ public class PreferenceStore implements Jsonizable {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         
         writer.key("entries");
@@ -81,7 +81,7 @@ public class PreferenceStore implements Jsonizable {
                 
                 Object o = _prefs.get(k);
                 if (o instanceof Jsonizable) {
-                    ((Jsonizable) o).write(writer, options);
+                    ((Jsonizable) o).writeToJSON(writer, options);
                 } else {
                     writer.value(o);
                 }

@@ -107,7 +107,7 @@ public class Diff implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
         writer.key("description"); writer.value("For strings, returns the portion where they differ. For dates, it returns the difference in given time units");
         writer.key("params"); writer.value("o1, o2, time unit (optional)");
