@@ -136,6 +136,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     $("#no-project-message").clone().show().appendTo(container);
   } else {
     Refine.selectActionArea('open-project');
+    
+
 
     var table = $(
       '<table class="tablesorter-blue list-table"><thead><tr>' +
@@ -159,6 +161,30 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       })() +     
       '</tr></thead><tbody></tbody></table>'
     ).appendTo(container)[0];
+    
+    var allProjIds = "";
+    $.each(projects, function(i) {
+      allProjIds = allProjIds + "," + projects[i].id;
+    });
+    $('<a/>').attr("href", "").html($.i18n._('core-index-open')["delete-all-proj"]).addClass("header-delete-all").click(function() {
+      if (window.confirm($.i18n._('core-index-open')["del-body"]+ "\"?")) {
+        $.ajax({
+          type : "POST",
+          url : "command/core/delete-all-projects",
+          data : {
+            "projects" : allProjIds
+          },
+          dataType : "json",
+          success : function(data) {
+            if (data && typeof data.code != 'undefined' && data.code == "ok") {
+              self._fetchProjects();
+            }
+          }
+        });
+      }
+      return false;
+    }).appendTo(table);
+    
 
     var renderProject = function(project) {
       var tr = table.getElementsByTagName('tbody')[0].insertRow(table.rows.length - 1);

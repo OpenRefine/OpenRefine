@@ -71,6 +71,7 @@ function registerCommands() {
   RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
+  RS.registerCommand(module, "delete-all-projects", new Packages.com.google.refine.commands.project.DeleteAllProjectsCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
   RS.registerCommand(module, "set-project-metadata", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
 
