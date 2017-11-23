@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.json.JSONObject;
 
 import com.google.refine.ProjectMetadata;

@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
@@ -191,7 +191,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 // value is fileName#sheetIndex
                 fileNameAndSheetIndex = sheetObj.getString("fileNameAndSheetIndex").split("#");
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
             
             if (!fileNameAndSheetIndex[0].equals(fileSource))

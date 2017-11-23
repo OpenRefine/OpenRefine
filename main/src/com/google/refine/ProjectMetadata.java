@@ -42,7 +42,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -202,7 +202,7 @@ public class ProjectMetadata implements  IMetadata {
             try {
                 pm._preferenceStore.load(obj.getJSONObject("preferences"));
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
         
@@ -211,7 +211,7 @@ public class ProjectMetadata implements  IMetadata {
                 ((TopList) pm._preferenceStore.get("scripting.expressions"))
                     .load(obj.getJSONArray("expressions"));
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
         
@@ -229,7 +229,7 @@ public class ProjectMetadata implements  IMetadata {
                     }
                 }
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
         
@@ -238,7 +238,7 @@ public class ProjectMetadata implements  IMetadata {
                 JSONArray jsonArray = obj.getJSONArray("importOptionMetadata");
                 pm._importOptionMetadata = jsonArray;
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
         
@@ -247,7 +247,7 @@ public class ProjectMetadata implements  IMetadata {
                 JSONArray jsonArray = obj.getJSONArray(PreferenceStore.USER_METADATA_KEY);
                 pm._userMetadata = jsonArray;
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         } 
         
@@ -419,7 +419,7 @@ public class ProjectMetadata implements  IMetadata {
                     obj.put("value", valueString);
                 }
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
     }
@@ -433,7 +433,7 @@ public class ProjectMetadata implements  IMetadata {
         } catch (NoSuchFieldException e) {
             updateUserMetadata(metaName, valueString);
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            logger.error(ExceptionUtils.getFullStackTrace(e));
+            logger.error(ExceptionUtils.getStackTrace(e));
         }
     }
 

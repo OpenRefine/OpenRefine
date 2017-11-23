@@ -3,7 +3,7 @@ package com.google.refine.importers.tree;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A column group describes a branch in tree structured data

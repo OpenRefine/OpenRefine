@@ -38,7 +38,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 
 import com.google.refine.ProjectManager;
