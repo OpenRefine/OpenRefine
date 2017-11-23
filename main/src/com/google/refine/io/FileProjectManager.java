@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
+import com.google.refine.IMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
@@ -115,7 +115,7 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
-            ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
+            IMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
@@ -216,7 +216,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
         ProjectMetadataUtilities.save(_projects.get(projectId), metadata, projectDir);
     }
@@ -280,7 +280,7 @@ public class FileProjectManager extends ProjectManager {
             jsonWriter.key("projectIDs");
             jsonWriter.array();
             for (Long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = _projectsMetadata.get(id);
+                IMetadata metadata = _projectsMetadata.get(id);
                 if (metadata != null) {
                     jsonWriter.value(id);
                     if (metadata.isDirty()) {
@@ -370,7 +370,7 @@ public class FileProjectManager extends ProjectManager {
                     long id = a.getLong(i);
 
                     File projectDir = getProjectDir(id);
-                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+                    IMetadata metadata = ProjectMetadataUtilities.load(projectDir);
                     
                     mergeEmptyUserMetadata(metadata);
 

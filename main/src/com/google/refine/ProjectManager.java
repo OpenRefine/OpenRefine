@@ -73,7 +73,7 @@ public abstract class ProjectManager {
     static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
 
 
-    protected Map<Long, ProjectMetadata> _projectsMetadata;
+    protected Map<Long, IMetadata> _projectsMetadata;
     protected PreferenceStore            _preferenceStore;
 
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
@@ -97,11 +97,14 @@ public abstract class ProjectManager {
     transient protected Map<Long, Project> _projects;
 
     static public ProjectManager singleton;
+    
+    protected IMetadata _metadata;
 
-    protected ProjectManager(){
-        _projectsMetadata = new HashMap<Long, ProjectMetadata>();
+    protected ProjectManager(IMetadata metadata){
+        _projectsMetadata = new HashMap<Long, IMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
+        _metadata = metadata;
 
         preparePreferenceStore(_preferenceStore);
     }
@@ -124,7 +127,7 @@ public abstract class ProjectManager {
      * @param project
      * @param projectMetadata
      */
-    public void registerProject(Project project, ProjectMetadata projectMetadata) {
+    public void registerProject(Project project, IMetadata projectMetadata) {
         synchronized (this) {
             _projects.put(project.id, project);
             _projectsMetadata.put(project.id, projectMetadata);
@@ -169,7 +172,7 @@ public abstract class ProjectManager {
      */
     public void ensureProjectSaved(long id) {
         synchronized(this){
-            ProjectMetadata metadata = this.getProjectMetadata(id);
+            IMetadata metadata = this.getProjectMetadata(id);
             if (metadata != null) {
                 try {
                     saveMetadata(metadata, id);
@@ -197,7 +200,7 @@ public abstract class ProjectManager {
      * @param projectId
      * @throws Exception
      */
-    public abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
+    public abstract void saveMetadata(IMetadata metadata, long projectId) throws Exception;
 
     /**
      * Save project to the data store
@@ -246,7 +249,7 @@ public abstract class ProjectManager {
         
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = getProjectMetadata(id);
+                IMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
@@ -315,7 +318,7 @@ public abstract class ProjectManager {
     protected void disposeUnmodifiedProjects() {
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = getProjectMetadata(id);
+                IMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id);
                 if (project != null && !project.getProcessManager().hasPending() 
                         && metadata.getModified().getTime() < project.getLastSave().getTime()) {
@@ -339,7 +342,7 @@ public abstract class ProjectManager {
      * @param id
      * @return
      */
-    public ProjectMetadata getProjectMetadata(long id) {
+    public IMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
     }
 
@@ -349,8 +352,8 @@ public abstract class ProjectManager {
      * @param name
      * @return
      */
-    public ProjectMetadata getProjectMetadata(String name) {
-        for (ProjectMetadata pm : _projectsMetadata.values()) {
+    public IMetadata getProjectMetadata(String name) {
+        for (IMetadata pm : _projectsMetadata.values()) {
             if (pm.getName().equals(name)) {
                 return pm;
             }
@@ -367,7 +370,7 @@ public abstract class ProjectManager {
      *     The id of the project, or -1 if it cannot be found
      */
     public long getProjectID(String name) {
-        for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
+        for (Entry<Long, IMetadata> entry : _projectsMetadata.entrySet()) {
             if (entry.getValue().getName().equals(name)) {
                 return entry.getKey();
             }
@@ -386,7 +389,7 @@ public abstract class ProjectManager {
             placeHolderJsonObj.has("display"));
     }
     
-    public void mergeEmptyUserMetadata(ProjectMetadata metadata) {
+    public void mergeEmptyUserMetadata(IMetadata metadata) {
         if (metadata == null)
             return;
         
@@ -458,7 +461,7 @@ public abstract class ProjectManager {
      * Gets all the project Metadata currently held in memory.
      * @return
      */
-    public Map<Long, ProjectMetadata> getAllProjectMetadata() {
+    public Map<Long, IMetadata> getAllProjectMetadata() {
         for(Project project : _projects.values()) {
             mergeEmptyUserMetadata(project.getMetadata());
         }

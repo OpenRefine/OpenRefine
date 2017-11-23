@@ -1,0 +1,3 @@
+[submodule "tableschema-java"]
+	path = tableschema-java
+	url = https://github.com/frictionlessdata/tableschema-java

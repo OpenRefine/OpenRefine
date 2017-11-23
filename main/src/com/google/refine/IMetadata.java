@@ -11,6 +11,8 @@ import org.json.JSONWriter;
  *
  */
 public interface IMetadata extends Jsonizable {
+    public String formatName = null;
+    
     public ProjectMetadata loadFromJSON(JSONObject obj);
     
     public ProjectMetadata loadFromFile(File metadataFile);
