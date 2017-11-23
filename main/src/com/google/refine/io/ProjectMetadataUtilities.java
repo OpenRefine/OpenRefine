@@ -66,13 +66,13 @@ public class ProjectMetadataUtilities {
     
     final static IMetadata projectMetaData = new ProjectMetadata();
 
-    public static void save(Project project, ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+    public static void save(Project project, IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         saveProjectMetadata(projectMeta, projectDir);
         
         saveTableSchema(project, projectDir);
     }
     
-    public static void saveProjectMetadata(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+    public static void saveProjectMetadata(IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
 
@@ -132,11 +132,11 @@ public class ProjectMetadataUtilities {
         tempFile.renameTo(file);
     }
     
-    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
+    protected static void saveToFile(IMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
             JSONWriter jsonWriter = new JSONWriter(writer);
-            projectMeta.write(jsonWriter);
+            projectMeta.write(jsonWriter, false);
         } finally {
             writer.close();
         }

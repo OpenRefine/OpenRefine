@@ -55,7 +55,7 @@ import com.google.refine.preference.TopList;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-public class ProjectMetadata implements Jsonizable, IMetadata {
+public class ProjectMetadata implements  IMetadata {
     private final Date     _created;
     private Date           _modified;
     private Date written = null;
@@ -171,6 +171,7 @@ public class ProjectMetadata implements Jsonizable, IMetadata {
      * @param onlyIfDirty true to not write unchanged metadata
      * @throws JSONException
      */
+    @Override
     public void write(JSONWriter jsonWriter, boolean onlyIfDirty) throws JSONException  {
         if (!onlyIfDirty || isDirty()) {
             Properties options = new Properties();
