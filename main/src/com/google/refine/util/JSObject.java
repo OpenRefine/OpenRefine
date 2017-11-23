@@ -157,7 +157,7 @@ public class JSObject extends Properties {
             writeJSONObject(writer, (JSONObject) o);
             
         } else {
-            writer.print("\"" + StringEscapeUtils.escapeJavaScript(o.toString()) + "\"");
+            writer.print("\"" + StringEscapeUtils.escapeEcmaScript(o.toString()) + "\"");
         }
     }
 }
