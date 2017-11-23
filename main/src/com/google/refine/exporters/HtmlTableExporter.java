@@ -63,7 +63,7 @@ public class HtmlTableExporter implements WriterExporter {
                     writer.write("<html>\n");
                     writer.write("<head>\n");
                     writer.write("<title>"); 
-                    writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+                    writer.write(ProjectManager.singleton.getMetadata(project.id).getName());
                     writer.write("</title>\n");
                     writer.write("<meta charset=\"utf-8\" />\n");
                     writer.write("</head>\n");

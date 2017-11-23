@@ -50,6 +50,7 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.IMetadata;
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
@@ -194,12 +195,12 @@ public abstract class Command {
      * @return
      * @throws ServletException
      */
-    protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
+    protected IMetadata getMetadata(HttpServletRequest request) throws ServletException {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
         try {
-            ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(Long.parseLong(request.getParameter("project")));
+            IMetadata pm = ProjectManager.singleton.getMetadata(Long.parseLong(request.getParameter("project")));
             if (pm != null) {
                 return pm;
             }

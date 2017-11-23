@@ -39,6 +39,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.EvalError;
@@ -61,7 +62,7 @@ public class Reinterpret implements Function {
                 encoder = (String) o2;
                 if (args.length == 2) {
                     Project project = (Project) bindings.get("project");
-                    ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
+                    IMetadata metadata = ProjectManager.singleton.getMetadata(project.id);
                     decoder = metadata.getEncoding(); // can return "" for broken projects
                 } else {
                     decoder = (String) args[2];

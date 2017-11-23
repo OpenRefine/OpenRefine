@@ -46,6 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
@@ -66,9 +67,9 @@ public class GetAllProjectMetadataCommand extends Command {
             
             writer.key("projects");
                 writer.object();
-                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-                for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
-                    ProjectMetadata pm = e.getValue();
+                Map<Long, IMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
+                for (Entry<Long,IMetadata> e : m.entrySet()) {
+                    IMetadata pm = e.getValue();
                     if (pm != null) {
                         writer.key(e.getKey().toString());
                         pm.writeToJSON(writer, options);

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
@@ -21,7 +22,7 @@ public class SetProjectMetadataCommand extends Command {
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         String metaName = request.getParameter("name");
         String valueString = request.getParameter("value");
-        ProjectMetadata meta = null;
+        IMetadata meta = null;
         
         if (project == null) {
             respond(response, "{ \"code\" : \"error\", \"message\" : \"Project cannot be found\" }");

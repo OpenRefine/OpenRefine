@@ -90,7 +90,7 @@ public class HistoryTests extends RefineTest {
         ProjectMetadata projectMetadata = mock(ProjectMetadata.class);
 
         when(projectManager.getProject(Mockito.anyLong())).thenReturn(project);
-        when(projectManager.getProjectMetadata(Mockito.anyLong())).thenReturn(projectMetadata);
+        when(projectManager.getMetadata(Mockito.anyLong())).thenReturn(projectMetadata);
 
         SUT.addEntry(entry);
 

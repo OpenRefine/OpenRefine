@@ -210,7 +210,7 @@ public class ProjectManagerTests extends RefineTest {
 
     protected void AssertProjectRegistered(){
         Assert.assertEquals(SUT.getProject(project.id), project);
-        Assert.assertEquals(SUT.getProjectMetadata(project.id), metadata);
+        Assert.assertEquals(SUT.getMetadata(project.id), metadata);
     }
 
     protected void whenGetSaveTimes(Project proj, ProjectMetadata meta){

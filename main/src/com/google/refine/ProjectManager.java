@@ -172,7 +172,7 @@ public abstract class ProjectManager {
      */
     public void ensureProjectSaved(long id) {
         synchronized(this){
-            IMetadata metadata = this.getProjectMetadata(id);
+            IMetadata metadata = this.getMetadata(id);
             if (metadata != null) {
                 try {
                     saveMetadata(metadata, id);
@@ -249,7 +249,7 @@ public abstract class ProjectManager {
         
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
-                IMetadata metadata = getProjectMetadata(id);
+                IMetadata metadata = getMetadata(id);
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
@@ -318,7 +318,7 @@ public abstract class ProjectManager {
     protected void disposeUnmodifiedProjects() {
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
-                IMetadata metadata = getProjectMetadata(id);
+                IMetadata metadata = getMetadata(id);
                 Project project = _projects.get(id);
                 if (project != null && !project.getProcessManager().hasPending() 
                         && metadata.getModified().getTime() < project.getLastSave().getTime()) {
@@ -342,7 +342,7 @@ public abstract class ProjectManager {
      * @param id
      * @return
      */
-    public IMetadata getProjectMetadata(long id) {
+    public IMetadata getMetadata(long id) {
         return _projectsMetadata.get(id);
     }
 

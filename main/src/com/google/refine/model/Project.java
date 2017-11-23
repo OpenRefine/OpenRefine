@@ -54,6 +54,7 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -123,8 +124,8 @@ public class Project {
         this._lastSave = new Date();
     }
 
-    public ProjectMetadata getMetadata() {
-        return ProjectManager.singleton.getProjectMetadata(id);
+    public IMetadata getMetadata() {
+        return ProjectManager.singleton.getMetadata(id);
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {

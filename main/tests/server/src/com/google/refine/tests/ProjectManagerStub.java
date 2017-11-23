@@ -38,6 +38,7 @@ import java.io.InputStream;
 
 import org.apache.tools.tar.TarOutputStream;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
@@ -83,7 +84,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
         // empty
 
     }

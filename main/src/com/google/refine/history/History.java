@@ -155,7 +155,7 @@ public class History implements Jsonizable {
     }
 
     protected void setModified() {
-        ProjectManager.singleton.getProjectMetadata(_projectID).updateModified();
+        ProjectManager.singleton.getMetadata(_projectID).updateModified();
     }
 
     synchronized public List<HistoryEntry> getLastPastEntries(int count) {

@@ -49,7 +49,7 @@ public class RenameProjectCommand extends Command {
         
         try {
             String name = request.getParameter("name");
-            ProjectMetadata pm = getProjectMetadata(request);
+            ProjectMetadata pm = getMetadata(request);
             
             pm.setName(name);
             

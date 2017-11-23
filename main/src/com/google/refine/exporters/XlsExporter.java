@@ -82,7 +82,7 @@ public class XlsExporter implements StreamExporter {
             public void startFile(JSONObject options) {
                 s = wb.createSheet();
                 String sheetName = WorkbookUtil.createSafeSheetName(
-                        ProjectManager.singleton.getProjectMetadata(project.id).getName());
+                        ProjectManager.singleton.getMetadata(project.id).getName());
                 wb.setSheetName(0, sheetName);
 
                 dateStyle = wb.createCellStyle();
