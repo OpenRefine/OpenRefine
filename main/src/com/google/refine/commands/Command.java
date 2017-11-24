@@ -52,12 +52,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 

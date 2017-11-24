@@ -47,10 +47,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 
 

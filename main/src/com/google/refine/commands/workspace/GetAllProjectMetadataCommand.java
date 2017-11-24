@@ -47,9 +47,9 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.ProjectMetadata;
 
 public class GetAllProjectMetadataCommand extends Command {
     @Override

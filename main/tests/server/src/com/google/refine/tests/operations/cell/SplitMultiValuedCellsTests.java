@@ -52,7 +52,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
@@ -61,6 +60,7 @@ import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.Process;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
 import com.google.refine.tests.RefineServletStub;

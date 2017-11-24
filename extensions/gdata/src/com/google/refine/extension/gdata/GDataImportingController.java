@@ -65,7 +65,6 @@ import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.DefaultImportingController;
@@ -73,6 +72,7 @@ import com.google.refine.importing.ImportingController;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 

@@ -47,8 +47,8 @@ import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 
