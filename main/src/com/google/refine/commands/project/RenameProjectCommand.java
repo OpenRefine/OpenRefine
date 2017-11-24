@@ -39,6 +39,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 
@@ -49,7 +50,7 @@ public class RenameProjectCommand extends Command {
         
         try {
             String name = request.getParameter("name");
-            ProjectMetadata pm = getMetadata(request);
+            IMetadata pm = getMetadata(request);
             
             pm.setName(name);
             

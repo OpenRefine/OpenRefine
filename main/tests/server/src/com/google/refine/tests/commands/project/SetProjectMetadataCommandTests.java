@@ -154,7 +154,8 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
+        Assert.assertEquals(proj.getMetadata().getName(), "subject");
+        Assert.assertEquals(((ProjectMetadata)proj.getMetadata()).getSubject(), SUBJECT);
     }
     
     /**

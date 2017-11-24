@@ -84,7 +84,9 @@ public class Project {
     transient private Date _lastSave = new Date();
 
     final static Logger logger = LoggerFactory.getLogger("project");
-
+    
+    private IMetadata metadata;
+    
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
@@ -122,10 +124,6 @@ public class Project {
      */
     public void setLastSave(){
         this._lastSave = new Date();
-    }
-
-    public IMetadata getMetadata() {
-        return ProjectManager.singleton.getMetadata(id);
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
@@ -267,5 +265,20 @@ public class Project {
     //TODO make the processManager variable private, and force all calls through this method
     public ProcessManager getProcessManager() {
         return this.processManager;
+    }
+    
+    /**
+    public IMetadata getMetadata() {
+        return ProjectManager.singleton.getMetadata(id);
+    }
+    */
+    
+    public IMetadata getMetadata() {
+        return metadata;
+    }
+    
+    // metadata XXX: need to set from somewhere 
+    public void setMetadata(IMetadata metadata) {
+        this.metadata = metadata;
     }
 }

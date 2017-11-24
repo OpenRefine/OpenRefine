@@ -50,6 +50,7 @@ import org.apache.commons.fileupload.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
@@ -75,7 +76,7 @@ public class ImportProjectCommand extends Command {
 
             ProjectManager.singleton.loadProjectMetadata(projectID);
 
-            ProjectMetadata pm = ProjectManager.singleton.getMetadata(projectID);
+            IMetadata pm = ProjectManager.singleton.getMetadata(projectID);
             if (pm != null) {
                 if (options.containsKey("project-name")) {
                     String projectName = options.getProperty("project-name");

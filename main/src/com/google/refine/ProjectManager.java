@@ -98,13 +98,10 @@ public abstract class ProjectManager {
 
     static public ProjectManager singleton;
     
-    protected IMetadata _metadata;
-
-    protected ProjectManager(IMetadata metadata){
+    protected ProjectManager(){
         _projectsMetadata = new HashMap<Long, IMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
-        _metadata = metadata;
 
         preparePreferenceStore(_preferenceStore);
     }
@@ -343,7 +340,7 @@ public abstract class ProjectManager {
      * @return
      */
     public IMetadata getMetadata(long id) {
-        return _projectsMetadata.get(id);
+        return _projects.get(id).getMetadata();
     }
 
     /**

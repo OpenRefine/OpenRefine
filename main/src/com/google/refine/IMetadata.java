@@ -2,6 +2,7 @@ package com.google.refine;
 
 
 import java.io.File;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,5 +26,19 @@ public interface IMetadata extends Jsonizable {
      * @throws JSONException
      */
     public void write(JSONWriter jsonWriter, boolean onlyIfDirty);
+
+    public String getEncoding();
+
+    public Date getModified();
+
+    public String getName();
+
+    public boolean isDirty();
+
+    public void setName(String projectName);
+
+    public void setRowCount(int size);
+
+    public void updateModified();
     
 }

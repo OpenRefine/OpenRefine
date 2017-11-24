@@ -157,7 +157,8 @@ public class ProjectMetadata implements  IMetadata {
     private boolean isSaveMode(Properties options) {
         return "save".equals(options.getProperty("mode"));
     }
-
+    
+    @Override
     public boolean isDirty() {
         return written == null || _modified.after(written);
     }
@@ -181,6 +182,7 @@ public class ProjectMetadata implements  IMetadata {
         }
     }
     
+    @Override
      public ProjectMetadata loadFromJSON(JSONObject obj) {
         // TODO: Is this correct?  It's using modified date for creation date
         ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
@@ -264,12 +266,14 @@ public class ProjectMetadata implements  IMetadata {
     public Date getCreated() {
         return _created;
     }
-
+    
+    @Override
     public void setName(String name) {
         this._name = name;
         updateModified();
     }
-
+    
+    @Override
     public String getName() {
         return _name;
     }
@@ -278,7 +282,8 @@ public class ProjectMetadata implements  IMetadata {
         this._encoding = encoding;
         updateModified();
     }
-
+    
+    @Override
     public String getEncoding() {
         return _encoding;
     }
@@ -306,11 +311,13 @@ public class ProjectMetadata implements  IMetadata {
     public String getPassword() {
         return _password;
     }
-
+    
+    @Override
     public Date getModified() {
         return _modified;
     }
-
+    
+    @Override
     public void updateModified() {
         _modified = new Date();
     }
@@ -395,7 +402,7 @@ public class ProjectMetadata implements  IMetadata {
         return _rowCount;
     }
 
-    
+    @Override
     public void setRowCount(int rowCount) {
         this._rowCount = rowCount;
         updateModified();
@@ -436,7 +443,6 @@ public class ProjectMetadata implements  IMetadata {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
     }
-
 
 
     @Override
