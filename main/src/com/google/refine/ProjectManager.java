@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
@@ -340,8 +342,18 @@ public abstract class ProjectManager {
      * @param id
      * @return
      */
-    public IMetadata getMetadata(long id) {
-        return _projects.get(id).getMetadata();
+    public ProjectMetadata getMetadata(long id) {
+        return (ProjectMetadata) _projects.get(id).getMetadata(MetadataFormat.PROJECT_METADATA);
+    }
+    
+    /**
+     * Get metadata based on the format
+     * @param id
+     * @param format
+     * @return
+     */
+    public IMetadata getMetadata(long id, MetadataFormat format) {
+        return _projects.get(id).getMetadata(format);
     }
 
     /**
@@ -461,7 +473,7 @@ public abstract class ProjectManager {
      */
     public Map<Long, IMetadata> getAllProjectMetadata() {
         for(Project project : _projects.values()) {
-            mergeEmptyUserMetadata(project.getMetadata());
+            mergeEmptyUserMetadata(project.getProjectMetadata());
         }
             
         return _projectsMetadata;

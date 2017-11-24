@@ -102,7 +102,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(projMan.getProject(anyLong())).thenReturn(proj);
-        when(proj.getMetadata()).thenReturn(metadata);
+        when(proj.getProjectMetadata()).thenReturn(metadata);
         
         try {
             when(response.getWriter()).thenReturn(pw);
@@ -146,7 +146,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata();
+        verify(proj, times(1)).getProjectMetadata();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
@@ -154,8 +154,8 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        Assert.assertEquals(proj.getMetadata().getName(), "subject");
-        Assert.assertEquals(((ProjectMetadata)proj.getMetadata()).getSubject(), SUBJECT);
+        Assert.assertEquals(proj.getProjectMetadata().getName(), "subject");
+        Assert.assertEquals(((ProjectMetadata)proj.getProjectMetadata()).getSubject(), SUBJECT);
     }
     
     /**
@@ -182,7 +182,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata();
+        verify(proj, times(1)).getProjectMetadata();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
@@ -190,7 +190,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        JSONObject obj = (JSONObject) ((ProjectMetadata)proj.getMetadata()).getUserMetadata().get(0);
+        JSONObject obj = (JSONObject) ((ProjectMetadata)proj.getProjectMetadata()).getUserMetadata().get(0);
         Assert.assertEquals(obj.get("name"), "clientID");
         Assert.assertEquals(obj.get("value"), "IBM");
     }

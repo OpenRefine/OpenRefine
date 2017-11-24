@@ -29,7 +29,7 @@ public class SetProjectMetadataCommand extends Command {
             return;
         }
         
-        meta = project.getMetadata(); 
+        meta = project.getProjectMetadata(); 
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

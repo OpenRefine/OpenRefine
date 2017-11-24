@@ -58,6 +58,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
@@ -85,7 +86,7 @@ public class Project {
 
     final static Logger logger = LoggerFactory.getLogger("project");
     
-    private List<IMetadata> metadataList;
+    private Map<MetadataFormat, IMetadata> metadataMap;
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -274,18 +275,19 @@ public class Project {
     */
     
     /**
-     * ProjectMetaData is always the first one
-     * @return
+     * should always be there.
+     * @return ProjectMetadata
      */
-    public IMetadata getMetadata() {
-        if (metadataList.size() == 0)
-            return null;
-        
-        return metadataList.get(0);
+    public ProjectMetadata getProjectMetadata() {
+        return (ProjectMetadata) getMetadata(MetadataFormat.PROJECT_METADATA);
+    }
+    
+    public IMetadata getMetadata(MetadataFormat format) {
+        return metadataMap.get(format);
     }
     
     // XXX: metadata: need to set from somewhere 
-    public void setMetadata(IMetadata metadata) {
-        this.metadataList.add(metadata);
+    public void setMetadata(MetadataFormat format, IMetadata metadata) {
+        this.metadataMap.put(format, metadata);
     }
 }
