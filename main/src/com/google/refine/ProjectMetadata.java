@@ -35,7 +35,6 @@ package com.google.refine;
 
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,32 +49,26 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.model.medadata.AbstractMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-public class ProjectMetadata implements  IMetadata {
+public class ProjectMetadata extends AbstractMetadata {
     private final Date     _created;
-    private Date           _modified;
-    private Date written = null;
-    private String         _name = "";
+    
     private String         _password = "";
-
-    private String         _encoding = "";
     private int            _encodingConfidence;
     
     private String _creator = "";
     private String _contributors = "";
     private String _subject = "";    // Several refine projects may be linked
     private String _description = "";                // free form of comment
-    private int _rowCount;      // at the creation. Essential for cleaning old projects too heavy
     
     // import options is an array for 1-n data sources
     private JSONArray _importOptionMetadata = new JSONArray();
     
-    // user metadata
-    private JSONArray _userMetadata = new JSONArray();; 
     
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
@@ -156,11 +149,6 @@ public class ProjectMetadata implements  IMetadata {
     
     private boolean isSaveMode(Properties options) {
         return "save".equals(options.getProperty("mode"));
-    }
-    
-    @Override
-    public boolean isDirty() {
-        return written == null || _modified.after(written);
     }
     
     public void write(JSONWriter jsonWriter) throws JSONException  {
@@ -267,27 +255,6 @@ public class ProjectMetadata implements  IMetadata {
         return _created;
     }
     
-    @Override
-    public void setName(String name) {
-        this._name = name;
-        updateModified();
-    }
-    
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    public void setEncoding(String encoding) {
-        this._encoding = encoding;
-        updateModified();
-    }
-    
-    @Override
-    public String getEncoding() {
-        return _encoding;
-    }
-
     public void setEncodingConfidence(int confidence) {
         this._encodingConfidence = confidence;
         updateModified();
@@ -312,16 +279,6 @@ public class ProjectMetadata implements  IMetadata {
         return _password;
     }
     
-    @Override
-    public Date getModified() {
-        return _modified;
-    }
-    
-    @Override
-    public void updateModified() {
-        _modified = new Date();
-    }
-
     public PreferenceStore getPreferenceStore() {
         return _preferenceStore;
     }
@@ -398,53 +355,6 @@ public class ProjectMetadata implements  IMetadata {
     }
 
     
-    public int getRowCount() {
-        return _rowCount;
-    }
-
-    @Override
-    public void setRowCount(int rowCount) {
-        this._rowCount = rowCount;
-        updateModified();
-    }
-
-    
-    public JSONArray getUserMetadata() {
-        return _userMetadata;
-    }
-
-    
-    public void setUserMetadata(JSONArray userMetadata) {
-        this._userMetadata = userMetadata;
-    }
-
-    private void updateUserMetadata(String metaName, String valueString)  {
-        for (int i = 0; i < _userMetadata.length(); i++) {
-            try {
-                JSONObject obj = _userMetadata.getJSONObject(i);
-                if (obj.getString("name").equals(metaName)) {
-                    obj.put("value", valueString);
-                }
-            } catch (JSONException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-    }
-    
-    public void setAnyField(String metaName, String valueString)  {
-        Class<? extends ProjectMetadata> metaClass = this.getClass();
-        try {
-            Field metaField = metaClass.getDeclaredField("_" + metaName);
-
-            metaField.set(this, valueString);
-        } catch (NoSuchFieldException e) {
-            updateUserMetadata(metaName, valueString);
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
-        }
-    }
-
-
     @Override
     public ProjectMetadata loadFromFile(File metadataFile) {
         // TODO Auto-generated method stub

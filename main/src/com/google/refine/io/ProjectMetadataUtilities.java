@@ -52,10 +52,10 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.IMetadata;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
 
 //import io.frictionlessdata.tableschema.Field;
 //import io.frictionlessdata.tableschema.Schema;
@@ -104,7 +104,7 @@ public class ProjectMetadataUtilities {
         }
     }
 
-    static public ProjectMetadata load(File projectDir) {
+    static public IMetadata load(File projectDir) {
         try {
             return loadFromFile(new File(projectDir, "metadata.json"));
         } catch (Exception e) {
@@ -162,7 +162,7 @@ public class ProjectMetadataUtilities {
         return pm;
     }
 
-    static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
+    static protected IMetadata loadFromFile(File metadataFile) throws Exception {
         FileReader reader = new FileReader(metadataFile);
         try {
             JSONTokener tokener = new JSONTokener(reader);

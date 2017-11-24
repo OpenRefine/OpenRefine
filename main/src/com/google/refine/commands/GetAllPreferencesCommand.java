@@ -53,7 +53,7 @@ public class GetAllPreferencesCommand extends Command {
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         
-        // metadata XXX: 
+        // XXX: metadata
         PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
                 
         try {

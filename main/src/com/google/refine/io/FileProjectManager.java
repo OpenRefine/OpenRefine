@@ -56,9 +56,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.IMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.preference.TopList;
 
 

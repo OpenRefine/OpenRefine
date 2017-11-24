@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 
-import com.google.refine.IMetadata;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
 
 public class SetProjectMetadataCommand extends Command {
     @Override
@@ -34,7 +34,7 @@ public class SetProjectMetadataCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
-            meta.setAnyField(metaName, valueString);
+            meta.setAnyStringField(metaName, valueString);
             ProjectManager.singleton.saveMetadata(meta, project.id);
             
             respond(response, "{ \"code\" : \"ok\" }");

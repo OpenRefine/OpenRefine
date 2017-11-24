@@ -39,9 +39,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.refine.IMetadata;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
+import com.google.refine.model.medadata.IMetadata;
 
 public class RenameProjectCommand extends Command {
     @Override
