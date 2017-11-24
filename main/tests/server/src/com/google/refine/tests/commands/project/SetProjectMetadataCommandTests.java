@@ -190,7 +190,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        JSONObject obj = (JSONObject) proj.getMetadata().getUserMetadata().get(0);
+        JSONObject obj = (JSONObject) ((ProjectMetadata)proj.getMetadata()).getUserMetadata().get(0);
         Assert.assertEquals(obj.get("name"), "clientID");
         Assert.assertEquals(obj.get("value"), "IBM");
     }
