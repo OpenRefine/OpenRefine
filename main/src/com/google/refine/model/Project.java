@@ -85,7 +85,7 @@ public class Project {
 
     final static Logger logger = LoggerFactory.getLogger("project");
     
-    private IMetadata metadata;
+    private List<IMetadata> metadataList;
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -273,12 +273,19 @@ public class Project {
     }
     */
     
+    /**
+     * ProjectMetaData is always the first one
+     * @return
+     */
     public IMetadata getMetadata() {
-        return metadata;
+        if (metadataList.size() == 0)
+            return null;
+        
+        return metadataList.get(0);
     }
     
     // XXX: metadata: need to set from somewhere 
     public void setMetadata(IMetadata metadata) {
-        this.metadata = metadata;
+        this.metadataList.add(metadata);
     }
 }
