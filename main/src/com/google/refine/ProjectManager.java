@@ -74,6 +74,7 @@ public abstract class ProjectManager {
 
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
+    protected Map<String, Integer> _projectsTags;// TagName, number of projects having that tag
     protected PreferenceStore            _preferenceStore;
 
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
@@ -102,6 +103,7 @@ public abstract class ProjectManager {
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
+        _projectsTags = new HashMap<String, Integer>();
 
         preparePreferenceStore(_preferenceStore);
     }
@@ -128,6 +130,16 @@ public abstract class ProjectManager {
         synchronized (this) {
             _projects.put(project.id, project);
             _projectsMetadata.put(project.id, projectMetadata);
+            if (_projectsTags == null)
+                _projectsTags = new HashMap<String, Integer>();
+
+            for (String tag : projectMetadata.getTags()) {
+              if (_projectsTags.containsKey(tag)) {
+                _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+              } else {
+                  _projectsTags.put(tag, 1);
+              }
+            }
         }
     }
 
@@ -464,6 +476,15 @@ public abstract class ProjectManager {
         }
             
         return _projectsMetadata;
+    }
+    
+    /**
+     * Gets all the project tags currently held in memory
+     * 
+     * @return
+     */
+    public Map<String, Integer> getAllProjectTags() {
+      return _projectsTags;
     }
 
     /**

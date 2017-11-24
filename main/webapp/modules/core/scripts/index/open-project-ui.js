@@ -70,8 +70,8 @@ Refine.OpenProjectUI = function(elmt) {
       }
     });
   });
-
-  this._fetchProjects();
+  Refine.TagsManager.allProjectTags = [];
+  this._buildTagsAndFetchProjects();
 };
 
 Refine.OpenProjectUI.prototype.resize = function() {
@@ -98,6 +98,53 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
       },
       "json"
   );
+};
+
+Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
+    this._buildTagsListPanel();
+    this._fetchProjects();
+};
+
+Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
+    var self = this;
+    self._allTags = Refine.TagsManager._getAllProjectTags();
+
+    var container = self._elmts.projectTags.empty();
+    var ul = $("<ul/>").attr('id', 'tagsUl').appendTo(container);
+
+    // Add 'all' menu item
+    var li = $('<li/>').addClass("active").appendTo(ul);
+    $('<a/>').attr('href', '#all').addClass("current").text('All').appendTo(li);
+
+    $.each(self._allTags, function(i) {
+            var li = $('<li/>').appendTo(ul);
+            $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
+                            .appendTo(li);
+    });
+
+    self._addTagsListAnimation();
+};
+
+Refine.OpenProjectUI.prototype._addTagsListAnimation = function() {
+    $("#tagsUl").lavalamp({
+            setOnClick : true,
+            duration : 300
+    });
+};
+
+Refine.OpenProjectUI.prototype._fetchProjects = function() {
+    var self = this;
+    $.ajax({
+            type : 'GET',
+            url : "command/core/get-all-project-metadata",
+            dataType : 'json',
+            success : function(data) {
+                    self._renderProjects(data);
+                    self.resize();
+            },
+            data : {},
+            async : false
+    });
 };
 
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
@@ -131,13 +178,13 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     projects.push(project);
   }
 
-  var container = $("#projects-container").empty();
+  var container = self._elmts.projectList.empty();
   if (!projects.length) {
     $("#no-project-message").clone().show().appendTo(container);
   } else {
     Refine.selectActionArea('open-project');
     
-
+    var projectsUl = $("<ul/>").attr('id', 'projectsUl').appendTo(container);
 
     var table = $(
       '<table class="tablesorter-blue list-table"><thead><tr>' +
@@ -149,6 +196,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["row-count"]+'</th>' + 
+      '<th>'+$.i18n._('core-index-open')["tags"]+'</th>' + 
       (function() {
           var htmlDisplay = "";
           for (var n in data.customMetadataColumns) {
@@ -159,8 +207,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           
           return htmlDisplay;
       })() +     
-      '</tr></thead><tbody></tbody></table>'
-    ).appendTo(container)[0];
+      '</tr></thead><tbody id="tableBody"></tbody></table>'
+    ).appendTo(projectsUl)[0];
     
     var allProjIds = "";
     $.each(projects, function(i) {
@@ -204,7 +252,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             dataType: "json",
             success: function (data) {
               if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                self._fetchProjects();
+                Refine.TagsManager.allProjectTags = [];
+                self._buildTagsAndFetchProjects();
               }
             }
           });
@@ -254,7 +303,62 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                appendMetaField(data[i].value); 
            }
       }
-    };
+    
+    $(tr.insertCell(tr.cells.length));
+    var tags = project.tags;
+    for (var i = 0; i < tags.length; i++) {
+        var tag = tags[i];
+        $("<span/>")
+        .addClass("project-tag")
+        .text(tag)
+        .attr("title", $.i18n._('core-index-open')["edit-tags"])
+        .appendTo($(tr.cells[tr.cells.length - 1]));
+        $(tr).addClass(tag);
+    }
+    
+
+    var editTagsLink = $('<a></a>')
+    .text($.i18n._('core-index-open')["rename"])
+    .addClass("secondary")
+    .addClass("edit-project-tags")
+    .css("visibility", "hidden")
+    .attr("href", "")
+    .attr("title", $.i18n._('core-index-open')["edit-tags"])
+    .html('<img src="images/edit.png" />')
+    .click(function() {
+            var oldTags = project.tags.join(",");
+            var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
+            if (newTags === null || newTags == oldTags) {
+                return false;
+            }
+            $.ajax({
+                type : "POST",
+                url : "command/core/set-project-tags",
+                data : {
+                    "project" : project.id,
+                    "old" : oldTags,
+                    "new" : newTags
+                },
+                dataType : "json",
+                success : function(data) {
+                    if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                        Refine.TagsManager.allProjectTags = [];
+                        self._buildTagsAndFetchProjects();
+                    } else {
+                        alert($.i18n._('core-index-open')["warning-tags-update"]+ " "+ data.message);
+                    }
+                }
+            });
+            return false;
+        }).appendTo($(tr.cells[tr.cells.length - 1]));
+        
+        $(tr).mouseenter(function() {
+            editTagsLink.css("visibility", "visible");
+        }).mouseleave(function() {
+            editTagsLink.css("visibility", "hidden");
+        });
+
+      };
 
     for (var i = 0; i < projects.length; i++) {
       renderProject(projects[i]);
@@ -269,7 +373,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         sortList: [[2,1]],
         widthFixed: false
     });
+    self._addTagFilter();
   }
+};
+
+Refine.OpenProjectUI.prototype._addTagFilter = function() {
+    $("#tableBody").filterList();
 };
 
 Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {

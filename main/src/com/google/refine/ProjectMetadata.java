@@ -35,9 +35,11 @@ package com.google.refine;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -63,6 +65,8 @@ public class ProjectMetadata implements Jsonizable {
 
     private String         _encoding = "";
     private int            _encodingConfidence;
+    
+    private String[] _tags = new String[0];
     
     private String _creator = "";
     private String _contributors = "";
@@ -118,6 +122,13 @@ public class ProjectMetadata implements Jsonizable {
             writer.value(value);
         }
         writer.endObject();
+        
+        writer.key("tags");
+        writer.array();
+        for (String tag : _tags) {
+          writer.value(tag);
+        }
+        writer.endArray();
         
         // write JSONArray directly 
         if (_importOptionMetadata.length() > 0 ) {
@@ -195,6 +206,8 @@ public class ProjectMetadata implements Jsonizable {
         pm._subject = JSONUtilities.getString(obj, "subject", "");
         pm._description = JSONUtilities.getString(obj, "description", "");
         pm._rowCount = JSONUtilities.getInt(obj, "rowCount", 0);
+        
+        pm._tags = JSONUtilities.getStringArray(obj, "tags");
         
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
@@ -294,6 +307,32 @@ public class ProjectMetadata implements Jsonizable {
 
     public int getEncodingConfidence() {
         return _encodingConfidence;
+    }
+    
+    public void setTags(String[] tags) {
+        if (tags != null) {
+          List<String> tmpTags = new ArrayList<String>(tags.length);
+          for (String tag : tags) {
+            if (tag != null) {
+              String trimmedTag = tag.trim();
+
+              if (!trimmedTag.isEmpty()) {
+                tmpTags.add(trimmedTag);
+              }
+            }
+          }
+          this._tags = tmpTags.toArray(new String[tmpTags.size()]);
+        } else {
+          this._tags = tags;
+        }
+
+        updateModified();
+      }
+
+      public String[] getTags() {
+        if (_tags == null)
+          this._tags = new String[0];
+        return _tags;
     }
 
     public void setPassword(String password) {
