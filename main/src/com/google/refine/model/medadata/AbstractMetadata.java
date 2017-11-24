@@ -2,9 +2,12 @@ package com.google.refine.model.medadata;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Properties;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,18 +92,22 @@ public abstract class AbstractMetadata implements IMetadata {
     public void setUserMetadata(JSONArray userMetadata) {
         this._userMetadata = userMetadata;
     }
-
+    
+    static boolean propertyExists(Object bean, String property) {
+        return PropertyUtils.isReadable(bean, property) && 
+               PropertyUtils.isWriteable(bean, property); 
+    }
+    
     @Override
     public void setAnyStringField(String metaName, String valueString)  {
-        Class<? extends AbstractMetadata> metaClass = this.getClass();
-        try {
-            Field metaField = metaClass.getDeclaredField("_" + metaName);
-
-            metaField.set(this, valueString);
-        } catch (NoSuchFieldException e) {
+        if (propertyExists(this, metaName)) {
+            try {
+                BeanUtils.setProperty(this, metaName, valueString);
+            } catch (IllegalAccessException | InvocationTargetException ite) {
+                logger.error(ExceptionUtils.getStackTrace(ite));
+            }
+        } else {
             updateUserMetadata(metaName, valueString);
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
         }
     }
     

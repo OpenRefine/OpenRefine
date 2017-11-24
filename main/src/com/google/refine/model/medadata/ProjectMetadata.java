@@ -279,10 +279,6 @@ public class ProjectMetadata extends AbstractMetadata {
         return _password;
     }
     
-    public PreferenceStore getPreferenceStore() {
-        return _preferenceStore;
-    }
-    
     public Serializable getCustomMetadata(String key) {
         return _customMetadata.get(key);
     }

@@ -12,13 +12,16 @@ import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.medadata.MetadataFormat;
 
 public class SetProjectMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        // get the metadata format from the request
+        MetadataFormat format = MetadataFormat
+                .valueOf(request.getParameter("format") == null ? MetadataFormat.PROJECT_METADATA.toString()
+                        : request.getParameter("format"));
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         String metaName = request.getParameter("name");
         String valueString = request.getParameter("value");
@@ -29,7 +32,7 @@ public class SetProjectMetadataCommand extends Command {
             return;
         }
         
-        meta = project.getProjectMetadata(); 
+        meta = project.getMetadata(format); 
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

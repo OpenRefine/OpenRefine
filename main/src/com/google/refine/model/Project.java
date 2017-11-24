@@ -275,7 +275,7 @@ public class Project {
     */
     
     /**
-     * should always be there.
+     * ProjectMetadata should always be there.
      * @return ProjectMetadata
      */
     public ProjectMetadata getProjectMetadata() {

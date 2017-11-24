@@ -59,6 +59,7 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.project.SetProjectMetadataCommand;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 
@@ -102,7 +103,10 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(projMan.getProject(anyLong())).thenReturn(proj);
+        
+        // below two should return the same object
         when(proj.getProjectMetadata()).thenReturn(metadata);
+        when(proj.getMetadata(MetadataFormat.PROJECT_METADATA)).thenReturn(metadata);
         
         try {
             when(response.getWriter()).thenReturn(pw);
@@ -141,12 +145,12 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
 
         // verify
-        verify(request, times(2)).getParameter("project");      
+        verify(request, times(1)).getParameter("name");      
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getProjectMetadata();
+        verify(proj, times(1)).getMetadata(MetadataFormat.PROJECT_METADATA);
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
@@ -154,8 +158,8 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        Assert.assertEquals(proj.getProjectMetadata().getName(), "subject");
-        Assert.assertEquals(((ProjectMetadata)proj.getProjectMetadata()).getSubject(), SUBJECT);
+//        Assert.assertEquals(proj.getProjectMetadata().getName(), "subject");
+        Assert.assertEquals(proj.getProjectMetadata().getSubject(), SUBJECT);
     }
     
     /**
@@ -182,7 +186,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getProjectMetadata();
+        verify(proj, times(1)).getMetadata(MetadataFormat.PROJECT_METADATA);
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
