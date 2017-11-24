@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
@@ -106,7 +107,9 @@ public class TemplatingExporter implements WriterExporter {
                 // ignore
             }
             
-            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
+            // metadata XXX: is template project specific?
+//            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
+            ProjectManager.singleton.getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
         }
         
         if (engine.getMode() == Mode.RowBased) {

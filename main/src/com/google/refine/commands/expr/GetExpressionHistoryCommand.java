@@ -63,7 +63,7 @@ public class GetExpressionHistoryCommand extends Command {
         try {
             Project project = getProject(request);
             
-            List<String> localExpressions = toExpressionList(project.getMetadata().getPreferenceStore().get("scripting.expressions"));
+            List<String> localExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
             localExpressions = localExpressions.size() > 20 ? localExpressions.subList(0, 20) : localExpressions;
             
             List<String> globalExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
