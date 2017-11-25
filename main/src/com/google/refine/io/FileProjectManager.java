@@ -41,6 +41,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -59,6 +61,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.preference.TopList;
 
 
@@ -112,6 +115,7 @@ public class FileProjectManager extends ProjectManager {
      *
      * @param projectID
      */
+    // XXX: metadata: load metadata using imetadata.load()
     @Override
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
@@ -120,7 +124,6 @@ public class FileProjectManager extends ProjectManager {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
             if (metadata != null) {
-                _projectsMetadata.put(projectID, metadata);
                 return true;
             } else {
                 return false;
@@ -279,15 +282,18 @@ public class FileProjectManager extends ProjectManager {
             jsonWriter.object();
             jsonWriter.key("projectIDs");
             jsonWriter.array();
-            for (Long id : _projectsMetadata.keySet()) {
-                IMetadata metadata = _projectsMetadata.get(id);
-                if (metadata != null) {
-                    jsonWriter.value(id);
-                    if (metadata.isDirty()) {
-                        Project project = ProjectManager.singleton.getProject(id);
-                        metadata.setRowCount(project.rows.size());
-                        ProjectMetadataUtilities.save(project, metadata, getProjectDir(id));
-                        saveWasNeeded = true;
+            for (Entry<Long, Project> entry : _projects.entrySet()) {
+                Long id = entry.getKey();
+                Map<MetadataFormat, IMetadata> metadataMap = entry.getValue().getMetadataMap();
+                for (IMetadata metadata : metadataMap.values()) {
+                    if (metadata != null) {
+                        jsonWriter.value(id);
+                        if (metadata.isDirty()) {
+                            Project project = ProjectManager.singleton.getProject(id);
+                            metadata.setRowCount(project.rows.size());
+                            ProjectMetadataUtilities.save(project, metadata, getProjectDir(id));
+                            saveWasNeeded = true;
+                        }
                     }
                 }
             }
@@ -348,8 +354,6 @@ public class FileProjectManager extends ProjectManager {
     protected boolean loadFromFile(File file) {
         logger.info("Loading workspace: {}", file.getAbsolutePath());
 
-        _projectsMetadata.clear();
-
         boolean found = false;
 
         if (file.exists() || file.canRead()) {
@@ -373,8 +377,6 @@ public class FileProjectManager extends ProjectManager {
                     IMetadata metadata = ProjectMetadataUtilities.load(projectDir);
                     
                     mergeEmptyUserMetadata(metadata);
-
-                    _projectsMetadata.put(id, metadata);
                 }
 
                 if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
@@ -415,7 +417,7 @@ public class FileProjectManager extends ProjectManager {
                         // ignore
                     }
 
-                    if (id > 0 && !_projectsMetadata.containsKey(id)) {
+                    if (id > 0 && !_projects.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
                             logger.info("Recovered project named " 
                                     + getMetadata(id).getName()
