@@ -19,6 +19,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.model.changes.MassChange;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.history.Change;
 import com.google.refine.io.FileProjectManager;
@@ -43,7 +44,8 @@ public class MassChangeTests extends RefineTest {
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("TNG Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
     }
 
     /**

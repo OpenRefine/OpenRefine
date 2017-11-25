@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="datapackage-java/src/main/resources"/>
+	<classpathentry kind="src" path="datapackage-java/src/test/java"/>
+	<classpathentry excluding="fixtures/not_a_json_datapackage.json|fixtures/simple_invalid_datapackage.json" kind="src" path="datapackage-java/src/test/resources"/>
+	<classpathentry kind="src" path="datapackage-java/src/main/java"/>
 	<classpathentry kind="src" path="tableschema-java/src/main/java"/>
 	<classpathentry kind="src" path="tableschema-java/src/main/resources"/>
 	<classpathentry kind="src" path="tableschema-java/src/test/java"/>

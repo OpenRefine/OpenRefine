@@ -53,6 +53,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.model.ProjectStub;
@@ -92,7 +93,8 @@ public class ProjectManagerTests extends RefineTest {
     @Test
     public void canRegisterProject(){
 
-        SUT.registerProject(project, metadata);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, metadata);
+        SUT.registerProject(project);
 
         AssertProjectRegistered();
 
@@ -205,7 +207,8 @@ public class ProjectManagerTests extends RefineTest {
         this.registerProject(project, metadata);
     }
     protected void registerProject(Project proj, ProjectMetadata meta){
-        SUT.registerProject(proj, meta);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, meta);
+        SUT.registerProject(proj);
     }
 
     protected void AssertProjectRegistered(){

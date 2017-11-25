@@ -60,6 +60,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
@@ -99,7 +100,8 @@ public class DataExtensionTests extends RefineTest {
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("Data Extension Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
 
         int index = project.columnModel.allocateNewCellIndex();
         Column column = new Column(index,"country");

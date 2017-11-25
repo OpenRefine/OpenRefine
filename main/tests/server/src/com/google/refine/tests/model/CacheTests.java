@@ -59,6 +59,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.row.RowRemovalOperation;
@@ -97,7 +98,8 @@ public class CacheTests extends RefineTest {
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("TNG Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
 
         int index = project.columnModel.allocateNewCellIndex();
         Column column = new Column(index,"Column A");

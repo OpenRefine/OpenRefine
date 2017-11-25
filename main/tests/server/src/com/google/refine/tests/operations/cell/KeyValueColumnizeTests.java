@@ -60,6 +60,7 @@ import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.Process;
 import com.google.refine.operations.cell.KeyValueColumnizeOperation;
@@ -92,7 +93,8 @@ public class KeyValueColumnizeTests extends RefineTest {
         project = new Project();
         pm = new ProjectMetadata();
         pm.setName("KeyValueColumnize test");
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
         options = mock(JSONObject.class);
 
 	ImportingManager.initialize(servlet);
@@ -130,7 +132,8 @@ public class KeyValueColumnizeTests extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
 
 	AbstractOperation op = new KeyValueColumnizeOperation(
 		"Key",

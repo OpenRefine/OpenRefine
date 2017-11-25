@@ -286,6 +286,10 @@ public class Project {
         return metadataMap.get(format);
     }
     
+    public Map<MetadataFormat, IMetadata> getMetadataMap() {
+        return metadataMap;
+    }
+    
     // XXX: metadata: need to set from somewhere 
     public void setMetadata(MetadataFormat format, IMetadata metadata) {
         this.metadataMap.put(format, metadata);

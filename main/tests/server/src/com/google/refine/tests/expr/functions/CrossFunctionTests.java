@@ -29,6 +29,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineServletStub;
@@ -104,7 +105,8 @@ public class CrossFunctionTests extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
         project.update();
-        ProjectManager.singleton.registerProject(project, metadata);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, metadata);
+        ProjectManager.singleton.registerProject(project);
         
         return project;
     }

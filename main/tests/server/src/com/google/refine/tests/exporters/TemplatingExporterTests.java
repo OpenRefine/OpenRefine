@@ -56,6 +56,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineTest;
@@ -94,7 +95,8 @@ public class TemplatingExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         project = new Project();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        ProjectManager.singleton.registerProject(project, projectMetadata);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, projectMetadata);
+        ProjectManager.singleton.registerProject(project);
         engine = new Engine(project);
         options = mock(Properties.class);
     }

@@ -58,6 +58,7 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
@@ -92,7 +93,8 @@ public class TextSearchFacetTests extends RefineTest {
         project = new Project();
         pm = new ProjectMetadata();
         pm.setName("TextSearchFacet test");
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
         options = mock(JSONObject.class);
 
         ImportingManager.initialize(servlet);
@@ -108,7 +110,8 @@ public class TextSearchFacetTests extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
     }
 
     @AfterMethod

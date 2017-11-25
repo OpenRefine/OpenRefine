@@ -59,6 +59,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
@@ -93,7 +94,8 @@ public class UrlFetchingTests extends RefineTest {
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("URL Fetching Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+        ProjectManager.singleton.registerProject(project);
 
         int index = project.columnModel.allocateNewCellIndex();
         Column column = new Column(index,"fruits");

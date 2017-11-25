@@ -76,7 +76,6 @@ public abstract class ProjectManager {
     static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
 
 
-    protected Map<Long, IMetadata> _projectsMetadata;
     protected PreferenceStore            _preferenceStore;
 
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
@@ -102,7 +101,6 @@ public abstract class ProjectManager {
     static public ProjectManager singleton;
     
     protected ProjectManager(){
-        _projectsMetadata = new HashMap<Long, IMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
 
@@ -119,7 +117,6 @@ public abstract class ProjectManager {
         }
         
         _projects.clear();
-        _projectsMetadata.clear();
     }
 
     /**
@@ -127,10 +124,9 @@ public abstract class ProjectManager {
      * @param project
      * @param projectMetadata
      */
-    public void registerProject(Project project, IMetadata projectMetadata) {
+    public void registerProject(Project project) {
         synchronized (this) {
             _projects.put(project.id, project);
-            _projectsMetadata.put(project.id, projectMetadata);
         }
     }
 
@@ -172,17 +168,22 @@ public abstract class ProjectManager {
      */
     public void ensureProjectSaved(long id) {
         synchronized(this){
-            IMetadata metadata = this.getMetadata(id);
-            if (metadata != null) {
-                try {
-                    saveMetadata(metadata, id);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }//FIXME what should be the behaviour if metadata is null? i.e. not found
+            Map<MetadataFormat, IMetadata> metadataMap = this.getProject(id).getMetadataMap();
+            for (IMetadata metadata : metadataMap.values()) {
+                if (metadata != null) {
+                    try {
+                        // XXX: metadata: something like metadata.save()
+                        saveMetadata(metadata, id);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }//FIXME what should be the behaviour if metadata is null? i.e. not found
+            }
 
             Project project = getProject(id);
-            if (project != null && metadata != null && metadata.getModified().after(project.getLastSave())) {
+            if (project != null && 
+                    metadataMap.get(MetadataFormat.PROJECT_METADATA) != null && 
+                    metadataMap.get(MetadataFormat.PROJECT_METADATA).getModified().after(project.getLastSave())) {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
@@ -248,7 +249,7 @@ public abstract class ProjectManager {
         Date startTimeOfSave = new Date();
         
         synchronized (this) {
-            for (long id : _projectsMetadata.keySet()) {
+            for (long id : _projects.keySet()) {
                 IMetadata metadata = getMetadata(id);
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
@@ -317,7 +318,7 @@ public abstract class ProjectManager {
      */
     protected void disposeUnmodifiedProjects() {
         synchronized (this) {
-            for (long id : _projectsMetadata.keySet()) {
+            for (long id : _projects.keySet()) {
                 IMetadata metadata = getMetadata(id);
                 Project project = _projects.get(id);
                 if (project != null && !project.getProcessManager().hasPending() 
@@ -362,14 +363,16 @@ public abstract class ProjectManager {
      * @param name
      * @return
      */
+    /** XXX: metadata: get rid of it for now. try to get it from project object
     public IMetadata getProjectMetadata(String name) {
-        for (IMetadata pm : _projectsMetadata.values()) {
+        for (IMetadata pm : _projects.values()) {
             if (pm.getName().equals(name)) {
                 return pm;
             }
         }
         return null;
     }
+    */
 
     /**
      * Tries to find the project id when given a project name
@@ -380,8 +383,8 @@ public abstract class ProjectManager {
      *     The id of the project, or -1 if it cannot be found
      */
     public long getProjectID(String name) {
-        for (Entry<Long, IMetadata> entry : _projectsMetadata.entrySet()) {
-            if (entry.getValue().getName().equals(name)) {
+        for (Entry<Long, Project> entry : _projects.entrySet()) {
+            if (entry.getValue().getProjectMetadata().getName().equals(name)) {
                 return entry.getKey();
             }
         }
@@ -472,11 +475,14 @@ public abstract class ProjectManager {
      * @return
      */
     public Map<Long, IMetadata> getAllProjectMetadata() {
-        for(Project project : _projects.values()) {
-            mergeEmptyUserMetadata(project.getProjectMetadata());
+        Map<Long, IMetadata> resultMap = new HashMap<Long, IMetadata>();
+        
+        for(Entry<Long, Project> entry : _projects.entrySet()) {
+            ProjectMetadata metadata = entry.getValue().getProjectMetadata();
+            mergeEmptyUserMetadata(metadata);
+            resultMap.put(entry.getKey(), metadata);
         }
-            
-        return _projectsMetadata;
+        return resultMap;
     }
 
     /**
@@ -545,9 +551,6 @@ public abstract class ProjectManager {
     protected void removeProject(long projectID){
         if (_projects.containsKey(projectID)) {
             _projects.remove(projectID).dispose();
-        }
-        if (_projectsMetadata.containsKey(projectID)) {
-            _projectsMetadata.remove(projectID);
         }
     }
 

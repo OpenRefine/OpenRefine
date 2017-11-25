@@ -86,6 +86,7 @@ import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
@@ -1028,8 +1029,8 @@ public class ImportingUtilities {
         if (!job.canceled) {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
-                
-                ProjectManager.singleton.registerProject(project, pm);
+                project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+                ProjectManager.singleton.registerProject(project);
                 
                 job.setProjectID(project.id);
                 job.setState("created-project");

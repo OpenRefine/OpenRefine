@@ -56,6 +56,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.process.Process;
@@ -118,7 +119,8 @@ public class TransposeTests extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
         project.update();
-        ProjectManager.singleton.registerProject(project, metadata);
+        project.setMetadata(MetadataFormat.PROJECT_METADATA, metadata);
+        ProjectManager.singleton.registerProject(project);
 
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);
