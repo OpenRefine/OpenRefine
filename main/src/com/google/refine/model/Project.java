@@ -86,7 +86,7 @@ public class Project {
 
     final static Logger logger = LoggerFactory.getLogger("project");
     
-    private Map<MetadataFormat, IMetadata> metadataMap;
+    private Map<MetadataFormat, IMetadata> metadataMap = new HashMap<MetadataFormat, IMetadata>();
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
