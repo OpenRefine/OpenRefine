@@ -38,7 +38,7 @@ import com.google.refine.model.Project;
 
 
 public class ProjectStub extends Project {
-    public ProjectStub(long id, ProjectManager pm){
-        super(id, pm);
+    public ProjectStub(long id){
+        super(id);
     }
 }

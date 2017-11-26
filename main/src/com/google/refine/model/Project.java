@@ -101,16 +101,8 @@ public class Project {
         this.history = new History(this);
         
         metadataMap = new HashMap<MetadataFormat, IMetadata>();
-        metadataMap.put(MetadataFormat.PROJECT_METADATA, ProjectManager.singleton.getProjectMetadata(id));
-    }
-    
-    // Only for testing since ProjectManager.singleton can not be mocked.
-    public Project(long id, ProjectManager pm) {
-        this.id = id;
-        this.history = new History(this);
-        
-        metadataMap = new HashMap<MetadataFormat, IMetadata>();
-        metadataMap.put(MetadataFormat.PROJECT_METADATA, pm.getProjectMetadata(id));
+        if (ProjectManager.singleton != null)
+            metadataMap.put(MetadataFormat.PROJECT_METADATA, ProjectManager.singleton.getProjectMetadata(id));
     }
     
     /**
