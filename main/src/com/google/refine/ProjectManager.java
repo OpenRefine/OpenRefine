@@ -474,17 +474,15 @@ public abstract class ProjectManager {
      * Gets all the project Metadata currently held in memory.
      * @return
      */
-    public Map<Long, IMetadata> getAllProjectMetadata() {
-        Map<Long, IMetadata> resultMap = new HashMap<Long, IMetadata>();
-        
-        for(Entry<Long, Project> entry : _projects.entrySet()) {
-            ProjectMetadata metadata = entry.getValue().getProjectMetadata();
-            mergeEmptyUserMetadata(metadata);
-            resultMap.put(entry.getKey(), metadata);
+    
+    public Map<Long, ProjectMetadata> getAllProjectMetadata() {
+        for(Project project : _projects.values()) {
+            mergeEmptyUserMetadata(project.getProjectMetadata());
         }
-        return resultMap;
+            
+        return _projectsMetadata;
     }
-
+    
     /**
      * Gets the required project from the data store
      * If project does not already exist in memory, it is loaded from the data store

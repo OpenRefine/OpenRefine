@@ -150,7 +150,7 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
         registerProject(project, metadata);
 
         // 2. add a second project to the cache
-        Project project2 = spy(new ProjectStub(2));
+        Project project2 = spy(new ProjectStub(2, SUT));
         ProjectMetadata metadata2 = mock(ProjectMetadata.class);
         whenGetSaveTimes(project2, metadata2, 10); //not modified since the last save but within 30 seconds flush limit
         registerProject(project2, metadata2);

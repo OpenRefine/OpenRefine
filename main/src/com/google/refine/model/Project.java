@@ -86,20 +86,31 @@ public class Project {
 
     final static Logger logger = LoggerFactory.getLogger("project");
     
-    private Map<MetadataFormat, IMetadata> metadataMap = new HashMap<MetadataFormat, IMetadata>();
+    private Map<MetadataFormat, IMetadata> metadataMap;
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
 
     public Project() {
-        id = generateID();
-        history = new History(this);
+        this(generateID());
     }
 
     protected Project(long id) {
         this.id = id;
         this.history = new History(this);
+        
+        metadataMap = new HashMap<MetadataFormat, IMetadata>();
+        metadataMap.put(MetadataFormat.PROJECT_METADATA, ProjectManager.singleton.getProjectMetadata(id));
+    }
+    
+    // Only for testing since ProjectManager.singleton can not be mocked.
+    public Project(long id, ProjectManager pm) {
+        this.id = id;
+        this.history = new History(this);
+        
+        metadataMap = new HashMap<MetadataFormat, IMetadata>();
+        metadataMap.put(MetadataFormat.PROJECT_METADATA, pm.getProjectMetadata(id));
     }
     
     /**
@@ -267,12 +278,6 @@ public class Project {
     public ProcessManager getProcessManager() {
         return this.processManager;
     }
-    
-    /**
-    public IMetadata getMetadata() {
-        return ProjectManager.singleton.getMetadata(id);
-    }
-    */
     
     /**
      * ProjectMetadata should always be there.
