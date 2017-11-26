@@ -292,6 +292,6 @@ public class Project {
     
     // XXX: metadata: need to set from somewhere 
     public void setMetadata(MetadataFormat format, IMetadata metadata) {
-        this.metadataMap.put(format, metadata);
+        getMetadataMap().put(format, metadata);
     }
 }

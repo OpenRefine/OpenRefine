@@ -420,7 +420,7 @@ public class FileProjectManager extends ProjectManager {
                     if (id > 0 && !_projects.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
                             logger.info("Recovered project named " 
-                                    + getMetadata(id).getName()
+                                    + getProjectMetadata(id).getName()
                                     + " in directory " + dirName);
                             recovered = true;
                         } else {

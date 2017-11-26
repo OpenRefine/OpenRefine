@@ -59,7 +59,7 @@ public class GetProjectMetadataCommand extends Command {
                 return;
             }
             
-            respondJSON(response, ProjectManager.singleton.getMetadata(project.id));
+            respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
         } catch (JSONException e) {
             respondException(response, e);
         }

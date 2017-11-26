@@ -1,7 +1,6 @@
 package com.google.refine.model.medadata;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Properties;

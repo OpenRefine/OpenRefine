@@ -62,7 +62,7 @@ public class Reinterpret implements Function {
                 encoder = (String) o2;
                 if (args.length == 2) {
                     Project project = (Project) bindings.get("project");
-                    IMetadata metadata = ProjectManager.singleton.getMetadata(project.id);
+                    IMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
                     decoder = metadata.getEncoding(); // can return "" for broken projects
                 } else {
                     decoder = (String) args[2];

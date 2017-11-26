@@ -200,7 +200,7 @@ public abstract class Command {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
         try {
-            IMetadata pm = ProjectManager.singleton.getMetadata(Long.parseLong(request.getParameter("project")));
+            IMetadata pm = ProjectManager.singleton.getProjectMetadata(Long.parseLong(request.getParameter("project")));
             if (pm != null) {
                 return pm;
             }

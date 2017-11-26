@@ -182,8 +182,8 @@ public abstract class ProjectManager {
 
             Project project = getProject(id);
             if (project != null && 
-                    metadataMap.get(MetadataFormat.PROJECT_METADATA) != null && 
-                    metadataMap.get(MetadataFormat.PROJECT_METADATA).getModified().after(project.getLastSave())) {
+                    project.getProjectMetadata() != null && 
+                    project.getProjectMetadata().getModified().after(project.getLastSave())) {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
@@ -250,8 +250,8 @@ public abstract class ProjectManager {
         
         synchronized (this) {
             for (long id : _projects.keySet()) {
-                IMetadata metadata = getMetadata(id);
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
+                IMetadata metadata = project.getProjectMetadata();
 
                 if (project != null) {
                     boolean hasUnsavedChanges =
@@ -319,7 +319,7 @@ public abstract class ProjectManager {
     protected void disposeUnmodifiedProjects() {
         synchronized (this) {
             for (long id : _projects.keySet()) {
-                IMetadata metadata = getMetadata(id);
+                IMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id);
                 if (project != null && !project.getProcessManager().hasPending() 
                         && metadata.getModified().getTime() < project.getLastSave().getTime()) {
@@ -339,12 +339,13 @@ public abstract class ProjectManager {
 
     /**
      * Gets the project metadata from memory
-     * Requires that the metadata has already been loaded from the data store
+     * Requires that the metadata has already been loaded from the data store.
+     * Delegate to project itself 
      * @param id
      * @return
      */
-    public ProjectMetadata getMetadata(long id) {
-        return (ProjectMetadata) _projects.get(id).getMetadata(MetadataFormat.PROJECT_METADATA);
+    public ProjectMetadata getProjectMetadata(long id) {
+        return (ProjectMetadata) _projects.get(id).getProjectMetadata();
     }
     
     /**

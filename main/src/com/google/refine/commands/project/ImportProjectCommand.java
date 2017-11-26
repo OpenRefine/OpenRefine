@@ -76,7 +76,7 @@ public class ImportProjectCommand extends Command {
 
             ProjectManager.singleton.loadProjectMetadata(projectID);
 
-            IMetadata pm = ProjectManager.singleton.getMetadata(projectID);
+            IMetadata pm = ProjectManager.singleton.getProjectMetadata(projectID);
             if (pm != null) {
                 if (options.containsKey("project-name")) {
                     String projectName = options.getProperty("project-name");

@@ -43,6 +43,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -58,7 +60,7 @@ import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.model.ProjectStub;
 
-public class ProjectManagerTests extends RefineTest {
+public class ProjectManagerTests<IMetadata> extends RefineTest {
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -75,11 +77,19 @@ public class ProjectManagerTests extends RefineTest {
     public void SetUp(){
         pm = new ProjectManagerStub();
         SUT = spy(pm);
+        
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
+        
         procmgr = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(procmgr);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
+        when(project.getProjectMetadata()).thenReturn(metadata);        // cannot wire metadata directly with project, need mock object
+        
+        // construct a map for mock object:
+        Map<MetadataFormat, com.google.refine.model.medadata.IMetadata> map = (Map<MetadataFormat, com.google.refine.model.medadata.IMetadata>) new HashMap<MetadataFormat, IMetadata>();
+        map.put(MetadataFormat.PROJECT_METADATA, (com.google.refine.model.medadata.IMetadata) metadata);
+        when(project.getMetadataMap()).thenReturn(map);
     }
 
     @AfterMethod
@@ -92,11 +102,10 @@ public class ProjectManagerTests extends RefineTest {
 
     @Test
     public void canRegisterProject(){
-
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, metadata);
         SUT.registerProject(project);
 
         AssertProjectRegistered();
+        verify(project, times(1)).getProjectMetadata();
 
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -112,16 +121,20 @@ public class ProjectManagerTests extends RefineTest {
         //run test
         SUT.ensureProjectSaved(project.id);
 
-        //assert and verify
+        //assert and verify it's registered under ProjectManager
         AssertProjectRegistered();
+        
         try {
+            // make sure the ProjectManager does save the metadata
             verify(SUT, times(1)).saveMetadata(metadata, project.id);
         } catch (Exception e) {
             Assert.fail();
         }
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
-
+        verify(project).getMetadataMap();
+        verify(project, times(3)).getProjectMetadata();
+        
         //ensure end
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -131,24 +144,24 @@ public class ProjectManagerTests extends RefineTest {
 
     @Test
     public void canSaveAllModified(){
+        // 1. register project 1
         whenGetSaveTimes(project, metadata); //5 minute difference
-        registerProject(project, metadata);
+        registerProject(project);
 
-        //add a second project to the cache
+        // 2. add a second project to the cache
         Project project2 = spy(new ProjectStub(2));
         ProjectMetadata metadata2 = mock(ProjectMetadata.class);
+        when(project2.getProjectMetadata()).thenReturn(metadata2);
         whenGetSaveTimes(project2, metadata2, 10); //not modified since the last save but within 30 seconds flush limit
-        registerProject(project2, metadata2);
+        registerProject(project2);
 
-        //check that the two projects are not the same
+        // 3. check that the two projects are not the same
         Assert.assertFalse(project.id == project2.id);
 
+        // 4. save all projects
         SUT.save(true);
-
-        verifySaved(project, metadata);
-
-        verifySaved(project2, metadata2);
-
+        verifySaved(project, metadata, 1);
+        verifySaved(project2, metadata2, 2);
         verify(SUT, times(1)).saveWorkspace();
     }
 
@@ -156,12 +169,13 @@ public class ProjectManagerTests extends RefineTest {
     public void canFlushFromCache(){
 
         whenGetSaveTimes(project, metadata, -10 );//already saved (10 seconds before)
-        registerProject(project, metadata);
+        registerProject(project);
         Assert.assertSame(SUT.getProject(0), project);
 
         SUT.save(true);
 
         verify(metadata, times(1)).getModified();
+        verify(project, times(1)).getProjectMetadata();
         verify(project, times(1)).getProcessManager();
         verify(project, times(2)).getLastSave();
         verify(project, times(1)).dispose();
@@ -195,7 +209,7 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.save(false); //not busy
 
-        verifySaved(project, metadata);
+        verifySaved(project, metadata, 1);
         verify(SUT, times(1)).saveWorkspace();
 
     }
@@ -204,16 +218,16 @@ public class ProjectManagerTests extends RefineTest {
     //-------------helpers-------------
 
     protected void registerProject(){
-        this.registerProject(project, metadata);
+        SUT.registerProject(project);
     }
-    protected void registerProject(Project proj, ProjectMetadata meta){
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, meta);
+    
+    protected void registerProject(Project proj){
         SUT.registerProject(proj);
     }
 
     protected void AssertProjectRegistered(){
         Assert.assertEquals(SUT.getProject(project.id), project);
-        Assert.assertEquals(SUT.getMetadata(project.id), metadata);
+        Assert.assertEquals(SUT.getProjectMetadata(project.id), metadata);
     }
 
     protected void whenGetSaveTimes(Project proj, ProjectMetadata meta){
@@ -244,11 +258,19 @@ public class ProjectManagerTests extends RefineTest {
         verify(metadata, times(times)).getModified();
         verify(project, times(times)).getLastSave();
     }
-
-    protected void verifySaved(Project proj, ProjectMetadata meta){
+    
+    /**
+     * @see ProjectManager#save(boolean allModified)
+     * for project 2 there is 2 times getProjectMetadata(),
+     * for project 1 only 1 time
+     * @param proj
+     * @param meta
+     */
+    protected void verifySaved(Project proj, ProjectMetadata meta, int nGetProjectMetadata){
         verify(meta, times(1)).getModified();
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(proj);
+        verify(proj, times(nGetProjectMetadata)).getProjectMetadata();
 
         verifyNoMoreInteractions(proj);
         verifyNoMoreInteractions(meta);

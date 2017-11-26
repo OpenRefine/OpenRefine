@@ -75,7 +75,7 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void startFile(JSONObject options) {
                 table = OdfTable.newTable(odfDoc);
-                table.setTableName(ProjectManager.singleton.getMetadata(project.id).getName());
+                table.setTableName(ProjectManager.singleton.getProjectMetadata(project.id).getName());
             }
 
             @Override
