@@ -120,7 +120,7 @@ public class TransposeTests extends RefineTest {
         importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
         project.update();
         project.setMetadata(MetadataFormat.PROJECT_METADATA, metadata);
-        ProjectManager.singleton.registerProject(project);
+        ProjectManager.singleton.registerProject(project, metadata);
 
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);

@@ -62,6 +62,7 @@ import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.TopList;
 
 
@@ -119,11 +120,12 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
-            IMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
+            ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
             if (metadata != null) {
+                _projectsMetadata.put(projectID, metadata);
                 return true;
             } else {
                 return false;

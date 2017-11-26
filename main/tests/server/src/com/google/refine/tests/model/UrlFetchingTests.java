@@ -95,7 +95,7 @@ public class UrlFetchingTests extends RefineTest {
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("URL Fetching Test Project");
         project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
-        ProjectManager.singleton.registerProject(project);
+        ProjectManager.singleton.registerProject(project, pm);
 
         int index = project.columnModel.allocateNewCellIndex();
         Column column = new Column(index,"fruits");

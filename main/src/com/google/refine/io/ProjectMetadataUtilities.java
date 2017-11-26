@@ -104,7 +104,7 @@ public class ProjectMetadataUtilities {
         }
     }
 
-    static public IMetadata load(File projectDir) {
+    static public ProjectMetadata load(File projectDir) {
         try {
             return loadFromFile(new File(projectDir, "metadata.json"));
         } catch (Exception e) {
@@ -162,13 +162,13 @@ public class ProjectMetadataUtilities {
         return pm;
     }
 
-    static protected IMetadata loadFromFile(File metadataFile) throws Exception {
+    static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
         FileReader reader = new FileReader(metadataFile);
         try {
             JSONTokener tokener = new JSONTokener(reader);
             JSONObject obj = (JSONObject) tokener.nextValue();
 
-            return projectMetaData.loadFromJSON(obj);
+            return (ProjectMetadata) projectMetaData.loadFromJSON(obj);
         } finally {
             reader.close();
         }

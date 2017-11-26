@@ -101,7 +101,7 @@ public class DataExtensionTests extends RefineTest {
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("Data Extension Test Project");
         project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
-        ProjectManager.singleton.registerProject(project);
+        ProjectManager.singleton.registerProject(project, pm);
 
         int index = project.columnModel.allocateNewCellIndex();
         Column column = new Column(index,"country");

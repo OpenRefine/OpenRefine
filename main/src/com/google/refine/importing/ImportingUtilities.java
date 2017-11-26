@@ -1030,7 +1030,7 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
                 project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
-                ProjectManager.singleton.registerProject(project);
+                ProjectManager.singleton.registerProject(project, pm);
                 
                 job.setProjectID(project.id);
                 job.setState("created-project");

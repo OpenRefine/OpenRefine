@@ -397,7 +397,7 @@ public class GDataImportingController implements ImportingController {
                         } else {
                             project.update(); // update all internal models, indexes, caches, etc.
                             
-                            ProjectManager.singleton.registerProject(project);
+                            ProjectManager.singleton.registerProject(project, pm);
                             
                             job.setState("created-project");
                             job.setProjectID(project.id);

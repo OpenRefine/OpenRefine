@@ -94,7 +94,7 @@ public class TextSearchFacetTests extends RefineTest {
         pm = new ProjectMetadata();
         pm.setName("TextSearchFacet test");
         project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
-        ProjectManager.singleton.registerProject(project);
+        ProjectManager.singleton.registerProject(project, pm);
         options = mock(JSONObject.class);
 
         ImportingManager.initialize(servlet);
@@ -111,7 +111,7 @@ public class TextSearchFacetTests extends RefineTest {
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
         project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
-        ProjectManager.singleton.registerProject(project);
+        ProjectManager.singleton.registerProject(project, pm);
     }
 
     @AfterMethod
