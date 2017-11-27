@@ -44,8 +44,8 @@ community-supported product.
 
 This is the full list of contributors (in chronological order):
 
- - David Huynh <dfhuynh@google.com>
- - Stefano Mazzocchi <stefanom@google.com>
+ - David Huynh <dfhuynh@google.com> (EMERITUS)
+ - Stefano Mazzocchi <stefanom@google.com> (EMERITUS)
  - Vishal Talwar <vtalwar@google.com> 
  - Jeff Fry <jfry@google.com>
  - Will Moffat <wdm@google.com>
