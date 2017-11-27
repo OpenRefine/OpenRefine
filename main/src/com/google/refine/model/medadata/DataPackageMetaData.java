@@ -2,8 +2,10 @@ package com.google.refine.model.medadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +19,8 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 public class DataPackageMetaData extends AbstractMetadata {
     final static Logger logger = LoggerFactory.getLogger(DataPackageMetaData.class);
+
+    private Package pkg;
     
     @Override
     public void writeToJSON(JSONWriter writer, Properties options)
@@ -47,8 +51,17 @@ public class DataPackageMetaData extends AbstractMetadata {
 
     @Override
     public void writeToFile(File metadataFile) {
-        // TODO Auto-generated method stub
-
+        try {
+            this.pkg.save(metadataFile.getAbsolutePath());
+            
+            // XXX: metadata::save How to save the resource files?
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (DataPackageException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -56,5 +69,20 @@ public class DataPackageMetaData extends AbstractMetadata {
         // TODO Auto-generated method stub
 
     }
-
+    
+    @Override
+    public void loadFromStream(InputStream inputStream) {
+        try {
+            this.pkg = new Package(IOUtils.toString(inputStream));
+        } catch (ValidationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (DataPackageException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

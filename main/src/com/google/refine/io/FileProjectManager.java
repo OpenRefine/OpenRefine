@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.DataPackageMetaData;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
@@ -164,36 +165,12 @@ public class FileProjectManager extends ProjectManager {
             GZIPInputStream gis = new GZIPInputStream(inputStream);
             untar(destDir, gis);
         } else {
-            Package pkg = pullDataPackage(inputStream);
-            try {
-                pkg.save(destDir.getAbsolutePath());
-            } catch (DataPackageException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            DataPackageMetaData meta = new DataPackageMetaData();
+            meta.loadFromStream(inputStream);
+            meta.writeToFile(new File(destDir, "datapackage.json"));
         }
     }
     
-    // XXX: metadata. exception handler for import DP.
-    private Package pullDataPackage(InputStream inputStream) {
-        // TODO Auto-generated method stub
-        try {
-            Package pkg = new Package(IOUtils.toString(inputStream));
-            return pkg;
-        } catch (ValidationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (DataPackageException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        return null;
-    }
-
     protected void untar(File destDir, InputStream inputStream) throws IOException {
         TarInputStream tin = new TarInputStream(inputStream);
         TarEntry tarEntry = null;

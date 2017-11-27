@@ -2,6 +2,7 @@ package com.google.refine.model.medadata;
 
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -47,5 +48,7 @@ public interface IMetadata extends Jsonizable {
     public JSONArray getUserMetadata();
 
     public void setAnyStringField(String metaName, String valueString);
+
+    void loadFromStream(InputStream inputStream);
     
 }
