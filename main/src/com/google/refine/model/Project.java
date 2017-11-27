@@ -287,7 +287,7 @@ public class Project {
         return metadataMap;
     }
     
-    // XXX: metadata: need to set from somewhere. DONE. 
+    // XXX: metadata::put need to set from somewhere. DONE. 
     public void setMetadata(MetadataFormat format, IMetadata metadata) {
         getMetadataMap().put(format, metadata);
     }

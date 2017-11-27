@@ -53,7 +53,7 @@ public class GetAllPreferencesCommand extends Command {
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         
-        // XXX: metadata. assume that project level has no specific preference?
+        // XXX: metadata::getCommand assume that project level has no specific preference?
         PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
                 
         try {

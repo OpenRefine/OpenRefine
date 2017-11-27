@@ -3,6 +3,8 @@ package com.google.refine.model.medadata;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -19,6 +21,8 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 public class DataPackageMetaData extends AbstractMetadata {
     final static Logger logger = LoggerFactory.getLogger(DataPackageMetaData.class);
+
+    private static final String RESOURCE_PATH_KEY = "path";
 
     private Package _pkg;
     
@@ -45,16 +49,19 @@ public class DataPackageMetaData extends AbstractMetadata {
             e.printStackTrace();
         }
         
-        logger.info("metadata file loaded");
+        logger.info("Data Package metadata file loaded");
         return null;
     }
-
+    
+    /**
+     * Write the package to a json file.
+     */
     @Override
     public void writeToFile(File metadataFile) {
         try {
             this._pkg.save(metadataFile.getAbsolutePath());
             
-            // XXX: metadata::save How to save the resource files?
+            // XXX: metadata::save How to save the resource files and "table schema"
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -84,5 +91,15 @@ public class DataPackageMetaData extends AbstractMetadata {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public List<String> getResources() {
+        List<String> listResources = new ArrayList<String>();
+        
+        for (int i = 0; i < _pkg.getResources().length(); i++) {
+            listResources.add(_pkg.getResources().getJSONObject(i).getString(RESOURCE_PATH_KEY));
+        }
+        
+        return listResources;
     }
 }

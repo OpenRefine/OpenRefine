@@ -41,6 +41,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -121,7 +122,7 @@ public class FileProjectManager extends ProjectManager {
      *
      * @param projectID
      */
-    // XXX: metadata: load metadata using imetadata.load()
+    // XXX: metadata::load  Load Project metadata using imetadata.load()
     @Override
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
@@ -152,12 +153,13 @@ public class FileProjectManager extends ProjectManager {
     }
     
     /**
+     * Import data package
      * inputStream comes from json file or from zip file
      * @param projectID
      * @param inputStream
      */
     @Override
-    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped)  throws IOException {
+    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped, URL baseURL)  throws IOException {
         File destDir = this.getProjectDir(projectID);
         destDir.mkdirs();
         
@@ -168,6 +170,10 @@ public class FileProjectManager extends ProjectManager {
             DataPackageMetaData meta = new DataPackageMetaData();
             meta.loadFromStream(inputStream);
             meta.writeToFile(new File(destDir, "datapackage.json"));
+            // XXX: metadata::import Import the data files. Need to involve the Progress Bar here.
+            for (String path : meta.getResources()) {
+                
+            }
         }
     }
     
