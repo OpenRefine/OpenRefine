@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.model;
 
-import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 
 

@@ -15,7 +15,7 @@ import com.google.refine.Jsonizable;
  *
  */
 public interface IMetadata extends Jsonizable {
-    public String formatName = null;
+    public MetadataFormat formatName = MetadataFormat.UNKNOWN;
     
     public IMetadata loadFromJSON(JSONObject obj);
     

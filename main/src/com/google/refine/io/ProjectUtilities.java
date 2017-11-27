@@ -36,6 +36,10 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -45,6 +49,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.AbstractMetadata;
+import com.google.refine.model.medadata.DataPackageMetaData;
+import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.util.Pool;
 
 
@@ -110,36 +117,65 @@ public class ProjectUtilities {
             out.close();
         }
     }
-
-    static public Project load(File dir, long id) {
+    
+    static public Project loadDataFile(File dir, String dataFile, long id) {
         try {
-            File file = new File(dir, "data.zip");
+            File file = new File(dir, dataFile);
             if (file.exists()) {
                 return loadFromFile(file, id);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-            File file = new File(dir, "data.temp.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            File file = new File(dir, "data.old.zip");
-            if (file.exists()) {
-                return loadFromFile(file, id);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        
         return null;
+    }
+    
+    static public Project load(File dir, long id) {
+        Project project =null;
+        
+        if ((project = loadDataFile(dir, "data.zip", id)) == null) {
+            if ((project = loadDataFile(dir, "data.temp.zip", id)) == null) {
+                project = loadDataFile(dir, "data.old.zip", id);
+            }
+        }
+        
+        loadMetadata(dir, project);
+        
+        return project;
+    }
+    
+    /**
+     * scan the folder for json files and load them as metadata
+     * @param dir
+     * @param project
+     */
+    private static void loadMetadata(File dir, Project project) {
+     // XXX: metadata: load the metadatas from data folder
+        Map<String, DataPackageMetaData> metadataMap = new HashMap<String, DataPackageMetaData>();
+        metadataMap.put("datapackage.json", new DataPackageMetaData());
+        
+        File[] jsons = dir.listFiles(
+                (folder, file) -> {
+                    return file.toLowerCase().endsWith(".json");
+                }
+        );
+        
+        for (File file : jsons) {
+            // already loaded
+            if (file.getName().equals("metadata.json"))
+                continue;
+            
+            DataPackageMetaData metadata = metadataMap.get(file.getName());
+            if (metadata == null)
+                continue;
+            
+            // load itself
+            metadata.loadFromFile(file);
+            
+            project.setMetadata(metadata.formatName, metadata);
+        }
+        
     }
 
     static protected Project loadFromFile(
