@@ -282,8 +282,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     
     $(tr.insertCell(tr.cells.length));
     var tags = project.tags;
-    for (var i = 0; i < tags.length; i++) {
-        var tag = tags[i];
+    for (var index = 0; index < tags.length; index++) {
+        var tag = tags[index];
         $("<span/>")
         .addClass("project-tag")
         .text(tag)
@@ -304,7 +304,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     .click(function() {
             var oldTags = project.tags.join(",");
             var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
-            if (newTags === null || newTags == oldTags) {
+            if (newTags === null || newTags === oldTags) {
                 return false;
             }
             $.ajax({

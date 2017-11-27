@@ -132,13 +132,14 @@ public abstract class ProjectManager {
             _projectsMetadata.put(project.id, projectMetadata);
             if (_projectsTags == null)
                 _projectsTags = new HashMap<String, Integer>();
-
-            for (String tag : projectMetadata.getTags()) {
-              if (_projectsTags.containsKey(tag)) {
-                _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-              } else {
-                  _projectsTags.put(tag, 1);
-              }
+            if(projectMetadata.getTags()!=null) {
+              for (String tag : projectMetadata.getTags()) {
+                  if (_projectsTags.containsKey(tag)) {
+                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                  } else {
+                      _projectsTags.put(tag, 1);
+                  }
+                }
             }
         }
     }

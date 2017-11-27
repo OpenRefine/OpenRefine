@@ -29,7 +29,7 @@
         
                 /* FILTERPORTFOLIO: pass in a class to show, all others will be hidden */
                 listElement.bind("filterMyList", function( e, classToShow ){
-                        if(classToShow == settings.allTag){
+                        if(classToShow === settings.allTag){
                                 $(this).trigger("show");
                         }else{
                                 $(this).trigger("show", [ '.' + classToShow ] );

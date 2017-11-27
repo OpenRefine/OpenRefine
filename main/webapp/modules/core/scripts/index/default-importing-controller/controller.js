@@ -342,7 +342,7 @@ Refine.TagsManager.allProjectTags = [];
 
 Refine.TagsManager._getAllProjectTags = function() {
     var self = this;
-    if (self.allProjectTags.length == 0) {
+    if (self.allProjectTags.length === 0) {
         jQuery.ajax({
              url : "command/core/get-all-project-tags",
              success : function(result) {
