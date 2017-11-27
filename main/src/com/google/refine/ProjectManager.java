@@ -175,7 +175,7 @@ public abstract class ProjectManager {
             for (IMetadata metadata : metadataMap.values()) {
                 if (metadata != null) {
                     try {
-                        // XXX: metadata: something like metadata.save()
+                        // XXX: metadata::save something like metadata.save()
                         saveMetadata(metadata, id);
                     } catch (Exception e) {
                         e.printStackTrace();
