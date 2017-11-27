@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model.medadata;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -359,6 +360,12 @@ public class ProjectMetadata extends AbstractMetadata {
 
     @Override
     public void writeToFile(File metadataFile) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void loadFromStream(InputStream inputStream) {
         // TODO Auto-generated method stub
         
     }

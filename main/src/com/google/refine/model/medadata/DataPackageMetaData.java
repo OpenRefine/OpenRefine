@@ -20,7 +20,7 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 public class DataPackageMetaData extends AbstractMetadata {
     final static Logger logger = LoggerFactory.getLogger(DataPackageMetaData.class);
 
-    private Package pkg;
+    private Package _pkg;
     
     @Override
     public void writeToJSON(JSONWriter writer, Properties options)
@@ -52,7 +52,7 @@ public class DataPackageMetaData extends AbstractMetadata {
     @Override
     public void writeToFile(File metadataFile) {
         try {
-            this.pkg.save(metadataFile.getAbsolutePath());
+            this._pkg.save(metadataFile.getAbsolutePath());
             
             // XXX: metadata::save How to save the resource files?
         } catch (IOException e) {
@@ -73,7 +73,7 @@ public class DataPackageMetaData extends AbstractMetadata {
     @Override
     public void loadFromStream(InputStream inputStream) {
         try {
-            this.pkg = new Package(IOUtils.toString(inputStream));
+            this._pkg = new Package(IOUtils.toString(inputStream));
         } catch (ValidationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
