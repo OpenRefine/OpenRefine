@@ -151,7 +151,7 @@ public class ProjectUtilities {
      * @param project
      */
     private static void loadMetadata(File dir, Project project) {
-     // XXX: metadata: load the metadatas from data folder
+     // XXX: metadata: load the metadatas from data folder. DONE
         Map<String, DataPackageMetaData> metadataMap = new HashMap<String, DataPackageMetaData>();
         metadataMap.put("datapackage.json", new DataPackageMetaData());
         

@@ -46,9 +46,11 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
+import org.everit.json.schema.ValidationException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,6 +66,8 @@ import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.TopList;
+import io.frictionlessdata.datapackage.Package;
+import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 
 public class FileProjectManager extends ProjectManager {
@@ -144,6 +148,50 @@ public class FileProjectManager extends ProjectManager {
         } else {
             untar(destDir, inputStream);
         }
+    }
+    
+    /**
+     * inputStream comes from json file or from zip file
+     * @param projectID
+     * @param inputStream
+     */
+    @Override
+    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped)  throws IOException {
+        File destDir = this.getProjectDir(projectID);
+        destDir.mkdirs();
+        
+        if (gziped) {
+            GZIPInputStream gis = new GZIPInputStream(inputStream);
+            untar(destDir, gis);
+        } else {
+            Package pkg = pullDataPackage(inputStream);
+            try {
+                pkg.save(destDir.getAbsolutePath());
+            } catch (DataPackageException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    // XXX: metadata. exception handler for import DP.
+    private Package pullDataPackage(InputStream inputStream) {
+        // TODO Auto-generated method stub
+        try {
+            Package pkg = new Package(IOUtils.toString(inputStream));
+            return pkg;
+        } catch (ValidationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (DataPackageException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return null;
     }
 
     protected void untar(File destDir, InputStream inputStream) throws IOException {

@@ -592,4 +592,7 @@ public abstract class ProjectManager {
        ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }
+
+    public abstract void importDataPackage(long projectID, InputStream inputStream, boolean gziped)
+            throws IOException;
 }

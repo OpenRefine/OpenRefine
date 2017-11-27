@@ -105,4 +105,11 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
     }
 
+    @Override
+    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped)
+            throws IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
