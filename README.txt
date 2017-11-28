@@ -52,7 +52,8 @@ This is the full list of contributors (in chronological order):
  - pxb <pxb1988@gmail.com>
  - Qi <jackyq2015@gmail.com>
  - Antonin Delpeuch <antonin@delpeuch.eu>
- 
+ - Owen Stephens <owen@ostephens.com>
+  
  We welcome additional contributors if you'd like to help out.
                                 - o -
 
