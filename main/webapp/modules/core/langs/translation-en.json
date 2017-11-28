@@ -78,6 +78,7 @@
         "warning-data-file": "You must specify a data file to import.",
         "uploading-data": "Uploading data ...",
         "web-address": "Web Addresses (URLs)",
+        "data-package": "Data Package (JSON URL)",
         "warning-web-address": "You must specify a web address (URL) to import.",
         "downloading-data": "Downloading data ...",
         "clipboard": "Clipboard",

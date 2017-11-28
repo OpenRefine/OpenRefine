@@ -33,12 +33,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importing;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.List;
+
 public interface UrlRewriter {
     static public class Result {
         public String rewrittenUrl;
         public String format;
         public boolean download;
+        
+        public Result(String rewrittenUrl, String format, boolean download) {
+            this.rewrittenUrl = rewrittenUrl;
+            this.format = format;
+            this.download = download;
+        }
     }
     
-    public Result rewrite(String url);
+    public List<Result> rewrite(String url) throws MalformedURLException, IOException;
+    
+    public boolean filter(String url);
 }

@@ -274,6 +274,8 @@ function registerImporting() {
   IM.registerMimeType("application/rdf+xml", "text/xml/rdf");
 
   IM.registerMimeType("application/marc", "text/marc");
+  
+  IM.registerUrlRewriter(new Packages.com.google.refine.model.medadata.DataPackageUrlRewriter());
 
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,

@@ -60,8 +60,6 @@ public class DataPackageMetaData extends AbstractMetadata {
     public void writeToFile(File metadataFile) {
         try {
             this._pkg.save(metadataFile.getAbsolutePath());
-            
-            // XXX: metadata::save How to save the resource files and "table schema"
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

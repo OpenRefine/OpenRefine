@@ -35,6 +35,7 @@ package com.google.refine.tests;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.apache.tools.tar.TarOutputStream;
 
@@ -106,7 +107,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped)
+    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped, URL baseURL)
             throws IOException {
         // TODO Auto-generated method stub
         

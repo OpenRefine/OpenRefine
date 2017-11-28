@@ -47,6 +47,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -170,9 +171,10 @@ public class FileProjectManager extends ProjectManager {
             DataPackageMetaData meta = new DataPackageMetaData();
             meta.loadFromStream(inputStream);
             meta.writeToFile(new File(destDir, "datapackage.json"));
-            // XXX: metadata::import Import the data files. Need to involve the Progress Bar here.
+            // XXX: metadata::import Import the data files. May neet to involve the Progress Bar here.
             for (String path : meta.getResources()) {
-                
+                URL fileURL = new URL(baseURL, path);
+//                FileUtils.copyURLToFile(fileURL, File);
             }
         }
     }

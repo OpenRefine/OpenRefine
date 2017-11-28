@@ -262,22 +262,6 @@ public class ImportingUtilities {
                     JSONUtilities.safePut(fileRecord, "origin", "download");
                     JSONUtilities.safePut(fileRecord, "url", urlString);
                     
-                    for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
-                        Result result = rewriter.rewrite(urlString);
-                        if (result != null) {
-                            urlString = result.rewrittenUrl;
-                            url = new URL(urlString);
-                            
-                            JSONUtilities.safePut(fileRecord, "url", urlString);
-                            JSONUtilities.safePut(fileRecord, "format", result.format);
-                            if (!result.download) {
-                                downloadCount++;
-                                JSONUtilities.append(fileRecords, fileRecord);
-                                continue parts;
-                            }
-                        }
-                    }
-
                     if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
                         DefaultHttpClient client = new DefaultHttpClient();
                         DecompressingHttpClient httpclient = 
@@ -347,6 +331,104 @@ public class ImportingUtilities {
                             downloadCount++;
                         } finally {
                             stream2.close();
+                        }
+                    }
+                } else if (name.equals("data-package")) {
+                    String urlString = Streams.asString(stream);
+                    List<URL> listURL = new ArrayList<URL>();
+                    listURL.add(new URL(urlString));
+
+                    JSONObject fileRecord = new JSONObject();
+                    JSONUtilities.safePut(fileRecord, "origin", "download");
+                    JSONUtilities.safePut(fileRecord, "url", urlString);
+
+                    for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
+                        List<Result> results = rewriter.rewrite(urlString);
+                        if (results != null) {
+                            for (Result result : results) {
+                                JSONObject resourceRecord = new JSONObject();
+                                JSONUtilities.safePut(resourceRecord, "url", result.rewrittenUrl);
+                                JSONUtilities.safePut(resourceRecord, "format", result.format);
+                                listURL.add(new URL(result.rewrittenUrl));
+                                if (!result.download) {
+                                    downloadCount++;
+                                    JSONUtilities.append(fileRecords, resourceRecord);
+                                    // continue parts;
+                                }
+                            }
+                        }
+                    }
+
+                    for (URL url : listURL) {
+                        logger.info("Processing download URL:" + url);
+                        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                            DefaultHttpClient client = new DefaultHttpClient();
+                            DecompressingHttpClient httpclient = new DecompressingHttpClient(client);
+                            HttpGet httpGet = new HttpGet(url.toURI());
+                            httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
+                            if ("https".equals(url.getProtocol())) {
+                                // HTTPS only - no sending password in the clear over HTTP
+                                String userinfo = url.getUserInfo();
+                                if (userinfo != null) {
+                                    int s = userinfo.indexOf(':');
+                                    if (s > 0) {
+                                        String user = userinfo.substring(0, s);
+                                        String pw = userinfo.substring(s + 1, userinfo.length());
+                                        client.getCredentialsProvider().setCredentials(
+                                                new AuthScope(url.getHost(), 443),
+                                                new UsernamePasswordCredentials(user, pw));
+                                    }
+                                }
+                            }
+
+                            HttpResponse response = httpclient.execute(httpGet);
+
+                            try {
+                                response.getStatusLine();
+                                HttpEntity entity = response.getEntity();
+                                if (entity == null) {
+                                    throw new Exception("No content found in " + url.toString());
+                                }
+                                InputStream stream2 = entity.getContent();
+                                String encoding = null;
+                                if (entity.getContentEncoding() != null) {
+                                    encoding = entity.getContentEncoding().getValue();
+                                }
+                                JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
+                                String contentType = null;
+                                if (entity.getContentType() != null) {
+                                    contentType = entity.getContentType().getValue();
+                                }
+                                JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
+                                if (saveStream(stream2, url, rawDataDir, progress, update, fileRecord, fileRecords,
+                                        entity.getContentLength())) {
+                                    archiveCount++;
+                                }
+                                downloadCount++;
+                                EntityUtils.consume(entity);
+                            } finally {
+                                httpGet.releaseConnection();
+                            }
+                        } else {
+                            // Fallback handling for non HTTP connections (only FTP?)
+                            URLConnection urlConnection = url.openConnection();
+                            urlConnection.setConnectTimeout(5000);
+                            urlConnection.connect();
+                            InputStream stream2 = urlConnection.getInputStream();
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding", 
+                                    urlConnection.getContentEncoding());
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType", 
+                                    urlConnection.getContentType());
+                            try {
+                                if (saveStream(stream2, url, rawDataDir, progress, 
+                                        update, fileRecord, fileRecords,
+                                        urlConnection.getContentLength())) {
+                                    archiveCount++;
+                                }
+                                downloadCount++;
+                            } finally {
+                                stream2.close();
+                            }
                         }
                     }
                 } else {

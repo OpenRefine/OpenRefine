@@ -66,6 +66,7 @@ public class ProjectMetadataUtilities {
     
     final static IMetadata projectMetaData = new ProjectMetadata();
 
+    
     public static void save(Project project, IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         saveProjectMetadata(projectMeta, projectDir);
         
