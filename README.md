@@ -42,17 +42,22 @@ was acquired by Google, Inc. in July 2010 and the product was renamed Google Ref
 In October 2012, it was renamed OpenRefine as it transitioned to a 
 community-supported product.
 
-This is the full list of contributors (in chronological order):
+EMERITUS CONTRIBUTORS (no longer current but honored here for their previous contributions)
+---------------------
 
- - David Huynh <dfhuynh@google.com> (EMERITUS)
- - Stefano Mazzocchi <stefanom@google.com> (EMERITUS)
+ - David Huynh <dfhuynh@google.com>
+ - Stefano Mazzocchi <stefanom@google.com>
  - Vishal Talwar <vtalwar@google.com> 
  - Jeff Fry <jfry@google.com>
  - Will Moffat <wdm@google.com>
  - James Home <jameshome@google.com>
+ - Heather Campbell <campbellh@google.com>
+ 
+CURRENT CONTRIBUTORS
+--------------------
+
  - Iain Sproat <iainsproat@gmail.com>
  - Tom Morris <tfmorris@gmail.com>
- - Heather Campbell <campbellh@google.com>
  - Thad Guidry <thadguidry@gmail.com>
  - Paul Makepeace <paulm@paulm.com>
  - Tomaž Šolc <tomaz.solc@zemanta.com>
