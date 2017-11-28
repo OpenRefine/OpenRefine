@@ -20,8 +20,8 @@ Documentation and Videos
 
 Contributing to the project
 ---------------------------
-* [Donate $](https://www.bountysource.com/teams/openrefine/issues)
 * [Developers Guide & Architecture](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers)
+* [Contributing Guide](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
 Contact us
 ----------
