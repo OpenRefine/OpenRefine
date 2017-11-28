@@ -154,7 +154,7 @@ function DataPackageImportingSourceUI(controller) {
       if ($.trim(self._elmts.urlInput[0].value).length === 0) {
         window.alert($.i18n._('core-index-import')["warning-web-address"]);
       } else {
-        self._controller.startImportJob(self._elmts.form, $.i18n._('core-index-import')["downloading-data"]);
+        self._controller.startImportJob(self._elmts.form, $.i18n._('core-index-import')["data-package"]);
       }
     });
   };
