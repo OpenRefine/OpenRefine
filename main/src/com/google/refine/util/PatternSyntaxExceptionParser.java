@@ -36,6 +36,44 @@ package com.google.refine.util;
 import java.util.regex.PatternSyntaxException;
 
 public class PatternSyntaxExceptionParser {
+    /*  Class to translate PatternSyntaxExceptions into more user friendly error messages
+        Currently translates the following error messages from java.util.regex.Pattern
+            "Unclosed character class"
+            "Unmatched closing ')'"
+            "Unexpected internal error"
+            "Dangling meta character '" + ((char)ch) + "'"
+            "Unclosed counted closure"
+            "Illegal repetition"
+            "Illegal repetition range"
+            "Illegal character range"
+        
+        The following messages are not currently translated and are output as per PatternSyntaxException
+            "\\k is not followed by '<' for named capturing group"
+            "(named capturing group <"+ name+"> does not exist"
+            "Illegal/unsupported escape sequence"
+            "Bad class syntax"
+            "Unexpected character '"+((char)ch)+"'"
+            "Unclosed character family"
+            "Empty character family"
+            "Unknown Unicode property {name=<" + name + ">, "+ "value=<" + value + ">}"
+            "Unknown character script name {" + name + "}"
+            "Unknown character block name {" + name + "}"
+            "Unknown character property name {" + name + "}"
+            "named capturing group has 0 length name"
+            "named capturing group is missing trailing '>'"
+            "Named capturing group <" + name + "> is already defined"
+            "Look-behind group does not have " + "an obvious maximum length"
+            "Unknown look-behind group"
+            "Unknown group type"
+            "Unknown inline modifier"
+            "Internal logic error"
+            "Illegal control escape sequence"
+            "Illegal octal escape sequence"
+            "Hexadecimal codepoint is too big"
+            "Unclosed hexadecimal escape sequence"
+            "Illegal hexadecimal escape sequence"
+            "Illegal Unicode escape sequence"
+        */
     private final PatternSyntaxException exception;
 
     public PatternSyntaxExceptionParser(PatternSyntaxException e) {
@@ -51,7 +89,7 @@ public class PatternSyntaxExceptionParser {
             //Need these errors to be more human readable
             //Possibly include html for formatting
             //Update tests first with user friendly errors
-                sb.append("The regular expression is missing a closing ']' character.");
+                sb.append("The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.");
                 break;
             case "Unmatched closing ')'":
                 sb.append("The regular expression is missing a opening '(' character.");
@@ -59,49 +97,31 @@ public class PatternSyntaxExceptionParser {
             case "Unclosed group":
                 sb.append("The regular expression is missing a closing ')' character.");
                 break;
+            case "Dangling meta character '*'":
+            case "Dangling meta character '+'":
+            case "Dangling meta character '?'":
+                sb.append("The regular expression has a '*','+' or '?' in the wrong place.");
+                break;
+            case "Unexpected internal error":
+                sb.append("The regular expression has a backslash '\\' at the end.");
+                break;
+            case "Unclosed counted closure":
+                sb.append("The regular expression is missing a closing '}' character, or has an incorrect quantifier statement in curly brackets '{}'.");
+                break;
+            case "Illegal repetition":
+                sb.append("The regular expression has an incomplete or incorrect quantifier statement in curly brackets '{}'.");
+                break;
+            case "Illegal repetition range":
+                sb.append("The regular expression has a quantifier statement where the minimum is larger than the maximum (e.g. {4,3}).");
+                break;
+            case "Illegal character range":
+                sb.append("The regular expression has a range statement which is incomplete or has the characters in the incorrect order (e.g. [9-0])");
+                break;
             default:
-                // If no special handling in place fall back on method
-                // as used in java.util.regex.PatternSyntaxException
-                sb.append(desc);
+                // If no special handling in place fall back on error msg
+                // created by java.util.regex.PatternSyntaxException
+                sb.append(exception.getMessage());
         }
         return sb.toString();
     }
-        /* Error messages from java.util.regex.Pattern
-        "Unclosed character class"
-        "Unmatched closing ')'"
-        "Unexpected internal error"
-        "Dangling meta character '" + ((char)ch) + "'"
-        "\\k is not followed by '<' for named capturing group"
-        "(named capturing group <"+ name+"> does not exist"
-        "Illegal/unsupported escape sequence"
-        "Bad class syntax"
-        "Unclosed character class"
-        "Illegal character range"
-        "Unexpected character '"+((char)ch)+"'"
-        "Unclosed character family"
-        "Empty character family"
-        "Unknown Unicode property {name=<" + name + ">, "+ "value=<" + value + ">}"
-        "Unknown character script name {" + name + "}"
-        "Unknown character block name {" + name + "}"
-        "Unknown character property name {" + name + "}"
-        "named capturing group has 0 length name"
-        "named capturing group is missing trailing '>'"
-        "Named capturing group <" + name + "> is already defined"
-        "Look-behind group does not have " + "an obvious maximum length"
-        "Unknown look-behind group"
-        "Unknown group type"
-        "Unknown inline modifier"
-        "Internal logic error"
-        "Unclosed counted closure"
-        "Illegal repetition range"
-        "Illegal repetition"
-        "Illegal control escape sequence"
-        "Illegal octal escape sequence"
-        "Hexadecimal codepoint is too big"
-        "Unclosed hexadecimal escape sequence"
-        "Illegal hexadecimal escape sequence"
-        "Illegal Unicode escape sequence"
-        */
-
-
 }

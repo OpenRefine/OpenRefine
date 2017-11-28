@@ -51,36 +51,6 @@ public class PatternSyntaxExceptionParserTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
-/* 
-Potential errors and error messages from PatternSyntaxException
-groupopen:"Unmatched opening parenthesis."
-    Unclosed group near index 1 ( ^
-groupclose:"Unmatched closing parenthesis."
-    Unmatched closing ')' )
-setopen:"Unmatched opening square bracket."
-    Unclosed character class near index 0 [ ^
-quanttarg:"Invalid target for quantifier."
-    Dangling meta character '+' near index 0 +{4} ^
-    Dangling meta character '*' near index 0 * ^
-    Dangling meta character '?' near index 0 ? ^
-esccharopen:"Dangling backslash."
-    Unexpected internal error near index 1 \ ^
-quantrev:"Quantifier minimum is greater than maximum."
-    Illegal repetition range near index 5 a{3,2} ^
-rangerev:"Range values reversed. Start char is greater than end char."
-    Illegal character range near index 3 [9-0] ^
-esccharbad:"Invalid escape sequence."
-    Illegal control escape sequence: \c
-    Illegal/unsupported escape sequence: \g \i \j \l \m \o \q \y
-    \k is not followed by '<' for named capturing group: \k
-    Unknown character property name {}: \p
-    Illegal Unicode escape sequence: {backslash}u
-    Illegal hexadecimal escape sequence: \x
-    Illegal octal escape sequence: \0
-invalidnamegroup:
-    named capturing group is missing trailing '>' near index 5 (?<as?>a) ^
-*/
 
     @Test
     public void unmatchedOpeningParenthesisTest(){
@@ -116,20 +86,7 @@ invalidnamegroup:
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression is missing a closing ']' character.");
-        }
-    }
-
-    @Test
-    public void quantifierTargetValidityTest(){
-        String s = "abc+*";
-        try {
-            Pattern pattern = Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
-        } catch (PatternSyntaxException err) {
-            PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
-            Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has a '*','+' or '?' in the wrong place");
+                                "The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.");
         }
     }
 
@@ -143,6 +100,43 @@ invalidnamegroup:
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
                                 "The regular expression has a backslash '\\' at the end.");
+        }
+    }
+
+    @Test
+    public void unmatchedOpeningCurlyBracketTest(){
+        String s = "abc{3";
+        try {
+            Pattern pattern = Pattern.compile(s);
+        } catch (PatternSyntaxException err) {
+            PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
+            Assert.assertEquals(e.getUserMessage(),
+                                "The regular expression is missing a closing '}' character, or has an incorrect quantifier statement in curly brackets '{}'.");
+        }
+    }
+
+    @Test
+    public void illegalQuantifierStatement(){
+        String s = "abc{";
+        try {
+            Pattern pattern = Pattern.compile(s);
+        } catch (PatternSyntaxException err) {
+            PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
+            Assert.assertEquals(e.getUserMessage(),
+                                "The regular expression has an incomplete or incorrect quantifier statement in curly brackets '{}'.");
+        }
+    }
+
+    @Test
+    public void quantifierTargetValidityTest(){
+        String s = "abc+*";
+        try {
+            Pattern pattern = Pattern.compile(s);
+            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
+        } catch (PatternSyntaxException err) {
+            PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
+            Assert.assertEquals(e.getUserMessage(),
+                                "The regular expression has a '*','+' or '?' in the wrong place.");
         }
     }
 
@@ -168,22 +162,8 @@ invalidnamegroup:
         } catch (PatternSyntaxException err) {
             PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
             Assert.assertEquals(e.getUserMessage(),
-                                "The regular expression has a range statement with the characters in the incorrect order (e.g. [9-0])");
+                                "The regular expression has a range statement which is incomplete or has the characters in the incorrect order (e.g. [9-0])");
         }
     }
 
-/* This needs to be different to the others - see all the variations on invalid escape sequences
-    @Test
-    public void escapeSequenceValidityTest(){
-        String s = "";
-        try {
-            Pattern pattern = Pattern.compile(s);
-            Assert.assertTrue(false,"Test pattern successfully compiled when it should fail");
-        } catch (PatternSyntaxException err) {
-            PatternSyntaxExceptionParser e = new PatternSyntaxExceptionParser(err);
-            Assert.assertEquals(e.getUserMessage(),
-                                "Invalid escape sequence.");
-        }
-    }
-*/
 }
