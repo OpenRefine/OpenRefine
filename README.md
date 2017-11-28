@@ -59,6 +59,7 @@ CURRENT CONTRIBUTORS
  - Iain Sproat <iainsproat@gmail.com>
  - Tom Morris <tfmorris@gmail.com>
  - Thad Guidry <thadguidry@gmail.com>
+ - Martin Magdinier <martin.magdinier@gmail.com>
  - Paul Makepeace <paulm@paulm.com>
  - Tomaž Šolc <tomaz.solc@zemanta.com>
  - Gabriel Sjoberg <GabrielSjoberg@gmail.com>
