@@ -82,7 +82,6 @@ public class PatternSyntaxExceptionParser {
 
     public String getUserMessage() {
         String msg = "";
-        StringBuffer sb = new StringBuffer();
         String desc = exception.getDescription();
         switch(desc)
         {
