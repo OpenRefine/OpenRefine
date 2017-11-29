@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
@@ -69,6 +70,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -81,11 +83,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.beust.jcommander.internal.Lists;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
@@ -173,11 +178,11 @@ public class ImportingUtilities {
     ) throws Exception {
         JSONArray fileRecords = new JSONArray();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
+        JSONUtilities.safePut(retrievalRecord, "downloadCount", 0);
+        JSONUtilities.safePut(retrievalRecord, "archiveCount", 0);
         
         int clipboardCount = 0;
         int uploadCount = 0;
-        int downloadCount = 0;
-        int archiveCount = 0;
         
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
@@ -256,178 +261,26 @@ public class ImportingUtilities {
                     
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
-                    URL url = new URL(urlString);
-                    
-                    JSONObject fileRecord = new JSONObject();
-                    JSONUtilities.safePut(fileRecord, "origin", "download");
-                    JSONUtilities.safePut(fileRecord, "url", urlString);
-                    
-                    if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        DefaultHttpClient client = new DefaultHttpClient();
-                        DecompressingHttpClient httpclient = 
-                                new DecompressingHttpClient(client);
-                        HttpGet httpGet = new HttpGet(url.toURI());
-                        httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
-                        if ("https".equals(url.getProtocol())) {
-                            // HTTPS only - no sending password in the clear over HTTP
-                            String userinfo = url.getUserInfo();
-                            if (userinfo != null) {
-                                int s = userinfo.indexOf(':');
-                                if (s > 0) {
-                                    String user = userinfo.substring(0, s);
-                                    String pw = userinfo.substring(s + 1, userinfo.length());
-                                    client.getCredentialsProvider().setCredentials(
-                                            new AuthScope(url.getHost(), 443),
-                                            new UsernamePasswordCredentials(user, pw));
-                                }
-                            }
-                        }
- 
-                        HttpResponse response = httpclient.execute(httpGet);
-                        
-                        try {
-                            response.getStatusLine();
-                            HttpEntity entity = response.getEntity();
-                            if (entity == null) {
-                                throw new Exception("No content found in " + url.toString());
-                            }
-                            InputStream stream2 = entity.getContent();
-                            String encoding = null;
-                            if (entity.getContentEncoding() != null) {
-                                encoding = entity.getContentEncoding().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
-                            String contentType = null;
-                            if (entity.getContentType() != null) {
-                                contentType = entity.getContentType().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
-                            if (saveStream(stream2, url, rawDataDir, progress, update, 
-                                    fileRecord, fileRecords,
-                                    entity.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                            EntityUtils.consume(entity);
-                        } finally {
-                            httpGet.releaseConnection();
-                        }
-                    } else {
-                        // Fallback handling for non HTTP connections (only FTP?)
-                        URLConnection urlConnection = url.openConnection();
-                        urlConnection.setConnectTimeout(5000);
-                        urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding", 
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType", 
-                                urlConnection.getContentType());
-                        try {
-                            if (saveStream(stream2, url, rawDataDir, progress, 
-                                    update, fileRecord, fileRecords,
-                                    urlConnection.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                        } finally {
-                            stream2.close();
-                        }
-                    }
+                    download(rawDataDir, retrievalRecord, progress, fileRecords, update, urlString);
                 } else if (name.equals("data-package")) {
                     String urlString = Streams.asString(stream);
-                    List<URL> listURL = new ArrayList<URL>();
-                    listURL.add(new URL(urlString));
-
-                    JSONObject fileRecord = new JSONObject();
-                    JSONUtilities.safePut(fileRecord, "origin", "download");
-                    JSONUtilities.safePut(fileRecord, "url", urlString);
-
+                    List<Result> results = null;
+                    
                     for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
-                        List<Result> results = rewriter.rewrite(urlString);
+                        results = rewriter.rewrite(urlString);
                         if (results != null) {
                             for (Result result : results) {
-                                JSONObject resourceRecord = new JSONObject();
-                                JSONUtilities.safePut(resourceRecord, "url", result.rewrittenUrl);
-                                JSONUtilities.safePut(resourceRecord, "format", result.format);
-                                listURL.add(new URL(result.rewrittenUrl));
-                                if (!result.download) {
-                                    downloadCount++;
-                                    JSONUtilities.append(fileRecords, resourceRecord);
-                                    // continue parts;
-                                }
-                            }
-                        }
-                    }
-
-                    for (URL url : listURL) {
-                        logger.info("Processing download URL:" + url);
-                        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                            DefaultHttpClient client = new DefaultHttpClient();
-                            DecompressingHttpClient httpclient = new DecompressingHttpClient(client);
-                            HttpGet httpGet = new HttpGet(url.toURI());
-                            httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
-                            if ("https".equals(url.getProtocol())) {
-                                // HTTPS only - no sending password in the clear over HTTP
-                                String userinfo = url.getUserInfo();
-                                if (userinfo != null) {
-                                    int s = userinfo.indexOf(':');
-                                    if (s > 0) {
-                                        String user = userinfo.substring(0, s);
-                                        String pw = userinfo.substring(s + 1, userinfo.length());
-                                        client.getCredentialsProvider().setCredentials(
-                                                new AuthScope(url.getHost(), 443),
-                                                new UsernamePasswordCredentials(user, pw));
-                                    }
-                                }
-                            }
-
-                            HttpResponse response = httpclient.execute(httpGet);
-
-                            try {
-                                response.getStatusLine();
-                                HttpEntity entity = response.getEntity();
-                                if (entity == null) {
-                                    throw new Exception("No content found in " + url.toString());
-                                }
-                                InputStream stream2 = entity.getContent();
-                                String encoding = null;
-                                if (entity.getContentEncoding() != null) {
-                                    encoding = entity.getContentEncoding().getValue();
-                                }
-                                JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
-                                String contentType = null;
-                                if (entity.getContentType() != null) {
-                                    contentType = entity.getContentType().getValue();
-                                }
-                                JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
-                                if (saveStream(stream2, url, rawDataDir, progress, update, fileRecord, fileRecords,
-                                        entity.getContentLength())) {
-                                    archiveCount++;
-                                }
-                                downloadCount++;
-                                EntityUtils.consume(entity);
-                            } finally {
-                                httpGet.releaseConnection();
-                            }
-                        } else {
-                            // Fallback handling for non HTTP connections (only FTP?)
-                            URLConnection urlConnection = url.openConnection();
-                            urlConnection.setConnectTimeout(5000);
-                            urlConnection.connect();
-                            InputStream stream2 = urlConnection.getInputStream();
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", 
-                                    urlConnection.getContentEncoding());
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", 
-                                    urlConnection.getContentType());
-                            try {
-                                if (saveStream(stream2, url, rawDataDir, progress, 
-                                        update, fileRecord, fileRecords,
-                                        urlConnection.getContentLength())) {
-                                    archiveCount++;
-                                }
-                                downloadCount++;
-                            } finally {
-                                stream2.close();
+//                                JSONObject resourceRecord = new JSONObject();
+//                                JSONUtilities.safePut(resourceRecord, "origin", "download");
+//                                JSONUtilities.safePut(resourceRecord, "url", result.rewrittenUrl);
+//                                JSONUtilities.safePut(resourceRecord, "format", result.format);
+                                download(rawDataDir, retrievalRecord, progress, fileRecords, 
+                                        update, result.rewrittenUrl, result.metaDataFormat);
+                                
+//                                if (!result.download) {
+//                                    JSONUtilities.safeInc(retrievalRecord, "downloadCount");
+//                                    JSONUtilities.append(fileRecords, resourceRecord);
+//                                }
                             }
                         }
                     }
@@ -438,7 +291,6 @@ public class ImportingUtilities {
 //                    request.getParameterMap().put(name, value);
                     
                 }
-
             } else { // is file content
                 String fileName = fileItem.getName();
                 if (fileName.length() > 0) {
@@ -459,7 +311,7 @@ public class ImportingUtilities {
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
-                        archiveCount++;
+                        JSONUtilities.safeInc(retrievalRecord, "archiveCount");
                     }
                     
                     uploadCount++;
@@ -475,9 +327,113 @@ public class ImportingUtilities {
         }
         
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
-        JSONUtilities.safePut(retrievalRecord, "downloadCount", downloadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
-        JSONUtilities.safePut(retrievalRecord, "archiveCount", archiveCount);
+    }
+
+    private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
+            JSONArray fileRecords, final SavingUpdate update, String urlString)
+            throws URISyntaxException, IOException, ClientProtocolException, Exception {
+         download(rawDataDir, retrievalRecord, progress, fileRecords, update, urlString, null);
+    }
+    
+    /**
+     * @param rawDataDir
+     * @param retrievalRecord
+     * @param progress
+     * @param fileRecords
+     * @param update
+     * @param urlString
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws Exception
+     */
+    private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
+            JSONArray fileRecords, final SavingUpdate update, String urlString, String metaDataFormat)
+            throws URISyntaxException, IOException, ClientProtocolException, Exception {
+        URL url = new URL(urlString);
+        JSONObject fileRecord = new JSONObject();
+        JSONUtilities.safePut(fileRecord, "origin", "download");
+        JSONUtilities.safePut(fileRecord, "url", urlString);
+        
+        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+            DefaultHttpClient client = new DefaultHttpClient();
+            DecompressingHttpClient httpclient = 
+                    new DecompressingHttpClient(client);
+            HttpGet httpGet = new HttpGet(url.toURI());
+            httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
+            if ("https".equals(url.getProtocol())) {
+                // HTTPS only - no sending password in the clear over HTTP
+                String userinfo = url.getUserInfo();
+                if (userinfo != null) {
+                    int s = userinfo.indexOf(':');
+                    if (s > 0) {
+                        String user = userinfo.substring(0, s);
+                        String pw = userinfo.substring(s + 1, userinfo.length());
+                        client.getCredentialsProvider().setCredentials(
+                                new AuthScope(url.getHost(), 443),
+                                new UsernamePasswordCredentials(user, pw));
+                    }
+                }
+            }
+ 
+            HttpResponse response = httpclient.execute(httpGet);
+            
+            try {
+                response.getStatusLine();
+                HttpEntity entity = response.getEntity();
+                if (entity == null) {
+                    throw new Exception("No content found in " + url.toString());
+                }
+                InputStream stream2 = entity.getContent();
+                String encoding = null;
+                if (entity.getContentEncoding() != null) {
+                    encoding = entity.getContentEncoding().getValue();
+                }
+                JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
+                String contentType = null;
+                if (entity.getContentType() != null) {
+                    contentType = entity.getContentType().getValue();
+                }
+                JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
+                
+                if (saveStream(stream2, url, rawDataDir, progress, update, 
+                        fileRecord, fileRecords,
+                        entity.getContentLength())) {
+                    JSONUtilities.safeInc(retrievalRecord, "archiveCount");
+                }
+                if (metaDataFormat != null)
+                    JSONUtilities.safePut(fileRecord, "metaDataFormat", metaDataFormat);
+                
+                JSONUtilities.safeInc(retrievalRecord, "downloadCount");
+                EntityUtils.consume(entity);
+            } finally {
+                httpGet.releaseConnection();
+            }
+        } else {
+            // Fallback handling for non HTTP connections (only FTP?)
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.connect();
+            InputStream stream2 = urlConnection.getInputStream();
+            JSONUtilities.safePut(fileRecord, "declaredEncoding", 
+                    urlConnection.getContentEncoding());
+            JSONUtilities.safePut(fileRecord, "declaredMimeType", 
+                    urlConnection.getContentType());
+            try {
+                if (saveStream(stream2, url, rawDataDir, progress, 
+                        update, fileRecord, fileRecords,
+                        urlConnection.getContentLength())) {
+                    JSONUtilities.safeInc(retrievalRecord, "archiveCount");
+                }
+                if (metaDataFormat != null)
+                    JSONUtilities.safePut(fileRecord, "metaDataFormat", metaDataFormat);
+                
+                JSONUtilities.safeInc(retrievalRecord, "downloadCount");
+            } finally {
+                stream2.close();
+            }
+        }
     }
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
@@ -1112,6 +1068,17 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
                 project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+                
+                for (JSONObject fileRecord : job.getSelectedFileRecords()) {
+                    if (job.isMetadataFileRecord(fileRecord)) {
+                        IMetadata metadata = null;
+                        metadata.loadFromFile(metadataFile);
+                        // XXX: metadata::import save the metadata file to project
+                        project.setMetadata(MetadataFormat.valueOf((String) fileRecord.get("metaDataFormat")),
+                                metadata);
+                    }
+                }
+                
                 ProjectManager.singleton.registerProject(project, pm);
                 
                 job.setProjectID(project.id);

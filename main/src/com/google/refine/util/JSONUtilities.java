@@ -263,6 +263,15 @@ public class JSONUtilities {
         }
     }
     
+    static public void safeInc(JSONObject obj, String key) {
+        try {
+            int currentValue = obj.getInt(key);
+            safePut(obj, key, currentValue + 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    
     static public void safePut(JSONObject obj, String key, long value) {
         try {
             obj.put(key, value);

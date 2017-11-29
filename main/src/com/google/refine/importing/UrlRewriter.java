@@ -42,11 +42,19 @@ public interface UrlRewriter {
         public String rewrittenUrl;
         public String format;
         public boolean download;
+        public String metaDataFormat;
         
         public Result(String rewrittenUrl, String format, boolean download) {
             this.rewrittenUrl = rewrittenUrl;
             this.format = format;
             this.download = download;
+        }
+        
+        public Result(String rewrittenUrl, String format, boolean download, String metaDataFormat) {
+            this.rewrittenUrl = rewrittenUrl;
+            this.format = format;
+            this.download = download;
+            this.metaDataFormat = metaDataFormat;
         }
     }
     

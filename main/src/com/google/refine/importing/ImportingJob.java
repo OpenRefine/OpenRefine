@@ -139,6 +139,34 @@ public class ImportingJob implements Jsonizable {
         }
     }
     
+    /**
+     * TO check if the file record is a metadata file entry
+     * @param fileRecordObject
+     * @return JSONObject
+     */
+    public boolean isMetadataFileRecord(JSONObject fileRecordObject) {
+        return fileRecordObject.has("metaDataFormat");
+    }
+    
+    /**
+     * Return the metadata file record if there is any.
+     * @return JSONObject
+     */
+    public JSONObject getMetadataFileRecord() {
+        JSONObject retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
+        if (retrievalRecord != null) {
+            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+            if (fileRecordArray != null) {
+                    for (int i = 0; i < fileRecordArray.length(); i++) {
+                        JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecordArray, i);
+                        if (isMetadataFileRecord(fileRecord))
+                            return fileRecord;
+                    }
+            }
+        }
+        
+        return null;
+    }
     
     public List<JSONObject> getSelectedFileRecords() {
         List<JSONObject> results = new ArrayList<JSONObject>();
