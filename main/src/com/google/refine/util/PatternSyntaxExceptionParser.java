@@ -86,9 +86,6 @@ public class PatternSyntaxExceptionParser {
         switch(desc)
         {
             case "Unclosed character class":
-            //Need these errors to be more human readable
-            //Possibly include html for formatting
-            //Update tests first with user friendly errors
                 sb.append("The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.");
                 break;
             case "Unmatched closing ')'":
