@@ -147,7 +147,7 @@ public class ProjectUtilities {
      * @param project
      */
     private static void loadMetadata(File dir, Project project) {
-     // XXX: metadata::load load the metadatas from data folder. DONE
+     // load the metadatas from data folder.
         Map<String, DataPackageMetaData> metadataMap = new HashMap<String, DataPackageMetaData>();
         metadataMap.put(DataPackageMetaData.DEFAULT_FILE_NAME, new DataPackageMetaData());
         

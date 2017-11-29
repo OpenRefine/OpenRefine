@@ -225,7 +225,7 @@ public class ImportingUtilities {
         List<FileItem> tempFiles = (List<FileItem>)upload.parseRequest(request);
         
         progress.setProgress("Uploading data ...", -1);
-        parts: for (FileItem fileItem : tempFiles) {
+        for (FileItem fileItem : tempFiles) {
             if (progress.isCanceled()) {
                 break;
             }
@@ -1073,7 +1073,7 @@ public class ImportingUtilities {
                 for (int i = 0;i < fileRecords.length();i++) {
                     fileRecord = fileRecords.getJSONObject(i);
                     if (job.isMetadataFileRecord(fileRecord)) {
-                     // XXX: metadata::import support mulitple metadata format:
+                     // 1. XXX: metadata::import support mulitple metadata format:
                         IMetadata metadata = new DataPackageMetaData();
                         
                         String relativePath = fileRecord.getString("location");

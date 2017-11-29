@@ -41,7 +41,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -118,7 +117,6 @@ public class FileProjectManager extends ProjectManager {
      *
      * @param projectID
      */
-    // XXX: metadata::load  Load Project metadata using imetadata.load()
     @Override
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
@@ -147,32 +145,7 @@ public class FileProjectManager extends ProjectManager {
             untar(destDir, inputStream);
         }
     }
-    
-    /**
-     * Import data package
-     * inputStream comes from json file or from zip file
-     * @param projectID
-     * @param inputStream
-     */
-    @Override
-    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped, URL baseURL)  throws IOException {
-        File destDir = this.getProjectDir(projectID);
-        destDir.mkdirs();
         
-        if (gziped) {
-            GZIPInputStream gis = new GZIPInputStream(inputStream);
-            untar(destDir, gis);
-        } else {
-            DataPackageMetaData meta = new DataPackageMetaData();
-            meta.loadFromStream(inputStream);
-            meta.writeToFile(new File(destDir, DataPackageMetaData.DEFAULT_FILE_NAME));
-            // XXX: metadata::import import DataPackage
-            for (String path : meta.getResources()) {
-                URL fileURL = new URL(baseURL, path);
-            }
-        }
-    }
-    
     protected void untar(File destDir, InputStream inputStream) throws IOException {
         TarInputStream tin = new TarInputStream(inputStream);
         TarEntry tarEntry = null;
@@ -251,7 +224,7 @@ public class FileProjectManager extends ProjectManager {
     public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
         
-        // XXX: metadata::save | More generic way to handle this
+        // 1. XXX: metadata::save | More generic way to handle this
         if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) {
             Project project = ProjectManager.singleton.getProject(projectId);
             ((ProjectMetadata)metadata).setRowCount(project.rows.size());

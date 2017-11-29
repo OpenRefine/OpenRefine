@@ -35,7 +35,6 @@ package com.google.refine.tests;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import org.apache.tools.tar.TarOutputStream;
 
@@ -43,7 +42,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.ProjectMetadata;
 
 /**
  * Stub used to make protected methods public for testing
@@ -105,12 +103,4 @@ public class ProjectManagerStub extends ProjectManager {
     protected void saveWorkspace() {
         // empty
     }
-
-    @Override
-    public void importDataPackage(long projectID, InputStream inputStream, boolean gziped, URL baseURL)
-            throws IOException {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

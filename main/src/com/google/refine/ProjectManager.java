@@ -35,7 +35,6 @@ package com.google.refine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -176,12 +175,12 @@ public abstract class ProjectManager {
             for (IMetadata metadata : metadataMap.values()) {
                 if (metadata != null) {
                     try {
-                        // XXX: metadata::save something like metadata.save()
+                        //  save the metadata
                         saveMetadata(metadata, id);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }//FIXME what should be the behaviour if metadata is null? i.e. not found
+                }
             }
 
             Project project = getProject(id);
@@ -589,6 +588,4 @@ public abstract class ProjectManager {
        ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }
-
-    public abstract void importDataPackage(long projectID, InputStream inputStream, boolean gziped, URL baseURL) throws IOException;
 }
