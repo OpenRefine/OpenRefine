@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractMetadata implements IMetadata {
     private final static Logger logger = LoggerFactory.getLogger("AbstractMetadata");
     
+    private MetadataFormat formatName = MetadataFormat.UNKNOWN;
+    
     protected Date written = null;
     protected Date           _modified;
     protected String         _name = "";
@@ -25,6 +27,16 @@ public abstract class AbstractMetadata implements IMetadata {
     protected int _rowCount;
  // user metadata
     protected JSONArray _userMetadata = new JSONArray();; 
+
+    
+    public MetadataFormat getFormatName() {
+        return formatName;
+    }
+
+    
+    public void setFormatName(MetadataFormat formatName) {
+        this.formatName = formatName;
+    }
 
     @Override
     public abstract void writeToJSON(JSONWriter writer, Properties options) throws JSONException;

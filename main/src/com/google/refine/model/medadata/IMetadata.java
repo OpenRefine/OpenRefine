@@ -16,7 +16,9 @@ import com.google.refine.Jsonizable;
  *
  */
 public interface IMetadata extends Jsonizable {
-    public MetadataFormat formatName = MetadataFormat.UNKNOWN;
+    public MetadataFormat getFormatName();
+    
+    public void setFormatName(MetadataFormat format);
     
     public IMetadata loadFromJSON(JSONObject obj);
     
@@ -41,8 +43,6 @@ public interface IMetadata extends Jsonizable {
 
     public void setName(String projectName);
 
-    public void setRowCount(int size);
-
     public void updateModified();
 
     public JSONArray getUserMetadata();
@@ -50,5 +50,7 @@ public interface IMetadata extends Jsonizable {
     public void setAnyStringField(String metaName, String valueString);
 
     void loadFromStream(InputStream inputStream);
+
+    void setRowCount(int rowCount);
     
 }

@@ -104,6 +104,6 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/org.everit.json.schema-1.5.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-lang-2.5.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_45"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>

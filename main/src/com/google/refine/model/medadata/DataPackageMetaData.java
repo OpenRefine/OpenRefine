@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
@@ -22,9 +23,14 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 public class DataPackageMetaData extends AbstractMetadata {
     final static Logger logger = LoggerFactory.getLogger(DataPackageMetaData.class);
 
+    public final String DEFAULT_FILE_NAME = "datapackage.json";
     private static final String RESOURCE_PATH_KEY = "path";
 
     private Package _pkg;
+    
+    public DataPackageMetaData() {
+        setFormatName(MetadataFormat.OKF_METADATA);
+    }
     
     @Override
     public void writeToJSON(JSONWriter writer, Properties options)
@@ -41,16 +47,17 @@ public class DataPackageMetaData extends AbstractMetadata {
 
     @Override
     public IMetadata loadFromFile(File metadataFile) {
-        // TODO Auto-generated method stub
         try {
-            Package dp = new Package(metadataFile.getAbsolutePath());
+            String jsonString = FileUtils.readFileToString(metadataFile);
+            _pkg = new Package(jsonString);
         } catch (ValidationException | DataPackageException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
         logger.info("Data Package metadata file loaded");
-        return null;
+        
+        return this;
     }
     
     /**

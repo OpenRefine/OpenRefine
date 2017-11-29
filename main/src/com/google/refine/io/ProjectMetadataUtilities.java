@@ -65,15 +65,8 @@ public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
     
     final static IMetadata projectMetaData = new ProjectMetadata();
-
     
-    public static void save(Project project, IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
-        saveProjectMetadata(projectMeta, projectDir);
-        
-        saveTableSchema(project, projectDir);
-    }
-    
-    public static void saveProjectMetadata(IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+    public static void save(IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
 

@@ -83,13 +83,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.beust.jcommander.internal.Lists;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.DataPackageMetaData;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
@@ -1068,14 +1067,22 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
                 project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
+                JSONArray fileRecords = JSONUtilities.getArray(job.getRetrievalRecord(), "files");
                 
-                for (JSONObject fileRecord : job.getSelectedFileRecords()) {
+                JSONObject fileRecord = null;
+                for (int i = 0;i < fileRecords.length();i++) {
+                    fileRecord = fileRecords.getJSONObject(i);
                     if (job.isMetadataFileRecord(fileRecord)) {
-                        IMetadata metadata = null;
+                     // XXX: metadata::import support mulitple metadata format:
+                        IMetadata metadata = new DataPackageMetaData();
+                        
+                        String relativePath = fileRecord.getString("location");
+                        File metadataFile = new File(job.getRawDataDir(), relativePath);
                         metadata.loadFromFile(metadataFile);
-                        // XXX: metadata::import save the metadata file to project
+                        
                         project.setMetadata(MetadataFormat.valueOf((String) fileRecord.get("metaDataFormat")),
                                 metadata);
+                        logger.info(fileRecord.get("metaDataFormat") + " metadata is set for project " + project.id);
                     }
                 }
                 

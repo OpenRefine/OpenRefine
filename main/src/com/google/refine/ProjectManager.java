@@ -257,23 +257,19 @@ public abstract class ProjectManager {
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
-                    boolean hasUnsavedChanges =
-                        metadata.getModified().getTime() >= project.getLastSave().getTime();
+                    boolean hasUnsavedChanges = metadata.getModified().getTime() >= project.getLastSave().getTime();
                     // We use >= instead of just > to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
 
                     if (hasUnsavedChanges) {
                         long msecsOverdue = startTimeOfSave.getTime() - project.getLastSave().getTime();
-
                         records.add(new SaveRecord(project, msecsOverdue));
-
                     } else if (!project.getProcessManager().hasPending()
-                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
-                        
+                            && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
                         /*
-                         *  It's been a while since the project was last saved and it hasn't been
-                         *  modified. We can safely remove it from the cache to save some memory.
+                         * It's been a while since the project was last saved and it hasn't been
+                         * modified. We can safely remove it from the cache to save some memory.
                          */
                         _projects.remove(id).dispose();
                     }

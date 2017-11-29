@@ -47,12 +47,9 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
-import org.everit.json.schema.ValidationException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,8 +66,6 @@ import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.TopList;
-import io.frictionlessdata.datapackage.Package;
-import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 
 public class FileProjectManager extends ProjectManager {
@@ -171,10 +166,9 @@ public class FileProjectManager extends ProjectManager {
             DataPackageMetaData meta = new DataPackageMetaData();
             meta.loadFromStream(inputStream);
             meta.writeToFile(new File(destDir, "datapackage.json"));
-            // XXX: metadata::import Import the data files. May neet to involve the Progress Bar here.
+            // XXX: metadata::import import DataPackage
             for (String path : meta.getResources()) {
                 URL fileURL = new URL(baseURL, path);
-//                FileUtils.copyURLToFile(fileURL, File);
             }
         }
     }
@@ -256,7 +250,18 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
-        ProjectMetadataUtilities.save(_projects.get(projectId), metadata, projectDir);
+        
+        // XXX: metadata::save | More generic way to handle this
+        if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) {
+            Project project = ProjectManager.singleton.getProject(projectId);
+            ((ProjectMetadata)metadata).setRowCount(project.rows.size());
+            ProjectMetadataUtilities.save(metadata, projectDir);
+        } else if (metadata.getFormatName() == MetadataFormat.OKF_METADATA) {
+            DataPackageMetaData dp = (DataPackageMetaData)metadata;
+            dp.writeToFile(new File(projectDir, dp.DEFAULT_FILE_NAME));
+        }
+        
+        logger.info("metadata saved in " + metadata.getFormatName());
     }
 
     @Override
@@ -309,7 +314,7 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    protected boolean saveToFile(File file) throws IOException, JSONException {
+    protected boolean saveToFile(File file) throws Exception {
         FileWriter writer = new FileWriter(file);
         boolean saveWasNeeded = false;
         try {
@@ -320,15 +325,12 @@ public class FileProjectManager extends ProjectManager {
             for (Entry<Long, Project> entry : _projects.entrySet()) {
                 Long id = entry.getKey();
                 Map<MetadataFormat, IMetadata> metadataMap = entry.getValue().getMetadataMap();
+                
                 for (IMetadata metadata : metadataMap.values()) {
-                    if (metadata != null) {
-                        jsonWriter.value(id);
-                        if (metadata.isDirty()) {
-                            Project project = ProjectManager.singleton.getProject(id);
-                            metadata.setRowCount(project.rows.size());
-                            ProjectMetadataUtilities.save(project, metadata, getProjectDir(id));
-                            saveWasNeeded = true;
-                        }
+                    jsonWriter.value(id);
+                    if (metadata.isDirty()) {
+                        saveMetadata(metadata, id);
+                        saveWasNeeded = true;
                     }
                 }
             }

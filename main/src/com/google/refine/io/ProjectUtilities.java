@@ -36,8 +36,6 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -49,9 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.AbstractMetadata;
 import com.google.refine.model.medadata.DataPackageMetaData;
-import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.util.Pool;
 
 
@@ -173,7 +169,7 @@ public class ProjectUtilities {
             // load itself
             metadata.loadFromFile(file);
             
-            project.setMetadata(metadata.formatName, metadata);
+            project.setMetadata(metadata.getFormatName(), metadata);
         }
         
     }

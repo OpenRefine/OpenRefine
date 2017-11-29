@@ -77,6 +77,7 @@ public class ProjectMetadata extends AbstractMetadata {
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
     protected ProjectMetadata(Date date) {
+        setFormatName(MetadataFormat.PROJECT_METADATA);
         _created = date;
         preparePreferenceStore(_preferenceStore);
     }
