@@ -10,8 +10,6 @@ import com.google.refine.importing.UrlRewriter;
 
 
 public class DataPackageUrlRewriter implements UrlRewriter {
-    private static String METADATA_FILENAME = "datapackage.json";
-    
     @Override
     public List<Result> rewrite(String url) throws MalformedURLException, IOException {
         List<Result> listResult = new ArrayList<Result>();
@@ -34,11 +32,11 @@ public class DataPackageUrlRewriter implements UrlRewriter {
 
     @Override
     public boolean filter(String url) {
-        return url.endsWith(METADATA_FILENAME);
+        return url.endsWith(DataPackageMetaData.DEFAULT_FILE_NAME);
     }
     
     private String getBaseURL(String url) {
-        return url.replaceFirst(METADATA_FILENAME, "");
+        return url.replaceFirst(DataPackageMetaData.DEFAULT_FILE_NAME, "");
     }
 
 }

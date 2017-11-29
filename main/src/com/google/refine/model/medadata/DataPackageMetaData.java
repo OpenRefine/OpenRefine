@@ -23,7 +23,7 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 public class DataPackageMetaData extends AbstractMetadata {
     final static Logger logger = LoggerFactory.getLogger(DataPackageMetaData.class);
 
-    public final String DEFAULT_FILE_NAME = "datapackage.json";
+    public static final String DEFAULT_FILE_NAME = "datapackage.json";
     private static final String RESOURCE_PATH_KEY = "path";
 
     private Package _pkg;

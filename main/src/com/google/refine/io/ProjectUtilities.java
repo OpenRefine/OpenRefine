@@ -149,7 +149,7 @@ public class ProjectUtilities {
     private static void loadMetadata(File dir, Project project) {
      // XXX: metadata::load load the metadatas from data folder. DONE
         Map<String, DataPackageMetaData> metadataMap = new HashMap<String, DataPackageMetaData>();
-        metadataMap.put("datapackage.json", new DataPackageMetaData());
+        metadataMap.put(DataPackageMetaData.DEFAULT_FILE_NAME, new DataPackageMetaData());
         
         File[] jsons = dir.listFiles(
                 (folder, file) -> {

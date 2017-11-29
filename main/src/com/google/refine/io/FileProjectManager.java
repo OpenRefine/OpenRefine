@@ -165,7 +165,7 @@ public class FileProjectManager extends ProjectManager {
         } else {
             DataPackageMetaData meta = new DataPackageMetaData();
             meta.loadFromStream(inputStream);
-            meta.writeToFile(new File(destDir, "datapackage.json"));
+            meta.writeToFile(new File(destDir, DataPackageMetaData.DEFAULT_FILE_NAME));
             // XXX: metadata::import import DataPackage
             for (String path : meta.getResources()) {
                 URL fileURL = new URL(baseURL, path);
@@ -258,7 +258,7 @@ public class FileProjectManager extends ProjectManager {
             ProjectMetadataUtilities.save(metadata, projectDir);
         } else if (metadata.getFormatName() == MetadataFormat.OKF_METADATA) {
             DataPackageMetaData dp = (DataPackageMetaData)metadata;
-            dp.writeToFile(new File(projectDir, dp.DEFAULT_FILE_NAME));
+            dp.writeToFile(new File(projectDir, DataPackageMetaData.DEFAULT_FILE_NAME));
         }
         
         logger.info("metadata saved in " + metadata.getFormatName());
