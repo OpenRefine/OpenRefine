@@ -24,7 +24,9 @@ public class DataPackageUrlRewriter implements UrlRewriter {
         // Import the data files.  
         for (String path : meta.getResources()) {
             String fileURL = getBaseURL(url) + "/" + path;
-            listResult.add(new Result(fileURL, "text/line-based/*sv", true));  // XXX: metadata::import csv for now,Get the format from json
+            listResult.add(new Result(fileURL, 
+                    "", // "text/line-based/*sv", // XXX: metadata::import csv for now,Get the format from json
+                    true));  
         }
         
         return listResult;

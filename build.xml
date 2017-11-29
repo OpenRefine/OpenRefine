@@ -320,7 +320,7 @@
             <classPath mainClass="com.google.refine.Refine">
                 <cp>server/lib/*.jar</cp>
             </classPath>
-            <jre minVersion="1.6.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
+            <jre minVersion="1.8.0" jdkPreference="preferJre" initialHeapSize="256" maxHeapSize="1024">
                 <opt>-Djava.library.path=server/lib/native/windows </opt>
             </jre>
             <versionInfo
@@ -441,7 +441,7 @@
             classname="net.sourceforge.pmd.ant.PMDTask"
             classpathref="pmd.path" 
         />
-        <pmd rulesetfiles="${conf.dir}/pmd.rules.xml" targetjdk="1.6" encoding="UTF-8">
+        <pmd rulesetfiles="${conf.dir}/pmd.rules.xml" targetjdk="1.8" encoding="UTF-8">
             <formatter type="html" toFile="${reports.dir}/pmd.html" toConsole="true"/>
             <fileset dir="${server.src.dir}">
                 <include name="**/*.java"/>
