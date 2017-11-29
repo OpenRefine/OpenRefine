@@ -81,45 +81,46 @@ public class PatternSyntaxExceptionParser {
     }
 
     public String getUserMessage() {
+        String msg = "";
         StringBuffer sb = new StringBuffer();
         String desc = exception.getDescription();
         switch(desc)
         {
             case "Unclosed character class":
-                sb.append("The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.");
+                msg = "The regular expression is missing a closing ']' character, or has an empty pair of square brackets '[]'.";
                 break;
             case "Unmatched closing ')'":
-                sb.append("The regular expression is missing a opening '(' character.");
+                msg = "The regular expression is missing a opening '(' character.";
                 break;
             case "Unclosed group":
-                sb.append("The regular expression is missing a closing ')' character.");
+                msg = "The regular expression is missing a closing ')' character.";
                 break;
             case "Dangling meta character '*'":
             case "Dangling meta character '+'":
             case "Dangling meta character '?'":
-                sb.append("The regular expression has a '*','+' or '?' in the wrong place.");
+                msg = "The regular expression has a '*','+' or '?' in the wrong place.";
                 break;
             case "Unexpected internal error":
-                sb.append("The regular expression has a backslash '\\' at the end.");
+                msg = "The regular expression has a backslash '\\' at the end.";
                 break;
             case "Unclosed counted closure":
-                sb.append("The regular expression is missing a closing '}' character, or has an incorrect quantifier statement in curly brackets '{}'.");
+                msg = "The regular expression is missing a closing '}' character, or has an incorrect quantifier statement in curly brackets '{}'.";
                 break;
             case "Illegal repetition":
-                sb.append("The regular expression has an incomplete or incorrect quantifier statement in curly brackets '{}'.");
+                msg = "The regular expression has an incomplete or incorrect quantifier statement in curly brackets '{}'.";
                 break;
             case "Illegal repetition range":
-                sb.append("The regular expression has a quantifier statement where the minimum is larger than the maximum (e.g. {4,3}).");
+                msg = "The regular expression has a quantifier statement where the minimum is larger than the maximum (e.g. {4,3}).";
                 break;
             case "Illegal character range":
-                sb.append("The regular expression has a range statement which is incomplete or has the characters in the incorrect order (e.g. [9-0])");
+                msg = "The regular expression has a range statement which is incomplete or has the characters in the incorrect order (e.g. [9-0])";
                 break;
             default:
                 // If no special handling in place fall back on error msg
                 // created by java.util.regex.PatternSyntaxException
-                sb.append(exception.getMessage());
+                msg = exception.getMessage();
                 break;
         }
-        return sb.toString();
+        return msg;
     }
 }
