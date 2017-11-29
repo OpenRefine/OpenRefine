@@ -121,6 +121,7 @@ public class PatternSyntaxExceptionParser {
                 // If no special handling in place fall back on error msg
                 // created by java.util.regex.PatternSyntaxException
                 sb.append(exception.getMessage());
+                break;
         }
         return sb.toString();
     }
