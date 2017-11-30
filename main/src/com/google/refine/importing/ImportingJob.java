@@ -153,7 +153,7 @@ public class ImportingJob implements Jsonizable {
      * @return JSONObject
      */
     public JSONObject getMetadataFileRecord() {
-        JSONObject retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
+        JSONObject retrievalRecord = getRetrievalRecord();
         if (retrievalRecord != null) {
             JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
             if (fileRecordArray != null) {
@@ -166,6 +166,27 @@ public class ImportingJob implements Jsonizable {
         }
         
         return null;
+    }
+    
+    /**
+     * Return the index of metadata file record if found any.
+     * If there is none, return -1
+     * @return
+     */
+    public int getMetadataFileRecordIndex() {
+        JSONObject retrievalRecord = getRetrievalRecord();
+        if (retrievalRecord != null) {
+            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+            if (fileRecordArray != null) {
+                    for (int i = 0; i < fileRecordArray.length(); i++) {
+                        JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecordArray, i);
+                        if (isMetadataFileRecord(fileRecord))
+                            return i;
+                    }
+            }
+        }
+        
+        return -1;
     }
     
     public List<JSONObject> getSelectedFileRecords() {

@@ -821,9 +821,12 @@ public class ImportingUtilities {
         
         // Default to text/line-based to to avoid parsing as binary/excel.
         String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
+        int metadataFileRecordIndex = job.getMetadataFileRecordIndex();
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
-            // If there's no archive, then select everything
+            // If there's no archive, then select everything except metadata file
             for (int i = 0; i < count; i++) {
+                if (i == metadataFileRecordIndex)
+                    continue;
                 JSONUtilities.append(fileSelectionIndexes, i);
             }
         } else {

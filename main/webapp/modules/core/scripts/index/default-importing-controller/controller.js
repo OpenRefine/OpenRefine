@@ -137,7 +137,12 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
 
 Refine.DefaultImportingController.prototype._onImportJobReady = function() {
   this._prepareData();
-  if (this._job.config.retrievalRecord.files.length > 1) {
+  var cntMetadataFile = 0;
+  if (this._job.config.retrievalRecord.files[0].metaDataFormat !== undefined) {
+      cntMetadataFile = 1;
+  }
+   
+  if (this._job.config.retrievalRecord.files.length - cntMetadataFile > 1) {
     this._showFileSelectionPanel();
   } else {
     this._showParsingPanel(false);
