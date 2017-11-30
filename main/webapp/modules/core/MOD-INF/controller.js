@@ -69,6 +69,8 @@ function registerCommands() {
   RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
   RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
+  RS.registerCommand(module, "get-imetaData", new Packages.com.google.refine.commands.project.GetMetadataCommand());
+  RS.registerCommand(module, "set-imetaData", new Packages.com.google.refine.commands.project.SetMetadataCommand());
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
@@ -404,6 +406,7 @@ function init() {
       "externals/date.js",
       "externals/jquery.i18n.js",
       "externals/underscore-min.js",
+      "externals/jsoneditor/jsoneditor.js",
 
       "scripts/project.js",
 
@@ -466,6 +469,7 @@ function init() {
       "externals/suggest/css/suggest-4_3.min.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
+      "externals/jsoneditor/jsoneditor.css",
 
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
