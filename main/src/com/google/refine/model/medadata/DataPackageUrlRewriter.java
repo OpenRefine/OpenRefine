@@ -17,7 +17,7 @@ public class DataPackageUrlRewriter implements UrlRewriter {
         if (!filter(url))
             return listResult;
         
-        listResult.add(new Result(url, "json", true, MetadataFormat.OKF_METADATA.name()));
+        listResult.add(new Result(url, "json", true, MetadataFormat.DATAPACKAGE_METADATA.name()));
         
         DataPackageMetaData meta = new DataPackageMetaData();
         meta.loadFromStream(new URL(url).openStream());

@@ -8,7 +8,7 @@ package com.google.refine.model.medadata;
 public enum MetadataFormat {
     UNKNOWN("UNKNOWN"),
     PROJECT_METADATA("PROJECT_METADATA"),
-    OKF_METADATA("OKF_METADATA"),
+    DATAPACKAGE_METADATA("DATAPACKAGE_METADATA"),
     CSVW_METADATA("CSVW_METADATA");
     
     private final String format;

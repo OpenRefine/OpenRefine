@@ -29,7 +29,7 @@ public class DataPackageMetaData extends AbstractMetadata {
     private Package _pkg;
     
     public DataPackageMetaData() {
-        setFormatName(MetadataFormat.OKF_METADATA);
+        setFormatName(MetadataFormat.DATAPACKAGE_METADATA);
     }
     
     @Override

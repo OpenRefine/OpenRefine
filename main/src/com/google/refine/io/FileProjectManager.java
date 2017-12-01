@@ -229,7 +229,7 @@ public class FileProjectManager extends ProjectManager {
             Project project = ProjectManager.singleton.getProject(projectId);
             ((ProjectMetadata)metadata).setRowCount(project.rows.size());
             ProjectMetadataUtilities.save(metadata, projectDir);
-        } else if (metadata.getFormatName() == MetadataFormat.OKF_METADATA) {
+        } else if (metadata.getFormatName() == MetadataFormat.DATAPACKAGE_METADATA) {
             DataPackageMetaData dp = (DataPackageMetaData)metadata;
             dp.writeToFile(new File(projectDir, DataPackageMetaData.DEFAULT_FILE_NAME));
         }
