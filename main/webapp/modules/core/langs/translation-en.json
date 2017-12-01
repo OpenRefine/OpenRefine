@@ -328,6 +328,7 @@
         "clear-selection": "Clear selection in all facets",
         "remove-all": "Remove all facets",
         "export-project": "Export project",
+        "project-data-package": "Project data package",
         "tab-value": "Tab-separated value",
         "comma-sep": "Comma-separated value",
         "html-table": "HTML table",

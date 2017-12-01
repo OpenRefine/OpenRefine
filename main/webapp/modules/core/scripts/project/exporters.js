@@ -44,6 +44,11 @@ ExporterManager.MenuItems = [
     "label": $.i18n._('core-project')["export-project"],
     "click": function() { ExporterManager.handlers.exportProject(); }
   },
+  {
+      "id" : "core/project-data-package",
+      "label": $.i18n._('core-project')["project-data-package"],
+      "click": function() { ExporterManager.handlers.projectDataPackage(); }
+  },
   {},
   {
     "id" : "core/export-tsv",
@@ -182,3 +187,29 @@ ExporterManager.handlers.exportProject = function() {
 
   document.body.removeChild(form);
 };
+
+ExporterManager.handlers.projectDataPackage = function() {
+    function save() {
+        var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+        var form = document.createElement("form");
+        $(form)
+        .css("display", "none")
+        .attr("method", "post")
+        .attr("action", "command/core/project-data-package/" + name + ".openrefine.zip")
+        .attr("target", "refine-export");
+        $('<input />')
+        .attr("name", "project")
+        .attr("value", theProject.id)
+        .appendTo(form);
+
+        document.body.appendChild(form);
+
+        window.open("about:blank", "refine-export");
+        form.submit();
+
+        document.body.removeChild(form);
+        alert("saved");
+    };
+    
+    new EditGeneralMetadataDialog(theProject.id, save);
+  };

@@ -65,6 +65,7 @@ function registerCommands() {
   RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
   RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
   RS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
+  RS.registerCommand(module, "project-data-package", new Packages.com.google.refine.commands.project.PackageProjectCommand());
 
   RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
@@ -458,7 +459,9 @@ function init() {
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
-      "scripts/dialogs/expression-column-dialog.js"
+      "scripts/dialogs/expression-column-dialog.js",
+      
+      "scripts/project/edit-general-metadata-dialog.js"
     ]
   );
 

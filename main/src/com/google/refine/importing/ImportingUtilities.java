@@ -97,6 +97,8 @@ import com.google.refine.util.JSONUtilities;
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
     
+    final static String METADATA_FILE_KEY  = "metadataFile";
+    
     static public interface Progress {
         public void setProgress(String message, int percent);
         public boolean isCanceled();
@@ -269,17 +271,8 @@ public class ImportingUtilities {
                         results = rewriter.rewrite(urlString);
                         if (results != null) {
                             for (Result result : results) {
-//                                JSONObject resourceRecord = new JSONObject();
-//                                JSONUtilities.safePut(resourceRecord, "origin", "download");
-//                                JSONUtilities.safePut(resourceRecord, "url", result.rewrittenUrl);
-//                                JSONUtilities.safePut(resourceRecord, "format", result.format);
                                 download(rawDataDir, retrievalRecord, progress, fileRecords, 
                                         update, result.rewrittenUrl, result.metaDataFormat);
-                                
-//                                if (!result.download) {
-//                                    JSONUtilities.safeInc(retrievalRecord, "downloadCount");
-//                                    JSONUtilities.append(fileRecords, resourceRecord);
-//                                }
                             }
                         }
                     }
@@ -288,7 +281,6 @@ public class ImportingUtilities {
                     parameters.put(name, value);
                     // TODO: We really want to store this on the request so it's available for everyone
 //                    request.getParameterMap().put(name, value);
-                    
                 }
             } else { // is file content
                 String fileName = fileItem.getName();
@@ -401,8 +393,12 @@ public class ImportingUtilities {
                         entity.getContentLength())) {
                     JSONUtilities.safeInc(retrievalRecord, "archiveCount");
                 }
-                if (metaDataFormat != null)
+                
+                if (metaDataFormat != null) {
                     JSONUtilities.safePut(fileRecord, "metaDataFormat", metaDataFormat);
+                    JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, fileRecord);
+                    fileRecords.remove(0);
+                }
                 
                 JSONUtilities.safeInc(retrievalRecord, "downloadCount");
                 EntityUtils.consume(entity);
@@ -821,12 +817,9 @@ public class ImportingUtilities {
         
         // Default to text/line-based to to avoid parsing as binary/excel.
         String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
-        int metadataFileRecordIndex = job.getMetadataFileRecordIndex();
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
-            // If there's no archive, then select everything except metadata file
+            // If there's no archive, then select everything
             for (int i = 0; i < count; i++) {
-                if (i == metadataFileRecordIndex)
-                    continue;
                 JSONUtilities.append(fileSelectionIndexes, i);
             }
         } else {
@@ -1070,23 +1063,20 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
                 project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
-                JSONArray fileRecords = JSONUtilities.getArray(job.getRetrievalRecord(), "files");
                 
-                JSONObject fileRecord = null;
-                for (int i = 0;i < fileRecords.length();i++) {
-                    fileRecord = fileRecords.getJSONObject(i);
-                    if (job.isMetadataFileRecord(fileRecord)) {
-                     // 1. XXX: metadata::import support mulitple metadata format:
-                        IMetadata metadata = new DataPackageMetaData();
-                        
-                        String relativePath = fileRecord.getString("location");
-                        File metadataFile = new File(job.getRawDataDir(), relativePath);
-                        metadata.loadFromFile(metadataFile);
-                        
-                        project.setMetadata(MetadataFormat.valueOf((String) fileRecord.get("metaDataFormat")),
-                                metadata);
-                        logger.info(fileRecord.get("metaDataFormat") + " metadata is set for project " + project.id);
-                    }
+                JSONObject metadataFileRecord = (JSONObject) job.getRetrievalRecord().get(METADATA_FILE_KEY);
+                
+                if (metadataFileRecord != null) {
+                    // 1. XXX: metadata::import support multiple metadata format:
+                    IMetadata metadata = new DataPackageMetaData();
+                    
+                    String relativePath = metadataFileRecord.getString("location");
+                    File metadataFile = new File(job.getRawDataDir(), relativePath);
+                    metadata.loadFromFile(metadataFile);
+                    
+                    project.setMetadata(MetadataFormat.valueOf((String) metadataFileRecord.get("metaDataFormat")),
+                            metadata);
+                    logger.info(metadataFileRecord.get("metaDataFormat") + " metadata is set for project " + project.id);
                 }
                 
                 ProjectManager.singleton.registerProject(project, pm);
