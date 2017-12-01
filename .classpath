@@ -80,12 +80,12 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-schemas-3.13-20150929.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="extensions/jython/module/MOD-INF/lib/jython-standalone-2.7.1.jar"/>
 	<classpathentry kind="lib" path="main/tests/data"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/swc-parser-lazy-3.1.5-jar-with-dependencies.jar" sourcepath="main/webapp/WEB-INF/lib-src/swc-parser-lazy-3.1.5-sources.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-annotations-2.9.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-2.9.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-databind-2.9.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>
