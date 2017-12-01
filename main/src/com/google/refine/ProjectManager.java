@@ -58,48 +58,54 @@ import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
 /**
- * ProjectManager is responsible for loading and saving the workspace and projects.
+ * ProjectManager is responsible for loading and saving the workspace and
+ * projects.
  *
  *
  */
 public abstract class ProjectManager {
+
     // last n expressions used across all projects
     static protected final int s_expressionHistoryMax = 100;
 
     // If a project has been idle this long, flush it from memory
-    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
-    
-    // Don't spend more than this much time saving projects if doing a quick save
+    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15
+                                                                     // minutes
+
+    // Don't spend more than this much time saving projects if doing a quick
+    // save
     static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
 
-
     protected Map<Long, ProjectMetadata> _projectsMetadata;
-    protected Map<String, Integer> _projectsTags;// TagName, number of projects having that tag
-    protected PreferenceStore            _preferenceStore;
+    protected Map<String, Integer> _projectsTags;// TagName, number of projects
+                                                 // having that tag
+    protected PreferenceStore _preferenceStore;
 
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
 
     /**
-     *  What caches the joins between projects.
+     * What caches the joins between projects.
      */
     transient protected InterProjectModel _interProjectModel = new InterProjectModel();
 
     /**
-     *  Flag for heavy operations like creating or importing projects.  Workspace saves are skipped while it's set.
+     * Flag for heavy operations like creating or importing projects. Workspace
+     * saves are skipped while it's set.
      */
     transient protected int _busy = 0;
 
     /**
-     *  While each project's metadata is loaded completely at start-up, each project's raw data
-     *  is loaded only when the project is accessed by the user. This is because project
-     *  metadata is tiny compared to raw project data. This hash map from project ID to project
-     *  is more like a last accessed-last out cache.
+     * While each project's metadata is loaded completely at start-up, each
+     * project's raw data is loaded only when the project is accessed by the
+     * user. This is because project metadata is tiny compared to raw project
+     * data. This hash map from project ID to project is more like a last
+     * accessed-last out cache.
      */
     transient protected Map<Long, Project> _projects;
 
     static public ProjectManager singleton;
 
-    protected ProjectManager(){
+    protected ProjectManager() {
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
@@ -107,7 +113,7 @@ public abstract class ProjectManager {
 
         preparePreferenceStore(_preferenceStore);
     }
-    
+
     public void dispose() {
         save(true); // complete save
 
@@ -116,13 +122,14 @@ public abstract class ProjectManager {
                 project.dispose();
             }
         }
-        
+
         _projects.clear();
         _projectsMetadata.clear();
     }
 
     /**
      * Registers the project in the memory of the current session
+     * 
      * @param project
      * @param projectMetadata
      */
@@ -130,15 +137,17 @@ public abstract class ProjectManager {
         synchronized (this) {
             _projects.put(project.id, project);
             _projectsMetadata.put(project.id, projectMetadata);
-            if (_projectsTags == null)
+            if (_projectsTags == null) {
                 _projectsTags = new HashMap<String, Integer>();
-            if(projectMetadata.getTags()!=null) {
-              for (String tag : projectMetadata.getTags()) {
-                  if (_projectsTags.containsKey(tag)) {
-                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                  } else {
-                      _projectsTags.put(tag, 1);
-                  }
+            }
+            String[] tags = projectMetadata.getTags();
+            if (tags != null) {
+                for (String tag : tags) {
+                    if (_projectsTags.containsKey(tag)) {
+                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                    } else {
+                        _projectsTags.put(tag, 1);
+                    }
                 }
             }
         }
@@ -146,6 +155,7 @@ public abstract class ProjectManager {
 
     /**
      * Load project metadata from data storage
+     * 
      * @param projectID
      * @return
      */
@@ -153,6 +163,7 @@ public abstract class ProjectManager {
 
     /**
      * Loads a project from the data store into memory
+     * 
      * @param id
      * @return
      */
@@ -160,28 +171,32 @@ public abstract class ProjectManager {
 
     /**
      * Import project from a Refine archive
+     * 
      * @param projectID
      * @param inputStream
      * @param gziped
      * @throws IOException
      */
-    public abstract void importProject(long projectID, InputStream inputStream, boolean gziped) throws IOException;
+    public abstract void importProject(long projectID, InputStream inputStream, boolean gziped)
+            throws IOException;
 
     /**
      * Export project to a Refine archive
+     * 
      * @param projectId
      * @param tos
      * @throws IOException
      */
-    public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
-
+    public abstract void exportProject(long projectId, TarOutputStream tos)
+            throws IOException;
 
     /**
      * Saves a project and its metadata to the data store
+     * 
      * @param id
      */
     public void ensureProjectSaved(long id) {
-        synchronized(this){
+        synchronized (this) {
             ProjectMetadata metadata = this.getProjectMetadata(id);
             if (metadata != null) {
                 try {
@@ -189,7 +204,8 @@ public abstract class ProjectManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }//FIXME what should be the behaviour if metadata is null? i.e. not found
+            } // FIXME what should be the behaviour if metadata is null? i.e.
+              // not found
 
             Project project = getProject(id);
             if (project != null && metadata != null && metadata.getModified().after(project.getLastSave())) {
@@ -198,29 +214,36 @@ public abstract class ProjectManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }//FIXME what should be the behaviour if project is null? i.e. not found or loaded.
-            //FIXME what should happen if the metadata is found, but not the project? or vice versa?
+            } // FIXME what should be the behaviour if project is null? i.e. not
+              // found or loaded.
+              // FIXME what should happen if the metadata is found, but not the
+              // project? or vice versa?
         }
 
     }
 
     /**
      * Save project metadata to the data store
+     * 
      * @param metadata
      * @param projectId
      * @throws Exception
      */
-    public abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
+    public abstract void saveMetadata(ProjectMetadata metadata, long projectId)
+            throws Exception;
 
     /**
      * Save project to the data store
+     * 
      * @param project
-     * @throws IOException 
+     * @throws IOException
      */
-    protected abstract void saveProject(Project project) throws IOException;
+    protected abstract void saveProject(Project project)
+            throws IOException;
 
     /**
      * Save workspace and all projects to data store
+     * 
      * @param allModified
      */
     public void save(boolean allModified) {
@@ -236,10 +259,11 @@ public abstract class ProjectManager {
     protected abstract void saveWorkspace();
 
     /**
-     * A utility class to prioritize projects for saving, depending on how long ago
-     * they have been changed but have not been saved.
+     * A utility class to prioritize projects for saving, depending on how long
+     * ago they have been changed but have not been saved.
      */
     static protected class SaveRecord {
+
         final Project project;
         final long overdue;
 
@@ -251,22 +275,26 @@ public abstract class ProjectManager {
 
     /**
      * Saves all projects to the data store
+     * 
      * @param allModified
      */
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
         Date startTimeOfSave = new Date();
-        
+
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = getProjectMetadata(id);
-                Project project = _projects.get(id); // don't call getProject() as that will load the project.
+                Project project = _projects.get(id); // don't call getProject()
+                                                     // as that will load the
+                                                     // project.
 
                 if (project != null) {
-                    boolean hasUnsavedChanges =
-                        metadata.getModified().getTime() >= project.getLastSave().getTime();
-                    // We use >= instead of just > to avoid the case where a newly created project
-                    // has the same modified and last save times, resulting in the project not getting
+                    boolean hasUnsavedChanges = metadata.getModified().getTime() >= project.getLastSave().getTime();
+                    // We use >= instead of just > to avoid the case where a
+                    // newly created project
+                    // has the same modified and last save times, resulting in
+                    // the project not getting
                     // saved at all.
 
                     if (hasUnsavedChanges) {
@@ -275,20 +303,22 @@ public abstract class ProjectManager {
                         records.add(new SaveRecord(project, msecsOverdue));
 
                     } else if (!project.getProcessManager().hasPending()
-                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
-                        
+                            && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
+
                         /*
-                         *  It's been a while since the project was last saved and it hasn't been
-                         *  modified. We can safely remove it from the cache to save some memory.
+                         * It's been a while since the project was last saved
+                         * and it hasn't been modified. We can safely remove it
+                         * from the cache to save some memory.
                          */
                         _projects.remove(id).dispose();
                     }
                 }
             }
         }
-        
+
         if (records.size() > 0) {
             Collections.sort(records, new Comparator<SaveRecord>() {
+
                 @Override
                 public int compare(SaveRecord o1, SaveRecord o2) {
                     if (o1.overdue < o2.overdue) {
@@ -301,21 +331,17 @@ public abstract class ProjectManager {
                 }
             });
 
-            logger.info(allModified ?
-                "Saving all modified projects ..." :
-                "Saving some modified projects ..."
-            );
+            logger.info(allModified ? "Saving all modified projects ..." : "Saving some modified projects ...");
 
-            for (int i = 0;
-                 i < records.size() &&
-                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < QUICK_SAVE_MAX_TIME));
-                 i++) {
+            for (int i = 0; i < records.size()
+                    && (allModified || (new Date().getTime() - startTimeOfSave.getTime() < QUICK_SAVE_MAX_TIME)); i++) {
 
                 try {
                     saveProject(records.get(i).project);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    // In case we're running low on memory, free as much as we can
+                    // In case we're running low on memory, free as much as we
+                    // can
                     disposeUnmodifiedProjects();
                 }
             }
@@ -330,9 +356,9 @@ public abstract class ProjectManager {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id);
-                if (project != null && !project.getProcessManager().hasPending() 
+                if (project != null && !project.getProcessManager().hasPending()
                         && metadata.getModified().getTime() < project.getLastSave().getTime()) {
-                        _projects.remove(id).dispose();
+                    _projects.remove(id).dispose();
                 }
             }
         }
@@ -345,10 +371,10 @@ public abstract class ProjectManager {
         return _interProjectModel;
     }
 
-
     /**
-     * Gets the project metadata from memory
-     * Requires that the metadata has already been loaded from the data store
+     * Gets the project metadata from memory Requires that the metadata has
+     * already been loaded from the data store
+     * 
      * @param id
      * @return
      */
@@ -357,8 +383,9 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Gets the project metadata from memory
-     * Requires that the metadata has already been loaded from the data store
+     * Gets the project metadata from memory Requires that the metadata has
+     * already been loaded from the data store
+     * 
      * @param name
      * @return
      */
@@ -372,12 +399,12 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Tries to find the project id when given a project name
-     * Requires that all project metadata exists has been loaded to memory from the data store
+     * Tries to find the project id when given a project name Requires that all
+     * project metadata exists has been loaded to memory from the data store
+     * 
      * @param name
-     *     The name of the project
-     * @return
-     *     The id of the project, or -1 if it cannot be found
+     *            The name of the project
+     * @return The id of the project, or -1 if it cannot be found
      */
     public long getProjectID(String name) {
         for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
@@ -387,44 +414,46 @@ public abstract class ProjectManager {
         }
         return -1;
     }
-    
+
     /**
      * A valid user meta data definition should have name and display property
+     * 
      * @param placeHolderJsonObj
      * @return
      */
     private boolean isValidUserMetadataDefinition(JSONObject placeHolderJsonObj) {
-        return (placeHolderJsonObj != null &&
-                placeHolderJsonObj.has("name") &&
-            placeHolderJsonObj.has("display"));
+        return (placeHolderJsonObj != null && placeHolderJsonObj.has("name") && placeHolderJsonObj.has("display"));
     }
-    
+
     public void mergeEmptyUserMetadata(ProjectMetadata metadata) {
-        if (metadata == null)
+        if (metadata == null) {
             return;
-        
+        }
+
         // place holder
         JSONArray userMetadataPreference = null;
         // actual metadata for project
         JSONArray jsonObjArray = metadata.getUserMetadata();
-        
+
         initDisplay(jsonObjArray);
-        
+
         try {
-            String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
-            if (userMeta == null)
+            String userMeta = (String) _preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
+            if (userMeta == null) {
                 return;
+            }
             userMetadataPreference = new JSONArray(userMeta);
         } catch (JSONException e1) {
-            logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
+            logger.warn(
+                    "wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
             logger.error(ExceptionUtils.getFullStackTrace(e1));
         }
-        
+
         for (int index = 0; index < userMetadataPreference.length(); index++) {
             try {
                 boolean found = false;
                 JSONObject placeHolderJsonObj = userMetadataPreference.getJSONObject(index);
-                
+
                 if (!isValidUserMetadataDefinition(placeHolderJsonObj)) {
                     logger.warn("Skipped invalid user metadata definition" + placeHolderJsonObj.toString());
                     continue;
@@ -442,18 +471,18 @@ public abstract class ProjectManager {
                 if (!found) {
                     placeHolderJsonObj.put("value", "");
                     metadata.getUserMetadata().put(placeHolderJsonObj);
-                    logger.info("Put the placeholder {} for project {}",
-                            placeHolderJsonObj.getString("name"),
+                    logger.info("Put the placeholder {} for project {}", placeHolderJsonObj.getString("name"),
                             metadata.getName());
-                } 
+                }
             } catch (JSONException e) {
-                logger.warn("Exception when mergeEmptyUserMetadata",e);
+                logger.warn("Exception when mergeEmptyUserMetadata", e);
             }
         }
     }
-    
+
     /**
      * honor the meta data preference
+     * 
      * @param jsonObjArray
      */
     private void initDisplay(JSONArray jsonObjArray) {
@@ -469,32 +498,33 @@ public abstract class ProjectManager {
 
     /**
      * Gets all the project Metadata currently held in memory.
+     * 
      * @return
      */
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
-        for(Project project : _projects.values()) {
+        for (Project project : _projects.values()) {
             mergeEmptyUserMetadata(project.getMetadata());
         }
-            
+
         return _projectsMetadata;
     }
-    
+
     /**
      * Gets all the project tags currently held in memory
      * 
      * @return
      */
     public Map<String, Integer> getAllProjectTags() {
-      return _projectsTags;
+        return _projectsTags;
     }
 
     /**
-     * Gets the required project from the data store
-     * If project does not already exist in memory, it is loaded from the data store
+     * Gets the required project from the data store If project does not already
+     * exist in memory, it is loaded from the data store
+     * 
      * @param id
-     *     the id of the project
-     * @return
-     *     the project with the matching id, or null if it can't be found
+     *            the id of the project
+     * @return the project with the matching id, or null if it can't be found
      */
     public Project getProject(long id) {
         synchronized (this) {
@@ -503,7 +533,7 @@ public abstract class ProjectManager {
             } else {
                 Project project = loadProject(id);
                 if (project != null) {
-                    _projects.put(id, project);                    
+                    _projects.put(id, project);
                 }
                 return project;
             }
@@ -512,6 +542,7 @@ public abstract class ProjectManager {
 
     /**
      * Gets the preference store
+     * 
      * @return
      */
     public PreferenceStore getPreferenceStore() {
@@ -520,6 +551,7 @@ public abstract class ProjectManager {
 
     /**
      * Gets all expressions from the preference store
+     * 
      * @return
      */
     public List<String> getExpressions() {
@@ -528,13 +560,14 @@ public abstract class ProjectManager {
 
     /**
      * The history entry manager deals with changes
+     * 
      * @return manager for handling history
      */
     public abstract HistoryEntryManager getHistoryEntryManager();
 
-
     /**
      * Remove the project from the data store
+     * 
      * @param project
      */
     public void deleteProject(Project project) {
@@ -543,15 +576,17 @@ public abstract class ProjectManager {
 
     /**
      * Remove project from data store
+     * 
      * @param projectID
      */
     public abstract void deleteProject(long projectID);
 
     /**
      * Removes project from memory
+     * 
      * @param projectID
      */
-    protected void removeProject(long projectID){
+    protected void removeProject(long projectID) {
         if (_projects.containsKey(projectID)) {
             _projects.remove(projectID).dispose();
         }
@@ -560,10 +595,10 @@ public abstract class ProjectManager {
         }
     }
 
-
     /**
-     * Sets the flag for long running operations.  This will prevent
-     * workspace saves from happening while it's set.
+     * Sets the flag for long running operations. This will prevent workspace
+     * saves from happening while it's set.
+     * 
      * @param busy
      */
     public void setBusy(boolean busy) {
@@ -576,10 +611,9 @@ public abstract class ProjectManager {
         }
     }
 
-
-
     /**
      * Add the latest expression to the preference store
+     * 
      * @param s
      */
     public void addLatestExpression(String s) {
@@ -588,13 +622,12 @@ public abstract class ProjectManager {
         }
     }
 
-
     /**
-    *
-    * @param ps
-    */
-   static protected void preparePreferenceStore(PreferenceStore ps) {
-       ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
-       ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
-   }
+     *
+     * @param ps
+     */
+    static protected void preparePreferenceStore(PreferenceStore ps) {
+        ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
+        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
+    }
 }

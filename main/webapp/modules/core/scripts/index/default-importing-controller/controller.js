@@ -350,12 +350,12 @@ Refine.TagsManager._getAllProjectTags = function() {
                      return a.toLowerCase().localeCompare(b.toLowerCase());
                      });
                                 
-                 for (var i = 0; i < array.length; i++) {
-                     self.allProjectTags[i] = array[i];
-                     }
-                 },
-                 async : false
+                 array.map(function(item){
+                     self.allProjectTags.push(item);
                  });
-        }
+             },
+             async : false
+         });
+    }
     return self.allProjectTags;
 };
