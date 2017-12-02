@@ -22,7 +22,7 @@ public class DataPackageUrlRewriter implements UrlRewriter {
         DataPackageMetadata meta = new DataPackageMetadata();
         meta.loadFromStream(new URL(url).openStream());
         // Import the data files.  
-        for (String path : meta.getResources()) {
+        for (String path : meta.getResourcePaths()) {
             String fileURL = getBaseURL(url) + "/" + path;
             listResult.add(new Result(fileURL, 
                     "", // "text/line-based/*sv", // XXX: metadata::import CAN remove the "format" field later?

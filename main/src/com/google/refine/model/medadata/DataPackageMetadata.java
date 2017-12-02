@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.frictionlessdata.datapackage.Package;
+import io.frictionlessdata.datapackage.Resource;
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 
@@ -100,11 +101,11 @@ public class DataPackageMetadata extends AbstractMetadata {
         }
     }
     
-    public List<String> getResources() {
+    public List<String> getResourcePaths() {
         List<String> listResources = new ArrayList<String>();
         
-        for (int i = 0; i < _pkg.getResources().length(); i++) {
-            listResources.add(_pkg.getResources().getJSONObject(i).getString(RESOURCE_PATH_KEY));
+        for (Resource resource : _pkg.getResources()) {
+            listResources.add((String) resource.getPath());
         }
         
         return listResources;
