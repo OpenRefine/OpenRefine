@@ -91,7 +91,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doAddColumnByFetchingURLs = function() {
     var frame = $(
         DOM.loadHTML("core", "scripts/views/data-table/add-column-by-fetching-urls-dialog.html")
-        .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+        .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml())
+        .replace("$HTTP_HEADERS_WIDGET$", HttpHeadersDialog.generateWidgetHtml())
+        );
 
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n._('core-views')["add-col-fetch"]+" " + column.name);
@@ -103,6 +105,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_setBlank.text($.i18n._('core-views')["set-blank"]);
     elmts.or_views_storeErr.text($.i18n._('core-views')["store-err"]);
     elmts.or_views_cacheResponses.text($.i18n._('core-views')["cache-responses"]);
+    elmts.or_views_httpHeaders.text($.i18n._('core-views')["http-headers"]);
     elmts.or_views_urlFetch.text($.i18n._('core-views')["url-fetch"]);
     elmts.okButton.html($.i18n._('core-buttons')["ok"]);
     elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);

@@ -541,6 +541,7 @@
         "throttle-delay": "Throttle delay",
         "milli": "milliseconds",
         "url-fetch": "Formulate the URLs to fetch:",
+        "http-headers": "Define any HTTP headers to be used when fetching URLs:",
         "enter-col-name": "Enter new column name",
         "split-col": "Split column",
         "several-col": "into several columns",
