@@ -57,6 +57,10 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class ProjectMetadata extends AbstractMetadata {
+    final public static String DEFAULT_FILE_NAME = "metadata.json";
+    final public static String TEMP_FILE_NAME = "metadata.temp.json";
+    final public static String OLD_FILE_NAME = "metadata.old.json";
+    
     private final Date     _created;
     
     private String         _password = "";
@@ -216,7 +220,6 @@ public class ProjectMetadata extends AbstractMetadata {
             try {
                 JSONObject obj2 = obj.getJSONObject("customMetadata");
                 
-                @SuppressWarnings("unchecked")
                 Iterator<String> keys = obj2.keys();
                 while (keys.hasNext()) {
                     String key = keys.next();

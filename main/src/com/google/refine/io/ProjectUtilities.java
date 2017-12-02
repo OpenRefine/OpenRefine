@@ -159,7 +159,7 @@ public class ProjectUtilities {
         
         for (File file : jsons) {
             // already loaded
-            if (file.getName().equals("metadata.json"))
+            if (file.getName().startsWith("metadata."))
                 continue;
             
             DataPackageMetadata metadata = metadataMap.get(file.getName());

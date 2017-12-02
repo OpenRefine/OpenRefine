@@ -60,11 +60,11 @@ public class ProjectMetadataUtilities {
     final static IMetadata projectMetaData = new ProjectMetadata();
     
     public static void save(IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
-        File tempFile = new File(projectDir, "metadata.temp.json");
+        File tempFile = new File(projectDir, ProjectMetadata.TEMP_FILE_NAME);
         saveToFile(projectMeta, tempFile);
 
-        File file = new File(projectDir, "metadata.json");
-        File oldFile = new File(projectDir, "metadata.old.json");
+        File file = new File(projectDir, ProjectMetadata.DEFAULT_FILE_NAME);
+        File oldFile = new File(projectDir, ProjectMetadata.OLD_FILE_NAME);
 
         if (oldFile.exists()) {
             oldFile.delete();
@@ -93,17 +93,17 @@ public class ProjectMetadataUtilities {
 
     static public ProjectMetadata load(File projectDir) {
         try {
-            return loadFromFile(new File(projectDir, "metadata.json"));
+            return loadFromFile(new File(projectDir, ProjectMetadata.DEFAULT_FILE_NAME));
         } catch (Exception e) {
         }
 
         try {
-            return loadFromFile(new File(projectDir, "metadata.temp.json"));
+            return loadFromFile(new File(projectDir, ProjectMetadata.TEMP_FILE_NAME));
         } catch (Exception e) {
         }
 
         try {
-            return loadFromFile(new File(projectDir, "metadata.old.json"));
+            return loadFromFile(new File(projectDir, ProjectMetadata.OLD_FILE_NAME));
         } catch (Exception e) {
         }
 

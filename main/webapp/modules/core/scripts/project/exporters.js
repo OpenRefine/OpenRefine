@@ -208,7 +208,7 @@ ExporterManager.handlers.projectDataPackage = function() {
         form.submit();
 
         document.body.removeChild(form);
-        alert("saved");
+        console.log("saved from ExporterManager.handlers.projectDataPackage");
     };
     
     new EditGeneralMetadataDialog(theProject.id, save);
