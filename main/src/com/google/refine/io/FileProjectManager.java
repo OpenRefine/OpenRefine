@@ -224,7 +224,7 @@ public class FileProjectManager extends ProjectManager {
     public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
         
-        // 1. XXX: metadata::save | More generic way to handle this
+        // XXX: 1. metadata::save | More generic way to handle this
         if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) {
             Project project = ProjectManager.singleton.getProject(projectId);
             ((ProjectMetadata)metadata).setRowCount(project.rows.size());

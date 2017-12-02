@@ -1064,10 +1064,12 @@ public class ImportingUtilities {
                 project.update(); // update all internal models, indexes, caches, etc.
                 project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
                 
-                JSONObject metadataFileRecord = (JSONObject) job.getRetrievalRecord().get(METADATA_FILE_KEY);
+                boolean hasMetadataFileRecord = ((JSONObject)job.getRetrievalRecord()).has(METADATA_FILE_KEY);
                 
-                if (metadataFileRecord != null) {
-                    // 1. XXX: metadata::import support multiple metadata format:
+                if (hasMetadataFileRecord) {
+                    JSONObject metadataFileRecord = (JSONObject) job.getRetrievalRecord().get(METADATA_FILE_KEY);
+                    
+                    // XXX: 1. metadata::import support multiple metadata format:
                     IMetadata metadata = new DataPackageMetaData();
                     
                     String relativePath = metadataFileRecord.getString("location");
