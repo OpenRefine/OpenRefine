@@ -41,9 +41,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 
-import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFactory;
+import com.google.refine.model.medadata.MetadataFormat;
 
 public class GetMetadataCommand extends Command {
     @Override
@@ -52,14 +54,21 @@ public class GetMetadataCommand extends Command {
         
         try {
             Project project;
+            MetadataFormat metadataFormat;
             try {
                 project = getProject(request);
+                metadataFormat = MetadataFormat.valueOf(request.getParameter("metadataFormat"));
             } catch (ServletException e) {
                 respond(response, "error", e.getLocalizedMessage());
                 return;
             }
             
-            respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
+            IMetadata metadata = project.getMetadata(metadataFormat);
+            if (metadata == null) {
+                metadata = MetadataFactory.buildMetadata(metadataFormat);
+            }
+            
+            respondJSONObject(response, metadata.getJSON());
         } catch (JSONException e) {
             respondException(response, e);
         }

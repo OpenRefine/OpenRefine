@@ -19,7 +19,7 @@ public class DataPackageUrlRewriter implements UrlRewriter {
         
         listResult.add(new Result(url, "json", true, MetadataFormat.DATAPACKAGE_METADATA.name()));
         
-        DataPackageMetaData meta = new DataPackageMetaData();
+        DataPackageMetadata meta = new DataPackageMetadata();
         meta.loadFromStream(new URL(url).openStream());
         // Import the data files.  
         for (String path : meta.getResources()) {
@@ -34,11 +34,11 @@ public class DataPackageUrlRewriter implements UrlRewriter {
 
     @Override
     public boolean filter(String url) {
-        return url.endsWith(DataPackageMetaData.DEFAULT_FILE_NAME);
+        return url.endsWith(DataPackageMetadata.DEFAULT_FILE_NAME);
     }
     
     private String getBaseURL(String url) {
-        return url.replaceFirst(DataPackageMetaData.DEFAULT_FILE_NAME, "");
+        return url.replaceFirst(DataPackageMetadata.DEFAULT_FILE_NAME, "");
     }
 
 }

@@ -313,7 +313,20 @@ public abstract class Command {
         w.flush();
         w.close();
     }
+    
+    static protected void respondJSONObject(
+            HttpServletResponse response, JSONObject o)
+            throws IOException, JSONException {
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        response.setHeader("Cache-Control", "no-cache");
 
+        Writer w = response.getWriter();
+        w.append(o.toString());
+        w.flush();
+        w.close();
+    }
+    
     static protected void respondException(HttpServletResponse response, Exception e)
         throws IOException, ServletException {
 

@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.DataPackageMetaData;
+import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.util.Pool;
 
 
@@ -148,8 +148,8 @@ public class ProjectUtilities {
      */
     private static void loadMetadata(File dir, Project project) {
      // load the metadatas from data folder.
-        Map<String, DataPackageMetaData> metadataMap = new HashMap<String, DataPackageMetaData>();
-        metadataMap.put(DataPackageMetaData.DEFAULT_FILE_NAME, new DataPackageMetaData());
+        Map<String, DataPackageMetadata> metadataMap = new HashMap<String, DataPackageMetadata>();
+        metadataMap.put(DataPackageMetadata.DEFAULT_FILE_NAME, new DataPackageMetadata());
         
         File[] jsons = dir.listFiles(
                 (folder, file) -> {
@@ -162,7 +162,7 @@ public class ProjectUtilities {
             if (file.getName().equals("metadata.json"))
                 continue;
             
-            DataPackageMetaData metadata = metadataMap.get(file.getName());
+            DataPackageMetadata metadata = metadataMap.get(file.getName());
             if (metadata == null)
                 continue;
             

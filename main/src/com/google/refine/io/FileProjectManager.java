@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.DataPackageMetaData;
+import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
@@ -230,8 +230,8 @@ public class FileProjectManager extends ProjectManager {
             ((ProjectMetadata)metadata).setRowCount(project.rows.size());
             ProjectMetadataUtilities.save(metadata, projectDir);
         } else if (metadata.getFormatName() == MetadataFormat.DATAPACKAGE_METADATA) {
-            DataPackageMetaData dp = (DataPackageMetaData)metadata;
-            dp.writeToFile(new File(projectDir, DataPackageMetaData.DEFAULT_FILE_NAME));
+            DataPackageMetadata dp = (DataPackageMetadata)metadata;
+            dp.writeToFile(new File(projectDir, DataPackageMetadata.DEFAULT_FILE_NAME));
         }
         
         logger.info("metadata saved in " + metadata.getFormatName());

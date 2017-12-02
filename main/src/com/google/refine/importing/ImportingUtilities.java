@@ -88,8 +88,8 @@ import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.DataPackageMetaData;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
@@ -1069,8 +1069,8 @@ public class ImportingUtilities {
                 if (hasMetadataFileRecord) {
                     JSONObject metadataFileRecord = (JSONObject) job.getRetrievalRecord().get(METADATA_FILE_KEY);
                     
-                    // XXX: 1. metadata::import support multiple metadata format:
-                    IMetadata metadata = new DataPackageMetaData();
+                    String metadataFormat = (String)metadataFileRecord.get("metaDataFormat");
+                    IMetadata metadata = MetadataFactory.buildMetadata(MetadataFormat.valueOf(metadataFormat));
                     
                     String relativePath = metadataFileRecord.getString("location");
                     File metadataFile = new File(job.getRawDataDir(), relativePath);

@@ -90,12 +90,6 @@ public abstract class AbstractMetadata implements IMetadata {
     }
 
     @Override
-    public void setRowCount(int rowCount) {
-        this._rowCount = rowCount;
-        updateModified();
-    }
-
-    @Override
     public JSONArray getUserMetadata() {
         return _userMetadata;
     }

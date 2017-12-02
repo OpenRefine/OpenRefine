@@ -1,6 +1,5 @@
 package com.google.refine.model.medadata;
 
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
@@ -13,16 +12,13 @@ import org.json.JSONWriter;
 import com.google.refine.Jsonizable;
 /**
  * Interface to import/export metadata 
- *
  */
 public interface IMetadata extends Jsonizable {
-    public MetadataFormat getFormatName();
-    
-    public void setFormatName(MetadataFormat format);
-    
     public IMetadata loadFromJSON(JSONObject obj);
     
     public IMetadata loadFromFile(File metadataFile);
+    
+    void loadFromStream(InputStream inputStream);
     
     public void writeToFile(File metadataFile);
     
@@ -32,16 +28,18 @@ public interface IMetadata extends Jsonizable {
      * @throws JSONException
      */
     public void write(JSONWriter jsonWriter, boolean onlyIfDirty);
-
+    
+    public MetadataFormat getFormatName();
+    public void setFormatName(MetadataFormat format);
+    
     public String getEncoding();
 
     public Date getModified();
 
     public String getName();
-
-    public boolean isDirty();
-
     public void setName(String projectName);
+    
+    public boolean isDirty();
 
     public void updateModified();
 
@@ -49,8 +47,5 @@ public interface IMetadata extends Jsonizable {
 
     public void setAnyStringField(String metaName, String valueString);
 
-    void loadFromStream(InputStream inputStream);
-
-    void setRowCount(int rowCount);
-    
+    public JSONObject getJSON();
 }

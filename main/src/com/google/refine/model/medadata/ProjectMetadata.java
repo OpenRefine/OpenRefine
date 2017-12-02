@@ -93,6 +93,11 @@ public class ProjectMetadata extends AbstractMetadata {
         _name = name;
     }
     
+    public void setRowCount(int rowCount) {
+        this._rowCount = rowCount;
+        updateModified();
+    }
+    
     @Override
     public void writeToJSON(JSONWriter writer, Properties options)
             throws JSONException {
@@ -369,6 +374,12 @@ public class ProjectMetadata extends AbstractMetadata {
     public void loadFromStream(InputStream inputStream) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public JSONObject getJSON() {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }
