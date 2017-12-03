@@ -567,7 +567,7 @@ function process(path, request, response) {
       var output = response.getWriter();
       try {
         var paths = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
-        for each (var qualifiedPath in paths) {
+        for (var qualifiedPath in paths) {
           var input = null;
           try {
             var url = qualifiedPath.module.getResource(qualifiedPath.path);
@@ -612,7 +612,7 @@ function process(path, request, response) {
         
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
-        for each (var qualifiedPath in styles) {
+        for (var qualifiedPath in styles) {
           styleInjection.push(
               '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
         }
@@ -623,7 +623,7 @@ function process(path, request, response) {
         } else {
           var scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
           var scriptInjection = [];
-          for each (var qualifiedPath in scripts) {
+          for (var qualifiedPath in scripts) {
             scriptInjection.push(
                 '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
           }
@@ -634,10 +634,10 @@ function process(path, request, response) {
           var encodings = [];
           
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
-          for each (var code in sortedCharsetMap.keySet().toArray()) {
+          for (var code in sortedCharsetMap.keySet().toArray()) {
             var charset = sortedCharsetMap.get(code);
             var aliases = [];
-            for each (var alias in charset.aliases().toArray()) {
+            for (var alias in charset.aliases().toArray()) {
               aliases.push(alias);
             }
             
