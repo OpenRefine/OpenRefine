@@ -25,7 +25,7 @@ public class DataPackageUrlRewriter implements UrlRewriter {
         for (String path : meta.getResourcePaths()) {
             String fileURL = getBaseURL(url) + "/" + path;
             listResult.add(new Result(fileURL, 
-                    "", // "text/line-based/*sv", // XXX: metadata::import CAN remove the "format" field later?
+                    "", // leave to guesser. "text/line-based/*sv"
                     true));  
         }
         

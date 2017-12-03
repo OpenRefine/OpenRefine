@@ -25,7 +25,6 @@ public class DataPackageMetadata extends AbstractMetadata {
     final static Logger logger = LoggerFactory.getLogger(DataPackageMetadata.class);
 
     public static final String DEFAULT_FILE_NAME = "datapackage.json";
-    private static final String RESOURCE_PATH_KEY = "path";
 
     private Package _pkg;
     
