@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 
 import com.google.refine.commands.Command;
@@ -52,12 +53,18 @@ import com.google.refine.model.medadata.MetadataFormat;
 public class SetMetadataCommand extends Command {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
             MetadataFormat format = MetadataFormat.valueOf(request.getParameter("format"));
             String jsonContent = request.getParameter("jsonContent");
+            
+            if (StringUtils.isBlank(jsonContent)) {
+                respond(response, "error", "json cannot be blank");
+                return;
+            }
+            
             IMetadata metadata = MetadataFactory.buildMetadata(format);
             InputStream in = IOUtils.toInputStream(jsonContent, "UTF-8");
             metadata.loadFromStream(in);

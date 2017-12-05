@@ -22,7 +22,7 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
  */
 public class PackageExtension {
     private static final int JSON_INDENT_FACTOR = 4;
-    private static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
+    public static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
     
     /**
      * Do the package since the final spec for the compression/bundle are not settled yet.
