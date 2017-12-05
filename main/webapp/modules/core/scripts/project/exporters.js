@@ -189,7 +189,9 @@ ExporterManager.handlers.exportProject = function() {
 };
 
 ExporterManager.handlers.projectDataPackage = function() {
-    function save() {
+    function save(jsonMetadata) {
+        alert(jsonMetadata);
+        
         var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
         var form = document.createElement("form");
         $(form)
@@ -201,6 +203,11 @@ ExporterManager.handlers.projectDataPackage = function() {
         .attr("name", "project")
         .attr("value", theProject.id)
         .appendTo(form);
+        $('<input />')
+        .attr("name", "metadata")
+        .attr("value", jsonMetadata)
+        .appendTo(form);
+        
 
         document.body.appendChild(form);
 

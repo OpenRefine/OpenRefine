@@ -1,0 +1,78 @@
+package com.google.refine.model.medadata;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.everit.json.schema.ValidationException;
+
+
+import io.frictionlessdata.datapackage.Package;
+import io.frictionlessdata.datapackage.exceptions.DataPackageException;
+
+/** 
+ * This class contains some methods which is not included in the official "Data Package" repo for now.
+ * Some methods can be removed after the official library provide the corresponding function.
+ */
+public class PackageExtension {
+    private static final int JSON_INDENT_FACTOR = 4;
+    private static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
+    
+    /**
+     * Do the package since the final spec for the compression/bundle are not settled yet.
+     * https://github.com/frictionlessdata/datapackage-js/issues/93
+     * 
+     * @param pkg Package 
+     * @param dataByteArrayOutputStream  ByteArrayOutputStream
+     * @param destOs OutputStream
+     * @throws IOException 
+     * @throws FileNotFoundException 
+     * @see Package#saveZip(String outputFilePath) 
+     */
+    public static void saveZip(Package pkg, final ByteArrayOutputStream dataByteArrayOutputStream, final OutputStream destOs) throws FileNotFoundException, IOException {
+                try(ZipOutputStream zos = new ZipOutputStream(destOs)){
+                    // json file 
+                    ZipEntry entry = new ZipEntry(DataPackageMetadata.DEFAULT_FILE_NAME); 
+                    zos.putNextEntry(entry);
+                    zos.write(pkg.getJson().toString(JSON_INDENT_FACTOR).getBytes());
+                    zos.closeEntry();
+                    // default data file to data.csv or given path(can only handle one file because files cannot be restored)
+                    String path = (String) pkg.getResources().get(0).getPath();
+                    entry = new ZipEntry(StringUtils.isBlank(path) ? "data.csv" : path);
+                    zos.putNextEntry(entry);
+                    zos.write(dataByteArrayOutputStream.toByteArray());
+                    zos.closeEntry();
+                }           
+    }
+    
+    /**
+     * To build a Package object from a template file contains empty metadata
+     * XXX metadata: need to define the template file
+     *  
+     * @param templateFile
+     */
+    public static Package buildPackageFromTemplate() {
+        try {
+            ClassLoader classLoader = PackageExtension.class.getClassLoader();
+            File file = new File(classLoader.getResource(DATAPAAKCAGE_TEMPLATE_FILE).getFile());
+            return new Package(FileUtils.readFileToString(file));
+        } catch (ValidationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (DataPackageException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+}

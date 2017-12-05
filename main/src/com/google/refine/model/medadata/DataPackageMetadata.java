@@ -30,8 +30,8 @@ public class DataPackageMetadata extends AbstractMetadata {
     
     public DataPackageMetadata() {
         setFormatName(MetadataFormat.DATAPACKAGE_METADATA);
-        // XXX metadata: create new json from template 
         
+        _pkg = PackageExtension.buildPackageFromTemplate();
     }
     
     @Override
@@ -113,5 +113,9 @@ public class DataPackageMetadata extends AbstractMetadata {
     @Override
     public JSONObject getJSON() {
         return _pkg.getJson();
+    }
+    
+    public Package getPackage() {
+        return _pkg;
     }
 }
