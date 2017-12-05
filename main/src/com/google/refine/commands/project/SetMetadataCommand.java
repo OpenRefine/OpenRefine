@@ -34,34 +34,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.project;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 
-import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFactory;
+import com.google.refine.model.medadata.MetadataFormat;
 
 public class SetMetadataCommand extends Command {
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
-            Project project;
-            try {
-                project = getProject(request);
-            } catch (ServletException e) {
-                respond(response, "error", e.getLocalizedMessage());
-                return;
-            }
+            MetadataFormat format = MetadataFormat.valueOf(request.getParameter("format"));
+            String jsonContent = request.getParameter("jsonContent");
+            IMetadata metadata = MetadataFactory.buildMetadata(format);
+            InputStream in = IOUtils.toInputStream(jsonContent, "UTF-8");
+            metadata.loadFromStream(in);
+            metadata.validate();
             
-            respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
+            Project project = getProject(request);
+            
+            // save the matadata
+            project.setMetadata(format, metadata);
+            
+            respond(response, "{ \"code\" : \"ok\" }");
         } catch (JSONException e) {
             respondException(response, e);
+        } catch (ServletException e) {
+            respond(response, "error", e.getLocalizedMessage());
+            return;
         }
     }
 }

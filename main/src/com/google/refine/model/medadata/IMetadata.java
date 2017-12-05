@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -39,4 +38,6 @@ public interface IMetadata extends Jsonizable {
     public boolean isDirty();
 
     public JSONObject getJSON();
+    
+    public boolean validate();
 }

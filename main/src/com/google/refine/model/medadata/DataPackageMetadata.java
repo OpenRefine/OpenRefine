@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,5 +118,17 @@ public class DataPackageMetadata extends AbstractMetadata {
     
     public Package getPackage() {
         return _pkg;
+    }
+
+    @Override
+    public boolean validate() {
+        try {
+            _pkg.validate();
+        } catch (ValidationException | IOException | DataPackageException e) {
+            logger.error("validate json failed", ExceptionUtils.getStackTrace(e));
+            return false;
+        }
+        
+        return true;
     }
 }

@@ -438,5 +438,10 @@ public class ProjectMetadata extends AbstractMetadata {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public boolean validate() {
+        return true;
+    }
     
 }
