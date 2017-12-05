@@ -150,7 +150,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata(MetadataFormat.PROJECT_METADATA);
+        verify(proj, times(1)).getProjectMetadata();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
@@ -186,7 +186,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata(MetadataFormat.PROJECT_METADATA);
+        verify(proj, times(1)).getProjectMetadata();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
