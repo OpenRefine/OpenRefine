@@ -32,20 +32,11 @@ public interface IMetadata extends Jsonizable {
     public MetadataFormat getFormatName();
     public void setFormatName(MetadataFormat format);
     
-    public String getEncoding();
-
     public Date getModified();
 
-    public String getName();
-    public void setName(String projectName);
+    public void updateModified();
     
     public boolean isDirty();
-
-    public void updateModified();
-
-    public JSONArray getUserMetadata();
-
-    public void setAnyStringField(String metaName, String valueString);
 
     public JSONObject getJSON();
 }

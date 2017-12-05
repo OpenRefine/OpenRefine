@@ -36,12 +36,14 @@ package com.google.refine.model.medadata;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,6 +64,11 @@ public class ProjectMetadata extends AbstractMetadata {
     final public static String OLD_FILE_NAME = "metadata.old.json";
     
     private final Date     _created;
+    protected String         _name = "";
+    protected String         _encoding = "";
+    protected int _rowCount;
+    // user metadata
+    protected JSONArray _userMetadata = new JSONArray();; 
     
     private String         _password = "";
     private int            _encodingConfidence;
@@ -315,7 +322,24 @@ public class ProjectMetadata extends AbstractMetadata {
         _importOptionMetadata.put(obj);
         updateModified();
     }
+    
+    public String getEncoding() {
+        return _encoding;
+    }
 
+    public void setName(String name) {
+        this._name = name;
+        updateModified();
+    }
+    
+    public String getName() {
+        return _name;
+    }
+
+    public void setEncoding(String encoding) {
+        this._encoding = encoding;
+        updateModified();
+    }
     
     public String getCreator() {
         return _creator;
@@ -343,12 +367,10 @@ public class ProjectMetadata extends AbstractMetadata {
         return _subject;
     }
 
-    
     public void setSubject(String subject) {
         this._subject = subject;
         updateModified();
     }
-
     
     public String getDescription() {
         return _description;
@@ -359,7 +381,39 @@ public class ProjectMetadata extends AbstractMetadata {
         this._description = description;
         updateModified();
     }
-
+    
+    public JSONArray getUserMetadata() {
+        return _userMetadata;
+    }
+    
+    public void setUserMetadata(JSONArray userMetadata) {
+        this._userMetadata = userMetadata;
+    }
+    
+    public void setAnyStringField(String metaName, String valueString)  {
+        if (propertyExists(this, metaName)) {
+            try {
+                BeanUtils.setProperty(this, metaName, valueString);
+            } catch (IllegalAccessException | InvocationTargetException ite) {
+                logger.error(ExceptionUtils.getStackTrace(ite));
+            }
+        } else {
+            updateUserMetadata(metaName, valueString);
+        }
+    }
+    
+    private void updateUserMetadata(String metaName, String valueString)  {
+        for (int i = 0; i < _userMetadata.length(); i++) {
+            try {
+                JSONObject obj = _userMetadata.getJSONObject(i);
+                if (obj.getString("name").equals(metaName)) {
+                    obj.put("value", valueString);
+                }
+            } catch (JSONException e) {
+                logger.error(ExceptionUtils.getStackTrace(e));
+            }
+        }
+    }
     
     @Override
     public ProjectMetadata loadFromFile(File metadataFile) {

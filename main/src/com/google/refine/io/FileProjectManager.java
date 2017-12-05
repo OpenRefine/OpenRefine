@@ -384,7 +384,7 @@ public class FileProjectManager extends ProjectManager {
                     long id = a.getLong(i);
 
                     File projectDir = getProjectDir(id);
-                    IMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
                     
                     mergeEmptyUserMetadata(metadata);
                 }

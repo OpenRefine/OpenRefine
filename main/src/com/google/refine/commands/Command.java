@@ -195,12 +195,12 @@ public abstract class Command {
      * @return
      * @throws ServletException
      */
-    protected IMetadata getMetadata(HttpServletRequest request) throws ServletException {
+    protected ProjectMetadata getMetadata(HttpServletRequest request) throws ServletException {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
         try {
-            IMetadata pm = ProjectManager.singleton.getProjectMetadata(Long.parseLong(request.getParameter("project")));
+            ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(Long.parseLong(request.getParameter("project")));
             if (pm != null) {
                 return pm;
             }

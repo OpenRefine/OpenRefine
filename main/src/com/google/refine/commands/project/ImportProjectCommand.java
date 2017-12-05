@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.ParsingUtilities;
 
@@ -76,7 +75,7 @@ public class ImportProjectCommand extends Command {
 
             ProjectManager.singleton.loadProjectMetadata(projectID);
 
-            IMetadata pm = ProjectManager.singleton.getProjectMetadata(projectID);
+            ProjectMetadata pm = ProjectManager.singleton.getProjectMetadata(projectID);
             if (pm != null) {
                 if (options.containsKey("project-name")) {
                     String projectName = options.getProperty("project-name");

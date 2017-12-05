@@ -398,7 +398,7 @@ public abstract class ProjectManager {
             placeHolderJsonObj.has("display"));
     }
     
-    public void mergeEmptyUserMetadata(IMetadata metadata) {
+    public void mergeEmptyUserMetadata(ProjectMetadata metadata) {
         if (metadata == null)
             return;
         

@@ -11,28 +11,23 @@ import org.json.JSONException;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.ProjectMetadata;
 
 public class SetProjectMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // get the metadata format from the request
-        MetadataFormat format = MetadataFormat
-                .valueOf(request.getParameter("format") == null ? MetadataFormat.PROJECT_METADATA.toString()
-                        : request.getParameter("format"));
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         String metaName = request.getParameter("name");
         String valueString = request.getParameter("value");
-        IMetadata meta = null;
+        ProjectMetadata meta = null;
         
         if (project == null) {
             respond(response, "{ \"code\" : \"error\", \"message\" : \"Project cannot be found\" }");
             return;
         }
         
-        meta = project.getMetadata(format); 
+        meta = project.getProjectMetadata(); 
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

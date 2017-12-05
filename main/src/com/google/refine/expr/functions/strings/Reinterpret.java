@@ -44,7 +44,6 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.ProjectMetadata;
 
 public class Reinterpret implements Function {
@@ -62,7 +61,7 @@ public class Reinterpret implements Function {
                 encoder = (String) o2;
                 if (args.length == 2) {
                     Project project = (Project) bindings.get("project");
-                    IMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
+                    ProjectMetadata metadata = ProjectManager.singleton.getProjectMetadata(project.id);
                     decoder = metadata.getEncoding(); // can return "" for broken projects
                 } else {
                     decoder = (String) args[2];
