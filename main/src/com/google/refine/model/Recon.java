@@ -84,8 +84,7 @@ public class Recon implements HasFields, Jsonizable {
     static final public int Feature_nameMatch = 1;
     static final public int Feature_nameLevenshtein = 2;
     static final public int Feature_nameWordDistance = 3;
-    static final public int Feature_qaResult = 4;
-    static final public int Feature_max = 5;
+    static final public int Feature_max = 4;
 
     static final protected Map<String, Integer> s_featureMap = new HashMap<String, Integer>();
     static {
@@ -93,7 +92,6 @@ public class Recon implements HasFields, Jsonizable {
         s_featureMap.put("nameMatch", Feature_nameMatch);
         s_featureMap.put("nameLevenshtein", Feature_nameLevenshtein);
         s_featureMap.put("nameWordDistance", Feature_nameWordDistance);
-        s_featureMap.put("qaResult", Feature_qaResult);
     }
     
     final public long            id;
