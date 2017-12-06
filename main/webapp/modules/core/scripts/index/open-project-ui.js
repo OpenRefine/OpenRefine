@@ -102,12 +102,16 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
   var self = this;
-  var projects = [];
+  var projects = [], dataPackageMetadatas = [];
   for (var n in data.projects) {
     if (data.projects.hasOwnProperty(n)) {
       var project = data.projects[n];
       project.id = n;
       project.date = moment(project.modified).format('YYYY-MM-DD HH:mm A');
+      
+      if (data["other-metadatas"][n].filter(e => e.name === '"DATAPACKAGE_METADATA"').length > 0) {
+          dataPackageMetadatas.push(project.id);
+      }
       
       if (typeof project.userMetadata !== "undefined")  {
           for (var m in data.customMetadataColumns) {
@@ -187,7 +191,20 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       }).appendTo(
         $(tr.insertCell(tr.cells.length))
       );
-
+      
+      function save(jsonContent) {
+          $.ajax({
+              type: "POST",
+              url: "command/core/set-imetaData",
+              data: { "project" : project.id,
+                      "format" : "DATAPACKAGE_METADATA",
+                      "jsonContent" : jsonContent
+                    },
+              dataType: "json",
+          });
+      }    
+      
+      var metadataCell = $(tr.insertCell(tr.cells.length));
       var editMetadataLink = $('<a></a>')
       .text($.i18n._('core-index-open')["edit-meta-data"])
       .addClass("secondary")
@@ -195,9 +212,16 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .click(function() {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
-      .appendTo(
-        $(tr.insertCell(tr.cells.length))
-      );
+      .appendTo(metadataCell);
+      
+      var editDataPackageMetadataLink = $('<a></a>')
+      .html("&nbsp;&nbsp;" + $.i18n._('core-index-open')["edit-data-package"])
+      .addClass("secondary")
+      .attr("href", "javascript:{}")
+      .click(function() {
+          new EditGeneralMetadataDialog(project.id, save);
+      })
+      .appendTo(metadataCell);
       
       $('<div></div>')
       .html(project.date)

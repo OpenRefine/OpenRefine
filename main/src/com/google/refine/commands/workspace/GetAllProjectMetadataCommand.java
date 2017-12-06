@@ -48,7 +48,11 @@ import org.json.JSONWriter;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.util.JSONUtilities;
 
 public class GetAllProjectMetadataCommand extends Command {
     @Override
@@ -62,9 +66,11 @@ public class GetAllProjectMetadataCommand extends Command {
             JSONWriter writer = new JSONWriter(response.getWriter());
             Properties options = new Properties();
             
+            
             writer.object();
             
-            writer.key("projects");
+                // projects object
+                writer.key("projects");
                 writer.object();
                 Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
                 for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
@@ -75,7 +81,23 @@ public class GetAllProjectMetadataCommand extends Command {
                     }
                 }
                 writer.endObject();
+                
+                // other-metadatas object
+                writer.key("other-metadatas");
+                writer.object();
+                for (Entry<Long, ProjectMetadata> e : m.entrySet()) {
+                    JSONArray otherMetadatas = new JSONArray();
+                    Project project = ProjectManager.singleton.getProject(e.getKey());
+                    for (IMetadata metadata : project.getMetadataMap().values()) {
+                        if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) continue;
+                        JSONUtilities.append(otherMetadatas, metadata.getFormatName().name());
+                    }
+                    writer.key(e.getKey().toString());
+                    writer.value(otherMetadatas);
+                }
+                writer.endObject();
             
+            // userMetadata
             String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
             if (userMeta != null) {
                 writer.key("customMetadataColumns");

@@ -4,8 +4,6 @@ function EditGeneralMetadataDialog(projectId, callback) {
     this._projectId = projectId;
     this._callback = callback;
   this._createDialog();
-  
-  alert("_createDialog done");
 }
 
 EditGeneralMetadataDialog.prototype._createDialog = function() {
@@ -16,7 +14,7 @@ EditGeneralMetadataDialog.prototype._createDialog = function() {
 
   this._level = DialogSystem.showDialog(frame);
   
-  $('<h1>').text($.i18n._('core-index')["metaDatas"]).appendTo(body);
+//  $('<h1>').text($.i18n._('core-index')["metaDatas"]).appendTo(body);
   var editor = new JSONEditor(document.getElementById('jsoneditor'));
   
   this._elmts.okButton.html($.i18n._('core-buttons')["ok"]);

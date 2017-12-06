@@ -101,6 +101,7 @@
         "name": "Name",
         "rename": "Rename",
         "edit-meta-data": "About",
+        "edit-data-package": "Data package",
         "creator": "Creator",
         "contributors": "Contributors",
         "subject": "Subject",

@@ -326,6 +326,7 @@ function init() {
       "externals/jquery.i18n.js",
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
+      "externals/jsoneditor/jsoneditor.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -360,7 +361,8 @@ function init() {
       "scripts/index/parser-interfaces/wikitext-parser-ui.js",
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
-      "scripts/index/edit-metadata-dialog.js"
+      "scripts/index/edit-metadata-dialog.js",
+      "scripts/project/edit-general-metadata-dialog.js"
     ]
   );
 
@@ -375,6 +377,7 @@ function init() {
       "styles/pure.css",
       "styles/util/dialog.less",
       "styles/util/encoding.less",
+      "externals/jsoneditor/jsoneditor.css",
       
       "styles/index.less",
       "styles/index/create-project-ui.less",
@@ -390,7 +393,7 @@ function init() {
       "styles/index/fixed-width-parser-ui.less",
       "styles/index/xml-parser-ui.less",
       "styles/index/json-parser-ui.less",
-      "styles/index/wikitext-parser-ui.less",
+      "styles/index/wikitext-parser-ui.less"
     ]
   );
 
