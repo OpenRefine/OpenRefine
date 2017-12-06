@@ -139,6 +139,7 @@ public abstract class ProjectManager {
             _projectsMetadata.put(project.id, projectMetadata);
             if (_projectsTags == null) {
                 _projectsTags = new HashMap<String, Integer>();
+<<<<<<< Upstream, based on origin/master
             }
             String[] tags = projectMetadata.getTags();
             if (tags != null) {
@@ -148,6 +149,16 @@ public abstract class ProjectManager {
                     } else {
                         _projectsTags.put(tag, 1);
                     }
+=======
+            String[] tags = projectMetadata.getTags();
+            if (tags != null) {
+                for (String tag : tags) {
+                        if (_projectsTags.containsKey(tag)) {
+                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                        } else {
+                            _projectsTags.put(tag, 1);
+                        }
+>>>>>>> 529b6bd Modified tags in metadata dialog and moved column right to name
                 }
             }
         }

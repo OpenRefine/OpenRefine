@@ -192,11 +192,11 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th></th>' +
       '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["tags"]+'</th>' + 
       '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["row-count"]+'</th>' + 
-      '<th>'+$.i18n._('core-index-open')["tags"]+'</th>' + 
       (function() {
           var htmlDisplay = "";
           for (var n in data.customMetadataColumns) {
@@ -261,36 +261,18 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
       
-      var appendMetaField = function(data) {
-          $('<div></div>')
-          .html(data)
-          .appendTo($(tr.insertCell(tr.cells.length)));
-      };
       
-      appendMetaField(project.creator);
-      appendMetaField(project.subject);
-      appendMetaField(project.description, '20%');
-      appendMetaField(project.rowCount);
-      
-      var data = project.userMetadata;
-      for(var i in data)
-      {
-           if (data[i].display === true) {
-               appendMetaField(data[i].value); 
-           }
-      }
     
-    $(tr.insertCell(tr.cells.length));
+    var tagsCell = $(tr.insertCell(tr.cells.length));
     var tags = project.tags;
-    for (var index = 0; index < tags.length; index++) {
-        var tag = tags[index];
+    tags.map(function(tag){
         $("<span/>")
         .addClass("project-tag")
         .text(tag)
         .attr("title", $.i18n._('core-index-open')["edit-tags"])
-        .appendTo($(tr.cells[tr.cells.length - 1]));
+        .appendTo(tagsCell);
         $(tr).addClass(tag);
-    }
+    });
     
 
     var editTagsLink = $('<a></a>')
@@ -326,7 +308,26 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                 }
             });
             return false;
-        }).appendTo($(tr.cells[tr.cells.length - 1]));
+        }).appendTo(tagsCell);
+    
+    var appendMetaField = function(data) {
+        $('<div></div>')
+        .html(data)
+        .appendTo($(tr.insertCell(tr.cells.length)));
+    };
+    
+    appendMetaField(project.creator);
+    appendMetaField(project.subject);
+    appendMetaField(project.description, '20%');
+    appendMetaField(project.rowCount);
+    
+    var data = project.userMetadata;
+    for(var i in data)
+    {
+         if (data[i].display === true) {
+             appendMetaField(data[i].value); 
+         }
+    }
         
         $(tr).mouseenter(function() {
             editTagsLink.css("visibility", "visible");
@@ -388,18 +389,113 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
+    
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
             .text(data);
         } else {
-            $('td', tr).eq(index)
+            $('td', tr).eq(index).find('div')
             .text(data);
         }
     };
     
+    var refreshMetaTags = function(data, index) {
+        var tagCol = $('td', tr).eq(index).empty();
+        if(data.constructor === Array){
+            data.map(function(tag){
+                var tagsCell = $("<span/>")
+                .addClass("project-tag")
+                .text(tag)
+                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .appendTo(tagCol);
+                
+                var editTagsLink = $('<a></a>')
+                .text($.i18n._('core-index-open')["rename"])
+                .addClass("secondary")
+                .addClass("edit-project-tags")
+                .css("visibility", "hidden")
+                .attr("href", "")
+                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .html('<img src="images/edit.png" />')
+                .click(function() {
+                        var oldTags = project.tags.join(",");
+                        var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
+                        if (newTags === null || newTags === oldTags) {
+                            return false;
+                        }
+                        $.ajax({
+                            type : "POST",
+                            url : "command/core/set-project-tags",
+                            data : {
+                                "project" : project.id,
+                                "old" : oldTags,
+                                "new" : newTags
+                            },
+                            dataType : "json",
+                            success : function(data) {
+                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                                    Refine.TagsManager.allProjectTags = [];
+                                    self._buildTagsAndFetchProjects();
+                                } else {
+                                    alert($.i18n._('core-index-open')["warning-tags-update"]+ " "+ data.message);
+                                }
+                            }
+                        });
+                        return false;
+                    }).appendTo(tagCol);
+                	tagCol.parent().addClass(tag);
+            });
+        } else{
+            data.split(",").map(function(tag){
+                var tagsCell = $("<span/>")
+                .addClass("project-tag")
+                .text(tag)
+                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .appendTo(tagCol);
+                
+                var editTagsLink = $('<a></a>')
+                .text($.i18n._('core-index-open')["rename"])
+                .addClass("secondary")
+                .addClass("edit-project-tags")
+                .css("visibility", "hidden")
+                .attr("href", "")
+                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .html('<img src="images/edit.png" />')
+                .click(function() {
+                        var oldTags = project.tags.join(",");
+                        var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
+                        if (newTags === null || newTags === oldTags) {
+                            return false;
+                        }
+                        $.ajax({
+                            type : "POST",
+                            url : "command/core/set-project-tags",
+                            data : {
+                                "project" : project.id,
+                                "old" : oldTags,
+                                "new" : newTags
+                            },
+                            dataType : "json",
+                            success : function(data) {
+                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
+                                    Refine.TagsManager.allProjectTags = [];
+                                    self._buildTagsAndFetchProjects();
+                                } else {
+                                    alert($.i18n._('core-index-open')["warning-tags-update"]+ " "+ data.message);
+                                }
+                            }
+                        });
+                        return false;
+                    }).appendTo(tagCol);
+                tagCol.parent().addClass(tag);
+            });
+    }
+    };
+    
     var index = 3;
     refreshMetaField(metaData.name, index); index++;
+    refreshMetaTags(metaData.tags, index); index++;
     refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
     refreshMetaField(metaData.description,index); index++;
@@ -427,7 +523,21 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
              refreshMetaField(data[i].value,index); index++; 
          }
     }
-
+    
+    Refine.TagsManager.allProjectTags = [];
+    var self = this;
+    var list = $("#tagsUl").empty();
+    self._allTags = Refine.TagsManager._getAllProjectTags();
+     
+      var li = $('<li/>').addClass("active").appendTo(list);
+      $('<a/>').attr('href',
+      '#all').addClass("current").text('All').appendTo(li);
+     
+      $.each(self._allTags, function(i) {
+      var li = $('<li/>').appendTo(list);
+      $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
+      .appendTo(li);
+      });
 };
 
 Refine.actionAreas.push({

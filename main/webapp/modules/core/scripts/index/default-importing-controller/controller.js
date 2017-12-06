@@ -351,7 +351,14 @@ Refine.TagsManager._getAllProjectTags = function() {
                      });
                                 
                  array.map(function(item){
+<<<<<<< Upstream, based on origin/master
                      self.allProjectTags.push(item);
+=======
+                	 self.allProjectTags.push(item);
+                 });
+                 },
+                 async : false
+>>>>>>> 529b6bd Modified tags in metadata dialog and moved column right to name
                  });
              },
              async : false

@@ -21,11 +21,38 @@ function EditMetadataDialog(metaData, targetRowElem) {
 
       var td2 = tr.insertCell(2);
       
+      if(key==="tags"){
+          $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
+              var oldTags = $(td1).text().replace("\"","").replace("[","").replace("]","");
+              oldTags = replaceAll(oldTags,"\"","");
+              var newTags = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
+              newTags = newTags.replace("\"","").replace("[","").replace("]","");
+              newTags = replaceAll(newTags,"\"","");
+              if (newTags !== null) {
+                  $(td1).text(newTags);
+                  metaData[key] = newTags;
+                  $.ajax({
+                      type : "POST",
+                      url : "command/core/set-project-tags",
+                      data : {
+                          "project" : project,
+                          "old" : oldTags,
+                          "new" : newTags
+                      },
+                      dataType : "json",
+                  });
+              }
+              
+              Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
+            });
+      }
+      
       if (key !== "created" && 
               key !== "modified" && 
               key !== "rowCount" && 
               key !== "importOptionMetadata" && 
-              key !== "id")  {
+              key !== "id" &&
+              key !== "tags")  {
           $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
             var newValue = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
             if (newValue !== null) {
@@ -63,7 +90,7 @@ EditMetadataDialog.prototype._createDialog = function() {
 
   this._level = DialogSystem.showDialog(frame);
   this._elmts.closeButton.html($.i18n._('core-buttons')["close"]);
-  this._elmts.closeButton.click(function() { self._dismiss(); });
+  this._elmts.closeButton.click(function() { self._dismiss();Refine.OpenProjectUI.prototype._addTagFilter()});
   
   var body = $("#metadata-body");
     
@@ -110,4 +137,12 @@ EditMetadataDialog.prototype._createDialog = function() {
 EditMetadataDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);
 };
+
+function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  }
+
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+  }
 
