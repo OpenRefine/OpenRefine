@@ -15,18 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.junit.Rule;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.project.SetMetadataCommand;
@@ -34,20 +33,12 @@ import com.google.refine.model.Project;
 import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
-import com.google.refine.tests.RefineTest;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MetadataFactory.class)
-public class SetMetadataCommandTests extends RefineTest {
+public class SetMetadataCommandTests  {
     
-    @Rule
-    public PowerMockito rule = new PowerMockito();
-    
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
+    Logger logger = LoggerFactory.getLogger(SetMetadataCommandTests.class.getClass());
     
     // System Under Test
     SetMetadataCommand SUT = null;
@@ -66,7 +57,7 @@ public class SetMetadataCommandTests extends RefineTest {
     Project proj = null;
     PrintWriter pw = null;
 
-    @BeforeMethod
+    @Before
     public void SetUp() throws JSONException, IOException {
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
@@ -77,7 +68,7 @@ public class SetMetadataCommandTests extends RefineTest {
         response = mock(HttpServletResponse.class);
         SUT = new SetMetadataCommand();
         
-//        metadata = mock(DataPackageMetadata.class);
+        metadata = new DataPackageMetadata();
         String content = getJSONContent("datapackage-sample.json");
         changedJSON = content.replace("PDDL-1.0", LICENSE);
         
@@ -100,7 +91,7 @@ public class SetMetadataCommandTests extends RefineTest {
         }
     }
 
-    @AfterMethod
+    @After
     public void TearDown() {
         SUT = null;
 
