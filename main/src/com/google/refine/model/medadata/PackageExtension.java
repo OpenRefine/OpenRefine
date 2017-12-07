@@ -9,9 +9,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.everit.json.schema.ValidationException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.frictionlessdata.datapackage.Package;
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
@@ -21,6 +23,8 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
  * Some methods can be removed after the official library provide the corresponding function.
  */
 public class PackageExtension {
+    final static Logger logger = LoggerFactory.getLogger(PackageExtension.class);
+    
     private static final int JSON_INDENT_FACTOR = 4;
     public static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
     
@@ -61,16 +65,13 @@ public class PackageExtension {
         try {
             ClassLoader classLoader = PackageExtension.class.getClassLoader();
             File file = new File(classLoader.getResource(DATAPAAKCAGE_TEMPLATE_FILE).getFile());
-            return new Package(FileUtils.readFileToString(file));
+            return new Package(FileUtils.readFileToString(file), true);
         } catch (ValidationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("validation failed", ExceptionUtils.getStackTrace(e));
         } catch (DataPackageException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("DataPackage Exception", ExceptionUtils.getStackTrace(e));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("IOException when build package from template", ExceptionUtils.getStackTrace(e));
         }
         
         return null;

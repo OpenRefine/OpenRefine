@@ -54,8 +54,8 @@ public class DataPackageMetadata extends AbstractMetadata {
             String jsonString = FileUtils.readFileToString(metadataFile);
             _pkg = new Package(jsonString);
         } catch (ValidationException | DataPackageException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Load from file failed" + metadataFile.getAbsolutePath(),
+                    ExceptionUtils.getStackTrace(e));
         }
         
         logger.info("Data Package metadata file loaded");
@@ -71,11 +71,11 @@ public class DataPackageMetadata extends AbstractMetadata {
         try {
             this._pkg.save(metadataFile.getAbsolutePath());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("IO exception when writing to file " + metadataFile.getAbsolutePath(), 
+                    ExceptionUtils.getStackTrace(e));
         } catch (DataPackageException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Data package exception when writing to file " + metadataFile.getAbsolutePath(),
+                    ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -90,14 +90,11 @@ public class DataPackageMetadata extends AbstractMetadata {
         try {
             this._pkg = new Package(IOUtils.toString(inputStream));
         } catch (ValidationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("validation failed", ExceptionUtils.getStackTrace(e));
         } catch (DataPackageException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Data package excpetion when loading from stream", ExceptionUtils.getStackTrace(e));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("IO exception when loading from stream", ExceptionUtils.getStackTrace(e));
         }
     }
     
