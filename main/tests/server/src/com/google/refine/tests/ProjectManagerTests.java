@@ -94,15 +94,9 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.registerProject(project, metadata);
 
-<<<<<<< Upstream, based on origin/master
-        AssertProjectRegistered();
-        verify(metadata, times(1)).getTags();
-
-=======
         AssertProjectRegistered();      
         verify(metadata, times(1)).getTags();
         
->>>>>>> 529b6bd Modified tags in metadata dialog and moved column right to name
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -127,11 +121,7 @@ public class ProjectManagerTests extends RefineTest {
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
         verify(metadata, times(1)).getTags();
-<<<<<<< Upstream, based on origin/master
-
-=======
         
->>>>>>> 529b6bd Modified tags in metadata dialog and moved column right to name
         //ensure end
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);

@@ -274,41 +274,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $(tr).addClass(tag);
     });
     
-
-    var editTagsLink = $('<a></a>')
-    .text($.i18n._('core-index-open')["rename"])
-    .addClass("secondary")
-    .addClass("edit-project-tags")
-    .css("visibility", "hidden")
-    .attr("href", "")
-    .attr("title", $.i18n._('core-index-open')["edit-tags"])
-    .html('<img src="images/edit.png" />')
-    .click(function() {
-            var oldTags = project.tags.join(",");
-            var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
-            if (newTags === null || newTags === oldTags) {
-                return false;
-            }
-            $.ajax({
-                type : "POST",
-                url : "command/core/set-project-tags",
-                data : {
-                    "project" : project.id,
-                    "old" : oldTags,
-                    "new" : newTags
-                },
-                dataType : "json",
-                success : function(data) {
-                    if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                        Refine.TagsManager.allProjectTags = [];
-                        self._buildTagsAndFetchProjects();
-                    } else {
-                        alert($.i18n._('core-index-open')["warning-tags-update"]+ " "+ data.message);
-                    }
-                }
-            });
-            return false;
-        }).appendTo(tagsCell);
     
     var appendMetaField = function(data) {
         $('<div></div>')
@@ -329,11 +294,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
          }
     }
         
-        $(tr).mouseenter(function() {
-            editTagsLink.css("visibility", "visible");
-        }).mouseleave(function() {
-            editTagsLink.css("visibility", "hidden");
-        });
 
       };
 
@@ -388,7 +348,7 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   return false;
 };
 
-Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
+Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
     
     var refreshMetaField = function(data, index) {
         if (index === 3) {
@@ -409,43 +369,9 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
                 .text(tag)
                 .attr("title", $.i18n._('core-index-open')["edit-tags"])
                 .appendTo(tagCol);
-                
-                var editTagsLink = $('<a></a>')
-                .text($.i18n._('core-index-open')["rename"])
-                .addClass("secondary")
-                .addClass("edit-project-tags")
-                .css("visibility", "hidden")
-                .attr("href", "")
-                .attr("title", $.i18n._('core-index-open')["edit-tags"])
-                .html('<img src="images/edit.png" />')
-                .click(function() {
-                        var oldTags = project.tags.join(",");
-                        var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
-                        if (newTags === null || newTags === oldTags) {
-                            return false;
-                        }
-                        $.ajax({
-                            type : "POST",
-                            url : "command/core/set-project-tags",
-                            data : {
-                                "project" : project.id,
-                                "old" : oldTags,
-                                "new" : newTags
-                            },
-                            dataType : "json",
-                            success : function(data) {
-                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                                    Refine.TagsManager.allProjectTags = [];
-                                    self._buildTagsAndFetchProjects();
-                                } else {
-                                    alert($.i18n._('core-index-open')["warning-tags-update"]+ " "+ data.message);
-                                }
-                            }
-                        });
-                        return false;
-                    }).appendTo(tagCol);
-                	tagCol.parent().addClass(tag);
+                tagCol.parent().addClass(tag);
             });
+   
         } else{
             data.split(",").map(function(tag){
                 var tagsCell = $("<span/>")
@@ -453,44 +379,11 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
                 .text(tag)
                 .attr("title", $.i18n._('core-index-open')["edit-tags"])
                 .appendTo(tagCol);
-                
-                var editTagsLink = $('<a></a>')
-                .text($.i18n._('core-index-open')["rename"])
-                .addClass("secondary")
-                .addClass("edit-project-tags")
-                .css("visibility", "hidden")
-                .attr("href", "")
-                .attr("title", $.i18n._('core-index-open')["edit-tags"])
-                .html('<img src="images/edit.png" />')
-                .click(function() {
-                        var oldTags = project.tags.join(",");
-                        var newTags = window.prompt($.i18n._('core-index-open')["edit-tags-desc"],oldTags);
-                        if (newTags === null || newTags === oldTags) {
-                            return false;
-                        }
-                        $.ajax({
-                            type : "POST",
-                            url : "command/core/set-project-tags",
-                            data : {
-                                "project" : project.id,
-                                "old" : oldTags,
-                                "new" : newTags
-                            },
-                            dataType : "json",
-                            success : function(data) {
-                                if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                                    Refine.TagsManager.allProjectTags = [];
-                                    self._buildTagsAndFetchProjects();
-                                } else {
-                                    alert($.i18n._('core-index-open')["warning-tags-update"]+ " "+ data.message);
-                                }
-                            }
-                        });
-                        return false;
-                    }).appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });
+            
     }
+   
     };
     
     var index = 3;

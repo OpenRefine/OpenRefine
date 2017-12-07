@@ -23,10 +23,10 @@ function EditMetadataDialog(metaData, targetRowElem) {
       
       if(key==="tags"){
           $('<button class="button">').text($.i18n._('core-index')["edit"]).appendTo(td2).click(function() {
-              var oldTags = $(td1).text().replace("\"","").replace("[","").replace("]","");
+              var oldTags = $(td1).text().replace("[","").replace("]","");
               oldTags = replaceAll(oldTags,"\"","");
-              var newTags = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, value);
-              newTags = newTags.replace("\"","").replace("[","").replace("]","");
+              var newTags = window.prompt($.i18n._('core-index')["change-metadata-value"]+" " + key, $(td1).text());
+              newTags = newTags.replace("[","").replace("]","");
               newTags = replaceAll(newTags,"\"","");
               if (newTags !== null) {
                   $(td1).text(newTags);
@@ -43,7 +43,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
                   });
               }
               
-              Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
+              Refine.OpenProjectUI.refreshProject(targetRowElem, metaData, project);
             });
       }
       
@@ -74,7 +74,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
               );
             }
             
-            Refine.OpenProjectUI.refreshProject(targetRowElem, metaData);
+            Refine.OpenProjectUI.refreshProject(targetRowElem, metaData, project);
           });
       }
   };
