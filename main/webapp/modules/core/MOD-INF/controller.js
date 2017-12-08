@@ -72,6 +72,8 @@ function registerCommands() {
   RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
   RS.registerCommand(module, "get-imetaData", new Packages.com.google.refine.commands.project.GetMetadataCommand());
   RS.registerCommand(module, "set-imetaData", new Packages.com.google.refine.commands.project.SetMetadataCommand());
+  RS.registerCommand(module, "get-all-project-tags", new Packages.com.google.refine.commands.workspace.GetAllProjectTagsCommand());
+  RS.registerCommand(module, "set-project-tags", new Packages.com.google.refine.commands.project.SetProjectTagsCommand());
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
@@ -327,6 +329,8 @@ function init() {
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/jsoneditor/jsoneditor.js",
+      "externals/select2/select2.min.js",
+      "externals/jquery.lavalamp.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -338,6 +342,7 @@ function init() {
       "scripts/util/date-time.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
+      "scripts/util/filter-lists.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -371,6 +376,7 @@ function init() {
     module,
     [
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/select2/select2.css",
       "externals/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",

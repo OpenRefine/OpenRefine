@@ -278,9 +278,12 @@ Refine.DefaultImportingController.prototype._createProject = function() {
       return;
     }
 
+    var projectTags = $("#tagsInput").val().split(",");
+    
     var self = this;
     var options = this._formatParserUI.getOptions();
     options.projectName = projectName;
+    options.projectTags = projectTags;
     $.post(
       "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
@@ -332,4 +335,28 @@ Refine.DefaultImportingController.prototype._createProject = function() {
       "json"
     );
   }
+};
+
+Refine.TagsManager = {};
+Refine.TagsManager.allProjectTags = [];
+
+Refine.TagsManager._getAllProjectTags = function() {
+    var self = this;
+    if (self.allProjectTags.length === 0) {
+        jQuery.ajax({
+             url : "command/core/get-all-project-tags",
+             success : function(result) {
+                 var array = result.tags.sort(function (a, b) {
+                     return a.toLowerCase().localeCompare(b.toLowerCase());
+                     });
+                                
+                 array.map(function(item){
+                     self.allProjectTags.push(item);
+                 });
+                 
+                 },
+                 async : false
+                 });
+        }
+    return self.allProjectTags;
 };
