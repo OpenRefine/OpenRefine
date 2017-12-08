@@ -40,6 +40,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -440,8 +441,8 @@ public class ProjectMetadata extends AbstractMetadata {
     }
 
     @Override
-    public boolean validate() {
-        return true;
+    public List<Exception> validate() {
+        return null;
     }
     
 }

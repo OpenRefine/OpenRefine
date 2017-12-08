@@ -3,6 +3,7 @@ package com.google.refine.model.medadata;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,5 +40,5 @@ public interface IMetadata extends Jsonizable {
 
     public JSONObject getJSON();
     
-    public boolean validate();
+    public List<Exception> validate();
 }

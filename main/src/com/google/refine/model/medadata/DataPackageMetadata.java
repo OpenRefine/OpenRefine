@@ -118,14 +118,13 @@ public class DataPackageMetadata extends AbstractMetadata {
     }
 
     @Override
-    public boolean validate() {
+    public List<Exception> validate() {
         try {
             _pkg.validate();
         } catch (ValidationException | IOException | DataPackageException e) {
             logger.error("validate json failed", ExceptionUtils.getStackTrace(e));
-            return false;
         }
         
-        return true;
+        return _pkg.getErrors();
     }
 }
