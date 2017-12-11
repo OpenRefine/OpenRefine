@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -57,12 +59,17 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
+import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import io.frictionlessdata.tableschema.Schema;
+import io.frictionlessdata.tableschema.exceptions.ForeignKeyException;
+import io.frictionlessdata.tableschema.exceptions.PrimaryKeyException;
 
 public class Project {
     final static protected Map<String, Class<? extends OverlayModel>> 
@@ -87,6 +94,8 @@ public class Project {
     final static Logger logger = LoggerFactory.getLogger("project");
     
     private Map<MetadataFormat, IMetadata> metadataMap;
+    
+    private Schema schema;
     
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -279,6 +288,14 @@ public class Project {
         return (ProjectMetadata) getMetadata(MetadataFormat.PROJECT_METADATA);
     }
     
+    public DataPackageMetadata getDataPackageMetadata() {
+        return (DataPackageMetadata) getMetadata(MetadataFormat.DATAPACKAGE_METADATA);
+    }
+    
+    public Schema getSchema() {
+        return schema;
+    }
+    
     public IMetadata getMetadata(MetadataFormat format) {
         return metadataMap.get(format);
     }
@@ -289,5 +306,16 @@ public class Project {
     
     public void setMetadata(MetadataFormat format, IMetadata metadata) {
         getMetadataMap().put(format, metadata);
+        // inject the schema as a shorthand for access and reuse
+        if (format == MetadataFormat.DATAPACKAGE_METADATA) {
+            if (getDataPackageMetadata() != null) {
+                JSONObject jsonSchema = getDataPackageMetadata().getPackage().getResources().get(0).getSchema();
+                try {
+                    schema = new Schema(jsonSchema, true);
+                } catch (ValidationException | PrimaryKeyException | ForeignKeyException e) {
+                    logger.error("extract schema failed:" + ExceptionUtils.getFullStackTrace(e));
+                }
+            }
+        }
     }
 }
