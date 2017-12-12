@@ -24,6 +24,8 @@ import io.frictionlessdata.tableschema.Field;
 public class ValidatorInspector {
     final static Logger logger = LoggerFactory.getLogger(ValidatorInspector.class);
     
+    public static String CONSTRAINT_KEY = "constraint";
+    
     /**
      * Return a report contains the validate result
      * @param project
@@ -71,7 +73,7 @@ public class ValidatorInspector {
         for (Entry<String, Object> entry : field.getConstraints().entrySet()) {
             Class<Validator> clazz = constraintHandlersMap.get(entry.getKey());
             try {
-                options.put("constraint", new JSONObject().put(entry.getKey(), entry.getValue()));
+                options.put(CONSTRAINT_KEY, new JSONObject().put(entry.getKey(), entry.getValue()));
                 Constructor<Validator> c = clazz.getConstructor(Project.class, String.class, JSONObject.class);
                 validatorList.add(c.newInstance(project, columnIndex, options));
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException

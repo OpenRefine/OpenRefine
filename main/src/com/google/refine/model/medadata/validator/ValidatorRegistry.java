@@ -15,15 +15,23 @@ public class ValidatorRegistry {
     private static ValidatorRegistry instance = null;
     private Map<String, Class> constraintHandlersMap = null;
     
+    public static String CONSTRAINT_ENUM = "enum";
+    public static String CONSTRAINT_MAXIMUM = "maximum";
+    public static String CONSTRAINT_MAXLENGTH = "maxLength";
+    public static String CONSTRAINT_MINIMUM = "minimum";
+    public static String CONSTRAINT_MINLENGTH = "minLength";
+    public static String CONSTRAINT_PATTERN = "pattern";
+    public static String CONSTRAINT_REQUIRED = "required";
+    
     private ValidatorRegistry() {
         constraintHandlersMap = new HashMap<String, Class>();
-        constraintHandlersMap.put("enum",EnumerableConstraint.class);
-        constraintHandlersMap.put("maximum", MaximumConstraint.class);
-        constraintHandlersMap.put("maxLength", MaximumLengthConstraint.class);
-        constraintHandlersMap.put("minimum", MinimumConstraint.class);
-        constraintHandlersMap.put("minLength", MinimumLengthConstraint.class);
-        constraintHandlersMap.put("pattern", PatternConstraint.class);
-        constraintHandlersMap.put("required", RequiredConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_ENUM,EnumerableConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_MAXIMUM, MaximumConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_MAXLENGTH, MaximumLengthConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_MINIMUM, MinimumConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_MINLENGTH, MinimumLengthConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_PATTERN, PatternConstraint.class);
+        constraintHandlersMap.put(CONSTRAINT_REQUIRED, RequiredConstraint.class);
     }
     
     public static ValidatorRegistry getInstance() {

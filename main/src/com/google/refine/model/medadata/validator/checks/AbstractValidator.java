@@ -52,9 +52,12 @@ public abstract class AbstractValidator implements Validator {
         return null;
     }
     
+    /**
+     * will skip the cell if return true
+     */
     @Override
     public boolean filter(Cell cell) {
-        return false;
+        return cell == null || cell.value == null;
     }
     
     @Override
