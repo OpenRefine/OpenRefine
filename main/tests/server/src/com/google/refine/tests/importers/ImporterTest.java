@@ -22,7 +22,7 @@ import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 
-abstract class ImporterTest extends RefineTest {
+abstract public class ImporterTest extends RefineTest {
     //mock dependencies
     protected Project project;
     protected ProjectMetadata metadata;

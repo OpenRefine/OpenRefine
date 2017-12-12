@@ -64,6 +64,11 @@ public class ValidatorInspector {
         boolean result = true;
         Map<String, Class> constraintHandlersMap = ValidatorRegistry.getInstance().getConstraintHandlersMap();
         
+        if (project.getSchema() == null) {
+            logger.error("Cannot find the schema defined, failed to do compileChecks:");
+            return false;
+        }
+        
         Field field = project.getSchema().getField(columnName);
         List<Validator> validatorList = new ArrayList<Validator>();
         
