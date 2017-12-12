@@ -7,11 +7,14 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
+import io.frictionlessdata.tableschema.Field;
+
 
 public abstract class AbstractValidator implements Validator {
     protected Project project;
     protected int cellIndex;
     protected JSONObject options;
+    protected Field field;
     
     protected JSONArray jsonErros = new JSONArray();
     
@@ -25,10 +28,7 @@ public abstract class AbstractValidator implements Validator {
         this.project = project;
         this.cellIndex = cellIndex;
         this.options = options;
-    }
-    
-    protected AbstractValidator() {
-        
+        this.field = project.getSchema().getField(project.columnModel.getColumnNames().get(cellIndex));
     }
     
     @Override
