@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.medadata.validator.ValidateOperation;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.importers.TsvCsvImporterTests;
 
@@ -69,7 +71,6 @@ public class ValidateSchemaCommandTests extends TsvCsvImporterTests  {
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     ProjectManager projMan = null;
-    Project project = null;
     PrintWriter pw = null;
     
     //dependencies
@@ -105,9 +106,10 @@ public class ValidateSchemaCommandTests extends TsvCsvImporterTests  {
         
         dataPackageMetadata = new DataPackageMetadata();
         String content = getJSONContent("datapackage-sample.json");
+        dataPackageMetadata.loadFromStream(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8.name())));
         
         // mock dependencies
-        when(request.getParameter("project")).thenReturn(PROJECT_ID);
+//        when(request.getParameter("project")).thenReturn(PROJECT_ID);
         String options = "{\"columnNames\": [\"Country Name\",\"Country Code\",\"Year\",\"Value\"]}";
         when(request.getParameter("options")).thenReturn(options);
         
@@ -151,6 +153,10 @@ public class ValidateSchemaCommandTests extends TsvCsvImporterTests  {
     @Test
     public void setStartProcess()  {
         // run
+        String options = "{\"columnNames\": [\"Country Name\",\"Country Code\",\"Year\",\"Value\"]}";
+        JSONObject optionObj = new JSONObject(options);
+        new ValidateOperation(project, optionObj).startProcess();
+        /**
         try {
             SUT.doPost(request, response);
         } catch (ServletException e) {
@@ -166,6 +172,7 @@ public class ValidateSchemaCommandTests extends TsvCsvImporterTests  {
             Assert.fail();
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+        */
         
     }
     
@@ -182,14 +189,15 @@ public class ValidateSchemaCommandTests extends TsvCsvImporterTests  {
      public void readData() throws IOException{
          String sep = ",";
          //create input to test with
-         String inputSeparator =  sep == null ? "\t" : sep;
          String input =  getFileContent("gdp.csv");
          
          prepareOptions(sep, -1, 0, 0, 2, false, false);
          parseOneFile(parser, new StringReader(input));
 
+         setDataPackageMetaData();
+         
          Assert.assertEquals(project.columnModel.columns.size(), 4);
-         Assert.assertNotNull(project.getProjectMetadata());
+//         Assert.assertNotNull(project.getProjectMetadata());
          Assert.assertNotNull(project.getSchema());
          /**
          Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
@@ -201,9 +209,15 @@ public class ValidateSchemaCommandTests extends TsvCsvImporterTests  {
          Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
          Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
          */
+         
+//         when(SUT.getProject(request)).thenReturn((project);
      }
      
-     private String getFileContent(String fileName) throws IOException {
+     private void setDataPackageMetaData() {
+         project.setMetadata(MetadataFormat.DATAPACKAGE_METADATA, dataPackageMetadata);
+    }
+
+    private String getFileContent(String fileName) throws IOException {
          InputStream in = this.getClass().getClassLoader()
                  .getResourceAsStream(fileName);
          String content = org.apache.commons.io.IOUtils.toString(in);

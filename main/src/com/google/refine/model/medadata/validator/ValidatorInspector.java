@@ -38,6 +38,7 @@ public class ValidatorInspector {
         Map<String, List<Validator>> columnToCheckersMap = new HashMap<String, List<Validator>>();
         JSONArray validateReport = new JSONArray();
         
+        logger.info("starting inspect with options:" + options.toString());
         columnNames = JSONUtilities.toStringList(options.getJSONArray(COLUMN_NAMES_KEY));
         
         // build the check items
@@ -45,6 +46,7 @@ public class ValidatorInspector {
         for(String columnName : columnNames) {
             compilePass = compileChecks(project, columnName, options);
         }
+        logger.info("Inspector finished the checks compile.");
         
         if (!compilePass)
             return null;
@@ -56,6 +58,7 @@ public class ValidatorInspector {
                 JSONUtilities.concatArray(validateReport, result);
             }
         }
+        logger.info("Inspector finished the validation.");
         
         return new JSONObject(validateReport);
     }
