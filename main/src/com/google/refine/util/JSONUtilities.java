@@ -350,10 +350,10 @@ public class JSONUtilities {
         return list;
     }
     
-    static public void concatArray(JSONArray arr1, JSONArray arr2)
+    static public void concatArray(JSONArray destArray, JSONArray srcArray)
             throws JSONException {
-        for (int i = 0; i < arr1.length(); i++) {
-            arr2.put(arr1.get(i));
+        for (int i = 0; i < srcArray.length(); i++) {
+            destArray.put(srcArray.get(i));
         }
     }
 }

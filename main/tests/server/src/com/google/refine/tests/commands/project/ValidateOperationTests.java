@@ -95,7 +95,9 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         JSONObject optionObj = new JSONObject(options);
         
         // SUT
-        new ValidateOperation(project, optionObj).startProcess();
+        JSONObject report = new ValidateOperation(project, optionObj).startProcess();
+        
+        System.out.println("validation report:" + report.toString());
     }
     
      
@@ -111,7 +113,13 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
      public void readData() throws IOException{
          String sep = ",";
          //create input to test with
-         String input =  getFileContent("gdp.csv");
+          String input =  getFileContent("gdp.csv");
+         // create an data type issue on the fly
+          input.replace("28434203615.4795", "XXXXXXXXXXXXX");
+         
+/*         String input = "Country Name,Country Code,Year,Value\n" + 
+                 "Arab World,ARB,1968,25760683041.0826\n" + 
+                 "Arab World,ARB,1969,28434203615.4795XXX\n";*/
          
          prepareOptions(sep, -1, 0, 0, 1, false, false);
          parseOneFile(parser, new StringReader(input));

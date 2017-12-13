@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.validator.ValidatorSpec;
 
 import io.frictionlessdata.tableschema.Field;
 
@@ -15,8 +16,9 @@ public abstract class AbstractValidator implements Validator {
     protected int cellIndex;
     protected JSONObject options;
     protected Field field;
+    protected String code;
     
-    protected JSONArray jsonErros = new JSONArray();
+    protected JSONArray jsonErros = null;
     
     /**
      * Constructor
@@ -29,29 +31,50 @@ public abstract class AbstractValidator implements Validator {
         this.cellIndex = cellIndex;
         this.options = options;
         this.field = project.getSchema().getField(project.columnModel.getColumnNames().get(cellIndex));
+        // TODO
+        this.code = "maximum-length-constraint";
     }
     
     @Override
     public JSONArray validate() {
-        for (Row row : project.rows) {
+        for (int rowIndex = 0;rowIndex < project.rows.size();rowIndex++) {
+            Row row = project.rows.get(rowIndex);
             Cell cell = row.getCell(cellIndex);
             if (filter(cell))
                 continue;
             
             boolean checkResult = checkCell(cell);
             if (!checkResult) {
-                addError(formatErrorMessage(cell));
+                addError(formatErrorMessage(cell, rowIndex));
             }
         }
-        return null;
+        return jsonErros;
     }
     
     @Override
-    public JSONObject formatErrorMessage(Cell cell) {
-        // TODO Auto-generated method stub
-        return null;
+    public JSONObject formatErrorMessage(Cell cell, int rowIndex) {
+        // TODO java.util.ResourceBundle to do i18n
+        /**
+            message = spec['errors']['maximum-length-constraint']['message'];
+        */
+        String message = null;
+        message = ValidatorSpec.instance.getMessage(code);
+        String formattedMessage = format(message);
+        JSONObject json = new JSONObject();
+        json.put("code", code);
+        json.put("message", formattedMessage);
+        json.put("row-number", rowIndex);
+        json.put("column-number", cellIndex);
+        
+        return json;
     }
     
+    private String format(String message) {
+//        message = String.format("value=%s, row_number=%d, column_number=%s, constraint=%s");
+        
+        return message;
+    }
+
     /**
      * will skip the cell if return true
      */
@@ -67,7 +90,10 @@ public abstract class AbstractValidator implements Validator {
     
     @Override
     public void addError(JSONObject result) {
-        this.jsonErros.put(result);
+        if (jsonErros == null)
+            jsonErros = new JSONArray();
+        
+        jsonErros.put(result);
     }
 
 }

@@ -42,37 +42,44 @@ public class ValidatorInspector {
         columnNames = JSONUtilities.toStringList(options.getJSONArray(COLUMN_NAMES_KEY));
         
         // build the check items
-        boolean compilePass = false;
+        List<Validator> validatorList = null;
         for(String columnName : columnNames) {
-            compilePass = compileChecks(project, columnName, options);
+            validatorList = compileChecks(project, columnName, options);
+            if (validatorList.size() >= 0)
+                columnToCheckersMap.put(columnName, validatorList);
         }
-        logger.info("Inspector finished the checks compile.");
-        
-        if (!compilePass)
-            return null;
-        
+        logger.info("==========================================================");
+        logger.info("Inspector finished the checks compile. will do following check:");
+        for (Entry<String, List<Validator>> entry : columnToCheckersMap.entrySet()) {
+            logger.info("Column Name: " + entry.getKey());
+            for (Validator v : entry.getValue()) {
+                logger.info("\t Validator: " + v.getClass().getSimpleName());
+            }
+        }
+        logger.info("==========================================================");
+
         // do the inspect in another loop:
         for(String columnName : columnNames) {
             List<Validator> validators = columnToCheckersMap.get(columnName);
             if (validators != null) {
                 for (Validator validator : validators) {
                     JSONArray result = validator.validate();
-                    JSONUtilities.concatArray(validateReport, result);
+                    if (result != null && result.length() > 0)
+                        JSONUtilities.concatArray(validateReport, result);
                 }
             }
         }
         logger.info("Inspector finished the validation.");
         
-        return new JSONObject(validateReport);
+        return new JSONObject().put("validation-reports", (Object)validateReport);
     }
 
-    private static boolean compileChecks(Project project, String columnName, JSONObject options) {
-        boolean result = true;
+    private static List<Validator> compileChecks(Project project, String columnName, JSONObject options) {
         Map<String, Class> constraintHandlersMap = ValidatorRegistry.getInstance().getConstraintHandlersMap();
         
         if (project.getSchema() == null) {
             logger.error("Cannot find the schema defined, failed to do compileChecks:");
-            return false;
+            return null;
         }
         
         Field field = project.getSchema().getField(columnName);
@@ -91,12 +98,11 @@ public class ValidatorInspector {
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                     logger.error("failed to do compileChecks:" + ExceptionUtils.getStackTrace(e));
-                    result = false;
                 }
             }
         }
         
-        return result;
+        return validatorList;
     }
     
     
