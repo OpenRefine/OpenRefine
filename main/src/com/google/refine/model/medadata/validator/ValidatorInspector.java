@@ -25,6 +25,7 @@ public class ValidatorInspector {
     final static Logger logger = LoggerFactory.getLogger(ValidatorInspector.class);
     
     public static String CONSTRAINT_KEY = "constraint";
+    public static String CONSTRAINT_KEY_EXTRA = "constraint-extra";
     
     /**
      * Return a report contains the validate result
@@ -87,7 +88,12 @@ public class ValidatorInspector {
         
         int columnIndex = project.columnModel.getColumnIndexByName(columnName);
         
+        options.put(CONSTRAINT_KEY, new JSONObject().put("type", field.getType()));
+        // for TypeofFormatError, grab the format information
+        options.put(CONSTRAINT_KEY_EXTRA, new JSONObject().put("format", field.getFormat()));
         validatorList.add(new TypeorFormatError(project, columnIndex, options));
+        
+        
         if (field.getConstraints() != null) {
             for (Entry<String, Object> entry : field.getConstraints().entrySet()) {
                 Class<Validator> clazz = constraintHandlersMap.get(entry.getKey());
