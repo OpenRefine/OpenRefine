@@ -8,5 +8,6 @@ public class MinimumConstraint extends AbstractValidator {
 
     public MinimumConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "minimum-constrain";
     }
 }

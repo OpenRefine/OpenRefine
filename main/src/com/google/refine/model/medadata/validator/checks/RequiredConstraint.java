@@ -8,5 +8,7 @@ public class RequiredConstraint extends AbstractValidator {
 
     public RequiredConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "required-constraint";
+        
     }
 }

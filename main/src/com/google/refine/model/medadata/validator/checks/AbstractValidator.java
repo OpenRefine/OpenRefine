@@ -1,7 +1,10 @@
 package com.google.refine.model.medadata.validator.checks;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,8 +36,6 @@ public abstract class AbstractValidator implements Validator {
         this.cellIndex = cellIndex;
         this.options = options;
         this.field = project.getSchema().getField(project.columnModel.getColumnNames().get(cellIndex));
-        // TODO
-        this.code = "maximum-length-constraint";
     }
     
     @Override
@@ -56,8 +57,8 @@ public abstract class AbstractValidator implements Validator {
     @Override
     public JSONObject formatErrorMessage(Cell cell, int rowIndex) {
         String message = null;
-        message = ValidatorSpec.instance.getMessage(code);
-        String formattedMessage = format(message, rowIndex, cellIndex, code);
+        message = ValidatorSpec.getInstance().getMessage(code);
+        String formattedMessage = format(message, cell.value.toString(), rowIndex, cellIndex, code);
         JSONObject json = new JSONObject();
         json.put("code", code);
         json.put("message", formattedMessage);
@@ -66,9 +67,30 @@ public abstract class AbstractValidator implements Validator {
         
         return json;
     }
-    
-    private String format(String message,int rowIndex, int cellIndex, String code) {
-        return MessageFormat.format(message, rowIndex, cellIndex, code);
+
+    /**
+     * MessageFormat.format cannot take the named parameters.
+     * @param message
+     * @param value
+     * @param rowIndex
+     * @param cellIndex
+     * @param code
+     * @return
+     */
+    private String format(String message, String value, int rowIndex, int cellIndex, String code) {
+        Map<String, String> data = new HashMap<String, String>(6);
+        
+        data.put("value", value);
+        data.put("row_number", Integer.toString(rowIndex));
+        data.put("column_number", Integer.toString(cellIndex));
+        data.put("constraint", code);
+        data.put("field_type", value);
+        data.put("field_format", value);
+        
+        StrSubstitutor sub = new StrSubstitutor(data);
+        String result = sub.replace(message);
+        System.out.println("XXXXXXXX:" + result);
+        return result;
     }
 
     /**

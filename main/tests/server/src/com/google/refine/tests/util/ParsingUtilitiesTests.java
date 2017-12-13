@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -84,5 +88,19 @@ public class ParsingUtilitiesTests extends RefineTest {
         } catch (JSONException e) {
             //expected
         }
+    }
+    
+    @Test
+    public void strSubstitutorTest() {
+        Map<String, String> data = new HashMap<String, String>(6);
+        
+        data.put("value", "1234");
+        data.put("field_format", "String");
+        
+        StrSubstitutor sub = new StrSubstitutor(data);
+        String message = "The value {value} in row {row_number} and column {column_number} is not type {field_type} and format {field_format}";
+        String result = sub.replace(message);
+        System.out.println("XXXXXXXX:" + result);
+        Assert.assertTrue(result.contains("1234"));
     }
 }

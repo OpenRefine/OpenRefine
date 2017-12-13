@@ -13,6 +13,7 @@ public class TypeorFormatError extends AbstractValidator {
     
     public TypeorFormatError(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "type-or-format-error";
     }
     
     @Override

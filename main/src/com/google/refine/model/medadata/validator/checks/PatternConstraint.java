@@ -8,5 +8,6 @@ public class PatternConstraint extends AbstractValidator {
 
     public PatternConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "pattern-constraint";
     }
 }

@@ -12,6 +12,8 @@ public class MinimumLengthConstraint extends AbstractValidator {
     
     public MinimumLengthConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "minimum-length-constrain";
+        
         minLength = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY)
                 .getInt(ValidatorRegistry.CONSTRAINT_MINLENGTH);
     }

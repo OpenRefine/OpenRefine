@@ -12,6 +12,8 @@ public class MaximumLengthConstraint extends AbstractValidator {
     
     public MaximumLengthConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "maximum-length-constraint";
+        
         maxLength = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY)
                 .getInt(ValidatorRegistry.CONSTRAINT_MAXLENGTH);
     }

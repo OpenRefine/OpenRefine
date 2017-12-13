@@ -4,9 +4,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class ValidatorSpec {
-    private static String VALIDATOR_RESOURCE_BUNDLE = "TableSchemaValidator.json";
+    private static String VALIDATOR_RESOURCE_BUNDLE = "validator-resource-bundle";
     
-    public static ValidatorSpec instance = null;
+    private  static ValidatorSpec instance = null;
     private ResourceBundle bundle;
     
     private ValidatorSpec() {
@@ -14,9 +14,9 @@ public class ValidatorSpec {
         bundle = ResourceBundle.getBundle(VALIDATOR_RESOURCE_BUNDLE, locale);
     }
     
-    public ValidatorSpec getInstance() {
+    public static ValidatorSpec getInstance() {
         if (instance == null)
-            new ValidatorSpec();
+            instance = new ValidatorSpec();
         
         return instance;
     }

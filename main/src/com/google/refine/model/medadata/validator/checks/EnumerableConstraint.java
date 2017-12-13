@@ -8,5 +8,6 @@ public class EnumerableConstraint extends AbstractValidator {
 
     public EnumerableConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
+        this.code = "enumerable-constraint";
     }
 }
