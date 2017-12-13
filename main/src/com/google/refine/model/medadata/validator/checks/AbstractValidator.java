@@ -1,5 +1,7 @@
 package com.google.refine.model.medadata.validator.checks;
 
+import java.text.MessageFormat;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -53,13 +55,9 @@ public abstract class AbstractValidator implements Validator {
     
     @Override
     public JSONObject formatErrorMessage(Cell cell, int rowIndex) {
-        // TODO java.util.ResourceBundle to do i18n
-        /**
-            message = spec['errors']['maximum-length-constraint']['message'];
-        */
         String message = null;
         message = ValidatorSpec.instance.getMessage(code);
-        String formattedMessage = format(message);
+        String formattedMessage = format(message, rowIndex, cellIndex, code);
         JSONObject json = new JSONObject();
         json.put("code", code);
         json.put("message", formattedMessage);
@@ -69,10 +67,8 @@ public abstract class AbstractValidator implements Validator {
         return json;
     }
     
-    private String format(String message) {
-//        message = String.format("value=%s, row_number=%d, column_number=%s, constraint=%s");
-        
-        return message;
+    private String format(String message,int rowIndex, int cellIndex, String code) {
+        return MessageFormat.format(message, rowIndex, cellIndex, code);
     }
 
     /**
