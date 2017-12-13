@@ -45,7 +45,7 @@ public abstract class AbstractValidator implements Validator {
             
             boolean checkResult = checkCell(cell);
             if (!checkResult) {
-                addError(formatErrorMessage(cell, rowIndex));
+                addError(formatErrorMessage(cell, rowIndex + 1));
             }
         }
         return jsonErros;
