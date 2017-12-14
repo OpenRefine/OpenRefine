@@ -308,13 +308,17 @@ public class Project {
         getMetadataMap().put(format, metadata);
         // inject the schema as a shorthand for access and reuse
         if (format == MetadataFormat.DATAPACKAGE_METADATA) {
-            if (getDataPackageMetadata() != null) {
+            if (getDataPackageMetadata() != null
+                    && getDataPackageMetadata().getPackage().getResources().size() > 0) {
                 JSONObject jsonSchema = getDataPackageMetadata().getPackage().getResources().get(0).getSchema();
-                try {
-                    schema = new Schema(jsonSchema, true);
-                } catch (ValidationException | PrimaryKeyException | ForeignKeyException e) {
-                    logger.error("extract schema failed:" + ExceptionUtils.getFullStackTrace(e));
+                if (jsonSchema != null) {
+                    try {
+                        schema = new Schema(jsonSchema, true);
+                    } catch (ValidationException | PrimaryKeyException | ForeignKeyException e) {
+                        logger.error("extract schema failed:" + ExceptionUtils.getFullStackTrace(e));
+                    }
                 }
+                // XXX: metadata:: infer if not exist
             }
         }
     }
