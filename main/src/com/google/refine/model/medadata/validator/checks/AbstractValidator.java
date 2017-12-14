@@ -1,12 +1,13 @@
 package com.google.refine.model.medadata.validator.checks;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -17,6 +18,8 @@ import io.frictionlessdata.tableschema.Field;
 
 
 public abstract class AbstractValidator implements Validator {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     protected Project project;
     protected int cellIndex;
     protected JSONObject options;
@@ -24,6 +27,8 @@ public abstract class AbstractValidator implements Validator {
     protected String code;
     
     protected JSONArray jsonErros = null;
+    
+    protected Map<String, String> lookup = new HashMap<String, String>(6);
     
     /**
      * Constructor
@@ -78,21 +83,20 @@ public abstract class AbstractValidator implements Validator {
      * @return
      */
     private String format(String message, String value, int rowIndex, int cellIndex, String code) {
-        Map<String, String> data = new HashMap<String, String>(6);
+        lookup.put("value", value);
+        lookup.put("row_number", Integer.toString(rowIndex));
+        lookup.put("column_number", Integer.toString(cellIndex));
+        lookup.put("constraint", code);
+        customizedFormat();
         
-        data.put("value", value);
-        data.put("row_number", Integer.toString(rowIndex));
-        data.put("column_number", Integer.toString(cellIndex));
-        data.put("constraint", code);
-        data.put("field_type", value);
-        data.put("field_format", value);
-        
-        StrSubstitutor sub = new StrSubstitutor(data);
-        String result = sub.replace(message);
-        System.out.println("XXXXXXXX:" + result);
-        return result;
+        return new StrSubstitutor(lookup).replace(message);
     }
-
+    
+    // Empty body since default there is no customized Format
+    @Override
+    public void customizedFormat() {
+    }
+    
     /**
      * will skip the cell if return true
      */

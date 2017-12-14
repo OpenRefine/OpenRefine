@@ -31,4 +31,6 @@ public interface Validator {
     public void addError(JSONObject result);
 
     public JSONObject formatErrorMessage(Cell cell, int rowIndex);
+
+    public void customizedFormat();
 }

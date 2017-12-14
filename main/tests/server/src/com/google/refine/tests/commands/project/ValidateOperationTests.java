@@ -97,7 +97,7 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // SUT
         JSONObject report = new ValidateOperation(project, optionObj).startProcess();
         
-        System.out.println("validation report:" + report.toString());
+        System.out.println("validation report:" + report.toString(2));
     }
     
      
