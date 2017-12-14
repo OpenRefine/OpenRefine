@@ -17,8 +17,10 @@ public class TypeorFormatError extends AbstractValidator {
     public TypeorFormatError(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
         this.code = "type-or-format-error";
-        this.type = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY).getString("type");
-        this.format = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY_EXTRA).getString("format");
+        this.type = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY)
+                .getString(ValidatorInspector.CONSTRAINT_TYPE_KEY);
+        this.format = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY_EXTRA)
+                .getString(ValidatorInspector.CONSTRAINT_FORMAT_KEY);
     }
     
     @Override
