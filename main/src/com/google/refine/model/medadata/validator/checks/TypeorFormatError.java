@@ -6,7 +6,6 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.validator.ValidatorInspector;
 
-import io.frictionlessdata.tableschema.Field;
 import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
 import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
 
@@ -28,7 +27,6 @@ public class TypeorFormatError extends AbstractValidator {
         boolean valid = true;
         
         try {
-            Field field = project.getSchema().getField(project.columnModel.getColumnNames().get(cellIndex));
             field.castValue(cell.value.toString());
         } catch (InvalidCastException | ConstraintsException e) {
           // patch for issue: https://github.com/frictionlessdata/tableschema-java/issues/21
