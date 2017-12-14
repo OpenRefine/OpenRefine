@@ -31,7 +31,15 @@ public class TypeorFormatError extends AbstractValidator {
             Field field = project.getSchema().getField(project.columnModel.getColumnNames().get(cellIndex));
             field.castValue(cell.value.toString());
         } catch (InvalidCastException | ConstraintsException e) {
-          valid = false;
+          // patch for issue: https://github.com/frictionlessdata/tableschema-java/issues/21
+            if (type.equals("number")) {
+                try {
+                    field.castValue(cell.value.toString() + ".0");
+                } catch (InvalidCastException | ConstraintsException e1) {
+                    valid = false;
+                }
+            } else
+                valid = false;
         } 
             
         return valid;
