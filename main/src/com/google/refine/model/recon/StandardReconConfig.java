@@ -39,7 +39,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -310,10 +310,10 @@ public class StandardReconConfig extends ReconConfig {
                                 jsonWriter.endObject();
                             } else if (cell2.value instanceof Calendar) {
                                 Calendar calendar = (Calendar) cell2.value;
-                                ZonedDateTime d = ZonedDateTime.ofInstant(calendar.toInstant(), ZoneId.of("Z"));
+                                OffsetDateTime d = OffsetDateTime.ofInstant(calendar.toInstant(), ZoneId.of("Z"));
                                 jsonWriter.value(ParsingUtilities.dateToString(d));
                             } else if (cell2.value instanceof Date) {
-                                jsonWriter.value(ParsingUtilities.dateToString((ZonedDateTime) cell2.value));
+                                jsonWriter.value(ParsingUtilities.dateToString((OffsetDateTime) cell2.value));
                             } else {
                                 jsonWriter.value(cell2.value.toString());
                             }

@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
@@ -214,10 +214,10 @@ public class PreviewExpressionCommand extends Command {
                     Calendar c = (Calendar) v;
                     
                     sb.append("[date " + 
-                        ParsingUtilities.dateToString(ZonedDateTime.ofInstant(c.toInstant(), ZoneId.systemDefault())) +"]");
+                        ParsingUtilities.dateToString(OffsetDateTime.ofInstant(c.toInstant(), ZoneId.systemDefault())) +"]");
                 } else if (v instanceof LocalDateTime) {
                     sb.append("[date " + 
-                            ParsingUtilities.dateToString((ZonedDateTime) v) +"]");
+                            ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
                 } else if (v instanceof String) {
                     if (quote) {
                         sb.append(JSONObject.quote((String) v));

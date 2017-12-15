@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -202,7 +202,7 @@ public class CsvExporterTests extends RefineTest {
     public void exportDateColumns(){
         CreateGrid(1,2);
         LocalDateTime localDate = LocalDateTime.now();
-        ZonedDateTime date = ZonedDateTime.now(ZoneId.of("Z"));
+        OffsetDateTime date = OffsetDateTime.now(ZoneId.of("Z"));
 
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         project.rows.get(0).cells.set(0, new Cell(localDate, null));

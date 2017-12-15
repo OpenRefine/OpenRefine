@@ -40,7 +40,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
@@ -174,9 +174,8 @@ public class ParsingUtilities {
      * @param d the date to be written
      * @return string with ISO_LOCAL_DATE_TIME formatted date & time
      */
-    static public String dateToString(ZonedDateTime d) {
-//        return d.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        return d.format(DateTimeFormatter.ISO_INSTANT);
+    static public String dateToString(OffsetDateTime d) {
+        return d.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
     
     static public String localDateToString(LocalDateTime d) {
@@ -189,9 +188,8 @@ public class ParsingUtilities {
      * @param s the string to be parsed
      * @return LocalDateTime or null if the parse failed
      */
-    static public ZonedDateTime stringToDate(String s) {
-//        return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        return ZonedDateTime.parse(s, DateTimeFormatter.ISO_INSTANT);
+    static public OffsetDateTime stringToDate(String s) {
+        return OffsetDateTime.parse(s, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
     
     static public LocalDateTime stringToLocalDate(String s) {

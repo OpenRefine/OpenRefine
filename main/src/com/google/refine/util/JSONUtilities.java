@@ -35,7 +35,7 @@ package com.google.refine.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -97,9 +97,9 @@ public class JSONUtilities {
         }
     }
     
-    static public ZonedDateTime getDate(JSONObject obj, String key, ZonedDateTime def) {
+    static public OffsetDateTime getDate(JSONObject obj, String key, OffsetDateTime def) {
         try {
-            ZonedDateTime d = ParsingUtilities.stringToDate(obj.getString(key));
+            OffsetDateTime d = ParsingUtilities.stringToDate(obj.getString(key));
             
             return d != null ? d : def;
         } catch (JSONException e) {
@@ -193,9 +193,9 @@ public class JSONUtilities {
         } else if (value instanceof Boolean) {
             obj.put(key, value);
         } else if (value instanceof Date) {
-            obj.put(key, ParsingUtilities.dateToString((ZonedDateTime) value));
+            obj.put(key, ParsingUtilities.dateToString((OffsetDateTime) value));
         } else if (value instanceof Calendar) {
-            obj.put(key, ParsingUtilities.dateToString(ZonedDateTime.ofInstant(((Calendar)value).toInstant(), ZoneId.of("Z"))));
+            obj.put(key, ParsingUtilities.dateToString(OffsetDateTime.ofInstant(((Calendar)value).toInstant(), ZoneId.of("Z"))));
         } else if (value instanceof String) {
             obj.put(key, value);
         } else {
