@@ -41,8 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -222,7 +221,7 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void whenProjectGetLastSave(Project proj){
-        Date projectLastSaveDate = new GregorianCalendar(1970,01,02,00,30,00).getTime();
+        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970,01,02,00,30,00);
         when(proj.getLastSave()).thenReturn(projectLastSaveDate);
     }
 
@@ -230,7 +229,7 @@ public class ProjectManagerTests extends RefineTest {
         whenMetadataGetModified(meta, 5*60);
     }
     protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference){
-        Date metadataModifiedDate = new GregorianCalendar(1970,01,02,00, 30, secondsDifference).getTime();
+        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970,01,02,00, 30 + secondsDifference);
         when(meta.getModified()).thenReturn(metadataModifiedDate);
     }
 

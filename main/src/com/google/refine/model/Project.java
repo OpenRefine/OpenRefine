@@ -41,6 +41,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class Project {
     final public History                    history;
     
     transient public ProcessManager processManager = new ProcessManager();
-    transient private Date _lastSave = new Date();
+    transient private LocalDateTime _lastSave = LocalDateTime.now();
 
     final static Logger logger = LoggerFactory.getLogger("project");
 
@@ -113,14 +114,14 @@ public class Project {
         // The rest of the project should get garbage collected when we return.
     }
 
-    public Date getLastSave(){
+    public LocalDateTime getLastSave(){
         return this._lastSave;
     }
     /**
      * Sets the lastSave time to now
      */
     public void setLastSave(){
-        this._lastSave = new Date();
+        this._lastSave = LocalDateTime.now();
     }
 
     public ProjectMetadata getMetadata() {

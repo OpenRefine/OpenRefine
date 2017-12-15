@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.tests.model;
+package com.google.refine.tests.operations.cell;
 
 import static org.mockito.Mockito.mock;
 

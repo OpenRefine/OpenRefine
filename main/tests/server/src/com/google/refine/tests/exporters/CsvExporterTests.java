@@ -40,8 +40,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -200,11 +201,11 @@ public class CsvExporterTests extends RefineTest {
     @Test
     public void exportDateColumns(){
         CreateGrid(1,2);
-        Calendar calendar = Calendar.getInstance();
-        Date date = new Date();
+        LocalDateTime localDate = LocalDateTime.now();
+        ZonedDateTime date = ZonedDateTime.now(ZoneId.of("Z"));
 
         when(options.getProperty("printColumnHeader")).thenReturn("false");
-        project.rows.get(0).cells.set(0, new Cell(calendar, null));
+        project.rows.get(0).cells.set(0, new Cell(localDate, null));
         project.rows.get(0).cells.set(1, new Cell(date, null));
 
         try {
@@ -213,7 +214,7 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        String expectedOutput = ParsingUtilities.dateToString(calendar.getTime()) + "," +
+        String expectedOutput = ParsingUtilities.localDateToString(localDate) + "," +
             ParsingUtilities.dateToString(date) + "\n";
 
         Assert.assertEquals(writer.toString(), expectedOutput);

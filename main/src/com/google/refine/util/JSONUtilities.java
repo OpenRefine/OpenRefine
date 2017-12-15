@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -94,9 +97,19 @@ public class JSONUtilities {
         }
     }
     
-    static public Date getDate(JSONObject obj, String key, Date def) {
+    static public ZonedDateTime getDate(JSONObject obj, String key, ZonedDateTime def) {
         try {
-            Date d = ParsingUtilities.stringToDate(obj.getString(key));
+            ZonedDateTime d = ParsingUtilities.stringToDate(obj.getString(key));
+            
+            return d != null ? d : def;
+        } catch (JSONException e) {
+            return def;
+        }
+    }
+    
+    static public LocalDateTime getLocalDate(JSONObject obj, String key, LocalDateTime def) {
+        try {
+            LocalDateTime d = ParsingUtilities.stringToLocalDate(obj.getString(key));
             
             return d != null ? d : def;
         } catch (JSONException e) {
@@ -180,9 +193,9 @@ public class JSONUtilities {
         } else if (value instanceof Boolean) {
             obj.put(key, value);
         } else if (value instanceof Date) {
-            obj.put(key, ParsingUtilities.dateToString((Date) value));
+            obj.put(key, ParsingUtilities.dateToString((ZonedDateTime) value));
         } else if (value instanceof Calendar) {
-            obj.put(key, ParsingUtilities.dateToString(((Calendar) value).getTime()));
+            obj.put(key, ParsingUtilities.dateToString(ZonedDateTime.ofInstant(((Calendar)value).toInstant(), ZoneId.of("Z"))));
         } else if (value instanceof String) {
             obj.put(key, value);
         } else {

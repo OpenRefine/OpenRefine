@@ -35,15 +35,16 @@ package com.google.refine.model;
 
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.EvalError;
@@ -86,11 +87,11 @@ public class Cell implements HasFields, Jsonizable {
         } else {
             writer.key("v");
             if (value != null) {
-                if (value instanceof Calendar) {
-                    writer.value(ParsingUtilities.dateToString(((Calendar) value).getTime()));
+                if (value instanceof LocalDateTime) {
+                    writer.value(ParsingUtilities.localDateToString((LocalDateTime)value));
                     writer.key("t"); writer.value("date");
-                } else if (value instanceof Date) {
-                    writer.value(ParsingUtilities.dateToString((Date) value));
+                } else if (value instanceof ZonedDateTime) {
+                    writer.value(ParsingUtilities.dateToString((ZonedDateTime) value));
                     writer.key("t"); writer.value("date");
                 } else if (value instanceof Double 
                         && (((Double)value).isNaN() || ((Double)value).isInfinite())) {

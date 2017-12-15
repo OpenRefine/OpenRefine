@@ -38,6 +38,8 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -307,9 +309,11 @@ public class StandardReconConfig extends ReconConfig {
                                 jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.name);
                                 jsonWriter.endObject();
                             } else if (cell2.value instanceof Calendar) {
-                                jsonWriter.value(ParsingUtilities.dateToString(((Calendar) cell2.value).getTime()));
+                                Calendar calendar = (Calendar) cell2.value;
+                                ZonedDateTime d = ZonedDateTime.ofInstant(calendar.toInstant(), ZoneId.of("Z"));
+                                jsonWriter.value(ParsingUtilities.dateToString(d));
                             } else if (cell2.value instanceof Date) {
-                                jsonWriter.value(ParsingUtilities.dateToString((Date) cell2.value));
+                                jsonWriter.value(ParsingUtilities.dateToString((ZonedDateTime) cell2.value));
                             } else {
                                 jsonWriter.value(cell2.value.toString());
                             }
