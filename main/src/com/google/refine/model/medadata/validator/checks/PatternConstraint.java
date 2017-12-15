@@ -1,13 +1,30 @@
 package com.google.refine.model.medadata.validator.checks;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.json.JSONObject;
 
+import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 
-public class PatternConstraint extends AbstractValidator {
+import io.frictionlessdata.tableschema.Field;
 
+public class PatternConstraint extends AbstractValidator {
+    String regexPattern;
+    
     public PatternConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
         this.code = "pattern-constraint";
+        
+        this.regexPattern = (String)field.getConstraints().get(Field.CONSTRAINT_KEY_PATTERN);
+    }
+    
+    @Override
+    public boolean checkCell(Cell cell) {
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher((String)cell.value);
+        
+        return matcher.matches();
     }
 }

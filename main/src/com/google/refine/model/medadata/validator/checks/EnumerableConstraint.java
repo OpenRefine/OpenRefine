@@ -21,6 +21,7 @@ public class EnumerableConstraint extends AbstractValidator {
     
     @Override
     public boolean checkCell(Cell cell) {
+        // XXX: deal with recon 
         return enumList.contains(cell.value);
     }
 }
