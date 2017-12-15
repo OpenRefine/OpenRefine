@@ -24,11 +24,6 @@ import io.frictionlessdata.tableschema.Field;
 public class ValidatorInspector {
     final static Logger logger = LoggerFactory.getLogger(ValidatorInspector.class);
     
-    public static String CONSTRAINT_KEY = "constraint";
-    public static String CONSTRAINT_KEY_EXTRA = "constraint-extra";
-    public static String CONSTRAINT_TYPE_KEY = "type";
-    public static String CONSTRAINT_FORMAT_KEY = "format";
-    
     /**
      * Return a report contains the validate result
      * @param project
@@ -90,9 +85,6 @@ public class ValidatorInspector {
         
         int columnIndex = project.columnModel.getColumnIndexByName(columnName);
         
-        options.put(CONSTRAINT_KEY, new JSONObject().put(CONSTRAINT_TYPE_KEY, field.getType()));
-        // for TypeofFormatError, grab the format information
-        options.put(CONSTRAINT_KEY_EXTRA, new JSONObject().put(CONSTRAINT_FORMAT_KEY, field.getFormat()));
         validatorList.add(new TypeorFormatError(project, columnIndex, options));
         
         
@@ -100,7 +92,6 @@ public class ValidatorInspector {
             for (Entry<String, Object> entry : field.getConstraints().entrySet()) {
                 Class<Validator> clazz = constraintHandlersMap.get(entry.getKey());
                 try {
-                    options.put(CONSTRAINT_KEY, new JSONObject().put(entry.getKey(), entry.getValue()));
                     Constructor<Validator> c = clazz.getConstructor(Project.class, String.class, JSONObject.class);
                     validatorList.add(c.newInstance(project, columnIndex, options));
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException

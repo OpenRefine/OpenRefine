@@ -4,8 +4,8 @@ import org.json.JSONObject;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.validator.ValidatorInspector;
-import com.google.refine.model.medadata.validator.ValidatorRegistry;
+
+import io.frictionlessdata.tableschema.Field;
 
 public class MinimumLengthConstraint extends AbstractValidator {
     private int minLength;
@@ -14,8 +14,8 @@ public class MinimumLengthConstraint extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "minimum-length-constrain";
         
-        minLength = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY)
-                .getInt(ValidatorRegistry.CONSTRAINT_MINLENGTH);
+        minLength = (int)field.getConstraints()
+                .get(Field.CONSTRAINT_KEY_MIN_LENGTH);
     }
     
     @Override

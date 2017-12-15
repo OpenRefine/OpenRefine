@@ -4,8 +4,8 @@ import org.json.JSONObject;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.validator.ValidatorInspector;
-import com.google.refine.model.medadata.validator.ValidatorRegistry;
+
+import io.frictionlessdata.tableschema.Field;
 
 public class MaximumLengthConstraint extends AbstractValidator {
     private int maxLength;
@@ -14,8 +14,8 @@ public class MaximumLengthConstraint extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "maximum-length-constraint";
         
-        maxLength = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY)
-                .getInt(ValidatorRegistry.CONSTRAINT_MAXLENGTH);
+        maxLength = (int) field.getConstraints()
+                .get(Field.CONSTRAINT_KEY_MAX_LENGTH);
     }
     
     @Override

@@ -4,8 +4,8 @@ import org.json.JSONObject;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.validator.ValidatorInspector;
 
+import io.frictionlessdata.tableschema.Field;
 import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
 import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
 
@@ -15,9 +15,8 @@ public class MaximumConstraint extends AbstractValidator {
     public MaximumConstraint(Project project, int cellIndex, JSONObject options) throws InvalidCastException, ConstraintsException {
         super(project, cellIndex, options);
         this.code = "maximum-constraint";
-        String threasholdStr = options.getJSONObject(ValidatorInspector.CONSTRAINT_KEY)
-                .getString(ValidatorInspector.CONSTRAINT_TYPE_KEY);
-        threashold = field.castValue(threasholdStr);
+        threashold = (Comparable)field.getConstraints()
+                                .get(Field.CONSTRAINT_KEY_MAXIMUM);
     }
     
     @Override
