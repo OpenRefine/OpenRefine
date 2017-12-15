@@ -9,6 +9,7 @@ import io.frictionlessdata.tableschema.Field;
 import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
 import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
 
+@SuppressWarnings("rawtypes")
 public class MaximumConstraint extends AbstractValidator {
     private Comparable threashold;
     
@@ -19,6 +20,7 @@ public class MaximumConstraint extends AbstractValidator {
                                 .get(Field.CONSTRAINT_KEY_MAXIMUM);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public boolean checkCell(Cell cell) {
         boolean valid = true;

@@ -12,6 +12,7 @@ import io.frictionlessdata.tableschema.Field;
 public class EnumerableConstraint extends AbstractValidator {
     private List<Object> enumList;
     
+    @SuppressWarnings("unchecked")
     public EnumerableConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);
         this.code = "enumerable-constraint";

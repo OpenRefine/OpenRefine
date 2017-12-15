@@ -9,6 +9,7 @@ import io.frictionlessdata.tableschema.Field;
 import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
 import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
 
+@SuppressWarnings("rawtypes")
 public class MinimumConstraint extends AbstractValidator {
 private Comparable threashold;
     
@@ -19,6 +20,7 @@ private Comparable threashold;
                 .get(Field.CONSTRAINT_KEY_MINIMUM);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public boolean checkCell(Cell cell) {
         boolean valid = true;
