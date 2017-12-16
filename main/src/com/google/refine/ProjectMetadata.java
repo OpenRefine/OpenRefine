@@ -36,6 +36,7 @@ package com.google.refine;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,9 +83,6 @@ public class ProjectMetadata implements Jsonizable {
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
 
-    private Map<String, Serializable> _customMetadata = new HashMap<String, Serializable>();
-    private PreferenceStore _preferenceStore = new PreferenceStore();
-
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
     protected ProjectMetadata(LocalDateTime date) {
@@ -116,6 +114,8 @@ public class ProjectMetadata implements Jsonizable {
             writer.value(tag);
         }
         writer.endArray();
+        writer.key("created"); writer.value(ParsingUtilities.localDateToString(_created));
+        writer.key("modified"); writer.value(ParsingUtilities.localDateToString(_modified));
         writer.key("creator");
         writer.value(_creator);
         writer.key("contributors");
@@ -129,8 +129,7 @@ public class ProjectMetadata implements Jsonizable {
 
         writer.key("customMetadata");
         writer.object();
-        writer.key("created"); writer.value(ParsingUtilities.localDateToString(_created));
-        writer.key("modified"); writer.value(ParsingUtilities.localDateToString(_modified));
+        
         for (String key : _customMetadata.keySet()) {
             Serializable value = _customMetadata.get(key);
             writer.key(key);
