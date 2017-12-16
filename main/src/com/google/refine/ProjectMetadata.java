@@ -35,8 +35,8 @@ package com.google.refine;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,12 +57,11 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class ProjectMetadata implements Jsonizable {
-
-    private final Date _created;
-    private Date _modified;
-    private Date written = null;
-    private String _name = "";
-    private String _password = "";
+    private final LocalDateTime     _created;
+    private LocalDateTime           _modified;
+    private LocalDateTime written = null;
+    private String         _name = "";
+    private String         _password = "";
 
     private String _encoding = "";
     private int _encodingConfidence;
@@ -79,24 +78,24 @@ public class ProjectMetadata implements Jsonizable {
     private JSONArray _importOptionMetadata = new JSONArray();
 
     // user metadata
-    private JSONArray _userMetadata = new JSONArray();;
-
-    private Map<String, Serializable> _customMetadata = new HashMap<String, Serializable>();
-    private PreferenceStore _preferenceStore = new PreferenceStore();
+    private JSONArray _userMetadata = new JSONArray();
+    
+    private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
+    private PreferenceStore             _preferenceStore = new PreferenceStore();
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
-    protected ProjectMetadata(Date date) {
+    protected ProjectMetadata(LocalDateTime date) {
         _created = date;
         preparePreferenceStore(_preferenceStore);
     }
 
     public ProjectMetadata() {
-        this(new Date());
+        this(LocalDateTime.now());
         _modified = _created;
     }
 
-    public ProjectMetadata(Date created, Date modified, String name) {
+    public ProjectMetadata(LocalDateTime created, LocalDateTime modified, String name) {
         this(created);
         _modified = modified;
         _name = name;
@@ -115,10 +114,8 @@ public class ProjectMetadata implements Jsonizable {
             writer.value(tag);
         }
         writer.endArray();
-        writer.key("created");
-        writer.value(ParsingUtilities.dateToString(_created));
-        writer.key("modified");
-        writer.value(ParsingUtilities.dateToString(_modified));
+        writer.key("created"); writer.value(ParsingUtilities.localDateToString(_created));
+        writer.key("modified"); writer.value(ParsingUtilities.localDateToString(_modified));
         writer.key("creator");
         writer.value(_creator);
         writer.key("contributors");
@@ -132,6 +129,7 @@ public class ProjectMetadata implements Jsonizable {
 
         writer.key("customMetadata");
         writer.object();
+        
         for (String key : _customMetadata.keySet()) {
             Serializable value = _customMetadata.get(key);
             writer.key(key);
@@ -167,7 +165,7 @@ public class ProjectMetadata implements Jsonizable {
         writer.endObject();
 
         if (isSaveMode(options)) {
-            written = new Date();
+            written = LocalDateTime.now();
         }
     }
 
@@ -181,7 +179,7 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     public boolean isDirty() {
-        return written == null || _modified.after(written);
+        return written == null || _modified.isAfter(written);
     }
 
     public void write(JSONWriter jsonWriter)
@@ -207,10 +205,10 @@ public class ProjectMetadata implements Jsonizable {
     }
 
     static public ProjectMetadata loadFromJSON(JSONObject obj) {
-        // TODO: Is this correct? It's using modified date for creation date
-        ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
+        // TODO: Is this correct?  It's using modified date for creation date
+        ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now()));
 
-        pm._modified = JSONUtilities.getDate(obj, "modified", new Date());
+        pm._modified = JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now());
         pm._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
         pm._password = JSONUtilities.getString(obj, "password", "");
 
@@ -275,10 +273,10 @@ public class ProjectMetadata implements Jsonizable {
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getFullStackTrace(e));
             }
-        }
-
-        pm.written = new Date(); // Mark it as not needing writing until modified
-
+        } 
+        
+        pm.written = LocalDateTime.now(); // Mark it as not needing writing until modified
+        
         return pm;
     }
 
@@ -287,7 +285,7 @@ public class ProjectMetadata implements Jsonizable {
         // Any project specific preferences?
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return _created;
     }
 
@@ -358,12 +356,12 @@ public class ProjectMetadata implements Jsonizable {
         return _password;
     }
 
-    public Date getModified() {
+    public  LocalDateTime getModified() {
         return _modified;
     }
 
     public void updateModified() {
-        _modified = new Date();
+        _modified = LocalDateTime.now();
     }
 
     public PreferenceStore getPreferenceStore() {

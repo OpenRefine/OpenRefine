@@ -38,9 +38,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -168,26 +169,30 @@ public class ParsingUtilities {
     }
 
     /**
-     * Convert a date/time to an ISO 8601 string
+     * Convert a date/time to an ISO_LOCAL_DATE_TIME string
      * 
      * @param d the date to be written
-     * @return string with ISO 8601 formatted date & time
+     * @return string with ISO_LOCAL_DATE_TIME formatted date & time
      */
-    static public String dateToString(Date d) {
-        return ISO8601_FORMAT.get().format(d);
+    static public String dateToString(OffsetDateTime d) {
+        return d.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+    
+    static public String localDateToString(LocalDateTime d) {
+      return d.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     /**
-     * Parse an ISO 8601 formatted string into a Java Date.
+     * Parse an ISO_LOCAL_DATE_TIME formatted string into a Java Date.
      * 
      * @param s the string to be parsed
-     * @return Date or null if the parse failed
+     * @return LocalDateTime or null if the parse failed
      */
-    static public Date stringToDate(String s) {
-        try {
-            return ISO8601_FORMAT.get().parse(s);
-        } catch (ParseException e) {
-            return null;
-        }
+    static public OffsetDateTime stringToDate(String s) {
+        return OffsetDateTime.parse(s, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+    
+    static public LocalDateTime stringToLocalDate(String s) {
+      return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 }

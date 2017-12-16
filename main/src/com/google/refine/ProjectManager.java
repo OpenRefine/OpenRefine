@@ -35,10 +35,11 @@ package com.google.refine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,7 +194,7 @@ public abstract class ProjectManager {
             }//FIXME what should be the behaviour if metadata is null? i.e. not found
 
             Project project = getProject(id);
-            if (project != null && metadata != null && metadata.getModified().after(project.getLastSave())) {
+            if (project != null && metadata != null && metadata.getModified().isAfter(project.getLastSave())) {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
@@ -256,7 +257,7 @@ public abstract class ProjectManager {
      */
     protected void saveProjects(boolean allModified) {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
-        Date startTimeOfSave = new Date();
+        LocalDateTime startTimeOfSave = LocalDateTime.now();
         
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
@@ -265,18 +266,18 @@ public abstract class ProjectManager {
 
                 if (project != null) {
                     boolean hasUnsavedChanges =
-                        metadata.getModified().getTime() >= project.getLastSave().getTime();
+                        metadata.getModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() >= project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                     // We use >= instead of just > to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
 
                     if (hasUnsavedChanges) {
-                        long msecsOverdue = startTimeOfSave.getTime() - project.getLastSave().getTime();
+                        long msecsOverdue = startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
                         records.add(new SaveRecord(project, msecsOverdue));
 
                     } else if (!project.getProcessManager().hasPending()
-                              && startTimeOfSave.getTime() - project.getLastSave().getTime() > PROJECT_FLUSH_DELAY) {
+                              && startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() > PROJECT_FLUSH_DELAY) {
                         
                         /*
                          *  It's been a while since the project was last saved and it hasn't been
@@ -309,7 +310,8 @@ public abstract class ProjectManager {
 
             for (int i = 0;
                  i < records.size() &&
-                    (allModified || (new Date().getTime() - startTimeOfSave.getTime() < QUICK_SAVE_MAX_TIME));
+                    (allModified || (LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - 
+                            startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < QUICK_SAVE_MAX_TIME));
                  i++) {
 
                 try {
@@ -332,7 +334,7 @@ public abstract class ProjectManager {
                 ProjectMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id);
                 if (project != null && !project.getProcessManager().hasPending() 
-                        && metadata.getModified().getTime() < project.getLastSave().getTime()) {
+                        && metadata.getModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) {
                         _projects.remove(id).dispose();
                 }
             }
