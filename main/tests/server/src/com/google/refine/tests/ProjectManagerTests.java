@@ -93,8 +93,9 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.registerProject(project, metadata);
 
-        AssertProjectRegistered();
-
+        AssertProjectRegistered();      
+        verify(metadata, times(1)).getTags();
+        
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -118,7 +119,8 @@ public class ProjectManagerTests extends RefineTest {
         }
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
-
+        verify(metadata, times(1)).getTags();
+        
         //ensure end
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -159,6 +161,7 @@ public class ProjectManagerTests extends RefineTest {
         SUT.save(true);
 
         verify(metadata, times(1)).getModified();
+        verify(metadata, times(1)).getTags();
         verify(project, times(1)).getProcessManager();
         verify(project, times(2)).getLastSave();
         verify(project, times(1)).dispose();
@@ -179,6 +182,7 @@ public class ProjectManagerTests extends RefineTest {
 
         verify(SUT, never()).saveProjects(Mockito.anyBoolean());
         verify(SUT, never()).saveWorkspace();
+        verify(metadata, times(1)).getTags();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -245,6 +249,7 @@ public class ProjectManagerTests extends RefineTest {
         verify(meta, times(1)).getModified();
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(proj);
+        verify(meta, times(1)).getTags();
 
         verifyNoMoreInteractions(proj);
         verifyNoMoreInteractions(meta);

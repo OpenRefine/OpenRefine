@@ -72,6 +72,7 @@
         "sel-by-regex": "Select by Regex on File Names",
         "parsing-options": "Configure Parsing Options",
         "project-name": "Project&nbsp;name",
+        "project-tags": "Tags",
         "updating-preview": "Updating preview ...",
         "parse-as": "Parse data as",
         "this-computer": "This Computer",
@@ -112,7 +113,10 @@
         "warning-rename": "Failed to rename project:",
         "warning-proj-name": "You must specify a project name.",
         "warning-data-file": "You must specify a data file to upload or a URL to retrieve.",
-        "browse": "Browse workspace directory"
+        "browse": "Browse workspace directory",
+        "tags": "Tags",
+        "edit-tags": "Edit project tags",
+        "edit-tags-desc": "Edit project tags (space and comma are delimiters):"
     },
     "core-index-lang": {
         "lang-settings": "Language Settings",

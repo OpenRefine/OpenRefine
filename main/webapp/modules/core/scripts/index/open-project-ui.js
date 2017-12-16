@@ -70,8 +70,8 @@ Refine.OpenProjectUI = function(elmt) {
       }
     });
   });
-
-  this._fetchProjects();
+  Refine.TagsManager.allProjectTags = [];
+  this._buildTagsAndFetchProjects();
 };
 
 Refine.OpenProjectUI.prototype.resize = function() {
@@ -98,6 +98,53 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
       },
       "json"
   );
+};
+
+Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
+    this._buildTagsListPanel();
+    this._fetchProjects();
+};
+
+Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
+    var self = this;
+    self._allTags = Refine.TagsManager._getAllProjectTags();
+
+    var container = self._elmts.projectTags.empty();
+    var ul = $("<ul/>").attr('id', 'tagsUl').appendTo(container);
+
+    // Add 'all' menu item
+    var li = $('<li/>').addClass("active").appendTo(ul);
+    $('<a/>').attr('href', '#all').addClass("current").text('All').appendTo(li);
+
+    $.each(self._allTags, function(i) {
+            var li = $('<li/>').appendTo(ul);
+            $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
+                            .appendTo(li);
+    });
+
+    self._addTagsListAnimation();
+};
+
+Refine.OpenProjectUI.prototype._addTagsListAnimation = function() {
+    $("#tagsUl").lavalamp({
+            setOnClick : true,
+            duration : 300
+    });
+};
+
+Refine.OpenProjectUI.prototype._fetchProjects = function() {
+    var self = this;
+    $.ajax({
+            type : 'GET',
+            url : "command/core/get-all-project-metadata",
+            dataType : 'json',
+            success : function(data) {
+                    self._renderProjects(data);
+                    self.resize();
+            },
+            data : {},
+            async : false
+    });
 };
 
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
@@ -131,11 +178,13 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     projects.push(project);
   }
 
-  var container = $("#projects-container").empty();
+  var container = self._elmts.projectList.empty();
   if (!projects.length) {
     $("#no-project-message").clone().show().appendTo(container);
   } else {
     Refine.selectActionArea('open-project');
+    
+    var projectsUl = $("<ul/>").attr('id', 'projectsUl').appendTo(container);
 
     var table = $(
       '<table class="tablesorter-blue list-table"><thead><tr>' +
@@ -143,6 +192,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th></th>' +
       '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
+      '<th>'+$.i18n._('core-index-open')["tags"]+'</th>' + 
       '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
@@ -157,8 +207,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           
           return htmlDisplay;
       })() +     
-      '</tr></thead><tbody></tbody></table>'
-    ).appendTo(container)[0];
+      '</tr></thead><tbody id="tableBody"></tbody></table>'
+    ).appendTo(projectsUl)[0];
 
     var renderProject = function(project) {
       var tr = table.getElementsByTagName('tbody')[0].insertRow(table.rows.length - 1);
@@ -178,7 +228,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             dataType: "json",
             success: function (data) {
               if (data && typeof data.code != 'undefined' && data.code == "ok") {
-                self._fetchProjects();
+                Refine.TagsManager.allProjectTags = [];
+                self._buildTagsAndFetchProjects();
               }
             }
           });
@@ -210,25 +261,41 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
       
-      var appendMetaField = function(data) {
-          $('<div></div>')
-          .html(data)
-          .appendTo($(tr.insertCell(tr.cells.length)));
-      };
       
-      appendMetaField(project.creator);
-      appendMetaField(project.subject);
-      appendMetaField(project.description, '20%');
-      appendMetaField(project.rowCount);
-      
-      var data = project.userMetadata;
-      for(var i in data)
-      {
-           if (data[i].display === true) {
-               appendMetaField(data[i].value); 
-           }
-      }
+    
+    var tagsCell = $(tr.insertCell(tr.cells.length));
+    var tags = project.tags;
+    tags.map(function(tag){
+        $("<span/>")
+        .addClass("project-tag")
+        .text(tag)
+        .attr("title", $.i18n._('core-index-open')["edit-tags"])
+        .appendTo(tagsCell);
+        $(tr).addClass(tag);
+    });
+    
+    
+    var appendMetaField = function(data) {
+        $('<div></div>')
+        .html(data)
+        .appendTo($(tr.insertCell(tr.cells.length)));
     };
+    
+    appendMetaField(project.creator);
+    appendMetaField(project.subject);
+    appendMetaField(project.description, '20%');
+    appendMetaField(project.rowCount);
+    
+    var data = project.userMetadata;
+    for(var i in data)
+    {
+         if (data[i].display === true) {
+             appendMetaField(data[i].value); 
+         }
+    }
+        
+
+      };
 
     for (var i = 0; i < projects.length; i++) {
       renderProject(projects[i]);
@@ -243,7 +310,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         sortList: [[2,1]],
         widthFixed: false
     });
+    self._addTagFilter();
   }
+};
+
+Refine.OpenProjectUI.prototype._addTagFilter = function() {
+    $("#tableBody").filterList();
 };
 
 Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
@@ -276,19 +348,47 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   return false;
 };
 
-Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
+Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
+    
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
             .text(data);
         } else {
-            $('td', tr).eq(index)
+            $('td', tr).eq(index).find('div')
             .text(data);
         }
     };
     
+    var refreshMetaTags = function(data, index) {
+        var tagCol = $('td', tr).eq(index).empty();
+        if(data.constructor === Array){
+            data.map(function(tag){
+                var tagsCell = $("<span/>")
+                .addClass("project-tag")
+                .text(tag)
+                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .appendTo(tagCol);
+                tagCol.parent().addClass(tag);
+            });
+   
+        } else{
+            data.split(",").map(function(tag){
+                var tagsCell = $("<span/>")
+                .addClass("project-tag")
+                .text(tag)
+                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .appendTo(tagCol);
+                tagCol.parent().addClass(tag);
+            });
+            
+    }
+   
+    };
+    
     var index = 3;
     refreshMetaField(metaData.name, index); index++;
+    refreshMetaTags(metaData.tags, index); index++;
     refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
     refreshMetaField(metaData.description,index); index++;
@@ -316,7 +416,21 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData) {
              refreshMetaField(data[i].value,index); index++; 
          }
     }
-
+    
+    Refine.TagsManager.allProjectTags = [];
+    var self = this;
+    var list = $("#tagsUl").empty();
+    self._allTags = Refine.TagsManager._getAllProjectTags();
+     
+      var li = $('<li/>').addClass("active").appendTo(list);
+      $('<a/>').attr('href',
+      '#all').addClass("current").text('All').appendTo(li);
+     
+      $.each(self._allTags, function(i) {
+      var li = $('<li/>').appendTo(list);
+      $('<a/>').attr('href', '#' + self._allTags[i]).text(self._allTags[i])
+      .appendTo(li);
+      });
 };
 
 Refine.actionAreas.push({

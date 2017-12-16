@@ -41,6 +41,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -119,8 +120,22 @@ public class FileProjectManager extends ProjectManager {
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
+            
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
+                if (_projectsTags == null) {
+                    _projectsTags = new HashMap<String, Integer>();
+                }
+                
+                if (metadata != null && metadata.getTags() != null) {
+                    for (String tag : metadata.getTags()) {
+                      if (_projectsTags.containsKey(tag)) {
+                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                      } else {
+                        _projectsTags.put(tag, 1);
+                      }
+                    }
+                }
                 return true;
             } else {
                 return false;
@@ -375,6 +390,16 @@ public class FileProjectManager extends ProjectManager {
                     mergeEmptyUserMetadata(metadata);
 
                     _projectsMetadata.put(id, metadata);
+                    
+                    if (metadata != null && metadata.getTags() != null) {
+                        for (String tag : metadata.getTags()) {
+                          if (_projectsTags.containsKey(tag)) {
+                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                          } else {
+                            _projectsTags.put(tag, 1);
+                          }
+                        }
+                    }
                 }
 
                 if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
