@@ -74,7 +74,7 @@ public class ProjectMetadata implements Jsonizable {
     private JSONArray _importOptionMetadata = new JSONArray();
     
     // user metadata
-    private JSONArray _userMetadata = new JSONArray();; 
+    private JSONArray _userMetadata = new JSONArray();
     
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
