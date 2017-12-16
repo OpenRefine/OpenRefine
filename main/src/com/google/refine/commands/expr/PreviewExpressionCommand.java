@@ -35,8 +35,10 @@ package com.google.refine.commands.expr;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -212,10 +214,10 @@ public class PreviewExpressionCommand extends Command {
                     Calendar c = (Calendar) v;
                     
                     sb.append("[date " + 
-                        ParsingUtilities.dateToString(c.getTime()) +"]");
-                } else if (v instanceof Date) {
+                        ParsingUtilities.dateToString(OffsetDateTime.ofInstant(c.toInstant(), ZoneId.systemDefault())) +"]");
+                } else if (v instanceof LocalDateTime) {
                     sb.append("[date " + 
-                            ParsingUtilities.dateToString((Date) v) +"]");
+                            ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
                 } else if (v instanceof String) {
                     if (quote) {
                         sb.append(JSONObject.quote((String) v));

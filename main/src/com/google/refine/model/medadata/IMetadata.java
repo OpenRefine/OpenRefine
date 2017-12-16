@@ -2,7 +2,7 @@ package com.google.refine.model.medadata;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.json.JSONException;
@@ -32,7 +32,7 @@ public interface IMetadata extends Jsonizable {
     public MetadataFormat getFormatName();
     public void setFormatName(MetadataFormat format);
     
-    public Date getModified();
+    public LocalDateTime getModified();
 
     public void updateModified();
     

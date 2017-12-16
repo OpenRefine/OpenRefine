@@ -41,8 +41,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,21 +75,15 @@ public class Project {
     final static protected Map<String, Class<? extends OverlayModel>> 
         s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();
     
-    static public void registerOverlayModel(String modelName, Class<? extends OverlayModel> klass) {
-        s_overlayModelClasses.put(modelName, klass);
-    }
-    
     final public long                       id;
     final public List<Row>                  rows = new ArrayList<Row>();
-    
     final public ColumnModel                columnModel = new ColumnModel();
     final public RecordModel                recordModel = new RecordModel();
     final public Map<String, OverlayModel>  overlayModels = new HashMap<String, OverlayModel>();
-    
     final public History                    history;
     
     transient public ProcessManager processManager = new ProcessManager();
-    transient private Date _lastSave = new Date();
+    transient private LocalDateTime _lastSave = LocalDateTime.now();
 
     final static Logger logger = LoggerFactory.getLogger("project");
     
@@ -114,6 +108,10 @@ public class Project {
             metadataMap.put(MetadataFormat.PROJECT_METADATA, ProjectManager.singleton.getProjectMetadata(id));
     }
     
+    static public void registerOverlayModel(String modelName, Class<? extends OverlayModel> klass) {
+        s_overlayModelClasses.put(modelName, klass);
+    }
+    
     /**
      * Free/dispose of project data from memory.
      */
@@ -129,14 +127,14 @@ public class Project {
         // The rest of the project should get garbage collected when we return.
     }
 
-    public Date getLastSave(){
+    public LocalDateTime getLastSave(){
         return this._lastSave;
     }
     /**
      * Sets the lastSave time to now
      */
     public void setLastSave(){
-        this._lastSave = new Date();
+        this._lastSave = LocalDateTime.now();
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {

@@ -1,7 +1,7 @@
 package com.google.refine.model.medadata;
 
 import java.io.File;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Properties;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -16,8 +16,8 @@ public abstract class AbstractMetadata implements IMetadata {
     
     private MetadataFormat formatName = MetadataFormat.UNKNOWN;
     
-    protected Date written = null;
-    protected Date           _modified;
+    protected LocalDateTime written = null;
+    protected LocalDateTime           _modified;
     
     public MetadataFormat getFormatName() {
         return formatName;
@@ -47,17 +47,17 @@ public abstract class AbstractMetadata implements IMetadata {
     
     @Override
     public boolean isDirty() {
-        return written == null || _modified.after(written);
+        return written == null || _modified.isAfter(written);
     }
 
     @Override
-    public Date getModified() {
+    public LocalDateTime getModified() {
         return _modified;
     }
     
     @Override
     public void updateModified() {
-        _modified = new Date();
+        _modified = LocalDateTime.now();
     }
 
     static boolean propertyExists(Object bean, String property) {

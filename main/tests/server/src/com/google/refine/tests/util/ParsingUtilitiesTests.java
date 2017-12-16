@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.util;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,6 +91,25 @@ public class ParsingUtilitiesTests extends RefineTest {
         } catch (JSONException e) {
             //expected
         }
+    }
+    @Test
+    public void zonedDateTimeTest() {
+//        String d = "2017-07-18T20:26:28.582+03:00[Asia/Istanbul]";
+//        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME ;
+//        OffsetDateTime.parse(d, formatter);
+        String  d = "2017-12-01T14:53:36Z";
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+        OffsetDateTime.parse(d, formatter);
+    }
+    
+    @Test
+    public void parseProjectBeforeJDK8() {
+        String historyEntryDate = "2017-12-01T14:53:36Z";
+        
+        OffsetDateTime zdt = ParsingUtilities.stringToDate(historyEntryDate);
+        String zdtString = ParsingUtilities.dateToString(zdt);
+        Assert.assertEquals(zdtString, historyEntryDate);
+        
     }
     
     @Test

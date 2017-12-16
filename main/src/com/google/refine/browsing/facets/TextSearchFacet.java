@@ -50,6 +50,7 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.ast.VariableExpr;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.util.PatternSyntaxExceptionParser;
 
 public class TextSearchFacet implements Facet {
     /*
@@ -106,7 +107,8 @@ public class TextSearchFacet implements Facet {
                             _query, 
                             _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
-                    throw new JSONException(e);
+                    PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
+                    throw new JSONException(err.getUserMessage());
                 }
             } else if (!_caseSensitive) {
                 _query = _query.toLowerCase();

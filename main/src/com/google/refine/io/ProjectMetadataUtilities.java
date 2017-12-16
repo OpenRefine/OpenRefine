@@ -39,7 +39,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -143,7 +145,9 @@ public class ProjectMetadataUtilities {
                     mtime = Math.max(mtime, time);
                 }
             }
-            pm = new ProjectMetadata(new Date(ctime),new Date(mtime), tempName);
+            pm = new ProjectMetadata(LocalDateTime.ofInstant(Instant.ofEpochMilli(ctime), ZoneId.systemDefault()),
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(mtime), ZoneId.systemDefault()),
+                    tempName);
             logger.error("Partially recovered missing metadata project in directory " + projectDir + " - " + tempName);
         }
         return pm;

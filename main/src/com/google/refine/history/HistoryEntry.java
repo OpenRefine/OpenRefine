@@ -34,7 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.history;
 
 import java.io.Writer;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -59,7 +60,7 @@ public class HistoryEntry implements Jsonizable {
     final public long   id;
     final public long   projectID;
     final public String description;
-    final public Date   time;
+    final public OffsetDateTime   time;
 
     // the manager (deals with IO systems or databases etc.)
     final public HistoryEntryManager _manager;
@@ -85,11 +86,11 @@ public class HistoryEntry implements Jsonizable {
     }
 
     public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
-        this(id,project.id,description,operation,new Date());
+        this(id,project.id,description,operation,OffsetDateTime.now(ZoneId.of("Z")));
         setChange(change);
     }
 
-    protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time) {
+    protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, OffsetDateTime time) {
         this.id = id;
         this.projectID = projectID;
         this.description = description;
