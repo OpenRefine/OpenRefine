@@ -25,7 +25,7 @@ public class TypeorFormatError extends AbstractValidator {
         boolean valid = true;
         
         try {
-            field.castValue(cell.value.toString());
+            field.castValue(cell.value.toString(), false);
         } catch (InvalidCastException | ConstraintsException e) {
           // patch for issue: https://github.com/frictionlessdata/tableschema-java/issues/21
             if (type.equals("number")) {

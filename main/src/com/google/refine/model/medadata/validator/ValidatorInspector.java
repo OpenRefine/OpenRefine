@@ -92,7 +92,7 @@ public class ValidatorInspector {
             for (Entry<String, Object> entry : field.getConstraints().entrySet()) {
                 Class<Validator> clazz = constraintHandlersMap.get(entry.getKey());
                 try {
-                    Constructor<Validator> c = clazz.getConstructor(Project.class, String.class, JSONObject.class);
+                    Constructor<Validator> c = clazz.getConstructor(Project.class, int.class, JSONObject.class);
                     validatorList.add(c.newInstance(project, columnIndex, options));
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException | NoSuchMethodException | SecurityException e) {
