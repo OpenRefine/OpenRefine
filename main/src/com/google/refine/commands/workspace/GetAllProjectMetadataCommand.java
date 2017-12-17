@@ -88,6 +88,11 @@ public class GetAllProjectMetadataCommand extends Command {
                 for (Entry<Long, ProjectMetadata> e : m.entrySet()) {
                     JSONArray otherMetadatas = new JSONArray();
                     Project project = ProjectManager.singleton.getProject(e.getKey());
+                    if (project == null) {
+                        logger.error( "Project is not loaded. Most likely it was corrupted :" + e.getKey());
+                        continue;
+                    }
+                    
                     for (IMetadata metadata : project.getMetadataMap().values()) {
                         if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) continue;
                         JSONUtilities.append(otherMetadatas, metadata.getFormatName().name());
