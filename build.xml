@@ -149,7 +149,7 @@
         <copy file="${webapp.src.dir}/TableSchemaValidator.json" tofile="${webapp.classes.dir}/TableSchemaValidator.json"/>
         <copy file="${webapp.src.dir}/validator-resource-bundle.properties" tofile="${webapp.classes.dir}/validator-resource-bundle.properties"/>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
-        <copydir src="${data-package.resources.dir}" dest="${webapp.classes.dir}"/>
+	<copy todir="${webapp.classes.dir}"><fileset dir="${data-package.resources.dir}" /></copy>
     </target>
 
     <target name="build_tests" depends="build">
