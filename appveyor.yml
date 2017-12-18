@@ -12,7 +12,7 @@ install:
   - 7z x apache-ant-1.10.1-bin.zip > nul
 
 clone_script:
-- cmd: git clone --recursive https://github.com/OpenRefine/OpenRefine/
+- cmd: git clone --recursive https://github.com/jackyq2015/OpenRefine/
       
 clone_folder: c:\openrefine
 
