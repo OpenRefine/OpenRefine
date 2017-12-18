@@ -1,0 +1,18 @@
+cache:
+- C:\apache-ant-1.9.7-bin.zip
+
+environment:
+  matrix:
+    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0_152\
+      ANT_HOME: C:\apache-ant-1.9.7
+      
+
+install:
+  - cd \
+  - appveyor DownloadFile http://www.eu.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.zip
+  - 7z x apache-ant-1.9.7-bin.zip > nul
+
+test_script:
+  - refine server_test
+
+build: off
