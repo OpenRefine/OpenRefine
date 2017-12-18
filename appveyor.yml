@@ -5,14 +5,19 @@ environment:
   matrix:
     - JAVA_HOME: C:\Program Files\Java\jdk1.8.0_152\
       ANT_HOME: C:\apache-ant-1.9.7
-      
 
 install:
   - cd \
   - appveyor DownloadFile http://apache.spinellicreations.com//ant/binaries/apache-ant-1.10.1-bin.zip
   - 7z x apache-ant-1.10.1-bin.zip > nul
 
+clone_script:
+- cmd: git clone --recursive https://github.com/OpenRefine/OpenRefine/
+      
+clone_folder: c:\openrefine
+
 test_script:
+  - cd c:\openrefine
   - refine server_test
 
 build: off
