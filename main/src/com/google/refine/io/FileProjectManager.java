@@ -477,4 +477,9 @@ public class FileProjectManager extends ProjectManager {
     public HistoryEntryManager getHistoryEntryManager(){
         return new FileHistoryEntryManager();
     }
+    
+    @Override
+    public Map<MetadataFormat, IMetadata> loadProjectMetadatas(long projectId) {
+        return ProjectUtilities.retriveMetadata(getProjectDir(projectId));
+    }
 }

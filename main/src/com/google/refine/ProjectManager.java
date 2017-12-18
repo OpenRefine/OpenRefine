@@ -617,4 +617,11 @@ public abstract class ProjectManager {
        ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }
+   
+   /**
+    * Load project metadata from data storage
+    * @param projectID
+    * @return
+    */
+    public abstract Map<MetadataFormat, IMetadata> loadProjectMetadatas(long projectId);
 }

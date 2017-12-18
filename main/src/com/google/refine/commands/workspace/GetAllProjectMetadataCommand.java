@@ -48,7 +48,6 @@ import org.json.JSONWriter;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
@@ -87,13 +86,18 @@ public class GetAllProjectMetadataCommand extends Command {
                 writer.object();
                 for (Entry<Long, ProjectMetadata> e : m.entrySet()) {
                     JSONArray otherMetadatas = new JSONArray();
+                    /**
                     Project project = ProjectManager.singleton.getProject(e.getKey());
                     if (project == null) {
                         logger.error( "Project is not loaded. Most likely it was corrupted :" + e.getKey());
                         continue;
-                    }
+                    }*/
+                     Map<MetadataFormat, IMetadata> metadataMap = null;
+                     
+                     metadataMap = ProjectManager.singleton.loadProjectMetadatas(e.getKey());
                     
-                    for (IMetadata metadata : project.getMetadataMap().values()) {
+//                    for (IMetadata metadata : project.getMetadataMap().values()) {
+                    for (IMetadata metadata : metadataMap.values()) {
                         if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) continue;
                         JSONUtilities.append(otherMetadatas, metadata.getFormatName().name());
                     }

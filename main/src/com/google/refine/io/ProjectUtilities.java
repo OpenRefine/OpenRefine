@@ -48,6 +48,8 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.DataPackageMetadata;
+import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.util.Pool;
 
 
@@ -141,15 +143,15 @@ public class ProjectUtilities {
         return project;
     }
     
+    
     /**
-     * scan the folder for json files and load them as metadata
+     * scan the folder for json files and read them as metadata
      * @param dir
      * @param project
      */
-    private static void loadMetadata(File dir, Project project) {
+    public static Map<MetadataFormat, IMetadata> retriveMetadata(File dir) {
      // load the metadatas from data folder.
-        Map<String, DataPackageMetadata> metadataMap = new HashMap<String, DataPackageMetadata>();
-        metadataMap.put(DataPackageMetadata.DEFAULT_FILE_NAME, new DataPackageMetadata());
+        Map<MetadataFormat, IMetadata> metadataMap = new HashMap<MetadataFormat, IMetadata>();
         
         File[] jsons = dir.listFiles(
                 (folder, file) -> {
@@ -162,18 +164,29 @@ public class ProjectUtilities {
             if (file.getName().startsWith("metadata."))
                 continue;
             
-            DataPackageMetadata metadata = metadataMap.get(file.getName());
-            if (metadata == null)
-                continue;
-            
+            DataPackageMetadata metadata = (DataPackageMetadata) metadataMap.get(MetadataFormat.DATAPACKAGE_METADATA);
             // load itself
             metadata.loadFromFile(file);
             
-            project.setMetadata(metadata.getFormatName(), metadata);
+            metadataMap.put(MetadataFormat.DATAPACKAGE_METADATA, new DataPackageMetadata());
         }
         
+        return metadataMap;
+        
     }
-
+    
+    /**
+     * load the metadatas into project
+     * @param dir
+     * @param project
+     */
+    private static void loadMetadata(File dir, Project project) {
+        Map<MetadataFormat, IMetadata> metadatasMap = retriveMetadata(dir);
+        for(IMetadata metadata : metadatasMap.values()) {
+            project.setMetadata(metadata.getFormatName(), metadata);
+        }
+    }
+    
     static protected Project loadFromFile(
             File file,
             long id
