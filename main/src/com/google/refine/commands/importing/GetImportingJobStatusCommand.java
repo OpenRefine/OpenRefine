@@ -65,7 +65,7 @@ public class GetImportingJobStatusCommand extends Command {
                 writer.key("message"); writer.value("No such import job");
             } else {
                 writer.key("code"); writer.value("ok");
-                writer.key("job"); job.writeToJSON(writer, new Properties());
+                writer.key("job"); job.write(writer, new Properties());
             }
             writer.endObject();
         } catch (JSONException e) {

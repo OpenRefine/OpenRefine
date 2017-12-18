@@ -171,7 +171,7 @@ public class ColumnModel implements Jsonizable {
     }
 
     @Override
-    synchronized public void writeToJSON(JSONWriter writer, Properties options)
+    synchronized public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -179,7 +179,7 @@ public class ColumnModel implements Jsonizable {
         writer.key("columns");
         writer.array();
         for (Column column : columns) {
-            column.writeToJSON(writer, options);
+            column.write(writer, options);
         }
         writer.endArray();
         
@@ -191,7 +191,7 @@ public class ColumnModel implements Jsonizable {
         writer.key("columnGroups");
         writer.array();
         for (ColumnGroup g : _rootColumnGroups) {
-            g.writeToJSON(writer, options);
+            g.write(writer, options);
         }
         writer.endArray();
         

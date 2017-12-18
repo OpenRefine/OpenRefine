@@ -310,7 +310,7 @@ public class DataExtensionChange implements Change {
             try {
                 if(type != null) {
                     JSONWriter jsonWriter = new JSONWriter(writer);
-                    type.writeToJSON(jsonWriter, options);
+                    type.write(jsonWriter, options);
                 }
             } catch (JSONException e) {
                 // ???
@@ -337,7 +337,7 @@ public class DataExtensionChange implements Change {
                     } else if (value instanceof ReconCandidate) {
                         try {
                             JSONWriter jsonWriter = new JSONWriter(writer);
-                            ((ReconCandidate) value).writeToJSON(jsonWriter, options);
+                            ((ReconCandidate) value).write(jsonWriter, options);
                         } catch (JSONException e) {
                             // ???
                         }

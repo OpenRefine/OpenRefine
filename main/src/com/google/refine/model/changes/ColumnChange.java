@@ -55,7 +55,7 @@ abstract public class ColumnChange implements Change {
         for (ColumnGroup cg : oldColumnGroups) {
             JSONWriter jsonWriter = new JSONWriter(writer);
             try {
-                cg.writeToJSON(jsonWriter, options);
+                cg.write(jsonWriter, options);
             } catch (JSONException e) {
                 throw new IOException(e);
             }

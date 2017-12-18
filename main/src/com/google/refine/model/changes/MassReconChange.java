@@ -112,7 +112,7 @@ public class MassReconChange implements Change {
 
             JSONWriter jsonWriter = new JSONWriter(writer);
             try {
-                recon.writeToJSON(jsonWriter, options);
+                recon.write(jsonWriter, options);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

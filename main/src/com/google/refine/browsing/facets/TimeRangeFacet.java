@@ -66,7 +66,7 @@ public class TimeRangeFacet extends RangeFacet {
     protected int       _nonTimeCount;
     
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
+    public void write(JSONWriter writer, Properties options) throws JSONException {
         
         writer.object();
         writer.key("name"); writer.value(_name);

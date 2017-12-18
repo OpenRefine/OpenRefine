@@ -66,7 +66,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
     public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            historyEntry.writeToJSON(jsonWriter, options);
+            historyEntry.write(jsonWriter, options);
         } catch (JSONException e) {
             e.printStackTrace();
         }

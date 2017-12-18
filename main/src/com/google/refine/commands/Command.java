@@ -254,7 +254,7 @@ public abstract class Command {
 
             writer.object();
             writer.key("code"); writer.value("ok");
-            writer.key("historyEntry"); historyEntry.writeToJSON(writer, options);
+            writer.key("historyEntry"); historyEntry.write(writer, options);
             writer.endObject();
 
             w.flush();
@@ -309,7 +309,7 @@ public abstract class Command {
         Writer w = response.getWriter();
         JSONWriter writer = new JSONWriter(w);
 
-        o.writeToJSON(writer, options);
+        o.write(writer, options);
         w.flush();
         w.close();
     }

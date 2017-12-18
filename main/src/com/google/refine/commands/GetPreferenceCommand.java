@@ -71,7 +71,7 @@ public class GetPreferenceCommand extends Command {
                 writer.value(pref);
             } else if (pref instanceof TopList) {
                 TopList tl = (TopList) pref;
-                tl.writeToJSON(writer, new Properties());
+                tl.write(writer, new Properties());
             } else {
                 writer.value(pref.toString());
             }

@@ -234,14 +234,14 @@ public class Engine implements Jsonizable {
     }
 
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
     throws JSONException {
 
         writer.object();
         writer.key("facets");
         writer.array();
         for (Facet facet : _facets) {
-            facet.writeToJSON(writer, options);
+            facet.write(writer, options);
         }
         writer.endArray();
         writer.key(MODE); writer.value(_mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED);

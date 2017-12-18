@@ -69,7 +69,7 @@ public class GetOperationsCommand extends Command {
                 writer.key("description"); writer.value(entry.description);
                 if (entry.operation != null) {
                     writer.key("operation");
-                    entry.operation.writeToJSON(writer, options);
+                    entry.operation.write(writer, options);
                 }
                 writer.endObject();
             }

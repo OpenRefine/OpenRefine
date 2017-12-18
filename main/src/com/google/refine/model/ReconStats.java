@@ -64,7 +64,7 @@ public class ReconStats implements Jsonizable {
     }
 
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -100,7 +100,7 @@ public class ReconStats implements Jsonizable {
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            writeToJSON(jsonWriter, new Properties());
+            write(jsonWriter, new Properties());
         } catch (JSONException e) {
             e.printStackTrace();
         }

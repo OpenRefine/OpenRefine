@@ -115,7 +115,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     }
     
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
             throws JSONException {
 
         writer.object();
@@ -172,7 +172,7 @@ public class ProjectMetadata  extends AbstractMetadata {
             writer.value(_encodingConfidence);
 
             writer.key("preferences");
-            _preferenceStore.writeToJSON(writer, options);
+            _preferenceStore.write(writer, options);
         }
 
         writer.endObject();
@@ -184,7 +184,7 @@ public class ProjectMetadata  extends AbstractMetadata {
 
     public void writeWithoutOption(JSONWriter writer)
             throws JSONException {
-        writeToJSON(writer, new Properties());
+        write(writer, new Properties());
     }
 
     private boolean isSaveMode(Properties options) {
@@ -209,7 +209,7 @@ public class ProjectMetadata  extends AbstractMetadata {
             Properties options = new Properties();
             options.setProperty("mode", "save");
 
-            writeToJSON(jsonWriter, options);
+            write(jsonWriter, options);
         }
     }
 

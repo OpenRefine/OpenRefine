@@ -180,7 +180,7 @@ public class Project {
             try {
                 JSONWriter jsonWriter = new JSONWriter(writer);
                 
-                overlayModels.get(modelName).writeToJSON(jsonWriter, options);
+                overlayModels.get(modelName).write(jsonWriter, options);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

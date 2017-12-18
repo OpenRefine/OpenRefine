@@ -326,7 +326,7 @@ public class FileProjectManager extends ProjectManager {
 
             jsonWriter.key("preferences");
             saveWasNeeded |= _preferenceStore.isDirty();
-            _preferenceStore.writeToJSON(jsonWriter, new Properties());
+            _preferenceStore.write(jsonWriter, new Properties());
 
             jsonWriter.endObject();
         } finally {

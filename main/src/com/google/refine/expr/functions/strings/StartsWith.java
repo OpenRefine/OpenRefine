@@ -56,7 +56,7 @@ public class StartsWith implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
         throws JSONException {
     
         writer.object();

@@ -54,14 +54,14 @@ public class ProcessManager implements Jsonizable {
     }
     
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
         writer.key("processes"); writer.array();
         synchronized (_processes) {
             for (Process p : _processes) {
-                p.writeToJSON(writer, options);
+                p.write(writer, options);
             }
         }
         writer.endArray();

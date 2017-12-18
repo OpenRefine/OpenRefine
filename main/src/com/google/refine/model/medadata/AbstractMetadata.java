@@ -29,7 +29,7 @@ public abstract class AbstractMetadata implements IMetadata {
     }
 
     @Override
-    public abstract void writeToJSON(JSONWriter writer, Properties options) throws JSONException;
+    public abstract void write(JSONWriter writer, Properties options) throws JSONException;
 
     @Override
     public abstract IMetadata loadFromJSON(JSONObject obj);

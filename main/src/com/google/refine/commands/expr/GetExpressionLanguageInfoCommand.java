@@ -68,7 +68,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
             {
                 for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
                     writer.key(entry.getKey());
-                    entry.getValue().writeToJSON(writer, options);
+                    entry.getValue().write(writer, options);
                 }
             }
             writer.endObject();
@@ -78,7 +78,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
             {
                 for (Entry<String, Control> entry : ControlFunctionRegistry.getControlMapping()) {
                     writer.key(entry.getKey());
-                    entry.getValue().writeToJSON(writer, options);
+                    entry.getValue().write(writer, options);
                 }
             }
             writer.endObject();

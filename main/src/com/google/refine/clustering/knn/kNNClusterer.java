@@ -217,7 +217,7 @@ public class kNNClusterer extends Clusterer {
     }
     
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options) throws JSONException {
+    public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.array();        
         for (Set<Serializable> m : _clusters) {
             if (m.size() > 1) {

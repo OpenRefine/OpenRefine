@@ -78,7 +78,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         }
         
         @Override
-        public void writeToJSON(JSONWriter writer, Properties options)
+        public void write(JSONWriter writer, Properties options)
             throws JSONException {
             
             writer.object();
@@ -151,7 +151,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
@@ -163,7 +163,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         writer.key("edits");
             writer.array();
             for (Edit edit : _edits) {
-                edit.writeToJSON(writer, options);
+                edit.write(writer, options);
             }
             writer.endArray();
         writer.endObject();

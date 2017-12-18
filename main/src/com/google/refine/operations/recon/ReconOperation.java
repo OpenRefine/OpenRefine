@@ -108,14 +108,14 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public void writeToJSON(JSONWriter writer, Properties options)
+    public void write(JSONWriter writer, Properties options)
             throws JSONException {
         
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("columnName"); writer.value(_columnName);
-        writer.key("config"); _reconConfig.writeToJSON(writer, options);
+        writer.key("config"); _reconConfig.write(writer, options);
         writer.key("engineConfig"); writer.value(getEngineConfig());
         writer.endObject();
     }
@@ -158,7 +158,7 @@ public class ReconOperation extends EngineDependentOperation {
         }
         
         @Override
-        public void writeToJSON(JSONWriter writer, Properties options)
+        public void write(JSONWriter writer, Properties options)
                 throws JSONException {
             
             writer.object();

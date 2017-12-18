@@ -260,20 +260,20 @@ public class History implements Jsonizable {
     }
 
     @Override
-    synchronized public void writeToJSON(JSONWriter writer, Properties options)
+    synchronized public void write(JSONWriter writer, Properties options)
             throws JSONException {
 
         writer.object();
 
         writer.key("past"); writer.array();
         for (HistoryEntry entry : _pastEntries) {
-            entry.writeToJSON(writer, options);
+            entry.write(writer, options);
         }
         writer.endArray();
 
         writer.key("future"); writer.array();
         for (HistoryEntry entry : _futureEntries) {
-            entry.writeToJSON(writer, options);
+            entry.write(writer, options);
         }
         writer.endArray();
 

@@ -171,7 +171,7 @@ public class GetRowsCommand extends Command {
             
             jsonWriter.key("start"); jsonWriter.value(start);
             jsonWriter.key("limit"); jsonWriter.value(limit);
-            jsonWriter.key("pool"); pool.writeToJSON(jsonWriter, options);
+            jsonWriter.key("pool"); pool.write(jsonWriter, options);
             
             jsonWriter.endObject();
             
@@ -236,7 +236,7 @@ public class GetRowsCommand extends Command {
         public boolean internalVisit(Project project, int rowIndex, Row row) {
             try {
                 options.put("rowIndex", rowIndex);
-                row.writeToJSON(writer, options);
+                row.write(writer, options);
             } catch (JSONException e) {
             }
             return false;
@@ -251,7 +251,7 @@ public class GetRowsCommand extends Command {
                     
                     options.put("rowIndex", r);
                     
-                    row.writeToJSON(writer, options);
+                    row.write(writer, options);
                     
                 } catch (JSONException e) {
                 }
