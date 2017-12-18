@@ -1,5 +1,5 @@
 cache:
-- C:\apache-ant-1.9.7-bin.zip
+- C:\apache-ant-1.10.1-bin.zip
 
 environment:
   matrix:
@@ -9,8 +9,8 @@ environment:
 
 install:
   - cd \
-  - appveyor DownloadFile http://www.eu.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.zip
-  - 7z x apache-ant-1.9.7-bin.zip > nul
+  - appveyor DownloadFile http://apache.spinellicreations.com//ant/binaries/apache-ant-1.10.1-bin.zip
+  - 7z x apache-ant-1.10.1-bin.zip > nul
 
 test_script:
   - refine server_test
