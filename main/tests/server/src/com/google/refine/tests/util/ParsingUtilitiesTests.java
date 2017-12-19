@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import com.google.refine.tests.RefineTest;
 import com.google.refine.util.ParsingUtilities;
