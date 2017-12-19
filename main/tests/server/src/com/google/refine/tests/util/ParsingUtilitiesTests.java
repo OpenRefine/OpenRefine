@@ -33,8 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.util;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -115,21 +117,11 @@ public class ParsingUtilitiesTests extends RefineTest {
         
     }
     
-    
     @Test
     public void parseProjectModifiedBeforeJDK8() {
         String modified = "2014-01-15T21:46:25Z";
-        LocalDateTime ldt;
-        
-        if (modified.endsWith("Z")) {
-            ldt = ParsingUtilities.stringToDate(modified).toLocalDateTime();
-        } else 
-            ldt = ParsingUtilities.stringToLocalDate(modified);
-        
-        ZonedDateTime zoned = ZonedDateTime.parse(modified, DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        System.out.println(zoned.toLocalDateTime());
-//        Assert.assertEquals(ldt.toString(), "2014-01-15T16:46:25");
-        
+        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(), 
+                modified);
     }
     
     @Test
