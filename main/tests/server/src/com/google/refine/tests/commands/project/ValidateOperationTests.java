@@ -106,7 +106,10 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
     public void testTypeorFormatError()  {
         JSONObject optionObj = new JSONObject(optionsString);
         // run
-        startValidateOperation(optionObj);
+        JSONObject result = startValidateOperation(optionObj);
+        
+        Assert.assertTrue(result.getJSONArray("validation-reports").length() > 0,
+                "should get records in report");
     }
     
     @Test
@@ -121,7 +124,10 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
         
         // run
-        startValidateOperation(optionObj);
+        JSONObject result = startValidateOperation(optionObj);
+        
+        Assert.assertTrue(result.getJSONArray("validation-reports").length() > 0,
+                "should get records in report");
     }
     
     @Test
@@ -136,7 +142,10 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
         
         // run
-        startValidateOperation(optionObj);
+        JSONObject result = startValidateOperation(optionObj);
+        
+        Assert.assertTrue(result.getJSONArray("validation-reports").length() > 0,
+                "should get records in report");
     }
     
     @Test
@@ -151,7 +160,10 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
         
         // run
-        startValidateOperation(optionObj);
+        JSONObject result = startValidateOperation(optionObj);
+        
+        Assert.assertTrue(result.getJSONArray("validation-reports").length() == 0,
+                "should NOT get records in report");
     }
     
     @Test
@@ -167,7 +179,33 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
         
         // run
-        startValidateOperation(optionObj);
+        JSONObject result = startValidateOperation(optionObj);
+        
+        Assert.assertTrue(result.getJSONArray("validation-reports").length() > 0,
+                "should get records in report");
+    }
+    
+    @Test
+    public void testEnumerableConstraint_ShouldReturnEmpty() {
+     // options
+        optionsString = "{\"columnNames\": [\"Year\"]}";
+        JSONObject optionObj = new JSONObject(optionsString);
+        
+        // add Constraint
+        String contraintKey = Field.CONSTRAINT_KEY_ENUM;
+        String contraintValueStr = "[";
+        for (int i = 1950;i < 2018;i++) {
+            contraintValueStr += "\"" + i + "\",";
+        }
+        contraintValueStr += "]";
+        
+        List<Object> contraintValue = ParsingUtilities.evaluateJsonStringToArray(contraintValueStr).toList();
+        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        
+        // run
+        JSONObject result = startValidateOperation(optionObj);
+        
+        Assert.assertEquals(result.getJSONArray("validation-reports").length(), 0);
     }
     
     
@@ -188,11 +226,13 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
     }
      
     
-    private void startValidateOperation(JSONObject options) {
+    private JSONObject startValidateOperation(JSONObject options) {
         // SUT
         JSONObject report = new ValidateOperation(project, options).startProcess();
         
         System.out.println("validation report:" + report.toString(2));
+        
+        return report;
     }
     
      private String getJSONContent(String fileName) throws IOException {
