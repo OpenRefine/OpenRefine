@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.util;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.HashMap;
@@ -47,6 +49,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
@@ -109,6 +112,23 @@ public class ParsingUtilitiesTests extends RefineTest {
         OffsetDateTime zdt = ParsingUtilities.stringToDate(historyEntryDate);
         String zdtString = ParsingUtilities.dateToString(zdt);
         Assert.assertEquals(zdtString, historyEntryDate);
+        
+    }
+    
+    
+    @Test
+    public void parseProjectModifiedBeforeJDK8() {
+        String modified = "2014-01-15T21:46:25Z";
+        LocalDateTime ldt;
+        
+        if (modified.endsWith("Z")) {
+            ldt = ParsingUtilities.stringToDate(modified).toLocalDateTime();
+        } else 
+            ldt = ParsingUtilities.stringToLocalDate(modified);
+        
+        ZonedDateTime zoned = ZonedDateTime.parse(modified, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+        System.out.println(zoned.toLocalDateTime());
+//        Assert.assertEquals(ldt.toString(), "2014-01-15T16:46:25");
         
     }
     

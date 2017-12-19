@@ -54,6 +54,8 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gdata.wireformats.ParserUtils;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
@@ -215,7 +217,7 @@ public class ProjectMetadata  extends AbstractMetadata {
 
      public ProjectMetadata loadFromJSON(JSONObject obj) {
         // TODO: Is this correct?  It's using modified date for creation date
-        ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now()));
+        ProjectMetadata pm = buildProjectMetadata(obj);
 
         pm._modified = JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now());
         pm._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
@@ -287,6 +289,14 @@ public class ProjectMetadata  extends AbstractMetadata {
         pm.written = LocalDateTime.now(); // Mark it as not needing writing until modified
         
         return pm;
+    }
+
+    private ProjectMetadata buildProjectMetadata(JSONObject obj) {
+        String modified = JSONUtilities.getString(obj, "modified", LocalDateTime.now().toString());
+        if (modified.endsWith("Z")) {
+            return new ProjectMetadata(ParsingUtilities.stringToDate(modified).toLocalDateTime());
+        } else 
+            return new ProjectMetadata(ParsingUtilities.stringToLocalDate(modified));
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
