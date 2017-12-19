@@ -107,4 +107,25 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(zdtString, historyEntryDate);
         
     }
+    
+    @Test
+    public void parseProjectModifiedBeforeJDK8() {
+        String modified = "2014-01-15T21:46:25Z";
+        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(), 
+                modified);
+    }
+    
+    @Test
+    public void strSubstitutorTest() {
+        Map<String, String> data = new HashMap<String, String>(6);
+        
+        data.put("value", "1234");
+        data.put("field_format", "String");
+        
+        StrSubstitutor sub = new StrSubstitutor(data);
+        String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
+        String result = sub.replace(message);
+        System.out.println("XXXXXXXX:" + result);
+        Assert.assertTrue(result.contains("1234"));
+    }
 }
