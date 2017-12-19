@@ -98,8 +98,7 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
     }
     
     /**
-     *  Contract for a complete working post
-     * @throws IOException 
+     *  type or format error
      */
     @Test
     public void testTypeorFormatError()  {

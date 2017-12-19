@@ -599,6 +599,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
+      /**
         {
             label: $.i18n._('core-views')["table-schema-validate"],
             id: "core/facets",
@@ -607,6 +608,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
                    doTextTransformPrompt();
             }
         },
+        */
         {
             label: $.i18n._('core-views')["transform"],
             id: "core/facets",
