@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.everit.json.schema.ValidationException;
@@ -33,6 +34,7 @@ import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.validator.ValidateOperation;
 import com.google.refine.tests.importers.TsvCsvImporterTests;
+import com.google.refine.util.ParsingUtilities;
 
 import io.frictionlessdata.tableschema.Field;
 import io.frictionlessdata.tableschema.exceptions.ForeignKeyException;
@@ -152,6 +154,21 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         startValidateOperation(optionObj);
     }
     
+    @Test
+    public void testEnumerableConstraint() {
+     // options
+        optionsString = "{\"columnNames\": [\"Year\"]}";
+        JSONObject optionObj = new JSONObject(optionsString);
+        
+        // add Constraint
+        String contraintKey = Field.CONSTRAINT_KEY_ENUM;
+        String contraintValueStr = "[\"2010\",\"1990\",\"2015\"]";
+        List<Object> contraintValue = ParsingUtilities.evaluateJsonStringToArray(contraintValueStr).toList();
+        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        
+        // run
+        startValidateOperation(optionObj);
+    }
     
     
     private void addConstraint(Field field, String contraintKey, Object contraintValue) {
