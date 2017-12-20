@@ -141,7 +141,7 @@ public class UrlFetchingTests extends RefineTest {
         Process process = op.createProcess(project, options);
 	process.startPerforming(pm);
 	Assert.assertTrue(process.isRunning());
-        for(int i = 0;i < 12;i++) {
+        for (int i = 0; i < 12; i++) {
             try {
                 // We have 100 rows and 500 ms per row but only two distinct
                 // values so we should not wait more than ~2000 ms to get the
@@ -149,13 +149,14 @@ public class UrlFetchingTests extends RefineTest {
                 // net latency we sleep for longer (but still less than
                 // 50,000ms).
                 Thread.sleep(5000);
-                if (process.isDone())
+                if (process.isDone()) 
                     break;
             } catch (InterruptedException e) {
                 Assert.fail("Test interrupted");
             }
         }
-	Assert.assertFalse(process.isRunning());
+        Assert.assertTrue(process.isDone());
+//	Assert.assertFalse(process.isRunning());
 
 	// Inspect rows
 	String ref_val = (String)project.rows.get(0).getCellValue(1);
