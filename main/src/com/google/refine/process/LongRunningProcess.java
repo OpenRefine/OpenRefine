@@ -102,11 +102,5 @@ abstract public class LongRunningProcess extends Process {
         }
     }
     
-    public void join(int millesec) throws InterruptedException {
-        if (_thread == null)
-            return;
-        
-        _thread.join(millesec);
-    }
     abstract protected Runnable getRunnable();
 }
