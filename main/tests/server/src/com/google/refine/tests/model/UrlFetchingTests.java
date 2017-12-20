@@ -37,6 +37,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -51,8 +52,6 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.RowVisitor;
-import com.google.refine.grel.Function;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
@@ -60,7 +59,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.operations.OnError;
@@ -118,49 +116,66 @@ public class UrlFetchingTests extends RefineTest {
         engine = null;
         bindings = null;
     }
+    
+    private boolean isHostReachable(String host, int timeout){
+        boolean state = false;
 
+        try {
+            state = InetAddress.getByName(host).isReachable(timeout);
+        } catch (IOException e) {
+//            e.printStackTrace();
+        }
+
+        return state;
+    }
+    
     /**
      * Test for caching
      */
 
     @Test
     public void testUrlCaching() throws Exception {
+        if (!isHostReachable("www.random.org", 5000))
+            return;
+        
         for (int i = 0; i < 100; i++) {
             Row row = new Row(2);
             row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
             project.rows.add(row);
         }
-	EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-		"fruits",
-		"\"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new&city=\"+value",
-		OnError.SetToBlank,
-		"rand",
-		1,
-		500,
-		true);
-	ProcessManager pm = project.getProcessManager();
-	LongRunningProcess process = (LongRunningProcess) op.createProcess(project, options);
-	process.startPerforming(pm);
-	Assert.assertTrue(process.isRunning());
+        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                "\"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new&city=\"+value",
+                OnError.StoreError,
+                "rand",
+                1,
+                500,
+                true);
+        ProcessManager pm = project.getProcessManager();
+        Process process = op.createProcess(project, options);
+        process.startPerforming(pm);
+        Assert.assertTrue(process.isRunning());
         try {
             // We have 100 rows and 500 ms per row but only two distinct
             // values so we should not wait more than ~2000 ms to get the
             // results. Just to make sure the test passes with plenty of
-            // net latency we wait for longer (but still less than
+            // net latency we sleep for longer (but still less than
             // 50,000ms).
-            process.join(5000 * 1200);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-	Assert.assertFalse(process.isRunning());
 
-	// Inspect rows
-	String ref_val = (String)project.rows.get(0).getCellValue(1);
-	Assert.assertTrue(ref_val != "apple"); // just to make sure I picked the right column
-	for (int i = 1; i < 4; i++) {
-	    // all random values should be equal due to caching
-	    Assert.assertEquals(project.rows.get(i).getCellValue(1), ref_val);
-	}
+
+        // Inspect rows
+        String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
+        Assert.assertTrue(ref_val != "apple"); // just to make sure I picked the right column
+        for (int i = 1; i < 4; i++) {
+            System.out.println("value:" + project.rows.get(i).getCellValue(1));
+            // all random values should be equal due to caching
+            Assert.assertEquals(project.rows.get(i).getCellValue(1), ref_val);
+        }
+               Assert.assertFalse(process.isRunning());
     }
 
     /**
@@ -178,30 +193,30 @@ public class UrlFetchingTests extends RefineTest {
         Row row2 = new Row(2);
         row2.setCell(0, new Cell("http://anursiebcuiesldcresturce.detur/anusclbc", null)); // well-formed but invalid
         project.rows.add(row2);
-	EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-		"fruits",
-		"value",
-		OnError.StoreError,
-		"junk",
-		1,
-		50,
-		true);
-	ProcessManager pm = project.getProcessManager();
+        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                "fruits",
+                "value",
+                OnError.StoreError,
+                "junk",
+                1,
+                50,
+                true);
+        ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
-	process.startPerforming(pm);
-	Assert.assertTrue(process.isRunning());
-	try {
-	    Thread.sleep(5000);
+        process.startPerforming(pm);
+        Assert.assertTrue(process.isRunning());
+        try {
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
-	    Assert.fail("Test interrupted");
+            Assert.fail("Test interrupted");
         }
-	Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning());
 
-	int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
-	// Inspect rows
-	Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
-	Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
-	Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
+        int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
+        // Inspect rows
+        Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
+        Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
+        Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
     }
 
 }
