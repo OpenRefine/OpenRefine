@@ -141,7 +141,7 @@ public class UrlFetchingTests extends RefineTest {
         Process process = op.createProcess(project, options);
 	process.startPerforming(pm);
 	Assert.assertTrue(process.isRunning());
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 1200; i++) {
             try {
                 // We have 100 rows and 500 ms per row but only two distinct
                 // values so we should not wait more than ~2000 ms to get the
