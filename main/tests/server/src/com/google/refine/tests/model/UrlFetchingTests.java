@@ -60,6 +60,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.operations.OnError;
@@ -138,25 +139,20 @@ public class UrlFetchingTests extends RefineTest {
 		500,
 		true);
 	ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
+	LongRunningProcess process = (LongRunningProcess) op.createProcess(project, options);
 	process.startPerforming(pm);
 	Assert.assertTrue(process.isRunning());
-        for (int i = 0; i < 1200; i++) {
-            try {
-                // We have 100 rows and 500 ms per row but only two distinct
-                // values so we should not wait more than ~2000 ms to get the
-                // results. Just to make sure the test passes with plenty of
-                // net latency we sleep for longer (but still less than
-                // 50,000ms).
-                Thread.sleep(5000);
-                if (process.isDone()) 
-                    break;
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
+        try {
+            // We have 100 rows and 500 ms per row but only two distinct
+            // values so we should not wait more than ~2000 ms to get the
+            // results. Just to make sure the test passes with plenty of
+            // net latency we wait for longer (but still less than
+            // 50,000ms).
+            process.join(5000 * 1200);
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
         }
-        Assert.assertTrue(process.isDone());
-//	Assert.assertFalse(process.isRunning());
+	Assert.assertFalse(process.isRunning());
 
 	// Inspect rows
 	String ref_val = (String)project.rows.get(0).getCellValue(1);
