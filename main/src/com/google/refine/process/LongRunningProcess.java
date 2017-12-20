@@ -102,5 +102,9 @@ abstract public class LongRunningProcess extends Process {
         }
     }
     
+    public Thread getThread() {
+        return this._thread;
+    }
+    
     abstract protected Runnable getRunnable();
 }

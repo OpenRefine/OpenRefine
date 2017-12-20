@@ -61,6 +61,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.operations.OnError;
@@ -140,7 +141,7 @@ public class UrlFetchingTests extends RefineTest {
 		500,
 		true);
 	ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
+	LongRunningProcess process = (LongRunningProcess) op.createProcess(project, options);
 	process.startPerforming(pm);
 	Assert.assertTrue(process.isRunning());
 	try {
@@ -153,6 +154,7 @@ public class UrlFetchingTests extends RefineTest {
         } catch (InterruptedException e) {
 	    Assert.fail("Test interrupted");
         }
+	System.out.println("Thread status:" + process.getThread().getState());
 	Assert.assertFalse(process.isRunning());
 
 	// Inspect rows
