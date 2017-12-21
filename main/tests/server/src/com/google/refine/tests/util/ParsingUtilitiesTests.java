@@ -93,9 +93,6 @@ public class ParsingUtilitiesTests extends RefineTest {
     }
     @Test
     public void zonedDateTimeTest() {
-//        String d = "2017-07-18T20:26:28.582+03:00[Asia/Istanbul]";
-//        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME ;
-//        OffsetDateTime.parse(d, formatter);
         String  d = "2017-12-01T14:53:36Z";
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         OffsetDateTime.parse(d, formatter);
