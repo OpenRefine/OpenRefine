@@ -39,8 +39,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
@@ -193,6 +195,11 @@ public class ParsingUtilities {
     }
     
     static public LocalDateTime stringToLocalDate(String s) {
-      return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        if (s.endsWith("Z")) {          // UTC time
+            Instant instant = Instant.parse(s);
+            return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        } else {
+            return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        }
     }
 }
