@@ -128,7 +128,6 @@ public class ParsingUtilitiesTests extends RefineTest {
         StrSubstitutor sub = new StrSubstitutor(data);
         String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
         String result = sub.replace(message);
-        System.out.println("XXXXXXXX:" + result);
         Assert.assertTrue(result.contains("1234"));
     }
 }
