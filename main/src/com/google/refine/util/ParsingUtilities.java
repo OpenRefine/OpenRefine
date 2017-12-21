@@ -198,7 +198,8 @@ public class ParsingUtilities {
         if (s.endsWith("Z")) {          // UTC time
             Instant instant = Instant.parse(s);
             return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        } else 
+        } else {
             return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        }
     }
 }
