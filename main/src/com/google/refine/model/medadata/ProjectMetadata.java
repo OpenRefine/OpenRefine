@@ -54,8 +54,6 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gdata.wireformats.ParserUtils;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
