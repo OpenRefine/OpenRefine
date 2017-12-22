@@ -68,6 +68,19 @@ for /f "tokens=1,* delims==" %%a in (refine.ini) do (
     set %%a=%%b
 )
 
+rem --- Log for troubleshooting ------------------------------------------
+for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
+for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
+(
+echo ----------------------- 
+echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
+echo JAVA_HOME = %JAVA_HOME%
+echo java -version = %JVERSION%
+echo freeRam = %freeRam%M
+echo REFINE_MEMORY = %REFINE_MEMORY%
+echo ----------------------- 
+) > support.log
+
 rem --- Check JAVA_HOME ---------------------------------------------
 
 if not "%JAVA_HOME%" == "" goto gotJavaHome
