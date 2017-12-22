@@ -14,11 +14,11 @@ import com.google.refine.Jsonizable;
  * Interface to import/export metadata 
  */
 public interface IMetadata extends Jsonizable {
-    public IMetadata loadFromJSON(JSONObject obj);
+    public void loadFromJSON(JSONObject obj);
     
-    public IMetadata loadFromFile(File metadataFile);
+    public void loadFromFile(File metadataFile);
     
-    void loadFromStream(InputStream inputStream);
+    public void loadFromStream(InputStream inputStream);
     
     public void writeToFile(File metadataFile);
     

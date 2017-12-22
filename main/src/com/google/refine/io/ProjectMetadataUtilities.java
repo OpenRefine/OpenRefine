@@ -35,7 +35,6 @@ package com.google.refine.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -46,8 +45,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +55,6 @@ import com.google.refine.model.medadata.ProjectMetadata;
 
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
-    
-    final static IMetadata projectMetaData = new ProjectMetadata();
     
     public static void save(IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
         File tempFile = new File(projectDir, ProjectMetadata.TEMP_FILE_NAME);
@@ -154,14 +149,8 @@ public class ProjectMetadataUtilities {
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        FileReader reader = new FileReader(metadataFile);
-        try {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject obj = (JSONObject) tokener.nextValue();
-
-            return (ProjectMetadata) projectMetaData.loadFromJSON(obj);
-        } finally {
-            reader.close();
-        }
+        ProjectMetadata projectMetaData =  new ProjectMetadata();
+        projectMetaData.loadFromFile(metadataFile);
+        return projectMetaData;
     }
 }

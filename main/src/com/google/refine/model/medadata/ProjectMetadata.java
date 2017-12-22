@@ -34,8 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model.medadata;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,10 +53,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,45 +205,27 @@ public class ProjectMetadata  extends AbstractMetadata {
         write(jsonWriter, false);
     }
 
-    /**
-     * @param jsonWriter
-     *            writer to save metadatea to
-     * @param onlyIfDirty
-     *            true to not write unchanged metadata
-     * @throws JSONException
-     */
-    @Override
-    public void write(JSONWriter jsonWriter, boolean onlyIfDirty) throws JSONException  {
-        if (!onlyIfDirty || isDirty()) {
-            Properties options = new Properties();
-            options.setProperty("mode", "save");
+     public void loadFromJSON(JSONObject obj) {
+        extractModifiedLocalTime(obj);
 
-            write(jsonWriter, options);
-        }
-    }
+        this._modified = JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now());
+        this._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
+        this._password = JSONUtilities.getString(obj, "password", "");
 
-     public ProjectMetadata loadFromJSON(JSONObject obj) {
-        // TODO: Is this correct?  It's using modified date for creation date
-        ProjectMetadata pm = buildProjectMetadata(obj);
+        this._encoding = JSONUtilities.getString(obj, "encoding", "");
+        this._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
 
-        pm._modified = JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now());
-        pm._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
-        pm._password = JSONUtilities.getString(obj, "password", "");
+        this._creator = JSONUtilities.getString(obj, "creator", "");
+        this._contributors = JSONUtilities.getString(obj, "contributors", "");
+        this._subject = JSONUtilities.getString(obj, "subject", "");
+        this._description = JSONUtilities.getString(obj, "description", "");
+        this._rowCount = JSONUtilities.getInt(obj, "rowCount", 0);
 
-        pm._encoding = JSONUtilities.getString(obj, "encoding", "");
-        pm._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
-
-        pm._creator = JSONUtilities.getString(obj, "creator", "");
-        pm._contributors = JSONUtilities.getString(obj, "contributors", "");
-        pm._subject = JSONUtilities.getString(obj, "subject", "");
-        pm._description = JSONUtilities.getString(obj, "description", "");
-        pm._rowCount = JSONUtilities.getInt(obj, "rowCount", 0);
-
-        pm._tags = JSONUtilities.getStringArray(obj, "tags");
+        this._tags = JSONUtilities.getStringArray(obj, "tags");
 
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
-                pm._preferenceStore.load(obj.getJSONObject("preferences"));
+                this._preferenceStore.load(obj.getJSONObject("preferences"));
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
@@ -242,7 +233,7 @@ public class ProjectMetadata  extends AbstractMetadata {
 
         if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
             try {
-                ((TopList) pm._preferenceStore.get("scripting.expressions")).load(obj.getJSONArray("expressions"));
+                ((TopList) this._preferenceStore.get("scripting.expressions")).load(obj.getJSONArray("expressions"));
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
@@ -258,7 +249,7 @@ public class ProjectMetadata  extends AbstractMetadata {
                     String key = keys.next();
                     Object value = obj2.get(key);
                     if (value != null && value instanceof Serializable) {
-                        pm._customMetadata.put(key, (Serializable) value);
+                        this._customMetadata.put(key, (Serializable) value);
                     }
                 }
             } catch (JSONException e) {
@@ -269,7 +260,7 @@ public class ProjectMetadata  extends AbstractMetadata {
         if (obj.has("importOptionMetadata") && !obj.isNull("importOptionMetadata")) {
             try {
                 JSONArray jsonArray = obj.getJSONArray("importOptionMetadata");
-                pm._importOptionMetadata = jsonArray;
+                this._importOptionMetadata = jsonArray;
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
@@ -278,23 +269,23 @@ public class ProjectMetadata  extends AbstractMetadata {
         if (obj.has(PreferenceStore.USER_METADATA_KEY) && !obj.isNull(PreferenceStore.USER_METADATA_KEY)) {
             try {
                 JSONArray jsonArray = obj.getJSONArray(PreferenceStore.USER_METADATA_KEY);
-                pm._userMetadata = jsonArray;
+                this._userMetadata = jsonArray;
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
         } 
         
-        pm.written = LocalDateTime.now(); // Mark it as not needing writing until modified
+        this.written = LocalDateTime.now(); // Mark it as not needing writing until modified
         
-        return pm;
     }
 
-    private ProjectMetadata buildProjectMetadata(JSONObject obj) {
+    private void extractModifiedLocalTime(JSONObject obj) {
         String modified = JSONUtilities.getString(obj, "modified", LocalDateTime.now().toString());
         if (modified.endsWith("Z")) {
-            return new ProjectMetadata(ParsingUtilities.stringToDate(modified).toLocalDateTime());
-        } else 
-            return new ProjectMetadata(ParsingUtilities.stringToLocalDate(modified));
+            this._modified = ParsingUtilities.stringToDate(modified).toLocalDateTime();
+        } else {
+            this._modified = ParsingUtilities.stringToLocalDate(modified);
+        }
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
@@ -487,27 +478,54 @@ public class ProjectMetadata  extends AbstractMetadata {
     }
     
     @Override
-    public ProjectMetadata loadFromFile(File metadataFile) {
-        // TODO Auto-generated method stub
-        return null;
+    public void loadFromFile(File metadataFile) {
+        InputStream targetStream = null;
+        try {
+            targetStream = FileUtils.openInputStream(metadataFile);
+        } catch (IOException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
+        loadFromStream(targetStream);
     }
 
     @Override
     public void writeToFile(File metadataFile) {
-        // TODO Auto-generated method stub
-        
+        Writer writer = null;
+        try {
+            writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
+
+            JSONWriter jsonWriter = new JSONWriter(writer);
+            write(jsonWriter, false);
+        } catch (FileNotFoundException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                logger.error(ExceptionUtils.getStackTrace(e));
+            }
+        }
     }
 
     @Override
     public void loadFromStream(InputStream inputStream) {
-        // TODO Auto-generated method stub
-        
+        try (InputStreamReader reader = new InputStreamReader(inputStream)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject obj = (JSONObject) tokener.nextValue();
+
+            this.loadFromJSON(obj);
+        } catch (IOException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
     }
 
     @Override
     public JSONObject getJSON() {
-        // TODO Auto-generated method stub
-        return null;
+        StringWriter writer = new StringWriter();
+        JSONWriter jsonWriter = new JSONWriter(writer);
+        writeWithoutOption(jsonWriter);
+        
+        return new JSONObject(jsonWriter.toString());
     }
 
     @Override

@@ -28,23 +28,18 @@ public abstract class AbstractMetadata implements IMetadata {
         this.formatName = formatName;
     }
 
-    @Override
-    public abstract void write(JSONWriter writer, Properties options) throws JSONException;
+//    @Override
+//    public abstract void write(JSONWriter writer, Properties options) throws JSONException;
 
     @Override
-    public abstract IMetadata loadFromJSON(JSONObject obj);
+    public abstract void loadFromJSON(JSONObject obj);
 
     @Override
-    public abstract IMetadata loadFromFile(File metadataFile);
+    public abstract void loadFromFile(File metadataFile);
 
     @Override
     public abstract void writeToFile(File metadataFile);
 
-    @Override
-    public abstract void write(JSONWriter jsonWriter, boolean onlyIfDirty);
-
-    
-    
     @Override
     public boolean isDirty() {
         return written == null || _modified.isAfter(written);
@@ -59,7 +54,24 @@ public abstract class AbstractMetadata implements IMetadata {
     public void updateModified() {
         _modified = LocalDateTime.now();
     }
+    
+    /**
+     * @param jsonWriter
+     *            writer to save metadatea to
+     * @param onlyIfDirty
+     *            true to not write unchanged metadata
+     * @throws JSONException
+     */
+    @Override
+    public void write(JSONWriter jsonWriter, boolean onlyIfDirty) throws JSONException  {
+        if (!onlyIfDirty || isDirty()) {
+            Properties options = new Properties();
+            options.setProperty("mode", "save");
 
+            write(jsonWriter, options);
+        }
+    }
+    
     static boolean propertyExists(Object bean, String property) {
         return PropertyUtils.isReadable(bean, property) && 
                PropertyUtils.isWriteable(bean, property); 

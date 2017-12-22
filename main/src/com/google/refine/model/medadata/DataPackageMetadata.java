@@ -3,6 +3,7 @@ package com.google.refine.model.medadata;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -36,31 +37,28 @@ public class DataPackageMetadata extends AbstractMetadata {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public IMetadata loadFromJSON(JSONObject obj) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IMetadata loadFromFile(File metadataFile) {
+    public void loadFromJSON(JSONObject obj) {
         try {
-            String jsonString = FileUtils.readFileToString(metadataFile);
-            _pkg = new Package(jsonString);
+            _pkg = new Package(obj);
         } catch (ValidationException | DataPackageException | IOException e) {
-            logger.error("Load from file failed" + metadataFile.getAbsolutePath(),
+            logger.error("Load from JSONObject failed" + obj.toString(4),
                     ExceptionUtils.getStackTrace(e));
         }
         
-        logger.info("Data Package metadata file loaded");
-        
-        return this;
+        logger.info("Data Package metadata loaded");
+    }
+
+    @Override
+    public void loadFromFile(File metadataFile) {
+            String jsonString = null;
+            try {
+                jsonString = FileUtils.readFileToString(metadataFile);
+            } catch (IOException e) {
+                logger.error("Load data package failed when reading from file: " + metadataFile.getAbsolutePath(),
+                        ExceptionUtils.getStackTrace(e));
+            }
+            
+            loadFromJSON(new JSONObject(jsonString));
     }
     
     /**
@@ -78,11 +76,13 @@ public class DataPackageMetadata extends AbstractMetadata {
                     ExceptionUtils.getStackTrace(e));
         }
     }
-
+    
     @Override
-    public void write(JSONWriter jsonWriter, boolean onlyIfDirty) {
-        // TODO Auto-generated method stub
-
+    public void write(JSONWriter jsonWriter, Properties options)
+            throws JSONException {
+        StringWriter sw = new StringWriter();
+        _pkg.getJson().write(sw);
+        jsonWriter = new JSONWriter(sw);
     }
     
     @Override
