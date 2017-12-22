@@ -57,7 +57,6 @@ public class PackageExtension {
     
     /**
      * To build a Package object from a template file contains empty metadata
-     * XXX metadata: need to define the template file
      *  
      * @param templateFile
      */
@@ -65,7 +64,7 @@ public class PackageExtension {
         try {
             ClassLoader classLoader = PackageExtension.class.getClassLoader();
             File file = new File(classLoader.getResource(DATAPAAKCAGE_TEMPLATE_FILE).getFile());
-            return new Package(FileUtils.readFileToString(file), true);
+            return new Package(FileUtils.readFileToString(file), false);
         } catch (ValidationException e) {
             logger.error("validation failed", ExceptionUtils.getStackTrace(e));
         } catch (DataPackageException e) {
