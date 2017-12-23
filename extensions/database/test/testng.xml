@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="DatabaseExtensionUnitTestSuite">
+	<parameter name = "dbName" value="postgres"/> 
+	<parameter name = "dbUser" value="postgres"/>
+	<test name="DatabaseExtensionUnitTest">
+		<!-- <classes>
+			<class name="com.google.refine.extension.database.DatabaseImportControllerTest" />
+			<class name="com.google.refine.extension.database.DatabaseServiceTest" />
+			<class name="com.google.refine.extension.database.DBQueryResultImportReaderTest" />
+			<class name="com.google.refine.extension.database.DBQueryResultPreviewReaderTest" />
+			
+			<class name="com.google.refine.extension.database.cmd.ConnectCommandTest" />
+			<class name="com.google.refine.extension.database.cmd.QueryCommandTest" />
+			<class name="com.google.refine.extension.database.cmd.SavedConnectionCommandTest" />
+			<class name="com.google.refine.extension.database.cmd.TestConnectCommandTest" />
+			
+			<class name="com.google.refine.extension.database.mariadb.MariaDBConnectionManagerTest" />
+			<class name="com.google.refine.extension.database.mariadb.MariaDBDatabaseServiceTest" />
+			<class name="com.google.refine.extension.database.mysql.MySQLConnectionManagerTest" />
+			<class name="com.google.refine.extension.database.mysql.MySQLDatabaseServiceTest" />
+			<class name="com.google.refine.extension.database.pgsql.PgSQLConnectionManagerTest" />
+			<class name="com.google.refine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
+		</classes> -->
+	</test>
+</suite>
