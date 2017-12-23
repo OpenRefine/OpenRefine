@@ -56,7 +56,7 @@ public class ConnectCommand extends DatabaseCommand {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        logger.info("ConnectCommand::Post");
+        logger.debug("ConnectCommand::Post");
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
  
         logger.info("ConnectCommand::Post::{}", databaseConfiguration);

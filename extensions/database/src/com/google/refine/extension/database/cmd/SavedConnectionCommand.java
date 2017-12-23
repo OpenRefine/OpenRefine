@@ -262,7 +262,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
         
       
         if(jdbcConfig.getDatabasePassword() != null) {
-            logger.info("SavedConnectionCommand::Post::password::{}", jdbcConfig.getDatabasePassword());
+            logger.debug("SavedConnectionCommand::Post::password::{}", jdbcConfig.getDatabasePassword());
            jdbcConfig.setDatabasePassword(DatabaseUtils.encrypt(jdbcConfig.getDatabasePassword()));
         }
         
@@ -313,7 +313,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
         }
        
        
-        logger.info("SavedConnectionCommand::PUT Connection: {}", jdbcConfig.getConnectionName());
+        logger.debug("SavedConnectionCommand::PUT Connection: {}", jdbcConfig.getConnectionName());
         
         if(jdbcConfig.getDatabasePassword() != null) {
             jdbcConfig.setDatabasePassword(DatabaseUtils.encrypt(jdbcConfig.getDatabasePassword()));

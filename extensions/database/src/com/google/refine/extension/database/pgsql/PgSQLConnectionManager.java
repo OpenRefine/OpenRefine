@@ -143,7 +143,7 @@ public class PgSQLConnectionManager {
             connection = DriverManager.getConnection(dbURL, databaseConfiguration.getDatabaseUser(),
                     databaseConfiguration.getDatabasePassword());
 
-            logger.info("*** Acquired New  connection for ::{} **** ", dbURL);
+            logger.debug("*** Acquired New  connection for ::{} **** ", dbURL);
 
             return connection;
 

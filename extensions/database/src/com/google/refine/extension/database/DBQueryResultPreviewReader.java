@@ -74,7 +74,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
-        logger.info("DBQueryResultPreviewReader::batchSize:" + batchSize);
+        logger.debug("DBQueryResultPreviewReader::batchSize:" + batchSize);
 
     }
 
@@ -91,7 +91,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                 row.add(cd.getName());
             }
             usedHeaders = true;
-            logger.info("Exit::getNextRowOfCells return header::row:" +  row);
+           // logger.debug("Exit::getNextRowOfCells return header::row:" +  row);
             return row;
         }
         
@@ -107,7 +107,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             //logger.info("Exit::getNextRowOfCells :rowsOfCellsNotNull::rowsOfCells size:" + rowsOfCells.size() + ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
             return rowsOfCells.get(nextRow++ - batchRowStart);
         } else {
-            logger.info("nextRow:{}, batchRowStart:{}", nextRow, batchRowStart);
+            logger.debug("nextRow:{}, batchRowStart:{}", nextRow, batchRowStart);
 //            
 //            rowsOfCells = getRowsOfCells(batchRowStart);
 //            if(rowsOfCells != null) {
@@ -139,7 +139,7 @@ public class DBQueryResultPreviewReader implements TableDataReader {
         List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
         
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
-        logger.info("batchSize::"  + batchSize +  " startRow::" + startRow + " query::" + query );
+        logger.debug("batchSize::"  + batchSize +  " startRow::" + startRow + " query::" + query );
         
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
 

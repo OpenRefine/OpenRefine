@@ -93,7 +93,7 @@ public abstract class DatabaseService {
      * @return
      */
     public static DatabaseService get(String dbType) {
-        logger.info("get called on DatabaseService with, {}", dbType);
+        logger.debug("get called on DatabaseService with, {}", dbType);
         DatabaseService databaseService = DatabaseService.DBType.getJdbcServiceFromType(dbType.toLowerCase());
         
         logger.debug("DatabaseService found: {}", databaseService.getClass());

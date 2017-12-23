@@ -71,7 +71,7 @@ public class MySQLConnectionManager {
      */
     public static MySQLConnectionManager getInstance() throws DatabaseServiceException {
         if (instance == null) {
-            logger.info("::Creating new MySQLConnectionManager ::");
+            logger.debug("::Creating new MySQLConnectionManager ::");
             instance = new MySQLConnectionManager();
 
         }
@@ -141,7 +141,7 @@ public class MySQLConnectionManager {
             connection = DriverManager.getConnection(dbURL, databaseConfiguration.getDatabaseUser(),
                     databaseConfiguration.getDatabasePassword());
 
-            logger.info("*** Acquired New  connection for ::{} **** ", dbURL);
+            logger.debug("*** Acquired New  connection for ::{} **** ", dbURL);
 
             return connection;
 

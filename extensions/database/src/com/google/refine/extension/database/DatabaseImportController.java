@@ -89,7 +89,7 @@ public class DatabaseImportController implements ImportingController {
         
         String subCommand = parameters.getProperty("subCommand");
         
-        logger.info("DatabaseImportController::doPost::subCommand::{}", subCommand);
+        logger.debug("DatabaseImportController::doPost::subCommand::{}", subCommand);
         
         if ("initialize-parser-ui".equals(subCommand)) {
             doInitializeParserUI(request, response, parameters);
@@ -129,7 +129,7 @@ public class DatabaseImportController implements ImportingController {
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
 
-        logger.info("doInitializeParserUI:::{}", result.toString());
+        logger.debug("doInitializeParserUI:::{}", result.toString());
         HttpUtilities.respond(response, result.toString());
 
     }
@@ -381,7 +381,7 @@ public class DatabaseImportController implements ImportingController {
         
         long endTime = System.currentTimeMillis() ;
         
-        logger.info("Execution Time: {}", endTime - startTime);
+        logger.debug("Execution Time: {}", endTime - startTime);
         
         setProgress(job, querySource, 100);
      
@@ -421,7 +421,7 @@ public class DatabaseImportController implements ImportingController {
                 || jdbcConfig.getDatabasePassword() == null || jdbcConfig.getDatabaseType() == null
                 || jdbcConfig.getDatabaseUser() == null || query == null) {
             
-            logger.info("Missing Database Configuration::{}", jdbcConfig);
+            logger.debug("Missing Database Configuration::{}", jdbcConfig);
             return null;
         }
         

@@ -55,7 +55,7 @@ public class ExecuteQueryCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        logger.info("QueryCommand::Post");
+        logger.debug("QueryCommand::Post");
         
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
         String query = request.getParameter("queryString");
@@ -76,7 +76,7 @@ public class ExecuteQueryCommand extends DatabaseCommand {
                
                 response.setStatus(HttpStatus.SC_OK);
                 String jsonStr = mapperObj.writeValueAsString(databaseInfo);
-                logger.info("QueryCommand::Post::Result::{} " ,jsonStr);
+                logger.debug("QueryCommand::Post::Result::{} " ,jsonStr);
                 
                 writer.object();
                 writer.key("code"); writer.value("ok");

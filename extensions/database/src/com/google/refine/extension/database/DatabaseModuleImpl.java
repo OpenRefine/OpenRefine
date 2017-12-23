@@ -60,13 +60,13 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizabl
         // TODO Auto-generated method stub
         super.init(config);
         
-        logger.info("init called in DatabaseModuleImpl: {}", config);
+        
         readModuleProperty(); 
         
          // Set the singleton.
         instance = this;
        
- 
+        logger.info("*** Database Extension Module init complete ***");
     }
     
     public static String getImportCreateBatchSize() {
