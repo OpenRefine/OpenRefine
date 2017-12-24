@@ -198,8 +198,8 @@ public class DBExtensionTestUtils {
  
     }
 
-    private String getNextIMEI(int i) {
-        
+    private String getNextIMEI(int index) {
+          index++;
 //        byte[] array = new byte[16]; // length is bounded by 7
 //        new Random().nextBytes(array);
 //        String generatedString = new String(array, Charset.forName("UTF-8"));
@@ -210,27 +210,32 @@ public class DBExtensionTestUtils {
 
   
 
-    private  int getMNC(int i) {
+    private  int getMNC(int index) {
+        index++;
         // TODO Auto-generated method stub
         return mncMap.get(rand.nextInt(3));
     }
 
-    private  int getMCC(int i) {
+    private  int getMCC(int index) {
+        index++;
        // System.out.println(rand.nextInt(3));
         return mccMap.get(rand.nextInt(3));
     }
 
-    private Date getNextEndDate(int i) {
+    private Date getNextEndDate(int index) {
         // TODO Auto-generated method stub
+        index++;
         return  new Date(System.currentTimeMillis() + 1);
     }
 
-    private Date getNextStartDate(int i) {
+    private Date getNextStartDate(int index) {
         // TODO Auto-generated method stub
+        index++;
         return new Date(System.currentTimeMillis());
     }
 
-    private String getNextUeId(int i) {
+    private String getNextUeId(int index) {
+        index++;
         int n = 300000000 + rand.nextInt(900000000);
         
         return "" + n;

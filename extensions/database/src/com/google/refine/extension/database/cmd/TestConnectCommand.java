@@ -48,7 +48,7 @@ import com.google.refine.extension.database.DatabaseServiceException;
 
 public class TestConnectCommand extends DatabaseCommand {
 
-    static final Logger logger = LoggerFactory.getLogger("TestConnectCommand");
+    private static final Logger logger = LoggerFactory.getLogger("TestConnectCommand");
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)

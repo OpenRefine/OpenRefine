@@ -45,7 +45,7 @@ import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
 
 public abstract class DatabaseService {
 
-    static final Logger logger = LoggerFactory.getLogger("DatabaseService");
+    private static final Logger logger = LoggerFactory.getLogger("DatabaseService");
     
     
     public static class DBType {

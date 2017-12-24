@@ -44,7 +44,6 @@ import com.google.refine.extension.database.DatabaseServiceException;
 
 public abstract class DatabaseCommand extends Command {
 
-    final static protected Logger logger = LoggerFactory.getLogger("jdbcCommand");
     /**
      * 
      * @param request

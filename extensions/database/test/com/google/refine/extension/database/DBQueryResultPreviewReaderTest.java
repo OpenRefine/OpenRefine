@@ -7,11 +7,12 @@ public class DBQueryResultPreviewReaderTest {
     
     @BeforeTest
     public void beforeTest() {
+      //add test logic
     }
 
     @Test
     public void testGetNextRowOfCells() {
-        
+        //add test logic
     }
 
 }

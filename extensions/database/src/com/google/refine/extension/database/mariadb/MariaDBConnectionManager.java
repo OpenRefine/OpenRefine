@@ -43,7 +43,7 @@ import com.google.refine.extension.database.SQLType;
 
 public class MariaDBConnectionManager {
 
-    static final Logger logger = LoggerFactory.getLogger("MariaDBConnectionManager");
+    private static final Logger logger = LoggerFactory.getLogger("MariaDBConnectionManager");
     private Connection connection; 
     private SQLType type;
 

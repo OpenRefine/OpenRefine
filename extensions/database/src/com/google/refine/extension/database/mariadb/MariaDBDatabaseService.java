@@ -54,7 +54,7 @@ import com.google.refine.extension.database.mysql.MySQLConnectionManager;
 
 public class MariaDBDatabaseService extends DatabaseService {
     
-    static final Logger logger = LoggerFactory.getLogger("MariaDBDatabaseService");
+    private static final Logger logger = LoggerFactory.getLogger("MariaDBDatabaseService");
 
     public static final String DB_NAME = "mariadb";
     public static final String DB_DRIVER = "org.mariadb.jdbc.Driver";

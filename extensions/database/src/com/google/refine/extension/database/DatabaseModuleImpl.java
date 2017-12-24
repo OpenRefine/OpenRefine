@@ -47,7 +47,7 @@ import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
 public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizable {
     
-    final static Logger logger = LoggerFactory.getLogger("DatabaseModuleImpl");
+    private static final Logger logger = LoggerFactory.getLogger("DatabaseModuleImpl");
     
     public static DatabaseModuleImpl instance;
     

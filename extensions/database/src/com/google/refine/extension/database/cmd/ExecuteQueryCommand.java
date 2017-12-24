@@ -50,7 +50,7 @@ import com.google.refine.extension.database.model.DatabaseInfo;
 
 public class ExecuteQueryCommand extends DatabaseCommand {
 
-    static final Logger logger = LoggerFactory.getLogger("QueryCommand");
+    private static final Logger logger = LoggerFactory.getLogger("ExecuteQueryCommand");
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)

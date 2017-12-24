@@ -505,9 +505,9 @@ th {
 
 /* IE10 display: -ms-flexbox (and display: flex in IE 11) does not work inside a table; fall back to block and rely on font hack */
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	table .pure-g {
-		display: block;
-	}
+    table .pure-g {
+        display: block;
+    }
 }
 
 /* Opera as of 12 on Windows needs word-spacing.

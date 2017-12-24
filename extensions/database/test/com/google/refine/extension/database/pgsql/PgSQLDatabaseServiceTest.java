@@ -36,25 +36,25 @@ public class PgSQLDatabaseServiceTest {
     @Test
     @Parameters("dbName")
     public void testGetConnection(@Optional("postgres") String dbName) {
-        System.out.println("dbName::" + dbName);
+      //add test logic
     }
 
     @Test
     @Parameters("dbName")
     public void testTestConnection(@Optional("postgres") String dbName) {
-  
+      //add test logic
     }
 
     @Test
     @Parameters("dbName")
     public void testConnect(@Optional("postgres") String dbName) {
-       
+      //add test logic
     }
 
     @Test
     @Parameters("dbName")
     public void testExecuteQuery(@Optional("postgres") String dbName) {
-      
+      //add test logic
     }
 
     @Test
@@ -67,19 +67,19 @@ public class PgSQLDatabaseServiceTest {
     @Test
     @Parameters("dbName")
     public void testGetRows(@Optional("postgres") String dbName) {
-     
+      //add test logic
     }
 
     @Test
     @Parameters("dbName")
     public void testGetInstance(@Optional("postgres") String dbName) {
-       
+      //add test logic
     }
 
     @Test
     @Parameters("dbName")
     public void testGetColumns(@Optional("postgres") String dbName) {
-        
+      //add test logic
     }
 
 }

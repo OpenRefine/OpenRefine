@@ -48,7 +48,7 @@ import com.google.refine.extension.database.DatabaseUtils;
 
 public class SavedConnectionCommand extends DatabaseCommand {
  
-    static final Logger logger = LoggerFactory.getLogger("SavedConnectionCommand");
+    private static final Logger logger = LoggerFactory.getLogger("SavedConnectionCommand");
     
 
     @Override

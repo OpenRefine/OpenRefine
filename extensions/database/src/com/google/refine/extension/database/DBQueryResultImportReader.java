@@ -44,7 +44,7 @@ import com.google.refine.importing.ImportingJob;
 
 public class DBQueryResultImportReader implements TableDataReader {
     
-    static final Logger logger = LoggerFactory.getLogger("DBQueryResultImportReader");
+    private static final Logger logger = LoggerFactory.getLogger("DBQueryResultImportReader");
 
     private final ImportingJob job;
     private final String querySource;    

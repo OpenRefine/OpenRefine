@@ -51,7 +51,7 @@ import com.google.refine.extension.database.mysql.MySQLConnectionManager;
 
 public class PgSQLDatabaseService extends DatabaseService {
     
-    private final static Logger logger = LoggerFactory.getLogger("PgSQLDatabaseService");
+    private static final Logger logger = LoggerFactory.getLogger("PgSQLDatabaseService");
     
     public static final String DB_NAME = "postgresql";
     public static final String DB_DRIVER = "org.postgresql.Driver";

@@ -51,7 +51,7 @@ import com.mysql.jdbc.ResultSetMetaData;
 public class MySQLDatabaseService extends DatabaseService {
   
 
-    private final static Logger logger = LoggerFactory.getLogger("MySQLDatabaseService");
+    private static final Logger logger = LoggerFactory.getLogger("MySQLDatabaseService");
     
     public static final String DB_NAME = "mysql";
     public static final String DB_DRIVER = "com.mysql.jdbc.Driver";

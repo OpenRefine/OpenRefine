@@ -46,7 +46,7 @@ import com.google.refine.io.FileProjectManager;
 
 public class DatabaseUtils {
     
-    final static Logger logger = LoggerFactory.getLogger("DatabaseUtils");
+    private static final Logger logger = LoggerFactory.getLogger("DatabaseUtils");
     
  
     private final static String DATABASE_EXTENSION_DIR = "dbextension";

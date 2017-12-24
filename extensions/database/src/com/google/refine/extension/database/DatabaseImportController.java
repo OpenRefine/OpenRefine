@@ -63,7 +63,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class DatabaseImportController implements ImportingController {
     
-    final static Logger logger = LoggerFactory.getLogger("DatabaseImportController");
+    private static final Logger logger = LoggerFactory.getLogger("DatabaseImportController");
     protected RefineServlet servlet;
     public static int DEFAULT_PREVIEW_LIMIT = 100; 
     public static String OPTIONS_KEY = "options";

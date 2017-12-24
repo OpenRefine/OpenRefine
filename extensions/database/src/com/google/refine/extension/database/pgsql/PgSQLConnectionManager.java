@@ -43,7 +43,7 @@ import com.google.refine.extension.database.SQLType;
 
 public class PgSQLConnectionManager {
 
-    static final Logger logger = LoggerFactory.getLogger("PgSQLConnectionManager");
+    private static final Logger logger = LoggerFactory.getLogger("PgSQLConnectionManager");
     private Connection connection; 
     private SQLType type;
 
