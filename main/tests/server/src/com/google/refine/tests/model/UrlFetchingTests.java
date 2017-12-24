@@ -173,6 +173,7 @@ public class UrlFetchingTests extends RefineTest {
             return;
         Assert.assertTrue(ref_val != "apple"); // just to make sure I picked the right column
         for (int i = 1; i < 4; i++) {
+            System.out.println("value:" + project.rows.get(i).getCellValue(1));
             // all random values should be equal due to caching
             Assert.assertEquals(project.rows.get(i).getCellValue(1), ref_val);
         }

@@ -39,7 +39,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,9 +98,6 @@ public class ParsingUtilitiesTests extends RefineTest {
     }
     @Test
     public void zonedDateTimeTest() {
-//        String d = "2017-07-18T20:26:28.582+03:00[Asia/Istanbul]";
-//        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME ;
-//        OffsetDateTime.parse(d, formatter);
         String  d = "2017-12-01T14:53:36Z";
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         OffsetDateTime.parse(d, formatter);
@@ -134,7 +130,6 @@ public class ParsingUtilitiesTests extends RefineTest {
         StrSubstitutor sub = new StrSubstitutor(data);
         String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
         String result = sub.replace(message);
-        System.out.println("XXXXXXXX:" + result);
         Assert.assertTrue(result.contains("1234"));
     }
 }

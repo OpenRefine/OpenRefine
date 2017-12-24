@@ -1039,16 +1039,7 @@ public class ImportingUtilities {
         final Format record,
         final Project project
     ) {
-        ProjectMetadata pm = new ProjectMetadata();
-        pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
-        pm.setTags(JSONUtilities.getStringArray(optionObj, "projectTags"));
-        String encoding = JSONUtilities.getString(optionObj, "encoding", "UTF-8");
-        if ("".equals(encoding)) {
-            // encoding can be present, but empty, which won't trigger JSONUtilities default processing
-            encoding = "UTF-8";
-        }
-        pm.setEncoding(encoding);
-        
+        ProjectMetadata pm = createProjectMetadata(optionObj);
         record.parser.parse(
             project,
             pm,
@@ -1093,6 +1084,19 @@ public class ImportingUtilities {
             job.updating = false;
         }
     }
-    
 
+    static public ProjectMetadata createProjectMetadata(JSONObject optionObj) {
+        ProjectMetadata pm = new ProjectMetadata();
+        pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
+        pm.setTags(JSONUtilities.getStringArray(optionObj, "projectTags"));
+        pm.appendImportOptionMetadata(optionObj);
+
+        String encoding = JSONUtilities.getString(optionObj, "encoding", "UTF-8");
+        if ("".equals(encoding)) {
+            // encoding can be present, but empty, which won't trigger JSONUtilities default processing
+            encoding = "UTF-8";
+        }
+        pm.setEncoding(encoding);
+        return pm;
+    }
 }
