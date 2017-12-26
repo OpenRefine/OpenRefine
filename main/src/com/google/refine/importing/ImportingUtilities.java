@@ -68,6 +68,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
@@ -371,7 +372,12 @@ public class ImportingUtilities {
             HttpResponse response = httpclient.execute(httpGet);
             
             try {
-                response.getStatusLine();
+                int code = response.getStatusLine().getStatusCode();
+                if (code != HttpStatus.SC_OK) {
+                    throw new Exception("HTTP response code: " + code +
+                            " when accessing URL: "+ url.toString());
+                }
+                
                 HttpEntity entity = response.getEntity();
                 if (entity == null) {
                     throw new Exception("No content found in " + url.toString());
