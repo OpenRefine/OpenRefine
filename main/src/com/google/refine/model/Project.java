@@ -289,7 +289,7 @@ public class Project {
         // update the data package metadata
         DataPackageMetadata dp = getDataPackageMetadata();
         if (dp == null) {
-            dp = (DataPackageMetadata) MetadataFactory.buildMetadata(MetadataFormat.DATAPACKAGE_METADATA);
+            dp = MetadataFactory.buildDataPackageMetadata();
             setMetadata(MetadataFormat.DATAPACKAGE_METADATA, dp);
         }
         

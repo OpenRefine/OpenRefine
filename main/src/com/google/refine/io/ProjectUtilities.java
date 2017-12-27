@@ -164,11 +164,11 @@ public class ProjectUtilities {
             if (file.getName().startsWith("metadata."))
                 continue;
             
-            DataPackageMetadata metadata = (DataPackageMetadata) metadataMap.get(MetadataFormat.DATAPACKAGE_METADATA);
+            DataPackageMetadata metadata = new DataPackageMetadata();
             // load itself
             metadata.loadFromFile(file);
             
-            metadataMap.put(MetadataFormat.DATAPACKAGE_METADATA, new DataPackageMetadata());
+            metadataMap.put(MetadataFormat.DATAPACKAGE_METADATA, metadata);
         }
         
         return metadataMap;

@@ -26,6 +26,11 @@ public class PackageExtension {
     final static Logger logger = LoggerFactory.getLogger(PackageExtension.class);
     
     private static final int JSON_INDENT_FACTOR = 4;
+    
+    public static final String JSON_KEY_LAST_UPDATED = "last_updated";
+    public static final String JSON_KEY_DESCRIPTION = "description";
+    public static final String JSON_KEY_KEYWORKS = "keywords";
+    
     public static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
     
     /**

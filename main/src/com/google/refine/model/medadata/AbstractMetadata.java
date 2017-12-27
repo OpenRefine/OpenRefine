@@ -28,9 +28,6 @@ public abstract class AbstractMetadata implements IMetadata {
         this.formatName = formatName;
     }
 
-//    @Override
-//    public abstract void write(JSONWriter writer, Properties options) throws JSONException;
-
     @Override
     public abstract void loadFromJSON(JSONObject obj);
 
