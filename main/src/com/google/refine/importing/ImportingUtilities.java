@@ -93,6 +93,7 @@ import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.JSONUtilities;
 
 public class ImportingUtilities {
@@ -1090,9 +1091,16 @@ public class ImportingUtilities {
             job.updating = false;
         }
     }
-
+    
+    /**
+     * Create project metadata. pull the "USER_NAME" from the PreferenceStore as the creator
+     * @param optionObj
+     * @return
+     */
     static public ProjectMetadata createProjectMetadata(JSONObject optionObj) {
         ProjectMetadata pm = new ProjectMetadata();
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+        
         pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
         pm.setTags(JSONUtilities.getStringArray(optionObj, "projectTags"));
 
@@ -1102,6 +1110,12 @@ public class ImportingUtilities {
             encoding = "UTF-8";
         }
         pm.setEncoding(encoding);
+        
+        String creator = (String) ps.get(PreferenceStore.USER_NAME);
+        if (creator != null) {
+            pm.setCreator(creator);
+        }
+        
         return pm;
     }
 }
