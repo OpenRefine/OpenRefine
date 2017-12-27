@@ -62,6 +62,21 @@ public class ColumnAdditionChange extends ColumnChange {
         newCells.toArray(_newCells);
     }
 
+    
+    public String getColumnName() {
+        return _columnName;
+    }
+
+    
+    public int getColumnIndex() {
+        return _columnIndex;
+    }
+
+    
+    public int getNewCellIndex() {
+        return _newCellIndex;
+    }
+
     @Override
     public void apply(Project project) {
         synchronized (project) {
@@ -107,7 +122,7 @@ public class ColumnAdditionChange extends ColumnChange {
                 e.printStackTrace();
             }
             
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 
@@ -124,7 +139,7 @@ public class ColumnAdditionChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 

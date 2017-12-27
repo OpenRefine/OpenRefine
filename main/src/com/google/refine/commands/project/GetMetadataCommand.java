@@ -39,13 +39,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.SchemaExtension;
+
+import io.frictionlessdata.datapackage.Resource;
+import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 public class GetMetadataCommand extends Command {
     @Override
@@ -66,11 +72,22 @@ public class GetMetadataCommand extends Command {
             IMetadata metadata = project.getMetadata(metadataFormat);
             if (metadata == null) {
                 metadata = MetadataFactory.buildMetadata(metadataFormat);
+                if (metadataFormat == MetadataFormat.DATAPACKAGE_METADATA) {
+                    DataPackageMetadata dpm = (DataPackageMetadata)metadata;
+                    Resource resource = SchemaExtension.createResource(project.getProjectMetadata().getName(),
+                            project.columnModel);
+                    dpm.getPackage().addResource(resource);
+                }
             }
-            
             respondJSONObject(response, metadata.getJSON());
         } catch (JSONException e) {
             respondException(response, e);
+        } catch (ValidationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (DataPackageException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

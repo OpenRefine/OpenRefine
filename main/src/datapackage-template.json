@@ -10,30 +10,7 @@
     }],
     "name": "",
     "description": "",
-    "resources": [{
-        "schema": {"fields": [
-            {
-                "name": "",
-                "type": ""
-            },
-            {
-                "name": "",
-                "type": "",
-                "foreignkey": ""
-            },
-            {
-                "name": "",
-                "type": ""
-            },
-            {
-                "name": "",
-                "description": "",
-                "type": ""
-            }
-        ]},
-        "path": "",
-        "name": ""
-    }],
+    "resources": [],
     "title": "",
     "version": ""
 }

@@ -54,9 +54,13 @@ public class ColumnRemovalChange extends ColumnChange {
     protected Column            _oldColumn;
     protected CellAtRow[]       _oldCells;
     protected List<ColumnGroup> _oldColumnGroups;
-    
+
     public ColumnRemovalChange(int index) {
         _oldColumnIndex = index;
+    }
+    
+    public int getOldColumnIndex() {
+        return _oldColumnIndex;
     }
     
     @Override
@@ -113,7 +117,7 @@ public class ColumnRemovalChange extends ColumnChange {
                 row.setCell(cellIndex, null);
             }
             
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 
@@ -130,7 +134,7 @@ public class ColumnRemovalChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 

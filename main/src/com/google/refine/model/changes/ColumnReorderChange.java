@@ -57,6 +57,11 @@ public class ColumnReorderChange extends ColumnChange {
         _columnNames = columnNames;
     }
     
+    
+    public List<String> getColumnNames() {
+        return _columnNames;
+    }
+
     @Override
     public void apply(Project project) {
         synchronized (project) {
@@ -78,7 +83,7 @@ public class ColumnReorderChange extends ColumnChange {
             project.columnModel.columns.addAll(_newColumns);
             project.columnModel.columnGroups.clear();
 
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 
@@ -91,7 +96,7 @@ public class ColumnReorderChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
 
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 

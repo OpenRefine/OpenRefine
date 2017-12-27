@@ -58,6 +58,18 @@ public class ColumnMoveChange extends ColumnChange {
         _newColumnIndex = index;
     }
     
+    public int getOldColumnIndex() {
+        return _oldColumnIndex;
+    }
+
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    public int getNewColumnIndex() {
+        return _newColumnIndex;
+    }
+
     @Override
     public void apply(Project project) {
         synchronized (project) {
@@ -75,7 +87,7 @@ public class ColumnMoveChange extends ColumnChange {
             project.columnModel.columns.add(_newColumnIndex, column);
             project.columnModel.columnGroups.clear();
             
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 
@@ -88,7 +100,7 @@ public class ColumnMoveChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.update();
+            project.updateColumnChange(this);
         }
     }
 

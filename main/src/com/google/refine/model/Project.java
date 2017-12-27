@@ -59,14 +59,24 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
+import com.google.refine.model.changes.ColumnAdditionChange;
+import com.google.refine.model.changes.ColumnChange;
+import com.google.refine.model.changes.ColumnMoveChange;
+import com.google.refine.model.changes.ColumnRemovalChange;
+import com.google.refine.model.changes.ColumnReorderChange;
+import com.google.refine.model.changes.ColumnSplitChange;
 import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.medadata.SchemaExtension;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
+import io.frictionlessdata.datapackage.Resource;
+import io.frictionlessdata.tableschema.Field;
 import io.frictionlessdata.tableschema.Schema;
 import io.frictionlessdata.tableschema.exceptions.ForeignKeyException;
 import io.frictionlessdata.tableschema.exceptions.PrimaryKeyException;
@@ -269,6 +279,80 @@ public class Project {
     public void update() {
         columnModel.update();
         recordModel.update(this);
+    }
+    
+    public void updateColumnChange(ColumnChange change) {
+        JSONObject schemaObj = null;
+        Schema schema = null;
+        
+        this.update();
+        // update the data package metadata
+        DataPackageMetadata dp = getDataPackageMetadata();
+        if (dp == null) {
+            dp = (DataPackageMetadata) MetadataFactory.buildMetadata(MetadataFormat.DATAPACKAGE_METADATA);
+            setMetadata(MetadataFormat.DATAPACKAGE_METADATA, dp);
+        }
+        
+        try {
+             if (dp.getPackage().getResources().size() > 0) {
+                 schemaObj = dp.getPackage().getResources().get(0).getSchema();
+                 schema = new Schema(schemaObj);
+             } else {
+                 Resource resource = SchemaExtension.createResource(getProjectMetadata().getName(),
+                         columnModel);
+                 dp.getPackage().addResource(resource);
+                 schema = new Schema();
+             }
+        } catch (Exception e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
+        
+        String changeClazzName = change.getClass().getSimpleName();
+        switch (changeClazzName) {
+            case "ColumnAdditionChange":
+                ColumnAdditionChange cac = (ColumnAdditionChange)change;
+                Field field = new Field(cac.getColumnName(), 
+                        Field.FIELD_TYPE_STRING);
+                SchemaExtension.insertField(schema, field, cac.getColumnIndex());
+                break;
+            case "ColumnRemovalChange":
+                ColumnRemovalChange crc = (ColumnRemovalChange)change;
+                SchemaExtension.removeField(schema, crc.getOldColumnIndex());
+                break;
+            case "ColumnMoveChange":
+                ColumnMoveChange cmc = (ColumnMoveChange)change;
+                Field f = SchemaExtension.removeField(schema, cmc.getOldColumnIndex());
+                SchemaExtension.insertField(schema, f, cmc.getNewColumnIndex());
+                break;
+            case "ColumnReorderChange":
+                ColumnReorderChange crec = (ColumnReorderChange)change;
+                Schema newSchema = new Schema();
+                List<String> columnNames = crec.getColumnNames();
+                for (String columnName : columnNames) {
+                    newSchema.addField(new Field(columnName, 
+                        Field.FIELD_TYPE_STRING));
+                }
+                schema = newSchema;
+                break;
+            case "ColumnSplitChange":
+                ColumnSplitChange csc = (ColumnSplitChange)change;
+                int baseIndex = csc.getColumnIndex();
+                for (String columnName : csc.getColumnNames()) {
+                    SchemaExtension.insertField(schema,
+                            new Field(columnName, Field.FIELD_TYPE_STRING),
+                            baseIndex++);
+                }
+                if (csc.isRemoveOriginalColumn()) {
+                    SchemaExtension.removeField(schema, csc.getColumnIndex());
+                }
+                break;
+             default:
+                 logger.warn("Unhandled column change:" + changeClazzName);
+                 break;
+        }
+        
+        JSONObject resourceJSON = dp.getPackage().getResources().get(0).getJson();
+        resourceJSON.put(Resource.JSON_KEY_SCHEMA, schema.getJson());
     }
 
 
