@@ -14,7 +14,7 @@ public class MaximumLengthConstraint extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "maximum-length-constraint";
         
-        maxLength = (int) field.getConstraints()
+        maxLength = (int) column.getConstraints()
                 .get(Field.CONSTRAINT_KEY_MAX_LENGTH);
     }
     

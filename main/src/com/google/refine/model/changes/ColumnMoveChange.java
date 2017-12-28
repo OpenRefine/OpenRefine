@@ -87,7 +87,7 @@ public class ColumnMoveChange extends ColumnChange {
             project.columnModel.columns.add(_newColumnIndex, column);
             project.columnModel.columnGroups.clear();
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 
@@ -100,7 +100,7 @@ public class ColumnMoveChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 

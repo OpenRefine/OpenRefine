@@ -14,7 +14,7 @@ public class MinimumLengthConstraint extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "minimum-length-constrain";
         
-        minLength = (int)field.getConstraints()
+        minLength = (int)column.getConstraints()
                 .get(Field.CONSTRAINT_KEY_MIN_LENGTH);
     }
     

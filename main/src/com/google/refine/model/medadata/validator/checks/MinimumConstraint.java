@@ -16,7 +16,7 @@ private String threashold;
     public MinimumConstraint(Project project, int cellIndex, JSONObject options) throws InvalidCastException, ConstraintsException {
         super(project, cellIndex, options);
         this.code = "minimum-constraint";
-        threashold = (String)field.getConstraints()
+        threashold = (String)column.getConstraints()
                 .get(Field.CONSTRAINT_KEY_MINIMUM);
     }
     
@@ -26,9 +26,9 @@ private String threashold;
         boolean valid = true;
         
         try {
-            Comparable value = field.castValue(cell.value.toString(), false);
+            Comparable value = column.castValue(cell.value.toString());
             // return this - threashold
-            if (value.compareTo(field.castValue(threashold, false)) < 0)
+            if (value.compareTo(column.castValue(threashold)) < 0)
                 valid = false;
         } catch (InvalidCastException | ConstraintsException e) {
                 valid = false;

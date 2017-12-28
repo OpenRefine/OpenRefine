@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.medadata.validator.ValidatorSpec;
@@ -23,7 +24,7 @@ public abstract class AbstractValidator implements Validator {
     protected Project project;
     protected int cellIndex;
     protected JSONObject options;
-    protected Field field;
+    protected Column column;
     protected String code;
     
     protected JSONArray jsonErros = null;
@@ -40,7 +41,7 @@ public abstract class AbstractValidator implements Validator {
         this.project = project;
         this.cellIndex = cellIndex;
         this.options = options;
-        this.field = project.getSchema().getField(project.columnModel.getColumnNames().get(cellIndex));
+        this.column = project.columnModel.getColumnByCellIndex(cellIndex);
     }
     
     @Override

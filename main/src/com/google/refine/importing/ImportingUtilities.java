@@ -50,9 +50,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -66,6 +69,7 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -88,18 +92,33 @@ import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
+import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.PackageExtension;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
+
+import io.frictionlessdata.datapackage.Package;
+import io.frictionlessdata.tableschema.Field;
+import io.frictionlessdata.tableschema.Schema;
+import io.frictionlessdata.tableschema.TypeInferrer;
+import io.frictionlessdata.tableschema.exceptions.TypeInferringException;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
     
     final static String METADATA_FILE_KEY  = "metadataFile";
+
+    private static final int INFER_ROW_LIMIT = 100;
     
     static public interface Progress {
         public void setProgress(String message, int percent);
@@ -1077,10 +1096,33 @@ public class ImportingUtilities {
                     
                     project.setMetadata(MetadataFormat.valueOf((String) metadataFileRecord.get("metaDataFormat")),
                             metadata);
+                    
+                    // process the data package metadata
+                    if (MetadataFormat.valueOf(metadataFormat) == MetadataFormat.DATAPACKAGE_METADATA) {
+                        populateDataPackageMetadata(project, (DataPackageMetadata) metadata);
+                    }
                     logger.info(metadataFileRecord.get("metaDataFormat") + " metadata is set for project " + project.id);
                 }
                 
                 ProjectManager.singleton.registerProject(project, pm);
+                
+                // infer the column type
+                if (project.columnModel.columns.get(0).getType().isEmpty()) {
+                    List<Object[]> listCells = new ArrayList<Object[]>(INFER_ROW_LIMIT);
+                    List<Row> rows = project.rows
+                             .stream()
+                             .limit(INFER_ROW_LIMIT)
+                             .collect(Collectors.toList());
+                    rows.forEach(r->listCells.add(r.cells.toArray()));
+                    try {
+                        JSONObject fieldsJSON = TypeInferrer.getInstance().infer(listCells, 
+                                project.columnModel.getColumnNames().toArray(new String[0]),
+                                100);
+                        populateColumnTypes(project.columnModel, fieldsJSON.getJSONArray(Schema.JSON_KEY_FIELDS));
+                    } catch (TypeInferringException e) {
+                       logger.error("infer column type exception.", ExceptionUtils.getStackTrace(e));
+                    }
+                }
                 
                 job.setProjectID(project.id);
                 job.setState("created-project");
@@ -1092,6 +1134,45 @@ public class ImportingUtilities {
         }
     }
     
+    private static void populateDataPackageMetadata(Project project, DataPackageMetadata metadata) {
+        // project metadata
+        ProjectMetadata pmd = project.getProjectMetadata();
+        JSONObject pkg = metadata.getPackage().getJson();
+        
+        pmd.setName(pkg.getString(Package.JSON_KEY_NAME));
+        pmd.setDescription(pkg.getString(PackageExtension.JSON_KEY_DESCRIPTION));
+        
+        String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
+        pmd.setTags(tags);
+        
+        // column model
+        JSONObject schema = metadata.getPackage().getResources().get(0).getSchema();
+        populateColumnTypes(project.columnModel, schema.getJSONArray(Schema.JSON_KEY_FIELDS));
+    }
+    
+    /**
+     * Populate the column model
+     * @param columnModel
+     * @param fieldsJSON
+     */
+    private static void populateColumnTypes(ColumnModel columnModel, JSONArray fieldsJSON) {
+        int cellIndex = 0;
+        Iterator<Object> iter = fieldsJSON.iterator();
+        while(iter.hasNext()){
+            JSONObject fieldJsonObj = (JSONObject)iter.next();
+            Field field = new Field(fieldJsonObj);
+            
+            Column column = columnModel.getColumnByCellIndex(cellIndex);
+            column.setType(field.getType());
+            column.setFormat(field.getFormat());
+            column.setDescription(field.getDescription());
+            column.setTitle(field.getTitle());
+            column.setConstraints(field.getConstraints());
+            
+            cellIndex++;
+        }  
+    }
+
     /**
      * Create project metadata. pull the "USER_NAME" from the PreferenceStore as the creator
      * @param optionObj

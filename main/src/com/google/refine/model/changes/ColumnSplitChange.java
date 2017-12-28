@@ -237,7 +237,7 @@ public class ColumnSplitChange extends ColumnChange {
                 project.columnModel.columns.remove(_columnIndex);
             }
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
     
@@ -263,7 +263,7 @@ public class ColumnSplitChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 

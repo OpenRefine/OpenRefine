@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model;
 
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -47,12 +48,24 @@ import com.google.refine.Jsonizable;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
+import io.frictionlessdata.tableschema.Field;
+import io.frictionlessdata.tableschema.TypeInferrer;
+import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
+import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
+
 public class Column implements Jsonizable {
     final private int       _cellIndex;
     final private String    _originalName;
     private String          _name;
     private ReconConfig     _reconConfig;
     private ReconStats      _reconStats;
+    
+    // from data package metadata Field.java:
+    private String type = "";
+    private String format = Field.FIELD_FORMAT_DEFAULT;
+    private String title = "";
+    private String description = "";
+    private Map<String, Object> constraints = null;
     
     transient protected Map<String, Object> _precomputes;
     
@@ -140,6 +153,56 @@ public class Column implements Jsonizable {
         _precomputes.put(key, value);
     }
     
+    
+    public String getType() {
+        return type;
+    }
+
+    
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    
+    public String getFormat() {
+        return format;
+    }
+
+    
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    
+    public String getTitle() {
+        return title;
+    }
+
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    
+    public String getDescription() {
+        return description;
+    }
+
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
+    public Map<String, Object> getConstraints() {
+        return constraints;
+    }
+
+    
+    public void setConstraints(Map<String, Object> constraints) {
+        this.constraints = constraints;
+    }
+
     public void save(Writer writer) {
         JSONWriter jsonWriter = new JSONWriter(writer);
         try {
@@ -167,5 +230,24 @@ public class Column implements Jsonizable {
     @Override
     public String toString() {
         return _name;
+    }
+    
+    public <Any> Any castValue(String value)
+            throws InvalidCastException, ConstraintsException {
+        if (this.type.isEmpty()) {
+            throw new InvalidCastException();
+        } else {
+            try {
+                // Using reflection to invoke appropriate type casting method from the
+                // TypeInferrer class
+                String castMethodName = "cast" + (this.type.substring(0, 1).toUpperCase() + this.type.substring(1));
+                Method method = TypeInferrer.class.getMethod(castMethodName, String.class, String.class, Map.class);
+                Object castValue = method.invoke(TypeInferrer.getInstance(), this.format, value, null);
+
+                return (Any) castValue;
+            } catch (Exception e) {
+                throw new InvalidCastException();
+            }
+        }
     }
 }

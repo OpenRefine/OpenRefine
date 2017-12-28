@@ -83,7 +83,7 @@ public class ColumnReorderChange extends ColumnChange {
             project.columnModel.columns.addAll(_newColumns);
             project.columnModel.columnGroups.clear();
 
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 
@@ -96,7 +96,7 @@ public class ColumnReorderChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
 
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 

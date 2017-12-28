@@ -16,8 +16,8 @@ public class TypeorFormatError extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "type-or-format-error";
         
-        this.type = field.getType();
-        this.format = field.getFormat();
+        this.type = column.getType();
+        this.format = column.getFormat();
     }
     
     @Override
@@ -25,12 +25,12 @@ public class TypeorFormatError extends AbstractValidator {
         boolean valid = true;
         
         try {
-            field.castValue(cell.value.toString(), false);
+            column.castValue(cell.value.toString());
         } catch (InvalidCastException | ConstraintsException e) {
           // patch for issue: https://github.com/frictionlessdata/tableschema-java/issues/21
             if (type.equals("number")) {
                 try {
-                    field.castValue(cell.value.toString() + ".0");
+                    column.castValue(cell.value.toString() + ".0");
                 } catch (InvalidCastException | ConstraintsException e1) {
                     valid = false;
                 }

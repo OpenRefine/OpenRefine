@@ -122,7 +122,7 @@ public class ColumnAdditionChange extends ColumnChange {
                 e.printStackTrace();
             }
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 
@@ -139,7 +139,7 @@ public class ColumnAdditionChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 

@@ -17,7 +17,7 @@ public class EnumerableConstraint extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "enumerable-constraint";
         
-        enumList = (List<Object>) field.getConstraints().get(Field.CONSTRAINT_KEY_ENUM); 
+        enumList = (List<Object>) column.getConstraints().get(Field.CONSTRAINT_KEY_ENUM); 
     }
     
     @Override

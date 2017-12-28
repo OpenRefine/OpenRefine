@@ -29,6 +29,7 @@ import org.testng.Assert;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.model.Column;
 import com.google.refine.model.medadata.DataPackageMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
@@ -121,7 +122,8 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // add Constraint
         String contraintKey = Field.CONSTRAINT_KEY_MINIMUM;
         String contraintValue = "1962";
-        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -139,7 +141,8 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // add Constraint
         String contraintKey = Field.CONSTRAINT_KEY_MAXIMUM;
         String contraintValue = "2015";
-        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -157,13 +160,15 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // add Constraint
         String contraintKey = Field.CONSTRAINT_KEY_PATTERN;
         String contraintValue = "[0-9]{4}";
-        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
         
         Assert.assertTrue(result.getJSONArray("validation-reports").length() == 0,
-                "should NOT get records in report");
+                "should NOT get records in re"
+                + "port");
     }
     
     @Test
@@ -176,7 +181,8 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         String contraintKey = Field.CONSTRAINT_KEY_ENUM;
         String contraintValueStr = "[\"2010\",\"1990\",\"2015\"]";
         List<Object> contraintValue = ParsingUtilities.evaluateJsonStringToArray(contraintValueStr).toList();
-        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -200,7 +206,8 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         contraintValueStr += "]";
         
         List<Object> contraintValue = ParsingUtilities.evaluateJsonStringToArray(contraintValueStr).toList();
-        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
+        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -209,17 +216,17 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
     }
     
     
-    private void addConstraint(Field field, String contraintKey, Object contraintValue) {
+    private void addConstraint(Column column, String contraintKey, Object contraintValue) {
         java.lang.reflect.Field f1;
         try {
-            f1 = field.getClass().getDeclaredField("constraints");
+            f1 = column.getClass().getDeclaredField("constraints");
             f1.setAccessible(true);
-            Map<String, Object> existingMap = (HashMap<String, Object>)f1.get(field);
+            Map<String, Object> existingMap = (HashMap<String, Object>)f1.get(column);
             if (existingMap == null) {
                 existingMap = new HashMap<String, Object>();
             } 
             existingMap.put(contraintKey, contraintValue);
-            f1.set(field, existingMap);
+            f1.set(column, existingMap);
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }

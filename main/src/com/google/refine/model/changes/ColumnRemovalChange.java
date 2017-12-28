@@ -117,7 +117,7 @@ public class ColumnRemovalChange extends ColumnChange {
                 row.setCell(cellIndex, null);
             }
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 
@@ -134,7 +134,7 @@ public class ColumnRemovalChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
-            project.updateColumnChange(this);
+            project.update();
         }
     }
 

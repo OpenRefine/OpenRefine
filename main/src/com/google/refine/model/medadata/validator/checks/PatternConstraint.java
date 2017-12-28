@@ -17,7 +17,7 @@ public class PatternConstraint extends AbstractValidator {
         super(project, cellIndex, options);
         this.code = "pattern-constraint";
         
-        this.regexPattern = (String)field.getConstraints().get(Field.CONSTRAINT_KEY_PATTERN);
+        this.regexPattern = (String)column.getConstraints().get(Field.CONSTRAINT_KEY_PATTERN);
     }
     
     @Override
