@@ -48,8 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -59,27 +57,10 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
-import com.google.refine.model.changes.ColumnAdditionChange;
-import com.google.refine.model.changes.ColumnChange;
-import com.google.refine.model.changes.ColumnMoveChange;
-import com.google.refine.model.changes.ColumnRemovalChange;
-import com.google.refine.model.changes.ColumnReorderChange;
-import com.google.refine.model.changes.ColumnSplitChange;
-import com.google.refine.model.medadata.DataPackageMetadata;
-import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.MetadataFactory;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
-import com.google.refine.model.medadata.SchemaExtension;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
-
-import io.frictionlessdata.datapackage.Resource;
-import io.frictionlessdata.tableschema.Field;
-import io.frictionlessdata.tableschema.Schema;
-import io.frictionlessdata.tableschema.exceptions.ForeignKeyException;
-import io.frictionlessdata.tableschema.exceptions.PrimaryKeyException;
 
 public class Project {
     final static protected Map<String, Class<? extends OverlayModel>> 
@@ -97,10 +78,6 @@ public class Project {
 
     final static Logger logger = LoggerFactory.getLogger("project");
     
-    private Map<MetadataFormat, IMetadata> metadataMap;
-    
-    private Schema schema;
-    
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
@@ -112,10 +89,6 @@ public class Project {
     protected Project(long id) {
         this.id = id;
         this.history = new History(this);
-        
-        metadataMap = new HashMap<MetadataFormat, IMetadata>();
-        if (ProjectManager.singleton != null)
-            metadataMap.put(MetadataFormat.PROJECT_METADATA, ProjectManager.singleton.getProjectMetadata(id));
     }
     
     static public void registerOverlayModel(String modelName, Class<? extends OverlayModel> klass) {
@@ -287,46 +260,7 @@ public class Project {
         return this.processManager;
     }
     
-    /**
-     * ProjectMetadata should always be there.
-     * @return ProjectMetadata
-     */
-    public ProjectMetadata getProjectMetadata() {
-        return (ProjectMetadata) getMetadata(MetadataFormat.PROJECT_METADATA);
-    }
-    
-    public DataPackageMetadata getDataPackageMetadata() {
-        return (DataPackageMetadata) getMetadata(MetadataFormat.DATAPACKAGE_METADATA);
-    }
-    
-    public Schema getSchema() {
-        return schema;
-    }
-    
-    public IMetadata getMetadata(MetadataFormat format) {
-        return metadataMap.get(format);
-    }
-    
-    public Map<MetadataFormat, IMetadata> getMetadataMap() {
-        return metadataMap;
-    }
-    
-    public void setMetadata(MetadataFormat format, IMetadata metadata) {
-        getMetadataMap().put(format, metadata);
-        // inject the schema as a shorthand for access and reuse
-        if (format == MetadataFormat.DATAPACKAGE_METADATA) {
-            if (getDataPackageMetadata() != null
-                    && getDataPackageMetadata().getPackage().getResources().size() > 0) {
-                JSONObject jsonSchema = getDataPackageMetadata().getPackage().getResources().get(0).getSchema();
-                if (jsonSchema != null) {
-                    try {
-                        schema = new Schema(jsonSchema, true);
-                    } catch (ValidationException | PrimaryKeyException | ForeignKeyException e) {
-                        logger.error("extract schema failed:" + ExceptionUtils.getFullStackTrace(e));
-                    }
-                }
-                // XXX: metadata:: infer if not exist
-            }
-        }
+    public ProjectMetadata getMetadata() {
+        return ProjectManager.singleton.getProjectMetadata(id);
     }
 }

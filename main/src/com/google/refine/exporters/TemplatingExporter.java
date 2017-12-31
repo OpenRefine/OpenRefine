@@ -107,9 +107,7 @@ public class TemplatingExporter implements WriterExporter {
                 // ignore
             }
             
-            // XXX: metadata: is template project specific?
-//            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
-            ProjectManager.singleton.getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
+            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
         }
         
         if (engine.getMode() == Mode.RowBased) {

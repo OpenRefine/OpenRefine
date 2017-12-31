@@ -105,9 +105,4 @@ public class ProjectManagerStub extends ProjectManager {
     protected void saveWorkspace() {
         // empty
     }
-
-    @Override
-    public Map<MetadataFormat, IMetadata> loadProjectMetadatas(long projectId) {
-        return null;
-    }
 }

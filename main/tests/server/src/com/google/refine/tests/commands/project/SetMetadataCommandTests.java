@@ -78,8 +78,6 @@ public class SetMetadataCommandTests  {
         when(request.getParameter("jsonContent")).thenReturn(changedJSON);
         when(projMan.getProject(anyLong())).thenReturn(proj);
         
-        // below two should return the same object
-        when(proj.getMetadata(MetadataFormat.DATAPACKAGE_METADATA)).thenReturn(metadata);
         //given
         PowerMockito.mockStatic(MetadataFactory.class);
         BDDMockito.given(MetadataFactory.buildMetadata(MetadataFormat.DATAPACKAGE_METADATA)).willReturn(metadata);
@@ -129,7 +127,7 @@ public class SetMetadataCommandTests  {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        Assert.assertEquals(proj.getMetadata(MetadataFormat.DATAPACKAGE_METADATA).getJSON().get("license"), LICENSE);
+        Assert.assertEquals(proj.getMetadata().getJSON().get("license"), LICENSE);
     }
     
     

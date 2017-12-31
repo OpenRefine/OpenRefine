@@ -14,12 +14,11 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.validator.checks.TypeorFormatError;
 import com.google.refine.model.medadata.validator.checks.Validator;
 import com.google.refine.util.JSONUtilities;
-
-import io.frictionlessdata.tableschema.Field;
 
 public class ValidatorInspector {
     final static Logger logger = LoggerFactory.getLogger(ValidatorInspector.class);
@@ -75,12 +74,7 @@ public class ValidatorInspector {
     private static List<Validator> compileChecks(Project project, String columnName, JSONObject options) {
         Map<String, Class> constraintHandlersMap = ValidatorRegistry.getInstance().getConstraintHandlersMap();
         
-        if (project.getSchema() == null) {
-            logger.error("Cannot find the schema defined, failed to do compileChecks:");
-            return null;
-        }
-        
-        Field field = project.getSchema().getField(columnName);
+        Column column = project.columnModel.getColumnByName(columnName);
         List<Validator> validatorList = new ArrayList<Validator>();
         
         int columnIndex = project.columnModel.getColumnIndexByName(columnName);
@@ -88,8 +82,8 @@ public class ValidatorInspector {
         validatorList.add(new TypeorFormatError(project, columnIndex, options));
         
         
-        if (field.getConstraints() != null) {
-            for (Entry<String, Object> entry : field.getConstraints().entrySet()) {
+        if (column.getConstraints() != null) {
+            for (Entry<String, Object> entry : column.getConstraints().entrySet()) {
                 Class<Validator> clazz = constraintHandlersMap.get(entry.getKey());
                 try {
                     Constructor<Validator> c = clazz.getConstructor(Project.class, int.class, JSONObject.class);

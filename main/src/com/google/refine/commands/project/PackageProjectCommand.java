@@ -21,7 +21,6 @@ import com.google.refine.commands.Command;
 import com.google.refine.exporters.CsvExporter;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.DataPackageMetadata;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.PackageExtension;
 
 public class PackageProjectCommand extends Command {
@@ -41,7 +40,6 @@ public class PackageProjectCommand extends Command {
             // ensure project get saved
             DataPackageMetadata dpm = new DataPackageMetadata();
             dpm.loadFromStream(in);
-            project.setMetadata(MetadataFormat.DATAPACKAGE_METADATA, dpm);
             ProjectManager.singleton.ensureProjectSaved(project.id);
             
             // export project

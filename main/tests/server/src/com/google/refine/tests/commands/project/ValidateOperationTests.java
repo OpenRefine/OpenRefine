@@ -122,8 +122,9 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // add Constraint
         String contraintKey = Field.CONSTRAINT_KEY_MINIMUM;
         String contraintValue = "1962";
-//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
-        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
+        Column column = project.columnModel.getColumnByName("Year");
+        column.setType(Field.FIELD_TYPE_STRING);
+        addConstraint(column, contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -141,8 +142,9 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // add Constraint
         String contraintKey = Field.CONSTRAINT_KEY_MAXIMUM;
         String contraintValue = "2015";
-//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
-        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
+        Column column = project.columnModel.getColumnByName("Year");
+        column.setType(Field.FIELD_TYPE_STRING);
+        addConstraint(column, contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -160,8 +162,9 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         // add Constraint
         String contraintKey = Field.CONSTRAINT_KEY_PATTERN;
         String contraintValue = "[0-9]{4}";
-//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
-        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
+        Column column = project.columnModel.getColumnByName("Year");
+        column.setType(Field.FIELD_TYPE_STRING);
+        addConstraint(column, contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -181,8 +184,9 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         String contraintKey = Field.CONSTRAINT_KEY_ENUM;
         String contraintValueStr = "[\"2010\",\"1990\",\"2015\"]";
         List<Object> contraintValue = ParsingUtilities.evaluateJsonStringToArray(contraintValueStr).toList();
-//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
-        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
+        Column column = project.columnModel.getColumnByName("Year");
+        column.setType(Field.FIELD_TYPE_STRING);
+        addConstraint(column, contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -206,8 +210,9 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
         contraintValueStr += "]";
         
         List<Object> contraintValue = ParsingUtilities.evaluateJsonStringToArray(contraintValueStr).toList();
-//        addConstraint(project.getSchema().getField("Year"), contraintKey,  contraintValue);
-        addConstraint(project.columnModel.getColumnByName("Year"), contraintKey,  contraintValue);
+        Column column = project.columnModel.getColumnByName("Year");
+        column.setType(Field.FIELD_TYPE_STRING);
+        addConstraint(column, contraintKey,  contraintValue);
         
         // run
         JSONObject result = startValidateOperation(optionObj);
@@ -256,15 +261,8 @@ public class ValidateOperationTests extends TsvCsvImporterTests  {
          prepareOptions(sep, -1, 0, 0, 1, false, false);
          parseOneFile(parser, new StringReader(input));
 
-         setDataPackageMetaData();
-         
          Assert.assertEquals(project.columnModel.columns.size(), 4);
-         Assert.assertNotNull(project.getSchema());
      }
-     
-     private void setDataPackageMetaData() {
-         project.setMetadata(MetadataFormat.DATAPACKAGE_METADATA, dataPackageMetadata);
-    }
 
     private static String getFileContent(String fileName) throws IOException {
          InputStream in = ValidateOperationTests.class.getClassLoader()

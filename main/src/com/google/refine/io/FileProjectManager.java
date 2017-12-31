@@ -42,8 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -238,7 +236,6 @@ public class FileProjectManager extends ProjectManager {
     public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
         
-        // XXX: 1. metadata::save | More generic way to handle this
         if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) {
             Project project = ProjectManager.singleton.getProject(projectId);
             ((ProjectMetadata)metadata).setRowCount(project.rows.size());
@@ -301,7 +298,7 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    protected boolean saveToFile(File file) throws Exception {
+    protected boolean saveToFile(File file) throws IOException, JSONException {
         FileWriter writer = new FileWriter(file);
         boolean saveWasNeeded = false;
         try {
@@ -309,14 +306,14 @@ public class FileProjectManager extends ProjectManager {
             jsonWriter.object();
             jsonWriter.key("projectIDs");
             jsonWriter.array();
-            for (Entry<Long, Project> entry : _projects.entrySet()) {
-                Long id = entry.getKey();
-                Map<MetadataFormat, IMetadata> metadataMap = entry.getValue().getMetadataMap();
-                
-                for (IMetadata metadata : metadataMap.values()) {
+            for (Long id : _projectsMetadata.keySet()) {
+                ProjectMetadata metadata = _projectsMetadata.get(id);
+                if (metadata != null) {
                     jsonWriter.value(id);
                     if (metadata.isDirty()) {
-                        saveMetadata(metadata, id);
+                        Project project = ProjectManager.singleton.getProject(id);
+                        metadata.setRowCount(project.rows.size());
+                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
                         saveWasNeeded = true;
                     }
                 }
@@ -334,8 +331,6 @@ public class FileProjectManager extends ProjectManager {
         }
         return saveWasNeeded;
     }
-
-
 
     @Override
     public void deleteProject(long projectID) {
@@ -476,10 +471,5 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public HistoryEntryManager getHistoryEntryManager(){
         return new FileHistoryEntryManager();
-    }
-    
-    @Override
-    public Map<MetadataFormat, IMetadata> loadProjectMetadatas(long projectId) {
-        return ProjectUtilities.retriveMetadata(getProjectDir(projectId));
     }
 }

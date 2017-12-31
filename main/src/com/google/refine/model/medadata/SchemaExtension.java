@@ -52,7 +52,11 @@ public class SchemaExtension {
         Schema schema = new Schema();
         for (Column column : columnModel.columns) {
             schema.addField(new Field(column.getName(),
-                    Field.FIELD_TYPE_STRING));
+                    column.getType(),
+                    column.getFormat(),
+                    column.getTitle(),
+                    column.getDescription(),
+                    column.getConstraints()));
         }
         
         Resource resource = new Resource(resourceName, 

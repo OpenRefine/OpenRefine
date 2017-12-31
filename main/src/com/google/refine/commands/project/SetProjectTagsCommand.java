@@ -56,7 +56,7 @@ public class SetProjectTagsCommand extends Command {
         return;
       }
 
-      ProjectMetadata metadata = project.getProjectMetadata();
+      ProjectMetadata metadata = project.getMetadata();
 
       String oldT = request.getParameter("old");
       String newT = request.getParameter("new");

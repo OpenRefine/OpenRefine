@@ -93,7 +93,6 @@ public class KeyValueColumnizeTests extends RefineTest {
         project = new Project();
         pm = new ProjectMetadata();
         pm.setName("KeyValueColumnize test");
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
         ProjectManager.singleton.registerProject(project, pm);
         options = mock(JSONObject.class);
 
@@ -132,7 +131,6 @@ public class KeyValueColumnizeTests extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
         ProjectManager.singleton.registerProject(project, pm);
 
 	AbstractOperation op = new KeyValueColumnizeOperation(

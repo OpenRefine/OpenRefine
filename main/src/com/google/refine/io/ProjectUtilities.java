@@ -137,9 +137,6 @@ public class ProjectUtilities {
                 project = loadDataFile(dir, "data.old.zip", id);
             }
         }
-        
-        loadMetadata(dir, project);
-        
         return project;
     }
     
@@ -173,18 +170,6 @@ public class ProjectUtilities {
         
         return metadataMap;
         
-    }
-    
-    /**
-     * load the metadatas into project
-     * @param dir
-     * @param project
-     */
-    private static void loadMetadata(File dir, Project project) {
-        Map<MetadataFormat, IMetadata> metadatasMap = retriveMetadata(dir);
-        for(IMetadata metadata : metadatasMap.values()) {
-            project.setMetadata(metadata.getFormatName(), metadata);
-        }
     }
     
     static protected Project loadFromFile(

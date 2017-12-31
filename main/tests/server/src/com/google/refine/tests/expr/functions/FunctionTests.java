@@ -88,7 +88,6 @@ public class FunctionTests extends RefineTest {
         project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
         pm.setName("TNG Test Project");
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
         ProjectManager.singleton.registerProject(project, pm);
 
         int index = project.columnModel.allocateNewCellIndex();

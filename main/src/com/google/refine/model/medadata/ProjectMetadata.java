@@ -208,7 +208,6 @@ public class ProjectMetadata  extends AbstractMetadata {
      public void loadFromJSON(JSONObject obj) {
         extractModifiedLocalTime(obj);
 
-        this._modified = JSONUtilities.getLocalDate(obj, "modified", LocalDateTime.now());
         this._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
         this._password = JSONUtilities.getString(obj, "password", "");
 

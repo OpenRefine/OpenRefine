@@ -45,7 +45,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 
 import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
@@ -69,11 +68,6 @@ public class SetMetadataCommand extends Command {
             InputStream in = IOUtils.toInputStream(jsonContent, "UTF-8");
             metadata.loadFromStream(in);
             metadata.validate();
-            
-            Project project = getProject(request);
-            
-            // save the matadata
-            project.setMetadata(format, metadata);
             
             respond(response, "{ \"code\" : \"ok\" }");
         } catch (JSONException e) {

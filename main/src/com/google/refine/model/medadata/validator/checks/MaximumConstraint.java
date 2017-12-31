@@ -11,12 +11,12 @@ import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
 
 @SuppressWarnings("rawtypes")
 public class MaximumConstraint extends AbstractValidator {
-    private String threashold;
+    private String threshold;
     
     public MaximumConstraint(Project project, int cellIndex, JSONObject options) throws InvalidCastException, ConstraintsException {
         super(project, cellIndex, options);
         this.code = "maximum-constraint";
-        threashold = (String)column.getConstraints()
+        threshold = (String)column.getConstraints()
                                 .get(Field.CONSTRAINT_KEY_MAXIMUM);
     }
     
@@ -27,8 +27,8 @@ public class MaximumConstraint extends AbstractValidator {
         
         try {
             Comparable value = column.castValue(cell.value.toString());
-            // return this - threashold
-            if (value.compareTo(column.castValue(threashold)) > 0)
+            // return this - threshold
+            if (value.compareTo(column.castValue(threshold)) > 0)
                 valid = false;
         } catch (InvalidCastException | ConstraintsException e) {
                 valid = false;

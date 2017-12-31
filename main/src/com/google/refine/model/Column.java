@@ -114,6 +114,11 @@ public class Column implements Jsonizable {
         writer.key("cellIndex"); writer.value(_cellIndex);
         writer.key("originalName"); writer.value(_originalName);
         writer.key("name"); writer.value(_name);
+        writer.key("type"); writer.value(type);
+        writer.key("format"); writer.value(format);
+        writer.key("title"); writer.value(title);
+        writer.key("description"); writer.value(description);
+        writer.key("constraints"); writer.value(new JSONObject(constraints).toString());
         if (_reconConfig != null) {
             writer.key("reconConfig");
             _reconConfig.write(writer, options);
@@ -217,6 +222,12 @@ public class Column implements Jsonizable {
         Column column = new Column(obj.getInt("cellIndex"), obj.getString("originalName"));
         
         column._name = obj.getString("name");
+        column.type = obj.getString("type");
+        column.format = obj.getString("format");
+        column.title = obj.getString("title");
+        column.description = obj.getString("description");
+        column.constraints = new JSONObject(obj.getString("constraints")).toMap();
+              
         if (obj.has("reconConfig")) {
             column._reconConfig = ReconConfig.reconstruct(obj.getJSONObject("reconConfig"));
         }

@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,7 +57,6 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
@@ -186,22 +186,17 @@ public abstract class ProjectManager {
      */
     public void ensureProjectSaved(long id) {
         synchronized(this){
-            Map<MetadataFormat, IMetadata> metadataMap = this.getProject(id).getMetadataMap();
-            for (IMetadata metadata : metadataMap.values()) {
-                if (metadata != null) {
-                    try {
-                        //  save the metadata
-                        saveMetadata(metadata, id);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            ProjectMetadata metadata = this.getProjectMetadata(id);
+            if (metadata != null) {
+                try {
+                    saveMetadata(metadata, id);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
+            }//FIXME what should be the behaviour if metadata is null? i.e. not found
 
             Project project = getProject(id);
-            if (project != null 
-                    && project.getProjectMetadata() != null 
-                    && project.getProjectMetadata().getModified().isAfter(project.getLastSave())) {
+            if (project != null && metadata != null && metadata.getModified().isAfter(project.getLastSave())) {
                 try {
                     saveProject(project);
                 } catch (Exception e) {
@@ -210,6 +205,7 @@ public abstract class ProjectManager {
             }//FIXME what should be the behaviour if project is null? i.e. not found or loaded.
             //FIXME what should happen if the metadata is found, but not the project? or vice versa?
         }
+
     }
 
     /**
@@ -271,18 +267,19 @@ public abstract class ProjectManager {
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
+                    LocalDateTime projectLastSaveTime = project.getLastSave();
                     boolean hasUnsavedChanges =
-                        metadata.getModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() >= project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                        !metadata.getModified().isBefore(projectLastSaveTime);
                     // We use >= instead of just > to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
 
                     if (hasUnsavedChanges) {
-                        long msecsOverdue = startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
+                        long msecsOverdue = ChronoUnit.MILLIS.between(projectLastSaveTime, startTimeOfSave);
+                        
                         records.add(new SaveRecord(project, msecsOverdue));
                     } else if (!project.getProcessManager().hasPending()
-                              && startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() > PROJECT_FLUSH_DELAY) {
+                              && ChronoUnit.MILLIS.between(projectLastSaveTime, startTimeOfSave) > PROJECT_FLUSH_DELAY) {
                         
                         /*
                          * It's been a while since the project was last saved and it hasn't been
@@ -312,13 +309,10 @@ public abstract class ProjectManager {
                 "Saving all modified projects ..." :
                 "Saving some modified projects ..."
             );
-
-            for (int i = 0;
-                 i < records.size() &&
-                    (allModified || (LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - 
-                            startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < QUICK_SAVE_MAX_TIME));
+             
+            for (int i = 0;i < records.size() &&
+                    (allModified || (ChronoUnit.MILLIS.between(startTimeOfSave, LocalDateTime.now()) < QUICK_SAVE_MAX_TIME));
                  i++) {
-
                 try {
                     saveProject(records.get(i).project);
                 } catch (Exception e) {
@@ -364,16 +358,6 @@ public abstract class ProjectManager {
         return _projectsMetadata.get(id);
     }
     
-    /**
-     * Get metadata based on the format
-     * @param id
-     * @param format
-     * @return
-     */
-    public IMetadata getMetadata(long id, MetadataFormat format) {
-        return _projects.get(id).getMetadata(format);
-    }
-
     /**
      * Gets the project metadata from memory
      * Requires that the metadata has already been loaded from the data store
@@ -492,7 +476,7 @@ public abstract class ProjectManager {
     
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
         for(Project project : _projects.values()) {
-            mergeEmptyUserMetadata(project.getProjectMetadata());
+            mergeEmptyUserMetadata(project.getMetadata());
         }
             
         return _projectsMetadata;
@@ -617,11 +601,5 @@ public abstract class ProjectManager {
        ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }
-   
-   /**
-    * Load project metadata from data storage
-    * @param projectID
-    * @return
-    */
-    public abstract Map<MetadataFormat, IMetadata> loadProjectMetadatas(long projectId);
+
 }

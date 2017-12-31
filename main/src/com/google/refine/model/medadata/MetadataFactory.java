@@ -49,9 +49,9 @@ public class MetadataFactory {
      */
     public static DataPackageMetadata buildDataPackageMetadata(Project project) {
         DataPackageMetadata dpm = buildDataPackageMetadata();
-        ProjectMetadata pmd = project.getProjectMetadata();
+        ProjectMetadata pmd = project.getMetadata();
         Package pkg = dpm.getPackage();
-        Resource resource = SchemaExtension.createResource(project.getProjectMetadata().getName(),
+        Resource resource = SchemaExtension.createResource(project.getMetadata().getName(),
                 project.columnModel);
         try {
             pkg.addResource(resource);

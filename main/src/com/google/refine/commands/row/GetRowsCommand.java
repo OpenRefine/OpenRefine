@@ -180,8 +180,8 @@ public class GetRowsCommand extends Command {
             }
             
             // metadata refresh for row mode and record mode
-            if (project.getProjectMetadata() != null) {
-                project.getProjectMetadata().setRowCount(project.rows.size());
+            if (project.getMetadata() != null) {
+                project.getMetadata().setRowCount(project.rows.size());
             }
         } catch (Exception e) {
             respondException(response, e);

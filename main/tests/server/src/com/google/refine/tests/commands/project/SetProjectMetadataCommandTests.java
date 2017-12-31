@@ -105,8 +105,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         when(projMan.getProject(anyLong())).thenReturn(proj);
         
         // below two should return the same object
-        when(proj.getProjectMetadata()).thenReturn(metadata);
-        when(proj.getMetadata(MetadataFormat.PROJECT_METADATA)).thenReturn(metadata);
+        when(proj.getMetadata()).thenReturn(metadata);
         
         try {
             when(response.getWriter()).thenReturn(pw);
@@ -150,7 +149,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getProjectMetadata();
+        verify(proj, times(1)).getMetadata();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
@@ -159,7 +158,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
 //        Assert.assertEquals(proj.getProjectMetadata().getName(), "subject");
-        Assert.assertEquals(proj.getProjectMetadata().getSubject(), SUBJECT);
+        Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
     }
     
     /**
@@ -186,7 +185,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getProjectMetadata();
+        verify(proj, times(1)).getMetadata();
         try {
             verify(response, times(1)).getWriter();
         } catch (IOException e) {
@@ -194,7 +193,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        JSONObject obj = (JSONObject) ((ProjectMetadata)proj.getProjectMetadata()).getUserMetadata().get(0);
+        JSONObject obj = (JSONObject) ((ProjectMetadata)proj.getMetadata()).getUserMetadata().get(0);
         Assert.assertEquals(obj.get("name"), "clientID");
         Assert.assertEquals(obj.get("value"), "IBM");
     }

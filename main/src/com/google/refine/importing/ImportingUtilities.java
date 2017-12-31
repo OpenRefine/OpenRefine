@@ -55,7 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -92,7 +91,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
-import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
@@ -105,7 +103,6 @@ import com.google.refine.model.medadata.PackageExtension;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
 
 import io.frictionlessdata.datapackage.Package;
 import io.frictionlessdata.tableschema.Field;
@@ -1080,7 +1077,6 @@ public class ImportingUtilities {
         if (!job.canceled) {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
-                project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
                 
                 boolean hasMetadataFileRecord = ((JSONObject)job.getRetrievalRecord()).has(METADATA_FILE_KEY);
                 
@@ -1094,12 +1090,9 @@ public class ImportingUtilities {
                     File metadataFile = new File(job.getRawDataDir(), relativePath);
                     metadata.loadFromFile(metadataFile);
                     
-                    project.setMetadata(MetadataFormat.valueOf((String) metadataFileRecord.get("metaDataFormat")),
-                            metadata);
-                    
                     // process the data package metadata
                     if (MetadataFormat.valueOf(metadataFormat) == MetadataFormat.DATAPACKAGE_METADATA) {
-                        populateDataPackageMetadata(project, (DataPackageMetadata) metadata);
+                        populateDataPackageMetadata(project, pm, (DataPackageMetadata) metadata);
                     }
                     logger.info(metadataFileRecord.get("metaDataFormat") + " metadata is set for project " + project.id);
                 }
@@ -1134,9 +1127,8 @@ public class ImportingUtilities {
         }
     }
     
-    private static void populateDataPackageMetadata(Project project, DataPackageMetadata metadata) {
+    private static void populateDataPackageMetadata(Project project, ProjectMetadata pmd, DataPackageMetadata metadata) {
         // project metadata
-        ProjectMetadata pmd = project.getProjectMetadata();
         JSONObject pkg = metadata.getPackage().getJson();
         
         pmd.setName(pkg.getString(Package.JSON_KEY_NAME));

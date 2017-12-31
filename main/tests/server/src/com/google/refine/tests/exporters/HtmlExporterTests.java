@@ -91,7 +91,6 @@ public class HtmlExporterTests extends RefineTest {
         projectMetadata = new ProjectMetadata();
         project = new Project();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, projectMetadata);
         ProjectManager.singleton.registerProject(project, projectMetadata);
         engine = new Engine(project);
         options = mock(Properties.class);

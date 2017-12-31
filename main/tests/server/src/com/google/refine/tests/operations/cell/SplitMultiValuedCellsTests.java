@@ -93,7 +93,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
             project = new Project();
             pm = new ProjectMetadata();
             pm.setName("SplitMultiValuedCells test");
-            project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
             ProjectManager.singleton.registerProject(project, pm);
             options = mock(JSONObject.class);
 
@@ -125,7 +124,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
             List<Exception> exceptions = new ArrayList<Exception>();
             importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
             project.update();
-            project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
             ProjectManager.singleton.registerProject(project, pm);
 
         AbstractOperation op = new MultiValuedCellSplitOperation(
@@ -153,7 +151,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
             List<Exception> exceptions = new ArrayList<Exception>();
             importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
             project.update();
-            project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
             ProjectManager.singleton.registerProject(project, pm);
 
         AbstractOperation op = new MultiValuedCellSplitOperation(
@@ -185,7 +182,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
-        project.setMetadata(MetadataFormat.PROJECT_METADATA, pm);
         ProjectManager.singleton.registerProject(project, pm);
         int[] lengths = {4,4,6,4};
 

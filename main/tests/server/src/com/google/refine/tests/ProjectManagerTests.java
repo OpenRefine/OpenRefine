@@ -59,7 +59,7 @@ import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.model.ProjectStub;
 
-public class ProjectManagerTests<IMetadata> extends RefineTest {
+public class ProjectManagerTests extends RefineTest {
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -83,12 +83,7 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
         procmgr = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(procmgr);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
-        when(project.getProjectMetadata()).thenReturn(metadata);        // cannot wire metadata directly with project, need mock object
-        
-        // construct a map for mock object:
-        Map<MetadataFormat, com.google.refine.model.medadata.IMetadata> map = (Map<MetadataFormat, com.google.refine.model.medadata.IMetadata>) new HashMap<MetadataFormat, IMetadata>();
-        map.put(MetadataFormat.PROJECT_METADATA, (com.google.refine.model.medadata.IMetadata) metadata);
-        when(project.getMetadataMap()).thenReturn(map);
+        when(project.getMetadata()).thenReturn(metadata);        // cannot wire metadata directly with project, need mock object
     }
 
     @AfterMethod
@@ -103,7 +98,7 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
     public void canRegisterProject(){
         SUT.registerProject(project, metadata);
 
-        verify(metadata, times(1)).getTags();
+        verify(metadata).getTags();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -123,16 +118,13 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
         
         try {
             // make sure the ProjectManager does save the metadata
-            verify(SUT, times(1)).saveMetadata(metadata, project.id);
+            verify(SUT).saveMetadata(metadata, project.id);
         } catch (Exception e) {
             Assert.fail();
         }
         this.verifySaveTimeCompared(1);
-        verify(SUT, times(1)).saveProject(project);
-        verify(metadata, times(1)).getTags();
-        
-        verify(project).getMetadataMap();
-        verify(project, times(2)).getProjectMetadata();
+        verify(SUT).saveProject(project);
+        verify(metadata).getTags();
         
         //ensure end
         verifyNoMoreInteractions(project);
@@ -160,7 +152,7 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
         SUT.save(true);
         verifySaved(project, metadata);
 //        verifySaved(project2, metadata2);
-        verify(SUT, times(1)).saveWorkspace();
+        verify(SUT).saveWorkspace();
     }
 
     @Test
@@ -172,18 +164,18 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
 
         SUT.save(true);
 
-        verify(metadata, times(1)).getModified();
-        verify(metadata, times(1)).getTags();
-        verify(project, never()).getProjectMetadata();
-        verify(project, times(1)).getProcessManager();
-        verify(project, times(2)).getLastSave();
-        verify(project, times(1)).dispose();
+        verify(metadata).getModified();
+        verify(metadata).getTags();
+        verify(project, never()).getMetadata();
+        verify(project).getProcessManager();
+        verify(project).getLastSave();
+        verify(project).dispose();
         verify(SUT, never()).saveProject(project);
         Assert.assertEquals(SUT.getProject(0), null);
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
 
-        verify(SUT, times(1)).saveWorkspace();
+        verify(SUT).saveWorkspace();
     }
 
     @Test
@@ -195,7 +187,7 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
 
         verify(SUT, never()).saveProjects(Mockito.anyBoolean());
         verify(SUT, never()).saveWorkspace();
-        verify(metadata, times(1)).getTags();
+        verify(metadata).getTags();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -210,7 +202,7 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
         SUT.save(false); //not busy
 
         verifySaved(project, metadata);
-        verify(SUT, times(1)).saveWorkspace();
+        verify(SUT).saveWorkspace();
 
     }
     //TODO test canSaveAllModifiedWithRaceCondition
@@ -265,10 +257,10 @@ public class ProjectManagerTests<IMetadata> extends RefineTest {
      * @param meta
      */
     protected void verifySaved(Project proj, ProjectMetadata meta){
-        verify(meta, times(1)).getModified();
-        verify(proj, times(2)).getLastSave();
-        verify(SUT, times(1)).saveProject(proj);
-        verify(meta, times(1)).getTags();
+        verify(meta).getModified();
+        verify(proj).getLastSave();
+        verify(SUT).saveProject(proj);
+        verify(meta).getTags();
 
         verifyNoMoreInteractions(proj);
         verifyNoMoreInteractions(meta);
