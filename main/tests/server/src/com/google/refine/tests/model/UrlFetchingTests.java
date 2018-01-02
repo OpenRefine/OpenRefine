@@ -169,7 +169,9 @@ public class UrlFetchingTests extends RefineTest {
 
         // Inspect rows
         String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
-	if (ref_val.startsWith("HTTP error 403"))
+        
+        // http error could be 403(blacklisted) or 503(Service Unavailable), 
+	if (ref_val.startsWith("HTTP error"))
             return;
         Assert.assertTrue(ref_val != "apple"); // just to make sure I picked the right column
         for (int i = 1; i < 4; i++) {

@@ -75,7 +75,6 @@ public class ProjectMetadata  extends AbstractMetadata {
     final public static String OLD_FILE_NAME = "metadata.old.json";
     
     private final LocalDateTime     _created;
-    private LocalDateTime           _modified;
     private String         _name = "";
     private String         _password = "";
 
@@ -84,7 +83,8 @@ public class ProjectMetadata  extends AbstractMetadata {
     private int _rowCount;
     // user metadata
     private JSONArray _userMetadata = new JSONArray();; 
-
+    
+    // _tags maps to keywords of the data package metadata
     private String[] _tags = new String[0];
     private String _creator = "";
     private String _contributors = "";
