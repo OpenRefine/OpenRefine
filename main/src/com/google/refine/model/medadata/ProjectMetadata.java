@@ -226,6 +226,12 @@ public class ProjectMetadata  extends AbstractMetadata {
         this._subject = JSONUtilities.getString(obj, "subject", "");
         this._description = JSONUtilities.getString(obj, "description", "");
         this._rowCount = JSONUtilities.getInt(obj, "rowCount", 0);
+        
+        this.title = JSONUtilities.getString(obj, "title", "");
+        this.homepage = JSONUtilities.getString(obj, "homepage", "");
+        this.image = JSONUtilities.getString(obj, "image", "");
+        this.license = JSONUtilities.getString(obj, "license", "");
+        this.version = JSONUtilities.getString(obj, "version", "");
 
         this._tags = JSONUtilities.getStringArray(obj, "tags");
 
