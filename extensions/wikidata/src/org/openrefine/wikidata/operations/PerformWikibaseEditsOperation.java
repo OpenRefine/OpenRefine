@@ -5,6 +5,7 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,6 +25,7 @@ import org.wikidata.wdtk.datamodel.interfaces.DataObjectFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
@@ -59,14 +61,17 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     
     private DuplicateDetectionStrategy strategy;
     private OnDuplicateAction duplicateAction;
+    private String summary;
     
     public PerformWikibaseEditsOperation(
             JSONObject engineConfig,
             DuplicateDetectionStrategy strategy,
-            OnDuplicateAction duplicateAction) {
+            OnDuplicateAction duplicateAction,
+            String summary) {
         super(engineConfig);
         this.strategy = strategy;
         this.duplicateAction = duplicateAction;
+        this.summary = summary;
 
         // getEngine(request, project);
     }
@@ -76,10 +81,15 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         String strategy = obj.getString("duplicate_strategy");
         String action = obj.getString("duplicate_action");
+        String summary = obj.getString("summary");
+        if (summary == null) {
+            summary = "#openrefine";
+        }
         return new PerformWikibaseEditsOperation(
                 engineConfig,
                 DuplicateDetectionStrategy.valueOf(strategy),
-                OnDuplicateAction.valueOf(action));
+                OnDuplicateAction.valueOf(action),
+                summary);
     }
 
     
@@ -95,6 +105,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         writer.value(strategy.name());
         writer.key("duplicate_action");
         writer.value(duplicateAction.name());
+        writer.key("summary");
+        writer.value(summary);
         writer.key("engineConfig");
         writer.value(getEngineConfig());
         writer.endObject();
@@ -111,7 +123,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             project, 
             createEngine(project),
             getBriefDescription(project),
-            "#openrefine"
+            summary
         );
     }
     
@@ -223,6 +235,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     // New item
                     if (update.getItemId().getId() == "Q0") {
                         NewEntityIdValue newCell = (NewEntityIdValue)update.getItemId();
+                        update.normalizeLabelsAndAliases();
+
+                        
                         ItemDocument itemDocument = factory.getItemDocument(
                                 update.getItemId(),
                                 update.getLabels(),
@@ -236,7 +251,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                         newItemLibrary.setQid(newCell, createdDoc.getItemId().getId());
                     } else {
                         // Existing item
-                        wbde.updateStatements(update.getItemId(),
+                        wbde.updateTermsStatements(update.getItemId(),
+                                update.getLabels(),
+                                update.getDescriptions(),
+                                update.getAliases(),
+                                new ArrayList<MonolingualTextValue>(),
                                 update.getAddedStatements(),
                                 update.getDeletedStatements(), _summary);   
                     }

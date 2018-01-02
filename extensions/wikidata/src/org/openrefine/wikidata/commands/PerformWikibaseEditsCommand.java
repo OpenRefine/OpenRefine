@@ -18,9 +18,11 @@ public class PerformWikibaseEditsCommand extends EngineDependentCommand {
             throws Exception {
         String strategy = request.getParameter("strategy");
         String action = request.getParameter("action");
+        String summary = request.getParameter("summary");
         return new PerformWikibaseEditsOperation(engineConfig,
                 DuplicateDetectionStrategy.valueOf(strategy),
-                OnDuplicateAction.valueOf(action));
+                OnDuplicateAction.valueOf(action),
+                summary);
     }
 
 }
