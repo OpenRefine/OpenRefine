@@ -448,7 +448,7 @@ public class FileProjectManager extends ProjectManager {
                         // ignore
                     }
 
-                    if (id > 0 && !_projects.containsKey(id)) {
+                    if (id > 0 && !_projectsMetadata.containsKey(id)) {
                         if (loadProjectMetadata(id)) {
                             logger.info("Recovered project named " 
                                     + getProjectMetadata(id).getName()

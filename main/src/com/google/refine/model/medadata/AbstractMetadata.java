@@ -8,12 +8,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMetadata implements IMetadata {
-    private final static Logger logger = LoggerFactory.getLogger("AbstractMetadata");
-    
     private MetadataFormat formatName = MetadataFormat.UNKNOWN;
     
     protected LocalDateTime written = null;

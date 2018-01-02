@@ -15,9 +15,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.medadata.validator.ValidatorSpec;
 
-import io.frictionlessdata.tableschema.Field;
-
-
 public abstract class AbstractValidator implements Validator {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
