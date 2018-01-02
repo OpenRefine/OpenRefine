@@ -1,6 +1,6 @@
 version: 1.0.{build}
 clone_script:
-- cmd: git clone --recursive https://github.com/OpenRefine/OpenRefine
+- cmd: git clone https://github.com/OpenRefine/OpenRefine
 environment:
   ANT_HOME: C:\apache-ant-1.10.1
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0

@@ -31,8 +31,6 @@
     <property name="webapp.dir" value="${main.dir}/webapp" />
     <property name="webapp.src.dir" value="${main.dir}/src" />
     <property name="table-schema.src.dir" value="${basedir}/tableschema-java/src/main/java/" />
-    <property name="data-package.src.dir" value="${basedir}/datapackage-java/src/main/java/" />
-    <property name="data-package.resources.dir" value="${basedir}/datapackage-java/src/main/resources/" />
     <property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib" />
     <property name="webapp.classes.dir" value="${webapp.dir}/WEB-INF/classes" />
 
@@ -140,8 +138,6 @@
         <mkdir dir="${webapp.classes.dir}" />
         <javac source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${webapp.classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${webapp.src.dir}"/>
-            <src path="${table-schema.src.dir}"/>
-            <src path="${data-package.src.dir}"/>
             <classpath refid="webapp.class.path" />
         </javac>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
@@ -149,7 +145,6 @@
         <copy file="${webapp.src.dir}/TableSchemaValidator.json" tofile="${webapp.classes.dir}/TableSchemaValidator.json"/>
         <copy file="${webapp.src.dir}/validator-resource-bundle.properties" tofile="${webapp.classes.dir}/validator-resource-bundle.properties"/>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
-	<copy todir="${webapp.classes.dir}"><fileset dir="${data-package.resources.dir}" /></copy>
     </target>
 
     <target name="build_tests" depends="build">
