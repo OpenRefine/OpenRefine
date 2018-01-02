@@ -35,18 +35,22 @@ public class WbNameDescExpr extends BiJsonizable {
         _value.write(writer, options);
     }
     
-    public void contributeTo(ItemUpdate item, ExpressionContext ctxt) throws SkipStatementException {
-        MonolingualTextValue val = _value.evaluate(ctxt);
-        switch (_type) {
-            case LABEL:
-                item.addLabel(val);
-                break;
-            case DESCRIPTION:
-                item.addDescription(val);
-                break;
-            case ALIAS:
-                item.addAlias(val);
-                break;
+    public void contributeTo(ItemUpdate item, ExpressionContext ctxt) {
+        try {
+            MonolingualTextValue val = _value.evaluate(ctxt);
+            switch (_type) {
+                case LABEL:
+                    item.addLabel(val);
+                    break;
+                case DESCRIPTION:
+                    item.addDescription(val);
+                    break;
+                case ALIAS:
+                    item.addAlias(val);
+                    break;
+            }
+        } catch (SkipStatementException e) {
+            return;
         }
     }
 

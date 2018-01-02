@@ -301,6 +301,7 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   .attr('value', 'ALIAS')
   .text('Alias')
   .appendTo(type_input);
+  type_input.val(type);
 
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(namedesc);
   $('<img src="images/close.png" />').attr('alt', 'remove name/description').click(function() {
@@ -317,10 +318,10 @@ SchemaAlignmentDialog._nameDescToJSON = function (namedesc) {
   var type = namedesc.find('select').first().val();
   var value = namedesc.find('.wbs-namedesc-value').first().data("jsonValue");
   return {
-    type: "wbnamedescexpr",    
+    type: "wbnamedescexpr",    
     name_type: type,
     value: value,
-  }
+  };
 }
   
 
@@ -551,7 +552,7 @@ SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
         props: "datatype",
      },
      dataType: "jsonp",
-     success: function(data) {
+     success: function(data) {
         callback(data.entities[pid].datatype);
      }});
 }
@@ -884,7 +885,7 @@ $.suggest("langsuggest", {
       success: function(data) {
          self.response(self.convertResults(data));
       },
-      dataType: "jsonp",
+      dataType: "jsonp",
      };
     $.ajax(ajax_options); 
   },
