@@ -76,15 +76,14 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     private final LocalDateTime     _created;
     private LocalDateTime           _modified;
-    private LocalDateTime written = null;
     private String         _name = "";
     private String         _password = "";
 
     private String _encoding = "";
     private int _encodingConfidence;
-    protected int _rowCount;
+    private int _rowCount;
     // user metadata
-    protected JSONArray _userMetadata = new JSONArray();; 
+    private JSONArray _userMetadata = new JSONArray();; 
 
     private String[] _tags = new String[0];
     private String _creator = "";
@@ -255,7 +254,6 @@ public class ProjectMetadata  extends AbstractMetadata {
             try {
                 JSONObject obj2 = obj.getJSONObject("customMetadata");
 
-                @SuppressWarnings("unchecked")
                 Iterator<String> keys = obj2.keys();
                 while (keys.hasNext()) {
                     String key = keys.next();
