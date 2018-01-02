@@ -381,7 +381,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
     var index = 3;
     refreshMetaField(metaData.name, index); index++;
     refreshMetaTags(metaData.tags, index); index++;
-    refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
     refreshMetaField(metaData.description,index); index++;
     refreshMetaField(metaData.rowCount,index); index++;
