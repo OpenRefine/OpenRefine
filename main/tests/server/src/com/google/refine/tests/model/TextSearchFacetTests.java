@@ -38,8 +38,8 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,16 +52,15 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
+import com.google.refine.browsing.RowFilter;
+import com.google.refine.browsing.facets.TextSearchFacet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
-import com.google.refine.browsing.RowFilter;
-import com.google.refine.browsing.facets.TextSearchFacet;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;

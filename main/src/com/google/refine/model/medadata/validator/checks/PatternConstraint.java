@@ -11,7 +11,7 @@ import com.google.refine.model.Project;
 import io.frictionlessdata.tableschema.Field;
 
 public class PatternConstraint extends AbstractValidator {
-    String regexPattern;
+    private String regexPattern;
     
     public PatternConstraint(Project project, int cellIndex, JSONObject options) {
         super(project, cellIndex, options);

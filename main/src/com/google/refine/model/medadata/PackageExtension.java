@@ -23,7 +23,7 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
  * Some methods can be removed after the official library provide the corresponding function.
  */
 public class PackageExtension {
-    final static Logger logger = LoggerFactory.getLogger(PackageExtension.class);
+    private final static Logger logger = LoggerFactory.getLogger(PackageExtension.class);
     
     private static final int JSON_INDENT_FACTOR = 4;
     

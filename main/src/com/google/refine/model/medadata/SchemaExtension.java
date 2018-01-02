@@ -1,8 +1,5 @@
 package com.google.refine.model.medadata;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 
@@ -15,8 +12,6 @@ import io.frictionlessdata.tableschema.Schema;
  * Some methods can be removed after the official library provide the corresponding function.
  */
 public class SchemaExtension {
-    final static Logger logger = LoggerFactory.getLogger(SchemaExtension.class);
-    
     private static final String DEFAULT_RESOURCE_PATH = "data/";
     private static final String DEFAULT_RESOURCE_SUFFIX = ".csv";
     

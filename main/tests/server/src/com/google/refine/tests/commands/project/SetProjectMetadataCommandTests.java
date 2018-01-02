@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.commands.project;
 
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,7 +59,6 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.project.SetProjectMetadataCommand;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 

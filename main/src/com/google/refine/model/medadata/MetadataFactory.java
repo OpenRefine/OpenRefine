@@ -16,7 +16,7 @@ import io.frictionlessdata.datapackage.Resource;
 import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 public class MetadataFactory {
-    final static Logger logger = LoggerFactory.getLogger(MetadataFactory.class);
+    private final static Logger logger = LoggerFactory.getLogger(MetadataFactory.class);
     
     /**
      * Build metadata based on the format

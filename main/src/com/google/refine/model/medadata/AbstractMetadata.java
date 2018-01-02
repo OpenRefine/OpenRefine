@@ -65,7 +65,7 @@ public abstract class AbstractMetadata implements IMetadata {
         }
     }
     
-    static boolean propertyExists(Object bean, String property) {
+    protected static boolean propertyExists(Object bean, String property) {
         return PropertyUtils.isReadable(bean, property) && 
                PropertyUtils.isWriteable(bean, property); 
     }

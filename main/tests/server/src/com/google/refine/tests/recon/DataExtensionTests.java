@@ -37,9 +37,9 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,23 +52,19 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.RowVisitor;
-import com.google.refine.grel.Function;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
-import com.google.refine.model.medadata.MetadataFormat;
-import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
-import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
-import com.google.refine.operations.OnError;
+import com.google.refine.model.Row;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.recon.ExtendDataOperation;
+import com.google.refine.process.Process;
+import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 

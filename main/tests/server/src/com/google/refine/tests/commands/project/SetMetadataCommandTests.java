@@ -23,8 +23,6 @@ import org.mockito.BDDMockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 import com.google.refine.ProjectManager;
@@ -37,28 +35,26 @@ import com.google.refine.model.medadata.MetadataFormat;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MetadataFactory.class)
 public class SetMetadataCommandTests  {
-    
-    Logger logger = LoggerFactory.getLogger(SetMetadataCommandTests.class.getClass());
-    
     // System Under Test
-    SetMetadataCommand SUT = null;
+    private SetMetadataCommand SUT = null;
 
     // variables
-    long PROJECT_ID_LONG = 1234;
-    String PROJECT_ID = "1234";
+    private long PROJECT_ID_LONG = 1234;
+    private String PROJECT_ID = "1234";
     private static final String LICENSE = "Apache License 2.0";
-    private String changedJSON;
     private DataPackageMetadata metadata;
 
     // mocks
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
-    ProjectManager projMan = null;
-    Project proj = null;
-    PrintWriter pw = null;
+    private HttpServletRequest request = null;
+    private HttpServletResponse response = null;
+    private ProjectManager projMan = null;
+    private Project proj = null;
+    private PrintWriter pw = null;
 
     @Before
-    public void SetUp() throws JSONException, IOException {
+    public void before() throws JSONException, IOException {
+        String changedJSON;
+        
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
         proj = mock(Project.class);
@@ -90,7 +86,7 @@ public class SetMetadataCommandTests  {
     }
 
     @After
-    public void TearDown() {
+    public void after() {
         SUT = null;
 
         projMan = null;

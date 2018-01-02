@@ -42,8 +42,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -53,8 +51,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.model.ProjectStub;

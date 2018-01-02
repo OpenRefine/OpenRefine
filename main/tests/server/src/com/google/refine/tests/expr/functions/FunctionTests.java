@@ -58,7 +58,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;

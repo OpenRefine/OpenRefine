@@ -23,8 +23,6 @@ import org.mockito.BDDMockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 import com.google.refine.ProjectManager;
@@ -44,9 +42,6 @@ import io.frictionlessdata.tableschema.exceptions.PrimaryKeyException;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MetadataFactory.class)
 public class ValidateOperationTests extends TsvCsvImporterTests  {
-    
-    private Logger logger = LoggerFactory.getLogger(ValidateOperationTests.class.getClass());
-    
     private SeparatorBasedImporter parser = null;
 
     // variables

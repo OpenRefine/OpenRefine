@@ -599,7 +599,8 @@ EditGeneralMetadataDialog.prototype._dismiss = function() {
 };
 
 EditGeneralMetadataDialog.prototype._submit = function(editor) {
-    if (typeof this._callback === "function") 
+    if (typeof this._callback === "function") {
         this._callback(editor.getText());
+    }
     this._dismiss();
 };

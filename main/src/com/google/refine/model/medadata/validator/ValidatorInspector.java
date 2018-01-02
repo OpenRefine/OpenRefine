@@ -21,7 +21,7 @@ import com.google.refine.model.medadata.validator.checks.Validator;
 import com.google.refine.util.JSONUtilities;
 
 public class ValidatorInspector {
-    final static Logger logger = LoggerFactory.getLogger(ValidatorInspector.class);
+    private final static Logger logger = LoggerFactory.getLogger(ValidatorInspector.class);
     
     /**
      * Return a report contains the validate result
@@ -29,7 +29,7 @@ public class ValidatorInspector {
      * @param options
      * @return
      */
-    static JSONObject inspect(Project project, JSONObject options) {
+    public static JSONObject inspect(Project project, JSONObject options) {
         List<String> columnNames;
         String COLUMN_NAMES_KEY = "columnNames";
         Map<String, List<Validator>> columnToCheckersMap = new HashMap<String, List<Validator>>();

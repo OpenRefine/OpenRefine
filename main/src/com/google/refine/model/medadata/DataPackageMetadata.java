@@ -24,7 +24,7 @@ import io.frictionlessdata.datapackage.exceptions.DataPackageException;
 
 
 public class DataPackageMetadata extends AbstractMetadata {
-    final static Logger logger = LoggerFactory.getLogger(DataPackageMetadata.class);
+    private final static Logger logger = LoggerFactory.getLogger(DataPackageMetadata.class);
 
     public static final String DEFAULT_FILE_NAME = "datapackage.json";
 

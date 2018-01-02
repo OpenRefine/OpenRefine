@@ -114,7 +114,7 @@ import io.frictionlessdata.tableschema.exceptions.TypeInferringException;
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
     
-    final static String METADATA_FILE_KEY  = "metadataFile";
+    private final static String METADATA_FILE_KEY  = "metadataFile";
 
     private static final int INFER_ROW_LIMIT = 100;
     

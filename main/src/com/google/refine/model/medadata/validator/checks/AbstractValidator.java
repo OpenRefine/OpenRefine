@@ -90,7 +90,10 @@ public abstract class AbstractValidator implements Validator {
         return new StrSubstitutor(lookup).replace(message);
     }
     
-    // Empty body since default there is no customized Format
+    /*
+     * Empty body since default there is no customized Format
+     * @see com.google.refine.model.medadata.validator.checks.Validator#customizedFormat()
+     */
     @Override
     public void customizedFormat() {
     }

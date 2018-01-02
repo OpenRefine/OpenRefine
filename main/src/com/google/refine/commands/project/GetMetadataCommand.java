@@ -37,7 +37,7 @@ public class GetMetadataCommand extends Command {
                 return;
             }
             
-            IMetadata metadata = MetadataFactory.buildDataPackageMetadata(project);;
+            IMetadata metadata = MetadataFactory.buildDataPackageMetadata(project);
             respondJSONObject(response, metadata.getJSON());
         } catch (JSONException e) {
             respondException(response, e);

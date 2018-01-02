@@ -29,7 +29,6 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.medadata.MetadataFormat;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineServletStub;
