@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="datapackage-java/src/main/resources"/>
-	<classpathentry kind="src" path="datapackage-java/src/test/java"/>
-	<classpathentry excluding="fixtures/not_a_json_datapackage.json|fixtures/simple_invalid_datapackage.json" kind="src" path="datapackage-java/src/test/resources"/>
-	<classpathentry kind="src" path="datapackage-java/src/main/java"/>
-	<classpathentry kind="src" path="tableschema-java/src/main/java"/>
-	<classpathentry kind="src" path="tableschema-java/src/main/resources"/>
-	<classpathentry kind="src" path="tableschema-java/src/test/java"/>
-	<classpathentry kind="src" path="tableschema-java/src/test/resources"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/jython/src"/>
@@ -114,5 +106,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/objenesis-2.5.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/powermock-mockito2-1.7.1-full.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/testng-6.9.10.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/datapackage-java-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/tableschema-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>
