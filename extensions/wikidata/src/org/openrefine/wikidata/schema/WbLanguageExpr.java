@@ -23,8 +23,10 @@ public abstract class WbLanguageExpr extends BiJsonizable {
         String type = obj.getString(jsonTypeKey);
         if (WbLanguageConstant.jsonType.equals(type)) {
             return WbLanguageConstant.fromJSON(obj);
+        } else if (WbLanguageVariable.jsonType.equals(type)) {
+            return WbLanguageVariable.fromJSON(obj);
         } else {
-            throw new JSONException("unknown type for WbLocationExpr");
+            throw new JSONException("unknown type for WbLanguageExpr");
         }
     }
 }

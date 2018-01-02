@@ -156,4 +156,28 @@ public class ItemUpdate {
         }
         return map;
     }
+
+    /**
+     * This should only be used when creating a new item.
+     * This ensures that we never add an alias without adding
+     * a label in the same language.
+     */
+    public void normalizeLabelsAndAliases() {
+        // Ensure that we are only adding aliases with labels
+        List<String> labelLanguages = new ArrayList<String>();
+        for(MonolingualTextValue label : labels) {
+            labelLanguages.add(label.getLanguageCode());
+        }
+
+        List<MonolingualTextValue> filteredAliases = new ArrayList<>();
+        for(MonolingualTextValue alias : aliases) {
+            if(!labelLanguages.contains(alias.getLanguageCode())) {
+                labelLanguages.add(alias.getLanguageCode());
+                labels.add(alias);
+            } else {
+                filteredAliases.add(alias);
+            }
+        }
+        aliases = filteredAliases;
+    }
 }

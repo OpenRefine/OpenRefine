@@ -76,6 +76,7 @@ public class QuickStatementsExporter implements WriterExporter {
         if (item.getItemId().getId() == "Q0") {
             writer.write("CREATE\n");
             qid = "LAST";
+            item.normalizeLabelsAndAliases();
         }
         
         translateNameDescr(qid, item.getLabels(), "L", item.getItemId(), writer);
