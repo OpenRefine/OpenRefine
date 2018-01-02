@@ -24,6 +24,7 @@ PerformEditsDialog.launch = function(logged_in_username) {
        {},
        { strategy : "SNAK_QUALIFIERS",
          action: "MERGE",
+         summary: elmts.editSummary.val(),
        },
        { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
        { onDone:
