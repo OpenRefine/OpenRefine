@@ -193,7 +193,7 @@ public abstract class ProjectManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }//FIXME what should be the behaviour if metadata is null? i.e. not found
+            }
 
             Project project = getProject(id);
             if (project != null && metadata != null && metadata.getModified().isAfter(project.getLastSave())) {
@@ -202,8 +202,7 @@ public abstract class ProjectManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }//FIXME what should be the behaviour if project is null? i.e. not found or loaded.
-            //FIXME what should happen if the metadata is found, but not the project? or vice versa?
+            }
         }
 
     }

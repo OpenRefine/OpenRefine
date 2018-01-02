@@ -98,6 +98,13 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     private PreferenceStore             _preferenceStore = new PreferenceStore();
+    
+    // below 5 fields are from data package metadata:
+    private String title = "";
+    private String homepage;
+    private String image = "";
+    private String license = "";
+    private String version = "";
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
@@ -138,16 +145,16 @@ public class ProjectMetadata  extends AbstractMetadata {
         writer.endArray();
         writer.key("created"); writer.value(ParsingUtilities.localDateToString(_created));
         writer.key("modified"); writer.value(ParsingUtilities.localDateToString(_modified));
-        writer.key("creator");
-        writer.value(_creator);
-        writer.key("contributors");
-        writer.value(_contributors);
-        writer.key("subject");
-        writer.value(_subject);
-        writer.key("description");
-        writer.value(_description);
-        writer.key("rowCount");
-        writer.value(_rowCount);
+        writer.key("creator"); writer.value(_creator);
+        writer.key("contributors"); writer.value(_contributors);
+        writer.key("subject"); writer.value(_subject);
+        writer.key("description"); writer.value(_description);
+        writer.key("rowCount"); writer.value(_rowCount);
+        writer.key("title"); writer.value(title);
+        writer.key("homepage"); writer.value(homepage);
+        writer.key("image"); writer.value(image);
+        writer.key("license"); writer.value(license);
+        writer.key("version"); writer.value(version);
 
         writer.key("customMetadata");
         writer.object();
@@ -438,6 +445,55 @@ public class ProjectMetadata  extends AbstractMetadata {
     public void setDescription(String description) {
         this._description = description;
         updateModified();
+    }
+    
+    
+    public String getTitle() {
+        return title;
+    }
+
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    
+    public String getHomepage() {
+        return homepage;
+    }
+
+    
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
+    }
+
+    
+    public String getImage() {
+        return image;
+    }
+
+    
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    
+    public String getLicense() {
+        return license;
+    }
+
+    
+    public void setLicense(String license) {
+        this.license = license;
+    }
+    
+    public String getVersion() {
+        return version;
+    }
+
+    
+    public void setVersion(String version) {
+        this.version = version;
     }
     
     public JSONArray getUserMetadata() {

@@ -33,7 +33,7 @@ public class GetMetadataCommand extends Command {
             
             // for now, only the data package metadata is supported.
             if (metadataFormat != MetadataFormat.DATAPACKAGE_METADATA) {
-                respond(response, "error", "metadata format is not supporeted");
+                respond(response, "error", "metadata format is not supported");
                 return;
             }
             

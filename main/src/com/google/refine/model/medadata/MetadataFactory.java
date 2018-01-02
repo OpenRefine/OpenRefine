@@ -59,6 +59,10 @@ public class MetadataFactory {
             putValue(pkg, Package.JSON_KEY_NAME, pmd.getName());
             putValue(pkg, PackageExtension.JSON_KEY_LAST_UPDATED, ParsingUtilities.localDateToString(pmd.getModified()));
             putValue(pkg, PackageExtension.JSON_KEY_DESCRIPTION, pmd.getDescription());
+            putValue(pkg, PackageExtension.JSON_KEY_TITLE, pmd.getTitle());
+            putValue(pkg, PackageExtension.JSON_KEY_HOMEPAGE, pmd.getHomepage());
+            putValue(pkg, PackageExtension.JSON_KEY_IMAGE, pmd.getImage());
+            putValue(pkg, PackageExtension.JSON_KEY_LICENSE, pmd.getLicense());
             
             pkg.removeProperty(PackageExtension.JSON_KEY_KEYWORKS);
             pkg.addProperty(PackageExtension.JSON_KEY_KEYWORKS, JSONUtilities.arrayToJSONArray(pmd.getTags()));

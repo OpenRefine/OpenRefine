@@ -30,6 +30,11 @@ public class PackageExtension {
     public static final String JSON_KEY_LAST_UPDATED = "last_updated";
     public static final String JSON_KEY_DESCRIPTION = "description";
     public static final String JSON_KEY_KEYWORKS = "keywords";
+    public static final String JSON_KEY_TITLE = "title";
+    public static final String JSON_KEY_HOMEPAGE = "homepage";
+    public static final String JSON_KEY_IMAGE = "image"; 
+    public static final String JSON_KEY_LICENSE = "license";
+    public static final String JSON_KEY_VERSION = "version";
     
     public static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
     

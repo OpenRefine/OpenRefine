@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -46,6 +47,7 @@ import org.json.JSONWriter;
 import com.google.refine.InterProjectModel;
 import com.google.refine.Jsonizable;
 import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 import io.frictionlessdata.tableschema.Field;
@@ -222,11 +224,13 @@ public class Column implements Jsonizable {
         Column column = new Column(obj.getInt("cellIndex"), obj.getString("originalName"));
         
         column._name = obj.getString("name");
-        column.type = obj.getString("type");
-        column.format = obj.getString("format");
-        column.title = obj.getString("title");
-        column.description = obj.getString("description");
-        column.constraints = new JSONObject(obj.getString("constraints")).toMap();
+        column.type = JSONUtilities.getString(obj, Field.JSON_KEY_TYPE, StringUtils.EMPTY);
+        column.format = JSONUtilities.getString(obj, Field.JSON_KEY_FORMAT, StringUtils.EMPTY);
+        column.title = JSONUtilities.getString(obj, Field.JSON_KEY_TITLE, StringUtils.EMPTY);
+        column.description = JSONUtilities.getString(obj, Field.JSON_KEY_DESCRIPTION, StringUtils.EMPTY);
+        if (obj.has(Field.JSON_KEY_CONSTRAINTS)) {
+            column.constraints = new JSONObject(obj.getString(Field.JSON_KEY_CONSTRAINTS)).toMap();
+        }
               
         if (obj.has("reconConfig")) {
             column._reconConfig = ReconConfig.reconstruct(obj.getJSONObject("reconConfig"));

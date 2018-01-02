@@ -68,6 +68,7 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -1131,8 +1132,13 @@ public class ImportingUtilities {
         // project metadata
         JSONObject pkg = metadata.getPackage().getJson();
         
-        pmd.setName(pkg.getString(Package.JSON_KEY_NAME));
-        pmd.setDescription(pkg.getString(PackageExtension.JSON_KEY_DESCRIPTION));
+        pmd.setName(getDataPackageProperty(pkg, Package.JSON_KEY_NAME));
+        pmd.setDescription(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_DESCRIPTION));
+        pmd.setTitle(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_TITLE));
+        pmd.setHomepage(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_HOMEPAGE));
+        pmd.setImage(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_IMAGE));
+        pmd.setLicense(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_LICENSE));
+        pmd.setVersion(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_VERSION));
         
         String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
         pmd.setTags(tags);
@@ -1142,6 +1148,9 @@ public class ImportingUtilities {
         populateColumnTypes(project.columnModel, schema.getJSONArray(Schema.JSON_KEY_FIELDS));
     }
     
+    private static String getDataPackageProperty(JSONObject pkg, String key) {
+        return JSONUtilities.getString(pkg, key, StringUtils.EMPTY);
+    }
     /**
      * Populate the column model
      * @param columnModel
@@ -1176,6 +1185,10 @@ public class ImportingUtilities {
         
         pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
         pm.setTags(JSONUtilities.getStringArray(optionObj, "projectTags"));
+        pm.setTitle(JSONUtilities.getString(optionObj, "title", ""));
+        pm.setHomepage(JSONUtilities.getString(optionObj, "homepage", ""));
+        pm.setImage(JSONUtilities.getString(optionObj, "image", ""));
+        pm.setLicense(JSONUtilities.getString(optionObj, "license", ""));
 
         String encoding = JSONUtilities.getString(optionObj, "encoding", "UTF-8");
         if ("".equals(encoding)) {
