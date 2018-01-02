@@ -48,17 +48,21 @@ public class ConnectionManager {
         connection = null;
     }
     
-    public void login(String username, String password) {
-        try {
-            JSONArray array = new JSONArray();
-            JSONObject obj = new JSONObject();
-            obj.put("username", username);
-            obj.put("password", password);
-            array.put(obj);
-            prefStore.put(PREFERENCE_STORE_KEY, array);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public void login(String username, String password, boolean rememberCredentials) {
+        if (rememberCredentials) {
+            try {
+                JSONArray array = new JSONArray();
+                JSONObject obj = new JSONObject();
+                obj.put("username", username);
+                obj.put("password", password);
+                array.put(obj);
+                prefStore.put(PREFERENCE_STORE_KEY, array);
+                // TODO save preferences (find out how)
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+        
         connection = ApiConnection.getWikidataApiConnection();
         try {
             connection.login(username, password);
@@ -67,19 +71,17 @@ public class ConnectionManager {
         }
     }
     
-    public void restorePreviousLogin() {
+    public JSONObject getStoredCredentials() {
         JSONArray array = (JSONArray) prefStore.get(PREFERENCE_STORE_KEY);
         if (array.length() > 0) {
             JSONObject obj;
             try {
-                obj = array.getJSONObject(0);
-                String username = obj.getString("username");
-                String password = obj.getString("password");
-                login(username, password);
+                return array.getJSONObject(0);
             } catch (JSONException e) {
                 e.printStackTrace();
             }      
         }
+        return null;
     }
     
     public void logout() {

@@ -1,8 +1,29 @@
 var ManageAccountDialog = {};
+/*
+  $.post(
+      "command/core/get-all-preferences",
+      null,
+      populatePreferences,
+      "json"
+  );
+*/
+
 ManageAccountDialog.launch = function(logged_in_username, callback) {
+   $.post(
+      "command/core/get-all-preferences",
+      null,
+      function (preferences) {
+         ManageAccountDialog.display(logged_in_username, preferences.wikidata_credentials, callback);
+      },
+      "json"
+  );
+};
+
+ManageAccountDialog.display = function(logged_in_username, saved_credentials, callback) {
   var self = this;
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/manage-account-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
+  console.log(saved_credentials);
 
   this._level = DialogSystem.showDialog(frame);
 

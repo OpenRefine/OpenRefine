@@ -3,7 +3,6 @@
   <div class="dialog-body" bind="dialogBody">
     <p class="body-text">
       Logging in to Wikidata will allow you to perform edits directly from OpenRefine.
-      Your credentials will be stored unencrypted in OpenRefine's preferences.
     </p>
         <div class="wikibase-user-management-area">
           <div class="wikibase-user-login" bind="loginArea">
@@ -17,6 +16,10 @@
                 <tr>
                   <td><label for="wb-password">Password:</label></td>
                   <td><input name="wb-password" type="password" placeholder="Enter your password" /></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" name="remember-credentials" /></td>
+                  <td><label for="remember-credentials">Remember credentials (stored unencrypted in OpenRefine's preferences)</label></td>
                 </tr>
               </table>
             </form>
