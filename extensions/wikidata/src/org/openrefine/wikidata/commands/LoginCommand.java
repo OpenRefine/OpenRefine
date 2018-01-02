@@ -12,7 +12,8 @@ import org.json.JSONWriter;
 import org.openrefine.wikidata.editing.ConnectionManager;
 
 import com.google.refine.commands.Command;
-
+import com.google.refine.preference.PreferenceStore;
+import com.google.refine.ProjectManager;
 
 public class LoginCommand extends Command {
     @Override
@@ -20,9 +21,11 @@ public class LoginCommand extends Command {
             throws ServletException, IOException {
         String username = request.getParameter("wb-username");
         String password = request.getParameter("wb-password");
+        String remember = request.getParameter("remember-credentials");
+        System.out.println(remember);
         ConnectionManager manager = ConnectionManager.getInstance();
         if (username != null && password != null) {
-            manager.login(username, password);
+            manager.login(username, password, "on".equals(remember));
         } else if ("true".equals(request.getParameter("logout"))) {
             manager.logout();
         }
