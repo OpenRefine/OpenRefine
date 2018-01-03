@@ -5,11 +5,9 @@ import java.util.Properties;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.HasFields;
 import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class JythonAttributeTest {
@@ -18,7 +16,7 @@ public class JythonAttributeTest {
 
         @Override
         public Object getField(String name, Properties bindings) {
-            if (name.equals("sunshine")) {
+            if ("sunshine".equals(name)) {
                 return "hammock";
             }
             return null;
@@ -33,8 +31,6 @@ public class JythonAttributeTest {
     
     @Test
     public void testWrappedObjectsHaveAttributes() {
-        Project project = new Project();
-
         Row row = new Row(2);
         row.setCell(0, new Cell("sunshine", null));
         row.setCell(1, new Cell("hammock", null));
