@@ -3,9 +3,29 @@ package org.openrefine.wikidata.schema;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.openrefine.wikidata.utils.JacksonJsonizable;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 
-public abstract class WbValueExpr extends BiJsonizable {
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
+      include=JsonTypeInfo.As.PROPERTY,
+      property="type")
+@JsonSubTypes({ 
+    @Type(value = WbStringConstant.class, name = "wbstringconstant"), 
+    @Type(value = WbStringVariable.class, name = "wbstringvariable"),
+    @Type(value = WbLocationConstant.class, name = "wblocationconstant"), 
+    @Type(value = WbLocationVariable.class, name = "wblocationvariable"),
+    @Type(value = WbItemConstant.class, name = "wbitemconstant"), 
+    @Type(value = WbItemVariable.class, name = "wbitemvariable"),
+    @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"), 
+    @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
+    @Type(value = WbDateConstant.class, name = "wbdateconstant"), 
+    @Type(value = WbDateVariable.class, name = "wbdatevariable") ,
+  })
+public abstract class WbValueExpr extends JacksonJsonizable {
     /* An expression that represents a Wikibase value,
      * i.e. anything that can be on the right-hand side
      * of a statement.
@@ -18,31 +38,6 @@ public abstract class WbValueExpr extends BiJsonizable {
     public abstract Value evaluate(ExpressionContext ctxt) throws SkipStatementException;
     
     public static WbValueExpr fromJSON(JSONObject obj) throws JSONException {
-        String type = obj.getString(WbValueExpr.jsonTypeKey);
-        WbValueExpr valueExpr = null;
-        if (WbPropConstant.jsonType.equals(type)) {
-            valueExpr = WbPropConstant.fromJSON(obj);
-        } else if (WbItemConstant.jsonType.equals(type)) {
-            valueExpr = WbItemConstant.fromJSON(obj);
-        } else if (WbItemVariable.jsonType.equals(type)) {
-            valueExpr = WbItemVariable.fromJSON(obj);
-        } else if (WbStringVariable.jsonType.equals(type)) {
-            valueExpr = WbStringVariable.fromJSON(obj);
-        } else if (WbStringConstant.jsonType.equals(type)) {
-            valueExpr = WbStringConstant.fromJSON(obj);
-        } else if (WbDateVariable.jsonType.equals(type)) {
-            valueExpr = WbDateVariable.fromJSON(obj);
-        } else if (WbDateConstant.jsonType.equals(type)) {
-            valueExpr = WbDateConstant.fromJSON(obj);
-        } else if (WbLocationVariable.jsonType.equals(type)) {
-            valueExpr = WbLocationVariable.fromJSON(obj);
-        } else if (WbLocationConstant.jsonType.equals(type)) {
-            valueExpr = WbLocationConstant.fromJSON(obj);
-        } else if (WbMonolingualExpr.jsonType.equals(type)) {
-            valueExpr = WbMonolingualExpr.fromJSON(obj);
-        } else {
-            throw new JSONException("unknown type '"+type+"' for WbValueExpr");
-        }
-        return valueExpr;
+        return fromJSONClass(obj, WbValueExpr.class);
     }
 }

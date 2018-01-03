@@ -1,27 +1,25 @@
 package org.openrefine.wikidata.schema;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.model.Cell;
 
 
 public class WbLanguageVariable extends WbLanguageExpr {
-    public static final String jsonType = "wblanguagevariable";
     
-    private String _columnName;
+    private String columnName;
     
-    public WbLanguageVariable(String columnName) {
-        _columnName = columnName;
+    @JsonCreator
+    public WbLanguageVariable(
+            @JsonProperty("columnName") String columnName) {
+        this.columnName = columnName;
     }
     
     @Override
     public String evaluate(ExpressionContext ctxt)
             throws SkipStatementException {
-        Cell cell = ctxt.getCellByName(_columnName);
+        Cell cell = ctxt.getCellByName(getColumnName());
         if (cell != null) {
             // TODO some validation here?
             return cell.value.toString();
@@ -29,20 +27,8 @@ public class WbLanguageVariable extends WbLanguageExpr {
         throw new SkipStatementException();
     }
 
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("columnName");
-        writer.value(_columnName);
-    }
-    
-    public static WbLanguageVariable fromJSON(JSONObject obj) throws JSONException {
-        return new WbLanguageVariable(obj.getString("columnName"));
-    }
-
-    @Override
-    public String getJsonType() {
-        return jsonType;
+    public String getColumnName() {
+        return columnName;
     }
 
 }

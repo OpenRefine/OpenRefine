@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -21,65 +22,24 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class WbStatementExpr extends BiJsonizable {
-    
-    public static final String jsonType = "wbstatementexpr";
+
+public class WbStatementExpr extends JacksonJsonizable {
     
     private WbValueExpr mainSnakValueExpr;
     private List<WbSnakExpr> qualifierExprs;
     private List<WbReferenceExpr> referenceExprs;
-    // TODO: references
     
-    public WbStatementExpr(WbValueExpr mainSnakValueExpr,
-                       List<WbSnakExpr> qualifierExprs,
-                       List<WbReferenceExpr> referenceExprs) {
+    @JsonCreator
+    public WbStatementExpr(
+            @JsonProperty("value") WbValueExpr mainSnakValueExpr,
+            @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
+            @JsonProperty("references") List<WbReferenceExpr> referenceExprs) {
         this.mainSnakValueExpr = mainSnakValueExpr;
         this.qualifierExprs = qualifierExprs;
         this.referenceExprs = referenceExprs;
-    }
-
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("value");
-        mainSnakValueExpr.write(writer, options);
-        writer.key("qualifiers");
-        writer.array();
-        for (WbSnakExpr expr : qualifierExprs) {
-            expr.write(writer, options);
-        }
-        writer.endArray();
-        writer.key("references");
-        writer.array();
-        for (WbReferenceExpr expr : referenceExprs) {
-            expr.write(writer, options);
-        }
-        writer.endArray();
-    }
-    
-    public static WbStatementExpr fromJSON(JSONObject obj) throws JSONException {
-        JSONObject mainSnakObj = obj.getJSONObject("value");
-        
-        List<WbSnakExpr> qualifierExprs = new ArrayList<WbSnakExpr>();
-        if (obj.has("qualifiers")) {
-            JSONArray qualifiersArr = obj.getJSONArray("qualifiers");
-            for (int i = 0; i != qualifiersArr.length(); i++) {
-                qualifierExprs.add(WbSnakExpr.fromJSON(qualifiersArr.getJSONObject(i)));
-            }
-        }
-        
-        List<WbReferenceExpr> referenceExprs = new ArrayList<WbReferenceExpr>();
-        if (obj.has("references")) {
-            JSONArray referencesArr = obj.getJSONArray("references");
-            for (int i = 0; i != referencesArr.length(); i++) {
-                referenceExprs.add(WbReferenceExpr.fromJSON(referencesArr.getJSONObject(i)));
-            }
-        }
-        return new WbStatementExpr(
-                WbValueExpr.fromJSON(mainSnakObj),
-                qualifierExprs,
-                referenceExprs);
     }
     
     public static List<SnakGroup> groupSnaks(List<Snak> snaks) {
@@ -93,12 +53,12 @@ public class WbStatementExpr extends BiJsonizable {
     }
     
     public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) throws SkipStatementException {
-        Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
+        Value mainSnakValue = getMainsnak().evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         
         // evaluate qualifiers
-        List<Snak> qualifiers = new ArrayList<Snak>(qualifierExprs.size());
-        for (WbSnakExpr qExpr : qualifierExprs) {
+        List<Snak> qualifiers = new ArrayList<Snak>(getQualifiers().size());
+        for (WbSnakExpr qExpr : getQualifiers()) {
             qualifiers.add(qExpr.evaluate(ctxt));
         }
         List<SnakGroup> groupedQualifiers = groupSnaks(qualifiers);
@@ -106,7 +66,7 @@ public class WbStatementExpr extends BiJsonizable {
         
         // evaluate references
         List<Reference> references = new ArrayList<Reference>();
-        for (WbReferenceExpr rExpr : referenceExprs) {
+        for (WbReferenceExpr rExpr : getReferences()) {
             references.add(rExpr.evaluate(ctxt));
         }
         
@@ -114,7 +74,16 @@ public class WbStatementExpr extends BiJsonizable {
         return Datamodel.makeStatement(claim, references, rank, "");
     }
 
-    public String getJsonType() {
-        return jsonType;
+    @JsonProperty("value")
+    public WbValueExpr getMainsnak() {
+        return mainSnakValueExpr;
+    }
+
+    public List<WbSnakExpr> getQualifiers() {
+        return qualifierExprs;
+    }
+
+    public List<WbReferenceExpr> getReferences() {
+        return referenceExprs;
     }
 }

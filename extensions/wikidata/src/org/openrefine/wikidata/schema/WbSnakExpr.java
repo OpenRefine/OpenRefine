@@ -1,51 +1,39 @@
 package org.openrefine.wikidata.schema;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbSnakExpr implements Jsonizable {
+public class WbSnakExpr extends JacksonJsonizable {
     
-    private WbPropExpr propExpr;
-    private WbValueExpr valueExpr;
+    private WbPropExpr prop;
+    private WbValueExpr value;
     
-    public WbSnakExpr(WbPropExpr propExpr, WbValueExpr valueExpr) {
-        this.propExpr = propExpr;
-        this.valueExpr = valueExpr;
+    @JsonCreator
+    public WbSnakExpr(
+            @JsonProperty("prop") WbPropExpr propExpr,
+            @JsonProperty("value") WbValueExpr valueExpr) {
+        this.prop = propExpr;
+        this.value = valueExpr;
     }
 
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("prop");
-        propExpr.write(writer, options);
-        writer.key("value");
-        valueExpr.write(writer, options);
-        writer.endObject();
-    }
-    
-    public static WbSnakExpr fromJSON(JSONObject obj) throws JSONException {
-        JSONObject propObj = obj.getJSONObject("prop");
-        WbPropExpr propExpr = WbPropConstant.fromJSON(propObj);
-        JSONObject valueObj = obj.getJSONObject("value");
-        WbValueExpr valueExpr = WbValueExpr.fromJSON(valueObj);
-        return new WbSnakExpr(propExpr, valueExpr);
-    }
-   
     public Snak evaluate(ExpressionContext ctxt) throws SkipStatementException {
-        PropertyIdValue propertyId = propExpr.evaluate(ctxt);
-        Value value = valueExpr.evaluate(ctxt);
-        return Datamodel.makeValueSnak(propertyId, value);
+        PropertyIdValue propertyId = getProp().evaluate(ctxt);
+        Value evaluatedValue = value.evaluate(ctxt);
+        return Datamodel.makeValueSnak(propertyId, evaluatedValue);
     }
 
+    public WbPropExpr getProp() {
+        return prop;
+    }
+
+    public WbValueExpr getValue() {
+        return value;
+    }
 }

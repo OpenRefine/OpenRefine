@@ -81,9 +81,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         String strategy = obj.getString("duplicate_strategy");
         String action = obj.getString("duplicate_action");
-        String summary = obj.getString("summary");
-        if (summary == null) {
-            summary = "#openrefine";
+        String summary = null;
+        if (obj.has("summary")) {
+            summary = obj.getString("summary");
         }
         return new PerformWikibaseEditsOperation(
                 engineConfig,

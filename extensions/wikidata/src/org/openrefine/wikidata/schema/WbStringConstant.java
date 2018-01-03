@@ -1,40 +1,27 @@
 package org.openrefine.wikidata.schema;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class WbStringConstant extends WbStringExpr {
     
-    public static final String jsonType = "wbstringconstant";
-    
     private String value;
     
-    public WbStringConstant(String value) {
+    @JsonCreator
+    public WbStringConstant(@JsonProperty("value") String value) {
         this.value = value;
     }
-
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("value");
-        writer.value(value);
-    }
     
-    public static WbStringConstant fromJSON(JSONObject obj) throws JSONException {
-        return new WbStringConstant(obj.getString("value"));
-    }
-
     @Override
     public StringValue evaluate(ExpressionContext ctxt) {
         return Datamodel.makeStringValue(value);
     }
-
-    public String getJsonType() {
-        return jsonType;
+    
+    public String getValue() {
+        return value;
     }
 }
