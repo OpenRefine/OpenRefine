@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -12,19 +13,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import org.openrefine.wikidata.schema.WbItemDocumentExpr;
 import org.openrefine.wikidata.schema.ExpressionContext;
+import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 	
-    final protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
+    protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
     
     protected String baseUri = "http://www.wikidata.org/entity/";
 
@@ -56,6 +64,10 @@ public class WikibaseSchema implements OverlayModel {
 
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
+    }
+    
+    public void setItemDocumentExpressions(List<WbItemDocumentExpr> exprs) {
+        this.itemDocumentExprs = exprs;
     }
     
     /**
@@ -108,10 +120,11 @@ public class WikibaseSchema implements OverlayModel {
     }
 
     static public WikibaseSchema reconstruct(JSONObject o) throws JSONException {
+        
         JSONArray changeArr = o.getJSONArray("itemDocuments");
         WikibaseSchema schema = new WikibaseSchema();
         for (int i = 0; i != changeArr.length(); i++) {
-            WbItemDocumentExpr changeExpr = WbItemDocumentExpr.fromJSON(changeArr.getJSONObject(i));
+            WbItemDocumentExpr changeExpr = JacksonJsonizable.fromJSONClass(changeArr.getJSONObject(i), WbItemDocumentExpr.class);
             schema.itemDocumentExprs.add(changeExpr);
         }
         return schema;

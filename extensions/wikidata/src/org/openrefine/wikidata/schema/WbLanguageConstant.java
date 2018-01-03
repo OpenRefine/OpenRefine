@@ -1,12 +1,7 @@
 package org.openrefine.wikidata.schema;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WbLanguageConstant extends WbLanguageExpr {
     
@@ -15,30 +10,24 @@ public class WbLanguageConstant extends WbLanguageExpr {
     protected String _langId;
     protected String _langLabel;
     
+    @JsonCreator
+    public WbLanguageConstant(
+            @JsonProperty("lang") String langId,
+            @JsonProperty("label") String langLabel) {
+        _langId = langId;
+        _langLabel = langLabel;
+    }
+    
     public String evaluate(ExpressionContext ctxt) throws SkipStatementException {
         return _langId;
     }
     
-    public WbLanguageConstant(String langId, String langLabel) {
-        _langId = langId;
-        _langLabel = langLabel;
-    }
-
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("id");
-        writer.value(_langId);
-        writer.key("label");
-        writer.value(_langLabel);
-    }
-
-    @Override
-    public String getJsonType() {
-        return jsonType;
+    public String getLang() {
+        return _langId;
     }
     
-    public static WbLanguageExpr fromJSON(JSONObject obj) throws JSONException {
-        return new WbLanguageConstant(obj.getString("id"), obj.getString("label"));
+    public String getLabel() {
+        return _langLabel;
     }
+    
 }

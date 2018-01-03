@@ -3,12 +3,21 @@ package org.openrefine.wikidata.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.openrefine.wikidata.schema.WbItemConstant;
+import org.openrefine.wikidata.schema.WbItemDocumentExpr;
+import org.openrefine.wikidata.schema.WbNameDescExpr;
+import org.openrefine.wikidata.schema.WbStatementGroupExpr;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
@@ -24,10 +33,20 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     public SaveWikibaseSchemaOperation(WikibaseSchema schema) {
         this._schema = schema;
+        
+
     }
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj)
             throws Exception {
+        System.out.println("Attempting to reconstruct save op");
+        try {
+            System.out.println(WikibaseSchema.reconstruct(obj.getJSONObject("schema")).toString());
+        } catch(Exception e) {
+            System.out.println("Failed to reconstruct");
+            e.printStackTrace();
+        }
+        System.out.println("SUCCESS");
         return new SaveWikibaseSchemaOperation(WikibaseSchema.reconstruct(obj
                 .getJSONObject("schema")));
     }

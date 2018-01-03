@@ -4,22 +4,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.common.collect.ImmutableMap;
 
 
 public class WbDateConstant extends WbDateExpr {
-    public static final String jsonType = "wbdateconstant";
-    
+
     public static Map<SimpleDateFormat,Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat,Integer>builder()
         .put(new SimpleDateFormat("yyyy"), 9)
         .put(new SimpleDateFormat("yyyy-MM"), 10)
@@ -29,25 +27,22 @@ public class WbDateConstant extends WbDateExpr {
         .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"), 14)
         .build();
     
-    private TimeValue _parsed;
-    private String _origDatestamp;
+    private TimeValue parsed;
+    private String origDatestamp;
     
-    public WbDateConstant(String origDatestamp) {
-        _origDatestamp = origDatestamp;
-        try {
-           _parsed = parse(origDatestamp);
-        } catch(ParseException e) {
-            _parsed = null;
-        }
+    @JsonCreator
+    public WbDateConstant(
+            @JsonProperty("value") String origDatestamp) {
+        this.setOrigDatestamp(origDatestamp);
     }
     
     @Override
     public TimeValue evaluate(ExpressionContext ctxt)
             throws SkipStatementException {
-        if (_parsed == null) {
+        if (parsed == null) {
             throw new SkipStatementException();
         }
-        return _parsed;
+        return parsed;
     }
     
     public static TimeValue parse(String datestamp) throws ParseException {
@@ -81,21 +76,20 @@ public class WbDateConstant extends WbDateExpr {
                     TimeValue.CM_GREGORIAN_PRO);
         }     
     }
+    
+    @JsonProperty("value")
+    public String getOrigDatestamp() {
+        return origDatestamp;
+    }
 
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("value");
-        writer.value(_origDatestamp);
+    private void setOrigDatestamp(String origDatestamp) {
+        this.origDatestamp = origDatestamp;
+        try {
+           this.parsed = parse(origDatestamp);
+        } catch(ParseException e) {
+            this.parsed = null;
+        }
     }
     
-    public static WbDateConstant fromJSON(JSONObject obj) throws JSONException {
-        return new WbDateConstant(obj.getString("value"));
-    }
-
-    @Override
-    public String getJsonType() {
-        return jsonType;
-    }
 
 }

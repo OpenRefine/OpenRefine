@@ -4,7 +4,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
+
+@JsonSubTypes({ 
+    @Type(value = WbPropConstant.class, name = "wbpropconstant")
+})
 public abstract class WbPropExpr extends WbValueExpr {
     /* An expression that represents a property */
     

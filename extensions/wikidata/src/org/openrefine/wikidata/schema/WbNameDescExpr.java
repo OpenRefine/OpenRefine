@@ -1,16 +1,13 @@
 package org.openrefine.wikidata.schema;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class WbNameDescExpr extends BiJsonizable {
-    
-    public final String jsonType = "wbnamedescexpr";
+
+public class WbNameDescExpr extends JacksonJsonizable {
     
     enum NameDescrType {
         LABEL,
@@ -18,27 +15,21 @@ public class WbNameDescExpr extends BiJsonizable {
         ALIAS,
     }
     
-    private NameDescrType _type;
-    private WbMonolingualExpr _value;
-    
-    public WbNameDescExpr(NameDescrType type, WbMonolingualExpr value) {
-        _type = type;
-        _value = value;
-    }
-
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("name_type");
-        writer.value(_type.name());
-        writer.key("value");
-        _value.write(writer, options);
+    private NameDescrType type;
+    private WbMonolingualExpr value;
+   
+    @JsonCreator
+    public WbNameDescExpr(
+            @JsonProperty("type") NameDescrType type,
+            @JsonProperty("value") WbMonolingualExpr value) {
+        this.type = type;
+        this.value = value;
     }
     
     public void contributeTo(ItemUpdate item, ExpressionContext ctxt) {
         try {
-            MonolingualTextValue val = _value.evaluate(ctxt);
-            switch (_type) {
+            MonolingualTextValue val = getValue().evaluate(ctxt);
+            switch (getType()) {
                 case LABEL:
                     item.addLabel(val);
                     break;
@@ -54,14 +45,11 @@ public class WbNameDescExpr extends BiJsonizable {
         }
     }
 
-    @Override
-    public String getJsonType() {
-        return jsonType;
+    public NameDescrType getType() {
+        return type;
     }
 
-    public static WbNameDescExpr fromJSON(JSONObject obj) throws JSONException {
-        return new WbNameDescExpr(NameDescrType.valueOf((String) obj.get("name_type")),
-                WbMonolingualExpr.fromJSON(obj.getJSONObject("value")));
+    public WbMonolingualExpr getValue() {
+        return value;
     }
-
 }

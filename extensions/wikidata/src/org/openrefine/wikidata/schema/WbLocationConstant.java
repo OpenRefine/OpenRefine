@@ -1,24 +1,28 @@
 package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public class WbLocationConstant extends WbLocationExpr {
-    public static final String jsonType = "wblocationconstant";
     
-    private String _origValue;
-    private GlobeCoordinatesValue _parsed;
+    private String value;
+    private GlobeCoordinatesValue parsed;
     
-    public WbLocationConstant(String origValue) {
-        _origValue = origValue;
-        _parsed = null;
+    @JsonCreator
+    public WbLocationConstant(
+            @JsonProperty("value") String origValue) {
+        this.value = origValue;
+        try {
+            this.parsed = parse(origValue);
+        } catch (ParseException e) {
+            this.parsed = null;
+        }
     }
     
     public static GlobeCoordinatesValue parse(String expr) throws ParseException {
@@ -45,24 +49,12 @@ public class WbLocationConstant extends WbLocationExpr {
     @Override
     public GlobeCoordinatesValue evaluate(ExpressionContext ctxt)
             throws SkipStatementException {
-        if (_parsed == null)
+        if (parsed == null)
             throw new SkipStatementException();
-        return _parsed;
+        return parsed;
     }
     
-    public static WbLocationConstant fromJSON(JSONObject obj) throws JSONException {
-        return new WbLocationConstant(obj.getString("value"));
+    public String getValue() {
+        return value;
     }
-
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("value");
-        writer.value(_origValue);     
-    }
-
-    @Override
-    public String getJsonType() {
-        return jsonType;
-    }  
 }

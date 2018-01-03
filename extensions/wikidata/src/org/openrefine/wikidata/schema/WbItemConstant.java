@@ -1,47 +1,37 @@
 package org.openrefine.wikidata.schema;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class WbItemConstant extends WbItemExpr {
     /* Represents an item that does not vary,
      * it is independent of the row. */
     
-    public static final String jsonType = "wbitemconstant";
-    
     private String qid;
     private String label;
     
-    public WbItemConstant(String qid, String label) {
+    @JsonCreator
+    public WbItemConstant(
+            @JsonProperty("qid") String qid,
+            @JsonProperty("label") String label) {
         this.qid = qid;
         this.label = label;
-    }
-
-    @Override
-    public void writeFields(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.key("qid");
-        writer.value(qid);
-        writer.key("label");
-        writer.value(label);
-    }
-    
-    public static WbItemConstant fromJSON(JSONObject obj) throws JSONException {
-        return new WbItemConstant(obj.getString("qid"), obj.getString("label"));
     }
 
     @Override
     public ItemIdValue evaluate(ExpressionContext ctxt) {
         return ItemIdValueImpl.create(qid, ctxt.getBaseIRI());
     }
-    
-    public String getJsonType() {
-        return jsonType;
+
+    public String getQid() {
+        return qid;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }
