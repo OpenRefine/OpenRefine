@@ -5,8 +5,8 @@
     |  OpenRefine Extension Jython Build File    
     |                
     +-->
-    
-<project name="refine-jython" default="build" basedir=".">
+   
+<project name="refine-jython" default="build" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
 
     <property environment="env"/>
 
@@ -27,12 +27,14 @@
     </condition>
 
     <property name="fullname" value="${name}-${version}-${revision}" />
+    <property name="java_version" value="1.8"/>
     
     <property name="refine.dir" value="${basedir}/../../main" />
     <property name="refine.webinf.dir" value="${refine.dir}/webapp/WEB-INF" />
     <property name="refine.modinf.dir" value="${refine.dir}/webapp/modules/core/MOD-INF" />
     <property name="refine.classes.dir" value="${refine.webinf.dir}/classes" />
     <property name="refine.lib.dir" value="${refine.webinf.dir}/lib" />
+    <property name="refine.tests.lib.dir" value="${refine.dir}/tests/server/lib" />
     
     <property name="src.dir" value="${basedir}/src" />
     <property name="module.dir" value="${basedir}/module" />
@@ -40,6 +42,14 @@
     <property name="lib.dir" value="${modinf.dir}/lib" />
     <property name="classes.dir" value="${modinf.dir}/classes" />
 
+    <property name="extension.tests.dir" value="${basedir}/tests" />
+    <property name="tests.build.dir" value="${extension.tests.dir}/build" />
+    <property name="tests.src.dir" value="${extension.tests.dir}/src" />
+    <property name="tests.classes.dir" value="${extension.tests.dir}/classes" />
+    <property name="tests.report.dir" value="${extension.tests.dir}/report"/>
+    <property name="tests.report.html.dir" value="${tests.report.dir}/html"/>
+    <property name="tests.report.xml.path" value="${tests.report.dir}/jacoco.xml"/>
+ 
     <path id="class.path">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar" />
@@ -48,7 +58,23 @@
             <include name="**/*.jar" />
         </fileset>
         <pathelement path="${refine.classes.dir}"/>
+        <pathelement path="${classes.dir}" />
     </path>
+
+    <path id="extension.tests.class.path">
+        <path refid="class.path"/>
+        <pathelement location="${tests.classes.dir}"/>
+        <pathelement location="${refine.tests.lib.dir}/testng-6.8.jar"/>
+        <fileset dir="${refine.tests.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+
+    <taskdef resource="testngtasks" classpath="${refine.tests.lib.dir}/testng-6.8.jar"/>
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="${refine.tests.lib.dir}/jacocoant.jar"/>
+    </taskdef>
             
     <target name="build_java">
         <mkdir dir="${classes.dir}" />
@@ -60,7 +86,46 @@
 
     <target name="build" depends="build_java"/>
 
+    <target name="build_tests" depends="build">
+        <mkdir dir="${tests.classes.dir}" />
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" srcdir="${tests.src.dir}" destdir="${tests.classes.dir}" debug="true" includeAntRuntime="no">
+            <classpath refid="extension.tests.class.path" />
+        </javac>
+        <copy file="${tests.src.dir}/tests.log4j.properties" tofile="${tests.classes.dir}/tests.log4j.properties"/>
+    </target>
+ 
+    <mkdir dir="${tests.build.dir}" />
+    <target name="test" depends="build_tests">
+	<jacoco:coverage destfile="${tests.report.dir}/jacoco.exec">
+            <testng verbose="2" haltOnFailure="true" workingdir="${tests.build.dir}"
+                listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
+                classpathref="extension.tests.class.path">
+             <xmlfileset file="${extension.tests.dir}/conf/tests.xml"/>
+            </testng>
+	</jacoco:coverage>
+        <jacoco:report>
+           <executiondata>
+		   <file file="${tests.report.dir}/jacoco.exec"/>
+           </executiondata>
+
+           <structure name="Jython extension">
+               <classfiles>
+		       <fileset dir="${classes.dir}"/>
+               </classfiles>
+                <sourcefiles encoding="UTF-8">
+	            <fileset dir="${src.dir}"/>
+                </sourcefiles>
+            </structure>
+	    <html destdir="${tests.report.html.dir}"/>
+	    <xml destfile="${tests.report.xml.path}"/>
+        </jacoco:report>
+    </target>
+
+
     <target name="clean">
         <delete dir="${classes.dir}" />
+        <delete dir="${tests.classes.dir}" />
+        <delete dir="${tests.report.dir}" />
+        <delete dir="${tests.build.dir}" />
     </target>
 </project>

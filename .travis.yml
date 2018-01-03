@@ -9,7 +9,9 @@ env:
 before_install:
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar
 
-script: ./refine server_test
+script:
+  - ./refine server_test
+  - ./refine extensions_test
 
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/report/jacoco.xml
