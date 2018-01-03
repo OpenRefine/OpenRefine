@@ -66,6 +66,7 @@ and <action> is one of
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
    ui_test ............................. Run only the UI tests
+   extensions_test ..................... Run only the extensions tests
 
    broker .............................. Run OpenRefine Broker
    
@@ -591,6 +592,7 @@ mac_dist() {
 test() {
     server_test $1
     ui_test $1 
+    extensions_test $1
 }
 
 ui_test() {
@@ -633,6 +635,10 @@ ui_test() {
 
 server_test() {
     ant server_test
+}
+
+extensions_test() {
+    ant extensions_test
 }
 
 run() {
@@ -1018,6 +1024,8 @@ case "$ACTION" in
   ui_tests) ui_test $1;;  
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
+  extensions_test) extensions_test $1;;
+  extensions_tests) extensions_test $1;;
   findbugs) findbugs;;  
   pmd) pmd;;  
   cpd) cpd;;  

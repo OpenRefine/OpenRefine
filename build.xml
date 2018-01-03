@@ -206,6 +206,10 @@
         </jacoco:report>
     </target>
 
+    <target name="extensions_test" depends="build">
+      <ant dir="extensions/" target="test" />
+    </target>
+
     <!-- ================================================================== -->
 
     <target name="prepare_jar">
