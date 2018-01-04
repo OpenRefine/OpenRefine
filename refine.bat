@@ -197,6 +197,7 @@ rem ----- Respond to the action ------------------------------------------------
 set ACTION=%1
 
 if ""%ACTION%"" == ""build"" goto doAnt
+if ""%ACTION%"" == ""server_test_debug"" goto doAntDebug
 if ""%ACTION%"" == ""server_test"" goto doAnt
 if ""%ACTION%"" == ""extensions_test"" goto doAnt
 if ""%ACTION%"" == ""clean"" goto doAnt
@@ -222,6 +223,10 @@ echo   http://bit.ly/1c2gkR
 echo.
 :gotAntHome
 "%ANT_HOME%\bin\ant.bat" -f build.xml %ACTION%
+goto end
+
+:doAntDebug
+"%ANT_HOME%\bin\ant.bat" -f -v -diagnostics build.xml %ACTION%
 goto end
 
 :end
