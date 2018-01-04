@@ -1,5 +1,5 @@
 rem Changing this for debugging on Appveyor
-@echo on
+rem @echo off
 rem
 rem Configuration variables
 rem
@@ -72,8 +72,11 @@ for /f "tokens=1,* delims==" %%a in (refine.ini) do (
 
 rem --- Log for troubleshooting ------------------------------------------
 echo Getting Java Version...
+java -version 2^>^&1
+ECHO.=====================================================
 for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
-echo Getting Free Ram...
+ECHO Getting Free Ram...
+wmic os get FreePhysicalMemory
 for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
 (
 echo ----------------------- 
