@@ -324,6 +324,14 @@ public class ImportingUtilities {
                         JSONUtilities.safeInc(retrievalRecord, "archiveCount");
                     }
                     
+                    int dataPackageJSONFileIndex = getDataPackageJSONFile(fileRecords);
+                    if (dataPackageJSONFileIndex >= 0) {
+                        JSONObject dataPackageJSONFile = (JSONObject) fileRecords.get(dataPackageJSONFileIndex);
+                        JSONUtilities.safePut(dataPackageJSONFile, "metaDataFormat", MetadataFormat.DATAPACKAGE_METADATA.name());
+                        JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, dataPackageJSONFile);
+                        fileRecords.remove(dataPackageJSONFileIndex);
+                    }
+                    
                     uploadCount++;
                 }
             }
@@ -338,6 +346,18 @@ public class ImportingUtilities {
         
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
+    }
+
+    private static int getDataPackageJSONFile(JSONArray fileRecords) {
+        for (int i = 0; i < fileRecords.length(); i++) {
+            JSONObject file = fileRecords.getJSONObject(i);
+            if (file.has("archiveFileName") && 
+                    file.has("fileName") &&
+                    file.get("fileName").equals(DataPackageMetadata.DEFAULT_FILE_NAME)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
@@ -1145,7 +1165,9 @@ public class ImportingUtilities {
         
         // column model
         JSONObject schema = metadata.getPackage().getResources().get(0).getSchema();
-        populateColumnTypes(project.columnModel, schema.getJSONArray(Schema.JSON_KEY_FIELDS));
+        if (schema != null) {
+            populateColumnTypes(project.columnModel, schema.getJSONArray(Schema.JSON_KEY_FIELDS));
+        }
     }
     
     private static String getDataPackageProperty(JSONObject pkg, String key) {

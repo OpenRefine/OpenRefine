@@ -459,6 +459,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     public void setTitle(String title) {
         this.title = title;
+        updateModified();
     }
 
     
@@ -469,6 +470,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     public void setHomepage(String homepage) {
         this.homepage = homepage;
+        updateModified();
     }
 
     
@@ -479,6 +481,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     public void setImage(String image) {
         this.image = image;
+        updateModified();
     }
 
     
@@ -489,6 +492,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     public void setLicense(String license) {
         this.license = license;
+        updateModified();
     }
     
     public String getVersion() {
@@ -498,6 +502,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     
     public void setVersion(String version) {
         this.version = version;
+        updateModified();
     }
     
     public JSONArray getUserMetadata() {

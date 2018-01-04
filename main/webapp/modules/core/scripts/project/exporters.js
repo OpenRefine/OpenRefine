@@ -190,8 +190,6 @@ ExporterManager.handlers.exportProject = function() {
 
 ExporterManager.handlers.projectDataPackage = function() {
     function save(jsonMetadata) {
-        alert(jsonMetadata);
-        
         var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
         var form = document.createElement("form");
         $(form)
