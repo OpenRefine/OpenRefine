@@ -22,4 +22,9 @@
     <ant dir="gdata/" target="clean" />
     <ant dir="pc-axis/" target="clean" />
   </target>
+
+  <target name="test">
+    <echo message="Testing extensions" />
+    <ant dir="jython/" target="test" />
+  </target>
 </project>

@@ -5,6 +5,7 @@ logs
 .*.swp
 *.DS_Store
 *.class
+*.patch
 .com.apple.timemachine.supported
 .import-temp/
 build/
@@ -15,10 +16,6 @@ main/tests/server/classes/
 main/test-output/
 appengine/classes/
 tools/
-extensions/sample-extension/module/MOD-INF/classes/
-extensions/jython/module/MOD-INF/classes/
-extensions/jython/module/MOD-INF/lib/cachedir/
-extensions/rdf-exporter/module/MOD-INF/classes/
 broker/appengine/module/MOD-INF/classes/
 broker/core/module/MOD-INF/classes/
 broker/core/WEB-INF/lib/

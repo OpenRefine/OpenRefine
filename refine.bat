@@ -47,6 +47,7 @@ echo   build ..................... Build OpenRefine
 echo   run ....................... Run OpenRefine
 echo.
 echo   server_test ............... Run the server tests
+echo   extensions_test ........... Run the extensions tests
 echo.
 
 echo   clean ..................... Clean compiled classes
@@ -184,6 +185,7 @@ set ACTION=%1
 
 if ""%ACTION%"" == ""build"" goto doAnt
 if ""%ACTION%"" == ""server_test"" goto doAnt
+if ""%ACTION%"" == ""extensions_test"" goto doAnt
 if ""%ACTION%"" == ""clean"" goto doAnt
 if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
