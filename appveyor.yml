@@ -40,4 +40,5 @@ test_script:
     cd OpenRefine
 
     refine server_test
+    
     refine extensions_test
