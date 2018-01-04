@@ -25,10 +25,12 @@ before_build:
 - cmd: echo Running scripts before build...
 
 build_script:
-- cmd: >-
-    echo Running refine build...
-    cd OpenRefine
-    refine build
+# - cmd: >-
+#    echo Running refine build...
+#    
+#    cd OpenRefine
+#    
+#    refine build
 
 test_script:
 - cmd: echo Running test_script...
