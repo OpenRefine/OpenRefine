@@ -70,24 +70,6 @@ for /f "tokens=1,* delims==" %%a in (refine.ini) do (
     set %%a=%%b
 )
 
-rem --- Log for troubleshooting ------------------------------------------
-echo Getting Java Version...
-java -version 2^>^&1
-ECHO.=====================================================
-for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
-ECHO Getting Free Ram...
-wmic os get FreePhysicalMemory
-for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
-(
-echo ----------------------- 
-echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
-echo JAVA_HOME = %JAVA_HOME%
-echo java -version = %JVERSION%
-echo freeRam = %freeRam%M
-echo REFINE_MEMORY = %REFINE_MEMORY%
-echo ----------------------- 
-) > support.log
-
 rem --- Check JAVA_HOME ---------------------------------------------
 
 if not "%JAVA_HOME%" == "" goto gotJavaHome
@@ -210,6 +192,24 @@ if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
+rem --- Log for troubleshooting ------------------------------------------
+echo Getting Java Version...
+java -version 2^>^&1
+echo.=====================================================
+for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
+echo Getting Free Ram...
+wmic os get FreePhysicalMemory
+for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
+(
+echo ----------------------- 
+echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
+echo JAVA_HOME = %JAVA_HOME%
+echo java -version = %JVERSION%
+echo freeRam = %freeRam%M
+echo REFINE_MEMORY = %REFINE_MEMORY%
+echo ----------------------- 
+) > support.log
+
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
