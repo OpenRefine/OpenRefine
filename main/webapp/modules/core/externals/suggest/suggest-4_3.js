@@ -1455,7 +1455,7 @@
 
       //this.flyoutpane.hide();
       var flyout_id = data.id;
-      var url = this.flyout_url.replace(/\$\{id\}/g, data.id);
+      var url = this.flyout_url.replace(/\$\{id\}/g, encodeURIComponent(data.id));
 
       var ajax_options = {
         url: url,
@@ -1825,7 +1825,7 @@
       }
       else {
         id = data['mid'];
-        image = flyout_image_url.replace(/\$\{id\}/g, id);
+        image = flyout_image_url.replace(/\$\{id\}/g, encodeURIComponent(id));
       }
 
       var desc_text = null;
