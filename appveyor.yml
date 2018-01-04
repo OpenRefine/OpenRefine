@@ -1,4 +1,8 @@
 version: 1.0.{build}
+
+init:
+- cmd: java -version 2>&1 | find "version"
+
 clone_script:
 - cmd: git clone --recursive https://github.com/OpenRefine/OpenRefine
 environment:
@@ -14,9 +18,10 @@ build: off
 
 # scripts to run before build
 before_build:
-- cmd: java -version 2>&1 | find "version"
+- cmd: echo Running scripts before build...
 
 test_script:
+- cmd: echo Running test_script...
 - cmd: >-
     echo PATH is:
 
