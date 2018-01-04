@@ -8,6 +8,10 @@ clone_script:
 environment:
   ANT_HOME: C:\apache-ant-1.10.1
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
+
+matrix:
+  fast_finish: true
+
 install:
 - cmd: if not exist %ANT_HOME% pushd . && cd \ && appveyor DownloadFile http://apache.spinellicreations.com/ant/binaries/apache-ant-1.10.1-bin.zip && 7z x apache-ant-1.10.1-bin.zip && popd
 
@@ -19,6 +23,12 @@ build: off
 # scripts to run before build
 before_build:
 - cmd: echo Running scripts before build...
+
+build_script:
+- cmd: >-
+    echo Running refine build...
+    cd OpenRefine
+    refine build
 
 test_script:
 - cmd: echo Running test_script...
