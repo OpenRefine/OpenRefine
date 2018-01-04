@@ -23,7 +23,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
     @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"), 
     @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
     @Type(value = WbDateConstant.class, name = "wbdateconstant"), 
-    @Type(value = WbDateVariable.class, name = "wbdatevariable") ,
+    @Type(value = WbDateVariable.class, name = "wbdatevariable"),
+    @Type(value = WbMonolingualExpr.class, name = "wbmonolingualexpr"),
   })
 public abstract class WbValueExpr extends JacksonJsonizable {
     /* An expression that represents a Wikibase value,

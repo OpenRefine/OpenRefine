@@ -20,7 +20,7 @@ public class WbNameDescExpr extends JacksonJsonizable {
    
     @JsonCreator
     public WbNameDescExpr(
-            @JsonProperty("type") NameDescrType type,
+            @JsonProperty("name_type") NameDescrType type,
             @JsonProperty("value") WbMonolingualExpr value) {
         this.type = type;
         this.value = value;
@@ -45,6 +45,7 @@ public class WbNameDescExpr extends JacksonJsonizable {
         }
     }
 
+    @JsonProperty("name_type")
     public NameDescrType getType() {
         return type;
     }
