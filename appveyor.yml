@@ -11,6 +11,11 @@ cache:
 - C:\apache-ant-1.10.1
 - apache-ant-1.10.1-bin.zip
 build: off
+
+# scripts to run before build
+before_build:
+- cmd: java -version 2>&1 | find "version"
+
 test_script:
 - cmd: >-
     echo PATH is:
