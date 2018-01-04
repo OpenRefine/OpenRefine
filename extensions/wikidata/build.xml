@@ -60,6 +60,7 @@
             <include name="**/*.jar" />
         </fileset>
         <pathelement path="${refine.classes.dir}"/>
+        <pathelement path="${classes.dir}" />
     </path>
 
      <path id="extension.tests.class.path">
@@ -78,7 +79,7 @@
             
     <target name="build_java">
         <mkdir dir="${classes.dir}" />
-        <javac destdir="${classes.dir}" debug="true" includeAntRuntime="no">
+        <javac source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${classes.dir}" debug="true" includeAntRuntime="no">
             <src path="${src.dir}"/>
             <classpath refid="class.path" />
         </javac>
@@ -94,10 +95,9 @@
         <copy file="${tests.src.dir}/tests.log4j.properties" tofile="${tests.classes.dir}/tests.log4j.properties"/>
     </target>
  
-    <mkdir dir="${tests.build.dir}" />
     <target name="test" depends="build_tests">
 	<jacoco:coverage destfile="${tests.report.dir}/jacoco.exec">
-            <testng verbose="2" haltOnFailure="true" workingdir="${tests.build.dir}"
+            <testng verbose="2" haltOnFailure="true" workingdir="${extension.tests.dir}"
                 listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
                 classpathref="extension.tests.class.path">
              <xmlfileset file="${extension.tests.dir}/conf/tests.xml"/>
@@ -110,7 +110,7 @@
 
            <structure name="Wikidata extension">
                <classfiles>
-		       <fileset dir="${classes.dir}"/>
+                    <fileset dir="${classes.dir}" />
                </classfiles>
                 <sourcefiles encoding="UTF-8">
 	            <fileset dir="${src.dir}"/>
