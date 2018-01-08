@@ -1,0 +1,42 @@
+{
+        "wikidata-schema": {
+                "dialog-header": "Align to Wikidata",
+                "dialog-explanation": "The schema alignment skeleton below specifies how your tabular data will be transformed into Wikibase statements. You can drag and drop columns in statements: they will be replaced by their values once you export the statements.",
+                "schema-tab-header": "Schema",
+                "warnings-tab-header": "Issues",
+                "qs-preview-tab-header": "QuickStatements preview",
+                "draggable-columns-header": "Columns:",
+                "add-item-button": "add item",
+                "invalid-schema-warning-issues": "Your schema is incomplete, fix it to see the issues.",
+                "invalid-schema-warning-qs": "Your schema is incomplete, fix it to see the preview.",
+                "reset-button": "Reset",
+                "save-button": "Save",
+                "close-button": "Close"
+        },
+        "warnings-messages": {
+                "new-item-created": {
+                        "title": "This batch will create new Wikidata items.",
+                        "body": "Please make sure that these items do not exist yet and are suitable for inclusion in Wikidata."
+                },
+                "new-item-without-labels-or-aliases": {
+                        "title": "Some new items will be created without any label or alias.",
+                        "body": "You should at least provide one label, so that others can understand what the item is about."
+                },
+                "new-item-without-descriptions": {
+                        "title": "Some new items will be created without any description.",
+                        "body": "Adding descriptions will make it easier to disambiguate them from namesakes."
+                },
+               "new-item-with-deleted-statements": {
+                        "title": "You are trying to delete statements on new items.",
+                        "body": "There is probably something wrong in your schema or project."
+                },
+                "new-item-without-P31-or-P279": {
+                        "title": "Some new items will be created without any type.",
+                        "body": "You should provide an \"instance of\" (P31) or \"subclass of\" (P279) statement for each item that you create."
+                },
+                "statement-without-reference": {
+                        "title": "Some statements are not referenced.",
+                        "body": "Please provide references for the statements that you add."
+                }
+       }
+}

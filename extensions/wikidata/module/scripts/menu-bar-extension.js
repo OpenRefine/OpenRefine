@@ -1,3 +1,21 @@
+// Load the localization file
+var dictionary = {};
+$.ajax({
+	url : "command/core/load-language?",
+	type : "POST",
+	async : false,
+	data : {
+	  module : "wikidata",
+//		lang : lang
+	},
+	success : function(data) {
+		dictionary = data;
+	}
+});
+$.i18n.setDictionary(dictionary);
+
+
+
 ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
         {
