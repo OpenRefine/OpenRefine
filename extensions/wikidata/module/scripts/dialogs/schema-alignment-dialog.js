@@ -153,6 +153,19 @@ SchemaAlignmentDialog._createDialog = function() {
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/schema-alignment-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
 
+  this._elmts.dialogHeader.text($.i18n._('wikidata-schema')["dialog-header"]);
+  this._elmts.dialogExplanation.text($.i18n._('wikidata-schema')["dialog-explanation"]);
+  this._elmts.schemaTabHeader.text($.i18n._('wikidata-schema')["schema-tab-header"]);
+  this._elmts.warningsTabHeader.text($.i18n._('wikidata-schema')["warnings-tab-header"]);
+  this._elmts.qsPreviewTabHeader.text($.i18n._('wikidata-schema')["qs-preview-tab-header"]);
+  this._elmts.draggableColumnsHeader.text($.i18n._('wikidata-schema')["draggable-columns-header"]);
+  this._elmts.addItemButton.text($.i18n._('wikidata-schema')["add-item-button"]);
+  this._elmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
+  this._elmts.invalidSchemaWarningQs.text($.i18n._('wikidata-schema')["invalid-schema-warning-qs"]);
+  this._elmts.resetButton.text($.i18n._('wikidata-schema')["reset-button"]);
+  this._elmts.saveButton.text($.i18n._('wikidata-schema')["save-button"]);
+  this._elmts.closeButton.text($.i18n._('wikidata-schema')["close-button"]);
+
   this._level = DialogSystem.showDialog(frame);
   this._wikibasePrefix = "http://www.wikidata.org/entity/"; // hardcoded for now
 
@@ -850,6 +863,13 @@ SchemaAlignmentDialog.preview = function(initial) {
  *************************/
 
 SchemaAlignmentDialog._renderWarning = function(warning) {
+  var localized = $.i18n._('warnings-messages')[warning.type];
+  var title = warning.type;
+  var body = "";
+  if (localized) {
+      title = localized.title;
+      body = localized.body;
+  }
   var tr = $('<tr></tr>').addClass('wb-warning');
   var severityTd = $('<td></td>')
        .addClass('wb-warning-severity')
@@ -859,10 +879,10 @@ SchemaAlignmentDialog._renderWarning = function(warning) {
        .addClass('wb-warning-body')
        .appendTo(tr);
   var h1 = $('<h1></h1>')
-        .text(warning.type)
+        .text(title)
         .appendTo(bodyTd);
   var p = $('<p></p>')
-        .text('Lorem ipsum')
+        .text(body)
         .appendTo(bodyTd);
   var countTd = $('<td></td>')
        .addClass('wb-warning-count')
