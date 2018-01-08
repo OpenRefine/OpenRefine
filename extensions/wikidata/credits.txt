@@ -1,0 +1,10 @@
+
+Sources for the images:
+- Information.svg by User:Bobarino:
+  https://commons.wikimedia.org/wiki/File:Information.svg
+- Warning.svg by User:Ezekiel63745 
+  https://commons.wikimedia.org/wiki/File:Information_orange.svg
+- Important.svg originally from David Vignoni
+  https://commons.wikimedia.org/wiki/File:Nuvola_apps_important.svg 
+- Critical.svg by User:Stannered
+  https://commons.wikimedia.org/wiki/File:Stop_x_nuvola.svg
