@@ -180,4 +180,11 @@ public class ItemUpdate {
         }
         aliases = filteredAliases;
     }
+
+    /**
+     * is this update about a new item?
+     */
+    public boolean isNew() {
+        return "Q0".equals(getItemId().getId());
+    }
 }

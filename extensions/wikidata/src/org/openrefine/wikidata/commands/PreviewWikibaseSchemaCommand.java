@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +51,9 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 
 import org.openrefine.wikidata.exporters.QuickStatementsExporter;
+import org.openrefine.wikidata.qa.EditInspector;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.schema.ItemUpdate;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -68,20 +73,36 @@ public class PreviewWikibaseSchemaCommand extends Command {
             JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             WikibaseSchema schema = WikibaseSchema.reconstruct(json);
             
+            // Evaluate project
+            Engine engine = getEngine(request, project);
+            List<ItemUpdate> editBatch = schema.evaluate(project, engine);
+            
             StringWriter sb = new StringWriter(2048);
             JSONWriter writer = new JSONWriter(sb, 32);
             writer.object();
             
             {
                 StringWriter stringWriter = new StringWriter();
-                QuickStatementsExporter exporter = new QuickStatementsExporter();
-                Engine engine = getEngine(request, project);
-                exporter.translateSchema(project, engine, schema, stringWriter);
+                
+                // Inspect the edits and generate warnings
+                EditInspector inspector = new EditInspector();
+                inspector.inspect(editBatch);
+                writer.key("warnings");
+                writer.array();
+                for (QAWarning warning : inspector.getWarnings()) {
+                    warning.write(writer, new Properties());
+                }
+                writer.endArray();
+                
+                // Export to QuickStatements
+                QuickStatementsExporter exporter = new QuickStatementsExporter(); 
+                exporter.translateItemList(editBatch, stringWriter);
                 
                 String fullQS = stringWriter.toString();
                 stringWriter = new StringWriter();
                 LineNumberReader reader = new LineNumberReader(new StringReader(fullQS));
                 
+                // Only keep the first 50 lines
                 int maxQSLinesForPreview = 50;
                 reader.setLineNumber(0);
                 String line = reader.readLine();
