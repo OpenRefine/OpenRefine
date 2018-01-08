@@ -834,6 +834,9 @@ SchemaAlignmentDialog.preview = function(initial) {
       if ("quickstatements" in data) {
         $(self._previewPanes[0]).text(data.quickstatements);
       }
+
+      self._updateWarnings(data.warnings);
+
       if ("code" in data && data.code === "error") {
          $('.invalid-schema-warning').show();
       }
@@ -841,6 +844,44 @@ SchemaAlignmentDialog.preview = function(initial) {
     "json"
   );
 };
+
+/*************************
+ * WARNINGS RENDERING *
+ *************************/
+
+SchemaAlignmentDialog._renderWarning = function(warning) {
+  var tr = $('<tr></tr>').addClass('wb-warning');
+  var severityTd = $('<td></td>')
+       .addClass('wb-warning-severity')
+       .addClass('wb-warning-severity-'+warning.severity)
+       .appendTo(tr);
+  var bodyTd = $('<td></td>')
+       .addClass('wb-warning-body')
+       .appendTo(tr);
+  var h1 = $('<h1></h1>')
+        .text(warning.type)
+        .appendTo(bodyTd);
+  var p = $('<p></p>')
+        .text('Lorem ipsum')
+        .appendTo(bodyTd);
+  var countTd = $('<td></td>')
+       .addClass('wb-warning-count')
+       .appendTo(tr);
+  var countSpan = $('<span></span>')
+       .text(warning.count)
+       .appendTo(countTd);
+  return tr;
+}
+
+SchemaAlignmentDialog._updateWarnings = function(warnings) {
+   var mainDiv = this._elmts.warningsArea;
+   mainDiv.empty();
+   var table = $('<table></table>').appendTo(mainDiv);
+   for (var i = 0; i != warnings.length; i++) {
+      var rendered = SchemaAlignmentDialog._renderWarning(warnings[i]);
+      rendered.appendTo(table);
+   }   
+}
 
 /********************
  * LANGUAGE SUGGEST *

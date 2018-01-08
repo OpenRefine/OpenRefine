@@ -216,10 +216,73 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin-bottom: 0.3em;
 }
 
+/*** Warnings rendering ****/
+
+.schema-alignment-dialog-warnings h1 {
+  font-size: 1.2em;
+}
+
+.schema-alignment-dialog-warnings table {
+  width: 100%;
+}
+
+tr.wb-warning:nth-of-type(odd) {
+  background-color: #f2f2f2;
+}
+
+.wb-warning-count span {
+  color: white;
+  background-color: #777;
+  padding: 0px 5px;
+  border-radius: 0.5em;
+}
+
+.wb-warning-severity {
+  width: 60px;
+  height: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.wb-warning-severity-INFO {
+  background-image: url('../../images/Information.png');
+}
+
+.wb-warning-severity-WARNING {
+  background-image: url('../../images/Warning.png');
+}
+
+.wb-warning-severity-IMPORTANT {
+  background-image: url('../../images/Important.png');
+}
+
+.wb-warning-severity-CRITICAL {
+  background-image: url('../../images/Critical.png');
+}
+
+.wb-warning-body {
+  padding: 5px;
+  vertical-align: top;
+}
+
+.wb-warning-count {
+  padding: 5px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.wb-warning-end {
+  float: clear;
+}
+
 div.schema-alignment-dialog-warnings {
   min-height: 340px;
   max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
+
+/*** QuickStatements Preview ***/
 
 div.schema-alignment-dialog-preview {
   min-height: 340px;
