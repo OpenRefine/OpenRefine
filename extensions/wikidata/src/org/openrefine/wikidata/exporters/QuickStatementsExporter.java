@@ -42,7 +42,6 @@ public class QuickStatementsExporter implements WriterExporter {
         return "text";
     }
 
-
     @Override
     public void export(Project project, Properties options, Engine engine, Writer writer)
             throws IOException {
@@ -53,9 +52,21 @@ public class QuickStatementsExporter implements WriterExporter {
         translateSchema(project, engine, schema, writer);
     }
     
+    /**
+     * Exports a project and a schema to a QuickStatements file
+     * @param project: the project to translate
+     * @param engine: the engine used for evaluation of the edits
+     * @param schema: the WikibaseSchema used for translation of tabular data to edits
+     * @param writer: the writer to which the QS should be written
+     * @throws IOException
+     */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer) throws IOException {
         List<ItemUpdate> items = schema.evaluate(project, engine);
-        for (ItemUpdate item : items) {
+        translateItemList(items, writer);
+    }
+    
+    public void translateItemList(List<ItemUpdate> editBatch, Writer writer) throws IOException {
+        for (ItemUpdate item : editBatch) {
             translateItem(item, writer);
         }
     }
@@ -73,7 +84,7 @@ public class QuickStatementsExporter implements WriterExporter {
     
     protected void translateItem(ItemUpdate item, Writer writer) throws IOException {
         String qid = item.getItemId().getId();
-        if (item.getItemId().getId() == "Q0") {
+        if (item.isNew()) {
             writer.write("CREATE\n");
             qid = "LAST";
             item.normalizeLabelsAndAliases();
