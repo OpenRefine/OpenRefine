@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.FormatConstraintScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
 import org.openrefine.wikidata.schema.ItemUpdate;
 
@@ -23,6 +25,7 @@ public class EditInspector {
         
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
+        register(new FormatConstraintScrutinizer());
     }
     
     /**
