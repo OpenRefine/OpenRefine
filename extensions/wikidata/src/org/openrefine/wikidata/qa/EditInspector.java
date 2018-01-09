@@ -9,6 +9,7 @@ import org.openrefine.wikidata.qa.scrutinizers.FormatConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.schema.ItemUpdate;
 
 /**
@@ -29,6 +30,7 @@ public class EditInspector {
         register(new FormatConstraintScrutinizer());
         register(new InverseConstraintScrutinizer());
         register(new SelfReferentialScrutinizer());
+        register(new UnsourcedScrutinizer());
     }
     
     /**
