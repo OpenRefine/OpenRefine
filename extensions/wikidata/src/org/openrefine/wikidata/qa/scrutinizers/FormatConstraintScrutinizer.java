@@ -5,10 +5,17 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
-
+/**
+ * A scrutinizer that detects incorrect formats in text values
+ * (mostly identifiers).
+ * 
+ * @author antonin
+ *
+ */
 public class FormatConstraintScrutinizer extends SnakScrutinizer {
     
     private Map<String, Pattern> _patterns;
@@ -41,7 +48,7 @@ public class FormatConstraintScrutinizer extends SnakScrutinizer {
     }
 
     @Override
-    public void scrutinize(Snak snak, boolean added) {
+    public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         if(StringValue.class.isInstance(snak.getValue())) {
             String value = ((StringValue) snak.getValue()).getString();
             String pid = snak.getPropertyId().getId();
