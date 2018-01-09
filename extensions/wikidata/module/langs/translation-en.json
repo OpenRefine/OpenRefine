@@ -77,6 +77,14 @@
                 "property-restricted-to-mainsnak-found-in-reference": {
                         "title": "Statement-only property used as reference.",
                         "body": "You are using in a reference a property that was designed to be used as a statement only."
+                },
+                "missing-mandatory-qualifiers": {
+                        "title": "Missing mandatory qualifiers.",
+                        "body": "Your statements are missing qualifiers, it would be good to add them."
+                },
+                "disallowed-qualifiers": {
+                        "title": "Disallowed qualifiers.",
+                        "body": "Some of your qualifiers are incompatible with the statements that they qualify. Please check your schema."
                 }
        }
 }

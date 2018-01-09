@@ -2,14 +2,24 @@ package org.openrefine.wikidata.qa;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
 import java.util.regex.Pattern;
 
 public class ConstraintFetcherTests {
     
     private ConstraintFetcher fetcher;
     
+    private PropertyIdValue headOfGovernment;
+    private PropertyIdValue startTime;
+    private PropertyIdValue endTime;
+    
     public ConstraintFetcherTests() {
         fetcher = new ConstraintFetcher();
+        headOfGovernment = Datamodel.makeWikidataPropertyIdValue("P6");
+        startTime = Datamodel.makeWikidataPropertyIdValue("P580");
+        endTime = Datamodel.makeWikidataPropertyIdValue("P582");
     }
     
     @Test
@@ -44,5 +54,20 @@ public class ConstraintFetcherTests {
     public void testOnlyValues() {
         Assert.assertTrue(fetcher.isForValuesOnly("P6"));
         Assert.assertFalse(fetcher.isForValuesOnly("P854"));
+    }
+    
+    @Test
+    public void testAllowedQualifiers() {
+        Assert.assertTrue(fetcher.allowedQualifiers(headOfGovernment).contains(startTime));
+        Assert.assertTrue(fetcher.allowedQualifiers(headOfGovernment).contains(endTime));
+        Assert.assertFalse(fetcher.allowedQualifiers(headOfGovernment).contains(headOfGovernment));
+        Assert.assertNull(fetcher.allowedQualifiers(startTime));
+    }
+    
+    @Test
+    public void testMandatoryQualifiers() {
+        Assert.assertTrue(fetcher.mandatoryQualifiers(headOfGovernment).contains(startTime));
+        Assert.assertFalse(fetcher.mandatoryQualifiers(headOfGovernment).contains(endTime));
+        Assert.assertNull(fetcher.allowedQualifiers(startTime));
     }
 }
