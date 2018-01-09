@@ -24,7 +24,7 @@
                 },
                 "new-item-without-descriptions": {
                         "title": "Some new items will be created without any description.",
-                        "body": "Adding descriptions will make it easier to disambiguate them from namesakes."
+                        "body": "Adding descriptions will make it easier to disambiguate the items from namesakes."
                 },
                "new-item-with-deleted-statements": {
                         "title": "You are trying to delete statements on new items.",
@@ -37,6 +37,14 @@
                 "statement-without-reference": {
                         "title": "Some statements are not referenced.",
                         "body": "Please provide references for the statements that you add."
+                },
+                "add-statements-with-invalid-format": {
+                        "title": "Invalid format for some text statements.",
+                        "body": "Please consult the documentation of the properties to find out the correct format for their values."
+                },
+                "remove-statements-with-invalid-format": {
+                        "title": "Statements with invalid format will be removed.",
+                        "body": "If these statements currently exist on Wikidata, this will solve constraint violations."
                 }
        }
 }
