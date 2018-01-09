@@ -53,6 +53,30 @@
                 "unsourced-statements": {
                         "title": "Statements without references.",
                         "body": "Most statements should have references. You can add them easily in the schema."
+                },
+                "property-restricted-to-reference-found-in-mainsnak": {
+                        "title": "Reference-only property used as statement.",
+                        "body": "You are using in a statement a property that was designed to be used in references only."
+                },
+                "property-restricted-to-reference-found-in-qualifier": {
+                        "title": "Reference-only property used as qualifier.",
+                        "body": "You are using in a qualifier a property that was designed to be used in references only."
+                },
+                "property-restricted-to-qualifier-found-in-mainsnak": {
+                        "title": "Qualifier-only property used as statement.",
+                        "body": "You are using in a statement a property that was designed to be used in qualifiers only."
+                },
+                "property-restricted-to-qualifier-found-in-reference": {
+                        "title": "Qualifier-only property used as reference.",
+                        "body": "You are using in a reference a property that was designed to be used in qualifiers only."
+                },
+                "property-restricted-to-mainsnak-found-in-qualifier": {
+                        "title": "Statement-only property used as qualifier.",
+                        "body": "You are using in a qualifier a property that was designed to be used as a statement only."
+                },
+                "property-restricted-to-mainsnak-found-in-reference": {
+                        "title": "Statement-only property used as reference.",
+                        "body": "You are using in a reference a property that was designed to be used as a statement only."
                 }
        }
 }
