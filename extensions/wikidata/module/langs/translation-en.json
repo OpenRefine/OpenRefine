@@ -19,40 +19,40 @@
                         "body": "Please make sure that these items do not exist yet and are suitable for inclusion in Wikidata."
                 },
                 "new-item-without-labels-or-aliases": {
-                        "title": "Some new items will be created without any label or alias.",
+                        "title": "New items created without any label or alias.",
                         "body": "You should at least provide one label, so that others can understand what the item is about."
                 },
                 "new-item-without-descriptions": {
-                        "title": "Some new items will be created without any description.",
+                        "title": "New items created without any description.",
                         "body": "Adding descriptions will make it easier to disambiguate the items from namesakes."
                 },
                "new-item-with-deleted-statements": {
-                        "title": "You are trying to delete statements on new items.",
+                        "title": "Deleting statements on new items.",
                         "body": "There is probably something wrong in your schema or project."
                 },
                 "new-item-without-P31-or-P279": {
-                        "title": "Some new items will be created without any type.",
+                        "title": "New items created without any type.",
                         "body": "You should provide an \"instance of\" (P31) or \"subclass of\" (P279) statement for each item that you create."
                 },
-                "statement-without-reference": {
-                        "title": "Some statements are not referenced.",
-                        "body": "Please provide references for the statements that you add."
-                },
                 "add-statements-with-invalid-format": {
-                        "title": "Invalid format for some text statements.",
+                        "title": "Text statements with invalid format.",
                         "body": "Please consult the documentation of the properties to find out the correct format for their values."
                 },
                 "remove-statements-with-invalid-format": {
-                        "title": "Statements with invalid format will be removed.",
+                        "title": "Removed statements with invalid format.",
                         "body": "If these statements currently exist on Wikidata, this will solve constraint violations."
                 },
                 "missing-inverse-statements": {
-                        "title": "Inverse statements will not be added.",
+                        "title": "Missing inverse statements.",
                         "body": "Some of the properties that you are using require inverse statements. You should add them in your schema."
                 },
                 "self-referential-statements": {
-                        "title": "Some statements are self-referential.",
+                        "title": "Self-referential statements.",
                         "body": "While not forbidden, self-referential statements are generally suspicious. You could have reconciliation issues."
+                },
+                "unsourced-statements": {
+                        "title": "Statements without references.",
+                        "body": "Most statements should have references. You can add them easily in the schema."
                 }
        }
 }
