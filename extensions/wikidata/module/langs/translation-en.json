@@ -45,6 +45,10 @@
                 "remove-statements-with-invalid-format": {
                         "title": "Statements with invalid format will be removed.",
                         "body": "If these statements currently exist on Wikidata, this will solve constraint violations."
+                },
+                "missing-inverse-statements": {
+                        "title": "Inverse statements will not be added.",
+                        "body": "Some of the properties that you are using require inverse statements. You should add them in your schema."
                 }
        }
 }

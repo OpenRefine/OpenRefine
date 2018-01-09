@@ -26,6 +26,7 @@ public class EditInspector {
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
         register(new FormatConstraintScrutinizer());
+        register(new InverseConstraintScrutinizer());
     }
     
     /**
