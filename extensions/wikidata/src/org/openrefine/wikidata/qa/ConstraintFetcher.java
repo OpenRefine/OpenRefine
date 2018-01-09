@@ -2,6 +2,7 @@ package org.openrefine.wikidata.qa;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,6 +12,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -42,8 +44,8 @@ public class ConstraintFetcher {
     
     // The following constraints still need to be implemented:
     
-    public static String ALLOWED_QUALIFIERS_CONSRAINT_QID = "Q21510851";
-    public static String ALLOWED_QUALIFIERS_PID = "P2306";
+    public static String ALLOWED_QUALIFIERS_CONSTRAINT_QID = "Q21510851";
+    public static String ALLOWED_QUALIFIERS_CONSTRAINT_PID = "P2306";
     
     public static String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
     public static String MANDATORY_QUALIFIERS_CONSTRAINT_PID = "P2306";
@@ -106,6 +108,32 @@ public class ConstraintFetcher {
      */
     public boolean isForReferencesOnly(String pid) {
         return getSingleConstraint(pid, USED_ONLY_AS_REFERENCE_CONSTRAINT_QID) != null;
+    }
+    
+    /**
+     * Get the list of allowed qualifiers (as property ids) for this property (null if any)
+     */
+    public Set<PropertyIdValue> allowedQualifiers(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid.getId(), ALLOWED_QUALIFIERS_CONSTRAINT_QID);
+        
+        if (specs != null) {
+            List<Value> properties = findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
+            return properties.stream().map(e -> (PropertyIdValue) e).collect(Collectors.toSet());
+        }
+        return null;
+    }
+    
+    /**
+     * Get the list of mandatory qualifiers (as property ids) for this property (null if any)
+     */
+    public Set<PropertyIdValue> mandatoryQualifiers(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid.getId(), MANDATORY_QUALIFIERS_CONSTRAINT_QID);
+        
+        if (specs != null) {
+            List<Value> properties = findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
+            return properties.stream().map(e -> (PropertyIdValue) e).collect(Collectors.toSet());
+        }
+        return null;
     }
     
     /**
