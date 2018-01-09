@@ -12,7 +12,13 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-
+/**
+ * A scrutinizer that checks for missing inverse statements in
+ * edit batches.
+ * 
+ * @author antonin
+ *
+ */
 public class InverseConstraintScrutinizer extends StatementScrutinizer {
 
     private ConstraintFetcher _fetcher;

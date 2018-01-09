@@ -49,6 +49,10 @@
                 "missing-inverse-statements": {
                         "title": "Inverse statements will not be added.",
                         "body": "Some of the properties that you are using require inverse statements. You should add them in your schema."
+                },
+                "self-referential-statements": {
+                        "title": "Some statements are self-referential.",
+                        "body": "While not forbidden, self-referential statements are generally suspicious. You could have reconciliation issues."
                 }
        }
 }
