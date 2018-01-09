@@ -38,7 +38,7 @@ public abstract class SnakScrutinizer extends StatementScrutinizer {
         }
     }
     
-    private void scrutinizeSnakSet(Iterator<Snak> snaks, EntityIdValue entityId, boolean added) {
+    protected void scrutinizeSnakSet(Iterator<Snak> snaks, EntityIdValue entityId, boolean added) {
         while(snaks.hasNext()) {
             Snak snak = snaks.next();
             scrutinize(snak, entityId, added);

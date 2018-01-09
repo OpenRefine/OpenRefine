@@ -34,6 +34,20 @@ public class ConstraintFetcher {
     public static String INVERSE_CONSTRAINT_QID = "Q21510855";
     public static String INVERSE_PROPERTY_PID = "P2306";
     
+    public static String USED_ONLY_AS_VALUES_CONSTRAINT_QID = "Q21528958";
+    
+    public static String USED_ONLY_AS_QUALIFIER_CONSTRAINT_QID = "Q21510863";
+    
+    public static String USED_ONLY_AS_REFERENCE_CONSTRAINT_QID = "Q21528959";
+    
+    // The following constraints still need to be implemented:
+    
+    public static String ALLOWED_QUALIFIERS_CONSRAINT_QID = "Q21510851";
+    public static String ALLOWED_QUALIFIERS_PID = "P2306";
+    
+    public static String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
+    public static String MANDATORY_QUALIFIERS_CONSTRAINT_PID = "P2306";
+    
     public static String SINGLE_VALUE_CONSRAINT_QID = "Q19474404";
     public static String DISTINCT_VALUES_CONSRAINT_QID = "Q21502410";
     public static String TYPE_CONSTRAINT_QID = "Q21503250";
@@ -71,6 +85,27 @@ public class ConstraintFetcher {
             }
         }
         return null;
+    }
+    
+    /**
+     * Is this property for values only?
+     */
+    public boolean isForValuesOnly(String pid) {
+        return getSingleConstraint(pid, USED_ONLY_AS_VALUES_CONSTRAINT_QID) != null;
+    }
+    
+    /**
+     * Is this property for qualifiers only?
+     */
+    public boolean isForQualifiersOnly(String pid) {
+         return getSingleConstraint(pid, USED_ONLY_AS_QUALIFIER_CONSTRAINT_QID) != null;
+    }
+    
+    /**
+     * Is this property for references only?
+     */
+    public boolean isForReferencesOnly(String pid) {
+        return getSingleConstraint(pid, USED_ONLY_AS_REFERENCE_CONSTRAINT_QID) != null;
     }
     
     /**
