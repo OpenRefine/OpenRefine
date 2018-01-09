@@ -13,7 +13,21 @@ public abstract class ItemEditScrutinizer extends EditScrutinizer {
                 scrutinize(update);
             }
         }
+        batchIsFinished();
     }
 
-    public abstract void scrutinize(ItemUpdate update);  
+    /**
+     * Method to be overridden by subclasses to scrutinize 
+     * an individual item update.
+     * @param update
+     */
+    public abstract void scrutinize(ItemUpdate update);
+    
+    /**
+     * Method to be overridden by subclasses to emit warnings
+     * once a batch has been completely analyzed.
+     */
+    public void batchIsFinished() {
+        ;
+    }
 }

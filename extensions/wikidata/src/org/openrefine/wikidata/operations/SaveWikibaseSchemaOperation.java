@@ -39,14 +39,6 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj)
             throws Exception {
-        System.out.println("Attempting to reconstruct save op");
-        try {
-            System.out.println(WikibaseSchema.reconstruct(obj.getJSONObject("schema")).toString());
-        } catch(Exception e) {
-            System.out.println("Failed to reconstruct");
-            e.printStackTrace();
-        }
-        System.out.println("SUCCESS");
         return new SaveWikibaseSchemaOperation(WikibaseSchema.reconstruct(obj
                 .getJSONObject("schema")));
     }

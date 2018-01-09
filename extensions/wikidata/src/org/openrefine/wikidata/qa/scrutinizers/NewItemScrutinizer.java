@@ -15,7 +15,7 @@ public class NewItemScrutinizer extends ItemEditScrutinizer {
             info("new-item-created");
             
             if (update.getLabels().isEmpty() && update.getAliases().isEmpty()) {
-                important("new-item-without-labels-or-aliases");
+                critical("new-item-without-labels-or-aliases");
             }
             
             if (update.getDescriptions().isEmpty()) {
