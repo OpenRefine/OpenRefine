@@ -1,9 +1,5 @@
 package org.openrefine.wikidata.schema.entityvalues;
 
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
-
 /**
  * A placeholder for the Qid of a new item, which
  * also remembers from which reconciled cell it was

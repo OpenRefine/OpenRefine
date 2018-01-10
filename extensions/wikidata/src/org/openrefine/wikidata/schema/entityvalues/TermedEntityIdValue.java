@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
@@ -54,4 +53,24 @@ public abstract class TermedEntityIdValue implements EntityIdValue {
         return valueVisitor.visit(this);
     }
 
+    /**
+     * Equality check is important when we gather
+     * all ItemUpdates related to an ItemId.
+     * 
+     * The label is ignored in the equality check.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (other == null ||
+            !EntityIdValue.class.isInstance(other)) {
+            return false;
+        }
+        final EntityIdValue otherNew = (EntityIdValue)other;
+        return getIri().equals(otherNew.getIri());
+    }
+    
+    @Override
+    public int hashCode() {
+        return getIri().hashCode();
+    }
 }

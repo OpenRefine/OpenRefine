@@ -3,6 +3,7 @@ package org.openrefine.wikidata.qa;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.FormatConstraintScrutinizer;
@@ -15,6 +16,7 @@ import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.schema.ItemUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch
@@ -57,8 +59,10 @@ public class EditInspector {
      * @param editBatch
      */
     public void inspect(List<ItemUpdate> editBatch) {
+        Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(editBatch);
+        List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
         for(EditScrutinizer scrutinizer : scrutinizers.values()) {
-            scrutinizer.scrutinize(editBatch);
+            scrutinizer.scrutinize(mergedUpdates);
         }
         
         if (warningStore.getNbWarnings() == 0) {
