@@ -9,6 +9,7 @@ import java.util.Set;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -22,8 +23,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 public class InverseConstraintScrutinizer extends StatementScrutinizer {
 
     private ConstraintFetcher _fetcher;
-    private Map<String, String> _inverse;
-    private Map<String, Map<EntityIdValue, Set<EntityIdValue> >> _statements;
+    private Map<PropertyIdValue, PropertyIdValue> _inverse;
+    private Map<PropertyIdValue, Map<EntityIdValue, Set<EntityIdValue> >> _statements;
     
     public InverseConstraintScrutinizer() {
         _fetcher = new ConstraintFetcher();
@@ -31,11 +32,11 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         _statements = new HashMap<>();
     }
     
-    protected String getInverseConstraint(String pid) {
+    protected PropertyIdValue getInverseConstraint(PropertyIdValue pid) {
         if (_inverse.containsKey(pid)) {
             return _inverse.get(pid);
         } else {
-            String inversePid = _fetcher.getInversePid(pid);
+            PropertyIdValue inversePid = _fetcher.getInversePid(pid);
             _inverse.put(pid, inversePid);
             _statements.put(pid, new HashMap<EntityIdValue,Set<EntityIdValue>>());
             
@@ -57,8 +58,8 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         
         Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
         if (ItemIdValue.class.isInstance(mainSnakValue)) {
-            String pid = statement.getClaim().getMainSnak().getPropertyId().getId();
-            String inversePid = getInverseConstraint(pid);
+            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+            PropertyIdValue inversePid = getInverseConstraint(pid);
             if (inversePid != null) {
                 EntityIdValue targetEntityId = (EntityIdValue) mainSnakValue;
                 Set<EntityIdValue> currentValues = _statements.get(pid).get(entityId);
@@ -74,7 +75,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
     @Override
     public void batchIsFinished() {
         // For each pair of inverse properties (in each direction)
-        for(Entry<String,String> propertyPair : _inverse.entrySet()) {
+        for(Entry<PropertyIdValue,PropertyIdValue> propertyPair : _inverse.entrySet()) {
             // Get the statements made for the first
             for(Entry<EntityIdValue, Set<EntityIdValue>> itemLinks : _statements.get(propertyPair.getKey()).entrySet()) {
                 // For each outgoing link

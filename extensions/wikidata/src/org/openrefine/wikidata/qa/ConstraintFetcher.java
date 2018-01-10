@@ -61,7 +61,7 @@ public class ConstraintFetcher {
      * @param pid
      * @return the expression of a regular expression which should be compatible with java.util.regex
      */
-    public String getFormatRegex(String pid) {
+    public String getFormatRegex(PropertyIdValue pid) {
         List<SnakGroup> specs = getSingleConstraint(pid, FORMAT_CONSTRAINT_QID);
         if (specs != null) {
             List<Value> regexes = findValues(specs, FORMAT_REGEX_PID);
@@ -77,13 +77,13 @@ public class ConstraintFetcher {
      * @param pid: the property to retrieve the inverse for
      * @return the pid of the inverse property
      */
-    public String getInversePid(String pid) {
+    public PropertyIdValue getInversePid(PropertyIdValue pid) {
         List<SnakGroup> specs = getSingleConstraint(pid, INVERSE_CONSTRAINT_QID);
         
         if(specs != null) {
             List<Value> inverses = findValues(specs, INVERSE_PROPERTY_PID);
             if (! inverses.isEmpty()) {
-                return ((EntityIdValue)inverses.get(0)).getId();
+                return (PropertyIdValue)inverses.get(0);
             }
         }
         return null;
@@ -92,21 +92,21 @@ public class ConstraintFetcher {
     /**
      * Is this property for values only?
      */
-    public boolean isForValuesOnly(String pid) {
+    public boolean isForValuesOnly(PropertyIdValue pid) {
         return getSingleConstraint(pid, USED_ONLY_AS_VALUES_CONSTRAINT_QID) != null;
     }
     
     /**
      * Is this property for qualifiers only?
      */
-    public boolean isForQualifiersOnly(String pid) {
+    public boolean isForQualifiersOnly(PropertyIdValue pid) {
          return getSingleConstraint(pid, USED_ONLY_AS_QUALIFIER_CONSTRAINT_QID) != null;
     }
     
     /**
      * Is this property for references only?
      */
-    public boolean isForReferencesOnly(String pid) {
+    public boolean isForReferencesOnly(PropertyIdValue pid) {
         return getSingleConstraint(pid, USED_ONLY_AS_REFERENCE_CONSTRAINT_QID) != null;
     }
     
@@ -114,7 +114,7 @@ public class ConstraintFetcher {
      * Get the list of allowed qualifiers (as property ids) for this property (null if any)
      */
     public Set<PropertyIdValue> allowedQualifiers(PropertyIdValue pid) {
-        List<SnakGroup> specs = getSingleConstraint(pid.getId(), ALLOWED_QUALIFIERS_CONSTRAINT_QID);
+        List<SnakGroup> specs = getSingleConstraint(pid, ALLOWED_QUALIFIERS_CONSTRAINT_QID);
         
         if (specs != null) {
             List<Value> properties = findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
@@ -127,7 +127,7 @@ public class ConstraintFetcher {
      * Get the list of mandatory qualifiers (as property ids) for this property (null if any)
      */
     public Set<PropertyIdValue> mandatoryQualifiers(PropertyIdValue pid) {
-        List<SnakGroup> specs = getSingleConstraint(pid.getId(), MANDATORY_QUALIFIERS_CONSTRAINT_QID);
+        List<SnakGroup> specs = getSingleConstraint(pid, MANDATORY_QUALIFIERS_CONSTRAINT_QID);
         
         if (specs != null) {
             List<Value> properties = findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
@@ -143,7 +143,7 @@ public class ConstraintFetcher {
      * @param qid: the type of the constraints
      * @return the list of qualifiers for the constraint, or null if it does not exist
      */
-    protected List<SnakGroup> getSingleConstraint(String pid, String qid) {
+    protected List<SnakGroup> getSingleConstraint(PropertyIdValue pid, String qid) {
         Statement statement = getConstraintsByType(pid, qid).findFirst().orElse(null);
         if (statement != null) {
             return statement.getClaim().getQualifiers();
@@ -157,7 +157,7 @@ public class ConstraintFetcher {
      * @param qid: the type of the constraints
      * @return the stream of matching constraint statements
      */
-    protected Stream<Statement> getConstraintsByType(String pid, String qid) {
+    protected Stream<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
         Stream<Statement> allConstraints = getConstraintStatements(pid)
                 .stream()
                 .filter(s -> ((EntityIdValue) s.getValue()).getId().equals(qid));
@@ -169,7 +169,7 @@ public class ConstraintFetcher {
      * @param pid : the id of the property to retrieve the constraints for
      * @return the list of constraint statements
      */
-    protected List<Statement> getConstraintStatements(String pid) {
+    protected List<Statement> getConstraintStatements(PropertyIdValue pid) {
         PropertyDocument doc = (PropertyDocument) EntityCache.getEntityDocument(pid);
         StatementGroup group = doc.findStatementGroup(WIKIDATA_CONSTRAINT_PID);
         return group.getStatements();
