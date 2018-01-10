@@ -2,8 +2,10 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -53,7 +55,16 @@ public class FormatConstraintScrutinizer extends SnakScrutinizer {
             Pattern pattern = getPattern(pid);
             if (!pattern.matcher(value).matches()) {
                 if (added) {
-                    important("add-statements-with-invalid-format");
+                    QAWarning issue = new QAWarning(
+                            "add-statements-with-invalid-format",
+                            pid.getId(),
+                            QAWarning.Severity.IMPORTANT,
+                            1);
+                    issue.setProperty("property_entity", pid);
+                    issue.setProperty("regex", pattern.toString());
+                    issue.setProperty("example_value", value);
+                    issue.setProperty("example_item_entity", entityId);
+                    addIssue(issue);
                 } else {
                     info("remove-statements-with-invalid-format");
                 }
