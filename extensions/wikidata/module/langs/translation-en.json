@@ -23,11 +23,11 @@
                 },
                 "new-item-without-labels-or-aliases": {
                         "title": "New items created without any label or alias.",
-                        "body": "You should at least provide one label, so that others can understand what the item is about."
+                        "body": "You should at least provide one label for new items such as {example_entity}, so that others can understand what the item is about."
                 },
                 "new-item-without-descriptions": {
                         "title": "New items created without any description.",
-                        "body": "Adding descriptions will make it easier to disambiguate the items from namesakes."
+                        "body": "Adding descriptions on new items such as {example_entity} will make it easier to disambiguate the items from namesakes."
                 },
                "new-item-with-deleted-statements": {
                         "title": "Deleting statements on new items.",
@@ -35,7 +35,7 @@
                 },
                 "new-item-without-P31-or-P279": {
                         "title": "New items created without any type.",
-                        "body": "You should provide an \"instance of\" (P31) or \"subclass of\" (P279) statement for each item that you create."
+                        "body": "You should provide an \"instance of\" (P31) or \"subclass of\" (P279) statement for each item that you create, such as {example_entity}."
                 },
                 "add-statements-with-invalid-format": {
                         "title": "{property_entity} statements with invalid format.",
@@ -51,35 +51,35 @@
                 },
                 "self-referential-statements": {
                         "title": "Self-referential statements.",
-                        "body": "While not forbidden, self-referential statements are generally suspicious. You could have reconciliation issues."
+                        "body": "While not forbidden, self-referential statements are generally suspicious. You have some on {example_entity}."
                 },
                 "unsourced-statements": {
                         "title": "Statements without references.",
                         "body": "Most statements should have references. You can add them easily in the schema."
                 },
                 "property-restricted-to-reference-found-in-mainsnak": {
-                        "title": "Reference-only property used as statement.",
-                        "body": "You are using in a statement a property that was designed to be used in references only."
+                        "title": "{property_entity} used as statement.",
+                        "body": "You are using {property_entity} in a statement but it is designed to be used in references only."
                 },
                 "property-restricted-to-reference-found-in-qualifier": {
-                        "title": "Reference-only property used as qualifier.",
-                        "body": "You are using in a qualifier a property that was designed to be used in references only."
+                        "title": "{property_entity} used as qualifier.",
+                        "body": "You are using in {property_entity} in a qualifier but it is designed to be used in references only."
                 },
                 "property-restricted-to-qualifier-found-in-mainsnak": {
-                        "title": "Qualifier-only property used as statement.",
-                        "body": "You are using in a statement a property that was designed to be used in qualifiers only."
+                        "title": "{property_entity} used as statement.",
+                        "body": "You are using {property_entity} in a statement but it is designed to be used in qualifiers only."
                 },
                 "property-restricted-to-qualifier-found-in-reference": {
-                        "title": "Qualifier-only property used as reference.",
-                        "body": "You are using in a reference a property that was designed to be used in qualifiers only."
+                        "title": "{property_entity} used as reference.",
+                        "body": "You are using {property_entity} in a reference but it is designed to be used in qualifiers only."
                 },
                 "property-restricted-to-mainsnak-found-in-qualifier": {
-                        "title": "Statement-only property used as qualifier.",
-                        "body": "You are using in a qualifier a property that was designed to be used as a statement only."
+                        "title": "{property_entity} used as qualifier.",
+                        "body": "You are using {property_entity} in a qualifier but it is designed to be used as a statement only."
                 },
                 "property-restricted-to-mainsnak-found-in-reference": {
-                        "title": "Statement-only property used as reference.",
-                        "body": "You are using in a reference a property that was designed to be used as a statement only."
+                        "title": "{property_entity} used as reference.",
+                        "body": "You are using {property_entity} in a reference but it is designed to be used as a statement only."
                 },
                 "missing-mandatory-qualifiers": {
                         "title": "{statement_property_entity} is missing a {missing_property_entity} qualifier.",
@@ -90,8 +90,8 @@
                         "body": "Statements using {statement_property_entity} such as the one on {example_item_entity} should not have a {disallowed_property_entity} qualifier as they are incompatible."
                 },
                 "single-valued-property-added-more-than-once": {
-                        "title": "Single valued property added more than once.",
-                        "body": "A property that is expected to be used at most once on each item has been added multiple times on the same item."
+                        "title": "{property_entity} added more than once on the same item.",
+                        "body": "This property is expected to be used at most once on each item but has been added multiple times on the same item, for instance on {example_entity}."
                 },
                 "no-edit-generated": {
                         "title": "No edit was generated.",

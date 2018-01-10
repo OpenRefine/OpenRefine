@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
@@ -15,15 +16,33 @@ public class NewItemScrutinizer extends ItemEditScrutinizer {
             info("new-item-created");
             
             if (update.getLabels().isEmpty() && update.getAliases().isEmpty()) {
-                critical("new-item-without-labels-or-aliases");
+                QAWarning issue = new QAWarning(
+                     "new-item-without-labels-or-aliases",
+                     null,
+                     QAWarning.Severity.CRITICAL,
+                     1);
+                issue.setProperty("example_entity", update.getItemId());
+                addIssue(issue);
             }
             
             if (update.getDescriptions().isEmpty()) {
-                warning("new-item-without-descriptions");
+                QAWarning issue = new QAWarning(
+                     "new-item-without-descriptions",
+                     null,
+                     QAWarning.Severity.WARNING,
+                     1);
+                issue.setProperty("example_entity", update.getItemId());
+                addIssue(issue);
             }
             
             if (! update.getDeletedStatements().isEmpty()) {
-                warning("new-item-with-deleted-statements");
+                QAWarning issue = new QAWarning(
+                     "new-item-with-deleted-statements",
+                     null,
+                     QAWarning.Severity.WARNING,
+                     1);
+                issue.setProperty("example_entity", update.getItemId());
+                addIssue(issue);
             }
             
             // Try to find a "instance of" or "subclass of" claim
@@ -36,7 +55,13 @@ public class NewItemScrutinizer extends ItemEditScrutinizer {
                 }
             }
             if (!typeFound) {
-                warning("new-item-without-P31-or-P279");
+                QAWarning issue = new QAWarning(
+                        "new-item-without-P31-or-P279",
+                        null,
+                        QAWarning.Severity.WARNING,
+                        1);
+                   issue.setProperty("example_entity", update.getItemId());
+                   addIssue(issue);
             }
         }
     }

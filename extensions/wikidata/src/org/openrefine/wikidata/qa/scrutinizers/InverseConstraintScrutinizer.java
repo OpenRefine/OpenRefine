@@ -89,8 +89,8 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
                                 1);
                         issue.setProperty("added_property_entity", ourProperty);
                         issue.setProperty("inverse_property_entity", missingProperty);
-                        issue.setProperty("source_entity", idValue);
-                        issue.setProperty("target_entity", itemLinks.getKey());
+                        issue.setProperty("source_entity", itemLinks.getKey());
+                        issue.setProperty("target_entity", idValue);
                         addIssue(issue);
                     }
                 }

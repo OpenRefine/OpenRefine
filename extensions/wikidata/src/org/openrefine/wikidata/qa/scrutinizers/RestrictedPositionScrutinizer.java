@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -81,7 +82,14 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
         if (restriction != null && position != restriction) {
             String positionStr = position.toString().toLowerCase();
             String restrictionStr = restriction.toString().toLowerCase();
-            warning("property-restricted-to-"+restrictionStr+"-found-in-"+positionStr);
+            
+            QAWarning issue = new QAWarning(
+                 "property-restricted-to-"+restrictionStr+"-found-in-"+positionStr,
+                 snak.getPropertyId().getId(),
+                 QAWarning.Severity.IMPORTANT,
+                 1);
+            issue.setProperty("property_entity", snak.getPropertyId());
+            addIssue(issue);
         }
     }
 

@@ -3,6 +3,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -22,7 +23,15 @@ public class SingleValueScrutinizer extends ItemEditScrutinizer {
         for(Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             if (seenSingleProperties.contains(pid)) {
-                warning("single-valued-property-added-more-than-once");
+                
+                QAWarning issue = new QAWarning(
+                        "single-valued-property-added-more-than-once",
+                        pid.getId(),
+                        QAWarning.Severity.WARNING,
+                        1);
+                issue.setProperty("property_entity", pid);
+                issue.setProperty("example_entity", update.getItemId());
+                addIssue(issue);
             } else if (_fetcher.hasSingleValue(pid)) {
                 seenSingleProperties.add(pid);
             }
