@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -74,13 +75,23 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         // For each pair of inverse properties (in each direction)
         for(Entry<PropertyIdValue,PropertyIdValue> propertyPair : _inverse.entrySet()) {
             // Get the statements made for the first
-            for(Entry<EntityIdValue, Set<EntityIdValue>> itemLinks : _statements.get(propertyPair.getKey()).entrySet()) {
+            PropertyIdValue ourProperty = propertyPair.getKey();
+            for(Entry<EntityIdValue, Set<EntityIdValue>> itemLinks : _statements.get(ourProperty).entrySet()) {
                 // For each outgoing link
                 for(EntityIdValue idValue : itemLinks.getValue()) {
                     // Check that they are in the statements made for the second
-                    Set<EntityIdValue> reciprocalLinks = _statements.get(propertyPair.getValue()).get(idValue);
+                    PropertyIdValue missingProperty = propertyPair.getValue();
+                    Set<EntityIdValue> reciprocalLinks = _statements.get(missingProperty).get(idValue);
                     if (reciprocalLinks == null || !reciprocalLinks.contains(itemLinks.getKey())) {
-                        important("missing-inverse-statements");
+                        QAWarning issue = new QAWarning("missing-inverse-statements",
+                                ourProperty.getId(),
+                                QAWarning.Severity.IMPORTANT,
+                                1);
+                        issue.setProperty("added_property_entity", ourProperty);
+                        issue.setProperty("inverse_property_entity", missingProperty);
+                        issue.setProperty("source_entity", idValue);
+                        issue.setProperty("target_entity", itemLinks.getKey());
+                        addIssue(issue);
                     }
                 }
             }

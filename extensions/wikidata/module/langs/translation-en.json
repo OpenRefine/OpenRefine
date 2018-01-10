@@ -46,8 +46,8 @@
                         "body": "If these statements currently exist on Wikidata, this will solve constraint violations."
                 },
                 "missing-inverse-statements": {
-                        "title": "Missing inverse statements.",
-                        "body": "Some of the properties that you are using require inverse statements. You should add them in your schema."
+                        "title": "Inverse statements missing for {added_property_entity}.",
+                        "body": "Any {added_property_entity} statement such as the one from {source_entity} to {target_entity} should also be added in reverse with {inverse_property_entity}: in this case, {target_entity} {inverse_property_entity} {source_entity}."
                 },
                 "self-referential-statements": {
                         "title": "Self-referential statements.",
@@ -82,12 +82,12 @@
                         "body": "You are using in a reference a property that was designed to be used as a statement only."
                 },
                 "missing-mandatory-qualifiers": {
-                        "title": "Missing mandatory qualifiers.",
-                        "body": "Your statements are missing qualifiers, it would be good to add them."
+                        "title": "{statement_property_entity} is missing a {missing_property_entity} qualifier.",
+                        "body": "Statements using {statement_property_entity} such as the one on {example_item_entity} are missing a mandatory {missing_property_entity} qualifier."
                 },
                 "disallowed-qualifiers": {
-                        "title": "Disallowed qualifiers.",
-                        "body": "Some of your qualifiers are incompatible with the statements that they qualify. Please check your schema."
+                        "title": "Qualifier {disallowed_property_entity} is incompatible with {statement_property_entity}.",
+                        "body": "Statements using {statement_property_entity} such as the one on {example_item_entity} should not have a {disallowed_property_entity} qualifier as they are incompatible."
                 },
                 "single-valued-property-added-more-than-once": {
                         "title": "Single valued property added more than once.",

@@ -702,7 +702,6 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      }
 
      var propagateValue = function() {
-        console.log('propagateValue in monolingualtext')
         inputContainer.data("jsonValue", {
            type: "wbmonolingualexpr",
            language: inputContainerLanguage.data("jsonValue"),
@@ -848,7 +847,11 @@ SchemaAlignmentDialog.preview = function(initial) {
         $(self._previewPanes[0]).text(data.quickstatements);
       }
 
-      self._updateWarnings(data.warnings);
+      if (data.warnings) {
+          self._updateWarnings(data.warnings);
+      } else {
+          self._updateWarnings([]);
+      }
 
       if ("code" in data && data.code === "error") {
          $('.invalid-schema-warning').show();
@@ -864,6 +867,9 @@ SchemaAlignmentDialog.preview = function(initial) {
 
 // renders a Wikibase entity into a link
 SchemaAlignmentDialog._renderEntity = function(entity) {
+  if (!entity.id && entity.value) {
+      entity.id = entity.value.id;
+  }
   var id = entity.id;
   var is_new = id == "Q0";
   if (is_new) {
@@ -893,7 +899,7 @@ SchemaAlignmentDialog._replaceIssueProperties = function(template, properties) {
        if (key.endsWith('_entity')) {
           rendered = SchemaAlignmentDialog._renderEntity(properties[key]);
        }
-       expanded = expanded.replace('{'+key+'}', rendered);
+       expanded = expanded.replace(new RegExp('{'+key+'}', 'g'), rendered);
     }
   }
   return expanded;

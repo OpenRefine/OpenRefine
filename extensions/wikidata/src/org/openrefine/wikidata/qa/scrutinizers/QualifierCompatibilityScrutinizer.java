@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -62,11 +63,27 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         Set<PropertyIdValue> disallowedQualifiers = qualifiers
                 .stream().filter(p -> !qualifierIsAllowed(statementProperty, p)).collect(Collectors.toSet());
         
-        if( !missingQualifiers.isEmpty()) {
-            warning("missing-mandatory-qualifiers");
+        for (PropertyIdValue missing : missingQualifiers) {
+            QAWarning issue = new QAWarning(
+                    "missing-mandatory-qualifiers",
+                    statementProperty.getId()+"-"+missing.getId(),
+                    QAWarning.Severity.WARNING,
+                    1);
+            issue.setProperty("statement_property_entity", statementProperty);
+            issue.setProperty("missing_property_entity", missing);
+            issue.setProperty("example_item_entity", entityId);
+            addIssue(issue);
         }
-        if (!disallowedQualifiers.isEmpty()) {
-            warning("disallowed-qualifiers");
+        for (PropertyIdValue disallowed : disallowedQualifiers) {
+            QAWarning issue = new QAWarning(
+                    "disallowed-qualifiers",
+                    statementProperty.getId()+"-"+disallowed.getId(),
+                    QAWarning.Severity.WARNING,
+                    1);
+            issue.setProperty("statement_property_entity", statementProperty);
+            issue.setProperty("disallowed_property_entity", disallowed);
+            issue.setProperty("example_item_entity", entityId);
+            addIssue(issue);
         }
     }
 
