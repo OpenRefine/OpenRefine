@@ -94,6 +94,11 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 }
                 writer.endArray();
                 
+                // this is not the length of the warnings array written before,
+                // but the total number of issues raised (before deduplication)
+                writer.key("nb_warnings");
+                writer.value(inspector.getTotalNumberOfWarnings());
+                
                 // Export to QuickStatements
                 QuickStatementsExporter exporter = new QuickStatementsExporter(); 
                 exporter.translateItemList(editBatch, stringWriter);

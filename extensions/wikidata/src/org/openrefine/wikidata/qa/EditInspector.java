@@ -79,4 +79,10 @@ public class EditInspector {
         return warningStore.getWarnings();
     }
     
+    /**
+     * Retrieve the number of warnings before deduplication
+     */
+    public int getTotalNumberOfWarnings() {
+        return warningStore.getNbWarnings();
+    }
 }
