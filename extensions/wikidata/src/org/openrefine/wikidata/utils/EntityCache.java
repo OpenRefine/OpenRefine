@@ -23,7 +23,6 @@ public class EntityCache {
         ApiConnection connection = ApiConnection.getWikidataApiConnection();
         _fetcher = new WikibaseDataFetcher(connection, Datamodel.SITE_WIKIDATA);
 
-        System.out.println("Creating fresh cache");
         _cache = CacheBuilder.newBuilder()
                 .maximumSize(4096)
                 .expireAfterWrite(1, TimeUnit.HOURS)
