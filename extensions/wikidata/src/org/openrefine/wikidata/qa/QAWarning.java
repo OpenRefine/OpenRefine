@@ -1,5 +1,7 @@
 package org.openrefine.wikidata.qa;
 
+import java.util.Properties;
+
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -30,17 +32,21 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     private Severity severity;
     // The number of times this issue was found
     private int count;
+    // Other details about the warning, that can be displayed to the user
+    private Properties properties;
 
     @JsonCreator
     public QAWarning(
             @JsonProperty("type") String type,
             @JsonProperty("bucket_id") String bucketId,
             @JsonProperty("severity") Severity severity,
-            @JsonProperty("count") int count) {
+            @JsonProperty("count") int count,
+            @JsonProperty("properties") Properties properties) {
         this.type = type;
         this.bucketId = bucketId;
         this.severity = severity;
         this.count = count;
+        this.properties = properties;
     }
     
     /**
@@ -85,6 +91,11 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     @JsonProperty("count")
     public int getCount() {
         return count;
+    }
+    
+    @JsonProperty("properties")
+    public Properties getProperties() {
+        return properties;
     }
 
     /**

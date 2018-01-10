@@ -3,7 +3,6 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.schema.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -15,12 +14,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  *
  */
 public class SingleValueScrutinizer extends ItemEditScrutinizer {
-    
-    private ConstraintFetcher _fetcher;
-    
-    public SingleValueScrutinizer() {
-        _fetcher = new ConstraintFetcher();
-    }
 
     @Override
     public void scrutinize(ItemUpdate update) {

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -24,12 +23,10 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
   
     private Map<PropertyIdValue, SnakPosition> _restrictedPids;
     private Set<PropertyIdValue> _unrestrictedPids;
-    private ConstraintFetcher _fetcher;
     
     public RestrictedPositionScrutinizer() {
         _restrictedPids = new HashMap<>();
         _unrestrictedPids = new HashSet<>();
-        _fetcher = new ConstraintFetcher();
     }
     
     SnakPosition positionRestriction(PropertyIdValue pid) {

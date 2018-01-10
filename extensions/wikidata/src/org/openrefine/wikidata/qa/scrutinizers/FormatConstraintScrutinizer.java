@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -20,11 +19,9 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 public class FormatConstraintScrutinizer extends SnakScrutinizer {
     
     private Map<PropertyIdValue, Pattern> _patterns;
-    private ConstraintFetcher _fetcher;
     
     public FormatConstraintScrutinizer() {
         _patterns = new HashMap<>();
-        _fetcher = new ConstraintFetcher();
     }
     
     /**
