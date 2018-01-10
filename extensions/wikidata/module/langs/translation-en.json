@@ -85,6 +85,10 @@
                 "disallowed-qualifiers": {
                         "title": "Disallowed qualifiers.",
                         "body": "Some of your qualifiers are incompatible with the statements that they qualify. Please check your schema."
+                },
+                "single-valued-property-added-more-than-once": {
+                        "title": "Single valued property added more than once.",
+                        "body": "A property that is expected to be used at most once on each item has been added multiple times on the same item."
                 }
        }
 }

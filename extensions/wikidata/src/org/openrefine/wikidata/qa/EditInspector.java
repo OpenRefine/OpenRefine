@@ -11,6 +11,7 @@ import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.schema.ItemUpdate;
 
@@ -35,6 +36,7 @@ public class EditInspector {
         register(new UnsourcedScrutinizer());
         register(new RestrictedPositionScrutinizer());
         register(new QualifierCompatibilityScrutinizer());
+        register(new SingleValueScrutinizer());
     }
     
     /**
