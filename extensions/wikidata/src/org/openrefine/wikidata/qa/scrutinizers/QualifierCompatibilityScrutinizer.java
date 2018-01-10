@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -19,12 +18,10 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  */
 public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
     
-    private ConstraintFetcher _fetcher;
     private Map<PropertyIdValue, Set<PropertyIdValue>> _allowedQualifiers;
     private Map<PropertyIdValue, Set<PropertyIdValue>> _mandatoryQualifiers;
     
     public QualifierCompatibilityScrutinizer() {
-        _fetcher = new ConstraintFetcher();
         _allowedQualifiers = new HashMap<>();
         _mandatoryQualifiers = new HashMap<>();
     }

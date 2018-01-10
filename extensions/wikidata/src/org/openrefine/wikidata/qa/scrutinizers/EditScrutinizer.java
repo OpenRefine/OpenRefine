@@ -1,7 +1,9 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.List;
+import java.util.Properties;
 
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.ItemUpdate;
@@ -13,10 +15,15 @@ import org.openrefine.wikidata.schema.ItemUpdate;
  */
 public abstract class EditScrutinizer {
     
-    private QAWarningStore store;
+    protected QAWarningStore _store;
+    protected ConstraintFetcher _fetcher;
+    
+    public EditScrutinizer() {
+        _fetcher = new ConstraintFetcher();
+    }
     
     public void setStore(QAWarningStore store) {
-        this.store = store;
+        _store = store;
     }
     
     /**
@@ -30,7 +37,7 @@ public abstract class EditScrutinizer {
      * @param warning
      */
     protected void info(String type) {
-        store.addWarning(new QAWarning(type, null, QAWarning.Severity.INFO, 1));
+        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.INFO, 1, new Properties()));
     }
     
     /**
@@ -38,7 +45,7 @@ public abstract class EditScrutinizer {
      * @param warning
      */
     protected void warning(String type) {
-        store.addWarning(new QAWarning(type, null, QAWarning.Severity.WARNING, 1));
+        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.WARNING, 1, new Properties()));
     }
     
     /**
@@ -46,7 +53,7 @@ public abstract class EditScrutinizer {
      * @param warning
      */
     protected void important(String type) {
-        store.addWarning(new QAWarning(type, null, QAWarning.Severity.IMPORTANT, 1));
+        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.IMPORTANT, 1, new Properties()));
     }
     
     /**
@@ -54,6 +61,6 @@ public abstract class EditScrutinizer {
      * @param warning
      */
     protected void critical(String type) {
-        store.addWarning(new QAWarning(type, null, QAWarning.Severity.CRITICAL, 1));
+        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.CRITICAL, 1, new Properties()));
     }
 }

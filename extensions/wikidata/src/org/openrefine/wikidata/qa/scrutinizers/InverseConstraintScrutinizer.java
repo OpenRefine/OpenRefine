@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -22,12 +21,10 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
  */
 public class InverseConstraintScrutinizer extends StatementScrutinizer {
 
-    private ConstraintFetcher _fetcher;
     private Map<PropertyIdValue, PropertyIdValue> _inverse;
     private Map<PropertyIdValue, Map<EntityIdValue, Set<EntityIdValue> >> _statements;
     
     public InverseConstraintScrutinizer() {
-        _fetcher = new ConstraintFetcher();
         _inverse = new HashMap<>();
         _statements = new HashMap<>();
     }
