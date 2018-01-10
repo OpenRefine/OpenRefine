@@ -3,6 +3,9 @@ package org.openrefine.wikidata.editing;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
+
+import org.openrefine.wikidata.schema.entityvalues.NewEntityIdValue;
+
 import java.util.HashSet;
 
 import com.google.refine.model.Project;
@@ -11,8 +14,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconStats;
-
-import org.openrefine.wikidata.schema.NewEntityIdValue;
 
 /**
  * This keeps track of the new items that we

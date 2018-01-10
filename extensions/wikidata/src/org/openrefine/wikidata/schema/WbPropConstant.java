@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.entityvalues.TermedPropertyIdValue;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
@@ -26,7 +27,7 @@ public class WbPropConstant extends WbPropExpr {
 
     @Override
     public PropertyIdValue evaluate(ExpressionContext ctxt) {
-        return PropertyIdValueImpl.create(pid, ctxt.getBaseIRI());
+        return new TermedPropertyIdValue(pid, ctxt.getBaseIRI(), label);
     }
     
     public String getPid() {

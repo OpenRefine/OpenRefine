@@ -1,4 +1,4 @@
-package org.openrefine.wikidata.schema;
+package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -12,7 +12,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
  * 
  * @author antonin
  */
-public class NewEntityIdValue implements ItemIdValue {
+public class NewEntityIdValue extends TermedItemIdValue {
     
     private final int rowId;
     private final int colId;
@@ -25,8 +25,11 @@ public class NewEntityIdValue implements ItemIdValue {
      *          the index of the row for the cell
      * @param colId
      *          the index of the column for the cell
+     * @param label
+     *          the value of the cell
      */
-    public NewEntityIdValue(int rowId, int colId) {
+    public NewEntityIdValue(int rowId, int colId, String siteIRI, String label) {
+        super("Q0", siteIRI, label);
         this.rowId = rowId;
         this.colId = colId;
     }
@@ -61,30 +64,4 @@ public class NewEntityIdValue implements ItemIdValue {
         hash = 41*hash + colId;
         return hash;
     }
-    
-    @Override
-    public String getIri() {
-            return getSiteIri() + getId();
-    }
-
-    @Override
-    public <T> T accept(ValueVisitor<T> valueVisitor) {
-            return valueVisitor.visit(this);
-    }
-
-    @Override
-    public String getEntityType() {
-            return ET_ITEM;
-    }
-
-    @Override
-    public String getId() {
-            return "Q0";
-    }
-
-    @Override
-    public String getSiteIri() {
-            return EntityIdValue.SITE_LOCAL;
-    }
-
 }
