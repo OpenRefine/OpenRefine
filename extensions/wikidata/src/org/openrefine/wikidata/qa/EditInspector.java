@@ -8,6 +8,7 @@ import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.FormatConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.NoEditsMadeScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
@@ -37,6 +38,7 @@ public class EditInspector {
         register(new RestrictedPositionScrutinizer());
         register(new QualifierCompatibilityScrutinizer());
         register(new SingleValueScrutinizer());
+        register(new NoEditsMadeScrutinizer());
     }
     
     /**
@@ -57,6 +59,11 @@ public class EditInspector {
     public void inspect(List<ItemUpdate> editBatch) {
         for(EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.scrutinize(editBatch);
+        }
+        
+        if (warningStore.getNbWarnings() == 0) {
+            warningStore.addWarning(new QAWarning(
+                "no-issue-detected", null, QAWarning.Severity.INFO, 0));
         }
     }
     

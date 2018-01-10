@@ -16,6 +16,7 @@ public class QAWarningStore {
     
     private Map<String, QAWarning> map;
     private QAWarning.Severity maxSeverity;
+    private int totalWarnings;
     
     public QAWarningStore() {
         this.map = new HashMap<>();
@@ -32,6 +33,7 @@ public class QAWarningStore {
         if (severity.compareTo(maxSeverity) > 0) {
             maxSeverity = severity;
         }
+        totalWarnings += warning.getCount();
         if (map.containsKey(aggregationKey)) {
             QAWarning existing = map.get(aggregationKey);
             existing.aggregate(warning);
@@ -56,5 +58,13 @@ public class QAWarningStore {
     @JsonProperty("max_severity")
     QAWarning.Severity getMaxSeverity() {
         return maxSeverity;
+    }
+    
+    /**
+     * Returns the total number of warnings
+     */
+    @JsonProperty("nb_warnings")
+    int getNbWarnings() {
+        return totalWarnings;
     }
 }

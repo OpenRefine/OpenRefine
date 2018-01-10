@@ -92,6 +92,14 @@
                 "single-valued-property-added-more-than-once": {
                         "title": "Single valued property added more than once.",
                         "body": "A property that is expected to be used at most once on each item has been added multiple times on the same item."
+                },
+                "no-edit-generated": {
+                        "title": "No edit was generated.",
+                        "body": "There might be something wrong with your schema."
+                },
+                "no-issue-detected": {
+                        "title": "No issue was detected in your edits.",
+                        "body": "Note that OpenRefine cannot detect all the types of problems Wikidata edits can have."
                 }
        }
 }
