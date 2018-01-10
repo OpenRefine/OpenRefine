@@ -862,13 +862,50 @@ SchemaAlignmentDialog.preview = function(initial) {
  * WARNINGS RENDERING *
  *************************/
 
+// renders a Wikibase entity into a link
+SchemaAlignmentDialog._renderEntity = function(entity) {
+  var id = entity.id;
+  var is_new = id == "Q0";
+  if (is_new) {
+     id = $.i18n._('wikidata-preview')['new-id'];
+  }
+  var fullLabel = id;
+  if (entity.label) {
+      fullLabel = entity.label + ' (' + id + ')';
+  }
+
+  if (is_new) {
+     return '<span class="wb-preview-new-entity">'+fullLabel+'</span>';
+  } else {
+     return '<a href="'+entity.iri+'" class="wb-preview-entity" target="_blank">'+fullLabel+'</a>';
+  }
+}
+
+// replaces the issue properties in localization template
+SchemaAlignmentDialog._replaceIssueProperties = function(template, properties) {
+  if (!properties) {
+    return template;
+  }
+  var expanded = template;
+  for (var key in properties) {
+    if (properties.hasOwnProperty(key)) {
+       var rendered = properties[key];
+       if (key.endsWith('_entity')) {
+          rendered = SchemaAlignmentDialog._renderEntity(properties[key]);
+       }
+       expanded = expanded.replace('{'+key+'}', rendered);
+    }
+  }
+  return expanded;
+}     
+
 SchemaAlignmentDialog._renderWarning = function(warning) {
   var localized = $.i18n._('warnings-messages')[warning.type];
   var title = warning.type;
   var body = "";
   if (localized) {
-      title = localized.title;
-      body = localized.body;
+      title = SchemaAlignmentDialog._replaceIssueProperties(localized.title, warning.properties);
+      body = SchemaAlignmentDialog._replaceIssueProperties(localized.body, warning.properties);
   }
   var tr = $('<tr></tr>').addClass('wb-warning');
   var severityTd = $('<td></td>')
@@ -879,10 +916,10 @@ SchemaAlignmentDialog._renderWarning = function(warning) {
        .addClass('wb-warning-body')
        .appendTo(tr);
   var h1 = $('<h1></h1>')
-        .text(title)
+        .html(title)
         .appendTo(bodyTd);
   var p = $('<p></p>')
-        .text(body)
+        .html(body)
         .appendTo(bodyTd);
   var countTd = $('<td></td>')
        .addClass('wb-warning-count')

@@ -13,6 +13,9 @@
                 "save-button": "Save",
                 "close-button": "Close"
         },
+        "wikidata-preview": {
+                "new-id": "new item"
+        },
         "warnings-messages": {
                 "new-item-created": {
                         "title": "This batch will create new Wikidata items.",
@@ -35,8 +38,8 @@
                         "body": "You should provide an \"instance of\" (P31) or \"subclass of\" (P279) statement for each item that you create."
                 },
                 "add-statements-with-invalid-format": {
-                        "title": "Text statements with invalid format.",
-                        "body": "Please consult the documentation of the properties to find out the correct format for their values."
+                        "title": "{property_entity} statements with invalid format.",
+                        "body": "Values for this property are expected to match the regular expression <span class=\"wb-issue-preformat\">{regex}</span>, which is not the case for <span class=\"wb-issue-preformat\">{example_value}</span> added on {example_item_entity}."
                 },
                 "remove-statements-with-invalid-format": {
                         "title": "Removed statements with invalid format.",

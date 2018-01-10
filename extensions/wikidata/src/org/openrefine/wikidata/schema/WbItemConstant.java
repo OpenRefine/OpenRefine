@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.entityvalues.TermedItemIdValue;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
@@ -24,7 +25,10 @@ public class WbItemConstant extends WbItemExpr {
 
     @Override
     public ItemIdValue evaluate(ExpressionContext ctxt) {
-        return ItemIdValueImpl.create(qid, ctxt.getBaseIRI());
+        return new TermedItemIdValue(
+                qid,
+                ctxt.getBaseIRI(),
+                label);
     }
 
     public String getQid() {
