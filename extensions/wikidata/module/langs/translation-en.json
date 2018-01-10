@@ -93,6 +93,10 @@
                         "title": "{property_entity} added more than once on the same item.",
                         "body": "This property is expected to be used at most once on each item but has been added multiple times on the same item, for instance on {example_entity}."
                 },
+                "identical-values-for-distinct-valued-property": {
+                        "title": "Identical values for {property_entity}",
+                        "body": "This property should have distinct values."
+                },
                 "no-edit-generated": {
                         "title": "No edit was generated.",
                         "body": "There might be something wrong with your schema."

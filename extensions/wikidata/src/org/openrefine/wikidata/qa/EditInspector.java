@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.FormatConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
@@ -40,6 +41,7 @@ public class EditInspector {
         register(new RestrictedPositionScrutinizer());
         register(new QualifierCompatibilityScrutinizer());
         register(new SingleValueScrutinizer());
+        register(new DistinctValuesScrutinizer());
         register(new NoEditsMadeScrutinizer());
     }
     
