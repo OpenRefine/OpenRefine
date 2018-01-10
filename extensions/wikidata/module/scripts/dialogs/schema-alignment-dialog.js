@@ -848,9 +848,9 @@ SchemaAlignmentDialog.preview = function(initial) {
       }
 
       if (data.warnings) {
-          self._updateWarnings(data.warnings);
+          self._updateWarnings(data.warnings, data.nb_warnings);
       } else {
-          self._updateWarnings([]);
+          self._updateWarnings([], 0);
       }
 
       if ("code" in data && data.code === "error") {
@@ -936,14 +936,25 @@ SchemaAlignmentDialog._renderWarning = function(warning) {
   return tr;
 }
 
-SchemaAlignmentDialog._updateWarnings = function(warnings) {
+SchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
    var mainDiv = this._elmts.warningsArea;
+   var countsElem = this._elmts.warningsTabCount;
+
+   // clear everything
    mainDiv.empty();
+   countsElem.hide();
+
    var table = $('<table></table>').appendTo(mainDiv);
    for (var i = 0; i != warnings.length; i++) {
       var rendered = SchemaAlignmentDialog._renderWarning(warnings[i]);
       rendered.appendTo(table);
    }   
+
+   // update the counts
+   if (totalCount) {
+        countsElem.text(totalCount);
+        countsElem.show();
+   }
 }
 
 /********************
