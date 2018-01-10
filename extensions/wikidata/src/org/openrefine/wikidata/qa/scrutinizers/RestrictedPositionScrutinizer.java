@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -21,8 +22,8 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
         REFERENCE
     }
   
-    private Map<String, SnakPosition> _restrictedPids;
-    private Set<String> _unrestrictedPids;
+    private Map<PropertyIdValue, SnakPosition> _restrictedPids;
+    private Set<PropertyIdValue> _unrestrictedPids;
     private ConstraintFetcher _fetcher;
     
     public RestrictedPositionScrutinizer() {
@@ -31,7 +32,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
         _fetcher = new ConstraintFetcher();
     }
     
-    SnakPosition positionRestriction(String pid) {
+    SnakPosition positionRestriction(PropertyIdValue pid) {
         if(_unrestrictedPids.contains(pid)) {
             return null;
         }
@@ -79,7 +80,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     }
     
     public void scrutinize(Snak snak, EntityIdValue entityId, SnakPosition position, boolean added) {
-        SnakPosition restriction = positionRestriction(snak.getPropertyId().getId());
+        SnakPosition restriction = positionRestriction(snak.getPropertyId());
         if (restriction != null && position != restriction) {
             String positionStr = position.toString().toLowerCase();
             String restrictionStr = restriction.toString().toLowerCase();

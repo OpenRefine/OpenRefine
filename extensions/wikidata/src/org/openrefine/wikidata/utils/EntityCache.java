@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 
@@ -14,7 +15,7 @@ import com.google.common.cache.LoadingCache;
 public class EntityCache {
     private static EntityCache _entityCache = new EntityCache();
     
-    private LoadingCache<String, EntityDocument> _cache;
+    private LoadingCache<EntityIdValue, EntityDocument> _cache;
     private WikibaseDataFetcher _fetcher;
     
     
@@ -26,15 +27,15 @@ public class EntityCache {
                 .maximumSize(4096)
                 .expireAfterWrite(1, TimeUnit.HOURS)
                 .build(
-             new CacheLoader<String, EntityDocument>() {
-                 public EntityDocument load(String entityId) throws Exception {
-                     EntityDocument doc = _fetcher.getEntityDocument(entityId);
+             new CacheLoader<EntityIdValue, EntityDocument>() {
+                 public EntityDocument load(EntityIdValue entityId) throws Exception {
+                     EntityDocument doc = _fetcher.getEntityDocument(entityId.getId());
                      return doc;
                  }
              });
     }
     
-    public static EntityDocument getEntityDocument(String qid) {
+    public static EntityDocument getEntityDocument(EntityIdValue qid) {
         return _entityCache._cache.apply(qid);
     }
 }

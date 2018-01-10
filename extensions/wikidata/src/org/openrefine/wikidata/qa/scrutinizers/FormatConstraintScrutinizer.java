@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
@@ -18,7 +19,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
  */
 public class FormatConstraintScrutinizer extends SnakScrutinizer {
     
-    private Map<String, Pattern> _patterns;
+    private Map<PropertyIdValue, Pattern> _patterns;
     private ConstraintFetcher _fetcher;
     
     public FormatConstraintScrutinizer() {
@@ -33,7 +34,7 @@ public class FormatConstraintScrutinizer extends SnakScrutinizer {
      * @param pid the id of the property to fetch the constraints for
      * @return
      */
-    protected Pattern getPattern(String pid) {
+    protected Pattern getPattern(PropertyIdValue pid) {
         if(_patterns.containsKey(pid)) {
             return _patterns.get(pid);
         } else {
@@ -51,7 +52,7 @@ public class FormatConstraintScrutinizer extends SnakScrutinizer {
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         if(StringValue.class.isInstance(snak.getValue())) {
             String value = ((StringValue) snak.getValue()).getString();
-            String pid = snak.getPropertyId().getId();
+            PropertyIdValue pid = snak.getPropertyId();
             Pattern pattern = getPattern(pid);
             if (!pattern.matcher(value).matches()) {
                 if (added) {
