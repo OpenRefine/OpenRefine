@@ -1,5 +1,7 @@
 package org.openrefine.wikidata.qa;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openrefine.wikidata.utils.JacksonJsonizable;
@@ -33,7 +35,15 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     // The number of times this issue was found
     private int count;
     // Other details about the warning, that can be displayed to the user
-    private Properties properties;
+    private Map<String,Object> properties;
+    
+    public QAWarning(String type, String bucketId, Severity severity, int count) {
+        this.type = type;
+        this.bucketId = bucketId;
+        this.severity = severity;
+        this.count = count;
+        this.properties = new HashMap<String,Object>();
+    }
 
     @JsonCreator
     public QAWarning(
@@ -41,7 +51,7 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
             @JsonProperty("bucket_id") String bucketId,
             @JsonProperty("severity") Severity severity,
             @JsonProperty("count") int count,
-            @JsonProperty("properties") Properties properties) {
+            @JsonProperty("properties") Map<String,Object> properties) {
         this.type = type;
         this.bucketId = bucketId;
         this.severity = severity;
@@ -73,6 +83,16 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
         }
     }
     
+    /**
+     * Sets a property of the QA warning, to be used by the front-end
+     * for display.
+     * @param key: the name of the property
+     * @param value should be Jackson-serializable
+     */
+    public void setProperty(String key, Object value) {
+        this.properties.put(key, value);
+    }
+    
     @JsonProperty("type")
     public String getType() {
         return type;
@@ -94,7 +114,7 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     }
     
     @JsonProperty("properties")
-    public Properties getProperties() {
+    public Map<String,Object> getProperties() {
         return properties;
     }
 
