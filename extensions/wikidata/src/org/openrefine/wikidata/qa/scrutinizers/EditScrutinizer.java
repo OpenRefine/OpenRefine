@@ -1,10 +1,11 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.ItemUpdate;
 
@@ -31,36 +32,45 @@ public abstract class EditScrutinizer {
      * @param edit: the list of ItemUpdates to scrutinize
      */
     public abstract void scrutinize(List<ItemUpdate> edit);
+     
+    protected void addIssue(QAWarning warning) {
+        _store.addWarning(warning);
+    }
     
+    protected void addIssue(String type, String aggregationId, Severity severity, int count) {
+        addIssue(new QAWarning(type, aggregationId, severity, count));
+    }
+
     /**
-     * Helper to be used by subclasses to emit INFO warnings
+     * Helper to be used by subclasses to emit simple INFO warnings
      * @param warning
      */
     protected void info(String type) {
-        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.INFO, 1, new Properties()));
+        addIssue(type, null, QAWarning.Severity.INFO, 1);
+        
     }
-    
+
     /**
-     * Helper to be used by subclasses to emit warnings
+     * Helper to be used by subclasses to emit simple warnings
      * @param warning
      */
     protected void warning(String type) {
-        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.WARNING, 1, new Properties()));
+        addIssue(type, null, QAWarning.Severity.WARNING, 1);
     }
     
     /**
-     * Helper to be used by subclasses to emit important warnings
+     * Helper to be used by subclasses to emit simple important warnings
      * @param warning
      */
     protected void important(String type) {
-        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.IMPORTANT, 1, new Properties()));
+        addIssue(type, null, QAWarning.Severity.IMPORTANT, 1);
     }
     
     /**
-     * Helper to be used by subclasses to emit critical warnings
+     * Helper to be used by subclasses to emit simple critical warnings
      * @param warning
      */
     protected void critical(String type) {
-        _store.addWarning(new QAWarning(type, null, QAWarning.Severity.CRITICAL, 1, new Properties()));
+        addIssue(type, null, QAWarning.Severity.CRITICAL, 1);
     }
 }
