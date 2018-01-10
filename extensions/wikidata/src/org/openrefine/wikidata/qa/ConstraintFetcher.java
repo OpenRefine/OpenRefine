@@ -42,16 +42,17 @@ public class ConstraintFetcher {
     
     public static String USED_ONLY_AS_REFERENCE_CONSTRAINT_QID = "Q21528959";
     
-    // The following constraints still need to be implemented:
-    
     public static String ALLOWED_QUALIFIERS_CONSTRAINT_QID = "Q21510851";
     public static String ALLOWED_QUALIFIERS_CONSTRAINT_PID = "P2306";
     
     public static String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
     public static String MANDATORY_QUALIFIERS_CONSTRAINT_PID = "P2306";
     
-    public static String SINGLE_VALUE_CONSRAINT_QID = "Q19474404";
-    public static String DISTINCT_VALUES_CONSRAINT_QID = "Q21502410";
+    public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
+    public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
+    
+    // The following constraints still need to be implemented:
+    
     public static String TYPE_CONSTRAINT_QID = "Q21503250";
     
     
@@ -134,6 +135,20 @@ public class ConstraintFetcher {
             return properties.stream().map(e -> (PropertyIdValue) e).collect(Collectors.toSet());
         }
         return null;
+    }
+    
+    /**
+     * Is this property expected to have at most one value per item?
+     */
+    public boolean hasSingleValue(PropertyIdValue pid) {
+        return getSingleConstraint(pid, SINGLE_VALUE_CONSTRAINT_QID) != null;
+    }
+    
+    /**
+     * Is this property expected to have distinct values?
+     */
+    public boolean hasDistinctValues(PropertyIdValue pid) {
+        return getSingleConstraint(pid, DISTINCT_VALUES_CONSTRAINT_QID) != null;
     }
     
     /**
