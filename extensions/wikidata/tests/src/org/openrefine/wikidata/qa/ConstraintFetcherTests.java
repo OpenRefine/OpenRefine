@@ -14,46 +14,58 @@ public class ConstraintFetcherTests {
     private PropertyIdValue headOfGovernment;
     private PropertyIdValue startTime;
     private PropertyIdValue endTime;
+    private PropertyIdValue instanceOf;
+    private PropertyIdValue gridId;
+    private PropertyIdValue hasPart;
+    private PropertyIdValue partOf;
+    private PropertyIdValue referenceURL;
+    private PropertyIdValue reasonForDeprecation;
     
     public ConstraintFetcherTests() {
         fetcher = new ConstraintFetcher();
         headOfGovernment = Datamodel.makeWikidataPropertyIdValue("P6");
         startTime = Datamodel.makeWikidataPropertyIdValue("P580");
         endTime = Datamodel.makeWikidataPropertyIdValue("P582");
+        instanceOf = Datamodel.makeWikidataPropertyIdValue("P31");
+        gridId = Datamodel.makeWikidataPropertyIdValue("P2427");
+        hasPart = Datamodel.makeWikidataPropertyIdValue("P527");
+        partOf = Datamodel.makeWikidataPropertyIdValue("P361");
+        referenceURL = Datamodel.makeWikidataPropertyIdValue("P854");
+        reasonForDeprecation = Datamodel.makeWikidataPropertyIdValue("P2241");
     }
     
     @Test
     public void testGetFormatConstraint() {
-        String regex = fetcher.getFormatRegex("P2427");
+        String regex = fetcher.getFormatRegex(gridId);
         Pattern pattern = Pattern.compile(regex);
         
         Assert.assertTrue(pattern.matcher("grid.470811.b").matches());
         Assert.assertFalse(pattern.matcher("501100006367").matches());
         
-        Assert.assertNull(fetcher.getFormatRegex("P31"));
+        Assert.assertNull(fetcher.getFormatRegex(instanceOf));
     }
     
     @Test
     public void testGetInverseConstraint() {
-        Assert.assertEquals(fetcher.getInversePid("P361"), "P527");
+        Assert.assertEquals(fetcher.getInversePid(partOf), hasPart);
     }
     
     @Test
     public void testOnlyReferences() {
-        Assert.assertTrue(fetcher.isForReferencesOnly("P854"));
-        Assert.assertFalse(fetcher.isForReferencesOnly("P2241"));
+        Assert.assertTrue(fetcher.isForReferencesOnly(referenceURL));
+        Assert.assertFalse(fetcher.isForReferencesOnly(reasonForDeprecation));
     }
     
     @Test
     public void testOnlyQualifiers() {
-        Assert.assertTrue(fetcher.isForQualifiersOnly("P2241"));
-        Assert.assertFalse(fetcher.isForQualifiersOnly("P6"));
+        Assert.assertTrue(fetcher.isForQualifiersOnly(reasonForDeprecation));
+        Assert.assertFalse(fetcher.isForQualifiersOnly(headOfGovernment));
     }
     
     @Test
     public void testOnlyValues() {
-        Assert.assertTrue(fetcher.isForValuesOnly("P6"));
-        Assert.assertFalse(fetcher.isForValuesOnly("P854"));
+        Assert.assertTrue(fetcher.isForValuesOnly(headOfGovernment));
+        Assert.assertFalse(fetcher.isForValuesOnly(referenceURL));
     }
     
     @Test
