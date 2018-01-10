@@ -1,6 +1,7 @@
 package org.openrefine.wikidata.schema;
 
 
+import org.openrefine.wikidata.schema.entityvalues.NewEntityIdValue;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
@@ -31,8 +32,12 @@ public class WbItemVariable extends WbItemExpr {
                 ReconCandidate match = cell.recon.match;
                 return Datamodel.makeItemIdValue(match.id, ctxt.getBaseIRI());
             } else if (recon.judgment == Recon.Judgment.New) {
-                return new NewEntityIdValue(ctxt.getRowId(),
-                        ctxt.getCellIndexByName(getColumnName()));
+                int rowId = ctxt.getRowId();
+                int columnId = ctxt.getCellIndexByName(getColumnName());
+                String siteIRI = ctxt.getBaseIRI();
+                String label = ctxt.getCellByName(getColumnName()).value.toString();
+                return new NewEntityIdValue(
+                        rowId, columnId, siteIRI, label);
             }
         }
         throw new SkipStatementException();
