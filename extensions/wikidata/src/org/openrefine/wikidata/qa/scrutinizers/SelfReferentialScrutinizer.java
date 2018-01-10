@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 
@@ -15,7 +16,13 @@ public class SelfReferentialScrutinizer extends SnakScrutinizer {
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         if (entityId.equals(snak.getValue())) {
-            warning("self-referential-statements");
+            QAWarning issue = new QAWarning(
+                 "self-referential-statements",
+                 null,
+                 QAWarning.Severity.WARNING,
+                 1);
+            issue.setProperty("example_entity", entityId);
+            addIssue(issue);
         }
     }
 
