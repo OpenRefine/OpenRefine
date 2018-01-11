@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
@@ -40,7 +41,7 @@ public class WbNameDescExpr extends JacksonJsonizable {
                     item.addAlias(val);
                     break;
             }
-        } catch (SkipStatementException e) {
+        } catch (SkipSchemaExpressionException e) {
             return;
         }
     }

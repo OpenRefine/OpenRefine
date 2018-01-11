@@ -3,6 +3,7 @@ package org.openrefine.wikidata.schema;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -22,7 +23,7 @@ public class WbReferenceExpr extends JacksonJsonizable {
         this.snakExprs = snakExprs;
     }
     
-    public Reference evaluate(ExpressionContext ctxt) throws SkipStatementException {
+    public Reference evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
         for (WbSnakExpr expr : getSnaks()) {
             List<Snak> snakList = new ArrayList<Snak>(1);

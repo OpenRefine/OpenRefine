@@ -3,6 +3,7 @@ package org.openrefine.wikidata.schema;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -36,7 +37,7 @@ public abstract class WbValueExpr extends JacksonJsonizable {
      * Evaluates the value expression in a given context,
      * returns a wikibase value suitable to be the target of a claim.
      */
-    public abstract Value evaluate(ExpressionContext ctxt) throws SkipStatementException;
+    public abstract Value evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException;
     
     public static WbValueExpr fromJSON(JSONObject obj) throws JSONException {
         return fromJSONClass(obj, WbValueExpr.class);

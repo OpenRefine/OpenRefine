@@ -1,5 +1,7 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,13 +20,13 @@ public class WbLanguageVariable extends WbLanguageExpr {
     
     @Override
     public String evaluate(ExpressionContext ctxt)
-            throws SkipStatementException {
+            throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(getColumnName());
         if (cell != null) {
             // TODO some validation here?
             return cell.value.toString();
         }
-        throw new SkipStatementException();
+        throw new SkipSchemaExpressionException();
     }
 
     public String getColumnName() {

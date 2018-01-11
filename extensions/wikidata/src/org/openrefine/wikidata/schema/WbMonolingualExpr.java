@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
@@ -22,7 +23,7 @@ public class WbMonolingualExpr extends WbValueExpr {
 
     @Override
     public MonolingualTextValue evaluate(ExpressionContext ctxt)
-            throws SkipStatementException {
+            throws SkipSchemaExpressionException {
         return Datamodel.makeMonolingualTextValue(
                 getValueExpr().evaluate(ctxt).getString(),
                 getLanguageExpr().evaluate(ctxt));

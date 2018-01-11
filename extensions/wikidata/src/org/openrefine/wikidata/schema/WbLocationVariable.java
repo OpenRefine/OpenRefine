@@ -2,6 +2,7 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,7 +23,7 @@ public class WbLocationVariable extends WbLocationExpr {
 
     @Override
     public GlobeCoordinatesValue evaluate(ExpressionContext ctxt)
-            throws SkipStatementException {
+            throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(getColumnName());
         if (cell != null) {
             String expr = cell.value.toString();
@@ -31,7 +32,7 @@ public class WbLocationVariable extends WbLocationExpr {
             } catch (ParseException e) {
             }
         }
-        throw new SkipStatementException();
+        throw new SkipSchemaExpressionException();
     }
 
     public String getColumnName() {

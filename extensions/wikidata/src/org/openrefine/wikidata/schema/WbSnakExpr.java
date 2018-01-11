@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -23,7 +24,7 @@ public class WbSnakExpr extends JacksonJsonizable {
         this.value = valueExpr;
     }
 
-    public Snak evaluate(ExpressionContext ctxt) throws SkipStatementException {
+    public Snak evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = getProp().evaluate(ctxt);
         Value evaluatedValue = value.evaluate(ctxt);
         return Datamodel.makeValueSnak(propertyId, evaluatedValue);

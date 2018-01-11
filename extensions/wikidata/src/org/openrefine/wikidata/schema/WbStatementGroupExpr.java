@@ -3,6 +3,7 @@ package org.openrefine.wikidata.schema;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -27,7 +28,7 @@ public class WbStatementGroupExpr extends JacksonJsonizable {
         this.statementExprs = claimExprs;
     }
 
-    public StatementGroup evaluate(ExpressionContext ctxt, ItemIdValue subject) throws SkipStatementException {
+    public StatementGroup evaluate(ExpressionContext ctxt, ItemIdValue subject) throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = propertyExpr.evaluate(ctxt);
         List<Statement> statements = new ArrayList<Statement>(statementExprs.size());
         for(WbStatementExpr expr : statementExprs) {

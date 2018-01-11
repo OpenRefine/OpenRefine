@@ -2,6 +2,7 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
@@ -48,9 +49,9 @@ public class WbLocationConstant extends WbLocationExpr {
 
     @Override
     public GlobeCoordinatesValue evaluate(ExpressionContext ctxt)
-            throws SkipStatementException {
+            throws SkipSchemaExpressionException {
         if (parsed == null)
-            throw new SkipStatementException();
+            throw new SkipSchemaExpressionException();
         return parsed;
     }
     

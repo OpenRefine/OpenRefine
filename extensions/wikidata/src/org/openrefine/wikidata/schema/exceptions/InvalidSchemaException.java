@@ -1,4 +1,4 @@
-package org.openrefine.wikidata.schema;
+package org.openrefine.wikidata.schema.exceptions;
 
 
 public class InvalidSchemaException extends Exception {

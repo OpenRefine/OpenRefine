@@ -1,5 +1,7 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,7 +20,7 @@ public class WbLanguageConstant extends WbLanguageExpr {
         _langLabel = langLabel;
     }
     
-    public String evaluate(ExpressionContext ctxt) throws SkipStatementException {
+    public String evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         return _langId;
     }
     

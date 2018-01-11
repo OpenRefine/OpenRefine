@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
@@ -38,9 +39,9 @@ public class WbDateConstant extends WbDateExpr {
     
     @Override
     public TimeValue evaluate(ExpressionContext ctxt)
-            throws SkipStatementException {
+            throws SkipSchemaExpressionException {
         if (parsed == null) {
-            throw new SkipStatementException();
+            throw new SkipSchemaExpressionException();
         }
         return parsed;
     }

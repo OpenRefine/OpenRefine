@@ -25,6 +25,7 @@ import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import org.openrefine.wikidata.schema.WbItemDocumentExpr;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.schema.ExpressionContext;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 
@@ -81,7 +82,7 @@ public class WikibaseSchema implements OverlayModel {
             
             try {
                 result.add(expr.evaluate(ctxt));
-            } catch (SkipStatementException e) {
+            } catch (SkipSchemaExpressionException e) {
                 continue;
             }
         }
