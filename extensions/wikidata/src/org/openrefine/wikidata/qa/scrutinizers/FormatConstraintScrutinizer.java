@@ -53,6 +53,9 @@ public class FormatConstraintScrutinizer extends SnakScrutinizer {
             String value = ((StringValue) snak.getValue()).getString();
             PropertyIdValue pid = snak.getPropertyId();
             Pattern pattern = getPattern(pid);
+            if (pattern == null) {
+                return;
+            }
             if (!pattern.matcher(value).matches()) {
                 if (added) {
                     QAWarning issue = new QAWarning(

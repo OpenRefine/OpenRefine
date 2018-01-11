@@ -187,7 +187,11 @@ public class ConstraintFetcher {
     protected List<Statement> getConstraintStatements(PropertyIdValue pid) {
         PropertyDocument doc = (PropertyDocument) EntityCache.getEntityDocument(pid);
         StatementGroup group = doc.findStatementGroup(WIKIDATA_CONSTRAINT_PID);
-        return group.getStatements();
+        if (group != null) {
+            return group.getStatements();
+        } else {
+            return new ArrayList<Statement>();
+        }
     }
     
     /**
