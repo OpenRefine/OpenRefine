@@ -53,6 +53,7 @@ import com.google.refine.commands.Command;
 import org.openrefine.wikidata.exporters.QuickStatementsExporter;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.ItemUpdate;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import com.google.refine.model.Project;
@@ -72,10 +73,11 @@ public class PreviewWikibaseSchemaCommand extends Command {
             String jsonString = request.getParameter("schema");
             JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
             WikibaseSchema schema = WikibaseSchema.reconstruct(json);
+            QAWarningStore warningStore = new QAWarningStore();
             
             // Evaluate project
             Engine engine = getEngine(request, project);
-            List<ItemUpdate> editBatch = schema.evaluate(project, engine);
+            List<ItemUpdate> editBatch = schema.evaluate(project, engine, warningStore);
             
             StringWriter sb = new StringWriter(2048);
             JSONWriter writer = new JSONWriter(sb, 32);
@@ -85,11 +87,11 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 StringWriter stringWriter = new StringWriter();
                 
                 // Inspect the edits and generate warnings
-                EditInspector inspector = new EditInspector();
+                EditInspector inspector = new EditInspector(warningStore);
                 inspector.inspect(editBatch);
                 writer.key("warnings");
                 writer.array();
-                for (QAWarning warning : inspector.getWarnings()) {
+                for (QAWarning warning : warningStore.getWarnings()) {
                     warning.write(writer, new Properties());
                 }
                 writer.endArray();
@@ -97,7 +99,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 // this is not the length of the warnings array written before,
                 // but the total number of issues raised (before deduplication)
                 writer.key("nb_warnings");
-                writer.value(inspector.getTotalNumberOfWarnings());
+                writer.value(warningStore.getNbWarnings());
                 
                 // Export to QuickStatements
                 QuickStatementsExporter exporter = new QuickStatementsExporter(); 

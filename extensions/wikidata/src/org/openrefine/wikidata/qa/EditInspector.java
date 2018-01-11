@@ -28,9 +28,9 @@ public class EditInspector {
     private Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
     
-    public EditInspector() {
-        scrutinizers = new HashMap<>();
-        warningStore = new QAWarningStore();
+    public EditInspector(QAWarningStore warningStore) {
+        this.scrutinizers = new HashMap<>();
+        this.warningStore = warningStore;
         
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
@@ -71,20 +71,5 @@ public class EditInspector {
             warningStore.addWarning(new QAWarning(
                 "no-issue-detected", null, QAWarning.Severity.INFO, 0));
         }
-    }
-    
-    /**
-     * Retrieve the warnings after inspection of the edits
-     * @return
-     */
-    public List<QAWarning> getWarnings() {
-        return warningStore.getWarnings();
-    }
-    
-    /**
-     * Retrieve the number of warnings before deduplication
-     */
-    public int getTotalNumberOfWarnings() {
-        return warningStore.getNbWarnings();
     }
 }

@@ -31,8 +31,12 @@ public class WbItemDocumentExpr extends JacksonJsonizable {
         ItemIdValue subjectId = getSubject().evaluate(ctxt);
         ItemUpdate update = new ItemUpdate(subjectId);
         for(WbStatementGroupExpr expr : getStatementGroups()) {
-            for(Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {
-                update.addStatement(s);
+            try {
+                for(Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {
+                    update.addStatement(s);
+                }
+            } catch (SkipSchemaExpressionException e) {
+                continue;
             }
         }
         for(WbNameDescExpr expr : getNameDescs()) {
