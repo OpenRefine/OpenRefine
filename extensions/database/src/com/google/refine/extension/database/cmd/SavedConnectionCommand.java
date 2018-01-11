@@ -54,7 +54,10 @@ public class SavedConnectionCommand extends DatabaseCommand {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        logger.info("SavedConnectionCommand::Get::connectionName::{}", request.getParameter("connectionName"));
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("SavedConnectionCommand::Get::connectionName::{}", request.getParameter("connectionName"));
+        }
         
         String connectionName = request.getParameter("connectionName");
         try {
@@ -79,7 +82,10 @@ public class SavedConnectionCommand extends DatabaseCommand {
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        logger.info("SavedConnectionCommand::Delete Connection: {}", request.getParameter("connectionName"));
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("SavedConnectionCommand::Delete Connection: {}", request.getParameter("connectionName"));
+        }
 
         String connectionName  = request.getParameter("connectionName");
         
@@ -225,7 +231,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
             }
             writer.endArray();
             writer.endObject();
-            logger.info("Saved Connection Get Response sent");
+           // logger.info("Saved Connection Get Response sent");
         } finally {
             w.flush();
             w.close();
@@ -238,8 +244,10 @@ public class SavedConnectionCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        logger.info("SavedConnectionCommand::Post");
+       
+        if(logger.isDebugEnabled()) {
+            logger.info("doPost Connection: {}", request.getParameter("connectionName"));
+        }
         
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
         
@@ -262,7 +270,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
         
       
         if(jdbcConfig.getDatabasePassword() != null) {
-            logger.debug("SavedConnectionCommand::Post::password::{}", jdbcConfig.getDatabasePassword());
+            //logger.debug("SavedConnectionCommand::Post::password::{}", jdbcConfig.getDatabasePassword());
            jdbcConfig.setDatabasePassword(DatabaseUtils.encrypt(jdbcConfig.getDatabasePassword()));
         }
         
@@ -285,7 +293,11 @@ public class SavedConnectionCommand extends DatabaseCommand {
     public void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
      
-        logger.info("SavedConnectionCommand::Put::databaseType " + request.getParameter("databaseType"));
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("databaseType::{} " , request.getParameter("databaseHost"));
+        }
+        logger.info("databaseHost::{} " , request.getParameter("databaseServer"));
         
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
         StringBuilder sb = new StringBuilder();
@@ -312,8 +324,9 @@ public class SavedConnectionCommand extends DatabaseCommand {
             response.sendError(HttpStatus.SC_BAD_REQUEST, sb.toString());
         }
        
-       
-        logger.debug("SavedConnectionCommand::PUT Connection: {}", jdbcConfig.getConnectionName());
+       if(logger.isDebugEnabled()) {
+         logger.debug("Connection Config:: {}", jdbcConfig.getConnectionName());
+       }
         
         if(jdbcConfig.getDatabasePassword() != null) {
             jdbcConfig.setDatabasePassword(DatabaseUtils.encrypt(jdbcConfig.getDatabasePassword()));

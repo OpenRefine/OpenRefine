@@ -118,12 +118,16 @@ public class DBQueryResultImportReader implements TableDataReader {
                     setProgress(job, querySource, progress++);
                 }
                 if(processedRows % 10000 == 0) {
+                    if(logger.isDebugEnabled()) {
                     logger.debug("[[ {} rows processed... ]]",processedRows); 
+                    }
                 }
             }
             return result;
         } else {
-            logger.debug("[[processedRows:{} ]]", processedRows);
+            if(logger.isDebugEnabled()) {
+                logger.debug("[[processedRows:{} ]]", processedRows);
+            }
           return null;
         }
       
@@ -171,16 +175,17 @@ public class DBQueryResultImportReader implements TableDataReader {
                                 rowOfCells.add(Long.parseLong(text));
                                 continue;
                             } catch (NumberFormatException e) {}
-                           
-                            try {
-                                double d = Double.parseDouble(text);
-                                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                                    rowOfCells.add(d);
-                                    continue;
-                                }
-                            } catch (NumberFormatException e) {}
-                          
-                        }
+                       
+                         }else if(col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT ) {
+                             try {
+                                 double d = Double.parseDouble(text);
+                                 if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                                     rowOfCells.add(d);
+                                     continue;
+                                 }
+                             } catch (NumberFormatException e) {}
+                             
+                         }
                         
                         rowOfCells.add(text);
                     }

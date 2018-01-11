@@ -123,12 +123,16 @@ public class MariaDBConnectionManager {
     public  Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection) throws DatabaseServiceException{
         try {
 
-            logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
+           // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
 
             if (connection != null && !forceNewConnection) {
                 logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
-                    logger.info("Returning existing connection::{}", connection);
+                    if(logger.isDebugEnabled()) {
+                        logger.debug("Returning existing connection::{}", connection);
+                    }
+                    
+                    
                     return connection;
                 }
             }
@@ -139,7 +143,10 @@ public class MariaDBConnectionManager {
             connection = DriverManager.getConnection(dbURL, databaseConfiguration.getDatabaseUser(),
                     databaseConfiguration.getDatabasePassword());
 
-            logger.info("*** Acquired New  connection for ::{} **** ", dbURL);
+            if(logger.isDebugEnabled()) {
+                logger.debug("*** Acquired New  connection for ::{} **** ", dbURL); 
+            }
+            
 
             return connection;
 

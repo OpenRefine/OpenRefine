@@ -55,11 +55,14 @@ public class TestQueryCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        logger.debug("TestQueryCommand::Post");
-        
+       
         DatabaseConfiguration dbConfig = getJdbcConfiguration(request);
         String query = request.getParameter("query");
-        logger.info("TestQueryCommand::Post::DatabaseConfiguration::{}::Query::{} " ,dbConfig, query);
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("TestQueryCommand::Post::DatabaseConfiguration::{}::Query::{} " ,dbConfig, query);
+        }
+      
         
         //ProjectManager.singleton.setBusy(true);
         try {
@@ -76,7 +79,9 @@ public class TestQueryCommand extends DatabaseCommand {
                
                 response.setStatus(HttpStatus.SC_OK);
                 String jsonStr = mapperObj.writeValueAsString(databaseInfo);
-                logger.debug("TestQueryCommand::Post::Result::{} " ,jsonStr);
+                if(logger.isDebugEnabled()) {
+                    logger.debug("TestQueryCommand::Post::Result::{} " ,jsonStr);
+                }
                 
                 writer.object();
                 writer.key("code"); 
@@ -99,9 +104,10 @@ public class TestQueryCommand extends DatabaseCommand {
         } catch (Exception e) {
             logger.error("TestQueryCommand::Post::Exception::{}", e);
             throw new ServletException(e);
-        } finally {
-           // ProjectManager.singleton.setBusy(false);
         }
+//        finally {
+//           // ProjectManager.singleton.setBusy(false);
+//        }
 
         
     }

@@ -65,7 +65,9 @@ public class PgSQLDatabaseService extends DatabaseService {
         if (instance == null) {
             SQLType.registerSQLDriver(DB_NAME, DB_DRIVER);
             instance = new PgSQLDatabaseService();
-            logger.debug("PgSQLDatabaseService Instance: {}", instance);
+            if(logger.isDebugEnabled()) {
+                logger.debug("PgSQLDatabaseService Instance: {}", instance);
+            }
         }
         return instance;
     }
@@ -174,8 +176,16 @@ public class PgSQLDatabaseService extends DatabaseService {
 
     @Override
     public String buildLimitQuery(Integer limit, Integer offset, String query) {
+        if(logger.isDebugEnabled()) {
+            logger.debug( "<<< original input query::{} >>>" , query );
+        }
+       
+        final int len = query.length();
+        String parsedQuery = len > 0 && query.endsWith(";") ?  query.substring(0, len - 1) : query;
+               
+        
         StringBuilder sb = new StringBuilder();
-        sb.append(query);
+        sb.append(parsedQuery);
         
         if(limit != null) {
             sb.append(" LIMIT" + " " + limit);
@@ -184,8 +194,14 @@ public class PgSQLDatabaseService extends DatabaseService {
         if(offset != null) {
             sb.append(" OFFSET" + " " + offset);
         }
+        sb.append(";");
+        String parsedQueryOut = sb.toString();
         
-        return sb.toString();
+        if(logger.isDebugEnabled()) {
+            logger.debug( "<<<Final input query::{} >>>" , parsedQueryOut );
+        }
+        
+        return parsedQueryOut;
     }
 
     @Override
@@ -247,7 +263,7 @@ public class PgSQLDatabaseService extends DatabaseService {
                 return rows;
         
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
+            logger.error("SQLException::{}::{}", e);
             throw new DatabaseServiceException(true, e.getSQLState(), e.getErrorCode(), e.getMessage());
         }
     }

@@ -265,10 +265,17 @@ Refine.DatabaseImportController.prototype._updatePreview = function() {
             new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.unbind().empty());
           });
         } else {
-            alert(result.message);
-          //self._parsingPanelElmts.progressPanel.hide();
-          alert('Errors:\n' + 
-            (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
+          
+           alert('Errors:\n' +  (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
+           self._parsingPanelElmts.progressPanel.hide();
+           
+           Refine.CreateProjectUI.cancelImportingJob(self._jobID);
+           
+           delete self._jobID;
+           delete self._options;
+           
+           self._createProjectUI.showSourceSelectionPanel();
+           
          
         }
       },

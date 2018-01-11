@@ -1,39 +1,65 @@
 package com.google.refine.extension.database.pgsql;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
+import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.refine.extension.database.DBExtensionTestUtils;
+import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 
 
 
-public class PgSQLConnectionManagerTest {
+public class PgSQLConnectionManagerTest extends DBExtensionTests {
+   
+    private DatabaseConfiguration testDbConfig;
     
     
     @BeforeTest
-    public void beforeTest() {
+    @Parameters({ "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable"})
+    public void beforeTest(@Optional(DEFAULT_PGSQL_DB_NAME) String pgSqlDbName,  @Optional(DEFAULT_PGSQL_HOST) String pgSqlDbHost, 
+           @Optional(DEFAULT_PGSQL_PORT)    String pgSqlDbPort,     @Optional(DEFAULT_PGSQL_USER) String pgSqlDbUser,
+           @Optional(DEFAULT_PGSQL_PASSWORD)  String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String pgSqlTestTable) {
+       
+        MockitoAnnotations.initMocks(this);
+       // System.out.println("beforeTest " + pgSqlDbName);
+        testDbConfig = new DatabaseConfiguration();
+        testDbConfig.setDatabaseHost(pgSqlDbHost);
+        testDbConfig.setDatabaseName(pgSqlDbName);
+        testDbConfig.setDatabasePassword(pgSqlDbPassword);
+        testDbConfig.setDatabasePort(Integer.parseInt(pgSqlDbPort));
+        testDbConfig.setDatabaseType(PgSQLDatabaseService.DB_NAME);
+        testDbConfig.setDatabaseUser(pgSqlDbUser);
+        testDbConfig.setUseSSL(false);
+        
+        //testTable = mySqlTestTable;
+        DBExtensionTestUtils.initTestData(testDbConfig);
+        
         DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
+        
     }
-
+    
+ 
+    
+    @AfterSuite
+    public void afterSuite() {
+        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
+    }
   
     @Test
     public void testTestConnection() {
-        DatabaseConfiguration dc = new DatabaseConfiguration();
-        dc.setDatabaseHost("127.0.0.1");
-        dc.setDatabaseName("enmsso"); 
-        dc.setDatabasePort(5432);
-        dc.setDatabaseType(PgSQLDatabaseService.DB_NAME);
-        dc.setDatabaseUser("postgres");
-        dc.setUseSSL(false);
+        
         try {
-            boolean conn = PgSQLConnectionManager.getInstance().testConnection(dc);
-            Assert.assertEquals(conn, true);
+            boolean isConnected = PgSQLConnectionManager.getInstance().testConnection(testDbConfig);
+            Assert.assertEquals(isConnected, true);
             
         } catch (DatabaseServiceException e) {
             // TODO Auto-generated catch block
@@ -43,16 +69,9 @@ public class PgSQLConnectionManagerTest {
 
     @Test
     public void testGetConnection() {
-        DatabaseConfiguration dc = new DatabaseConfiguration();
-        dc.setDatabaseHost("127.0.0.1");
-        dc.setDatabaseName("enmsso");
-        //dc.setDatabasePassword("secret");
-        dc.setDatabasePort(5432);
-        dc.setDatabaseType(PgSQLDatabaseService.DB_NAME);
-        dc.setDatabaseUser("postgres");
-        dc.setUseSSL(false);
+      
         try {
-             Connection conn = PgSQLConnectionManager.getInstance().getConnection(dc, true);
+             Connection conn = PgSQLConnectionManager.getInstance().getConnection(testDbConfig, true);
              Assert.assertNotNull(conn);
             
         } catch (DatabaseServiceException e) {
@@ -63,17 +82,9 @@ public class PgSQLConnectionManagerTest {
 
     @Test
     public void testShutdown() {
-        
-        DatabaseConfiguration dc = new DatabaseConfiguration();
-        dc.setDatabaseHost("127.0.0.1");
-        dc.setDatabaseName("enmsso");
-        //dc.setDatabasePassword("secret");
-        dc.setDatabasePort(5432);
-        dc.setDatabaseType(PgSQLDatabaseService.DB_NAME);
-        dc.setDatabaseUser("postgres");
-        dc.setUseSSL(false);
+    
         try {
-             Connection conn = PgSQLConnectionManager.getInstance().getConnection(dc, true);
+             Connection conn = PgSQLConnectionManager.getInstance().getConnection(testDbConfig, true);
              Assert.assertNotNull(conn);
              
              PgSQLConnectionManager.getInstance().shutdown();
@@ -82,10 +93,7 @@ public class PgSQLConnectionManagerTest {
                  Assert.assertEquals(conn.isClosed(), true);
              }
              
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

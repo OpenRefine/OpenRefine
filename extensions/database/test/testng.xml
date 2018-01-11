@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="DatabaseExtensionUnitTestSuite">
-	<parameter name = "dbName" value="postgres"/> 
-	<parameter name = "dbUser" value="postgres"/>
+	<parameter name = "mySqlDbName" value="testdb"/> 
+	<parameter name = "mySqlDbHost" value="127.0.0.1"/> 
+	<parameter name = "mySqlDbPort" value="3306"/> 
+	<parameter name = "mySqlDbUser" value="root"/>
+    <parameter name = "mySqlDbPassword" value="secret"/>
+    <parameter name = "mySqlTestTable" value="test_data"/>
+    
+	<parameter name = "pgSqlDbName" value="testdb"/> 
+	<parameter name = "pgSqlDbHost" value="127.0.0.1"/> 
+	<parameter name = "pgSqlDbPort" value="5432"/> 
+	<parameter name = "pgSqlDbUser" value="postgres"/>
+    <parameter name = "pgSqlDbPassword" value=""/>
+    <parameter name = "pgSqlTestTable" value="test_data"/>
+    
+    <parameter name = "mariaDbName" value="testdb"/> 
+	<parameter name = "mariaDbHost" value="127.0.0.1"/> 
+	<parameter name = "mariadbDbPort" value="3306"/> 
+	<parameter name = "mariaDbUser" value="root"/>
+    <parameter name = "mariaDbPassword" value="secret"/>
+    <parameter name = "mariaDbTestTable" value="test_data"/>
 	<test name="DatabaseExtensionUnitTest">
-		<!-- <classes>
-			<class name="com.google.refine.extension.database.DatabaseImportControllerTest" />
+		<classes>
+			<!-- <class name="com.google.refine.extension.database.DatabaseImportControllerTest" />
 			<class name="com.google.refine.extension.database.DatabaseServiceTest" />
 			<class name="com.google.refine.extension.database.DBQueryResultImportReaderTest" />
 			<class name="com.google.refine.extension.database.DBQueryResultPreviewReaderTest" />
@@ -13,13 +31,13 @@
 			<class name="com.google.refine.extension.database.cmd.QueryCommandTest" />
 			<class name="com.google.refine.extension.database.cmd.SavedConnectionCommandTest" />
 			<class name="com.google.refine.extension.database.cmd.TestConnectCommandTest" />
-			
-			<class name="com.google.refine.extension.database.mariadb.MariaDBConnectionManagerTest" />
-			<class name="com.google.refine.extension.database.mariadb.MariaDBDatabaseServiceTest" />
-			<class name="com.google.refine.extension.database.mysql.MySQLConnectionManagerTest" />
-			<class name="com.google.refine.extension.database.mysql.MySQLDatabaseServiceTest" />
-			<class name="com.google.refine.extension.database.pgsql.PgSQLConnectionManagerTest" />
+			-->
+			<class name="com.google.refine.extension.database.mariadb.MariaDBConnectionManagerTest"/>
+			<class name="com.google.refine.extension.database.mariadb.MariaDBDatabaseServiceTest"/>
+		 	<class name="com.google.refine.extension.database.mysql.MySQLConnectionManagerTest"/>
+			<class name="com.google.refine.extension.database.mysql.MySQLDatabaseServiceTest"/>
+		    <class name="com.google.refine.extension.database.pgsql.PgSQLConnectionManagerTest"/>
 			<class name="com.google.refine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
-		</classes> -->
+		</classes>
 	</test>
 </suite>

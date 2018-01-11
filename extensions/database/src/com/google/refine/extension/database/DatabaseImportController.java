@@ -52,7 +52,6 @@ import com.google.refine.commands.HttpUtilities;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseQueryInfo;
 import com.google.refine.importers.TabularImportingParserBase;
-import com.google.refine.importing.DefaultImportingController;
 import com.google.refine.importing.ImportingController;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -82,23 +81,27 @@ public class DatabaseImportController implements ImportingController {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        logger.info("DatabaseImportController::doPost::databaseName::{}", request.getParameter("databaseName"));
-
+        logger.info("doPost Query String::{}", request.getQueryString());
+        
         response.setCharacterEncoding("UTF-8");
         Properties parameters = ParsingUtilities.parseUrlParameters(request);
         
         String subCommand = parameters.getProperty("subCommand");
         
-        logger.debug("DatabaseImportController::doPost::subCommand::{}", subCommand);
+        if(logger.isDebugEnabled()){
+            logger.info("doPost::subCommand::{}", subCommand);
+        }
         
         if ("initialize-parser-ui".equals(subCommand)) {
             doInitializeParserUI(request, response, parameters);
         } else if ("parse-preview".equals(subCommand)) {
             try {
+                
                 doParsePreview(request, response, parameters);
+                
             } catch (DatabaseServiceException e) {
-                logger.error("DatabaseImportController::doPost::DatabaseServiceException::{}", e);
-                HttpUtilities.respond(response, "error", e.getMessage());
+                logger.error("doPost::DatabaseServiceException::{}", e);
+                HttpUtilities.respond(response, "error", getDbServiceException(e));
             }
         } else if ("create-project".equals(subCommand)) {
             doCreateProject(request, response, parameters);
@@ -108,6 +111,19 @@ public class DatabaseImportController implements ImportingController {
 
     }
  
+    private String getDbServiceException(Exception ex) {
+        String message = "";
+        if(ex instanceof DatabaseServiceException) {
+            DatabaseServiceException dbEx = (DatabaseServiceException) ex;
+            if(dbEx.isSqlException()) {
+                message = message + dbEx.getSqlCode() + " " +  dbEx.getSqlState();
+            }
+        }
+        message = message + ex.getMessage();
+        
+        return message;
+    }
+
     /**
      * 
      * @param request
@@ -118,7 +134,10 @@ public class DatabaseImportController implements ImportingController {
      */
     private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
-        logger.info("::doInitializeParserUI::");
+        if(logger.isDebugEnabled()) {
+            logger.debug("::doInitializeParserUI::");
+        }
+        
 
         JSONObject result = new JSONObject();
         JSONObject options = new JSONObject();
@@ -128,8 +147,10 @@ public class DatabaseImportController implements ImportingController {
         JSONUtilities.safePut(options, "skipDataLines", 0); 
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
-
-        logger.debug("doInitializeParserUI:::{}", result.toString());
+        if(logger.isDebugEnabled()) {
+            logger.debug("doInitializeParserUI:::{}", result.toString());
+        }
+       
         HttpUtilities.respond(response, result.toString());
 
     }
@@ -147,8 +168,11 @@ public class DatabaseImportController implements ImportingController {
     private void doParsePreview(
             HttpServletRequest request, HttpServletResponse response, Properties parameters)
                 throws ServletException, IOException, DatabaseServiceException {
-            logger.info("DatabaseImportController::doParsePreview::JobID::{}", parameters.getProperty("jobID"));
-          
+            if(logger.isDebugEnabled()) {
+                logger.debug("JobID::{}", parameters.getProperty("jobID"));
+            } 
+            logger.info("JobID::{}", parameters.getProperty("jobID"));
+            
             long jobID = Long.parseLong(parameters.getProperty("jobID"));
             ImportingJob job = ImportingManager.getJob(jobID);
             if (job == null) {
@@ -179,6 +203,8 @@ public class DatabaseImportController implements ImportingController {
                     optionObj,
                     exceptions
                 );
+//                String exStr = getExceptionString(exceptions);
+//                logger.info("exceptions::" + exStr);
                 
                 Writer w = response.getWriter();
                 JSONWriter writer = new JSONWriter(w);
@@ -186,13 +212,16 @@ public class DatabaseImportController implements ImportingController {
                     writer.object();
                     if (exceptions.size() == 0) {
                         job.project.update(); // update all internal models, indexes, caches, etc.
-                        writer.key("status"); writer.value("ok");
+                        writer.key("status"); 
+                        writer.value("ok");
                     } else {
-                        writer.key("status"); writer.value("error");
-                        writer.key("errors");
-                        writer.array();
-                        DefaultImportingController.writeErrors(writer, exceptions);
-                        writer.endArray();
+                        writer.key("status"); 
+                        writer.value("error");
+                        writer.key("message");
+                        writer.value(getExceptionString(exceptions));
+//                        writer.array();
+//                        writeErrors(writer, exceptions);
+//                        writer.endArray();
                     }
                     writer.endObject();
                 } catch (JSONException e) {
@@ -209,6 +238,17 @@ public class DatabaseImportController implements ImportingController {
                 job.updating = false;
             }
         }
+
+
+
+    private String getExceptionString(List<Exception> exceptions) {
+        String ex = "";
+        for(Exception e: exceptions) {
+            ex = ex + e.getLocalizedMessage() + "\n";
+        }
+        // TODO Auto-generated method stub
+        return ex;
+    }
 
     /**
      * 
@@ -266,7 +306,9 @@ public class DatabaseImportController implements ImportingController {
      */
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException{
-            logger.info("DatabaseImportController::doCreateProject:::{}", parameters.getProperty("jobID"));
+            if(logger.isDebugEnabled()) {
+                logger.debug("DatabaseImportController::doCreateProject:::{}", parameters.getProperty("jobID"));
+            }
             
             long jobID = Long.parseLong(parameters.getProperty("jobID"));
             final ImportingJob job = ImportingManager.getJob(jobID);
@@ -309,7 +351,7 @@ public class DatabaseImportController implements ImportingController {
                                 exceptions
                             );
                         } catch (DatabaseServiceException e) {
-                            logger.info("DatabaseImportController::doCreateProject:::run{}", e);
+                            logger.error("DatabaseImportController::doCreateProject:::run{}", e);
                            // throw new RuntimeException("DatabaseServiceException::", e);
                         }
                       
@@ -380,8 +422,9 @@ public class DatabaseImportController implements ImportingController {
             );
         
         long endTime = System.currentTimeMillis() ;
-        
-        logger.debug("Execution Time: {}", endTime - startTime);
+        if(logger.isDebugEnabled()) {
+            logger.debug("Execution Time: {}", endTime - startTime);
+        }
         
         setProgress(job, querySource, 100);
      
@@ -420,8 +463,9 @@ public class DatabaseImportController implements ImportingController {
         if (jdbcConfig.getDatabaseHost() == null || jdbcConfig.getDatabaseName() == null
                 || jdbcConfig.getDatabasePassword() == null || jdbcConfig.getDatabaseType() == null
                 || jdbcConfig.getDatabaseUser() == null || query == null) {
-            
-            logger.debug("Missing Database Configuration::{}", jdbcConfig);
+            if(logger.isDebugEnabled()) {
+                logger.debug("Missing Database Configuration::{}", jdbcConfig);
+            }
             return null;
         }
         

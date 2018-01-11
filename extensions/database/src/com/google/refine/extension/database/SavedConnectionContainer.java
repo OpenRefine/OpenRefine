@@ -31,6 +31,7 @@ package com.google.refine.extension.database;
 import java.util.List;
 
 public class SavedConnectionContainer {
+    private List<DatabaseConfiguration> savedConnections;
     
     public List<DatabaseConfiguration> getSavedConnections() {
         return savedConnections;
@@ -41,7 +42,7 @@ public class SavedConnectionContainer {
         this.savedConnections = savedConnections;
     }
 
-    List<DatabaseConfiguration> savedConnections;
+
 
     public SavedConnectionContainer(List<DatabaseConfiguration> savedConnections) {
         super();

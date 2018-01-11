@@ -34,6 +34,10 @@ public enum DatabaseColumnType {
     STRING,
     NUMBER,
     DATETIME,
-    LOCATION
+    LOCATION,
+    BOOLEAN,
+    DATE,
+    DOUBLE,
+    FLOAT
 
 }

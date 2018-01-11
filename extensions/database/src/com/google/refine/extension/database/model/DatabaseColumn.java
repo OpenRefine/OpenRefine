@@ -36,6 +36,7 @@ public class DatabaseColumn {
     private String name;
     private int size;
     private DatabaseColumnType type;
+    private String label;
     
     public DatabaseColumnType getType() {
         return type;
@@ -59,10 +60,6 @@ public class DatabaseColumn {
         this.label = label;
     }
 
-
-
-
-    private String label;
 
     public DatabaseColumn(String name, int size, DatabaseColumnType type) {
         super();

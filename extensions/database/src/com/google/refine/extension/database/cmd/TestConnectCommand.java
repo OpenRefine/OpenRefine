@@ -54,9 +54,12 @@ public class TestConnectCommand extends DatabaseCommand {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        logger.debug("TestConnectCommand::Post");
+        
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
-        logger.info("TestConnectCommand::Post::{}", databaseConfiguration);
+        if(logger.isDebugEnabled()) {
+            logger.debug("TestConnectCommand::Post::{}", databaseConfiguration); 
+        }
+        
         
         //ProjectManager.singleton.setBusy(true);
         try {

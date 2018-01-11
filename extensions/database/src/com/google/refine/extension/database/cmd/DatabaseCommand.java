@@ -38,11 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.commands.Command;
-
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseServiceException;
 
 public abstract class DatabaseCommand extends Command {
+    
+    private static final Logger logger = LoggerFactory.getLogger("DatabaseCommand");
 
     /**
      * 
@@ -55,12 +56,22 @@ public abstract class DatabaseCommand extends Command {
         jdbcConfig.setConnectionName(request.getParameter("connectionName"));
         jdbcConfig.setDatabaseType(request.getParameter("databaseType"));
         jdbcConfig.setDatabaseHost(request.getParameter("databaseServer"));
-        jdbcConfig.setDatabasePort(Integer.parseInt(request.getParameter("databasePort")));
+        
+        String dbPort = request.getParameter("databasePort");
+        if(dbPort != null) {
+            try {
+                jdbcConfig.setDatabasePort(Integer.parseInt(dbPort));
+            }catch(NumberFormatException nfe) {}
+        }
+      
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
         jdbcConfig.setDatabasePassword(request.getParameter("databasePassword"));
         jdbcConfig.setDatabaseName(request.getParameter("initialDatabase"));
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
-
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("JDBC Configuration: {}", jdbcConfig);
+        }
         return jdbcConfig;
     }
     /**

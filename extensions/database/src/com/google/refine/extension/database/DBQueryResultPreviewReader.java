@@ -107,23 +107,21 @@ public class DBQueryResultPreviewReader implements TableDataReader {
             //logger.info("Exit::getNextRowOfCells :rowsOfCellsNotNull::rowsOfCells size:" + rowsOfCells.size() + ":batchRowStart:" + batchRowStart + " ::nextRow:" + nextRow);
             return rowsOfCells.get(nextRow++ - batchRowStart);
         } else {
-            logger.debug("nextRow:{}, batchRowStart:{}", nextRow, batchRowStart);
-//            
-//            rowsOfCells = getRowsOfCells(batchRowStart);
-//            if(rowsOfCells != null) {
-//                return rowsOfCells.get(nextRow++ - batchRowStart);
-//            }
+            if(logger.isDebugEnabled()) {
+                logger.debug("nextRow:{}, batchRowStart:{}", nextRow, batchRowStart);
+            }
+
             return null;
         }
       
         
       }catch(DatabaseServiceException e) {
-          logger.error("DatabaseServiceException::{}", e);
-          throw new IOException(e);
+          logger.error("DatabaseServiceException::preview:{}", e.getMessage());
+          IOException ioEx = new IOException(e.getMessage(), e);
+          throw ioEx;
           
       }
-      
-     
+  
    }
     
     /**
@@ -139,7 +137,9 @@ public class DBQueryResultPreviewReader implements TableDataReader {
         List<List<Object>> rowsOfCells = new ArrayList<List<Object>>(batchSize);
         
         String query = databaseService.buildLimitQuery(batchSize, startRow, dbQueryInfo.getQuery());
-        logger.debug("batchSize::"  + batchSize +  " startRow::" + startRow + " query::" + query );
+        if(logger.isDebugEnabled()) {
+            logger.debug("batchSize::"  + batchSize +  " startRow::" + startRow + " query::" + query );
+        }
         
         List<DatabaseRow> dbRows = databaseService.getRows(dbQueryInfo.getDbConfig(), query);
 

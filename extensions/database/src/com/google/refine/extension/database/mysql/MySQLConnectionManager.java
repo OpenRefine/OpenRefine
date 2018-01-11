@@ -59,8 +59,7 @@ public class MySQLConnectionManager {
 
     }
   
-    
-    
+  
     
     /**
      * Create a new instance of this connection manager.
@@ -122,8 +121,6 @@ public class MySQLConnectionManager {
     public  Connection getConnection(DatabaseConfiguration databaseConfiguration, boolean forceNewConnection) throws DatabaseServiceException{
         try {
 
-           // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
-
             if (connection != null && !forceNewConnection) {
                 //logger.info("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
@@ -134,14 +131,20 @@ public class MySQLConnectionManager {
                     return connection;
                 }
             }
-
-            Class.forName(type.getClassPath());
-            DriverManager.setLoginTimeout(10);
             String dbURL = getDatabaseUrl(databaseConfiguration);
+            Class.forName(type.getClassPath());
+            
+            //logger.info("*** type.getClassPath() ::{}, {}**** ", type.getClassPath());
+            
+            DriverManager.setLoginTimeout(10);
+            
             connection = DriverManager.getConnection(dbURL, databaseConfiguration.getDatabaseUser(),
                     databaseConfiguration.getDatabasePassword());
 
-            logger.debug("*** Acquired New  connection for ::{} **** ", dbURL);
+            if(logger.isDebugEnabled()) {
+                logger.debug("*** Acquired New  connection for ::{} **** ", dbURL); 
+            }
+            
 
             return connection;
 

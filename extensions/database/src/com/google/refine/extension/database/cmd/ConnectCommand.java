@@ -56,11 +56,10 @@ public class ConnectCommand extends DatabaseCommand {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        logger.debug("ConnectCommand::Post");
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
- 
-        logger.info("ConnectCommand::Post::{}", databaseConfiguration);
-        
+        if(logger.isDebugEnabled()) {
+            logger.debug("ConnectCommand::Post::{}", databaseConfiguration);
+        }
        // ProjectManager.singleton.setBusy(true);
         try {
         
@@ -73,11 +72,11 @@ public class ConnectCommand extends DatabaseCommand {
             try {
                 DatabaseInfo databaseInfo = DatabaseService.get(databaseConfiguration.getDatabaseType())
                         .connect(databaseConfiguration);
+                String databaseInfoString = mapperObj.writeValueAsString(databaseInfo);
                 response.setStatus(HttpStatus.SC_OK);
                 writer.object();
                 writer.key("code"); 
                 writer.value("ok");
-                String databaseInfoString = mapperObj.writeValueAsString(databaseInfo);
                 writer.key("databaseInfo"); 
                 writer.value(databaseInfoString);
               
@@ -96,9 +95,10 @@ public class ConnectCommand extends DatabaseCommand {
         } catch (Exception e) {
             logger.error("ConnectCommand::Post::Exception::{}", e);
             throw new ServletException(e);
-        } finally {
-           // ProjectManager.singleton.setBusy(false);
-        }
+        } 
+//        finally {
+//           // ProjectManager.singleton.setBusy(false);
+//        }
 
         
     }

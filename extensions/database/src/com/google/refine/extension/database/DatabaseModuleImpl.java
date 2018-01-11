@@ -52,6 +52,10 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizabl
     public static DatabaseModuleImpl instance;
     
     public static Properties extensionProperties;
+    
+    private static String DEFAULT_CREATE_PROJ_BATCH_SIZE = "100";
+    private static String DEFAULT_PREVIEW_BATCH_SIZE = "100";
+    
 
 
     @Override
@@ -66,27 +70,35 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizabl
          // Set the singleton.
         instance = this;
        
-        logger.info("*** Database Extension Module init complete ***");
+        logger.info("*** Database Extension Module Initialization Completed!!***");
     }
     
     public static String getImportCreateBatchSize() {
-
-        return extensionProperties.getProperty("create.batchSize", "100");
+        if(extensionProperties == null) {
+            return DEFAULT_CREATE_PROJ_BATCH_SIZE;
+        }
+        return extensionProperties.getProperty("create.batchSize", DEFAULT_CREATE_PROJ_BATCH_SIZE);
     }
 
     public static String getImportPreviewBatchSize() {
-
-        return extensionProperties.getProperty("preview.batchSize", "100");
+        if(extensionProperties == null) {
+            return DEFAULT_PREVIEW_BATCH_SIZE;
+        }
+        return extensionProperties.getProperty("preview.batchSize", DEFAULT_PREVIEW_BATCH_SIZE);
     }
 
     private void readModuleProperty() {
         // The module path
         File f = getPath();
-        logger.debug("Module getPath(): {}", f.getPath());
+        if(logger.isDebugEnabled()) {
+            logger.debug("Module getPath(): {}", f.getPath());
+        }
 
         // Load our custom properties.
         File modFile = new File(f,"MOD-INF");
-        logger.debug("Module File: {}", modFile.getPath());
+        if(logger.isDebugEnabled()) {
+            logger.debug("Module File: {}", modFile.getPath());
+        }
         
         if (modFile.exists()) {
 
@@ -100,7 +112,9 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizabl
         Properties ps = new Properties();
         try {
             if (propFile.exists()) {
-                logger.debug("Loading Extension properties ({})", propFile);
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Loading Extension properties ({})", propFile);
+                }
                 BufferedInputStream stream = null;
                 try {
                      ps = new Properties();

@@ -46,7 +46,7 @@ import com.google.refine.extension.database.SQLType;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
-import com.mysql.jdbc.ResultSetMetaData;
+//import com.mysql.jdbc.ResultSetMetaData;
 
 public class MySQLDatabaseService extends DatabaseService {
   
@@ -65,7 +65,9 @@ public class MySQLDatabaseService extends DatabaseService {
         if (instance == null) {
             SQLType.registerSQLDriver(DB_NAME, DB_DRIVER, false);
             instance = new MySQLDatabaseService();
-            logger.debug("MySQLDatabaseService Instance: {}", instance);
+            if(logger.isDebugEnabled()) {
+                logger.debug("MySQLDatabaseService Instance: {}", instance);
+            }
         }
         return instance;
     }
@@ -88,7 +90,13 @@ public class MySQLDatabaseService extends DatabaseService {
                 Connection connection = MySQLConnectionManager.getInstance().getConnection(dbConfig, false);
                 Statement statement = connection.createStatement();
                 ResultSet queryResult = statement.executeQuery(query);
-                ResultSetMetaData metadata = (ResultSetMetaData)queryResult.getMetaData();
+                java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
+                
+                if(metadata instanceof com.mysql.jdbc.ResultSetMetaData) {
+                    metadata = (com.mysql.jdbc.ResultSetMetaData)metadata;
+                }
+                //ResultSetMetaData metadata = (ResultSetMetaData)queryResult.getMetaData();
+               
                 int columnCount = metadata.getColumnCount();
                 ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
                 
@@ -171,8 +179,16 @@ public class MySQLDatabaseService extends DatabaseService {
 
     @Override
     public String buildLimitQuery(Integer limit, Integer offset, String query) {
+        if(logger.isDebugEnabled()) {
+            logger.info( "<<< original input query::{} >>>" , query );
+        }
+       
+        final int len = query.length();
+        String parsedQuery = len > 0 && query.endsWith(";") ?  query.substring(0, len - 1) : query;
+               
+        
         StringBuilder sb = new StringBuilder();
-        sb.append(query);
+        sb.append(parsedQuery);
         
         if(limit != null) {
             sb.append(" LIMIT" + " " + limit);
@@ -181,8 +197,14 @@ public class MySQLDatabaseService extends DatabaseService {
         if(offset != null) {
             sb.append(" OFFSET" + " " + offset);
         }
+        sb.append(";");
+        String parsedQueryOut = sb.toString();
         
-        return sb.toString();
+        if(logger.isDebugEnabled()) {
+            logger.info( "<<<Final input query::{} >>>" , parsedQueryOut );
+        }
+        
+        return parsedQueryOut;
     }
 
     @Override
@@ -193,7 +215,12 @@ public class MySQLDatabaseService extends DatabaseService {
             Statement statement = connection.createStatement();
 
             ResultSet queryResult = statement.executeQuery(query);
-            ResultSetMetaData metadata = (ResultSetMetaData) queryResult.getMetaData();
+            java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
+            if(metadata instanceof com.mysql.jdbc.ResultSetMetaData) {
+                metadata = (com.mysql.jdbc.ResultSetMetaData)metadata;
+            }
+            
+            //ResultSetMetaData metadata = (ResultSetMetaData) queryResult.getMetaData();
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
 
@@ -223,7 +250,13 @@ public class MySQLDatabaseService extends DatabaseService {
                 Statement statement = connection.createStatement();
                 statement.setFetchSize(10);
                 ResultSet queryResult = statement.executeQuery(query);
-                ResultSetMetaData metadata = (ResultSetMetaData)queryResult.getMetaData();
+                
+                java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
+                if(metadata instanceof com.mysql.jdbc.ResultSetMetaData) {
+                    metadata = (com.mysql.jdbc.ResultSetMetaData)metadata;
+                }
+                //logger.info("metadata class::" + metadata.getClass());
+                
                 int columnCount = metadata.getColumnCount();
 
                 int index = 0; 

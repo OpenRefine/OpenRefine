@@ -1,30 +1,41 @@
 package com.google.refine.extension.database;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.lang.text.StrSubstitutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DBExtensionTestUtils {
     
-    private static final String DB_TYPE_MYSQL = "mysql";
-    private static final String DB_HOST_MYSQL = "127.0.0.1";
-    private static final int DB_PORT_MYSQL = 3306;
-    private static final String DB_USER_MYSQL = "root";
-    private static final String DB_PASSWORD_MYSQL = "secret";
-    private static final String DB_NAME_MYSQL = "rxhub";
+    private static final Logger logger = LoggerFactory.getLogger("DBExtensionTestUtils");
     
-    private static final String DB_TYPE_PGSQL = "postgresql";
-    private static final String DB_HOST_PGSQL = "127.0.0.1";
-    private static final int DB_PORT_PGSQL = 5432;
-    private static final String DB_USER_PGSQL = "postgres";
-    private static final String DB_PASSWORD_PGSQL = "";
-    private static final String DB_NAME_PGSQL = "openrefine";
+    private static final String MYSQL_DB_NAME = "mysql";
+    private static final String DEFAULT_MYSQL_HOST = "127.0.0.1";
+    private static final int    DEFAULT_MYSQL_PORT = 3306;
+    private static final String DEFAULT_MYSQL_USER = "root";
+    private static final String DEFAULT_MYSQL_PASSWORD = "secret";
+    private static final String DEFAULT_MYSQL_DB_NAME = "testdb";
     
+    private static final String PGSQL_DB_NAME = "postgresql";
+    private static final String DEFAULT_PGSQL_HOST = "127.0.0.1";
+    private static final int    DEFAULT_PGSQL_PORT = 5432;
+    private static final String DEFAULT_PGSQL_USER = "postgres";
+    private static final String DEFAULT_PGSQL_PASSWORD = "";
+    private static final String DEFAULT_PGSQL_DB_NAME = "openrefine";
+    
+    private static final String DEFAULT_TEST_TABLE = "test_data";
     
     private static final int SAMPLE_SIZE = 500000;
     private static final int BATCH_SIZE = 1000;
@@ -34,8 +45,142 @@ public class DBExtensionTestUtils {
     private  Map<Integer, Integer> mncMap;
     private  Map<Integer, Integer> mccMap;
     
+  
+    /**
+     * Create Test Table with one row of Data
+     * @param dbConfig DatabaseConfiguration to test
+     * @param tableName
+     */
+    public static void initTestData(DatabaseConfiguration dbConfig, String tableName) {
+        
+        Statement stmt = null;
+        Connection conn  = null;
+        try {
+            DatabaseService dbService = DatabaseService.get(dbConfig.getDatabaseType());
+            conn = dbService.getConnection(dbConfig);
+            stmt = conn.createStatement();
+            
+             DatabaseMetaData dbm = conn.getMetaData();
+             // check if "employee" table is there
+             ResultSet tables = dbm.getTables(null, null, tableName, null);
+             if (tables.next()) {
+                 stmt.executeUpdate("DROP TABLE " + tableName);
+                 //System.out.println("Drop Table Result::" + dropResult);
+             }
+          
+            String createSQL = " CREATE TABLE " + tableName + " ( "
+                    + " ID   INT  NOT NULL, "
+                    + " NAME VARCHAR (20) NOT NULL, "
+                    + " CITY  VARCHAR (20) NOT NULL,"
+                    + " PRIMARY KEY (ID)  );";
+     
+                
+            stmt.executeUpdate(createSQL);
+            //System.out.println("Create Table Result::" + createResult);
+            
+            String insertTableSQL = "INSERT INTO " + tableName
+                    + "(ID, NAME, CITY) " + "VALUES"
+                    + "(1,'frank lens','Dallas')";
+            
+            stmt.executeUpdate(insertTableSQL);
+           // System.out.println("Insert Data Result::" + insertResult);
+            
+            logger.info("Database Test Init Data Created!!!");
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        
+        } finally {
+            if(stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if(conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+    }
     
-    public void generateMySQLTestData() {
+    
+    public static void initTestData(DatabaseConfiguration dbConfig) {
+         
+        Statement stmt = null;
+        Connection conn  = null;
+        try {
+            DatabaseService dbService = DatabaseService.get(dbConfig.getDatabaseType());
+            conn = dbService.getConnection(dbConfig);
+            stmt = conn.createStatement();
+            
+             DatabaseMetaData dbm = conn.getMetaData();
+             // check if "employee" table is there
+             ResultSet tables = dbm.getTables(null, null, DEFAULT_TEST_TABLE, null);
+             if (tables.next()) {
+                 stmt.executeUpdate("DROP TABLE " + DEFAULT_TEST_TABLE);
+                 //System.out.println("Drop Table Result::" + dropResult);
+             }
+          
+            String createSQL = " CREATE TABLE TEST_DATA( " 
+                    + " ID   INT  NOT NULL, "
+                    + " NAME VARCHAR (20) NOT NULL, "
+                    + " CITY  VARCHAR (20) NOT NULL,"
+                    + " PRIMARY KEY (ID)  );";
+     
+                
+            stmt.executeUpdate(createSQL);
+            //System.out.println("Create Table Result::" + createResult);
+            
+            String insertTableSQL = "INSERT INTO TEST_DATA"
+                    + "(ID, NAME, CITY) " + "VALUES"
+                    + "(1,'frank lens','Dallas')";
+            
+            stmt.executeUpdate(insertTableSQL);
+           // System.out.println("Insert Data Result::" + insertResult);
+            
+            logger.info("Database Test Init Data Created!!!");
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        
+        } finally {
+            if(stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if(conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+    }
+    
+   /**
+    * CREATE test data in MySQL 
+    * Table name: test_data
+    * @param sampleSize
+    * @param batchSize
+    */
+    public void generateMySQLTestData(int sampleSize, int batchSize) {
         mncMap =  new HashMap<Integer, Integer>();
         mccMap =  new HashMap<Integer, Integer>();
         mccMap.put(0, 302);
@@ -49,12 +194,12 @@ public class DBExtensionTestUtils {
         mncMap.put(3, 710);
         
         DatabaseConfiguration dc = new DatabaseConfiguration();
-        dc.setDatabaseHost(DB_HOST_MYSQL);
-        dc.setDatabaseName(DB_NAME_MYSQL);
-        dc.setDatabasePassword(DB_PASSWORD_MYSQL);
-        dc.setDatabasePort(DB_PORT_MYSQL);
-        dc.setDatabaseType(DB_TYPE_MYSQL);
-        dc.setDatabaseUser(DB_USER_MYSQL);
+        dc.setDatabaseHost(DEFAULT_MYSQL_HOST);
+        dc.setDatabaseName(DEFAULT_MYSQL_DB_NAME);
+        dc.setDatabasePassword(DEFAULT_MYSQL_PASSWORD);
+        dc.setDatabasePort(DEFAULT_MYSQL_PORT);
+        dc.setDatabaseType(MYSQL_DB_NAME);
+        dc.setDatabaseUser(DEFAULT_MYSQL_USER);
         dc.setUseSSL(false);
         
         String truncateTableSQL = "TRUNCATE test_data";
@@ -65,7 +210,7 @@ public class DBExtensionTestUtils {
         
         Connection conn;
         try {
-            conn = DatabaseService.get(DB_TYPE_MYSQL).getConnection(dc);
+            conn = DatabaseService.get(MYSQL_DB_NAME).getConnection(dc);
             
             Statement truncateStmt = conn.createStatement();
             int result = truncateStmt.executeUpdate(truncateTableSQL);
@@ -78,23 +223,23 @@ public class DBExtensionTestUtils {
             PreparedStatement stmt = conn.prepareStatement(insertTableSQL);
            
             int counter=1;
-            for (int i = 0; i < SAMPLE_SIZE; i++) {
+            for (int i = 0; i < sampleSize; i++) {
                stmt.setLong(1, i);
-               stmt.setString(2,  getNextUeId(i));
-               stmt.setDate(3, getNextStartDate(i));
-               stmt.setDate(4, getNextEndDate(i));
+               stmt.setString(2,  getNextUeId());
+               stmt.setDate(3, getNextStartDate());
+               stmt.setDate(4, getNextEndDate());
                stmt.setInt(5, rand.nextInt());
                stmt.setInt(6, rand.nextInt());
                stmt.setInt(7, rand.nextInt(10));
-               stmt.setInt(8, getMCC(i));
-               stmt.setInt(9, getMNC(i));
+               stmt.setInt(8, getMCC());
+               stmt.setInt(9, getMNC());
                stmt.setInt(10, rand.nextInt(100));
-               stmt.setString(11, getNextIMEI(i));
+               stmt.setString(11, getNextIMEI());
              
                stmt.addBatch();
                
                //Execute batch of 1000 records
-               if(i%BATCH_SIZE==0){
+               if(i%batchSize==0){
                   stmt.executeBatch();
                   conn.commit();
                   System.out.println("Batch "+(counter++)+" executed successfully");
@@ -116,8 +261,12 @@ public class DBExtensionTestUtils {
  
     }
    
-    
-    public void generatePgSQLTestData() {
+    /**
+     * 
+     * @param sampleSize
+     * @param batchSize
+     */
+    public void generatePgSQLTestData(int sampleSize, int batchSize) {
         mncMap =  new HashMap<Integer, Integer>();
         mccMap =  new HashMap<Integer, Integer>();
         mccMap.put(0, 302);
@@ -131,12 +280,12 @@ public class DBExtensionTestUtils {
         mncMap.put(3, 710);
         
         DatabaseConfiguration dc = new DatabaseConfiguration();
-        dc.setDatabaseHost(DB_HOST_PGSQL);
-        dc.setDatabaseName(DB_NAME_PGSQL);
-        dc.setDatabasePassword(DB_PASSWORD_PGSQL);
-        dc.setDatabasePort(DB_PORT_PGSQL);
-        dc.setDatabaseType(DB_TYPE_PGSQL);
-        dc.setDatabaseUser(DB_USER_PGSQL);
+        dc.setDatabaseHost(DEFAULT_PGSQL_HOST);
+        dc.setDatabaseName(DEFAULT_PGSQL_DB_NAME);
+        dc.setDatabasePassword(DEFAULT_PGSQL_PASSWORD);
+        dc.setDatabasePort(DEFAULT_PGSQL_PORT);
+        dc.setDatabaseType(PGSQL_DB_NAME);
+        dc.setDatabaseUser(DEFAULT_PGSQL_USER);
         dc.setUseSSL(false);
         
         String truncateTableSQL = "TRUNCATE public.test_data";
@@ -147,7 +296,7 @@ public class DBExtensionTestUtils {
         
         Connection conn;
         try {
-            conn = DatabaseService.get(DB_TYPE_PGSQL).getConnection(dc);
+            conn = DatabaseService.get(PGSQL_DB_NAME).getConnection(dc);
             
             Statement truncateStmt = conn.createStatement();
             int result = truncateStmt.executeUpdate(truncateTableSQL);
@@ -160,23 +309,23 @@ public class DBExtensionTestUtils {
             PreparedStatement stmt = conn.prepareStatement(insertTableSQL);
            
             int counter=1;
-            for (int i = 0; i < SAMPLE_SIZE; i++) {
+            for (int i = 0; i < sampleSize; i++) {
                stmt.setLong(1, i);
-               stmt.setString(2,  getNextUeId(i));
-               stmt.setDate(3, getNextStartDate(i));
-               stmt.setDate(4, getNextEndDate(i));
+               stmt.setString(2,  getNextUeId());
+               stmt.setDate(3, getNextStartDate());
+               stmt.setDate(4, getNextEndDate());
                stmt.setInt(5, rand.nextInt());
                stmt.setInt(6, rand.nextInt());
                stmt.setInt(7, rand.nextInt(10));
-               stmt.setInt(8, getMCC(i));
-               stmt.setInt(9, getMNC(i));
+               stmt.setInt(8, getMCC());
+               stmt.setInt(9, getMNC());
                stmt.setInt(10, rand.nextInt(100));
-               stmt.setString(11, getNextIMEI(i));
+               stmt.setString(11, getNextIMEI());
              
                stmt.addBatch();
                
                //Execute batch of 1000 records
-               if(i%BATCH_SIZE==0){
+               if(i%batchSize==0){
                   stmt.executeBatch();
                   conn.commit();
                   System.out.println("Batch "+(counter++)+" executed successfully");
@@ -198,44 +347,35 @@ public class DBExtensionTestUtils {
  
     }
 
-    private String getNextIMEI(int index) {
-          index++;
-//        byte[] array = new byte[16]; // length is bounded by 7
-//        new Random().nextBytes(array);
-//        String generatedString = new String(array, Charset.forName("UTF-8"));
-        
-        int n = 1000000000 + rand.nextInt(900000000);
+    private String getNextIMEI() {
+      int n = 1000000000 + rand.nextInt(900000000);
         return "" + n;
     }
 
   
 
-    private  int getMNC(int index) {
-        index++;
-        // TODO Auto-generated method stub
+    private  int getMNC() {
+ 
         return mncMap.get(rand.nextInt(3));
     }
 
-    private  int getMCC(int index) {
-        index++;
-       // System.out.println(rand.nextInt(3));
+    private  int getMCC() {
+ 
         return mccMap.get(rand.nextInt(3));
     }
 
-    private Date getNextEndDate(int index) {
-        // TODO Auto-generated method stub
-        index++;
+    private Date getNextEndDate() {
+    
         return  new Date(System.currentTimeMillis() + 1);
     }
 
-    private Date getNextStartDate(int index) {
-        // TODO Auto-generated method stub
-        index++;
+    private Date getNextStartDate() {
+   
         return new Date(System.currentTimeMillis());
     }
 
-    private String getNextUeId(int index) {
-        index++;
+    private String getNextUeId() {
+     
         int n = 300000000 + rand.nextInt(900000000);
         
         return "" + n;
@@ -243,8 +383,74 @@ public class DBExtensionTestUtils {
     
     public static void main(String[] args) {
         DBExtensionTestUtils testUtil = new DBExtensionTestUtils();
-       // testUtil.generatePgSQLTestData();
-        testUtil.generateMySQLTestData();
+        testUtil.generatePgSQLTestData(SAMPLE_SIZE, BATCH_SIZE);
+       // testUtil.generateMySQLTestData();
+    }
+
+
+    public static void cleanUpTestData(DatabaseConfiguration dbConfig) {
+        Statement stmt = null;
+        Connection conn  = null;
+        try {
+            DatabaseService dbService = DatabaseService.get(dbConfig.getDatabaseType());
+            conn = dbService.getConnection(dbConfig);
+            stmt = conn.createStatement();
+            
+             DatabaseMetaData dbm = conn.getMetaData();
+             // check if "employee" table is there
+             ResultSet tables = dbm.getTables(null, null, DEFAULT_TEST_TABLE, null);
+             if (tables.next()) {
+                 stmt.executeUpdate("DROP TABLE " + DEFAULT_TEST_TABLE);
+                 //System.out.println("Drop Table Result::" + dropResult);
+             }
+             
+             logger.info("Database Test Cleanup Done!!!");
+          
+        } catch (DatabaseServiceException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if(stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            if(conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+    }
+    
+    public static File createTempDirectory(String name)
+            throws IOException {
+        File dir = File.createTempFile(name, "");
+        dir.delete();
+        dir.mkdir();
+        return dir;
+    }
+    
+    public static String getJDBCUrl(DatabaseConfiguration dbConfig) {
+        Map<String, Object> substitutes = new HashMap<String, Object>();
+        substitutes.put("dbType", dbConfig.getDatabaseType());
+        substitutes.put("host", dbConfig.getDatabaseHost());
+        substitutes.put("port", "" + dbConfig.getDatabasePort());
+        substitutes.put("dbName", dbConfig.getDatabaseName());
+        substitutes.put("useSSL", dbConfig.isUseSSL());
+        String urlTemplate = "jdbc:${dbType}://${host}:${port}/${dbName}?useSSL=${useSSL}";
+        StrSubstitutor strSub = new StrSubstitutor(substitutes);
+        return strSub.replace(urlTemplate);
     }
 
 }

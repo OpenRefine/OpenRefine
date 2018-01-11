@@ -1,4 +1,3 @@
-
 package com.google.refine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
@@ -26,84 +25,85 @@ import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
 
 
-public class ConnectCommandTest extends DBExtensionTests {
-  
-
+public class ExecuteQueryCommandTest extends DBExtensionTests {
+    
     @Mock
     private HttpServletRequest request;
 
     @Mock
     private HttpServletResponse response;
 
-    private DatabaseConfiguration testDbConfig;
-   // private String testTable;
   
- 
-    @BeforeTest
-    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
-    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-           @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-           @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
-       
-        MockitoAnnotations.initMocks(this);
-       // System.out.println("beforeTest " + pgSqlDbName);
-        testDbConfig = new DatabaseConfiguration();
-        testDbConfig.setDatabaseHost(mySqlDbHost);
-        testDbConfig.setDatabaseName(mySqlDbName);
-        testDbConfig.setDatabasePassword(mySqlDbPassword);
-        testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
-        testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
-        testDbConfig.setDatabaseUser(mySqlDbUser);
-        testDbConfig.setUseSSL(false);
+    private DatabaseConfiguration testDbConfig;
+    private String testTable;
+   
+  
+     @BeforeTest
+     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
+     public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
+            @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+            @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
         
-        //testTable = mySqlTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig);
-        
-        DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-        
-    }
+         MockitoAnnotations.initMocks(this);
+         testDbConfig = new DatabaseConfiguration();
+         testDbConfig.setDatabaseHost(mySqlDbHost);
+         testDbConfig.setDatabaseName(mySqlDbName);
+         testDbConfig.setDatabasePassword(mySqlDbPassword);
+         testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
+         testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
+         testDbConfig.setDatabaseUser(mySqlDbUser);
+         testDbConfig.setUseSSL(false);
+         
+         testTable = mySqlTestTable;
+         DBExtensionTestUtils.initTestData(testDbConfig);
+         
+         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
+         
+     }
     
     @AfterSuite
     public void afterSuite() {
         DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-       
+      
     }
     
- 
+
     @Test
     public void testDoPost() {
 
-        when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
+        when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
         when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
-    
+        when(request.getParameter("queryString")).thenReturn("SELECT count(*) FROM " + testTable);
+        
+
         StringWriter sw = new StringWriter();
+
         PrintWriter pw = new PrintWriter(sw);
 
         try {
             when(response.getWriter()).thenReturn(pw);
-            ConnectCommand connectCommand = new ConnectCommand();
+            ExecuteQueryCommand executeQueryCommand = new ExecuteQueryCommand();
            
-            connectCommand.doPost(request, response);
+            executeQueryCommand.doPost(request, response);
             
             String result = sw.getBuffer().toString().trim();
             JSONObject json = new JSONObject(result);
        
             String code = json.getString("code");
             Assert.assertEquals(code, "ok");
-            
-            String databaseInfo = json.getString("databaseInfo");
-            Assert.assertNotNull(databaseInfo);
+
+            String queryResult = json.getString("QueryResult");
+            Assert.assertNotNull(queryResult);
         
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        } 
 
     }
-
 
 }
