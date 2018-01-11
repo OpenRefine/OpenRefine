@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema.entityvalues;
 
+import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
@@ -71,6 +72,6 @@ public abstract class TermedEntityIdValue implements EntityIdValue {
     
     @Override
     public int hashCode() {
-        return getIri().hashCode();
+        return Hash.hashCode(this);
     }
 }
