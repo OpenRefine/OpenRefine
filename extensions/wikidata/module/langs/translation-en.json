@@ -104,6 +104,14 @@
                 "no-issue-detected": {
                         "title": "No issue was detected in your edits.",
                         "body": "Note that OpenRefine cannot detect all the types of problems Wikidata edits can have."
+                },
+                "ignored-qualifiers": {
+                        "title": "Some qualifiers were ignored.",
+                        "body": "Qualifier values could not be parsed, so they will not be added to the corresponding statements."
+                },
+                "ignored-references": {
+                        "title": "Some references were ignored.",
+                        "body": "None of their statements could be parsed, so no reference was added."
                 }
        }
 }

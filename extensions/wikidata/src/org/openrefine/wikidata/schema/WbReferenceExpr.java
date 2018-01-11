@@ -27,10 +27,18 @@ public class WbReferenceExpr extends JacksonJsonizable {
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
         for (WbSnakExpr expr : getSnaks()) {
             List<Snak> snakList = new ArrayList<Snak>(1);
-            snakList.add(expr.evaluate(ctxt));
-            snakGroups.add(Datamodel.makeSnakGroup(snakList));
+            try {
+                snakList.add(expr.evaluate(ctxt));
+                snakGroups.add(Datamodel.makeSnakGroup(snakList));
+            } catch (SkipSchemaExpressionException e) {
+                continue;
+            }
         }
-        return Datamodel.makeReference(snakGroups);
+        if (! snakGroups.isEmpty()) {
+            return Datamodel.makeReference(snakGroups);
+        } else {
+            throw new SkipSchemaExpressionException();
+        }
     }
 
     public List<WbSnakExpr> getSnaks() {

@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -60,7 +61,18 @@ public class WbStatementExpr extends JacksonJsonizable {
         // evaluate qualifiers
         List<Snak> qualifiers = new ArrayList<Snak>(getQualifiers().size());
         for (WbSnakExpr qExpr : getQualifiers()) {
-            qualifiers.add(qExpr.evaluate(ctxt));
+            try {
+                qualifiers.add(qExpr.evaluate(ctxt));
+            } catch(SkipSchemaExpressionException e) {
+                QAWarning warning = new QAWarning(
+                        "ignored-qualifiers",
+                        null,
+                       QAWarning.Severity.INFO,
+                       1);
+                warning.setProperty("example_entity", subject);
+                warning.setProperty("example_property_entity", mainSnak.getPropertyId());
+                ctxt.addWarning(warning);
+            }
         }
         List<SnakGroup> groupedQualifiers = groupSnaks(qualifiers);
         Claim claim = Datamodel.makeClaim(subject, mainSnak, groupedQualifiers);
@@ -68,7 +80,18 @@ public class WbStatementExpr extends JacksonJsonizable {
         // evaluate references
         List<Reference> references = new ArrayList<Reference>();
         for (WbReferenceExpr rExpr : getReferences()) {
-            references.add(rExpr.evaluate(ctxt));
+            try {
+                references.add(rExpr.evaluate(ctxt));
+            } catch(SkipSchemaExpressionException e) {
+                QAWarning warning = new QAWarning(
+                        "ignored-references",
+                        null,
+                       QAWarning.Severity.INFO,
+                       1);
+                warning.setProperty("example_entity", subject);
+                warning.setProperty("example_property_entity", mainSnak.getPropertyId());
+                ctxt.addWarning(warning);
+            }
         }
         
         StatementRank rank = StatementRank.NORMAL;

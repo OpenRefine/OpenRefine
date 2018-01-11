@@ -32,9 +32,17 @@ public class WbStatementGroupExpr extends JacksonJsonizable {
         PropertyIdValue propertyId = propertyExpr.evaluate(ctxt);
         List<Statement> statements = new ArrayList<Statement>(statementExprs.size());
         for(WbStatementExpr expr : statementExprs) {
-            statements.add(expr.evaluate(ctxt, subject, propertyId));
+            try {
+                statements.add(expr.evaluate(ctxt, subject, propertyId));
+            } catch (SkipSchemaExpressionException e) {
+                continue;
+            }
         }
-        return Datamodel.makeStatementGroup(statements);
+        if (!statements.isEmpty()) {
+            return Datamodel.makeStatementGroup(statements);
+        } else {
+            throw new SkipSchemaExpressionException();
+        }
     }
 
     public WbPropExpr getProperty() {

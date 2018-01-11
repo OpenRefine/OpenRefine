@@ -46,7 +46,7 @@ public class QAWarningStore {
      * Returns the list of aggregated warnings, ordered by decreasing severity
      */
     @JsonProperty("warnings")
-    List<QAWarning> getWarnings() {
+    public List<QAWarning> getWarnings() {
         List<QAWarning> result = new ArrayList<>(map.values());
         Collections.sort(result);
         return result;
@@ -56,7 +56,7 @@ public class QAWarningStore {
      * Returns the maximum severity of the stored warnings (INFO if empty)
      */
     @JsonProperty("max_severity")
-    QAWarning.Severity getMaxSeverity() {
+    public QAWarning.Severity getMaxSeverity() {
         return maxSeverity;
     }
     
@@ -64,7 +64,7 @@ public class QAWarningStore {
      * Returns the total number of warnings
      */
     @JsonProperty("nb_warnings")
-    int getNbWarnings() {
+    public int getNbWarnings() {
         return totalWarnings;
     }
 }
