@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -19,7 +20,7 @@ public abstract class WbLanguageExpr extends JacksonJsonizable {
      * 
      * @param ctxt the evaluation context
      * @return a Wikimedia language code
-     * @throws SkipStatementException when the code is invalid
+     * @throws SkipSchemaExpressionException when the code is invalid
      */
-    public abstract String evaluate(ExpressionContext ctxt) throws SkipStatementException;
+    public abstract String evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException;
 }

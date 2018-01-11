@@ -2,6 +2,7 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,7 +23,7 @@ public class WbDateVariable extends WbDateExpr {
 
     @Override
     public TimeValue evaluate(ExpressionContext ctxt)
-            throws SkipStatementException {
+            throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(columnName);
         if (cell != null) {
             try {
@@ -31,7 +32,7 @@ public class WbDateVariable extends WbDateExpr {
             } catch (ParseException e) {
             }
         }
-        throw new SkipStatementException();
+        throw new SkipSchemaExpressionException();
     }
 
     public String getColumnName() {

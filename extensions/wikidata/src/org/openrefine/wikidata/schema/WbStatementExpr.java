@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -52,7 +53,7 @@ public class WbStatementExpr extends JacksonJsonizable {
         return snakGroups;
     }
     
-    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) throws SkipStatementException {
+    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) throws SkipSchemaExpressionException {
         Value mainSnakValue = getMainsnak().evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         

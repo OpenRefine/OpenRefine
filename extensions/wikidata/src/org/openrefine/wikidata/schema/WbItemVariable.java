@@ -3,6 +3,7 @@ package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.entityvalues.NewEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.TermedItemIdValue;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
@@ -25,7 +26,7 @@ public class WbItemVariable extends WbItemExpr {
     }
 
     @Override
-    public ItemIdValue evaluate(ExpressionContext ctxt) throws SkipStatementException {
+    public ItemIdValue evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(getColumnName());
         if (cell != null && cell.recon != null) {
             Recon recon = cell.recon;
@@ -48,7 +49,7 @@ public class WbItemVariable extends WbItemExpr {
                         rowId, columnId, siteIRI, label);
             }
         }
-        throw new SkipStatementException();
+        throw new SkipSchemaExpressionException();
     }
 
     public String getColumnName() {
