@@ -24,7 +24,7 @@ public class WbStringVariable extends WbStringExpr {
     public StringValue evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(columnName);
-        if (cell != null) {
+        if (cell != null && !cell.value.toString().isEmpty()) {
             return Datamodel.makeStringValue(cell.value.toString());
         }
         throw new SkipSchemaExpressionException();
