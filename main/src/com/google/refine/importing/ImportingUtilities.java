@@ -1160,8 +1160,10 @@ public class ImportingUtilities {
         pmd.setLicense(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_LICENSE));
         pmd.setVersion(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_VERSION));
         
-        String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
-        pmd.setTags(tags);
+        if (pkg.has(PackageExtension.JSON_KEY_KEYWORKS)) {
+            String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
+            pmd.setTags(tags);
+        }
         
         // column model
         JSONObject schema = metadata.getPackage().getResources().get(0).getSchema();
