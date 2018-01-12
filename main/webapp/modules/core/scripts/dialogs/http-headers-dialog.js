@@ -33,20 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function HttpHeadersDialog(title, headers, onDone) {
     this._onDone = onDone;
-
     var self = this;
-    var frame = DialogSystem.createDialog();
-    frame.width("700px");
     
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     var html = $(HttpHeadersDialog.generateWidgetHtml()).appendTo(body);
-    
     this._elmts = DOM.bind(html);
         
-    DialogSystem.showDialog(frame);
-    this._previewWidget = new HttpHeadersDialog.Widget(
+    this._httpHeadersWidget = new HttpHeadersDialog.Widget(
         this._elmts, 
         headers
     );
@@ -54,15 +49,69 @@ function HttpHeadersDialog(title, headers, onDone) {
 
 HttpHeadersDialog.generateWidgetHtml = function() {
     var html = DOM.loadHTML("core", "scripts/dialogs/http-headers-dialog.html");
-    return html;
+    var httpheaderOptions = [];
+
+    var httpHeaders = [];
+    for (var headerLabel in theProject.httpHeaders) {
+        if (theProject.httpHeaders.hasOwnProperty(headerLabel)) {
+            var info = theProject.httpHeaders[headerLabel];
+            httpheaderOptions.push('<label for="' +
+                                    headerLabel +
+                                    '">' +
+                                    info.header +
+                                    ': </label><input type="text" id="' +
+                                    headerLabel +
+                                    '" name="' +
+                                    headerLabel +
+                                    '" value="' +
+                                    info.defaultValue +
+                                    '" /></option><br />');
+        }
+    }
+
+    return html.replace("$HTTP_HEADER_OPTIONS$", httpheaderOptions.join(""));
 };
 
-HttpHeadersDialog.Widget = function(
-    elmts, 
-    headers
-) {
+HttpHeadersDialog.Widget = function(elmts) {
     this._elmts = elmts;
-    this._headers = headers;
             
     var self = this;
+    self._getSupportedHeaders();
 };
+
+HttpHeadersDialog.Widget.prototype._getSupportedHeaders = function() {
+    var self = this;
+    $.getJSON(
+        "command/core/get-http-headers",
+        null,
+        function(data) {
+            self._renderSetHttpHeaders(data);
+        },
+        "json"
+    );
+};
+
+HttpHeadersDialog.Widget.prototype._renderSetHttpHeaders = function(data) {
+    var self = this;
+    var elmt = this._elmts.setHttpHeadersContainer.empty();
+    
+    var table = $(
+        '<table cols="4">' +
+            '<tr><th colspan="2">'+$.i18n._('core-dialogs')["http-header-key"]+'</th><th colspan="2">'+$.i18n._('core-dialogs')["http-header-value"]+'</th></tr>' +
+        '</table>'
+    ).appendTo($('<div>').addClass("set-httpheaders-table-wrapper").appendTo(elmt))[0];
+    
+    var renderHeadersList = function(self,tr,header) {
+        $(tr).empty();
+        $("<span>"+header+"</span>").appendTo(tr.insertCell(0));
+        $("<input bind=\""+header+"\" />").appendTo(tr.insertCell(2));
+    };
+    
+    for (var i = 0; i < data["http-headers"].length; i++) {
+        var tr = table.insertRow(table.rows.length);
+        var header = data["http-headers"][i];
+        renderHeadersList(self,tr,header);
+    }
+   
+};
+
