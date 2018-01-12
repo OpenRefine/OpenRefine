@@ -112,6 +112,10 @@
                 "ignored-references": {
                         "title": "Some references were ignored.",
                         "body": "None of their statements could be parsed, so no reference was added."
+                },
+                "monolingual-text-without-language": {
+                        "title": "No language provided for monolingual text.",
+                        "body": "Some label, description, alias or monolingual text value have been skipped because no language was provided. Example value: <span class=\"wb-issue-preformat\">{example_text}</span>."
                 }
        }
 }
