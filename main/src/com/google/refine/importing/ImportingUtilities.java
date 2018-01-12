@@ -282,6 +282,7 @@ public class ImportingUtilities {
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
                     download(rawDataDir, retrievalRecord, progress, fileRecords, update, urlString);
+                    processDataPackage(retrievalRecord, fileRecords);
                 } else if (name.equals("data-package")) {
                     String urlString = Streams.asString(stream);
                     List<Result> results = null;
@@ -324,13 +325,7 @@ public class ImportingUtilities {
                         JSONUtilities.safeInc(retrievalRecord, "archiveCount");
                     }
                     
-                    int dataPackageJSONFileIndex = getDataPackageJSONFile(fileRecords);
-                    if (dataPackageJSONFileIndex >= 0) {
-                        JSONObject dataPackageJSONFile = (JSONObject) fileRecords.get(dataPackageJSONFileIndex);
-                        JSONUtilities.safePut(dataPackageJSONFile, "metaDataFormat", MetadataFormat.DATAPACKAGE_METADATA.name());
-                        JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, dataPackageJSONFile);
-                        fileRecords.remove(dataPackageJSONFileIndex);
-                    }
+                    processDataPackage(retrievalRecord, fileRecords);
                     
                     uploadCount++;
                 }
@@ -346,6 +341,16 @@ public class ImportingUtilities {
         
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
+    }
+
+    private static void processDataPackage(JSONObject retrievalRecord, JSONArray fileRecords) {
+        int dataPackageJSONFileIndex = getDataPackageJSONFile(fileRecords);
+        if (dataPackageJSONFileIndex >= 0) {
+            JSONObject dataPackageJSONFile = (JSONObject) fileRecords.get(dataPackageJSONFileIndex);
+            JSONUtilities.safePut(dataPackageJSONFile, "metaDataFormat", MetadataFormat.DATAPACKAGE_METADATA.name());
+            JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, dataPackageJSONFile);
+            fileRecords.remove(dataPackageJSONFileIndex);
+        }
     }
 
     private static int getDataPackageJSONFile(JSONArray fileRecords) {
