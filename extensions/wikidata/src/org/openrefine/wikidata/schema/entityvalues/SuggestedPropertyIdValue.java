@@ -2,9 +2,9 @@ package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
-public class TermedPropertyIdValue extends TermedEntityIdValue implements PropertyIdValue {
+public class SuggestedPropertyIdValue extends SuggestedEntityIdValue implements PropertyIdValue {
 
-    public TermedPropertyIdValue(String id, String siteIRI, String label) {
+    public SuggestedPropertyIdValue(String id, String siteIRI, String label) {
         super(id, siteIRI, label);
     }
 
@@ -12,4 +12,5 @@ public class TermedPropertyIdValue extends TermedEntityIdValue implements Proper
     public String getEntityType() {
         return ET_PROPERTY;
     }
+
 }
