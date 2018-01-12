@@ -36,6 +36,8 @@ package com.google.refine.commands.column;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
+import java.util.Enumeration;
 
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
@@ -46,7 +48,7 @@ import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+        HttpServletRequest request, JSONObject engineConfig) throws Exception {
         
         String baseColumnName = request.getParameter("baseColumnName");
         String urlExpression = request.getParameter("urlExpression");
@@ -55,7 +57,8 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
         int delay = Integer.parseInt(request.getParameter("delay"));
         String onError = request.getParameter("onError");
         boolean cacheResponses = Boolean.parseBoolean(request.getParameter("cacheResponses"));
-        
+        JSONArray httpHeadersJson = new JSONArray(request.getParameter("httpHeaders"));
+
         return new ColumnAdditionByFetchingURLsOperation(
             engineConfig, 
             baseColumnName, 
@@ -64,7 +67,8 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
             newColumnName,
             columnInsertIndex,
             delay,
-            cacheResponses
+            cacheResponses,
+            httpHeadersJson
         );
     }
 
