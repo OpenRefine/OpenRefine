@@ -16,6 +16,7 @@ import org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikidata.schema.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
@@ -43,6 +44,7 @@ public class EditInspector {
         register(new SingleValueScrutinizer());
         register(new DistinctValuesScrutinizer());
         register(new NoEditsMadeScrutinizer());
+        register(new WhitespaceScrutinizer());
     }
     
     /**
