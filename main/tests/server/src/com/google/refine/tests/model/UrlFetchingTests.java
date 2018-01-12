@@ -143,6 +143,7 @@ public class UrlFetchingTests extends RefineTest {
             row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
             project.rows.add(row);
         }
+
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
                 "\"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new&city=\"+value",
@@ -150,7 +151,8 @@ public class UrlFetchingTests extends RefineTest {
                 "rand",
                 1,
                 500,
-                true);
+                true,
+                null);
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
         process.startPerforming(pm);
@@ -195,6 +197,7 @@ public class UrlFetchingTests extends RefineTest {
         Row row2 = new Row(2);
         row2.setCell(0, new Cell("http://anursiebcuiesldcresturce.detur/anusclbc", null)); // well-formed but invalid
         project.rows.add(row2);
+
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
                 "value",
@@ -202,7 +205,8 @@ public class UrlFetchingTests extends RefineTest {
                 "junk",
                 1,
                 50,
-                true);
+                true,
+                null);
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
         process.startPerforming(pm);
