@@ -20,7 +20,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
  */
 public class DistinctValuesScrutinizer extends StatementScrutinizer {
     
-    private Map<PropertyIdValue, Set<Value>> _seenValues;
+    private Map<PropertyIdValue, Map<Value, EntityIdValue>> _seenValues;
     
     public DistinctValuesScrutinizer() {
         _seenValues = new HashMap<>();
@@ -31,22 +31,24 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
         PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
         if (_fetcher.hasDistinctValues(pid)) {
             Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
-            Set<Value> seen = _seenValues.get(pid);
+            Map<Value, EntityIdValue> seen = _seenValues.get(pid);
             if (seen == null) {
-                seen = new HashSet<Value>();
+                seen = new HashMap<Value, EntityIdValue>();
                 _seenValues.put(pid, seen);
             }
-            if (seen.contains(mainSnakValue)) {
+            if (seen.containsKey(mainSnakValue)) {
+                EntityIdValue otherId = seen.get(mainSnakValue);
                 QAWarning issue = new QAWarning(
                         "identical-values-for-distinct-valued-property",
                         pid.getId(),
                         QAWarning.Severity.IMPORTANT,
                         1);
                 issue.setProperty("property_entity", pid);
-                // TODO also report the items on which the property is duplicated
+                issue.setProperty("item1_entity", entityId);
+                issue.setProperty("item2_entity", otherId);
                 addIssue(issue);
             } else {
-                seen.add(mainSnakValue);
+                seen.put(mainSnakValue, entityId);
             }
         }
     }
