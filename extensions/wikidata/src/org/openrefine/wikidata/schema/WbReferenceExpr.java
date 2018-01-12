@@ -41,6 +41,7 @@ public class WbReferenceExpr extends JacksonJsonizable {
         }
     }
 
+    @JsonProperty("snaks")
     public List<WbSnakExpr> getSnaks() {
         return snakExprs;
     }

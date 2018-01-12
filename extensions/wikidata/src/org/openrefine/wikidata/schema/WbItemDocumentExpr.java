@@ -45,14 +45,17 @@ public class WbItemDocumentExpr extends JacksonJsonizable {
         return update;
     }
 
+    @JsonProperty("subject")
     public WbItemExpr getSubject() {
         return subject;
     }
 
+    @JsonProperty("nameDescs")
     public List<WbNameDescExpr> getNameDescs() {
         return nameDescs;
     }
 
+    @JsonProperty("statementGroups")
     public List<WbStatementGroupExpr> getStatementGroups() {
         return statementGroups;
     }

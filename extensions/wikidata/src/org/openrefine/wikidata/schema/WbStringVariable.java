@@ -30,6 +30,7 @@ public class WbStringVariable extends WbStringExpr {
         throw new SkipSchemaExpressionException();
     }
 
+    @JsonProperty("columnName")
     public String getColumnName() {
         return columnName;
     }

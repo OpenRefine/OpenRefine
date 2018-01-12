@@ -35,6 +35,7 @@ public class WbLocationVariable extends WbLocationExpr {
         throw new SkipSchemaExpressionException();
     }
 
+    @JsonProperty("columnName")
     public String getColumnName() {
         return columnName;
     }

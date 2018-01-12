@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.schema;
 
-import org.openrefine.wikidata.schema.entityvalues.TermedPropertyIdValue;
-import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
+import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -27,18 +26,20 @@ public class WbPropConstant extends WbPropExpr {
 
     @Override
     public PropertyIdValue evaluate(ExpressionContext ctxt) {
-        return new TermedPropertyIdValue(pid, ctxt.getBaseIRI(), label);
+        return new SuggestedPropertyIdValue(pid, ctxt.getBaseIRI(), label);
     }
     
+    @JsonProperty("pid")
     public String getPid() {
         return pid;
     }
 
-    
+    @JsonProperty("label")
     public String getLabel() {
         return label;
     }
     
+    @JsonProperty("datatype")
     public String getDatatype() {
         return datatype;
     }
