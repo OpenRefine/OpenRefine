@@ -45,10 +45,12 @@ public class WbStatementGroupExpr extends JacksonJsonizable {
         }
     }
 
+    @JsonProperty("property")
     public WbPropExpr getProperty() {
         return propertyExpr;
     }
 
+    @JsonProperty("statements")
     public List<WbStatementExpr> getStatements() {
         return statementExprs;
     }

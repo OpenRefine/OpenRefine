@@ -35,6 +35,7 @@ public class WbDateVariable extends WbDateExpr {
         throw new SkipSchemaExpressionException();
     }
 
+    @JsonProperty("columnName")
     public String getColumnName() {
         return columnName;
     }

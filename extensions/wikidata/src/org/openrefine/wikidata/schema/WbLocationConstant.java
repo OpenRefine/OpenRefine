@@ -55,6 +55,7 @@ public class WbLocationConstant extends WbLocationExpr {
         return parsed;
     }
     
+    @JsonProperty("value")
     public String getValue() {
         return value;
     }

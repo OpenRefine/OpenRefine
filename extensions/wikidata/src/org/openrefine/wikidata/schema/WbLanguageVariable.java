@@ -22,13 +22,14 @@ public class WbLanguageVariable extends WbLanguageExpr {
     public String evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(getColumnName());
-        if (cell != null) {
+        if (cell != null && cell.value != null && !cell.value.toString().isEmpty()) {
             // TODO some validation here?
             return cell.value.toString();
         }
         throw new SkipSchemaExpressionException();
     }
 
+    @JsonProperty("columnName")
     public String getColumnName() {
         return columnName;
     }

@@ -103,10 +103,12 @@ public class WbStatementExpr extends JacksonJsonizable {
         return mainSnakValueExpr;
     }
 
+    @JsonProperty("qualifiers")
     public List<WbSnakExpr> getQualifiers() {
         return qualifierExprs;
     }
 
+    @JsonProperty("references")
     public List<WbReferenceExpr> getReferences() {
         return referenceExprs;
     }

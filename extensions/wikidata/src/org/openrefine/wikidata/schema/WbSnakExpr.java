@@ -30,10 +30,12 @@ public class WbSnakExpr extends JacksonJsonizable {
         return Datamodel.makeValueSnak(propertyId, evaluatedValue);
     }
 
+    @JsonProperty("prop")
     public WbPropExpr getProp() {
         return prop;
     }
 
+    @JsonProperty("value")
     public WbValueExpr getValue() {
         return value;
     }

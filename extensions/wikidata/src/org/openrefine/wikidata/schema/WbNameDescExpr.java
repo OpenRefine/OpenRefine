@@ -51,6 +51,7 @@ public class WbNameDescExpr extends JacksonJsonizable {
         return type;
     }
 
+    @JsonProperty("value")
     public WbMonolingualExpr getValue() {
         return value;
     }

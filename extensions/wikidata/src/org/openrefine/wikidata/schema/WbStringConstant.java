@@ -21,6 +21,7 @@ public class WbStringConstant extends WbStringExpr {
         return Datamodel.makeStringValue(value);
     }
     
+    @JsonProperty("value")
     public String getValue() {
         return value;
     }

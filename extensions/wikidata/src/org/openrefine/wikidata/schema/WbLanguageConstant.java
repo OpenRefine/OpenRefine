@@ -7,14 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WbLanguageConstant extends WbLanguageExpr {
     
-    public static final String jsonType = "wblanguageconstant";
-    
     protected String _langId;
     protected String _langLabel;
     
     @JsonCreator
     public WbLanguageConstant(
-            @JsonProperty("lang") String langId,
+            @JsonProperty("id") String langId,
             @JsonProperty("label") String langLabel) {
         _langId = langId;
         _langLabel = langLabel;
@@ -24,10 +22,12 @@ public class WbLanguageConstant extends WbLanguageExpr {
         return _langId;
     }
     
+    @JsonProperty("id")
     public String getLang() {
         return _langId;
     }
     
+    @JsonProperty("label")
     public String getLabel() {
         return _langLabel;
     }
