@@ -2,9 +2,9 @@ package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
-public class TermedItemIdValue extends TermedEntityIdValue implements ItemIdValue {
+public class SuggestedItemIdValue extends SuggestedEntityIdValue implements ItemIdValue {
 
-    public TermedItemIdValue(String id, String siteIRI, String label) {
+    public SuggestedItemIdValue(String id, String siteIRI, String label) {
         super(id, siteIRI, label);
     }
 

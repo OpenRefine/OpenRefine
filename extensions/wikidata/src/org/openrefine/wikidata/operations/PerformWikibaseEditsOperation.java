@@ -15,16 +15,13 @@ import org.json.JSONWriter;
 
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.NewItemLibrary;
-import org.openrefine.wikidata.editing.CellCoordinates;
-import org.openrefine.wikidata.editing.CellCoordinatesKeyDeserializer;
 import org.openrefine.wikidata.schema.ItemUpdate;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.schema.entityvalues.NewEntityIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
 import org.wikidata.wdtk.datamodel.interfaces.DataObjectFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -32,11 +29,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 import org.wikidata.wdtk.datamodel.interfaces.SiteLink;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.history.Change;
@@ -170,8 +163,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 
                 if ("newItems".equals(field)) {
                     ObjectMapper mapper = new ObjectMapper();
-                    SimpleModule simpleModule = new SimpleModule();
-                    simpleModule.addKeyDeserializer(CellCoordinates.class, new CellCoordinatesKeyDeserializer());
                     library = mapper.readValue(value, NewItemLibrary.class);
                 }
             }
@@ -234,7 +225,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 try {
                     // New item
                     if (update.getItemId().getId() == "Q0") {
-                        NewEntityIdValue newCell = (NewEntityIdValue)update.getItemId();
+                        ReconEntityIdValue newCell = (ReconEntityIdValue)update.getItemId();
                         update.normalizeLabelsAndAliases();
 
                         
@@ -248,7 +239,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                                 0L);
                                 
                         ItemDocument createdDoc = wbde.createItemDocument(itemDocument, _summary);
-                        newItemLibrary.setQid(newCell, createdDoc.getItemId().getId());
+                        newItemLibrary.setQid(newCell.getReconInternalId(), createdDoc.getItemId().getId());
                     } else {
                         // Existing item
                         wbde.updateTermsStatements(update.getItemId(),
