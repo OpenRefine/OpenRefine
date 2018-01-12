@@ -95,7 +95,7 @@
                 },
                 "identical-values-for-distinct-valued-property": {
                         "title": "Identical values for {property_entity}",
-                        "body": "This property should have distinct values."
+                        "body": "This property should have distinct values, but the same value was found on {item1_entity} and {item2_entity} for instance."
                 },
                 "no-edit-generated": {
                         "title": "No edit was generated.",
