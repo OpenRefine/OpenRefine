@@ -79,7 +79,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
 
     @Override
     public String getSiteIri() {
-        return _recon.schemaSpace;
+        return _recon.identifierSpace;
     }
 
     @Override
