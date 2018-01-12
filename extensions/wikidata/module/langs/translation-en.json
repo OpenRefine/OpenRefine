@@ -116,6 +116,22 @@
                 "monolingual-text-without-language": {
                         "title": "No language provided for monolingual text.",
                         "body": "Some label, description, alias or monolingual text value have been skipped because no language was provided. Example value: <span class=\"wb-issue-preformat\">{example_text}</span>."
+                },
+                "leading-whitespace": {
+                        "title": "Leading whitespace in strings.",
+                        "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> have leading whitespace."
+                },
+                "trailing-whitespace": {
+                        "title": "Trailing whitespace in strings.",
+                        "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> have trailing whitespace."
+                },
+                "duplicate-whitespace": {
+                        "title": "Duplicate whitespace in strings.",
+                        "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> contain duplicate whitespace."
+                },
+                "non-printable-characters": {
+                        "title": "Non-printable characters in strings.",
+                        "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> contain non-printable characters."
                 }
        }
 }
