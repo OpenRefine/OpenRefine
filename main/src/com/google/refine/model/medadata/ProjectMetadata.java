@@ -54,6 +54,7 @@ import java.util.Properties;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -342,6 +343,11 @@ public class ProjectMetadata  extends AbstractMetadata {
         updateModified();
     }
 
+    public void appendTags(String[] tags) {
+        String[] mergedTags = (String[])ArrayUtils.addAll(this._tags, tags);
+        setTags(mergedTags);
+    }
+    
     public String[] getTags() {
         if (_tags == null) this._tags = new String[0];
         return _tags;

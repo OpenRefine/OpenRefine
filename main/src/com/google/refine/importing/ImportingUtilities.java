@@ -1167,7 +1167,7 @@ public class ImportingUtilities {
         
         if (pkg.has(PackageExtension.JSON_KEY_KEYWORKS)) {
             String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
-            pmd.setTags(tags);
+            pmd.appendTags(tags);
         }
         
         // column model
