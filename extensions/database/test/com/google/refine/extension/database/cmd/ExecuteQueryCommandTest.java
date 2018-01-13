@@ -58,13 +58,6 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
          DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
          
      }
-//    
-//    @AfterSuite
-//    public void afterSuite() {
-//        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-//      
-//    }
-    
 
     @Test
     public void testDoPost() {

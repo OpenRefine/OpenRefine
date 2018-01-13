@@ -76,7 +76,9 @@ public class DBQueryResultImportReader implements TableDataReader {
         this.dbColumns = columns;
         this.databaseService = databaseService;
         this.dbQueryInfo = dbQueryInfo;
-        logger.info("batchSize:" + batchSize);
+        if(logger.isDebugEnabled()) {
+            logger.debug("batchSize:" + batchSize);
+        }
 
     }
 
@@ -119,7 +121,7 @@ public class DBQueryResultImportReader implements TableDataReader {
                 }
                 if(processedRows % 10000 == 0) {
                     if(logger.isDebugEnabled()) {
-                    logger.debug("[[ {} rows processed... ]]",processedRows); 
+                        logger.debug("[[ {} rows processed... ]]",processedRows); 
                     }
                 }
             }

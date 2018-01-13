@@ -43,11 +43,7 @@ public class MySQLConnectionManagerTest extends DBExtensionTests {
         
     }
     
-//    @AfterSuite
-//    public void afterSuite() {
-//        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-//    }
-//  
+
     @Test
     public void testTestConnection() {
         

@@ -168,10 +168,5 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
          }
      }
      
-     
-//     @AfterSuite
-//     public void afterSuite() {
-//         DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-//         logger.info("<<After Suite Cleanup>>");
-//     }
+
 }

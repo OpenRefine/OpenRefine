@@ -44,7 +44,7 @@ public class ConnectCommandTest extends DBExtensionTests {
            @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
        
         MockitoAnnotations.initMocks(this);
-       // System.out.println("beforeTest " + pgSqlDbName);
+      
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mySqlDbHost);
         testDbConfig.setDatabaseName(mySqlDbName);
@@ -60,13 +60,7 @@ public class ConnectCommandTest extends DBExtensionTests {
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
         
     }
-    
-//    @AfterSuite
-//    public void afterSuite() {
-//        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-//       
-//    }
-//    
+
  
     @Test
     public void testDoPost() {

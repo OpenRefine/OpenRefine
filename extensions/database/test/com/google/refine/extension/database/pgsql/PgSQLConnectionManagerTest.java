@@ -28,7 +28,7 @@ public class PgSQLConnectionManagerTest extends DBExtensionTests {
            @Optional(DEFAULT_PGSQL_PASSWORD)  String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String pgSqlTestTable) {
        
         MockitoAnnotations.initMocks(this);
-       // System.out.println("beforeTest " + pgSqlDbName);
+       
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(pgSqlDbHost);
         testDbConfig.setDatabaseName(pgSqlDbName);

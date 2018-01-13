@@ -33,7 +33,6 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
            @Optional(DEFAULT_PGSQL_PASSWORD)    String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE)   String pgSqlTestTable) {
        
         MockitoAnnotations.initMocks(this);
-       // System.out.println("beforeTest " + pgSqlDbName);
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(pgSqlDbHost);
         testDbConfig.setDatabaseName(pgSqlDbName);
@@ -55,7 +54,7 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
     public void testGetDatabaseUrl() {
         PgSQLDatabaseService pgSqlService = (PgSQLDatabaseService)DatabaseService.get(PgSQLDatabaseService.DB_NAME);
         String dbUrl = pgSqlService.getDatabaseUrl(testDbConfig);
-        System.out.println("dbUrl:" + dbUrl);
+       
         Assert.assertNotNull(dbUrl);
         Assert.assertEquals(dbUrl, DBExtensionTestUtils.getJDBCUrl(testDbConfig));
     }

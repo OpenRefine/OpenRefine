@@ -51,17 +51,12 @@ public class DatabaseServiceTest extends DBExtensionTests{
         
     }
 
-//    @AfterSuite
-//    public void afterSuite() {
-//        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-//      
-//    }
+
 
     @Test
     public void testGetDatabaseUrl() {
         DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
         String dbUrl = dbService.getDatabaseUrl(testDbConfig);
-       // System.out.println("dbUrl:" + dbUrl);
         Assert.assertNotNull(dbUrl);
         Assert.assertEquals(dbUrl, DBExtensionTestUtils.getJDBCUrl(testDbConfig));
     }
@@ -99,7 +94,6 @@ public class DatabaseServiceTest extends DBExtensionTests{
            
            DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
            Connection conn = dbService.getConnection(testDbConfig);
-           //System.out.println("conn:" + conn);
            Assert.assertNotNull(conn);
             
         } catch (DatabaseServiceException e) {
@@ -173,7 +167,7 @@ public class DatabaseServiceTest extends DBExtensionTests{
             Assert.assertNotNull(dbColumns);
             
             int cols = dbColumns.size();
-            Assert.assertEquals(cols, 3);
+            Assert.assertEquals(cols, 10);
        
             
         } catch (DatabaseServiceException e) {

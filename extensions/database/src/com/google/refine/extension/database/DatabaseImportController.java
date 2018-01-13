@@ -465,7 +465,9 @@ public class DatabaseImportController implements ImportingController {
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
         
         String query = request.getParameter("query");
-        logger.info("jdbcConfig::{}, query::{}", jdbcConfig, query);
+        if(logger.isDebugEnabled()) {
+            logger.debug("jdbcConfig::{}, query::{}", jdbcConfig, query);
+        }
         if (jdbcConfig.getDatabaseHost() == null || jdbcConfig.getDatabaseName() == null
                 || jdbcConfig.getDatabasePassword() == null || jdbcConfig.getDatabaseType() == null
                 || jdbcConfig.getDatabaseUser() == null || query == null) {

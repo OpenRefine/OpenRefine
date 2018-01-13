@@ -182,7 +182,9 @@ public class DatabaseUtils {
      
      
      public static void deleteAllSavedConnections() {
-         logger.info("delete All Saved Connections called...");
+         if(logger.isDebugEnabled()) {
+             logger.debug("delete All Saved Connections called...");
+         }
          
          try {
              
@@ -221,8 +223,9 @@ public class DatabaseUtils {
       * @param connectionName
       */
      public static void deleteSavedConnections(String connectionName) {
-         
-        logger.info("deleteSavedConnections called with: {}", connectionName);
+         if(logger.isDebugEnabled()) {
+             logger.debug("deleteSavedConnections called with: {}", connectionName);
+         }
          
         try {
             

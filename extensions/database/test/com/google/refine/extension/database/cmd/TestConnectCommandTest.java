@@ -60,11 +60,7 @@ public class TestConnectCommandTest extends DBExtensionTests{
          
      }
      
-//     @AfterSuite
-//     public void afterSuite() {
-//         DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-//        
-//     }
+
      
     @Test
     public void testDoPost() {

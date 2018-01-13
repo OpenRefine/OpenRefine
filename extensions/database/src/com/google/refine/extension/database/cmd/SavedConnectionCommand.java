@@ -91,7 +91,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
         
         DatabaseConfiguration savedConn = DatabaseUtils.getSavedConnection(connectionName);
         if(savedConn == null) {
-            logger.error("Connection With name:: {} does not exist!", request.getParameter("connectionName"));
+            //logger.error("Connection With name:: {} does not exist!", request.getParameter("connectionName"));
             response.sendError(HttpStatus.SC_BAD_REQUEST, "Connection with name " + connectionName + " does not exists!");
             response.flushBuffer();
             return;
@@ -246,7 +246,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
             throws ServletException, IOException {
        
         if(logger.isDebugEnabled()) {
-            logger.info("doPost Connection: {}", request.getParameter("connectionName"));
+            logger.debug("doPost Connection: {}", request.getParameter("connectionName"));
         }
         
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
@@ -297,7 +297,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
         if(logger.isDebugEnabled()) {
             logger.debug("databaseType::{} " , request.getParameter("databaseHost"));
         }
-        logger.info("databaseHost::{} " , request.getParameter("databaseServer"));
+       // logger.info("databaseHost::{} " , request.getParameter("databaseServer"));
         
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
         StringBuilder sb = new StringBuilder();
