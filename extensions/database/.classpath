@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="module/MOD-INF/lib/mysql-connector-java-5.1.44-bin.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/postgresql-42.1.4.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/mariadb-java-client-2.2.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/rhino-1.7R2.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/velocity-1.5.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/httpcore-4.2.4.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jasypt-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="/OpenRefine/main/webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/OpenRefine/main/tests/server/lib/mockito-all-1.9.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/OpenRefine"/>
+	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+</classpath>
