@@ -1,0 +1,56 @@
+{
+    "gdata-import": {
+		"preparing": "準備中...",
+		"creating": "プロジェクトを作る...",
+		"title": "一般公開文書(public document)",
+		"import-by-url": "一般公開している(<em>public</em>)Google SpreadsheetかFusion TableのURLを入力してください:",
+		"next->": "次へ &raquo;",
+		"auth-doc": "認証済み文書(authorized document)",
+		"please": "まず",
+		"sign-in": "サインインして認証",
+		"sign-out": "サインアウト",
+		"access-data": "してから、あなたのGoogle文書にアクセスします",
+		"retrieving": "Google Docsを取り込んでいます ...",
+		"re-sign-in": "サインし直す",
+		"another-account": "別のアカウント"
+    },
+	"gdata-parsing": {
+		"start-over": "&laquo; やり直し",
+		"conf-pars": "解析オプションの設定",
+		"proj-name": "プロジェクト名",
+		"create-proj": "プロジェクトを作る &raquo;",
+		"updating-preview": "プレビューを更新中...",
+		"worksheet": "シート",
+		"option": "オプション",
+		"preview-button": "プレビューを更新",
+		"ignore-first": "先頭を無視",
+		"ignore": "行分",
+		"parse-next": "カラム名として解釈",
+		"parse": "行分",
+		"discard-next": "先頭データを破棄",
+		"discard": "行分",
+		"limit-next": "最大読み込み行数",
+		"limit": "行分",
+		"store-row": "空白行も保存",
+		"store-cell": "nullとして空白セルを保存"
+	},
+	"gdata-source": {
+		"alert-url": "インポートするアドレス(URL)を入力してください",
+		"type": "形式",
+		"title": "題名",
+		"authors": "著者",
+		"updated": "更新済み"
+	},
+	"gdata-exporter": {
+		"uploading": "アプロード中...",
+		"upload-error": "アップロードでエラー:",
+		"new-spreadsheet": "新しいGoogle spreadsheet",
+		"enter-spreadsheet": "新しいGoogle spreadsheetの題名を入力してください",
+		"new-fusion": "新しいFusion table",
+		"enter-fusion": "新しいFusion tableの題名を入力してください"
+	},
+	"gdata-auth": {
+		"authorize-label": "OpenRefine - 認証",
+		"authorized-label": "認証が完了しました。このウインドウを閉じてOpenRefineで作業できます"
+	}
+}
