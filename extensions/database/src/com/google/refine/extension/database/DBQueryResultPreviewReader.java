@@ -160,20 +160,18 @@ public class DBQueryResultPreviewReader implements TableDataReader {
                             try {
                                 rowOfCells.add(Long.parseLong(text));
                                 continue;
-                            } catch (NumberFormatException e) {
-                                // ignore
-                            }
-                            
-                            try {
-                                double d = Double.parseDouble(text);
-                                if (!Double.isInfinite(d) && !Double.isNaN(d)) {
-                                    rowOfCells.add(d);
-                                    continue;
-                                }
-                            } catch (NumberFormatException e) {
-                                // ignore
-                            }
-                        }
+                            } catch (NumberFormatException e) {}
+                       
+                         }else if(col.getType() == DatabaseColumnType.DOUBLE || col.getType() == DatabaseColumnType.FLOAT ) {
+                             try {
+                                 double d = Double.parseDouble(text);
+                                 if (!Double.isInfinite(d) && !Double.isNaN(d)) {
+                                     rowOfCells.add(d);
+                                     continue;
+                                 }
+                             } catch (NumberFormatException e) {}
+                             
+                         }
                         
                         rowOfCells.add(text);
                     }

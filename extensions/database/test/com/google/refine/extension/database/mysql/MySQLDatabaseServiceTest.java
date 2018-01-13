@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -45,7 +44,7 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
         testDbConfig.setUseSSL(false);
         
         testTable = mySqlTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig);
+        //DBExtensionTestUtils.initTestData(testDbConfig);
         
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
         
@@ -168,11 +167,6 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
          }
      }
      
-     
-     @AfterSuite
-     public void afterSuite() {
-         DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-       
-     }
+
 
 }

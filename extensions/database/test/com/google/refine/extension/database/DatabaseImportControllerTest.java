@@ -126,7 +126,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
                     "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=invalid-sub-command");
             
             when(response.getWriter()).thenReturn(pw);
-          
+           //test
             SUT.doPost(request, response);
        
             String result = sw.getBuffer().toString().trim();
@@ -257,12 +257,13 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
     
     @BeforeTest
     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
-    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-           @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+    public void beforeTest(
+           @Optional(DEFAULT_MYSQL_DB_NAME)   String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
+           @Optional(DEFAULT_MYSQL_PORT)      String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
            @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
        
         MockitoAnnotations.initMocks(this);
-       // System.out.println("beforeTest " + pgSqlDbName);
+       
         testDbConfig = new DatabaseConfiguration();
         testDbConfig.setDatabaseHost(mySqlDbHost);
         testDbConfig.setDatabaseName(mySqlDbName);
@@ -271,12 +272,14 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
         testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
         testDbConfig.setDatabaseUser(mySqlDbUser);
         testDbConfig.setUseSSL(false);
+        query = "SELECT count(*) FROM " + mySqlTestTable;
         
         //testTable = mySqlTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig);
+        
         
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
         
     }
+  
     
 }

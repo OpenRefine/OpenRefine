@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.util.List;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -44,7 +43,7 @@ public class DatabaseServiceTest extends DBExtensionTests{
         testDbConfig.setUseSSL(false);
         
         testTable = mySqlTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig);
+       // DBExtensionTestUtils.initTestData(testDbConfig);
         
         DatabaseService.DBType.registerDatabase(MariaDBDatabaseService.DB_NAME, MariaDBDatabaseService.getInstance());
         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
@@ -52,17 +51,17 @@ public class DatabaseServiceTest extends DBExtensionTests{
         
     }
 
-    @AfterSuite
-    public void afterSuite() {
-        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-      
-    }
+//    @AfterSuite
+//    public void afterSuite() {
+//        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
+//      
+//    }
 
     @Test
     public void testGetDatabaseUrl() {
         DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
         String dbUrl = dbService.getDatabaseUrl(testDbConfig);
-        System.out.println("dbUrl:" + dbUrl);
+       // System.out.println("dbUrl:" + dbUrl);
         Assert.assertNotNull(dbUrl);
         Assert.assertEquals(dbUrl, DBExtensionTestUtils.getJDBCUrl(testDbConfig));
     }

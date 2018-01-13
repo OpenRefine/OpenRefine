@@ -74,7 +74,10 @@ public class PgSQLConnectionManager {
      */
     public static PgSQLConnectionManager getInstance() throws DatabaseServiceException {
         if (instance == null) {
-            logger.info("::Creating new PgSQL ConnectionManager ::");
+            if(logger.isDebugEnabled()) {
+                logger.debug("::Creating new PgSQL ConnectionManager ::"); 
+            }
+            
             instance = new PgSQLConnectionManager();
 
         }

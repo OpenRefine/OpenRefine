@@ -72,7 +72,7 @@ public class MariaDBConnectionManager {
      */
     public static MariaDBConnectionManager getInstance() throws DatabaseServiceException {
         if (instance == null) {
-            logger.info("::Creating new MariaDB Connection Manager ::");
+            //logger.info("::Creating new MariaDB Connection Manager ::");
             instance = new MariaDBConnectionManager();
 
         }
@@ -126,7 +126,7 @@ public class MariaDBConnectionManager {
            // logger.info("connection::{}, forceNewConnection: {}", connection, forceNewConnection);
 
             if (connection != null && !forceNewConnection) {
-                logger.info("connection closed::{}", connection.isClosed());
+               // logger.debug("connection closed::{}", connection.isClosed());
                 if (!connection.isClosed()) {
                     if(logger.isDebugEnabled()) {
                         logger.debug("Returning existing connection::{}", connection);

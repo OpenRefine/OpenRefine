@@ -12,13 +12,11 @@ import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
@@ -55,17 +53,17 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
          testDbConfig.setUseSSL(false);
          
          testTable = mySqlTestTable;
-         DBExtensionTestUtils.initTestData(testDbConfig);
+        // DBExtensionTestUtils.initTestData(testDbConfig);
          
          DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
          
      }
-    
-    @AfterSuite
-    public void afterSuite() {
-        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-      
-    }
+//    
+//    @AfterSuite
+//    public void afterSuite() {
+//        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
+//      
+//    }
     
 
     @Test

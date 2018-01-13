@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -45,7 +44,7 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
         testDbConfig.setUseSSL(false);
         
         testTable = pgSqlTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig);
+        //DBExtensionTestUtils.initTestData(testDbConfig);
         
         DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
     }
@@ -167,12 +166,6 @@ public class PgSQLDatabaseServiceTest extends DBExtensionTests{
             e.printStackTrace();
         }
     }
-    
-    
-    @AfterSuite
-    public void afterClass() {
-        DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-     
-    }
+
 
 }

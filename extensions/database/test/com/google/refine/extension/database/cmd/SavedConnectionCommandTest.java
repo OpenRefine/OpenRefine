@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -30,11 +29,9 @@ import com.google.refine.RefineServlet;
 import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
-import com.google.refine.extension.database.DatabaseImportController;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
 import com.google.refine.extension.database.stub.RefineDbServletStub;
-import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
@@ -111,11 +108,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
          
      }
     
-    @AfterSuite
-    public void afterSuite() {
-       
-      
-    }
+ 
     
     private void saveDatabaseConfiguration(String savedDbName) {
         
@@ -306,7 +299,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
 
             SUT.doDelete(request, response);
             
-            String result = sw.getBuffer().toString().trim();
+           // String result = sw.getBuffer().toString().trim();
           
             JSONObject json = new JSONObject();
             

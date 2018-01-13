@@ -70,7 +70,10 @@ public abstract class DatabaseService {
                 databaseServiceMap.put(name, db);
                 logger.info(String.format("Registered %s Database", name));
             }else {
-                logger.info(name + " Database Type already exists");
+                if(logger.isDebugEnabled()) {
+                    logger.debug(name + " Database Type already exists");
+                }
+               
             }
        
         }

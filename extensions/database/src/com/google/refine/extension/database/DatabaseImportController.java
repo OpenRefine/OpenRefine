@@ -81,8 +81,9 @@ public class DatabaseImportController implements ImportingController {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        logger.info("doPost Query String::{}", request.getQueryString());
-        
+        if(logger.isDebugEnabled()){
+            logger.debug("doPost Query String::{}", request.getQueryString());
+        }
         response.setCharacterEncoding("UTF-8");
         Properties parameters = ParsingUtilities.parseUrlParameters(request);
         
@@ -171,7 +172,7 @@ public class DatabaseImportController implements ImportingController {
             if(logger.isDebugEnabled()) {
                 logger.debug("JobID::{}", parameters.getProperty("jobID"));
             } 
-            logger.info("JobID::{}", parameters.getProperty("jobID"));
+           
             
             long jobID = Long.parseLong(parameters.getProperty("jobID"));
             ImportingJob job = ImportingManager.getJob(jobID);
@@ -180,7 +181,10 @@ public class DatabaseImportController implements ImportingController {
                 return;
             }
           
+            
             DatabaseQueryInfo databaseQueryInfo = getQueryInfo(request);
+          
+            
             if(databaseQueryInfo == null) {
                 HttpUtilities.respond(response, "error", "Invalid or missing Query Info");
             }
@@ -270,6 +274,7 @@ public class DatabaseImportController implements ImportingController {
             JSONObject options,
             List<Exception> exceptions) throws DatabaseServiceException{
         
+       
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
         
@@ -398,6 +403,7 @@ public class DatabaseImportController implements ImportingController {
             JSONObject options,
             List<Exception> exceptions) throws DatabaseServiceException{
         
+        
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
         
@@ -459,7 +465,7 @@ public class DatabaseImportController implements ImportingController {
         jdbcConfig.setDatabaseSchema(request.getParameter("initialSchema"));
         
         String query = request.getParameter("query");
-        
+        logger.info("jdbcConfig::{}, query::{}", jdbcConfig, query);
         if (jdbcConfig.getDatabaseHost() == null || jdbcConfig.getDatabaseName() == null
                 || jdbcConfig.getDatabasePassword() == null || jdbcConfig.getDatabaseType() == null
                 || jdbcConfig.getDatabaseUser() == null || query == null) {

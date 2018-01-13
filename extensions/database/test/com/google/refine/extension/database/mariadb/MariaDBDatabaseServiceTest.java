@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -48,7 +47,7 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
         testDbConfig.setUseSSL(false);
         
         testTable = mariaDbTestTable;
-        DBExtensionTestUtils.initTestData(testDbConfig);
+        //DBExtensionTestUtils.initTestData(testDbConfig);
         
         DatabaseService.DBType.registerDatabase(MariaDBDatabaseService.DB_NAME, MariaDBDatabaseService.getInstance());
         
@@ -126,7 +125,7 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
          String limitQuery = pgSqlService.buildLimitQuery(100, 0, "SELECT * FROM " + testTable);
          Assert.assertNotNull(limitQuery);
 
-         Assert.assertEquals(limitQuery, "SELECT * FROM " + testTable + " LIMIT " + 100 + " OFFSET " + 0);
+         Assert.assertEquals(limitQuery, "SELECT * FROM " + testTable + " LIMIT " + 100 + " OFFSET " + 0 + ";");
 
      }
 
@@ -170,9 +169,9 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
      }
      
      
-     @AfterSuite
-     public void afterSuite() {
-         DBExtensionTestUtils.cleanUpTestData(testDbConfig);
-         logger.info("<<After Suite Cleanup>>");
-     }
+//     @AfterSuite
+//     public void afterSuite() {
+//         DBExtensionTestUtils.cleanUpTestData(testDbConfig);
+//         logger.info("<<After Suite Cleanup>>");
+//     }
 }
