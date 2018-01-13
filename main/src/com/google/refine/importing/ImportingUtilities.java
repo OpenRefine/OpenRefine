@@ -1226,8 +1226,8 @@ public class ImportingUtilities {
         }
         pm.setEncoding(encoding);
         
-        String creator = (String) ps.get(PreferenceStore.USER_NAME);
-        if (creator != null) {
+        if (ps.get(PreferenceStore.USER_NAME) != null) {
+            String creator = (String) ps.get(PreferenceStore.USER_NAME);
             pm.setCreator(creator);
         }
         
