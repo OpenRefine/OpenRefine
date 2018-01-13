@@ -1,0 +1,20 @@
+#*
+ * Access this page at the URL /extension/database/
+ *#
+<html>
+  <head>
+    <title>OpenRefine Database Extension v$version</title>
+  </head>
+  <body>
+    <h1>OpenRefine DATABASE Extension v$version</h1>
+    <h2>by Tony Opara <tcbuzor@gmail.com></h2>    
+    <p>The JDBC extension allows OpenRefine to read
+    (and write, soon) data from JDBC compatible databases(MySQL, PostgreSQL, MariaDB).  
+    </p>
+    <h3>Known Limitations</h3>
+    <ul>
+    	<li>No write support</li>
+	
+    </ul>
+  </body>
+</html>
