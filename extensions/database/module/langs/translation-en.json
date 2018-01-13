@@ -1,0 +1,58 @@
+{
+  "database-import": {
+		"title": "Database Servers",
+		"preparing": "Preparing Result ...",
+		"checking": "Validating Query ...",
+		"creating": "Creating project ..."
+   },
+   "database-source": {
+		"alert-host": "You must specify a Database Host",
+		"alert-port": "You must specify a Database Port",
+		"alert-user": "You must specify a Database User",
+		"alert-password": "You must specify a Database Password",
+		"alert-connection-name": "You must specify a Connection Name",
+		"alert-initial-database": "You must specify an Initial Database",
+		"alert-query": "You must specify a valid Query",
+		"alert-invalid-query-keyword": "Query cannot contain Data Manipulation keyword:",
+		"alert-invalid-query-select": "Query must start with SELECT Keyword",
+		"form-validation-failure" : "New Connection From is Invalid!",
+		"alert-connection-edit": "Connection edited successfully",
+		"connectionNameLabel": "Name:",
+		"databaseTypeLabel": "Type:",
+		"databaseHostLabel": "Host:",
+		"databasePortLabel": "Port:",
+		"databaseUserLabel": "User:",
+		"databasePasswordLabel": "Password:",
+		"databaseNameLabel": "Database:",
+		"databaseSchemaLabel": "Schema:",
+		"databaseTestButton": "Test",
+		"databaseSaveButton": "Save",
+		"databaseConnectButton": "Connect",
+		"newConnectionButtonDiv": "New Connection",
+		"savedConnectionSpan": "Saved Connections"
+		
+	
+	},
+	"database-parsing": {
+		"start-over": "&laquo; Start Over",
+		"conf-pars": "Configure Parsing Options",
+		"proj-name": "Project&nbsp;name",
+		"create-proj": "Create Project &raquo;",
+		"updating-preview": "Updating preview ...",
+		"worksheet": "Worksheets",
+		"option": "Options",
+		"preview-button": "Update&nbsp;Preview",
+		"ignore-first": "Ignore first",
+		"ignore": "line(s) at beginning of file",
+		"parse-next": "Parse next",
+		"parse": "line(s) as column headers",
+		"discard-next": "Discard initial",
+		"discard": "row(s) of data",
+		"limit-next": "Load at most",
+		"limit": "row(s) of data",
+		"store-row": "Store blank rows",
+		"store-cell": "Store blank cells as nulls"		
+	}
+  
+}
+ 

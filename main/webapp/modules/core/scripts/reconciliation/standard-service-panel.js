@@ -87,7 +87,7 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._elmts.rawServiceLink.html($.i18n._('core-recon')["service-api"]);
   this._elmts.or_proc_cellType.html($.i18n._('core-recon')["cell-type"]+":");
   this._elmts.or_proc_colDetail.html($.i18n._('core-recon')["col-detail"]+":");
-  this._elmts.or_proc_againsType.html($.i18n._('core-recon')["against-type"]+":");
+  this._elmts.or_proc_againstType.html($.i18n._('core-recon')["against-type"]+":");
   this._elmts.or_proc_noType.html($.i18n._('core-recon')["no-type"]);
   this._elmts.or_proc_autoMatch.html($.i18n._('core-recon')["auto-match"]);
   this._elmts.or_proc_max_candidates.html($.i18n._('core-recon')["max-candidates"]);

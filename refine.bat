@@ -1,4 +1,5 @@
-@echo off
+rem Changing this for debugging on Appveyor
+rem @echo off
 rem
 rem Configuration variables
 rem
@@ -184,6 +185,7 @@ rem ----- Respond to the action ------------------------------------------------
 set ACTION=%1
 
 if ""%ACTION%"" == ""build"" goto doAnt
+if ""%ACTION%"" == ""server_test_debug"" goto doAntDebug
 if ""%ACTION%"" == ""server_test"" goto doAnt
 if ""%ACTION%"" == ""extensions_test"" goto doAnt
 if ""%ACTION%"" == ""clean"" goto doAnt
@@ -191,6 +193,24 @@ if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
+rem --- Log for troubleshooting ------------------------------------------
+echo Getting Java Version...
+java -version 2^>^&1
+echo.=====================================================
+for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
+echo Getting Free Ram...
+wmic os get FreePhysicalMemory
+for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
+(
+echo ----------------------- 
+echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
+echo JAVA_HOME = %JAVA_HOME%
+echo java -version = %JVERSION%
+echo freeRam = %freeRam%M
+echo REFINE_MEMORY = %REFINE_MEMORY%
+echo ----------------------- 
+) > support.log
+
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
@@ -209,6 +229,10 @@ echo   http://bit.ly/1c2gkR
 echo.
 :gotAntHome
 "%ANT_HOME%\bin\ant.bat" -f build.xml %ACTION%
+goto end
+
+:doAntDebug
+"%ANT_HOME%\bin\ant.bat" -f -v -diagnostics build.xml %ACTION%
 goto end
 
 :end
