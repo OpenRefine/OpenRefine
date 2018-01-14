@@ -68,7 +68,7 @@ public class NewItemLibrary {
         
         for(Row row : project.rows) {
             for(Cell cell : row.cells) {
-                if (cell.recon == null) {
+                if (cell == null || cell.recon == null) {
                     continue;
                 }
                 Recon recon = cell.recon;
