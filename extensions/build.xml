@@ -13,6 +13,7 @@
     <ant dir="jython/" target="build" />
     <ant dir="gdata/" target="build" />
     <ant dir="pc-axis/" target="build" />
+  	<ant dir="database/" target="build" />
   </target>
 
   <target name="clean">
@@ -21,10 +22,12 @@
     <ant dir="jython/" target="clean" />
     <ant dir="gdata/" target="clean" />
     <ant dir="pc-axis/" target="clean" />
+  	<ant dir="database/" target="clean" />
   </target>
 
   <target name="test">
     <echo message="Testing extensions" />
     <ant dir="jython/" target="test" />
+  	<ant dir="database/" target="test" />
   </target>
 </project>

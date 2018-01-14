@@ -1,0 +1,24 @@
+language: java
+
+jdk:
+  - oraclejdk8
+  
+addons:
+  mariadb: '10.0'
+  
+services:
+  - mysql
+  - postgresql
+
+before_install:
+  
+  - mysql -u root -e 'CREATE DATABASE test_db;'
+  - mysql -u root test_db < test/conf/travis-mysql.sql
+
+  - psql -c 'CREATE DATABASE test_db;' -U postgres
+  - psql -U postgres test_db < test/conf/travis-pgsql.sql
+ 
+
+script:
+  - ant test
+ 

@@ -3,6 +3,8 @@
 	<classpathentry kind="src" path="main/src"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
+	<classpathentry kind="src" path="extensions/database/src"/>
+	<classpathentry kind="src" path="extensions/database/test"/>
 	<classpathentry kind="src" path="extensions/jython/src"/>
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
@@ -85,7 +87,14 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/swc-parser-lazy-3.1.5-jar-with-dependencies.jar" sourcepath="main/webapp/WEB-INF/lib-src/swc-parser-lazy-3.1.5-sources.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-annotations-2.9.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-2.9.1.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-databind-2.9.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-databind-2.9.1.jar"/>	
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/mysql-connector-java-5.1.44-bin.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/postgresql-42.1.4.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/mariadb-java-client-2.2.0.jar"/>
+    <classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jasypt-1.9.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>
