@@ -33,6 +33,8 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     public ReconEntityIdValue(Recon match, String cellValue) {
         _recon = match;
         _cellValue = cellValue;
+        assert (Recon.Judgment.Matched.equals(_recon.judgment) ||
+                Recon.Judgment.New.equals(_recon.judgment));
     }
     
     protected boolean isMatched() {

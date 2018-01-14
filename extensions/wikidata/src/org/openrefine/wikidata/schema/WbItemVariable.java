@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.model.Cell;
+import com.google.refine.model.Recon.Judgment;
 
 public class WbItemVariable extends WbItemExpr {
     /* An item that depends on a reconciled value in a column */
@@ -24,7 +25,9 @@ public class WbItemVariable extends WbItemExpr {
     @Override
     public ItemIdValue evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         Cell cell = ctxt.getCellByName(getColumnName());
-        if (cell != null && cell.recon != null) {
+        if (cell != null && cell.recon != null
+                && (Judgment.Matched.equals(cell.recon.judgment) ||
+                    Judgment.New.equals(cell.recon.judgment))) {
             return new ReconItemIdValue(cell.recon, cell.value.toString());
         }
         throw new SkipSchemaExpressionException();
