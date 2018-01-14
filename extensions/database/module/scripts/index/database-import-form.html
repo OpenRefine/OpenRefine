@@ -1,0 +1,144 @@
+<div  bind="databasePanel" class="database-container">
+    
+         <div id = "databaseLayoutDiv" class="grid-layout layout-div">
+         	
+            <div class="pure-g">
+               <div class="pure-u-1-5">
+                       <div class="pure-u-1"><button type="button" id="newConnectionButtonDiv" bind="newConnectionButton" class="pure-button pure-button-primary">New Connection</button></div>
+                       <div class="pure-u-1-2" style="border-bottom: 1px dashed; border-color:lightgrey; margin-top:1px; padding-right:1px;"></div>
+                       <div class="pure-u-1 sidebarDiv" bind="sidebarDiv">
+                 
+                          <div class="pure-menu pure-menu-scrollable custom-restricted">	
+                            <span class="pure-menu-heading" id="savedConnectionSpan">Saved Connections</span>
+                            <ul class="pure-menu-list" bind="menuListUl" id="menuListUl"></ul>
+                          </div>
+                  
+                      </div>
+               </div>
+               
+               <div class="connection-div-layout pure-u-4-5">
+               
+                     <div id = "newConnectionDiv" class="new-connection-div " bind="newConnectionDiv">
+                           
+                           <!-- <div class="panel panel-info"> -->
+                             <form class="pure-form pure-form-aligned">
+                             	  <fieldset class="new-connection-fieldset">
+                                     <!--   <div class="pure-control-group" style="border-bottom: 1px solid gray;">New Connection Editor </div> -->
+                                       
+                                      <legend class="new-connection-legend pure-input-1-2">New Connection Editor</legend>
+                                  
+                                      <div class="pure-control-group">
+                                           <label id="connectionNameLabel" for="name">Name:</label>
+                                           <input bind="connectionNameInput" id="connectionName" type="text" placeholder="Enter Connection Name" value="127.0.0.1" class="pure-input-1-3" required>
+                                       </div>
+                               
+                                       <div class="pure-control-group">
+                                           <label id="databaseTypeLabel" for="databaseType">Database Type:</label>
+                                            <select name="selection" id="databaseTypeSelect" bind="databaseTypeSelect" class="pure-input-1-3" required>
+                                            	  <option value="postgresql">PostgreSQL</option>  
+                                               <option value="mysql">MySQL</option>
+                                               <option value="mariadb">MariaDB</option>
+                                            </select>
+                                       </div>
+                               
+                                       <div class="pure-control-group">
+                                           <label id="databaseHostLabel" for="databaseHost">Database Host:</label>
+                                           <input bind="databaseHostInput" id="databaseHost" type="text" placeholder="Enter Database Host Address" value="localhost" class="pure-input-1-3" required>
+                                       </div>
+                               
+                                       <div class="pure-control-group">
+                                           <label id="databasePortLabel" for="databasePort">Database Port:</label>
+                                           <input bind="databasePortInput" id="databasePort" type="text" placeholder="Enter Database Port e.g. 3306" value="5432" class="pure-input-1-3" required>
+                                       </div>
+                                        <div class="pure-control-group">
+                                           <label id="databaseUserLabel" for="databaseUser">Database User:</label>
+                                           <input bind="databaseUserInput" id="databaseUser" type="text" placeholder="Enter Database User" value="postgres" class="pure-input-1-3" required>
+                                       </div>
+                                        <div class="pure-control-group">
+                                           <label id="databasePasswordLabel" for="databasePassword">Database Password:</label>
+                                           <input bind="databasePasswordInput" id="databasePassword" type="password" placeholder="Enter Database Password" class="pure-input-1-3" required>
+                                       </div>
+                                        <div class="pure-control-group">
+                                           <label id="databaseNameLabel" for="initialDatabase">Database Name:</label>
+                                           <input bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="Enter Database" class="pure-input-1-3" required>
+                                       </div>
+                                       <div class="pure-control-group" style="display:none;">
+                                           <label id="databaseSchemaLabel" for="initialSchema">Schema Name:</label>
+                                           <input bind="initialSchemaInput" id="initialSchema" type="text" placeholder="Enter Initial Schema" class="pure-input-1-3" required>
+                                       </div>
+                                       
+                                        <div class="pure-controls" id="newConnectionControlDiv">
+                                           <button type="button" id="databaseTestButton" bind="testDatabaseButton" class="pure-button pure-button-primary"><span>Test</span></button>
+                                           <button type="button" id="databaseSaveButton" bind="saveConnectionButton" class="button-success pure-button">Save</button>
+                                           <button type="button" id="databaseConnectButton" bind="databaseConnectButton" class="button-secondary pure-button">Connect</button>
+                                       </div>
+                                       
+                                       <div class="pure-controls" id="editConnectionControlDiv" style="display: none;">
+                                           <button type="button" id="connectionEditButton" bind="editConnectionButton" class="pure-button pure-button-primary"><span>Edit</span></button>
+                                           <button type="button" id="connectionEditCancelButton" bind="cancelEditConnectionButton" class="pure-button">Cancel</button>
+                                         
+                                       </div>
+                               			
+                                   </fieldset>
+                                </form>
+                            
+                           	 
+                           <!-- </div> --> <!--End Panel Div -->
+                         
+                         
+                      </div><!--End NewConnectionDiv -->
+                             
+                      <div class="sql-editor-div  grid-layout" bind="sqlEditorDiv" id="sqlEditorDiv" style="display: none;" >
+                                   
+                                <form class="pure-form pure-form-stacked">
+                                		<input type="hidden" id="currentConnectionNameInput" name="currentConnectionName">
+                                		<input type="hidden" id="currentDatabaseTypeInput" name="currentDatabaseType">
+                                		<input type="hidden" id="currentDatabaseUserInput" name="currentDatabaseUser">
+                                		<input type="hidden" id="currentDatabasePasswordInput" name="currentDatabasePassword">
+                                		<input type="hidden" id="currentDatabaseHostInput" name="currentDatabaseHost">
+                                		<input type="hidden" id="currentDatabasePortInput" name="currentDatabasePort">
+                                		<input type="hidden" id="currentInitialDatabaseInput" name="currentInitialDatabase">
+                                		
+									<div class="panel panel-info pure-input-3-4">
+										<div class="panel-heading">Query Editor </div>
+										<div class="panel-body">
+											<fieldset style="padding:2px; margin-top:5px;">
+											    <textarea id="queryTextArea" bind="queryTextArea" class="pure-input-1 no-resize" placeholder="Enter your query" rows="10" >SELECT * FROM</textarea>
+											</fieldset>	
+										    <div class="alert alert-info" id="connectionParameterSpan"></div>
+											<!-- <select name="querySelect" id="queryHistorySelect" bind="queryHistorySelect" class="pure-input-1" style="padding-bottom:2px;">
+													<option value="1">Query History</option>  
+											</select> -->
+										</div>
+										
+									<div class="panel-footer">
+										<div class="pure-controls pure-input-1-2">
+									       <button type="button" id="executeQueryBtn" bind="executeQueryButton" class="button-secondary pure-button">Preview Query Result</button>
+									    <!--    <button type="button" bind="saveQueryButton" class="button-success pure-button">Save Query</button> -->
+									    		
+									    </div>
+									</div>
+									</div>
+                                    
+                                    <!--
+									<div class="panel panel-info pure-input-1-2">
+										<div class="panel-heading">Saved Queries</div>
+										<div class="panel-body">
+											<div class="queryResultDiv pure-input-1 scrollable" bind="queryResultDiv" id="queryResultDiv" style="<!padding:2px; margin-top:5px;"> </div>
+										</div>
+										
+									</div>
+                                    -->
+                             </form>	
+                        
+                     </div><!-- End Sql Editor Div-->
+                   
+               </div>
+           
+           </div> <!-- End pure-g -->
+         
+       </div> <!-- End databaseLayoutDiv -->
+    
+    
+</div><!-- End databaseContainer -->
+ 
