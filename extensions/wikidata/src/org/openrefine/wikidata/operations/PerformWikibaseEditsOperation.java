@@ -320,6 +320,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                     }
                     
                     updatesDone++;
+                    _progress = (100*updatesDone) / totalItemUpdates;
                     if(_canceled) {
                         break;
                     }
