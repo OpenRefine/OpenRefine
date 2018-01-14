@@ -320,7 +320,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
         }
         if(error) {
             sb.append(" is missing");
-            logger.info("Connection Parameter errors::{}", sb.toString());
+            logger.debug("Connection Parameter errors::{}", sb.toString());
             response.sendError(HttpStatus.SC_BAD_REQUEST, sb.toString());
         }
        
