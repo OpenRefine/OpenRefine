@@ -26,6 +26,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
+import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 import org.wikidata.wdtk.datamodel.interfaces.SiteLink;
 
@@ -200,8 +201,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             ApiConnection connection = manager.getConnection();
 
-            //WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, schema.getBaseUri());
+            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseUri());
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseUri());
+            wbde.setEditAsBot(true);
             //wbde.disableEditing();
             
             // Evaluate the schema
@@ -242,13 +244,14 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                         newItemLibrary.setQid(newCell.getReconInternalId(), createdDoc.getItemId().getId());
                     } else {
                         // Existing item
-                        wbde.updateTermsStatements(update.getItemId(),
+                        ItemDocument currentDocument = (ItemDocument) wbdf.getEntityDocument(update.getItemId().getId());
+                        wbde.updateTermsStatements(currentDocument,
                                 update.getLabels(),
                                 update.getDescriptions(),
                                 update.getAliases(),
                                 new ArrayList<MonolingualTextValue>(),
                                 update.getAddedStatements(),
-                                update.getDeletedStatements(), _summary);   
+                                update.getDeletedStatements(), _summary);
                     }
                 } catch (MediaWikiApiErrorException e) {
                     // TODO Auto-generated catch block
