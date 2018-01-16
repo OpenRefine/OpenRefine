@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import java.util.Enumeration;
 
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;

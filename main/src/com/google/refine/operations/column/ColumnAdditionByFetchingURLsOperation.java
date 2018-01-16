@@ -350,7 +350,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         urlConnection.setRequestProperty(info.header, httpHeaders.get(headerLabel));
                     }
                 }
-//                    urlConnection.setRequestProperty(_headerKey, _headerValue);
 
                 try {
                     InputStream is = urlConnection.getInputStream();

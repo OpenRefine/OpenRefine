@@ -41,6 +41,8 @@ import com.google.refine.RefineServlet;
 
 abstract public class HttpHeadersSupport {
 
+    static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<String, HttpHeaderInfo>();
+
     static public class HttpHeaderInfo {
         final public String                 name;
         final public String                 header;
@@ -52,9 +54,7 @@ abstract public class HttpHeadersSupport {
             this.defaultValue = defaultValue;
         }
     }
-    
-    static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<String, HttpHeaderInfo>();
-    
+
     static {
         registerHttpHeader("User-Agent", RefineServlet.FULLNAME);
         registerHttpHeader("Accept", "*/*");
