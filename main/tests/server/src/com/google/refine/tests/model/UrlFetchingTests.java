@@ -42,6 +42,7 @@ import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -171,7 +172,7 @@ public class UrlFetchingTests extends RefineTest {
 
         // Inspect rows
         String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
-	if (ref_val.startsWith("HTTP error"))
+        if (ref_val.startsWith("HTTP error"))
             return;
         Assert.assertTrue(ref_val != "apple"); // just to make sure I picked the right column
         for (int i = 1; i < 4; i++) {
@@ -179,7 +180,7 @@ public class UrlFetchingTests extends RefineTest {
             // all random values should be equal due to caching
             Assert.assertEquals(project.rows.get(i).getCellValue(1).toString(), ref_val);
         }
-               Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning());
     }
 
     /**
@@ -207,6 +208,7 @@ public class UrlFetchingTests extends RefineTest {
                 50,
                 true,
                 null);
+
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
         process.startPerforming(pm);
@@ -223,6 +225,61 @@ public class UrlFetchingTests extends RefineTest {
         Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
         Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
         Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
+    }
+
+    @Test
+    public void testHttpHeaders() throws Exception {
+        Row row0 = new Row(2);
+        row0.setCell(0, new Cell("http://headers.jsontest.com", null));
+        /* 
+        http://headers.jsontest.com is a service which returns the HTTP request headers
+        as JSON. For example:
+        {
+           "X-Cloud-Trace-Context": "579a1a2ee5c778dfc0810a3bf131ba4e/11053223648711966807",
+           "Authorization": "Basic",
+           "Host": "headers.jsontest.com",
+           "User-Agent": "OpenRefine",
+           "Accept": "*"
+        }
+        */
+
+        project.rows.add(row0);
+
+        String userAgentValue =  "OpenRefine";
+        String authorizationValue = "Basic";
+        String acceptValue = "*/*";
+        String jsonString = "[{\"name\": \"authorization\",\"value\": \""+authorizationValue+
+                             "\"},{\"name\": \"user-agent\",\"value\": \""+userAgentValue+
+                             "\"},{\"name\": \"accept\",\"value\": \""+acceptValue+"\"}]";
+
+        JSONArray httpHeadersJson = new JSONArray(jsonString);
+
+        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+            "fruits",
+            "value",
+            OnError.StoreError,
+            "junk",
+            1,
+            50,
+            true,
+            httpHeadersJson);
+        ProcessManager pm = project.getProcessManager();
+        Process process = op.createProcess(project, options);
+        process.startPerforming(pm);
+        Assert.assertTrue(process.isRunning());
+        try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                Assert.fail("Test interrupted");
+            }
+        Assert.assertFalse(process.isRunning());
+
+        int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
+        JSONObject headersUsed = new JSONObject(project.rows.get(0).getCellValue(newCol).toString());
+        // Inspect the results we got from remote service
+        Assert.assertEquals(headersUsed.getString("User-Agent"), userAgentValue);
+        Assert.assertEquals(headersUsed.getString("Authorization"), authorizationValue);
+        Assert.assertEquals(headersUsed.getString("Accept"), acceptValue);
     }
 
 }
