@@ -541,7 +541,7 @@
         "throttle-delay": "Throttle delay",
         "milli": "milliseconds",
         "url-fetch": "Formulate the URLs to fetch:",
-        "http-headers": "Define any HTTP headers to be used when fetching URLs:",
+        "http-headers": "HTTP headers to be used when fetching URLs:",
         "enter-col-name": "Enter new column name",
         "split-col": "Split column",
         "several-col": "into several columns",
@@ -650,7 +650,8 @@
         "ctrl-enter": "Ctrl-Enter",
         "rows": "rows",
         "records": "records",
-        "show": "Show"
+        "show": "Show",
+        "hide": "Hide"
     },
     "core-buttons": {
         "cancel": "Cancel",
