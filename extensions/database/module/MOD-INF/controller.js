@@ -120,6 +120,8 @@ function init() {
     "project/scripts",
     module,
     [
+      "scripts/index/jquery.contextMenu.min.js",
+      "scripts/index/jquery.ui.position.min.js",
       "scripts/database-extension.js",
       "scripts/project/database-exporters.js"
     ]
