@@ -1,4 +1,4 @@
-This document present how you can contribute to the OpenRefine project. 
+This document present how you can contribute to the OpenRefine project. Please review also our [Governance model](https://github.com/OpenRefine/OpenRefine/blob/master/GOVERNANCE.md)
 
 ## Documentation, Questions or Problem
 

@@ -22,6 +22,7 @@ Contributing to the project
 ---------------------------
 * [Developers Guide & Architecture](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers)
 * [Contributing Guide](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
+* [Project Governance](https://github.com/OpenRefine/OpenRefine/blob/master/GOVERNANCE.md)
 
 Contact us
 ----------
