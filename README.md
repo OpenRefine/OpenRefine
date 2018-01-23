@@ -115,3 +115,4 @@ CURRENT CONTRIBUTORS
  - Matthias Findeisen
  - Mathieu Saby
  - Allan Nordhøy <epost@anotheragency.no>
+ - Tony Opara <tcbuzor@gmail.com>
