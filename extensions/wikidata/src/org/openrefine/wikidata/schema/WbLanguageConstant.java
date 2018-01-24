@@ -5,7 +5,15 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class WbLanguageConstant extends WbLanguageExpr {
+/**
+ * A constant that represents a Wikimedia language code.
+ * 
+ * TODO: migrate to a class more specific than String, with validation.
+ * 
+ * @author antonin
+ *
+ */
+public class WbLanguageConstant implements WbValueExpr<String> {
     
     protected String _langId;
     protected String _langLabel;

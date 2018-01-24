@@ -7,31 +7,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.model.Cell;
 
+/**
+ * A language variable generates a language code from a cell.
+ */
+public class WbLanguageVariable extends WbVariableExpr<String> {
 
-public class WbLanguageVariable extends WbLanguageExpr {
-    
-    private String columnName;
-    
-    @JsonCreator
-    public WbLanguageVariable(
-            @JsonProperty("columnName") String columnName) {
-        this.columnName = columnName;
-    }
-    
     @Override
-    public String evaluate(ExpressionContext ctxt)
+    public String fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
-        Cell cell = ctxt.getCellByName(getColumnName());
-        if (cell != null && cell.value != null && !cell.value.toString().isEmpty()) {
+        if (cell.value != null && !cell.value.toString().isEmpty()) {
             // TODO some validation here?
             return cell.value.toString();
         }
         throw new SkipSchemaExpressionException();
     }
-
-    @JsonProperty("columnName")
-    public String getColumnName() {
-        return columnName;
-    }
-
 }
