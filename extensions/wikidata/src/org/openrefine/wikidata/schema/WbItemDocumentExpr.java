@@ -19,13 +19,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class WbItemDocumentExpr extends JacksonJsonizable {
 
-    private WbValueExpr<? extends ItemIdValue> subject;
+    private WbExpression<? extends ItemIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
     
     @JsonCreator
     public WbItemDocumentExpr(
-            @JsonProperty("subject") WbValueExpr<? extends ItemIdValue> subjectExpr,
+            @JsonProperty("subject") WbExpression<? extends ItemIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         this.subject = subjectExpr;
@@ -52,7 +52,7 @@ public class WbItemDocumentExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("subject")
-    public WbValueExpr<? extends ItemIdValue> getSubject() {
+    public WbExpression<? extends ItemIdValue> getSubject() {
         return subject;
     }
 

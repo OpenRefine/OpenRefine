@@ -1,14 +1,13 @@
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbNameDescExpr extends JacksonJsonizable {
+public class WbNameDescExpr {
     
     enum NameDescrType {
         LABEL,

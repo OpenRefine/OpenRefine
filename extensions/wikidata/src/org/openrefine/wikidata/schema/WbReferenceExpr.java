@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbReferenceExpr extends JacksonJsonizable {
+public class WbReferenceExpr implements WbExpression<Reference> {
     private List<WbSnakExpr> snakExprs;
     
     @JsonCreator
@@ -23,6 +22,7 @@ public class WbReferenceExpr extends JacksonJsonizable {
         this.snakExprs = snakExprs;
     }
     
+    @Override
     public Reference evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
         for (WbSnakExpr expr : getSnaks()) {

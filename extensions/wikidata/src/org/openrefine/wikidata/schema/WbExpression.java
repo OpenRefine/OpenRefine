@@ -1,10 +1,6 @@
 package org.openrefine.wikidata.schema;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
     @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"), 
     @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
   })
-public interface  WbValueExpr<T>  {
+public interface  WbExpression<T>  {
 
     /**
      * Evaluates the value expression in a given context,

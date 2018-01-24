@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author antonin
  *
  */
-public class WbLanguageConstant implements WbValueExpr<String> {
+public class WbLanguageConstant implements WbExpression<String> {
     
     protected String _langId;
     protected String _langLabel;

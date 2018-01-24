@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author antonin
  *
  */
-public class WbPropConstant implements WbValueExpr<PropertyIdValue> {
+public class WbPropConstant implements WbExpression<PropertyIdValue> {
     
     private String pid;
     private String label;

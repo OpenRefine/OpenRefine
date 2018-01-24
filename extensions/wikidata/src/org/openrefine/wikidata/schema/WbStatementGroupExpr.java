@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -15,14 +14,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbStatementGroupExpr extends JacksonJsonizable {
+public class WbStatementGroupExpr {
     
-    private WbValueExpr<? extends PropertyIdValue> propertyExpr;
+    private WbExpression<? extends PropertyIdValue> propertyExpr;
     private List<WbStatementExpr> statementExprs;
     
     @JsonCreator
     public WbStatementGroupExpr(
-            @JsonProperty("property") WbValueExpr<? extends PropertyIdValue> propertyExpr,
+            @JsonProperty("property") WbExpression<? extends PropertyIdValue> propertyExpr,
             @JsonProperty("statements") List<WbStatementExpr> claimExprs) {
         this.propertyExpr = propertyExpr;
         this.statementExprs = claimExprs;
@@ -46,7 +45,7 @@ public class WbStatementGroupExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("property")
-    public WbValueExpr<? extends PropertyIdValue> getProperty() {
+    public WbExpression<? extends PropertyIdValue> getProperty() {
         return propertyExpr;
     }
 

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbStringConstant implements WbValueExpr<StringValue> {
+public class WbStringConstant implements WbExpression<StringValue> {
     
     private String value;
     
