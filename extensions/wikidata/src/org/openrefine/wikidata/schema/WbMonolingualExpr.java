@@ -4,20 +4,21 @@ import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbMonolingualExpr extends WbValueExpr {
+public class WbMonolingualExpr implements WbValueExpr<MonolingualTextValue> {
     
-    private WbLanguageExpr languageExpr;
-    private WbStringExpr valueExpr;
+    private WbValueExpr<? extends String> languageExpr;
+    private WbValueExpr<? extends StringValue> valueExpr;
     
     @JsonCreator
     public WbMonolingualExpr(
-            @JsonProperty("language") WbLanguageExpr languageExpr,
-            @JsonProperty("value") WbStringExpr valueExpr) {
+            @JsonProperty("language") WbValueExpr<? extends String> languageExpr,
+            @JsonProperty("value") WbValueExpr<? extends StringValue> valueExpr) {
         this.languageExpr = languageExpr;
         this.valueExpr = valueExpr;
     }
@@ -45,12 +46,12 @@ public class WbMonolingualExpr extends WbValueExpr {
     }
 
     @JsonProperty("language")
-    public WbLanguageExpr getLanguageExpr() {
+    public WbValueExpr<? extends String> getLanguageExpr() {
         return languageExpr;
     }
 
     @JsonProperty("value")
-    public WbStringExpr getValueExpr() {
+    public WbValueExpr<? extends StringValue> getValueExpr() {
         return valueExpr;
     }
 }

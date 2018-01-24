@@ -10,7 +10,10 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
-
+/**
+ * The base interface for all expressions, which evaluate to a
+ * particular type T in an ExpressionContext.
+ */
 @JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
       include=JsonTypeInfo.As.PROPERTY,
       property="type")
@@ -26,20 +29,15 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
     @Type(value = WbDateConstant.class, name = "wbdateconstant"), 
     @Type(value = WbDateVariable.class, name = "wbdatevariable"),
     @Type(value = WbMonolingualExpr.class, name = "wbmonolingualexpr"),
+    @Type(value = WbPropConstant.class, name = "wbpropconstant"),
+    @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"), 
+    @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
   })
-public abstract class WbValueExpr extends JacksonJsonizable {
-    /* An expression that represents a Wikibase value,
-     * i.e. anything that can be on the right-hand side
-     * of a statement.
-     */
-    
-    /*
+public interface  WbValueExpr<T>  {
+
+    /**
      * Evaluates the value expression in a given context,
-     * returns a wikibase value suitable to be the target of a claim.
+     * returns a Wikibase value suitable to be the target of a claim.
      */
-    public abstract Value evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException;
-    
-    public static WbValueExpr fromJSON(JSONObject obj) throws JSONException {
-        return fromJSONClass(obj, WbValueExpr.class);
-    }
+    public T evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException;
 }

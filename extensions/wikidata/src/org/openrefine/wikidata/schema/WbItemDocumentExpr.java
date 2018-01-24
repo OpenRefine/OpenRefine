@@ -10,16 +10,22 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
+/**
+ * The representation of an item document, which can contain
+ * variables both for its own id and in its contents.
+ * 
+ * @author antonin
+ *
+ */
 public class WbItemDocumentExpr extends JacksonJsonizable {
 
-    private WbItemExpr subject;
+    private WbValueExpr<? extends ItemIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
     
     @JsonCreator
     public WbItemDocumentExpr(
-            @JsonProperty("subject") WbItemExpr subjectExpr,
+            @JsonProperty("subject") WbValueExpr<? extends ItemIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         this.subject = subjectExpr;
@@ -46,7 +52,7 @@ public class WbItemDocumentExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("subject")
-    public WbItemExpr getSubject() {
+    public WbValueExpr<? extends ItemIdValue> getSubject() {
         return subject;
     }
 

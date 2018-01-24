@@ -5,38 +5,19 @@ import java.text.ParseException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.model.Cell;
 
 
-public class WbDateVariable extends WbDateExpr {
-    
-    private String columnName;
-    
-    @JsonCreator
-    public WbDateVariable(
-            @JsonProperty("columnName") String columnName) {
-        this.columnName = columnName;
-    }
+public class WbDateVariable extends WbVariableExpr<TimeValue> {
 
     @Override
-    public TimeValue evaluate(ExpressionContext ctxt)
+    public TimeValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
-        Cell cell = ctxt.getCellByName(columnName);
-        if (cell != null) {
-            try {
-                // TODO accept parsed dates (without converting them to strings)
-                return WbDateConstant.parse(cell.value.toString());
-            } catch (ParseException e) {
-            }
+        try {
+            // TODO accept parsed dates (without converting them to strings)
+            return WbDateConstant.parse(cell.value.toString());
+        } catch (ParseException e) {
+            throw new SkipSchemaExpressionException();
         }
-        throw new SkipSchemaExpressionException();
-    }
-
-    @JsonProperty("columnName")
-    public String getColumnName() {
-        return columnName;
     }
 }

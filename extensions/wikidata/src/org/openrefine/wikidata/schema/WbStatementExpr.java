@@ -30,13 +30,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WbStatementExpr extends JacksonJsonizable {
     
-    private WbValueExpr mainSnakValueExpr;
+    private WbValueExpr<? extends Value> mainSnakValueExpr;
     private List<WbSnakExpr> qualifierExprs;
     private List<WbReferenceExpr> referenceExprs;
     
     @JsonCreator
     public WbStatementExpr(
-            @JsonProperty("value") WbValueExpr mainSnakValueExpr,
+            @JsonProperty("value") WbValueExpr<? extends Value> mainSnakValueExpr,
             @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
             @JsonProperty("references") List<WbReferenceExpr> referenceExprs) {
         this.mainSnakValueExpr = mainSnakValueExpr;
@@ -99,7 +99,7 @@ public class WbStatementExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("value")
-    public WbValueExpr getMainsnak() {
+    public WbValueExpr<? extends Value> getMainsnak() {
         return mainSnakValueExpr;
     }
 

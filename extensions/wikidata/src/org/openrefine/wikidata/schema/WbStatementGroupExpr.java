@@ -17,12 +17,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WbStatementGroupExpr extends JacksonJsonizable {
     
-    private WbPropExpr propertyExpr;
+    private WbValueExpr<? extends PropertyIdValue> propertyExpr;
     private List<WbStatementExpr> statementExprs;
     
     @JsonCreator
     public WbStatementGroupExpr(
-            @JsonProperty("property") WbPropExpr propertyExpr,
+            @JsonProperty("property") WbValueExpr<? extends PropertyIdValue> propertyExpr,
             @JsonProperty("statements") List<WbStatementExpr> claimExprs) {
         this.propertyExpr = propertyExpr;
         this.statementExprs = claimExprs;
@@ -46,7 +46,7 @@ public class WbStatementGroupExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("property")
-    public WbPropExpr getProperty() {
+    public WbValueExpr<? extends PropertyIdValue> getProperty() {
         return propertyExpr;
     }
 

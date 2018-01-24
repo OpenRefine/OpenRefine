@@ -6,9 +6,13 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-public class WbPropConstant extends WbPropExpr {
-    /* A constant property, that does not change depending on the row */
+/**
+ * A constant property, that does not change depending on the row
+ * 
+ * @author antonin
+ *
+ */
+public class WbPropConstant implements WbValueExpr<PropertyIdValue> {
     
     private String pid;
     private String label;

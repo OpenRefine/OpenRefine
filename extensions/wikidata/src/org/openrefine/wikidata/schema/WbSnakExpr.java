@@ -13,13 +13,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WbSnakExpr extends JacksonJsonizable {
     
-    private WbPropExpr prop;
-    private WbValueExpr value;
+    private WbValueExpr<? extends PropertyIdValue> prop;
+    private WbValueExpr<? extends Value> value;
     
     @JsonCreator
     public WbSnakExpr(
-            @JsonProperty("prop") WbPropExpr propExpr,
-            @JsonProperty("value") WbValueExpr valueExpr) {
+            @JsonProperty("prop") WbValueExpr<? extends PropertyIdValue> propExpr,
+            @JsonProperty("value") WbValueExpr<? extends Value> valueExpr) {
         this.prop = propExpr;
         this.value = valueExpr;
     }
@@ -31,12 +31,12 @@ public class WbSnakExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("prop")
-    public WbPropExpr getProp() {
+    public WbValueExpr<? extends PropertyIdValue> getProp() {
         return prop;
     }
 
     @JsonProperty("value")
-    public WbValueExpr getValue() {
+    public WbValueExpr<? extends Value> getValue() {
         return value;
     }
 }
