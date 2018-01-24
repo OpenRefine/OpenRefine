@@ -10,15 +10,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbMonolingualExpr implements WbValueExpr<MonolingualTextValue> {
+public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     
-    private WbValueExpr<? extends String> languageExpr;
-    private WbValueExpr<? extends StringValue> valueExpr;
+    private WbExpression<? extends String> languageExpr;
+    private WbExpression<? extends StringValue> valueExpr;
     
     @JsonCreator
     public WbMonolingualExpr(
-            @JsonProperty("language") WbValueExpr<? extends String> languageExpr,
-            @JsonProperty("value") WbValueExpr<? extends StringValue> valueExpr) {
+            @JsonProperty("language") WbExpression<? extends String> languageExpr,
+            @JsonProperty("value") WbExpression<? extends StringValue> valueExpr) {
         this.languageExpr = languageExpr;
         this.valueExpr = valueExpr;
     }
@@ -46,12 +46,12 @@ public class WbMonolingualExpr implements WbValueExpr<MonolingualTextValue> {
     }
 
     @JsonProperty("language")
-    public WbValueExpr<? extends String> getLanguageExpr() {
+    public WbExpression<? extends String> getLanguageExpr() {
         return languageExpr;
     }
 
     @JsonProperty("value")
-    public WbValueExpr<? extends StringValue> getValueExpr() {
+    public WbExpression<? extends StringValue> getValueExpr() {
         return valueExpr;
     }
 }

@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +16,7 @@ import com.google.refine.model.Cell;
  * @param <T>
  *      the type of Wikibase value returned by the expression.
  */
-public abstract class WbVariableExpr<T> implements WbValueExpr<T> {
+public abstract class WbVariableExpr<T> implements WbExpression<T> {
 
     private String columnName;
     

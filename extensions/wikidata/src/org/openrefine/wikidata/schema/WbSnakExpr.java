@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -11,19 +10,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbSnakExpr extends JacksonJsonizable {
+public class WbSnakExpr implements WbExpression<Snak> {
     
-    private WbValueExpr<? extends PropertyIdValue> prop;
-    private WbValueExpr<? extends Value> value;
+    private WbExpression<? extends PropertyIdValue> prop;
+    private WbExpression<? extends Value> value;
     
     @JsonCreator
     public WbSnakExpr(
-            @JsonProperty("prop") WbValueExpr<? extends PropertyIdValue> propExpr,
-            @JsonProperty("value") WbValueExpr<? extends Value> valueExpr) {
+            @JsonProperty("prop") WbExpression<? extends PropertyIdValue> propExpr,
+            @JsonProperty("value") WbExpression<? extends Value> valueExpr) {
         this.prop = propExpr;
         this.value = valueExpr;
     }
 
+    @Override
     public Snak evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = getProp().evaluate(ctxt);
         Value evaluatedValue = value.evaluate(ctxt);
@@ -31,12 +31,12 @@ public class WbSnakExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("prop")
-    public WbValueExpr<? extends PropertyIdValue> getProp() {
+    public WbExpression<? extends PropertyIdValue> getProp() {
         return prop;
     }
 
     @JsonProperty("value")
-    public WbValueExpr<? extends Value> getValue() {
+    public WbExpression<? extends Value> getValue() {
         return value;
     }
 }

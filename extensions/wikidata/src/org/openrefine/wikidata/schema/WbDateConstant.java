@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 
 
-public class WbDateConstant implements WbValueExpr<TimeValue> {
+public class WbDateConstant implements WbExpression<TimeValue> {
 
     public static Map<SimpleDateFormat,Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat,Integer>builder()
         .put(new SimpleDateFormat("yyyy"), 9)

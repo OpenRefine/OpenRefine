@@ -1,18 +1,10 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -28,15 +20,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbStatementExpr extends JacksonJsonizable {
+public class WbStatementExpr {
     
-    private WbValueExpr<? extends Value> mainSnakValueExpr;
+    private WbExpression<? extends Value> mainSnakValueExpr;
     private List<WbSnakExpr> qualifierExprs;
     private List<WbReferenceExpr> referenceExprs;
     
     @JsonCreator
     public WbStatementExpr(
-            @JsonProperty("value") WbValueExpr<? extends Value> mainSnakValueExpr,
+            @JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
             @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
             @JsonProperty("references") List<WbReferenceExpr> referenceExprs) {
         this.mainSnakValueExpr = mainSnakValueExpr;
@@ -54,7 +46,8 @@ public class WbStatementExpr extends JacksonJsonizable {
         return snakGroups;
     }
     
-    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId) throws SkipSchemaExpressionException {
+    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId)
+            throws SkipSchemaExpressionException {
         Value mainSnakValue = getMainsnak().evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
         
@@ -99,7 +92,7 @@ public class WbStatementExpr extends JacksonJsonizable {
     }
 
     @JsonProperty("value")
-    public WbValueExpr<? extends Value> getMainsnak() {
+    public WbExpression<? extends Value> getMainsnak() {
         return mainSnakValueExpr;
     }
 

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class WbLocationConstant implements WbValueExpr<GlobeCoordinatesValue> {
+public class WbLocationConstant implements WbExpression<GlobeCoordinatesValue> {
     
     private String value;
     private GlobeCoordinatesValue parsed;

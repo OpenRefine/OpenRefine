@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents an item that does not vary,
  * it is independent of the row.
  */
-public class WbItemConstant implements WbValueExpr<ItemIdValue> {
+public class WbItemConstant implements WbExpression<ItemIdValue> {
     
     private String qid;
     private String label;
