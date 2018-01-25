@@ -33,30 +33,129 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeSuite;
 
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.RefineServlet;
+import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
+/**
+ * A base class containing various utilities to help testing Refine.
+ */
 public class RefineTest {
 
     protected Logger logger;
+    
+    protected RefineServlet servlet;
+    private List<Project> projects = new ArrayList<Project>();
+    private List<ImportingJob> importingJobs = new ArrayList<ImportingJob>();
 
     @BeforeSuite
     public void init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
+        ProjectManager.singleton = new ProjectManagerStub();
+    }
+    
+    /**
+     * Helper to create a project from a CSV encoded as a file. Not much
+     * control is given on the import options, because this method is intended
+     * to be a quick way to create a project for a test. For more control over
+     * the import, just call the importer directly.
+     * 
+     * The projects created via this method and their importing jobs will be disposed of
+     * at the end of each test.
+     * 
+     * @param projectName
+     *       the name of the project to create
+     * @param input
+     *       the content of the file, encoded as a CSV (with "," as a separator)
+     * @return
+     */
+    protected Project createCSVProject(String projectName, String input) {
+        Project project = new Project();
+        
+        ProjectMetadata metadata = new ProjectMetadata();
+        metadata.setName(projectName);
+        
+        JSONObject options = mock(JSONObject.class);
+        prepareImportOptions(options, ",", -1, 0, 0, 1, false, false);
+        
+        servlet = new RefineServletStub();
+        ImportingManager.initialize(servlet);
+        ImportingJob job = ImportingManager.createJob();
+        
+        SeparatorBasedImporter importer = new SeparatorBasedImporter();
+        
+        List<Exception> exceptions = new ArrayList<Exception>();
+        importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
+        project.update();
+        ProjectManager.singleton.registerProject(project, metadata);
+        
+        projects.add(project);
+        importingJobs.add(job);
+        return project;
+    }
+    
+    /**
+     * Initializes the importing options for the CSV importer.
+     * @param options
+     * @param sep
+     * @param limit
+     * @param skip
+     * @param ignoreLines
+     * @param headerLines
+     * @param guessValueType
+     * @param ignoreQuotes
+     */
+    private void prepareImportOptions(JSONObject options,
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+            
+            whenGetStringOption("separator", options, sep);
+            whenGetIntegerOption("limit", options, limit);
+            whenGetIntegerOption("skipDataLines", options, skip);
+            whenGetIntegerOption("ignoreLines", options, ignoreLines);
+            whenGetIntegerOption("headerLines", options, headerLines);
+            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+    }
+    
+    /**
+     * Cleans up the projects and jobs created with createCSVProject
+     */
+    @AfterMethod
+    private void cleanupProjectsAndJobs() {
+        for(ImportingJob job : importingJobs) {
+            ImportingManager.disposeJob(job.id);
+        }
+        for(Project project: projects) {
+            ProjectManager.singleton.deleteProject(project.id);
+        }
+        servlet = null;
     }
             
     /**
