@@ -101,15 +101,11 @@ public class ImportingUtilities {
         HttpServletRequest request,
         HttpServletResponse response,
         Properties parameters,
-        final ImportingJob job,
-        JSONObject config) throws IOException, ServletException {
+        final ImportingJob job) throws IOException, ServletException {
         
         JSONObject retrievalRecord = new JSONObject();
-        JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
-        JSONUtilities.safePut(config, "state", "loading-raw-data");
+        job.setState("loading-raw-data");
         
-        final JSONObject progress = new JSONObject();
-        JSONUtilities.safePut(config, "progress", progress);
         try {
             ImportingUtilities.retrieveContentFromPostRequest(
                 request,
@@ -119,10 +115,7 @@ public class ImportingUtilities {
                 new Progress() {
                     @Override
                     public void setProgress(String message, int percent) {
-                        if (message != null) {
-                            JSONUtilities.safePut(progress, "message", message);
-                        }
-                        JSONUtilities.safePut(progress, "percent", percent);
+                        job.setProgress(percent, message);
                     }
                     @Override
                     public boolean isCanceled() {
@@ -131,34 +124,34 @@ public class ImportingUtilities {
                 }
             );
         } catch (Exception e) {
-            JSONUtilities.safePut(config, "state", "error");
-            JSONUtilities.safePut(config, "error", "Error uploading data");
-            JSONUtilities.safePut(config, "errorDetails", e.getLocalizedMessage());
+            job.setError("Error uploading data", e.getLocalizedMessage());
             return;
         }
         
-        JSONArray fileSelectionIndexes = new JSONArray();
-        JSONUtilities.safePut(config, "fileSelection", fileSelectionIndexes);
+        job.setRetrievalRecord(retrievalRecord);
         
+        List<Integer> fileSelectionIndexes = new ArrayList<Integer>();
         String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, fileSelectionIndexes);
+        job.setFileSelection(fileSelectionIndexes);
+        
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
-        JSONArray rankedFormats = new JSONArray();
+        List<String> rankedFormats = new ArrayList<String>();
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
-        JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
+        job.setRankedFormats(rankedFormats);
         
-        JSONUtilities.safePut(config, "state", "ready");
-        JSONUtilities.safePut(config, "hasData", true);
-        config.remove("progress");
+        job.setState("ready");
+        job.setHasData(true);
+        job.removeProgress();
     }
     
-    static public void updateJobWithNewFileSelection(ImportingJob job, JSONArray fileSelectionArray) {
+    static public void updateJobWithNewFileSelection(ImportingJob job, List<Integer> fileSelectionArray) {
         job.setFileSelection(fileSelectionArray);
         
         String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
-        JSONArray rankedFormats = new JSONArray();
+        List<String> rankedFormats = new ArrayList<String>();
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
         job.setRankedFormats(rankedFormats);
     }
@@ -753,10 +746,10 @@ public class ImportingUtilities {
      * 
      * @param job ImportingJob object
      * @param retrievalRecord JSON object containing "files" key with all our files
-     * @param fileSelectionIndexes JSON array of selected file indices matching best format
+     * @param fileSelectionIndexes List of selected file indices matching best format
      * @return best (highest frequency) format
      */
-    static public String autoSelectFiles(ImportingJob job, JSONObject retrievalRecord, JSONArray fileSelectionIndexes) {
+    static public String autoSelectFiles(ImportingJob job, JSONObject retrievalRecord, List<Integer> fileSelectionIndexes) {
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
         
@@ -786,7 +779,7 @@ public class ImportingUtilities {
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
             // If there's no archive, then select everything
             for (int i = 0; i < count; i++) {
-                JSONUtilities.append(fileSelectionIndexes, i);
+                fileSelectionIndexes.add(i);
             }
         } else {
             // Otherwise, select files matching the best format
@@ -794,31 +787,31 @@ public class ImportingUtilities {
                 JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
                 String format = JSONUtilities.getString(fileRecord, "format", null);
                 if (format != null && format.equals(bestFormat)) {
-                    JSONUtilities.append(fileSelectionIndexes, i);
+                    fileSelectionIndexes.add(i);
                 }
             }
             
             // If nothing matches the best format but we have some files,
             // then select them all
-            if (fileSelectionIndexes.length() == 0 && count > 0) {
+            if (fileSelectionIndexes.size() == 0 && count > 0) {
                 for (int i = 0; i < count; i++) {
-                    JSONUtilities.append(fileSelectionIndexes, i);
+                    fileSelectionIndexes.add(i);
                 }
             }
         }
         return bestFormat;
     }
     
-    static public String getCommonFormatForSelectedFiles(ImportingJob job, JSONArray fileSelectionIndexes) {
+    static public String getCommonFormatForSelectedFiles(ImportingJob job, List<Integer> fileSelectionIndexes) {
         JSONObject retrievalRecord = job.getRetrievalRecord();
         
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
         
         JSONArray fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
-        int count = fileSelectionIndexes.length();
+        int count = fileSelectionIndexes.size();
         for (int i = 0; i < count; i++) {
-            int index = JSONUtilities.getIntElement(fileSelectionIndexes, i, -1);
+            int index = fileSelectionIndexes.get(i);
             if (index >= 0 && index < fileRecords.length()) {
                 JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecords, index);
                 String format = JSONUtilities.getString(fileRecord, "format", null);
@@ -885,7 +878,7 @@ public class ImportingUtilities {
         return bestFormat;
     }
     
-    static void rankFormats(ImportingJob job, final String bestFormat, JSONArray rankedFormats) {
+    static void rankFormats(ImportingJob job, final String bestFormat, List<String> rankedFormats) {
         final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
         
         boolean download = bestFormat == null ? true :
@@ -939,7 +932,7 @@ public class ImportingUtilities {
         }
         
         for (String format : formats) {
-            JSONUtilities.append(rankedFormats, format);
+            rankedFormats.add(format);
         }
     }
 

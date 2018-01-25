@@ -42,7 +42,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +68,8 @@ public class CreateProjectCommand extends Command {
         try {
             Properties parameters = ParsingUtilities.parseUrlParameters(request);
             ImportingJob job = ImportingManager.createJob();
-            JSONObject config = job.getOrCreateDefaultConfig();
             ImportingUtilities.loadDataAndPrepareJob(
-                    request, response, parameters, job, config);
+                    request, response, parameters, job);
             
             String format = parameters.getProperty("format");
             
@@ -93,9 +91,9 @@ public class CreateProjectCommand extends Command {
                            "\\t".equals(parameters.getProperty("separator"))) {
                     format = "text/line-based/*sv";
                 } else {
-                    JSONArray rankedFormats = JSONUtilities.getArray(config, "rankedFormats");
-                    if (rankedFormats != null && rankedFormats.length() > 0) {
-                        format = rankedFormats.getString(0);
+                    List<String> rankedFormats = job.getRankedFormats();
+                    if (rankedFormats.size() > 0) {
+                        format = rankedFormats.get(0);
                     }
                 }
                 
