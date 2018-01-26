@@ -55,7 +55,12 @@ public class JythonHasFieldsWrapper extends PyObject {
     @Override
     public PyObject __finditem__(PyObject key) {
         String k = (String) key.__tojava__(String.class);
-        Object v = _obj.getField(k, _bindings);
+        return __findattr_ex__(k);
+    }
+
+    @Override
+    public PyObject __findattr_ex__(String name) {
+        Object v = _obj.getField(name, _bindings);
         if (v != null) {
             if (v instanceof PyObject) {
                 return (PyObject) v;
@@ -70,5 +75,4 @@ public class JythonHasFieldsWrapper extends PyObject {
             return null;
         }
     }
-
 }
