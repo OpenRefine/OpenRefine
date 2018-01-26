@@ -36,7 +36,7 @@ public class PackageExtension {
     public static final String JSON_KEY_LICENSE = "license";
     public static final String JSON_KEY_VERSION = "version";
     
-    public static String DATAPAAKCAGE_TEMPLATE_FILE = "datapackage-template.json";
+    public static String DATAPAAKCAGE_TEMPLATE_FILE = "schemas/datapackage-template.json";
     
     /**
      * Do the package since the final spec for the compression/bundle are not settled yet.

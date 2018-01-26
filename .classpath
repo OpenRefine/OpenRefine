@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/database/src"/>
@@ -99,7 +100,7 @@
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/postgresql-42.1.4.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/mariadb-java-client-2.2.0.jar"/>
-    <classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-core-asl-1.9.13.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jasypt-1.9.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-csv-1.5.jar"/>
