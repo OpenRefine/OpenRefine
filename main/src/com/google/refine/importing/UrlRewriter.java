@@ -37,6 +37,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
+/**
+ * Given a URL rewrittenUrl, the interface will rewrite it into different URLS based on the rewrittenUrl
+ * The result will be stored in the Result and can be used for download, parsing etc.
+ * Typical use is to parse the data package json file.
+ * @see DataPackageUrlRewriter
+ */
 public interface UrlRewriter {
     static public class Result {
         public String rewrittenUrl;
@@ -58,6 +64,13 @@ public interface UrlRewriter {
         }
     }
     
+    /**
+     * Parse the url and output the Result
+     * @param url
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     */
     public List<Result> rewrite(String url) throws MalformedURLException, IOException;
     
     public boolean filter(String url);
