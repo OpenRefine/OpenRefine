@@ -48,6 +48,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 import com.google.refine.ProjectManager;
@@ -76,7 +77,27 @@ public class RefineTest {
     @BeforeSuite
     public void init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
+    }
+    
+    @BeforeMethod
+    protected void initProjectManager() {
+        servlet = new RefineServletStub();
         ProjectManager.singleton = new ProjectManagerStub();
+        ImportingManager.initialize(servlet);
+    }
+    
+    /**
+     * Helper to create a project from a CSV encoded as a file. Not much
+     * control is given on the import options, because this method is intended
+     * to be a quick way to create a project for a test. For more control over
+     * the import, just call the importer directly.
+     * 
+     * @param input
+     *          contents of the CSV file to create the project from
+     * @return
+     */
+    protected Project createCSVProject(String input) {
+        return createCSVProject("test project", input);
     }
     
     /**
@@ -103,8 +124,6 @@ public class RefineTest {
         JSONObject options = mock(JSONObject.class);
         prepareImportOptions(options, ",", -1, 0, 0, 1, false, false);
         
-        servlet = new RefineServletStub();
-        ImportingManager.initialize(servlet);
         ImportingJob job = ImportingManager.createJob();
         
         SeparatorBasedImporter importer = new SeparatorBasedImporter();
@@ -148,7 +167,7 @@ public class RefineTest {
      * Cleans up the projects and jobs created with createCSVProject
      */
     @AfterMethod
-    private void cleanupProjectsAndJobs() {
+    protected void cleanupProjectsAndJobs() {
         for(ImportingJob job : importingJobs) {
             ImportingManager.disposeJob(job.id);
         }
