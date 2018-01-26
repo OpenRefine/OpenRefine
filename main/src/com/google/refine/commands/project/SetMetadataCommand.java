@@ -49,6 +49,12 @@ import com.google.refine.model.medadata.IMetadata;
 import com.google.refine.model.medadata.MetadataFactory;
 import com.google.refine.model.medadata.MetadataFormat;
 
+/**
+ * We are noting save other metadata file for now, only the ProjectMetaData is saved.
+ * But we keep this command in case we want to save the medadata which requires to be saved for different reasons. 
+ * For example we cannot restore the original metadata if don't save it
+ *
+ */
 public class SetMetadataCommand extends Command {
 
     @Override
