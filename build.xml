@@ -30,7 +30,6 @@
 
     <property name="webapp.dir" value="${main.dir}/webapp" />
     <property name="webapp.src.dir" value="${main.dir}/src" />
-    <property name="table-schema.src.dir" value="${basedir}/tableschema-java/src/main/java/" />
     <property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib" />
     <property name="webapp.classes.dir" value="${webapp.dir}/WEB-INF/classes" />
 
