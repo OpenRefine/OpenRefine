@@ -33,37 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.browsing.facets;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineServlet;
-import com.google.refine.importers.SeparatorBasedImporter;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingManager;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
-import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 
 public class TextSearchFacetTests extends RefineTest {
@@ -81,7 +65,8 @@ public class TextSearchFacetTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() throws JSONException, IOException, ModelException {
-        project = createCSVProject("TextSearchFacet test", "Value\n"
+        project = createCSVProject("TextSearchFacet",
+             "Value\n"
             + "a\n"
             + "b\n"
             + "ab\n"

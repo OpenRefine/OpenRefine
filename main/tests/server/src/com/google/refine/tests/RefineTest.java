@@ -38,10 +38,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,10 +60,13 @@ import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
+import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.JSONUtilities;
 
 /**
@@ -70,6 +76,8 @@ public class RefineTest {
 
     protected Logger logger;
     
+    boolean testFailed;
+    protected File workspaceDir;
     protected RefineServlet servlet;
     private List<Project> projects = new ArrayList<Project>();
     private List<ImportingJob> importingJobs = new ArrayList<ImportingJob>();
@@ -77,13 +85,43 @@ public class RefineTest {
     @BeforeSuite
     public void init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
+        try {
+            workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+            File jsonPath = new File(workspaceDir, "workspace.json");
+            FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" + 
+                    ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
+                    "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
+                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}}}}");
+            FileProjectManager.initialize(workspaceDir);
+        } catch (IOException e) {
+            workspaceDir = null;
+            e.printStackTrace();
+        }
+        // This just keeps track of any failed test, for cleanupWorkspace
+        testFailed = false;
     }
-    
+
     @BeforeMethod
     protected void initProjectManager() {
         servlet = new RefineServletStub();
         ProjectManager.singleton = new ProjectManagerStub();
         ImportingManager.initialize(servlet);
+    }
+    
+    protected Project createProjectWithColumns(String projectName, String... columnNames) throws IOException, ModelException {
+        Project project = new Project();
+        ProjectMetadata pm = new ProjectMetadata();
+        pm.setName(projectName);
+        ProjectManager.singleton.registerProject(project, pm);
+
+        if (columnNames != null) {
+            for(String columnName : columnNames) {
+                int index = project.columnModel.allocateNewCellIndex();
+                Column column = new Column(index,columnName);
+                project.columnModel.addColumn(index, column, true);
+            }
+        }
+        return project;
     }
     
     /**
@@ -116,6 +154,8 @@ public class RefineTest {
      * @return
      */
     protected Project createCSVProject(String projectName, String input) {
+
+        
         Project project = new Project();
         
         ProjectMetadata metadata = new ProjectMetadata();
