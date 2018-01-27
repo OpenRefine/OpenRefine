@@ -1,10 +1,14 @@
 version: 1.0.{build}
 
+services:
+- mysql
+
 init:
 - cmd: java -version 2>&1 | find "version"
 
-clone_script:
-- cmd: git clone --recursive https://github.com/OpenRefine/OpenRefine
+clone_depth: 5
+skip_branch_with_pr: true
+
 environment:
   ANT_HOME: C:\apache-ant-1.10.1
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
@@ -20,19 +24,17 @@ cache:
 - apache-ant-1.10.1-bin.zip
 build: off
 
-# scripts to run before build
-before_build:
+# scripts to run before test
+before_test:
 - cmd: echo Running scripts before build...
-- cmd: cp extensions\database\test\conf\appveyor_int_tests.xml extensions\database\test\conf\int_tests.xml
-- cmd: >-
-    $env:MYSQL_PWD="password"
-    $cmd = '"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -e "create database test_db;" --user=root'
-    iex "& $cmd"
-    $cmd = '"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -u root test_db < extensions/database/test/conf/travis-mysql.sql'
-    iex "& $cmd"
+- cmd: |-
+    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe" -u root --password=Password12! -e "create database test_db;"
+    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe" -u root test_db --password=Password12! < extensions\database\test\conf\travis-mysql.sql
+    dir
+    copy extensions\database\test\conf\appveyor_int_tests.xml extensions\database\test\conf\int_tests.xml
 
 
-build_script:
+# build_script:
 # - cmd: >-
 #    echo Running refine build...
 #    
@@ -47,8 +49,9 @@ test_script:
 
     path
 
-    cd OpenRefine
-
     refine server_test
+  
+    git log --oneline
     
+
     refine extensions_test
