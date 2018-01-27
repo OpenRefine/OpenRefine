@@ -1,6 +1,7 @@
 package com.google.refine.extension.database.pgsql;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -15,7 +16,7 @@ import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 
 
-
+@Test(groups = { "requiresPgSQL" })
 public class PgSQLConnectionManagerTest extends DBExtensionTests {
    
     private DatabaseConfiguration testDbConfig;
@@ -48,48 +49,30 @@ public class PgSQLConnectionManagerTest extends DBExtensionTests {
 
   
     @Test
-    public void testTestConnection() {
+    public void testTestConnection() throws DatabaseServiceException {
         
-        try {
-            boolean isConnected = PgSQLConnectionManager.getInstance().testConnection(testDbConfig);
-            Assert.assertEquals(isConnected, true);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        boolean isConnected = PgSQLConnectionManager.getInstance().testConnection(testDbConfig);
+        Assert.assertEquals(isConnected, true);
     }
 
     @Test
-    public void testGetConnection() {
+    public void testGetConnection() throws DatabaseServiceException {
       
-        try {
-             Connection conn = PgSQLConnectionManager.getInstance().getConnection(testDbConfig, true);
-             Assert.assertNotNull(conn);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+         Connection conn = PgSQLConnectionManager.getInstance().getConnection(testDbConfig, true);
+         Assert.assertNotNull(conn);
     }
 
     @Test
-    public void testShutdown() {
+    public void testShutdown() throws DatabaseServiceException, SQLException {
     
-        try {
-             Connection conn = PgSQLConnectionManager.getInstance().getConnection(testDbConfig, true);
-             Assert.assertNotNull(conn);
-             
-             PgSQLConnectionManager.getInstance().shutdown();
-             
-             if(conn != null) {
-                 Assert.assertEquals(conn.isClosed(), true);
-             }
-             
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+         Connection conn = PgSQLConnectionManager.getInstance().getConnection(testDbConfig, true);
+         Assert.assertNotNull(conn);
+         
+         PgSQLConnectionManager.getInstance().shutdown();
+         
+         if(conn != null) {
+             Assert.assertEquals(conn.isClosed(), true);
+         }
      
     }
 

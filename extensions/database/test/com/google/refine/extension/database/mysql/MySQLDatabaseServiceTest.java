@@ -20,7 +20,7 @@ import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
 
 
-
+@Test(groups = { "requiresMySQL" })
 public class MySQLDatabaseServiceTest extends DBExtensionTests{
     
     private DatabaseConfiguration testDbConfig;
@@ -62,60 +62,36 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
  
 
      @Test
-     public void testGetConnection() {
-         try {
-            
-             MySQLDatabaseService pgSqlService = (MySQLDatabaseService)DatabaseService.get(MySQLDatabaseService.DB_NAME);
-             Connection conn = pgSqlService.getConnection(testDbConfig);
-        
-             Assert.assertNotNull(conn);
-              
-          } catch (DatabaseServiceException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-          }
+     public void testGetConnection() throws DatabaseServiceException {    
+         MySQLDatabaseService pgSqlService = (MySQLDatabaseService)DatabaseService.get(MySQLDatabaseService.DB_NAME);
+         Connection conn = pgSqlService.getConnection(testDbConfig);
+    
+         Assert.assertNotNull(conn);
      }
 
      @Test
-     public void testTestConnection() {
-         try {
-             MySQLDatabaseService pgSqlService = (MySQLDatabaseService)DatabaseService.get(MySQLDatabaseService.DB_NAME);
-                    
-             boolean result = pgSqlService.testConnection(testDbConfig);
-             Assert.assertEquals(result, true);
-
-         } catch (DatabaseServiceException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         }
+     public void testTestConnection() throws DatabaseServiceException {
+         MySQLDatabaseService pgSqlService = (MySQLDatabaseService)DatabaseService.get(MySQLDatabaseService.DB_NAME);
+                
+         boolean result = pgSqlService.testConnection(testDbConfig);
+         Assert.assertEquals(result, true);
      }
 
      @Test
-     public void testConnect() {
-         try {
-             MySQLDatabaseService pgSqlService = (MySQLDatabaseService)DatabaseService.get(MySQLDatabaseService.DB_NAME);
-            DatabaseInfo databaseInfo = pgSqlService.connect(testDbConfig);
-            Assert.assertNotNull(databaseInfo);
-             
-         } catch (DatabaseServiceException e) {
-            e.printStackTrace();
-         }
+     public void testConnect() throws DatabaseServiceException {
+        MySQLDatabaseService pgSqlService = (MySQLDatabaseService)DatabaseService.get(MySQLDatabaseService.DB_NAME);
+        DatabaseInfo databaseInfo = pgSqlService.connect(testDbConfig);
+        Assert.assertNotNull(databaseInfo);
      }
      
      @Test
-     public void testExecuteQuery() {
+     public void testExecuteQuery() throws DatabaseServiceException {
 
-         try {
+         MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
+                 .get(MySQLDatabaseService.DB_NAME);
+         DatabaseInfo databaseInfo = pgSqlService.testQuery(testDbConfig, "SELECT * FROM " + testTable);
 
-             MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
-                     .get(MySQLDatabaseService.DB_NAME);
-             DatabaseInfo databaseInfo = pgSqlService.testQuery(testDbConfig, "SELECT * FROM " + testTable);
-
-             Assert.assertNotNull(databaseInfo);
-
-         } catch (DatabaseServiceException e) {
-             e.printStackTrace();
-         }
+         Assert.assertNotNull(databaseInfo);
      }
 
      @Test
@@ -129,18 +105,12 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
      }
 
      @Test
-     public void testGetRows() {
-         try {
-             MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
-                     .get(MySQLDatabaseService.DB_NAME);
-             List<DatabaseRow> dbRows = pgSqlService.getRows(testDbConfig, "SELECT * FROM " + testTable);
+     public void testGetRows() throws DatabaseServiceException {
+         MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
+                 .get(MySQLDatabaseService.DB_NAME);
+         List<DatabaseRow> dbRows = pgSqlService.getRows(testDbConfig, "SELECT * FROM " + testTable);
 
-             Assert.assertNotNull(dbRows);
-
-         } catch (DatabaseServiceException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         }
+         Assert.assertNotNull(dbRows);
      }
 
      @Test
@@ -150,21 +120,14 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
      }
 
      @Test
-     public void testGetColumns() {
+     public void testGetColumns() throws DatabaseServiceException {
          List<DatabaseColumn> dbColumns;
+         MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
+                 .get(MySQLDatabaseService.DB_NAME);
 
-         try {
-             MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
-                     .get(MySQLDatabaseService.DB_NAME);
+         dbColumns = pgSqlService.getColumns(testDbConfig, "SELECT * FROM " + testTable);
 
-             dbColumns = pgSqlService.getColumns(testDbConfig, "SELECT * FROM " + testTable);
-
-             Assert.assertNotNull(dbColumns);
-
-         } catch (DatabaseServiceException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         }
+         Assert.assertNotNull(dbColumns);
      }
      
 

@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.extension.database;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 
 public class DBExtensionTests {
@@ -60,14 +62,9 @@ public class DBExtensionTests {
     protected final String DEFAULT_MARIADB_NAME = "testdb";
     
     protected final String DEFAULT_TEST_TABLE = "test_data";
+    
+    protected Properties properties;
 
-    protected Logger logger;
-
-//    @BeforeSuite
-//    public void init() {
-//        System.out.println("Log4j init...");
-//        System.setProperty("log4j.configuration", "log4j-test.properties");
-//    }
-            
+    protected Logger logger;  
    
 }
