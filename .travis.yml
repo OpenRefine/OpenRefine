@@ -20,6 +20,7 @@ before_install:
   - mysql -u root test_db < extensions/database/test/conf/travis-mysql.sql
   - psql -c 'CREATE DATABASE test_db;' -U postgres
   - psql -U postgres test_db < extensions/database/test/conf/travis-pgsql.sql
+  - cp extensions/database/test/conf/travis_int_tests.xml extensions/database/test/conf/int_tests.xml
 
 script:
   - ./refine server_test

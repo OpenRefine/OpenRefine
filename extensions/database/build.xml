@@ -104,7 +104,7 @@
     <target name="test" depends="build_tests">
 		<jacoco:coverage destfile="${test.report.dir}/jacoco.exec">
 	            <testng verbose="2" haltOnFailure="true" workingdir="${test.build.dir}"
-	                listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
+	                listener="org.testng.reporters.DotTestListener"
 	                classpathref="extension.tests.class.path">
 	             <xmlfileset file="${test.src.dir}/conf/int_tests.xml"/>
 	            </testng>
@@ -130,7 +130,7 @@
 	<target name="unit_test" depends="build_tests">
 			<jacoco:coverage destfile="${test.report.dir}/jacoco.exec">
 		            <testng verbose="2" haltOnFailure="true" workingdir="${test.build.dir}"
-		                listener="org.testng.reporters.DotTestListener" excludedgroups="broken"
+		                listener="org.testng.reporters.DotTestListener"
 		                classpathref="extension.tests.class.path">
 		             <xmlfileset file="${test.src.dir}/conf/unit_tests.xml"/>
 		            </testng>
