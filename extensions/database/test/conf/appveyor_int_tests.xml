@@ -15,7 +15,7 @@
     <parameter name = "pgSqlDbHost" value="127.0.0.1"/> 
     <parameter name = "pgSqlDbPort" value="5432"/> 
     <parameter name = "pgSqlDbUser" value="postgres"/>
-    <parameter name = "pgSqlDbPassword" value=""/>
+    <parameter name = "pgSqlDbPassword" value="Password12!"/>
     <parameter name = "pgSqlTestTable" value="test_table"/>
     
     <parameter name = "mariaDbName" value="test_db"/> 
@@ -27,7 +27,6 @@
     <test name="DatabaseExtensionUnitTest">
         <groups>
             <run>
-                <exclude name="requiresPgSQL"/>
                 <exclude name="requiresMariaDB" />
             </run>
         </groups>

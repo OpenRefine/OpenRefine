@@ -2,6 +2,7 @@ version: 1.0.{build}
 
 services:
 - mysql
+- postgresql96
 
 init:
 - cmd: java -version 2>&1 | find "version"
@@ -28,18 +29,15 @@ build: off
 before_test:
 - cmd: echo Running scripts before build...
 - cmd: |-
-    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe" -u root --password=Password12! -e "create database test_db;"
-    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe" -u root test_db --password=Password12! < extensions\database\test\conf\travis-mysql.sql
+    PATH=C:\Program Files\PostgreSQL\9.6\bin\;C:\Program Files\MySQL Server 5.7\bin\;%PATH%
+    SET MYSQL_PWD="Password12!"
+    mysql -u root --password=Password12! -e "create database test_db;"
+    mysql -u root test_db --password=Password12! < extensions\database\test\conf\travis-mysql.sql
+    SET PGUSER="postgres"
+    SET PGPASSWORD="Password12!"
+    psql -c 'CREATE DATABASE test_db;'
+    psql test_db < extensions\database\test\conf\travis-pgsql.sql
     copy extensions\database\test\conf\appveyor_int_tests.xml extensions\database\test\conf\int_tests.xml
-
-
-# build_script:
-# - cmd: >-
-#    echo Running refine build...
-#    
-#    cd OpenRefine
-#    
-#    refine build
 
 test_script:
 - cmd: echo Running test_script...
@@ -50,7 +48,4 @@ test_script:
 
     refine server_test
   
-    git log --oneline
-    
-
     refine extensions_test
