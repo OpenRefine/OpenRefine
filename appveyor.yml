@@ -35,8 +35,8 @@ before_test:
     mysql -u root test_db --password=Password12! < extensions\database\test\conf\travis-mysql.sql
     SET PGUSER="postgres"
     SET PGPASSWORD="Password12!"
-    psql -c 'CREATE DATABASE test_db;'
-    psql test_db < extensions\database\test\conf\travis-pgsql.sql
+    psql -U postgres -c 'CREATE DATABASE test_db;'
+    psql -U postgres test_db < extensions\database\test\conf\travis-pgsql.sql
     copy extensions\database\test\conf\appveyor_int_tests.xml extensions\database\test\conf\int_tests.xml
 
 test_script:
