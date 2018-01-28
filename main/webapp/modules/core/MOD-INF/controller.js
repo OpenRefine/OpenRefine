@@ -71,7 +71,6 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
   RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
   RS.registerCommand(module, "get-imetaData", new Packages.com.google.refine.commands.project.GetMetadataCommand());
-  RS.registerCommand(module, "set-imetaData", new Packages.com.google.refine.commands.project.SetMetadataCommand());
   RS.registerCommand(module, "get-all-project-tags", new Packages.com.google.refine.commands.workspace.GetAllProjectTagsCommand());
   RS.registerCommand(module, "set-project-tags", new Packages.com.google.refine.commands.project.SetProjectTagsCommand());
 
