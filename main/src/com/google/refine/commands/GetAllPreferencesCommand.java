@@ -52,9 +52,9 @@ public class GetAllPreferencesCommand extends Command {
             throws ServletException, IOException {
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
-        
-        // project level has no specific preference
-        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+        PreferenceStore ps = project != null ? 
+                project.getMetadata().getPreferenceStore() : 
+                ProjectManager.singleton.getPreferenceStore();
                 
         try {
             response.setCharacterEncoding("UTF-8");
