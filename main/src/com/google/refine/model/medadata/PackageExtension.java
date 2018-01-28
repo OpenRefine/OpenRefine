@@ -36,7 +36,7 @@ public class PackageExtension {
     public static final String JSON_KEY_LICENSE = "license";
     public static final String JSON_KEY_VERSION = "version";
     
-    public static String DATAPAAKCAGE_TEMPLATE_FILE = "schemas/datapackage-template.json";
+    public static String DATAPACKAGE_TEMPLATE_FILE = "schemas/datapackage-template.json";
     
     /**
      * Do the package since the final spec for the compression/bundle are not settled yet.
@@ -73,7 +73,7 @@ public class PackageExtension {
     public static Package buildPackageFromTemplate() {
         try {
             ClassLoader classLoader = PackageExtension.class.getClassLoader();
-            File file = new File(classLoader.getResource(DATAPAAKCAGE_TEMPLATE_FILE).getFile());
+            File file = new File(classLoader.getResource(DATAPACKAGE_TEMPLATE_FILE).getFile());
             return new Package(FileUtils.readFileToString(file), false);
         } catch (ValidationException e) {
             logger.error("validation failed", ExceptionUtils.getStackTrace(e));
