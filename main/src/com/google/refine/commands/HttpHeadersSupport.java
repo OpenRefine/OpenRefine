@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2017, Owen Stephens
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -13,7 +13,7 @@ notice, this list of conditions and the following disclaimer.
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-    * Neither the name of Google Inc. nor the names of its
+    * Neither the name of the copyright holder nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -31,48 +31,49 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.jython;
+package com.google.refine.commands;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import org.python.core.Py;
-import org.python.core.PyObject;
+import com.google.refine.RefineServlet;
 
-import com.google.refine.expr.HasFields;
+abstract public class HttpHeadersSupport {
 
-public class JythonHasFieldsWrapper extends PyObject {
-    private static final long serialVersionUID = -1275353513262385099L;
+    static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<String, HttpHeaderInfo>();
 
-    public HasFields _obj;
-
-    private Properties _bindings;
-
-    public JythonHasFieldsWrapper(HasFields obj, Properties bindings) {
-        _obj = obj;
-        _bindings = bindings;
-    }
-
-    @Override
-    public PyObject __finditem__(PyObject key) {
-        String k = (String) key.__tojava__(String.class);
-        return __findattr_ex__(k);
-    }
-
-    @Override
-    public PyObject __findattr_ex__(String name) {
-        Object v = _obj.getField(name, _bindings);
-        if (v != null) {
-            if (v instanceof PyObject) {
-                return (PyObject) v;
-            } else if (v instanceof HasFields) {
-                return new JythonHasFieldsWrapper((HasFields) v, _bindings);
-            } else if (Py.getAdapter().canAdapt(v)) {
-                return Py.java2py(v);
-            } else {
-                return new JythonObjectWrapper(v);
-            }
-        } else {
-            return null;
+    static public class HttpHeaderInfo {
+        final public String                 name;
+        final public String                 header;
+        final public String                 defaultValue;
+        
+        HttpHeaderInfo(String header, String defaultValue) {
+            this.name = header.toLowerCase();
+            this.header = header;
+            this.defaultValue = defaultValue;
         }
+    }
+
+    static {
+        registerHttpHeader("User-Agent", RefineServlet.FULLNAME);
+        registerHttpHeader("Accept", "*/*");
+        registerHttpHeader("Authorization", "");
+    }
+    
+    /**
+     * @param header
+     * @param defaultValue
+     */
+    static public void registerHttpHeader(String header, String defaultValue) {
+        s_headers.put(header.toLowerCase(), new HttpHeaderInfo(header, defaultValue));
+    }
+    
+    static public HttpHeaderInfo getHttpHeaderInfo(String header) {
+        return s_headers.get(header.toLowerCase());
+    }
+    
+    static public Set<String> getHttpHeaderLabels() {
+        return s_headers.keySet();
     }
 }

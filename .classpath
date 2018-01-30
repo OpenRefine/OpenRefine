@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
 	<classpathentry kind="src" path="main/resources"/>
+	<classpathentry kind="src" path="extensions/jython/tests/src"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/database/src"/>
