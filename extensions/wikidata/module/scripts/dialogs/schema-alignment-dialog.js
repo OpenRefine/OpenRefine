@@ -33,55 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var SchemaAlignment = {};
 
-SchemaAlignment.autoAlign = function() {
-  var protograph = {};
-
-  var columns = theProject.columnModel.columns;
-
-  var typedCandidates = [];
-  var candidates = [];
-
-  for (var c = 0; c < columns.length; c++) {
-    var column = columns[c];
-    var typed = (column.reconConfig) && 
-    ReconciliationManager.isFreebaseIdOrMid(column.reconConfig.identifierSpace) &&
-    ReconciliationManager.isFreebaseId(column.reconConfig.schemaSpace);
-
-    var candidate = {
-      status: "unbound",
-      typed: typed,
-      index: c,
-      column: column
-    };
-
-    candidates.push(candidate);
-    if (typed) {
-      typedCandidates.push(candidate);
-    }
-  }
-
-  if (typedCandidates.length > 0) {
-
-  } else {
-    var queries = {};
-    for (var i = 0; i < candidates.length; i++) {
-      var candidate = candidates[i];
-      var name = SchemaAlignment._cleanName(candidate.column.name);
-      var key = "t" + i + ":search";
-      queries[key] = {
-        "query" : name,
-        "limit" : 10,
-        "type" : "/type/type,/type/property",
-        "type_strict" : "any"
-      };
-    }
-
-    SchemaAlignment._batchSearch(queries, function(result) {
-      console.log(result);
-    });
-  }
-};
-
 SchemaAlignment._cleanName = function(s) {
   return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
 };
