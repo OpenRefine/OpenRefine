@@ -10,10 +10,11 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-public class WbReferenceExpr implements WbExpression<Reference> {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class WbReferenceExpr {
     private List<WbSnakExpr> snakExprs;
     
     @JsonCreator
@@ -22,7 +23,6 @@ public class WbReferenceExpr implements WbExpression<Reference> {
         this.snakExprs = snakExprs;
     }
     
-    @Override
     public Reference evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
         for (WbSnakExpr expr : getSnaks()) {
