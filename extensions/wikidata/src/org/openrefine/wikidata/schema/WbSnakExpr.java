@@ -7,10 +7,11 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-public class WbSnakExpr implements WbExpression<Snak> {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class WbSnakExpr {
     
     private WbExpression<? extends PropertyIdValue> prop;
     private WbExpression<? extends Value> value;
@@ -23,7 +24,6 @@ public class WbSnakExpr implements WbExpression<Snak> {
         this.value = valueExpr;
     }
 
-    @Override
     public Snak evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = getProp().evaluate(ctxt);
         Value evaluatedValue = value.evaluate(ctxt);
