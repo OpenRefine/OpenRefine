@@ -106,7 +106,7 @@
 	            <testng verbose="2" haltOnFailure="true" workingdir="${test.build.dir}"
 	                listener="org.testng.reporters.DotTestListener"
 	                classpathref="extension.tests.class.path">
-	             <xmlfileset file="${test.src.dir}/conf/int_tests.xml"/>
+	             <xmlfileset file="${test.src.dir}/conf/tests.xml"/>
 	            </testng>
 		</jacoco:coverage>
         <jacoco:report>
@@ -126,34 +126,6 @@
 		    <xml destfile="${test.report.xml.path}"/>
         </jacoco:report>
    </target>
-	
-	<target name="unit_test" depends="build_tests">
-			<jacoco:coverage destfile="${test.report.dir}/jacoco.exec">
-		            <testng verbose="2" haltOnFailure="true" workingdir="${test.build.dir}"
-		                listener="org.testng.reporters.DotTestListener"
-		                classpathref="extension.tests.class.path">
-		             <xmlfileset file="${test.src.dir}/conf/unit_tests.xml"/>
-		            </testng>
-			</jacoco:coverage>
-	        <jacoco:report>
-	           <executiondata>
-			   <file file="${test.report.dir}/jacoco.exec"/>
-	           </executiondata>
-
-	           <structure name="Database extension">
-	               <classfiles>
-			       <fileset dir="${classes.dir}"/>
-	               </classfiles>
-	                <sourcefiles encoding="UTF-8">
-		            <fileset dir="${src.dir}"/>
-	                </sourcefiles>
-	            </structure>
-			    <html destdir="${test.report.html.dir}"/>
-			    <xml destfile="${test.report.xml.path}"/>
-	        </jacoco:report>
-	   </target>
-
-
     <target name="dist" depends="build">
         <mkdir dir="${ext.dir}"/>
      
