@@ -62,16 +62,14 @@ public class DatabaseServiceTest extends DBExtensionTests{
     }
   
     
-
-    @Test
+    @Test(groups = {"requiresPgSQL"})
     public void testGetPgSQLDBService() {
-       
         DatabaseService dbService = DatabaseService.get(PgSQLDatabaseService.DB_NAME);
         Assert.assertNotNull(dbService);  
         Assert.assertEquals(dbService.getClass(), PgSQLDatabaseService.class);
     }
     
-    @Test
+    @Test(groups = {"requiresMySQL"})
     public void testGetMySQLDBService() {
        
         DatabaseService dbService = DatabaseService.get(MySQLDatabaseService.DB_NAME);
@@ -79,7 +77,7 @@ public class DatabaseServiceTest extends DBExtensionTests{
         Assert.assertEquals(dbService.getClass(), MySQLDatabaseService.class);
     }
     
-    @Test
+    @Test(groups = {"requiresMariaDB"})
     public void testGetMariaDBSQLDBService() {
        
         DatabaseService dbService = DatabaseService.get(MariaDBDatabaseService.DB_NAME);
@@ -87,64 +85,34 @@ public class DatabaseServiceTest extends DBExtensionTests{
         Assert.assertEquals(dbService.getClass(), MariaDBDatabaseService.class);
     }
 
-    @Test
-    public void testGetConnection() {
-  
-        try {
-           
-           DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
-           Connection conn = dbService.getConnection(testDbConfig);
-           Assert.assertNotNull(conn);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    @Test(groups = {"requiresMySQL"})
+    public void testGetConnection() throws DatabaseServiceException {
+       DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+       Connection conn = dbService.getConnection(testDbConfig);
+       Assert.assertNotNull(conn);
     }
 
-    @Test
-    public void testTestConnection() {
-
-        try {
-            DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
-            boolean result = dbService.testConnection(testDbConfig);
-            Assert.assertEquals(result, true);
-
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
+    @Test(groups = {"requiresMySQL"})
+    public void testTestConnection() throws DatabaseServiceException {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        boolean result = dbService.testConnection(testDbConfig);
+        Assert.assertEquals(result, true);
     }
 
-    @Test
-    public void testConnect() {
-
-        try {
-            DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
-            DatabaseInfo databaseInfo = dbService.connect(testDbConfig);
-            Assert.assertNotNull(databaseInfo);
-
-        } catch (DatabaseServiceException e) {
-            e.printStackTrace();
-        }
-        
+    @Test(groups = {"requiresMySQL"})
+    public void testConnect() throws DatabaseServiceException {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        DatabaseInfo databaseInfo = dbService.connect(testDbConfig);
+        Assert.assertNotNull(databaseInfo);
     }
 
-    @Test
-    public void testExecuteQuery() {
+    @Test(groups = {"requiresMySQL"})
+    public void testExecuteQuery() throws DatabaseServiceException {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        DatabaseInfo databaseInfo = dbService.testQuery(testDbConfig,
+                "SELECT * FROM " + testTable);
 
-        try {
-            DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
-            DatabaseInfo databaseInfo = dbService.testQuery(testDbConfig,
-                    "SELECT * FROM " + testTable);
-
-            Assert.assertNotNull(databaseInfo);
-
-        } catch (DatabaseServiceException e) {
-            e.printStackTrace();
-        }
-        
+        Assert.assertNotNull(databaseInfo);
     }
 
     @Test
@@ -157,44 +125,26 @@ public class DatabaseServiceTest extends DBExtensionTests{
         Assert.assertEquals(limitQuery, "SELECT * FROM " + testTable + " LIMIT " + 100 + " OFFSET " + 0 + ";");
     }
 
-    @Test
-    public void testGetColumns() {
+    @Test(groups = {"requiresMySQL"})
+    public void testGetColumns() throws DatabaseServiceException {
         List<DatabaseColumn> dbColumns;
       
-        try {
-            DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
-            dbColumns = dbService.getColumns(testDbConfig,"SELECT * FROM " + testTable);
-            Assert.assertNotNull(dbColumns);
-            
-            int cols = dbColumns.size();
-            Assert.assertEquals(cols, 10);
-       
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        dbColumns = dbService.getColumns(testDbConfig,"SELECT * FROM " + testTable);
+        Assert.assertNotNull(dbColumns);
         
-       
+        int cols = dbColumns.size();
+        Assert.assertEquals(cols, 10);
     }
 
-    @Test
-    public void testGetRows() {
+    @Test(groups = {"requiresMySQL"})
+    public void testGetRows() throws DatabaseServiceException {
+        DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
+        List<DatabaseRow> dbRows = dbService.getRows(testDbConfig,
+                "SELECT * FROM " + testTable);
         
-        try {
-       
-            DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
-            List<DatabaseRow> dbRows = dbService.getRows(testDbConfig,
-                    "SELECT * FROM " + testTable);
-            
-            Assert.assertNotNull(dbRows);
-            Assert.assertEquals(dbRows.size(), 1);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-       
+        Assert.assertNotNull(dbRows);
+        Assert.assertEquals(dbRows.size(), 1);
     }
 
 }

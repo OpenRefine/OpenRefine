@@ -1,5 +1,7 @@
 package com.google.refine.extension.database;
 
+import java.sql.SQLException;
+
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Optional;
@@ -30,7 +32,8 @@ public class DatabaseTestConfig extends DBExtensionTests {
             
             @Optional(DEFAULT_MARIADB_NAME)      String mariadbDbName,     @Optional(DEFAULT_MARIADB_HOST)  String mariadbDbHost, 
             @Optional(DEFAULT_MARIADB_PORT)      String mariadbDbPort,     @Optional(DEFAULT_MARIADB_USER)  String mariadbyDbUser,
-            @Optional(DEFAULT_MARIADB_PASSWORD)  String mariadbDbPassword, @Optional(DEFAULT_TEST_TABLE)    String mariadbTestTable) {
+            @Optional(DEFAULT_MARIADB_PASSWORD)  String mariadbDbPassword, @Optional(DEFAULT_TEST_TABLE)    String mariadbTestTable)
+                    throws DatabaseServiceException, SQLException {
         
         //System.out.println("@BeforeSuite\n");
          mysqlDbConfig = new DatabaseConfiguration();

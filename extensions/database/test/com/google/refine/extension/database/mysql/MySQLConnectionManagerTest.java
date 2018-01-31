@@ -1,6 +1,7 @@
 package com.google.refine.extension.database.mysql;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -14,6 +15,7 @@ import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 
+@Test(groups = { "requiresMySQL" })
 public class MySQLConnectionManagerTest extends DBExtensionTests {
   
     private DatabaseConfiguration testDbConfig;
@@ -45,49 +47,30 @@ public class MySQLConnectionManagerTest extends DBExtensionTests {
     
 
     @Test
-    public void testTestConnection() {
+    public void testTestConnection() throws DatabaseServiceException {
         
-        try {
-            boolean conn = MySQLConnectionManager.getInstance().testConnection(testDbConfig);
-            Assert.assertEquals(conn, true);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        boolean conn = MySQLConnectionManager.getInstance().testConnection(testDbConfig);
+        Assert.assertEquals(conn, true);
     }
 
     @Test
-    public void testGetConnection() {
+    public void testGetConnection() throws DatabaseServiceException {
       
-        try {
-             Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
-             Assert.assertNotNull(conn);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+         Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
+         Assert.assertNotNull(conn);
     }
 
     @Test
-    public void testShutdown() {
+    public void testShutdown() throws DatabaseServiceException, SQLException {
     
-        try {
-             Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
-             Assert.assertNotNull(conn);
-             
-             MySQLConnectionManager.getInstance().shutdown();
-             
-             if(conn != null) {
-                 Assert.assertEquals(conn.isClosed(), true);
-             }
-             
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-     
+         Connection conn = MySQLConnectionManager.getInstance().getConnection(testDbConfig, true);
+         Assert.assertNotNull(conn);
+         
+         MySQLConnectionManager.getInstance().shutdown();
+         
+         if(conn != null) {
+             Assert.assertEquals(conn.isClosed(), true);
+         }
     }
 
 }

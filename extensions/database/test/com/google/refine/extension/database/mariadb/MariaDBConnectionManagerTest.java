@@ -1,6 +1,7 @@
 package com.google.refine.extension.database.mariadb;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -14,7 +15,7 @@ import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 
-
+@Test(groups = { "requiresMariaDB" })
 public class MariaDBConnectionManagerTest extends DBExtensionTests {
     
    
@@ -48,48 +49,27 @@ public class MariaDBConnectionManagerTest extends DBExtensionTests {
     
 
     @Test
-    public void testTestConnection() {
-        
-        try {
-            boolean conn = MariaDBConnectionManager.getInstance().testConnection(testDbConfig);
-            Assert.assertEquals(conn, true);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void testTestConnection() throws DatabaseServiceException {    
+        boolean conn = MariaDBConnectionManager.getInstance().testConnection(testDbConfig);
+        Assert.assertEquals(conn, true);
     }
 
     @Test
-    public void testGetConnection() {
-      
-        try {
-             Connection conn = MariaDBConnectionManager.getInstance().getConnection(testDbConfig, true);
-             Assert.assertNotNull(conn);
-            
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void testGetConnection() throws DatabaseServiceException {   
+         Connection conn = MariaDBConnectionManager.getInstance().getConnection(testDbConfig, true);
+         Assert.assertNotNull(conn);
     }
 
     @Test
-    public void testShutdown() {
-    
-        try {
-             Connection conn = MariaDBConnectionManager.getInstance().getConnection(testDbConfig, true);
-             Assert.assertNotNull(conn);
-             
-             MariaDBConnectionManager.getInstance().shutdown();
-             
-             if(conn != null) {
-                 Assert.assertEquals(conn.isClosed(), true);
-             }
-             
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void testShutdown() throws DatabaseServiceException, SQLException {
+         Connection conn = MariaDBConnectionManager.getInstance().getConnection(testDbConfig, true);
+         Assert.assertNotNull(conn);
+         
+         MariaDBConnectionManager.getInstance().shutdown();
+         
+         if(conn != null) {
+             Assert.assertEquals(conn.isClosed(), true);
+         }
      
     }
 

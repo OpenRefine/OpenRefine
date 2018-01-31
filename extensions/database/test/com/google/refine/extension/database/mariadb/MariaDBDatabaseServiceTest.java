@@ -19,7 +19,7 @@ import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
 
-
+@Test(groups = { "requiresMariaDB" })
 public class MariaDBDatabaseServiceTest extends DBExtensionTests{
     
     
@@ -63,60 +63,35 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
     }
 
      @Test
-     public void testGetConnection() {
-         try {
-            
-             MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService)DatabaseService.get(MariaDBDatabaseService.DB_NAME);
-             Connection conn = pgSqlService.getConnection(testDbConfig);
-        
-             Assert.assertNotNull(conn);
-              
-          } catch (DatabaseServiceException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-          }
+     public void testGetConnection() throws DatabaseServiceException {
+         MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService)DatabaseService.get(MariaDBDatabaseService.DB_NAME);
+         Connection conn = pgSqlService.getConnection(testDbConfig);
+    
+         Assert.assertNotNull(conn);
      }
 
      @Test
-     public void testTestConnection() {
-         try {
-             MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService)DatabaseService.get(MariaDBDatabaseService.DB_NAME);
-                    
-             boolean result = pgSqlService.testConnection(testDbConfig);
-             Assert.assertEquals(result, true);
-
-         } catch (DatabaseServiceException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         }
+     public void testTestConnection() throws DatabaseServiceException {
+         MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService)DatabaseService.get(MariaDBDatabaseService.DB_NAME);
+                
+         boolean result = pgSqlService.testConnection(testDbConfig);
+         Assert.assertEquals(result, true);
      }
 
      @Test
-     public void testConnect() {
-         try {
-             MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService)DatabaseService.get(MariaDBDatabaseService.DB_NAME);
-            DatabaseInfo databaseInfo = pgSqlService.connect(testDbConfig);
-            Assert.assertNotNull(databaseInfo);
-             
-         } catch (DatabaseServiceException e) {
-            e.printStackTrace();
-         }
+     public void testConnect() throws DatabaseServiceException {
+        MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService)DatabaseService.get(MariaDBDatabaseService.DB_NAME);
+        DatabaseInfo databaseInfo = pgSqlService.connect(testDbConfig);
+        Assert.assertNotNull(databaseInfo);
      }
      
      @Test
-     public void testExecuteQuery() {
+     public void testExecuteQuery() throws DatabaseServiceException {
+         MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService
+                 .get(MariaDBDatabaseService.DB_NAME);
+         DatabaseInfo databaseInfo = pgSqlService.testQuery(testDbConfig, "SELECT * FROM " + testTable);
 
-         try {
-
-             MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService
-                     .get(MariaDBDatabaseService.DB_NAME);
-             DatabaseInfo databaseInfo = pgSqlService.testQuery(testDbConfig, "SELECT * FROM " + testTable);
-
-             Assert.assertNotNull(databaseInfo);
-
-         } catch (DatabaseServiceException e) {
-             e.printStackTrace();
-         }
+         Assert.assertNotNull(databaseInfo);
      }
 
      @Test
@@ -130,18 +105,12 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
      }
 
      @Test
-     public void testGetRows() {
-         try {
-             MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService
+     public void testGetRows() throws DatabaseServiceException {
+         MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService
                      .get(MariaDBDatabaseService.DB_NAME);
              List<DatabaseRow> dbRows = pgSqlService.getRows(testDbConfig, "SELECT * FROM " + testTable);
 
              Assert.assertNotNull(dbRows);
-
-         } catch (DatabaseServiceException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         }
      }
 
      @Test
@@ -151,21 +120,15 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
      }
 
      @Test
-     public void testGetColumns() {
+     public void testGetColumns() throws DatabaseServiceException {
          List<DatabaseColumn> dbColumns;
 
-         try {
-             MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService
-                     .get(MariaDBDatabaseService.DB_NAME);
+         MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService
+                 .get(MariaDBDatabaseService.DB_NAME);
 
-             dbColumns = pgSqlService.getColumns(testDbConfig, "SELECT * FROM " + testTable);
+         dbColumns = pgSqlService.getColumns(testDbConfig, "SELECT * FROM " + testTable);
 
-             Assert.assertNotNull(dbColumns);
-
-         } catch (DatabaseServiceException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         }
+         Assert.assertNotNull(dbColumns);
      }
      
 

@@ -50,8 +50,11 @@ public class DBExtensionTestUtils {
      * Create Test Table with one row of Data
      * @param dbConfig DatabaseConfiguration to test
      * @param tableName
+     * @throws DatabaseServiceException 
+     * @throws SQLException 
      */
-    public static void initTestData(DatabaseConfiguration dbConfig, String tableName) {
+    public static void initTestData(DatabaseConfiguration dbConfig, String tableName)
+            throws DatabaseServiceException, SQLException {
         
         Statement stmt = null;
         Connection conn  = null;
@@ -87,16 +90,11 @@ public class DBExtensionTestUtils {
             
             logger.info("Database Test Init Data Created!!!");
             
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        
         } finally {
             if(stmt != null) {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -104,7 +102,6 @@ public class DBExtensionTestUtils {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -113,7 +110,8 @@ public class DBExtensionTestUtils {
     }
     
     
-    public static void initTestData(DatabaseConfiguration dbConfig) {
+    public static void initTestData(DatabaseConfiguration dbConfig)
+            throws DatabaseServiceException, SQLException {
          
         Statement stmt = null;
         Connection conn  = null;
@@ -148,11 +146,7 @@ public class DBExtensionTestUtils {
            // System.out.println("Insert Data Result::" + insertResult);
             
             logger.info("Database Test Init Data Created!!!");
-            
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        
+
         } finally {
             if(stmt != null) {
                 try {
@@ -179,8 +173,11 @@ public class DBExtensionTestUtils {
     * Table name: test_data
     * @param sampleSize
     * @param batchSize
+    * @throws DatabaseServiceException 
+    * @throws SQLException 
     */
-    public void generateMySQLTestData(int sampleSize, int batchSize) {
+    public void generateMySQLTestData(int sampleSize, int batchSize)
+            throws DatabaseServiceException, SQLException {
         mncMap =  new HashMap<Integer, Integer>();
         mccMap =  new HashMap<Integer, Integer>();
         mccMap.put(0, 302);
@@ -208,65 +205,56 @@ public class DBExtensionTestUtils {
                 + "id, ue_id, start_time, end_date, bytes_upload, bytes_download, cell_id, mcc, mnc, lac, imei)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         
-        Connection conn;
-        try {
-            conn = DatabaseService.get(MYSQL_DB_NAME).getConnection(dc);
+        Connection conn = DatabaseService.get(MYSQL_DB_NAME).getConnection(dc);
             
-            Statement truncateStmt = conn.createStatement();
-            int result = truncateStmt.executeUpdate(truncateTableSQL);
-            System.out.println("Truncate Table Result::" + result);
-            truncateStmt.close();
-            
-            
-            conn.setAutoCommit(false);
-            
-            PreparedStatement stmt = conn.prepareStatement(insertTableSQL);
-           
-            int counter=1;
-            for (int i = 0; i < sampleSize; i++) {
-               stmt.setLong(1, i);
-               stmt.setString(2,  getNextUeId());
-               stmt.setDate(3, getNextStartDate());
-               stmt.setDate(4, getNextEndDate());
-               stmt.setInt(5, rand.nextInt());
-               stmt.setInt(6, rand.nextInt());
-               stmt.setInt(7, rand.nextInt(10));
-               stmt.setInt(8, getMCC());
-               stmt.setInt(9, getMNC());
-               stmt.setInt(10, rand.nextInt(100));
-               stmt.setString(11, getNextIMEI());
-             
-               stmt.addBatch();
-               
-               //Execute batch of 1000 records
-               if(i%batchSize==0){
-                  stmt.executeBatch();
-                  conn.commit();
-                  System.out.println("Batch "+(counter++)+" executed successfully");
-               }
-            }
-            //execute final batch
-            stmt.executeBatch();
-            System.out.println("Final Batch Executed "+(counter++)+" executed successfully");
-            conn.commit();
-            conn.close();
+        Statement truncateStmt = conn.createStatement();
+        int result = truncateStmt.executeUpdate(truncateTableSQL);
+        System.out.println("Truncate Table Result::" + result);
+        truncateStmt.close();
+        
+        
+        conn.setAutoCommit(false);
+        
+        PreparedStatement stmt = conn.prepareStatement(insertTableSQL);
+       
+        int counter=1;
+        for (int i = 0; i < sampleSize; i++) {
+           stmt.setLong(1, i);
+           stmt.setString(2,  getNextUeId());
+           stmt.setDate(3, getNextStartDate());
+           stmt.setDate(4, getNextEndDate());
+           stmt.setInt(5, rand.nextInt());
+           stmt.setInt(6, rand.nextInt());
+           stmt.setInt(7, rand.nextInt(10));
+           stmt.setInt(8, getMCC());
+           stmt.setInt(9, getMNC());
+           stmt.setInt(10, rand.nextInt(100));
+           stmt.setString(11, getNextIMEI());
          
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+           stmt.addBatch();
+           
+           //Execute batch of 1000 records
+           if(i%batchSize==0){
+              stmt.executeBatch();
+              conn.commit();
+              System.out.println("Batch "+(counter++)+" executed successfully");
+           }
         }
- 
+        //execute final batch
+        stmt.executeBatch();
+        System.out.println("Final Batch Executed "+(counter++)+" executed successfully");
+        conn.commit();
+        conn.close();
     }
    
     /**
      * 
      * @param sampleSize
      * @param batchSize
+     * @throws DatabaseServiceException 
+     * @throws SQLException 
      */
-    public void generatePgSQLTestData(int sampleSize, int batchSize) {
+    public void generatePgSQLTestData(int sampleSize, int batchSize) throws DatabaseServiceException, SQLException {
         mncMap =  new HashMap<Integer, Integer>();
         mccMap =  new HashMap<Integer, Integer>();
         mccMap.put(0, 302);
@@ -294,56 +282,46 @@ public class DBExtensionTestUtils {
                 + "id, ue_id, start_time, end_date, bytes_upload, bytes_download, cell_id, mcc, mnc, lac, imei)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         
-        Connection conn;
-        try {
-            conn = DatabaseService.get(PGSQL_DB_NAME).getConnection(dc);
+        Connection conn = DatabaseService.get(PGSQL_DB_NAME).getConnection(dc);
             
-            Statement truncateStmt = conn.createStatement();
-            int result = truncateStmt.executeUpdate(truncateTableSQL);
-            System.out.println("Truncate Table Result::" + result);
-            truncateStmt.close();
-            
-            
-            conn.setAutoCommit(false);
-            
-            PreparedStatement stmt = conn.prepareStatement(insertTableSQL);
-           
-            int counter=1;
-            for (int i = 0; i < sampleSize; i++) {
-               stmt.setLong(1, i);
-               stmt.setString(2,  getNextUeId());
-               stmt.setDate(3, getNextStartDate());
-               stmt.setDate(4, getNextEndDate());
-               stmt.setInt(5, rand.nextInt());
-               stmt.setInt(6, rand.nextInt());
-               stmt.setInt(7, rand.nextInt(10));
-               stmt.setInt(8, getMCC());
-               stmt.setInt(9, getMNC());
-               stmt.setInt(10, rand.nextInt(100));
-               stmt.setString(11, getNextIMEI());
-             
-               stmt.addBatch();
-               
-               //Execute batch of 1000 records
-               if(i%batchSize==0){
-                  stmt.executeBatch();
-                  conn.commit();
-                  System.out.println("Batch "+(counter++)+" executed successfully");
-               }
-            }
-            //execute final batch
-            stmt.executeBatch();
-            System.out.println("Final Batch Executed "+(counter++)+" executed successfully");
-            conn.commit();
-            conn.close();
+        Statement truncateStmt = conn.createStatement();
+        int result = truncateStmt.executeUpdate(truncateTableSQL);
+        System.out.println("Truncate Table Result::" + result);
+        truncateStmt.close();
+        
+        
+        conn.setAutoCommit(false);
+        
+        PreparedStatement stmt = conn.prepareStatement(insertTableSQL);
+       
+        int counter=1;
+        for (int i = 0; i < sampleSize; i++) {
+           stmt.setLong(1, i);
+           stmt.setString(2,  getNextUeId());
+           stmt.setDate(3, getNextStartDate());
+           stmt.setDate(4, getNextEndDate());
+           stmt.setInt(5, rand.nextInt());
+           stmt.setInt(6, rand.nextInt());
+           stmt.setInt(7, rand.nextInt(10));
+           stmt.setInt(8, getMCC());
+           stmt.setInt(9, getMNC());
+           stmt.setInt(10, rand.nextInt(100));
+           stmt.setString(11, getNextIMEI());
          
-        } catch (DatabaseServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+           stmt.addBatch();
+           
+           //Execute batch of 1000 records
+           if(i%batchSize==0){
+              stmt.executeBatch();
+              conn.commit();
+              System.out.println("Batch "+(counter++)+" executed successfully");
+           }
         }
+        //execute final batch
+        stmt.executeBatch();
+        System.out.println("Final Batch Executed "+(counter++)+" executed successfully");
+        conn.commit();
+        conn.close();
  
     }
 
@@ -381,7 +359,7 @@ public class DBExtensionTestUtils {
         return "" + n;
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DatabaseServiceException, SQLException {
         DBExtensionTestUtils testUtil = new DBExtensionTestUtils();
         testUtil.generatePgSQLTestData(SAMPLE_SIZE, BATCH_SIZE);
        // testUtil.generateMySQLTestData();
@@ -404,7 +382,7 @@ public class DBExtensionTestUtils {
                  //System.out.println("Drop Table Result::" + dropResult);
              }
              
-             logger.info("Database Test Cleanup Done!!!");
+             logger.info("Database Test Cleanup Done");
           
         } catch (DatabaseServiceException e) {
             // TODO Auto-generated catch block
