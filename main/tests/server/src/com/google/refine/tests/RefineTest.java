@@ -55,7 +55,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
@@ -66,6 +65,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.JSONUtilities;
 
