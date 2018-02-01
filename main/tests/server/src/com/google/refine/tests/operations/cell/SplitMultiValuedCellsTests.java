@@ -33,81 +33,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.operations.cell;
 
-import static org.mockito.Mockito.mock;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.RefineServlet;
-import com.google.refine.importers.SeparatorBasedImporter;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingManager;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
-import com.google.refine.process.Process;
-import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 
 public class SplitMultiValuedCellsTests extends RefineTest {
-    // dependencies
-    private RefineServlet servlet;
-    private Project project;
-    private ProjectMetadata pm;
-    private JSONObject options;
-    private ImportingJob job;
-    private SeparatorBasedImporter importer;
-
 
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-    }
-
-    @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
-        servlet = new RefineServletStub();
-            File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-            FileProjectManager.initialize(dir);
-            project = new Project();
-            pm = new ProjectMetadata();
-            pm.setName("SplitMultiValuedCells test");
-            ProjectManager.singleton.registerProject(project, pm);
-            options = mock(JSONObject.class);
-
-        ImportingManager.initialize(servlet);
-            job = ImportingManager.createJob();
-        importer = new SeparatorBasedImporter(); 
-    }
-
-    @AfterMethod
-    public void TearDown() {
-        ImportingManager.disposeJob(job.id);
-        ProjectManager.singleton.deleteProject(project.id);
-        job = null;
-            project = null;
-        pm = null;
-            options = null;
     }
 
     /**
@@ -117,13 +63,9 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsTextSeparator() throws Exception {
-        String csv = "Key,Value\n"
-            + "Record_1,one:two;three four\n";
-        prepareOptions(",", 10, 0, 0, 1, false, false);
-            List<Exception> exceptions = new ArrayList<Exception>();
-            importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-            project.update();
-            ProjectManager.singleton.registerProject(project, pm);
+        Project project = createCSVProject(
+                "Key,Value\n"
+              + "Record_1,one:two;three four\n");
 
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
@@ -144,13 +86,9 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsRegExSeparator() throws Exception {
-        String csv = "Key,Value\n"
-            + "Record_1,one:two;three four\n";
-        prepareOptions(",", 10, 0, 0, 1, false, false);
-            List<Exception> exceptions = new ArrayList<Exception>();
-            importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-            project.update();
-            ProjectManager.singleton.registerProject(project, pm);
+        Project project = createCSVProject(
+                "Key,Value\n"
+            + "Record_1,one:two;three four\n");
 
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
@@ -175,13 +113,10 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsLengths() throws Exception {
-        String csv = "Key,Value\n"
-            + "Record_1,one:two;three four\n";
-        prepareOptions(",", 10, 0, 0, 1, false, false);
-        List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-        project.update();
-        ProjectManager.singleton.registerProject(project, pm);
+        Project project = createCSVProject(
+              "Key,Value\n"
+            + "Record_1,one:two;three four\n");
+
         int[] lengths = {4,4,6,4};
 
         AbstractOperation op = new MultiValuedCellSplitOperation(
@@ -203,20 +138,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
     }
-
-    private void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-            
-            whenGetStringOption("separator", options, sep);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-        }
 
 
 }

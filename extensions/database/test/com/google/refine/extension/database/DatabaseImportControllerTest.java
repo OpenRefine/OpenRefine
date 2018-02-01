@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,7 +36,7 @@ import com.google.refine.model.Project;
 
 
 
-
+@Test(groups = { "requiresMySQL" })
 public class DatabaseImportControllerTest extends DBExtensionTests{
 
     @Mock
@@ -118,141 +119,114 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
     }
     
     @Test
-    public void testDoPostInvalidSubCommand() {
+    public void testDoPostInvalidSubCommand() throws IOException, ServletException, JSONException {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        try {
-            when(request.getQueryString()).thenReturn(
-                    "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=invalid-sub-command");
-            
-            when(response.getWriter()).thenReturn(pw);
-           //test
-            SUT.doPost(request, response);
-       
-            String result = sw.getBuffer().toString().trim();
-            JSONObject json = new JSONObject(result);
-
-            String code = json.getString("status");
-            String message = json.getString("message");
-            Assert.assertNotNull(code);
-            Assert.assertNotNull(message);
-            Assert.assertEquals(code, "error");
-            Assert.assertEquals(message, "No such sub command");
-
+        when(request.getQueryString()).thenReturn(
+                "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=invalid-sub-command");
         
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } 
+        when(response.getWriter()).thenReturn(pw);
+       //test
+        SUT.doPost(request, response);
+   
+        String result = sw.getBuffer().toString().trim();
+        JSONObject json = new JSONObject(result);
+
+        String code = json.getString("status");
+        String message = json.getString("message");
+        Assert.assertNotNull(code);
+        Assert.assertNotNull(message);
+        Assert.assertEquals(code, "error");
+        Assert.assertEquals(message, "No such sub command");
     }
         
     
 
     @Test
-    public void testDoPostInitializeParser() {
+    public void testDoPostInitializeParser() throws ServletException, IOException, JSONException {
         
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        try {
-            when(request.getQueryString()).thenReturn(
-                    "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=initialize-parser-ui");
-            when(response.getWriter()).thenReturn(pw);
-         
-            SUT.doPost(request, response);
-           
-            String result = sw.getBuffer().toString().trim();
-            JSONObject json = new JSONObject(result);
+        when(request.getQueryString()).thenReturn(
+                "http://127.0.0.1:3333/command/core/importing-controller?controller=database/database-import-controller&subCommand=initialize-parser-ui");
+        when(response.getWriter()).thenReturn(pw);
+     
+        SUT.doPost(request, response);
        
-            String status = json.getString("status");
-            //System.out.println("json::" + json);
-            Assert.assertEquals(status, "ok");
+        String result = sw.getBuffer().toString().trim();
+        JSONObject json = new JSONObject(result);
    
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        String status = json.getString("status");
+        //System.out.println("json::" + json);
+        Assert.assertEquals(status, "ok");
     }
     
     @Test
-    public void testDoPostParsePreview() {
+    public void testDoPostParsePreview() throws IOException, ServletException, JSONException {
         
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-
-        try {
             
-            long jobId = job.id;
-            
-            when(request.getQueryString()).thenReturn(
-                    "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
-                            + jobId + "&subCommand=parse-preview");
-            when(response.getWriter()).thenReturn(pw);
-            
-            
-            when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
-            when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
-            when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
-            when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
-            when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
-            when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
-            when(request.getParameter("query")).thenReturn(query);
-            when(request.getParameter("options")).thenReturn(JSON_OPTION);
-       
-            SUT.doPost(request, response);
-           
-            String result = sw.getBuffer().toString().trim();
-            JSONObject json = new JSONObject(result);
-       
-            String status = json.getString("status");
-            //System.out.println("json::" + json);
-            Assert.assertEquals(status, "ok");
+        long jobId = job.id;
+        
+        when(request.getQueryString()).thenReturn(
+                "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
+                        + jobId + "&subCommand=parse-preview");
+        when(response.getWriter()).thenReturn(pw);
+        
+        
+        when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
+        when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
+        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
+        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
+        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
+        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("query")).thenReturn(query);
+        when(request.getParameter("options")).thenReturn(JSON_OPTION);
    
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        SUT.doPost(request, response);
+       
+        String result = sw.getBuffer().toString().trim();
+        JSONObject json = new JSONObject(result);
+   
+        String status = json.getString("status");
+        //System.out.println("json::" + json);
+        Assert.assertEquals(status, "ok");
     }
     
     @Test
-    public void testDoPostCreateProject() {
+    public void testDoPostCreateProject() throws IOException, ServletException, JSONException {
         
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-
-        try {
             
-            long jobId = job.id;
-            
-            when(request.getQueryString()).thenReturn(
-                    "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
-                            + jobId + "&subCommand=create-project");
-            when(response.getWriter()).thenReturn(pw);
-            
-            
-            when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
-            when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
-            when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
-            when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
-            when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
-            when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
-            when(request.getParameter("query")).thenReturn(query);
-            when(request.getParameter("options")).thenReturn(JSON_OPTION);
-            
-           
-            SUT.doPost(request, response);
-           
-            String result = sw.getBuffer().toString().trim();
-            JSONObject json = new JSONObject(result);
+        long jobId = job.id;
+        
+        when(request.getQueryString()).thenReturn(
+                "http://127.0.0.1:3333/command/core/importing-controller?controller=database%2Fdatabase-import-controller&jobID="
+                        + jobId + "&subCommand=create-project");
+        when(response.getWriter()).thenReturn(pw);
+        
+        
+        when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
+        when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
+        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
+        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
+        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
+        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("query")).thenReturn(query);
+        when(request.getParameter("options")).thenReturn(JSON_OPTION);
+        
        
-            String status = json.getString("status");
-            //System.out.println("json::" + json);
-            Assert.assertEquals(status, "ok");
+        SUT.doPost(request, response);
+       
+        String result = sw.getBuffer().toString().trim();
+        JSONObject json = new JSONObject(result);
    
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        String status = json.getString("status");
+        //System.out.println("json::" + json);
+        Assert.assertEquals(status, "ok");
     }
     
     @BeforeTest

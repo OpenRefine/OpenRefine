@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -135,7 +136,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     }
     
     @Test
-    public void testDoPost() {
+    public void testDoPost() throws IOException, ServletException, JSONException {
         
         when(request.getParameter("connectionName")).thenReturn("test-db-name");
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
@@ -148,33 +149,24 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         
-        try {
-            when(response.getWriter()).thenReturn(pw);
-           
-            SUT.doPost(request, response);
-            
-            String result = sw.getBuffer().toString().trim();
-     
-            JSONObject json = new JSONObject(result);
-            
-            JSONArray savedConnections = json.getJSONArray("savedConnections");
-            Assert.assertNotNull(savedConnections);
-            
-            int len = savedConnections.length();
-            
-            Assert.assertEquals(len, 1);
-           
-
+        when(response.getWriter()).thenReturn(pw);
+       
+        SUT.doPost(request, response);
         
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-      
+        String result = sw.getBuffer().toString().trim();
+ 
+        JSONObject json = new JSONObject(result);
+        
+        JSONArray savedConnections = json.getJSONArray("savedConnections");
+        Assert.assertNotNull(savedConnections);
+        
+        int len = savedConnections.length();
+        
+        Assert.assertEquals(len, 1);
     }
 
     @Test
-    public void testDoGet() {
+    public void testDoGet() throws IOException, ServletException, JSONException {
         String testDbName = "testLocalDb";
         //add saved connection
         saveDatabaseConfiguration(testDbName);
@@ -191,32 +183,25 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         
-        try {
-            when(response.getWriter()).thenReturn(pw);
-         
-            SUT.doGet(request, response);
-          
-            JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
-            
-            JSONArray savedConnections = json.getJSONArray("savedConnections");
-            Assert.assertNotNull(savedConnections);
-         
-            Assert.assertEquals(savedConnections.length(), 1);
-            
-            JSONObject sc = (JSONObject)savedConnections.get(0);
-           // System.out.println("sc" + sc);
-            String connName = sc.getString("connectionName");
-            Assert.assertEquals(connName, testDbName);
-            
-         
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(pw);
+     
+        SUT.doGet(request, response);
+      
+        JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
+        
+        JSONArray savedConnections = json.getJSONArray("savedConnections");
+        Assert.assertNotNull(savedConnections);
+     
+        Assert.assertEquals(savedConnections.length(), 1);
+        
+        JSONObject sc = (JSONObject)savedConnections.get(0);
+       // System.out.println("sc" + sc);
+        String connName = sc.getString("connectionName");
+        Assert.assertEquals(connName, testDbName);
     }
 
     @Test
-    public void testDoPut() {
+    public void testDoPut() throws IOException, ServletException, JSONException {
         String testDbName = "testLocalDb";
         saveDatabaseConfiguration(testDbName);
     
@@ -224,37 +209,30 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         
-        try {
-            when(response.getWriter()).thenReturn(pw);
-           
-            //modify database config
-            String newHost = "localhost";
-            when(request.getParameter("connectionName")).thenReturn(testDbName);
-            when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
-            when(request.getParameter("databaseServer")).thenReturn(newHost);
-            when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
-            when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
-            when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
-            when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
-          
-            SUT.doPut(request, response);
-            
-            JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
-            JSONArray savedConnections = json.getJSONArray("savedConnections");
-            Assert.assertNotNull(savedConnections);
-           
-            Assert.assertEquals(savedConnections.length(), 1);
-            
-            JSONObject sc = (JSONObject)savedConnections.get(0);
-            System.out.println("sc" + sc);
-            String newDbHost = sc.getString("databaseHost");
-            Assert.assertEquals(newDbHost, newHost);
-            
-         
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        when(response.getWriter()).thenReturn(pw);
+       
+        //modify database config
+        String newHost = "localhost";
+        when(request.getParameter("connectionName")).thenReturn(testDbName);
+        when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
+        when(request.getParameter("databaseServer")).thenReturn(newHost);
+        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
+        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
+        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
+        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+      
+        SUT.doPut(request, response);
+        
+        JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
+        JSONArray savedConnections = json.getJSONArray("savedConnections");
+        Assert.assertNotNull(savedConnections);
+       
+        Assert.assertEquals(savedConnections.length(), 1);
+        
+        JSONObject sc = (JSONObject)savedConnections.get(0);
+        System.out.println("sc" + sc);
+        String newDbHost = sc.getString("databaseHost");
+        Assert.assertEquals(newDbHost, newHost);
     }
 
     @Test

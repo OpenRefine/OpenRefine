@@ -1,37 +1,22 @@
 
 package com.google.refine.tests.expr.functions;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.RefineServlet;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedRow;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.importers.SeparatorBasedImporter;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.medadata.ProjectMetadata;
-import com.google.refine.tests.ProjectManagerStub;
-import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 
 /**
@@ -47,81 +32,32 @@ public class CrossFunctionTests extends RefineTest {
     }
 
     // dependencies
-    RefineServlet servlet;
     Project projectGift;
     Project projectAddress;
-    ProjectMetadata metadata;
-    ImportingJob job;
-    JSONObject options;
-    SeparatorBasedImporter importer;
-
+    
+    // data from: https://github.com/OpenRefine/OpenRefine/wiki/GREL-Other-Functions
     @BeforeMethod
     public void SetUp() {
         bindings = new Properties();
         
-        servlet = new RefineServletStub();
-        ProjectManager.singleton = new ProjectManagerStub();
-        ImportingManager.initialize(servlet);
-        projectAddress = new Project();
-
-        job = ImportingManager.createJob();
-        options = mock(JSONObject.class);
-        importer = new SeparatorBasedImporter();
+        String projectName = "My Address Book";
+        String input = "friend,address\n"
+                        + "john,120 Main St.\n"
+                        + "mary,50 Broadway Ave.\n"
+                        + "john,999 XXXXXX St.\n"                       // john's 2nd address
+                        + "anne,17 Morning Crescent\n";
+        projectAddress = createCSVProject(projectName, input);
+    
+        projectName = "Christmas Gifts";
+        input = "gift,recipient\n"   
+                + "lamp,mary\n"
+                + "clock,john\n";
+        projectGift = createCSVProject(projectName, input);
         
-        createMyAddressBook();
-        projectGift = createChristmasGifts();
         bindings.put("project", projectGift);
-        
         // add a column address based on column recipient
         bindings.put("columnName", "recipient");
     }
-    
-    // data from: https://github.com/OpenRefine/OpenRefine/wiki/GREL-Other-Functions
-    private Project createMyAddressBook() {
-        String projectName = "My Address Book";
-        String input = "friend;address\n"
-                        + "john;120 Main St.\n"
-                        + "mary;50 Broadway Ave.\n"
-                        + "john;999 XXXXXX St.\n"                       // john's 2nd address
-                        + "anne;17 Morning Crescent\n";
-        return createProject(projectName, input);
-    }
-    
-    private Project createChristmasGifts() {
-        String projectName = "Christmas Gifts";
-        String input = "gift;recipient\n"   
-                + "lamp;mary\n"
-                + "clock;john\n";
-        return createProject(projectName, input);
-    }
-    
-    private Project createProject(String projectName, String input) {
-        Project project = new Project();
-        ProjectMetadata metadata = new ProjectMetadata();
-        
-        metadata.setName(projectName);
-        prepareOptions(";", -1, 0, 0, 1, false, false);
-        List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
-        project.update();
-        ProjectManager.singleton.registerProject(project, metadata);
-        
-        return project;
-    }
-    
-    @AfterMethod
-    public void TearDown() {
-        ImportingManager.disposeJob(job.id);
-        ProjectManager.singleton.deleteProject(projectGift.id);
-        ProjectManager.singleton.deleteProject(projectAddress.id);
-        job = null;
-        metadata = null;
-        projectGift = null;
-        projectAddress = null;
-        options = null;
-        importer = null;
-    }
-
     
     @Test
     public void crossFunctionOneToOneTest() throws Exception {
@@ -189,20 +125,4 @@ public class CrossFunctionTests extends RefineTest {
             return function.call(bindings,args);
         }
     }
-
-
-    private void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-            
-            whenGetStringOption("separator", options, sep);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-        }
-
 }

@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.model;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Properties;
@@ -45,17 +42,12 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.browsing.Engine;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -66,7 +58,6 @@ import com.google.refine.operations.OnError;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 
 public class UrlFetchingTests extends RefineTest {
@@ -80,44 +71,15 @@ public class UrlFetchingTests extends RefineTest {
     }
 
     // dependencies
-    Project project;
-    Properties options;
-    JSONObject engine_config;
-    Engine engine;
-    Properties bindings;
+    private Project project;
+    private Properties options;
+    private JSONObject engine_config;
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {
-        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        FileProjectManager.initialize(dir);
-        project = new Project();
-        ProjectMetadata pm = new ProjectMetadata();
-        pm.setName("URL Fetching Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
-
-        int index = project.columnModel.allocateNewCellIndex();
-        Column column = new Column(index,"fruits");
-        project.columnModel.addColumn(index, column, true);
-        
-        options = mock(Properties.class);
-        engine = new Engine(project);
-        engine_config = new JSONObject(ENGINE_JSON_URLS);
-        engine.initializeFromJSON(engine_config);
-        engine.setMode(Engine.Mode.RowBased);
-        
-        bindings = new Properties();
-        bindings.put("project", project);
-        
+        project = createProjectWithColumns("UrlFetchingTests", "fruits");       
     }
 
-    @AfterMethod
-    public void TearDown() {
-        project = null;
-        options = null;
-        engine = null;
-        bindings = null;
-    }
-    
     private boolean isHostReachable(String host, int timeout){
         boolean state = false;
 

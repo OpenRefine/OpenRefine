@@ -33,50 +33,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.browsing.facets;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.RefineServlet;
-import com.google.refine.importers.SeparatorBasedImporter;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingManager;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
-import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 
 public class TextSearchFacetTests extends RefineTest {
     // dependencies
-    private RefineServlet servlet;
     private Project project;
-    private ProjectMetadata pm;
-    private JSONObject options;
-    private ImportingJob job;
-    private SeparatorBasedImporter importer;
     private TextSearchFacet textfilter;
-    private JSONObject textsearchfacet;
     private RowFilter rowfilter;
+    private JSONObject textsearchfacet;
 
     @Override
     @BeforeTest
@@ -86,41 +66,14 @@ public class TextSearchFacetTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() throws JSONException, IOException, ModelException {
-        servlet = new RefineServletStub();
-        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        FileProjectManager.initialize(dir);
-        project = new Project();
-        pm = new ProjectMetadata();
-        pm.setName("TextSearchFacet test");
-        ProjectManager.singleton.registerProject(project, pm);
-        options = mock(JSONObject.class);
-
-        ImportingManager.initialize(servlet);
-        job = ImportingManager.createJob();
-        importer = new SeparatorBasedImporter();
-
-        String csv = "Value\n"
+        project = createCSVProject("TextSearchFacet",
+             "Value\n"
             + "a\n"
             + "b\n"
             + "ab\n"
-            + "Abc\n";
-        prepareOptions(",", 10, 0, 0, 1, false, false);
-        List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
-        project.update();
-        ProjectManager.singleton.registerProject(project, pm);
+            + "Abc\n");
     }
-
-    @AfterMethod
-    public void tearDown() {
-        ImportingManager.disposeJob(job.id);
-        ProjectManager.singleton.deleteProject(project.id);
-        job = null;
-        project = null;
-        pm = null;
-        options = null;
-    }
-
+    
     /**
      * Test to demonstrate the intended behaviour of the function
      */
@@ -245,21 +198,5 @@ public class TextSearchFacetTests extends RefineTest {
         Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)),false);
         Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)),true);
     }
-
-    private void prepareOptions(
-        String sep, int limit, int skip, int ignoreLines,
-        int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-        
-        whenGetStringOption("separator", options, sep);
-        whenGetIntegerOption("limit", options, limit);
-        whenGetIntegerOption("skipDataLines", options, skip);
-        whenGetIntegerOption("ignoreLines", options, ignoreLines);
-        whenGetIntegerOption("headerLines", options, headerLines);
-        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-    }
-
-
 }
 

@@ -2,12 +2,15 @@ package com.google.refine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,7 +25,7 @@ import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
 
-
+@Test(groups = { "requiresMySQL" })
 public class TestQueryCommandTest extends DBExtensionTests {
     
     @Mock
@@ -61,7 +64,7 @@ public class TestQueryCommandTest extends DBExtensionTests {
     
 
     @Test
-    public void testDoPost() {
+    public void testDoPost() throws IOException, ServletException, JSONException {
 
         when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
@@ -76,25 +79,19 @@ public class TestQueryCommandTest extends DBExtensionTests {
 
         PrintWriter pw = new PrintWriter(sw);
 
-        try {
-            when(response.getWriter()).thenReturn(pw);
-            TestQueryCommand executeQueryCommand = new TestQueryCommand();
-           
-            executeQueryCommand.doPost(request, response);
-            
-            String result = sw.getBuffer().toString().trim();
-            JSONObject json = new JSONObject(result);
+        when(response.getWriter()).thenReturn(pw);
+        TestQueryCommand executeQueryCommand = new TestQueryCommand();
        
-            String code = json.getString("code");
-            Assert.assertEquals(code, "ok");
-
-            String queryResult = json.getString("QueryResult");
-            Assert.assertNotNull(queryResult);
+        executeQueryCommand.doPost(request, response);
         
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } 
+        String result = sw.getBuffer().toString().trim();
+        JSONObject json = new JSONObject(result);
+   
+        String code = json.getString("code");
+        Assert.assertEquals(code, "ok");
+
+        String queryResult = json.getString("QueryResult");
+        Assert.assertNotNull(queryResult);
 
     }
 
