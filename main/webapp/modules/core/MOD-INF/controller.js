@@ -468,8 +468,8 @@ function init() {
       "scripts/dialogs/column-reordering-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
-      
-      "scripts/project/edit-general-metadata-dialog.js"
+      "scripts/project/edit-general-metadata-dialog.js",
+      "scripts/dialogs/http-headers-dialog.js",
     ]
   );
 

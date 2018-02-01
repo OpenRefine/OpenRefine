@@ -27,6 +27,32 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+$(function(){
+    $.contextMenu({
+        selector: '.context-menu-one',
+        trigger: 'left',
+        build: function($trigger, e) {
+
+            return {
+                callback: function(key, options) {
+                    var m = "clicked: " + key;
+                    DatabaseExtension.handleSavedConnectionClicked(key,  $(this).text());
+
+                },
+
+                items: {
+                    "edit":        {name: " Edit "},
+                    "sep0": "",
+                    "delete":   {name: " Delete "},
+                    "sep1": "---------",
+                    "connect": {name: " Connect "},
+                    "dummy":  {name: "", icon: ""}
+                }
+            };
+        }
+    });
+});
+
 Refine.DatabaseSourceUI = function(controller) {
   this._controller = controller;
 };

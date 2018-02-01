@@ -109,6 +109,7 @@ import com.google.refine.expr.functions.strings.IndexOf;
 import com.google.refine.expr.functions.strings.LastIndexOf;
 import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.expr.functions.strings.Match;
+import com.google.refine.expr.functions.strings.Find;
 import com.google.refine.expr.functions.strings.NGram;
 import com.google.refine.expr.functions.strings.NGramFingerprint;
 import com.google.refine.expr.functions.strings.ParseJson;
@@ -226,6 +227,7 @@ public class ControlFunctionRegistry {
         registerFunction("parseJson", new ParseJson());
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
+        registerFunction("find", new Find());
 
         // HTML functions from JSoup
         registerFunction("parseHtml", new ParseHtml());

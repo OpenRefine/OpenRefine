@@ -42,12 +42,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
@@ -66,6 +69,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
+import com.google.refine.commands.HttpHeadersSupport;
+import com.google.refine.commands.HttpHeadersSupport.HttpHeaderInfo;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
@@ -77,6 +82,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
 
+
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
     final protected String     _urlExpression;
@@ -86,6 +92,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected int        _columnInsertIndex;
     final protected int        _delay;
     final protected boolean    _cacheResponses;
+    final protected JSONArray  _httpHeadersJson;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
@@ -98,7 +105,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             obj.getString("newColumnName"),
             obj.getInt("columnInsertIndex"),
             obj.getInt("delay"),
-            obj.optBoolean("cacheResponses", false) // false for retro-compatibility
+            obj.optBoolean("cacheResponses", false), // false for retro-compatibility
+            obj.optJSONArray("httpHeadersJson") // will be null if it doesn't exist for retro-compatibility
         );
     }
 
@@ -110,7 +118,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         String         newColumnName,
         int            columnInsertIndex,
         int            delay,
-        boolean        cacheResponses
+        boolean        cacheResponses,
+        JSONArray      httpHeadersJson
     ) {
         super(engineConfig);
 
@@ -123,6 +132,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         _delay = delay;
         _cacheResponses = cacheResponses;
+        _httpHeadersJson = httpHeadersJson;
     }
 
     @Override
@@ -140,6 +150,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
         writer.key("delay"); writer.value(_delay);
         writer.key("cacheResponses"); writer.value(_cacheResponses);
+        writer.key("httpHeadersJson"); writer.value(_httpHeadersJson);
         writer.endObject();
     }
 
@@ -171,7 +182,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             engine,
             eval,
             getBriefDescription(null),
-            _cacheResponses
+            _cacheResponses,
+            _httpHeadersJson
         );
     }
 
@@ -188,7 +200,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             Engine engine,
             Evaluable eval,
             String description,
-            boolean cacheResponses
+            boolean cacheResponses,
+            JSONArray httpHeadersJson
         ) throws JSONException {
             super(description);
             _project = project;
@@ -217,13 +230,13 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                 result = null;
                             }
 
-			    if (result == null) {
-				// the load method should not return any null value
-				throw new Exception("null result returned by fetch");
-			    }
+                            if (result == null) {
+                                // the load method should not return any null value
+                                throw new Exception("null result returned by fetch");
+                            }
                             return result;
                         }
-                     });
+                        });
             }
         }
 
@@ -324,7 +337,19 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
             try {
                 URLConnection urlConnection = url.openConnection();
-//                    urlConnection.setRequestProperty(_headerKey, _headerValue);
+                if (_httpHeadersJson != null) {
+                    Map<String, String> httpHeaders = new HashMap<>();
+                    for (int i = 0; i < _httpHeadersJson.length(); i++) {            
+                        String headerLabel = _httpHeadersJson.getJSONObject(i).getString("name");
+                        String headerValue = _httpHeadersJson.getJSONObject(i).getString("value");
+                        httpHeaders.put(headerLabel, headerValue);
+                    }
+                    for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
+                        HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
+
+                        urlConnection.setRequestProperty(info.header, httpHeaders.get(headerLabel));
+                    }
+                }
 
                 try {
                     InputStream is = urlConnection.getInputStream();
