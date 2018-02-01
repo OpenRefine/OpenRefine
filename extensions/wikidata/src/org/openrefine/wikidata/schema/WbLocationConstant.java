@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WbLocationConstant implements WbExpression<GlobeCoordinatesValue> {
     
+    public static final double defaultPrecision = GlobeCoordinatesValue.PREC_TEN_MICRO_DEGREE;
+    
     private String value;
     private GlobeCoordinatesValue parsed;
     
@@ -29,7 +31,7 @@ public class WbLocationConstant implements WbExpression<GlobeCoordinatesValue> {
     public static GlobeCoordinatesValue parse(String expr) throws ParseException {
         double lat = 0;
         double lng = 0;
-        double precision = GlobeCoordinatesValue.PREC_TEN_MICRO_DEGREE;
+        double precision = defaultPrecision;
         String[] parts = expr.split("[,/]");
         if (parts.length >= 2 && parts.length <= 3) {
            try {
