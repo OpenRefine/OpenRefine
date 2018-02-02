@@ -44,7 +44,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.WikitextImporter;
-import com.google.refine.util.JSONUtilities;
 
 public class WikitextImporterTests extends ImporterTest {
 
