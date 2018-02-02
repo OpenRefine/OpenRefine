@@ -44,6 +44,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.WikitextImporter;
+import com.google.refine.util.JSONUtilities;
 
 public class WikitextImporterTests extends ImporterTest {
 
@@ -281,6 +282,34 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
     }
+    
+    /**
+     * Include templates and image filenames
+     */
+    @Test
+    public void readTableWithTemplates() {
+        String input = "\n"
+                + "{|\n"
+                + "|-\n"
+                + "| {{free to read}} || b || c \n"
+                + "|-\n"
+                + "| d\n"
+                + "| [[File:My logo.svg|70px]]\n"
+                + "| f<br>\n"
+                + "|-\n"
+                + "|}\n";
+        try {
+           prepareOptions(0, 0, true, true, null);
+           parse(input);
+        } catch (Exception e) {
+           Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 2);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "{{free to read}}");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "[[File:My logo.svg]]");
+    }
 
     //--helpers--
     
@@ -298,6 +327,7 @@ public class WikitextImporterTests extends ImporterTest {
         whenGetBooleanOption("blankSpanningCells", options, blankSpanningCells);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
         whenGetBooleanOption("parseReferences", options, true);
+        whenGetBooleanOption("includeRawTemplates", options, true);
         whenGetStringOption("wikiUrl", options, wikiUrl);
         whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
     }

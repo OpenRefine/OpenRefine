@@ -136,7 +136,7 @@
         "store-blank": "Store blank rows",
         "store-nulls": "Store blank cells as nulls",
         "blank-spanning-cells": "Pad cells spanning over multiple rows or columns with nulls",
-        "include-raw-templates": "Include templates as raw wikicode",
+        "include-raw-templates": "Include templates and images as raw wikicode",
         "parse-references": "Extract references in additional columns",
         "wiki-base-url": "Reconcile to wiki with base URL:",
         "invalid-wikitext": "No table could be parsed. Are you sure this is a valid wiki table?",

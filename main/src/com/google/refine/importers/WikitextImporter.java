@@ -30,6 +30,7 @@ import org.sweble.wikitext.parser.nodes.WtText;
 import org.sweble.wikitext.parser.nodes.WtInternalLink;
 import org.sweble.wikitext.parser.nodes.WtExternalLink;
 import org.sweble.wikitext.parser.nodes.WtHeading;
+import org.sweble.wikitext.parser.nodes.WtImageLink;
 import org.sweble.wikitext.parser.nodes.WtLinkTitle;
 import org.sweble.wikitext.parser.nodes.WtLinkTitle.WtNoLinkTitle;
 import org.sweble.wikitext.parser.nodes.WtUrl;
@@ -423,8 +424,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         
         public void visit(WtName e) {
             try {
-                currentXmlAttr = e.getAsString();
-               
+                currentXmlAttr = e.getAsString();  
             } catch (UnsupportedOperationException soe) {
                 currentXmlAttr = null;
             }
@@ -505,6 +505,14 @@ public class WikitextImporter extends TabularImportingParserBase {
                 }
             }
             iterate(e.getValue());
+        }
+        
+        public void visit(WtImageLink e) {
+            if(includeRawTemplates) {
+                writeText("[[");
+                writeText(e.getTarget().getAsString());
+                writeText("]]");
+            }
         }
         
         /* Content blocks */
