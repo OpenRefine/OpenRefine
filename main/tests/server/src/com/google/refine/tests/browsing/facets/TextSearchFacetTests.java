@@ -45,6 +45,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
 import com.google.refine.tests.RefineTest;

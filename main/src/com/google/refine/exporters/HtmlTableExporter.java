@@ -38,7 +38,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 
 import com.google.refine.ProjectManager;
@@ -103,7 +103,7 @@ public class HtmlTableExporter implements WriterExporter {
                                 if (cellData.link != null) {
                                     writer.write("<a href=\"");
                                     // TODO: The escape below looks wrong, but is probably harmless in most cases
-                                    writer.write(StringEscapeUtils.escapeHtml(cellData.link));
+                                    writer.write(StringEscapeUtils.escapeHtml4(cellData.link));
                                     writer.write("\">");
                                 }
                                 writer.write(StringEscapeUtils.escapeXml(cellData.text));

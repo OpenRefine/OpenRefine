@@ -62,6 +62,21 @@ public class ColumnAdditionChange extends ColumnChange {
         newCells.toArray(_newCells);
     }
 
+    
+    public String getColumnName() {
+        return _columnName;
+    }
+
+    
+    public int getColumnIndex() {
+        return _columnIndex;
+    }
+
+    
+    public int getNewCellIndex() {
+        return _newCellIndex;
+    }
+
     @Override
     public void apply(Project project) {
         synchronized (project) {

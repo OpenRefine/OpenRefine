@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -123,6 +124,10 @@ public class JSONUtilities {
         } catch (JSONException e) {
             return null;
         }
+    }
+    
+    static public JSONArray arrayToJSONArray(String[] array) {
+        return new JSONArray(Arrays.asList(array));
     }
     
     static public int[] getIntArray(JSONObject obj, String key) {
@@ -276,6 +281,15 @@ public class JSONUtilities {
         }
     }
     
+    static public void safeInc(JSONObject obj, String key) {
+        try {
+            int currentValue = obj.getInt(key);
+            safePut(obj, key, currentValue + 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    
     static public void safePut(JSONObject obj, String key, long value) {
         try {
             obj.put(key, value);
@@ -352,5 +366,12 @@ public class JSONUtilities {
         }
         
         return list;
+    }
+    
+    static public void concatArray(JSONArray destArray, JSONArray srcArray)
+            throws JSONException {
+        for (int i = 0; i < srcArray.length(); i++) {
+            destArray.put(srcArray.get(i));
+        }
     }
 }

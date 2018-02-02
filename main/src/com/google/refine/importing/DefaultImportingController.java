@@ -271,7 +271,15 @@ public class DefaultImportingController implements ImportingController {
             throw new ServletException(e);
         }
     }
-
+    
+    /**
+     * return the job to the front end.
+     * @param request
+     * @param response
+     * @param job
+     * @throws ServletException
+     * @throws IOException
+     */
     private void replyWithJobData(HttpServletRequest request, HttpServletResponse response, ImportingJob job)
         throws ServletException, IOException {
         

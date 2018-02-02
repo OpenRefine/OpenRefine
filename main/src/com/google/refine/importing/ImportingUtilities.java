@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
@@ -49,9 +50,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -65,10 +68,14 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -82,15 +89,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
+import com.google.refine.model.Column;
+import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
+import com.google.refine.model.medadata.DataPackageMetadata;
+import com.google.refine.model.medadata.IMetadata;
+import com.google.refine.model.medadata.MetadataFactory;
+import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.medadata.PackageExtension;
+import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.JSONUtilities;
+
+import io.frictionlessdata.datapackage.Package;
+import io.frictionlessdata.tableschema.Field;
+import io.frictionlessdata.tableschema.Schema;
+import io.frictionlessdata.tableschema.TypeInferrer;
+import io.frictionlessdata.tableschema.exceptions.TypeInferringException;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
+    
+    private final static String METADATA_FILE_KEY  = "metadataFile";
+
+    private static final int INFER_ROW_LIMIT = 100;
     
     static public interface Progress {
         public void setProgress(String message, int percent);
@@ -172,11 +198,11 @@ public class ImportingUtilities {
     ) throws Exception {
         JSONArray fileRecords = new JSONArray();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
+        JSONUtilities.safePut(retrievalRecord, "downloadCount", 0);
+        JSONUtilities.safePut(retrievalRecord, "archiveCount", 0);
         
         int clipboardCount = 0;
         int uploadCount = 0;
-        int downloadCount = 0;
-        int archiveCount = 0;
         
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
@@ -220,7 +246,7 @@ public class ImportingUtilities {
         List<FileItem> tempFiles = (List<FileItem>)upload.parseRequest(request);
         
         progress.setProgress("Uploading data ...", -1);
-        parts: for (FileItem fileItem : tempFiles) {
+        for (FileItem fileItem : tempFiles) {
             if (progress.isCanceled()) {
                 break;
             }
@@ -255,97 +281,19 @@ public class ImportingUtilities {
                     
                 } else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
-                    URL url = new URL(urlString);
-                    
-                    JSONObject fileRecord = new JSONObject();
-                    JSONUtilities.safePut(fileRecord, "origin", "download");
-                    JSONUtilities.safePut(fileRecord, "url", urlString);
+                    download(rawDataDir, retrievalRecord, progress, fileRecords, update, urlString);
+                    processDataPackage(retrievalRecord, fileRecords);
+                } else if (name.equals("data-package")) {
+                    String urlString = Streams.asString(stream);
+                    List<Result> results = null;
                     
                     for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
-                        Result result = rewriter.rewrite(urlString);
-                        if (result != null) {
-                            urlString = result.rewrittenUrl;
-                            url = new URL(urlString);
-                            
-                            JSONUtilities.safePut(fileRecord, "url", urlString);
-                            JSONUtilities.safePut(fileRecord, "format", result.format);
-                            if (!result.download) {
-                                downloadCount++;
-                                JSONUtilities.append(fileRecords, fileRecord);
-                                continue parts;
+                        results = rewriter.rewrite(urlString);
+                        if (results != null) {
+                            for (Result result : results) {
+                                download(rawDataDir, retrievalRecord, progress, fileRecords, 
+                                        update, result.rewrittenUrl, result.metaDataFormat);
                             }
-                        }
-                    }
-
-                    if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        DefaultHttpClient client = new DefaultHttpClient();
-                        DecompressingHttpClient httpclient = 
-                                new DecompressingHttpClient(client);
-                        HttpGet httpGet = new HttpGet(url.toURI());
-                        httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
-                        if ("https".equals(url.getProtocol())) {
-                            // HTTPS only - no sending password in the clear over HTTP
-                            String userinfo = url.getUserInfo();
-                            if (userinfo != null) {
-                                int s = userinfo.indexOf(':');
-                                if (s > 0) {
-                                    String user = userinfo.substring(0, s);
-                                    String pw = userinfo.substring(s + 1, userinfo.length());
-                                    client.getCredentialsProvider().setCredentials(
-                                            new AuthScope(url.getHost(), 443),
-                                            new UsernamePasswordCredentials(user, pw));
-                                }
-                            }
-                        }
- 
-                        HttpResponse response = httpclient.execute(httpGet);
-                        
-                        try {
-                            response.getStatusLine();
-                            HttpEntity entity = response.getEntity();
-                            if (entity == null) {
-                                throw new Exception("No content found in " + url.toString());
-                            }
-                            InputStream stream2 = entity.getContent();
-                            String encoding = null;
-                            if (entity.getContentEncoding() != null) {
-                                encoding = entity.getContentEncoding().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
-                            String contentType = null;
-                            if (entity.getContentType() != null) {
-                                contentType = entity.getContentType().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
-                            if (saveStream(stream2, url, rawDataDir, progress, update, 
-                                    fileRecord, fileRecords,
-                                    entity.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                            EntityUtils.consume(entity);
-                        } finally {
-                            httpGet.releaseConnection();
-                        }
-                    } else {
-                        // Fallback handling for non HTTP connections (only FTP?)
-                        URLConnection urlConnection = url.openConnection();
-                        urlConnection.setConnectTimeout(5000);
-                        urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding", 
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType", 
-                                urlConnection.getContentType());
-                        try {
-                            if (saveStream(stream2, url, rawDataDir, progress, 
-                                    update, fileRecord, fileRecords,
-                                    urlConnection.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                        } finally {
-                            stream2.close();
                         }
                     }
                 } else {
@@ -353,9 +301,7 @@ public class ImportingUtilities {
                     parameters.put(name, value);
                     // TODO: We really want to store this on the request so it's available for everyone
 //                    request.getParameterMap().put(name, value);
-                    
                 }
-
             } else { // is file content
                 String fileName = fileItem.getName();
                 if (fileName.length() > 0) {
@@ -376,8 +322,10 @@ public class ImportingUtilities {
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
-                        archiveCount++;
+                        JSONUtilities.safeInc(retrievalRecord, "archiveCount");
                     }
+                    
+                    processDataPackage(retrievalRecord, fileRecords);
                     
                     uploadCount++;
                 }
@@ -392,9 +340,144 @@ public class ImportingUtilities {
         }
         
         JSONUtilities.safePut(retrievalRecord, "uploadCount", uploadCount);
-        JSONUtilities.safePut(retrievalRecord, "downloadCount", downloadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
-        JSONUtilities.safePut(retrievalRecord, "archiveCount", archiveCount);
+    }
+
+    private static void processDataPackage(JSONObject retrievalRecord, JSONArray fileRecords) {
+        int dataPackageJSONFileIndex = getDataPackageJSONFile(fileRecords);
+        if (dataPackageJSONFileIndex >= 0) {
+            JSONObject dataPackageJSONFile = (JSONObject) fileRecords.get(dataPackageJSONFileIndex);
+            JSONUtilities.safePut(dataPackageJSONFile, "metaDataFormat", MetadataFormat.DATAPACKAGE_METADATA.name());
+            JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, dataPackageJSONFile);
+            fileRecords.remove(dataPackageJSONFileIndex);
+        }
+    }
+
+    private static int getDataPackageJSONFile(JSONArray fileRecords) {
+        for (int i = 0; i < fileRecords.length(); i++) {
+            JSONObject file = fileRecords.getJSONObject(i);
+            if (file.has("archiveFileName") && 
+                    file.has("fileName") &&
+                    file.get("fileName").equals(DataPackageMetadata.DEFAULT_FILE_NAME)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
+            JSONArray fileRecords, final SavingUpdate update, String urlString)
+            throws URISyntaxException, IOException, ClientProtocolException, Exception {
+         download(rawDataDir, retrievalRecord, progress, fileRecords, update, urlString, null);
+    }
+    
+    /**
+     * @param rawDataDir
+     * @param retrievalRecord
+     * @param progress
+     * @param fileRecords
+     * @param update
+     * @param urlString
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws ClientProtocolException
+     * @throws Exception
+     */
+    private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
+            JSONArray fileRecords, final SavingUpdate update, String urlString, String metaDataFormat)
+            throws URISyntaxException, IOException, ClientProtocolException, Exception {
+        URL url = new URL(urlString);
+        JSONObject fileRecord = new JSONObject();
+        JSONUtilities.safePut(fileRecord, "origin", "download");
+        JSONUtilities.safePut(fileRecord, "url", urlString);
+        
+        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+            DefaultHttpClient client = new DefaultHttpClient();
+            DecompressingHttpClient httpclient = 
+                    new DecompressingHttpClient(client);
+            HttpGet httpGet = new HttpGet(url.toURI());
+            httpGet.setHeader("User-Agent", RefineServlet.getUserAgent());
+            if ("https".equals(url.getProtocol())) {
+                // HTTPS only - no sending password in the clear over HTTP
+                String userinfo = url.getUserInfo();
+                if (userinfo != null) {
+                    int s = userinfo.indexOf(':');
+                    if (s > 0) {
+                        String user = userinfo.substring(0, s);
+                        String pw = userinfo.substring(s + 1, userinfo.length());
+                        client.getCredentialsProvider().setCredentials(
+                                new AuthScope(url.getHost(), 443),
+                                new UsernamePasswordCredentials(user, pw));
+                    }
+                }
+            }
+ 
+            HttpResponse response = httpclient.execute(httpGet);
+            
+            try {
+                int code = response.getStatusLine().getStatusCode();
+                if (code != HttpStatus.SC_OK) {
+                    throw new Exception("HTTP response code: " + code +
+                            " when accessing URL: "+ url.toString());
+                }
+                
+                HttpEntity entity = response.getEntity();
+                if (entity == null) {
+                    throw new Exception("No content found in " + url.toString());
+                }
+                InputStream stream2 = entity.getContent();
+                String encoding = null;
+                if (entity.getContentEncoding() != null) {
+                    encoding = entity.getContentEncoding().getValue();
+                }
+                JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
+                String contentType = null;
+                if (entity.getContentType() != null) {
+                    contentType = entity.getContentType().getValue();
+                }
+                JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
+                
+                if (saveStream(stream2, url, rawDataDir, progress, update, 
+                        fileRecord, fileRecords,
+                        entity.getContentLength())) {
+                    JSONUtilities.safeInc(retrievalRecord, "archiveCount");
+                }
+                
+                if (metaDataFormat != null) {
+                    JSONUtilities.safePut(fileRecord, "metaDataFormat", metaDataFormat);
+                    JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, fileRecord);
+                    fileRecords.remove(0);
+                }
+                
+                JSONUtilities.safeInc(retrievalRecord, "downloadCount");
+                EntityUtils.consume(entity);
+            } finally {
+                httpGet.releaseConnection();
+            }
+        } else {
+            // Fallback handling for non HTTP connections (only FTP?)
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.connect();
+            InputStream stream2 = urlConnection.getInputStream();
+            JSONUtilities.safePut(fileRecord, "declaredEncoding", 
+                    urlConnection.getContentEncoding());
+            JSONUtilities.safePut(fileRecord, "declaredMimeType", 
+                    urlConnection.getContentType());
+            try {
+                if (saveStream(stream2, url, rawDataDir, progress, 
+                        update, fileRecord, fileRecords,
+                        urlConnection.getContentLength())) {
+                    JSONUtilities.safeInc(retrievalRecord, "archiveCount");
+                }
+                if (metaDataFormat != null)
+                    JSONUtilities.safePut(fileRecord, "metaDataFormat", metaDataFormat);
+                
+                JSONUtilities.safeInc(retrievalRecord, "downloadCount");
+            } finally {
+                stream2.close();
+            }
+        }
     }
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
@@ -1021,7 +1104,44 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
                 
+                boolean hasMetadataFileRecord = ((JSONObject)job.getRetrievalRecord()).has(METADATA_FILE_KEY);
+                
+                if (hasMetadataFileRecord) {
+                    JSONObject metadataFileRecord = (JSONObject) job.getRetrievalRecord().get(METADATA_FILE_KEY);
+                    
+                    String metadataFormat = (String)metadataFileRecord.get("metaDataFormat");
+                    IMetadata metadata = MetadataFactory.buildMetadata(MetadataFormat.valueOf(metadataFormat));
+                    
+                    String relativePath = metadataFileRecord.getString("location");
+                    File metadataFile = new File(job.getRawDataDir(), relativePath);
+                    metadata.loadFromFile(metadataFile);
+                    
+                    // process the data package metadata
+                    if (MetadataFormat.valueOf(metadataFormat) == MetadataFormat.DATAPACKAGE_METADATA) {
+                        populateDataPackageMetadata(project, pm, (DataPackageMetadata) metadata);
+                    }
+                    logger.info(metadataFileRecord.get("metaDataFormat") + " metadata is set for project " + project.id);
+                }
+                
                 ProjectManager.singleton.registerProject(project, pm);
+                
+                // infer the column type
+                if (project.columnModel.columns.get(0).getType().isEmpty()) {
+                    List<Object[]> listCells = new ArrayList<Object[]>(INFER_ROW_LIMIT);
+                    List<Row> rows = project.rows
+                             .stream()
+                             .limit(INFER_ROW_LIMIT)
+                             .collect(Collectors.toList());
+                    rows.forEach(r->listCells.add(r.cells.toArray()));
+                    try {
+                        JSONObject fieldsJSON = TypeInferrer.getInstance().infer(listCells, 
+                                project.columnModel.getColumnNames().toArray(new String[0]),
+                                100);
+                        populateColumnTypes(project.columnModel, fieldsJSON.getJSONArray(Schema.JSON_KEY_FIELDS));
+                    } catch (TypeInferringException e) {
+                       logger.error("infer column type exception.", ExceptionUtils.getStackTrace(e));
+                    }
+                }
                 
                 job.setProjectID(project.id);
                 job.setState("created-project");
@@ -1032,11 +1152,72 @@ public class ImportingUtilities {
             job.updating = false;
         }
     }
+    
+    private static void populateDataPackageMetadata(Project project, ProjectMetadata pmd, DataPackageMetadata metadata) {
+        // project metadata
+        JSONObject pkg = metadata.getPackage().getJson();
+        
+        pmd.setName(getDataPackageProperty(pkg, Package.JSON_KEY_NAME));
+        pmd.setDescription(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_DESCRIPTION));
+        pmd.setTitle(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_TITLE));
+        pmd.setHomepage(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_HOMEPAGE));
+        pmd.setImage(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_IMAGE));
+        pmd.setLicense(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_LICENSE));
+        pmd.setVersion(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_VERSION));
+        
+        if (pkg.has(PackageExtension.JSON_KEY_KEYWORKS)) {
+            String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
+            pmd.appendTags(tags);
+        }
+        
+        // column model
+        JSONObject schema = metadata.getPackage().getResources().get(0).getSchema();
+        if (schema != null) {
+            populateColumnTypes(project.columnModel, schema.getJSONArray(Schema.JSON_KEY_FIELDS));
+        }
+    }
+    
+    private static String getDataPackageProperty(JSONObject pkg, String key) {
+        return JSONUtilities.getString(pkg, key, StringUtils.EMPTY);
+    }
+    /**
+     * Populate the column model
+     * @param columnModel
+     * @param fieldsJSON
+     */
+    private static void populateColumnTypes(ColumnModel columnModel, JSONArray fieldsJSON) {
+        int cellIndex = 0;
+        Iterator<Object> iter = fieldsJSON.iterator();
+        while(iter.hasNext()){
+            JSONObject fieldJsonObj = (JSONObject)iter.next();
+            Field field = new Field(fieldJsonObj);
+            
+            Column column = columnModel.getColumnByCellIndex(cellIndex);
+            column.setType(field.getType());
+            column.setFormat(field.getFormat());
+            column.setDescription(field.getDescription());
+            column.setTitle(field.getTitle());
+            column.setConstraints(field.getConstraints());
+            
+            cellIndex++;
+        }  
+    }
 
+    /**
+     * Create project metadata. pull the "USER_NAME" from the PreferenceStore as the creator
+     * @param optionObj
+     * @return
+     */
     static public ProjectMetadata createProjectMetadata(JSONObject optionObj) {
         ProjectMetadata pm = new ProjectMetadata();
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+        
         pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
         pm.setTags(JSONUtilities.getStringArray(optionObj, "projectTags"));
+        pm.setTitle(JSONUtilities.getString(optionObj, "title", ""));
+        pm.setHomepage(JSONUtilities.getString(optionObj, "homepage", ""));
+        pm.setImage(JSONUtilities.getString(optionObj, "image", ""));
+        pm.setLicense(JSONUtilities.getString(optionObj, "license", ""));
 
         String encoding = JSONUtilities.getString(optionObj, "encoding", "UTF-8");
         if ("".equals(encoding)) {
@@ -1044,6 +1225,12 @@ public class ImportingUtilities {
             encoding = "UTF-8";
         }
         pm.setEncoding(encoding);
+        
+        if (ps.get(PreferenceStore.USER_NAME) != null) {
+            String creator = (String) ps.get(PreferenceStore.USER_NAME);
+            pm.setCreator(creator);
+        }
+        
         return pm;
     }
 }

@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -56,16 +55,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class ParsingUtilities {
-
-    static final private ThreadLocal<SimpleDateFormat> ISO8601_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        }
-
-    };
-
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
 
@@ -198,8 +187,7 @@ public class ParsingUtilities {
         if (s.endsWith("Z")) {          // UTC time
             Instant instant = Instant.parse(s);
             return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        } else {
+        } else 
             return LocalDateTime.parse(s, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        }
     }
 }

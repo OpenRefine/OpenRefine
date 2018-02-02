@@ -42,8 +42,8 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.process.Process;
 import com.google.refine.operations.cell.MultiValuedCellJoinOperation;
+import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 
 

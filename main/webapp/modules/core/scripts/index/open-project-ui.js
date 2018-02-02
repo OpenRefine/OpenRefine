@@ -193,7 +193,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["tags"]+'</th>' + 
-      '<th>'+$.i18n._('core-index-open')["creator"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
       '<th>'+$.i18n._('core-index-open')["row-count"]+'</th>' + 
@@ -238,7 +237,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       }).appendTo(
         $(tr.insertCell(tr.cells.length))
       );
-
+      
+      var metadataCell = $(tr.insertCell(tr.cells.length));
       var editMetadataLink = $('<a></a>')
       .text($.i18n._('core-index-open')["edit-meta-data"])
       .addClass("secondary")
@@ -246,9 +246,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .click(function() {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
-      .appendTo(
-        $(tr.insertCell(tr.cells.length))
-      );
+      .appendTo(metadataCell);
       
       $('<div></div>')
       .html(project.date)
@@ -261,41 +259,35 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
       
-      
-    
-    var tagsCell = $(tr.insertCell(tr.cells.length));
-    var tags = project.tags;
-    tags.map(function(tag){
-        $("<span/>")
-        .addClass("project-tag")
-        .text(tag)
-        .attr("title", $.i18n._('core-index-open')["edit-tags"])
-        .appendTo(tagsCell);
-        $(tr).addClass(tag);
-    });
-    
-    
-    var appendMetaField = function(data) {
-        $('<div></div>')
-        .html(data)
-        .appendTo($(tr.insertCell(tr.cells.length)));
-    };
-    
-    appendMetaField(project.creator);
-    appendMetaField(project.subject);
-    appendMetaField(project.description, '20%');
-    appendMetaField(project.rowCount);
-    
-    var data = project.userMetadata;
-    for(var i in data)
-    {
-         if (data[i].display === true) {
-             appendMetaField(data[i].value); 
-         }
-    }
+        var tagsCell = $(tr.insertCell(tr.cells.length));
+        var tags = project.tags;
+        tags.map(function(tag){
+            $("<span/>")
+            .addClass("project-tag")
+            .text(tag)
+            .attr("title", $.i18n._('core-index-open')["edit-tags"])
+            .appendTo(tagsCell);
+            $(tr).addClass(tag);
+        });
         
-
-      };
+        var appendMetaField = function(data) {
+            $('<div></div>')
+            .html(data)
+            .appendTo($(tr.insertCell(tr.cells.length)));
+        };
+        
+        appendMetaField(project.subject);
+        appendMetaField(project.description, '20%');
+        appendMetaField(project.rowCount);
+        
+        var data = project.userMetadata;
+        for(var i in data)
+        {
+             if (data[i].display === true) {
+                 appendMetaField(data[i].value); 
+             }
+        }
+    };
 
     for (var i = 0; i < projects.length; i++) {
       renderProject(projects[i]);
@@ -389,7 +381,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
     var index = 3;
     refreshMetaField(metaData.name, index); index++;
     refreshMetaTags(metaData.tags, index); index++;
-    refreshMetaField(metaData.creator, index); index++;
     refreshMetaField(metaData.subject,index); index++;
     refreshMetaField(metaData.description,index); index++;
     refreshMetaField(metaData.rowCount,index); index++;

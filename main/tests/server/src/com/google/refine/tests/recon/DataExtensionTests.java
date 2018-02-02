@@ -36,9 +36,9 @@ package com.google.refine.tests.recon;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
-import java.util.Properties;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,9 +53,9 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.Row;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.operations.EngineDependentOperation;
