@@ -31,7 +31,6 @@ package com.google.refine.extension.gdata;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -153,11 +152,11 @@ public class UploadCommand extends Command {
         
         try {
             File body = new File();
-            body.setTitle(name);
+            body.setName(name);
             body.setDescription("Spreadsheet uploaded from OpenRefine project: " + name);
             body.setMimeType("application/vnd.google-apps.spreadsheet");
 
-            File file = driveService.files().insert(body).execute();
+            File file = driveService.files().create(body).execute();
             String fileID =  file.getId();
 
             // Iterate through all spreadsheets to find one with our ID
