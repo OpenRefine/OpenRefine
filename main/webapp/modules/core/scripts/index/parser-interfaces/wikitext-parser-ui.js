@@ -85,6 +85,12 @@ Refine.WikitextParserUI.prototype.getOptions = function() {
   } else {
     options.limit = -1;
   }
+  if (this._optionContainerElmts.headerLinesCheckbox[0].checked) {
+    options.headerLines = parseIntDefault(this._optionContainerElmts.headerLinesInput[0].value, 1);
+  } else {
+    options.headerLines = -1;
+  }
+
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
   options.blankSpanningCells = this._optionContainerElmts.blankSpanningCellsCheckbox[0].checked;
   options.includeRawTemplates = this._optionContainerElmts.includeRawTemplatesCheckbox[0].checked;
@@ -111,6 +117,8 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
   
   $('#or-import-wiki-base-url').text($.i18n._('core-index-parser')["wiki-base-url"]);
+  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
+  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
   $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
   $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
@@ -140,6 +148,11 @@ Refine.WikitextParserUI.prototype._initialize = function() {
    if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.prop("checked", true);
     this._optionContainerElmts.limitInput[0].value = this._config.limit.toString();
+  }
+
+   if (this._config.headerLines > 0) {
+    this._optionContainerElmts.headerLinesCheckbox.prop("checked", true);
+    this._optionContainerElmts.headerLinesInput[0].value = this._config.headerLines.toString();
   }
 
   if (this._config.blankSpanningCells) {
