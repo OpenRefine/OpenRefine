@@ -63,8 +63,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-1.20.0.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-servlet-1.20.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-1.20.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-jackson2-1.20.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-1.20.0.jar"/>
@@ -119,5 +117,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/tableschema-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-drive-v3-rev101-1.23.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-fusiontables-v2-rev21-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-servlet-1.23.0.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>
