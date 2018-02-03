@@ -569,6 +569,12 @@ public class TsvCsvImporterTests extends ImporterTest {
                 {","},{"\t"},{null}
         };
     }
+    
+    protected void prepareOptions(
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
+    }
 
     protected void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
