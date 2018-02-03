@@ -489,7 +489,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_CSV_1Header_1Row_singleQuote(String sep){
+    public void customQuoteCharacter(String sep){
         //create input to test with
         String inputSeparator =  sep == null ? "\t" : sep;
         String input = "'col1'" + inputSeparator + "'col2'" + inputSeparator + "'col3'\n" +

@@ -103,8 +103,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         
         Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
-        if (!StringUtils.isBlank(quoteCharacter)) {
-            quote = quoteCharacter.charAt(0);
+        if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
+            quote = quoteCharacter.trim().charAt(0);
         }
         
         final CSVParser parser = new CSVParser(
