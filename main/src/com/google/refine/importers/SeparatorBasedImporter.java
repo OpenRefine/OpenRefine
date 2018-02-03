@@ -50,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import org.json.JSONObject;
 
 import au.com.bytecode.opencsv.CSVParser;
@@ -75,6 +77,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
+        JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
 
         return options;
     }
@@ -98,9 +101,15 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
         
+        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+        String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
+        if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
+            quote = quoteCharacter.trim().charAt(0);
+        }
+        
         final CSVParser parser = new CSVParser(
             sep,
-            CSVParser.DEFAULT_QUOTE_CHARACTER,
+            quote,
             (char) 0, // we don't want escape processing
             strictQuotes,
             CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
