@@ -54,9 +54,7 @@ public class GetPreferenceCommand extends Command {
             throws ServletException, IOException {
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
-        PreferenceStore ps = project != null ? 
-                project.getMetadata().getPreferenceStore() : 
-                ProjectManager.singleton.getPreferenceStore();
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
                 
         String prefName = request.getParameter("name");
         Object pref = ps.get(prefName);

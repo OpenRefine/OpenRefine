@@ -140,6 +140,10 @@
             <classpath refid="webapp.class.path" />
         </javac>
         <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
+        <copy file="${main.dir}/resources/schemas/datapackage-template.json" tofile="${webapp.classes.dir}/schemas/datapackage-template.json"/>
+        <copy file="${main.dir}/resources/schemas/TableSchemaValidator.json" tofile="${webapp.classes.dir}/schemas/TableSchemaValidator.json"/>
+        <copy file="${webapp.src.dir}/validator-resource-bundle.properties" tofile="${webapp.classes.dir}/validator-resource-bundle.properties"/>
+        <copy file="${webapp.src.dir}/log4j.properties" tofile="${webapp.classes.dir}/log4j.properties"/>
     </target>
 
     <target name="build_tests" depends="build">

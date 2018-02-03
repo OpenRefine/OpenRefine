@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="extensions/jython/tests/src"/>
 	<classpathentry kind="src" path="server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
@@ -14,15 +15,9 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.5.1-slim.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-codec-1.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-io-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-lang-2.5.jar" sourcepath="main/webapp/WEB-INF/lib-src/commons-lang-2.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jrdf-0.5.6.jar" sourcepath="main/webapp/WEB-INF/lib-src/jrdf-0.5.6-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/json-20100208.jar" sourcepath="main/webapp/WEB-INF/lib-src/json-20100208-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
@@ -46,8 +41,6 @@
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/mockito-all-1.9.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/tests/server/lib/testng-6.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-meta-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-media-1.0.jar"/>
@@ -67,7 +60,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/commons-logging-1.1.1.jar"/>
@@ -88,14 +80,44 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/swc-parser-lazy-3.1.5-jar-with-dependencies.jar" sourcepath="main/webapp/WEB-INF/lib-src/swc-parser-lazy-3.1.5-sources.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-annotations-2.9.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-2.9.1.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-databind-2.9.1.jar"/>	
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-databind-2.9.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/json-20160810.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-digester-1.8.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-lang3-3.6.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-text-1.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-validator-1.5.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/hamcrest-all-1.3.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/icu4j-4.2.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/joda-time-2.9.9.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/opencsv-4.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/org.everit.json.schema-1.5.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-lang-2.5.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/mysql-connector-java-5.1.44-bin.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/postgresql-42.1.4.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/mariadb-java-client-2.2.0.jar"/>
-    <classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jackson-core-asl-1.9.13.jar"/>
 	<classpathentry kind="lib" path="extensions/database/module/MOD-INF/lib/jasypt-1.9.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-csv-1.5.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/bsh-2.0b4.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/byte-buddy-1.6.14.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/byte-buddy-agent-1.6.14.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/cglib-nodep-2.2.2.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/javassist-3.21.0-GA.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jcommander-1.48.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/mockito-core-2.8.9.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/objenesis-2.5.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/powermock-mockito2-1.7.1-full.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/testng-6.9.10.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/datapackage-java-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/tableschema-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>

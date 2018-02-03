@@ -45,11 +45,11 @@ import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.util.ServiceException;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TabularImportingParserBase;
 import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 /**

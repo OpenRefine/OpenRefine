@@ -37,9 +37,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 
 public class SetProjectTagsCommand extends Command {
   @Override

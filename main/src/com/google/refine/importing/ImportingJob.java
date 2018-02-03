@@ -47,8 +47,8 @@ import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 
@@ -139,6 +139,14 @@ public class ImportingJob implements Jsonizable {
         }
     }
     
+    /**
+     * TO check if the file record is a metadata file entry
+     * @param fileRecordObject
+     * @return JSONObject
+     */
+    public boolean isMetadataFileRecord(JSONObject fileRecordObject) {
+        return fileRecordObject.has("metaDataFormat");
+    }
     
     public List<JSONObject> getSelectedFileRecords() {
         List<JSONObject> results = new ArrayList<JSONObject>();
@@ -208,5 +216,4 @@ public class ImportingJob implements Jsonizable {
             writer.endObject();
         }
     }
-    
 }

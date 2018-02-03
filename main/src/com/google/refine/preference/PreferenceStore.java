@@ -50,6 +50,9 @@ import com.google.refine.RefineServlet;
 public class PreferenceStore implements Jsonizable {
     public static final String USER_METADATA_KEY = "userMetadata";
     
+    // use to populate "creator" filed in metadata. https://github.com/OpenRefine/OpenRefine/issues/1393
+    public static final String USER_NAME = "username";
+    
     private boolean dirty = false;
     protected Map<String, Object> _prefs = new HashMap<String, Object>();
     

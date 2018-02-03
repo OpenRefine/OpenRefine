@@ -9,15 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.medadata.ProjectMetadata;
 
 public class SetProjectMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         String metaName = request.getParameter("name");
         String valueString = request.getParameter("value");
@@ -33,7 +32,7 @@ public class SetProjectMetadataCommand extends Command {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             
-            meta.setAnyField(metaName, valueString);
+            meta.setAnyStringField(metaName, valueString);
             ProjectManager.singleton.saveMetadata(meta, project.id);
             
             respond(response, "{ \"code\" : \"ok\" }");

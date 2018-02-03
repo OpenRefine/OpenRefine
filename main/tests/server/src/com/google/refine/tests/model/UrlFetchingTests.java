@@ -51,6 +51,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.operations.OnError;

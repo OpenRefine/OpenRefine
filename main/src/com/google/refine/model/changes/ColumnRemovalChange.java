@@ -54,9 +54,13 @@ public class ColumnRemovalChange extends ColumnChange {
     protected Column            _oldColumn;
     protected CellAtRow[]       _oldCells;
     protected List<ColumnGroup> _oldColumnGroups;
-    
+
     public ColumnRemovalChange(int index) {
         _oldColumnIndex = index;
+    }
+    
+    public int getOldColumnIndex() {
+        return _oldColumnIndex;
     }
     
     @Override

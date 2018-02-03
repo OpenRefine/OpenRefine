@@ -25,7 +25,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;

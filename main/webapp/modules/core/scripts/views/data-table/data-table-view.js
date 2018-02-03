@@ -553,7 +553,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
   this.update();
 };
 
-/** below can be move to seperate file **/
+/** below can be move to separate file **/
   var doTextTransformPrompt = function() {
     var frame = $(
         DOM.loadHTML("core", "scripts/views/data-table/text-transform-dialog.html")
@@ -594,11 +594,21 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
       params.repeatCount = elmts.repeatCountInput[0].value;
     };
   };
-  /** above can be move to seperate file **/
+  /** above can be move to separate file **/
   
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
+      /**
+        {
+            label: $.i18n._('core-views')["table-schema-validate"],
+            id: "core/facets",
+            width: "200px",
+            click: function() {
+                   doTextTransformPrompt();
+            }
+        },
+        */
         {
             label: $.i18n._('core-views')["transform"],
             id: "core/facets",

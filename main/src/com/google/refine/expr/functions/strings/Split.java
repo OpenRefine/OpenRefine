@@ -36,7 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
