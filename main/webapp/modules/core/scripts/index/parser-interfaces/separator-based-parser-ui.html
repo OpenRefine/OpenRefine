@@ -46,6 +46,12 @@
         <td><label for="$limit" id="or-import-load"></label></td>
         <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
           <label for="$limit" id="or-import-rows2"></label></td></tr>
+
+      <tr><td width="1%"><input type="checkbox" bind="processQuoteMarksCheckbox" id="$quotes" /></td>
+        <td><label for="$quotes" id="or-import-quote"></label></td>
+        <td><input bind="quoteCharacterInput" type="text" class="lightweight" maxlength="1" size="2" value="&quot;" id="$quoteCharacter" />
+          <label for="$quoteCharacter" id="or-import-quote-character"></label></td></tr>
+
     </table></div></td>
   </tr>
   <tr>
@@ -54,9 +60,7 @@
     <td><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="guessCellValueTypesCheckbox" id="$guess" /></td>
         <td><label for="$guess" id="or-import-parseCell"></label></td></tr>
-      <tr><td width="1%"><input type="checkbox" bind="processQuoteMarksCheckbox" id="$quotes" /></td>
-        <td><label for="$quotes" id="or-import-quote"></label></td></tr>
-    </table></div></td>
+         </table></div></td>
     
     <td><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" id="$store-blank-rows" /></td>
