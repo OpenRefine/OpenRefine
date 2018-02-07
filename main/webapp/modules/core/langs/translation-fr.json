@@ -139,7 +139,7 @@
         "store-nulls": "Analyser les cellules vides comme nulles",
         "lines-into-row": "lignes comme une seule",
         "custom": "autre",
-        "include-raw-templates": "Inclure les modèles an tant que wikicode brut",
+        "include-raw-templates": "Inclure les modèles et images comme du wikicode brut",
         "quotation-mark": "Des guillemets sont utilisés<br/>pour délimiter les cellules qui contiennent<br/>des séparateurs de colonne",
         "invalid-wikitext": "Aucun tableau n'a pu être extrait. Êtes-vous sûr·e que c'est un wiki-tableau valide ?",
         "json-parser": "Cliquer sur le premier nœud JSON { } correspondant à la première ligne à charger.",
