@@ -111,6 +111,9 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 
   options.guessCellValueTypes = this._optionContainerElmts.guessCellValueTypesCheckbox[0].checked;
   options.processQuotes = this._optionContainerElmts.processQuoteMarksCheckbox[0].checked;
+  if (options.processQuotes) {
+    options.quoteCharacter = this._optionContainerElmts.quoteCharacterInput[0].value;
+  }
 
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
@@ -143,7 +146,8 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
   $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
   $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
-  $('#or-import-quote').html($.i18n._('core-index-parser')["quotation-mark"]);
+  $('#or-import-quote').html($.i18n._('core-index-parser')["use-quote"]);
+  $('#or-import-quote-character').html($.i18n._('core-index-parser')["quote-delimits-cells"]);
   $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
   $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
   $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
@@ -187,6 +191,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   }
   if (this._config.processQuotes) {
     this._optionContainerElmts.processQuoteMarksCheckbox.prop("checked", true);
+    this._optionContainerElmts.quoteCharacterInput[0].value = this._config.quoteCharacter;
   }
 
   if (this._config.storeBlankCellsAsNulls) {

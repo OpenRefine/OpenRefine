@@ -153,7 +153,8 @@
         "tabs": "tabs (TSV)",
         "custom": "custom",
         "escape": "Escape special characters with \\",
-        "quotation-mark": "Quotation marks are used<br/>to enclose cells containing<br/>column separators",
+        "use-quote": "Use character",
+        "quote-delimits-cells": "to enclose cells containing column separators",
         "click-xml": "Click on the first XML element corresponding to the first record to load."
     },
     "core-dialogs": {
