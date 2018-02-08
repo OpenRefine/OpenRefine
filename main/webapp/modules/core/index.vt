@@ -44,7 +44,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="OpenRefine" src="images/logo-openrefine-slogan-black.png" height="29" />
+    <img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" />
+    <span id="slogan"></span>
   </div>
   
   <div id="left-panel" class="main-layout-panel"><div id="left-panel-body">
@@ -53,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     <div id="project-links">
       <div id="logo-container">
-        <img alt="OpenRefine" src="images/logo-gem.png" height="65" />
+        <img alt="OpenRefine" src="images/logo-gem-126.png" height="65" />
         <div id="openrefine-version"></div>
       </div>
       <ul>
