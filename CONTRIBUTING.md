@@ -31,9 +31,9 @@ You can help us [translate OpenRefine](https://github.com/OpenRefine/OpenRefine/
 ##  Contributing code 
 
 You can contribute code in three different ways:
-- fix minor bugs
-- develop an OpenRefine extension 
-- start your own distribution or fork
+- Fix minor bugs - you can check the [issues flagged as easy](https://github.com/OpenRefine/OpenRefine/labels/easy)
+- Develop an OpenRefine extension 
+- Start your own distribution or fork
 
 All developers including new distributions and plugin developers are invited to leverage the following OpenRefine project management areas to avoid the dispersion of the community in different communication channels.
 - the [wiki](https://github.com/OpenRefine/OpenRefine/wiki) for shared documentation between both user docs and [documentation for developer](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers)
