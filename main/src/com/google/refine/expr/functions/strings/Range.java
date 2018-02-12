@@ -1,7 +1,6 @@
 package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
-import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
