@@ -8,7 +8,7 @@ Browser + version used - Please note that OpenRefine doesn't support Internet Ex
 
 Steps followed to create the issue:
 
-If you are allowed, it is awesome if you can include the data generating the issue:
+If you are allowed,and are OK with making your data public, it would be awesome if you can include the data causing the issue or a URL pointing to where the data is (if your concerned about keeping your data private, ping us on our mailing list):
 
 Current Results:
 
