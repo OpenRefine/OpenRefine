@@ -115,6 +115,7 @@ import com.google.refine.expr.functions.strings.NGramFingerprint;
 import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.expr.functions.strings.Partition;
 import com.google.refine.expr.functions.strings.Phonetic;
+import com.google.refine.expr.functions.strings.Range;
 import com.google.refine.expr.functions.strings.RPartition;
 import com.google.refine.expr.functions.strings.Reinterpret;
 import com.google.refine.expr.functions.strings.Replace;
@@ -201,6 +202,7 @@ public class ControlFunctionRegistry {
         registerFunction("substring", new Slice());
         registerFunction("replace", new Replace());
         registerFunction("replaceChars", new ReplaceChars());
+        registerFunction("range", new Range());
         registerFunction("split", new Split());
         registerFunction("smartSplit", new SmartSplit());
         registerFunction("splitByCharType", new SplitByCharType());
