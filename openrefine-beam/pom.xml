@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>it.okkam.examples.apache</groupId>
+	<artifactId>beam</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<beam.version>2.2.0</beam.version>
+
+		<bigquery.version>v2-rev355-1.22.0</bigquery.version>
+		<google-clients.version>1.22.0</google-clients.version>
+		<guava.version>20.0</guava.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<jackson.version>2.8.9</jackson.version>
+		<joda.version>2.4</joda.version>
+		<junit.version>4.12</junit.version>
+		<maven-compiler-plugin.version>3.6.2</maven-compiler-plugin.version>
+		<maven-exec-plugin.version>1.6.0</maven-exec-plugin.version>
+		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+		<maven-shade-plugin.version>3.0.0</maven-shade-plugin.version>
+		<pubsub.version>v1-rev10-1.22.0</pubsub.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<spark.version>1.6.3</spark.version>
+		<surefire-plugin.version>2.20</surefire-plugin.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>apache.snapshots</id>
+			<name>Apache Development Snapshot Repository</name>
+			<url>https://repository.apache.org/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire-plugin.version}</version>
+				<configuration>
+					<parallel>all</parallel>
+					<threadCount>4</threadCount>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>${surefire-plugin.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!-- Ensure that the Maven jar plugin runs before the Maven shade plugin 
+				by listing the plugin higher within the file. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin.version}</version>
+			</plugin>
+
+			<!-- Configures `mvn package` to produce a bundled jar ("fat jar") for 
+				runners that require this for job submission to a cluster. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>${maven-shade-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<finalName>${project.artifactId}-bundled-${project.version}</finalName>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/LICENSE</exclude>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${maven-exec-plugin.version}</version>
+					<configuration>
+						<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>direct-runner</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<!-- Makes the DirectRunner available when running a pipeline. -->
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.beam</groupId>
+					<artifactId>beam-runners-direct-java</artifactId>
+					<version>${beam.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>apex-runner</id>
+			<!-- Makes the ApexRunner available when running a pipeline. -->
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.beam</groupId>
+					<artifactId>beam-runners-apex</artifactId>
+					<version>${beam.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<!-- Apex depends on httpclient version 4.3.5, project has a transitive 
+					dependency to httpclient 4.0.1 from google-http-client. Apex dependency version 
+					being specified explicitly so that it gets picked up. This can be removed 
+					when the project no longer has a dependency on a different httpclient version. -->
+				<dependency>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+					<version>4.3.5</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>commons-codec</groupId>
+							<artifactId>commons-codec</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>dataflow-runner</id>
+			<!-- Makes the DataflowRunner available when running a pipeline. -->
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.beam</groupId>
+					<artifactId>beam-runners-google-cloud-dataflow-java</artifactId>
+					<version>${beam.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>flink-runner</id>
+			<!-- Makes the FlinkRunner available when running a pipeline. -->
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.beam</groupId>
+					<artifactId>beam-runners-flink_2.10</artifactId>
+					<version>${beam.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>spark-runner</id>
+			<!-- Makes the SparkRunner available when running a pipeline. Additionally, 
+				overrides some Spark dependencies to Beam-compatible versions. -->
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.beam</groupId>
+					<artifactId>beam-runners-spark</artifactId>
+					<version>${beam.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.beam</groupId>
+					<artifactId>beam-sdks-java-io-hadoop-file-system</artifactId>
+					<version>${beam.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.spark</groupId>
+					<artifactId>spark-streaming_2.10</artifactId>
+					<version>${spark.version}</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.slf4j</groupId>
+							<artifactId>jul-to-slf4j</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-scala_2.10</artifactId>
+					<version>${jackson.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<!-- Adds a dependency on the Beam SDK. -->
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-sdks-java-core</artifactId>
+			<version>${beam.version}</version>
+		</dependency>
+
+		<!-- Adds a dependency on the Beam Google Cloud Platform IO module. -->
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-sdks-java-io-google-cloud-platform</artifactId>
+			<version>${beam.version}</version>
+		</dependency>
+
+		<!-- Dependencies below this line are specific dependencies needed by the 
+			examples code. -->
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>${google-clients.version}</version>
+			<exclusions>
+				<!-- Exclude an old version of guava that is being pulled in by a transitive 
+					dependency of google-api-client -->
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava-jdk5</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-bigquery</artifactId>
+			<version>${bigquery.version}</version>
+			<exclusions>
+				<!-- Exclude an old version of guava that is being pulled in by a transitive 
+					dependency of google-api-client -->
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava-jdk5</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.http-client</groupId>
+			<artifactId>google-http-client</artifactId>
+			<version>${google-clients.version}</version>
+			<exclusions>
+				<!-- Exclude an old version of guava that is being pulled in by a transitive 
+					dependency of google-api-client -->
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava-jdk5</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-pubsub</artifactId>
+			<version>${pubsub.version}</version>
+			<exclusions>
+				<!-- Exclude an old version of guava that is being pulled in by a transitive 
+					dependency of google-api-client -->
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava-jdk5</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+
+		<!-- Add slf4j API frontend binding with JUL backend -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>${slf4j.version}</version>
+			<!-- When loaded at runtime this will wire up slf4j to the JUL backend -->
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Hamcrest and JUnit are required dependencies of PAssert, which is 
+			used in the main code of DebuggingWordCount example. -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<version>${hamcrest.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+
+		<!-- The DirectRunner is needed for unit tests. -->
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-runners-direct-java</artifactId>
+			<version>${beam.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
