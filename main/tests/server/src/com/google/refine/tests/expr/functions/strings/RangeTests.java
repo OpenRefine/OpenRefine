@@ -20,6 +20,18 @@ import com.google.refine.tests.RefineTest;
 public class RangeTests extends RefineTest {
 
     private static Properties bindings;
+    
+    private static final Integer[] EMPTY_ARRAY = new Integer[0];
+
+    private static final Integer[] ONE_AND_THREE = new Integer[] {1, 3};
+    private static final Integer[] FIVE_AND_THREE = new Integer[] {5, 3};
+
+    private static final Integer[] ZERO_TO_TWO = new Integer[] {0, 1, 2};
+    private static final Integer[] ONE_TO_FOUR = new Integer[] {1, 2, 3, 4};
+    private static final Integer[] FIVE_TO_TWO = new Integer[] {5, 4, 3, 2};
+
+    private static final Integer[] NEGATIVE_ONE_TO_FOUR = new Integer[] {-1, 0, 1, 2, 3, 4};
+    private static final Integer[] ONE_TO_NEGATIVE_FOUR = new Integer[] {1, 0, -1, -2, -3, -4};
 
     @Override
     @BeforeTest
@@ -118,193 +130,193 @@ public class RangeTests extends RefineTest {
     @Test
     public void testRangeValidSingleStringParams() {
         // Test valid single string containing one arg
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "3"))), "0, 1, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", " 3  "))), "0, 1, 2");
+        Assert.assertEquals(((Integer[]) invoke("range", "3")), ZERO_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", " 3  "))), ZERO_TO_TWO);
 
         // Test valid single string containing two args
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5, 1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "   1   ,5"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1,      5     "))), "1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5, 1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "   1   ,5"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1,      5     "))), ONE_TO_FOUR);
 
         // Test valid single string containing three args
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 1, 0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 1, 1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5, -1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5, 0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5, 1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5, 2"))), "1, 3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5, 1, -2"))), "5, 3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5, 1, -1"))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5, 1, 0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5, 1, 1"))), "");
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 1, 0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 1, 1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5, -1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5, 0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5, 1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5, 2"))), ONE_AND_THREE);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5, 1, -2"))), FIVE_AND_THREE);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5, 1, -1"))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5, 1, 0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5, 1, 1"))), EMPTY_ARRAY);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "  1  , 5, 1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1,  5  ,1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5,   1  "))), "1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", "  1  , 5, 1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1,  5  ,1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5,   1  "))), ONE_TO_FOUR);
     }
 
     @Test
     public void testRangeValidDoubleStringParams() {
         // Test valid double string containing two args
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "2", "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "1"))), "-1, 0");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "5"))), "1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "2", "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "1"))), new Integer[] {-1, 0});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "5"))), ONE_TO_FOUR);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "  -1   ", "1"))), "-1, 0");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", " 5  "))), "1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", "  -1   ", "1"))), new Integer[] {-1, 0});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", " 5  "))), ONE_TO_FOUR);
 
         // Test valid double string containing three args
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5, 0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5, 0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5, -1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5, 1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5, 1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5, -1"))), "1, 0, -1, -2, -3, -4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5, 2"))), "-1, 1, 3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5, -2"))), "1, -1, -3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5, 10"))), "-1");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5, -10"))), "1");
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, 0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, -1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, 1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -1"))), ONE_TO_NEGATIVE_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 2"))), new Integer[] {-1, 1, 3});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -2"))), new Integer[] {1, -1, -3});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5, 10"))), new Integer[] {-1});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5, -10"))), new Integer[] {1});
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, -5", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5", "-1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, -5", "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5", "1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, -5", "-1"))), "1, 0, -1, -2, -3, -4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5", "2"))), "-1, 1, 3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, -5", "-2"))), "1, -1, -3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5", "10"))), "-1");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, -5", "-10"))), "1");
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "-1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-1"))), ONE_TO_NEGATIVE_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "2"))), new Integer[] {-1, 1, 3});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-2"))), new Integer[] {1, -1, -3});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", "10"))), new Integer[] {-1});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, -5", "-10"))), new Integer[] {1});
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "  -1  , 5", "1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1,   5"  , "1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5", " 1   "))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "  -1  ", "5, 1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "  5  , 1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "  -1  ", "5,    1   "))), "-1, 0, 1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", "  -1  , 5", "1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1,   5"  , "1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5", " 1   "))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "  -1  ", "5, 1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "  5  , 1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "  -1  ", "5,    1   "))), NEGATIVE_ONE_TO_FOUR);
     }
 
     @Test public void testRangeValidTripleStringParams() {
         // Test valid triple string containing three arguments
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5", "-1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5", "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5", "1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5", "-1"))), "1, 0, -1, -2, -3, -4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5", "2"))), "-1, 1, 3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5", "-2"))), "1, -1, -3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1", "5", "10"))), "-1");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "-5", "-10"))), "1");
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "-1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-1"))), ONE_TO_NEGATIVE_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "2"))), new Integer[] {-1, 1, 3});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-2"))), new Integer[] {1, -1, -3});
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1", "5", "10"))), new Integer[] {-1});
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "-5", "-10"))), new Integer[] {1});
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "  -1  , 5, 1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1,   5  , 1"))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "-1, 5,   1   "))), "-1, 0, 1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", "  -1  , 5, 1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1,   5  , 1"))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "-1, 5,   1   "))), NEGATIVE_ONE_TO_FOUR);
     }
 
     @Test
     public void testRangeValidIntegerParams() {
         // Test valid single integer argument
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5))), "0, 1, 2, 3, 4");
+        Assert.assertEquals(((Integer[]) (invoke("range", 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5))), new Integer[] {0, 1, 2, 3, 4});
 
         // Test valid double integer arguments
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", -1, 5))), "-1, 0, 1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1))), "");
+        Assert.assertEquals(((Integer[]) (invoke("range", -1, 5))), NEGATIVE_ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1))), EMPTY_ARRAY);
 
         // Test valid triple integer arguments
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, -1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1, 1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, 1))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, 2))), "1, 3");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1, -2))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, -1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1, 1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, 1))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, 2))), ONE_AND_THREE);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1, -2))), FIVE_AND_THREE);
     }
 
     @Test
     public void testRangeValidMixedParams() {
-        // Test two valid arguments, with a single string arg (containing one arg) and a single int arg
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5"))), "1, 2, 3, 4");
+        // Test two valid arguments, with a single string arg (containing one arg) and a single Integer arg
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5"))), ONE_TO_FOUR);
 
-        // Test two valid arguments, with a single string arg (containing two args) and a single int arg
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5", -1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5", 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5", 1))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1, 5", 2))), "1, 3");
+        // Test two valid arguments, with a single string arg (containing two args) and a single Integer arg
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5", -1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5", 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5", 1))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1, 5", 2))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5, -1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5, 0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5, 1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5, 2"))), "1, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5, -1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5, 0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5, 1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5, 2"))), ONE_AND_THREE);
 
-        // Test three valid arguments, with a single string arg (containing one arg) and two int args
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, -1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, 1))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, 2))), "1, 3");
+        // Test three valid arguments, with a single string arg (containing one arg) and two Integer args
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, -1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, 1))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, 2))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, 1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, -1))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, -2))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, 1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, -1))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, -2))), FIVE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", -1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", 1))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", 2))), "1, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", -1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", 1))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", 2))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", 1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", -1))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", -2))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", 1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", -1))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", -2))), FIVE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, "-1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, "1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, 5, "2"))), "1, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, "-1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, "1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, 5, "2"))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1, "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1, "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1, "-1"))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, 1, "-2"))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1, "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1, "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1, "-1"))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, 1, "-2"))), FIVE_AND_THREE);
 
-        // Test three valid arguments, with two string args and one int arg
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "5", -1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "5", 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "5", 1))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", "5", 2))), "1, 3");
+        // Test three valid arguments, with two string args and one Integer arg
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "5", -1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "5", 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "5", 1))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", "5", 2))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", "1", 1))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", "1", 0))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", "1", -1))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", "1", -2))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", "1", 1))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", "1", 0))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", "1", -1))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", "1", -2))), FIVE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, "-1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, "1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "1", 5, "2"))), "1, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, "-1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, "1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", "1", 5, "2"))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, "-1"))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", "5", 1, "-2"))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, "-1"))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", "5", 1, "-2"))), FIVE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", "-1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", "1"))), "1, 2, 3, 4");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 1, "5", "2"))), "1, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", "-1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", "1"))), ONE_TO_FOUR);
+        Assert.assertEquals(((Integer[]) (invoke("range", 1, "5", "2"))), ONE_AND_THREE);
 
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", "1"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", "0"))), "");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", "-1"))), "5, 4, 3, 2");
-        Assert.assertEquals(String.join(", ", (String[]) (invoke("range", 5, "1", "-2"))), "5, 3");
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "1"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "0"))), EMPTY_ARRAY);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-1"))), FIVE_TO_TWO);
+        Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-2"))), FIVE_AND_THREE);
     }
 }
