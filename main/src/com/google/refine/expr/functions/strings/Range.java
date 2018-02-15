@@ -30,7 +30,7 @@ public class Range implements Function {
     private static final int DEFAULT_START = 0;
     private static final int DEFAULT_STEP = 1;
 
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+    private static final Integer[] EMPTY_ARRAY = new Integer[0];
 
     @Override
     public Object call(Properties bindings, Object[] args) {
@@ -280,15 +280,15 @@ public class Range implements Function {
      */
     private static Object createRange(int start, int stop, int step) {        
         if ((start > stop && step > 0) || (start < stop && step < 0) || step == 0) {
-            return EMPTY_STRING_ARRAY;
+            return EMPTY_ARRAY;
         }
 
         int rangeSize = (int) (Math.ceil(((double) Math.abs(start - stop))/ Math.abs(step)));
 
-        String[] generatedRange = new String[rangeSize];
+        Integer[] generatedRange = new Integer[rangeSize];
 
         for (int i = 0; i < rangeSize; i++) {
-           generatedRange[i] = Integer.toString(start + step * i);
+           generatedRange[i] = start + step * i;
         }
 
         return generatedRange;   
