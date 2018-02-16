@@ -27,6 +27,10 @@ package com.google.refine.beam.operations;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.services.bigquery.model.TableRow;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.column.ColumnAdditionOperation;
+import com.google.refine.util.ParsingUtilities;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +45,7 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.SimpleFunction;
 import org.apache.beam.sdk.values.PCollection;
+import org.json.JSONObject;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -57,7 +62,9 @@ public class AddColumnOperationTest {
   private static final String ADD_COLUMN_OP = "{\n" //
       + "    \"op\": \"core/column-addition\",\n"
       + "    \"description\": \"Create column test at index 2 based on column col2 using expression grel:value + \\\" test\\\"\",\n"
-      + "    \"engineConfig\": {\n" + "      \"mode\": \"row-based\",\n" + "      \"facets\": []\n"
+      + "    \"engineConfig\": {\n" //
+      + "      \"mode\": \"row-based\",\n" //
+      + "      \"facets\": []\n"//
       + "    },\n" + "    \"newColumnName\": \"new\",\n" + "    \"columnInsertIndex\": 1,\n"
       + "    \"baseColumnName\": \"col2\",\n"
       + "    \"expression\": \"grel:value + \\\" test\\\"\",\n"
@@ -82,6 +89,15 @@ public class AddColumnOperationTest {
 
     final String[] inputColumns = new String[] {COL1_NAME, COL2_NAME};
     final List<String> strRows = Arrays.asList(IN_CSV_LINES);
+
+    JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(ADD_COLUMN_OP);
+
+    OperationRegistry operationRegistry = new OperationRegistry();
+    operationRegistry.registerOperation("core","column-addition", ColumnAdditionOperation.class);
+    AbstractOperation operation =  operationRegistry.reconstruct(obj);
+    ColumnAdditionOperation op = (ColumnAdditionOperation) operation;
+    //TODO ColumnAdditionOperation does not have any access to its variables.. 
+
     final JsonNode operationJson = OBJ_MAPPER.readTree(ADD_COLUMN_OP);
     final String srcColumnName = operationJson.get("baseColumnName").asText();
     final String newColumnName = operationJson.get("newColumnName").asText();
@@ -120,7 +136,7 @@ public class AddColumnOperationTest {
     return outputColumns;
   }
 
-  
+
   @SuppressWarnings("serial")
   static class ApplyFacetFilter extends DoFn<TableRow, TableRow> {
     String facets;
@@ -135,7 +151,7 @@ public class AddColumnOperationTest {
       if (facets == null || facets.isEmpty()) {
         c.output(row);
       } else {
-        //TODO implement
+        // TODO implement
       }
     }
   }
