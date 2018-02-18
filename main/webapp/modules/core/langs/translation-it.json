@@ -474,7 +474,7 @@
         "re-trans": "Ritrasforma fino a",
         "warning-no-length": "Nessuna lunghezza dei campi specificata.",
         "discard-judg": "Annulla i match dei candidati",
-        "blank-out": "Cancella tutte le celle",
+        "blank-out": "Cancella tutte le celle (null)",
         "best-cand-type-match": "miglior match del tipo del candidato?",
         "sort-by-col": "ordina per questa colonna",
         "enter-col-name": "Inserisci il nome della nuova colonna",

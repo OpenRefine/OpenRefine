@@ -614,7 +614,7 @@
         "to-number": "To number",
         "to-date": "To date",
         "to-text": "To text",
-        "blank-out": "Set cells to null",
+        "blank-out": "Blank out cells (null)",
         "fill-down": "Fill down",
         "blank-down": "Blank down",
         "split-cells": "Split multi-valued cells",

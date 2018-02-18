@@ -475,7 +475,7 @@
         "re-trans": "Muling ibahin ang hanggang sa",
         "warning-no-length": "Hindi tinukoy ang haba ng patlang.",
         "discard-judg": "Itapon ang mga hatol sa pagkakasundo",
-        "blank-out": "Mga blankong cell",
+        "blank-out": "Mga blankong cell (null)",
         "best-cand-type-match": "tumutugma sa mga uri ng pinakamahusay na kandidato?",
         "sort-by-col": "ayusin ayon sa hanay na ito lamang",
         "enter-col-name": "Magpasok ng bagong pangalan ng haligi",

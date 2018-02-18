@@ -576,7 +576,7 @@
 		"to-number": "A número",
 		"to-date": "A fecha",
 		"to-text": "A texto",
-		"blank-out": "Vaciar Celdas",
+		"blank-out": "Vaciar Celdas (null)",
 		"fill-down": "Llenar hacia abajo",
 		"blank-down": "Vaciar hacia abajo",
 		"split-cells": "Dividir celdas multi-valuadas",
