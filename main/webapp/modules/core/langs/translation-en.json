@@ -615,6 +615,7 @@
         "to-date": "To date",
         "to-text": "To text",
         "blank-out": "Blank out cells (null)",
+        "blank-out-empty": "Blank out cells (empty string)",
         "fill-down": "Fill down",
         "blank-down": "Blank down",
         "split-cells": "Split multi-valued cells",
