@@ -33,25 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
 package com.google.refine.tests.expr.functions;
 
-import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.browsing.Engine;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 
 
 public class ExpressionUtilsTests extends RefineTest {
 
-    Project project;
-    Properties bindings;
     
     @Override
     @BeforeTest
@@ -59,18 +52,6 @@ public class ExpressionUtilsTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-
-    @BeforeMethod
-    public void SetUp() {
-        project = new Project();
-        bindings = ExpressionUtils.createBindings(project);
-    }
-
-    @AfterMethod
-    public void TearDown() {
-        project = null;
-        bindings = null;
-    }
 
     // -----------------tests------------
 
