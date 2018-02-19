@@ -467,7 +467,7 @@
         "uppercase": "Para maiúsculo",
         "best-type": "Best candidate's types",
         "discard-judg": "Descartar a análise de reconciliação",
-        "blank-out": "Limpar células (null)",
+        "blank-out": "Definir células para nulo",
         "best-cand-type-match": "best candidate's types match?",
         "sort-by-col": "ordenar somente esta coluna",
         "enter-col-name": "Digite um nome para a nova coluna",

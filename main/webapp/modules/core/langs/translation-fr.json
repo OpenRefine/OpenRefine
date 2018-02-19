@@ -476,7 +476,7 @@
         "remove-matching": "Supprimer les lignes correspondantes",
         "warning-no-length": "Aucune longueur de champ n’a été indiquée.",
         "discard-judg": "Rejeter les avis de réconciliation",
-        "blank-out": "Vider les cellules (null)",
+        "blank-out": "Définir les cellules sur null",
         "best-cand-type-match": "Meilleure correspondance de type des candidats ?",
         "sort-by-col": "trier selon cette seule colonne",
         "enter-col-name": "Indiquer le nom de la nouvelle colonne",
