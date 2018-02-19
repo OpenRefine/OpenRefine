@@ -80,7 +80,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             List<ItemUpdate> editBatch = schema.evaluate(project, engine, warningStore);
             
             StringWriter sb = new StringWriter(2048);
-            JSONWriter writer = new JSONWriter(sb, 32);
+            JSONWriter writer = new JSONWriter(sb);
             writer.object();
             
             {
