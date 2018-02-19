@@ -12,8 +12,6 @@ import org.json.JSONWriter;
 import org.openrefine.wikidata.editing.ConnectionManager;
 
 import com.google.refine.commands.Command;
-import com.google.refine.preference.PreferenceStore;
-import com.google.refine.ProjectManager;
 
 public class LoginCommand extends Command {
     @Override
@@ -33,7 +31,7 @@ public class LoginCommand extends Command {
         response.setHeader("Content-Type", "application/json");
         
         StringWriter sb = new StringWriter(2048);
-        JSONWriter writer = new JSONWriter(sb, 32);
+        JSONWriter writer = new JSONWriter(sb);
         
         try {
             writer.object();
