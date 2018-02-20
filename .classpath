@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="extensions/jython/tests/src"/>
 	<classpathentry kind="src" path="server/src"/>
+	<classpathentry kind="src" path="main/tests/server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/database/src"/>
 	<classpathentry kind="src" path="extensions/database/test"/>
@@ -11,7 +12,7 @@
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
 	<classpathentry kind="src" path="extensions/wikidata/src"/>
-	<classpathentry kind="src" path="main/tests/server/src"/>
+	<classpathentry kind="src" path="extensions/wikidata/tests/src"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
@@ -120,5 +121,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/testng-6.9.10.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/datapackage-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/tableschema-java-1.0-SNAPSHOT.jar"/>
+        <classpathentry kind="lib" path="extensions/wikidata/module/MOD-INF/lib/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar" sourcepath="extensions/wikidata/module/MOD-INF/lib-src/wdtk-datamodel-0.9.0-SNAPSHOT-sources.jar"/>
+        <classpathentry kind="lib" path="extensions/wikidata/module/MOD-INF/lib/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar" sourcepath="extensions/wikidata/module/MOD-INF/lib-src/wdtk-wikibaseapi-0.9.0-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>
