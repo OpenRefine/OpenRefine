@@ -33,6 +33,8 @@
     <property name="server.dir" value="${basedir}/../../server" />
     <property name="server.lib.dir" value="${server.dir}/lib" />
     <property name="refine.tests.lib.dir" value="${refine.dir}/tests/server/lib" />
+    <property name="refine.tests.classes.dir" value="${refine.dir}/tests/server/classes" />
+
     
     <property name="src.dir" value="${basedir}/src" />
     <property name="module.dir" value="${basedir}/module" />
@@ -47,7 +49,6 @@
     <property name="tests.report.dir" value="${extension.tests.dir}/report"/>
     <property name="tests.report.html.dir" value="${tests.report.dir}/html"/>
     <property name="tests.report.xml.path" value="${tests.report.dir}/jacoco.xml"/>
- 
 
     <path id="class.path">
         <fileset dir="${lib.dir}">
@@ -66,6 +67,7 @@
      <path id="extension.tests.class.path">
         <path refid="class.path"/>
         <pathelement location="${tests.classes.dir}"/>
+        <pathelement location="${refine.tests.classes.dir}"/>
         <pathelement location="${refine.tests.lib.dir}/testng-6.8.jar"/>
         <fileset dir="${refine.tests.lib.dir}">
             <include name="**/*.jar" />

@@ -2,12 +2,10 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
