@@ -46,6 +46,7 @@ public class ConnectionManager {
     private ConnectionManager() {
         prefStore = ProjectManager.singleton.getPreferenceStore();
         connection = null;
+        restoreSavedConnection();
     }
     
     public void login(String username, String password, boolean rememberCredentials) {
@@ -71,10 +72,22 @@ public class ConnectionManager {
         }
     }
     
+    public void restoreSavedConnection() {
+        JSONObject savedCredentials = getStoredCredentials();
+        if (savedCredentials != null) {
+            connection = ApiConnection.getWikidataApiConnection();
+            try {
+                connection.login(savedCredentials.getString("username"),
+                        savedCredentials.getString("password"));
+            } catch (LoginFailedException e) {
+                connection = null;
+            }
+        }
+    }
+    
     public JSONObject getStoredCredentials() {
         JSONArray array = (JSONArray) prefStore.get(PREFERENCE_STORE_KEY);
         if (array.length() > 0) {
-            JSONObject obj;
             try {
                 return array.getJSONObject(0);
             } catch (JSONException e) {
