@@ -98,10 +98,9 @@ public class ToFromConversionTests extends RefineTest {
     
     @Test
     public void testToNumber() {
-//        Assert.assertTrue(invoke("toNumber") instanceof EvalError);
-        Assert.assertNull(invoke("toNumber"));
-//        Assert.assertTrue(invoke("toNumber", (Object) null) instanceof EvalError);
-        Assert.assertNull(invoke("toNumber", (Object) null));
+        Assert.assertTrue(invoke("toNumber") instanceof EvalError);
+        Assert.assertTrue(invoke("toNumber", (Object) null) instanceof EvalError);
+        Assert.assertTrue(invoke("toNumber", "") instanceof EvalError);
         Assert.assertTrue(invoke("toNumber", "string") instanceof EvalError);
         Assert.assertEquals(invoke("toNumber", "0.0"), 0.0);
         Assert.assertEquals(invoke("toNumber", "123"), Long.valueOf(123));
@@ -128,9 +127,9 @@ public class ToFromConversionTests extends RefineTest {
     
     @Test
     public void testToDate() throws CalendarParserException {
-//      Assert.assertTrue(invoke("toDate") instanceof EvalError);
-      Assert.assertNull(invoke("toDate"));
+      Assert.assertTrue(invoke("toDate") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", (Object) null) instanceof EvalError);
+      Assert.assertTrue(invoke("toDate", "") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
       Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof GregorianCalendar);
