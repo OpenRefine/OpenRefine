@@ -1,1 +1,14 @@
-{}
+{
+    "name": "Ingles",
+    "core-index": {
+        "change-value": "Usba ang balyu sa preperens nga key",
+        "about": "Mahitungod sa",
+        "slogan": "Ang kusgan ng tool para sa pagtrabaho sa gubot nga data",
+        "help": "Tabang",
+        "version": "Bersyon",
+        "download": "I-download",
+        "delete-key": "I-delete ang preperens nga key",
+        "new-version": "Bag o nga Brsyon!",
+        "now": "karon"
+    }
+}
