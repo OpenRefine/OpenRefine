@@ -268,6 +268,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/to-blank",
           label: $.i18n._('core-views')["blank-out"],
           click: function() { doTextTransform("null", "keep-original", false, ""); }
+        },
+        {
+          id: "core/to-empty",
+          label: $.i18n._('core-views')["blank-out-empty"],
+          click: function() { doTextTransform("\"\"", "keep-original", false, ""); }
         }
       ]
     },
