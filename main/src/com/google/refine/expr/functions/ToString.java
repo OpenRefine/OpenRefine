@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.StringUtils;
 
@@ -68,7 +69,7 @@ public class ToString implements Function {
                 } 
             }
         }
-        return new EvalError("ToString accepts an object and an optional second argument containing a date format string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a date format string");
     }
 
     
