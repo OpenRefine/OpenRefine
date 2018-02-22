@@ -81,6 +81,8 @@ public class ConnectionManager {
                         savedCredentials.getString("password"));
             } catch (LoginFailedException e) {
                 connection = null;
+            } catch (JSONException e) {
+                connection = null;
             }
         }
     }

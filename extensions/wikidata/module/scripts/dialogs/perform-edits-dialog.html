@@ -6,9 +6,11 @@
         Consider requesting feedback at the <a href="https://www.wikidata.org/wiki/Wikidata:Data_Import_Hub">Data Import Hub</a>
         for large datasets.
     </p>
+    <div class="perform-edits-warnings-area" bind="warningsArea">
+    </div>
     <div class="wikibase-perform-edits-area">
         <p>You are logged in as <span bind="loggedInUsername"></span>.</p>
-        <p>Edit summary: <input type="text" name="editSummary" bind="editSummary" value="#openrefine" /></p>
+        <p>Edit summary: <input type="text" name="editSummary" bind="editSummary" class="edit-summary" value="" /></p>
         <div class="wikibase-login-buttons">
             <button class="button cancel-button" bind="cancelButton">Cancel</button>
             <button class="button button-primary" bind="performEditsButton">Perform edits</button>

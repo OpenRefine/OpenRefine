@@ -2,8 +2,13 @@ var PerformEditsDialog = {};
 
 PerformEditsDialog.launch = function(logged_in_username) {
   var self = this;
-  var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/perform-edits-dialog.html"));
-  var elmts = this._elmts = DOM.bind(frame);
+  var elmts = this._elmts;
+  var frame = this.frame;
+
+  console.log(this.missingSchema);
+  if (this.missingSchema) {
+    return;
+  }
 
   this._level = DialogSystem.showDialog(frame);
 
@@ -17,7 +22,7 @@ PerformEditsDialog.launch = function(logged_in_username) {
      dismiss();
   });
 
-  elmts.performEditsButton.click(function() {
+   elmts.performEditsButton.click(function() {
     Refine.postProcess(
        "wikidata",
        "perform-wikibase-edits",
@@ -35,10 +40,42 @@ PerformEditsDialog.launch = function(logged_in_username) {
   });
 };
 
+PerformEditsDialog._updateWarnings = function(data) {
+   var warnings = data.warnings;
+   var mainDiv = this._elmts.warningsArea;
+
+   // clear everything
+   mainDiv.empty();
+
+   var table = $('<table></table>').appendTo(mainDiv);
+   for (var i = 0; i != warnings.length; i++) {
+      var rendered = WarningsRenderer._renderWarning(warnings[i]);
+      rendered.appendTo(table);
+   }   
+}
+
 PerformEditsDialog.checkAndLaunch = function () {
+  var self = this;
+  this.frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/perform-edits-dialog.html"));
+  this._elmts = DOM.bind(this.frame);
+  this.missingSchema = false;
+
    ManageAccountDialog.ensureLoggedIn(function(logged_in_username) {
        if (logged_in_username) {
-          PerformEditsDialog.launch(logged_in_username);
+            $.post(
+                "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
+                { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+                function(data) {
+                   if(data['status'] != 'error') {
+                       PerformEditsDialog._updateWarnings(data);
+                       PerformEditsDialog.launch(logged_in_username);
+                   } else {
+                       SchemaAlignmentDialog.launch(
+                           PerformEditsDialog.checkAndLaunch);
+                   }
+                },
+                "json"
+            );
        }
    });
 };

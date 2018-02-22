@@ -71,8 +71,19 @@ public class PreviewWikibaseSchemaCommand extends Command {
             response.setHeader("Content-Type", "application/json");
             
             String jsonString = request.getParameter("schema");
-            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-            WikibaseSchema schema = WikibaseSchema.reconstruct(json);
+            
+
+            WikibaseSchema schema = null;
+            if (jsonString != null) {
+                JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
+                schema = WikibaseSchema.reconstruct(json);
+            } else {
+                schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
+            }
+            if (schema == null) {
+                respond(response, "error", "No Wikibase schema provided.");
+                return;
+            }
             QAWarningStore warningStore = new QAWarningStore();
             
             // Evaluate project
