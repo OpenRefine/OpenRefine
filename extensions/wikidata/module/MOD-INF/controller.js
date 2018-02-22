@@ -55,6 +55,8 @@ function init() {
       module,
       [
         "scripts/menu-bar-extension.js",
+        "scripts/warningsrenderer.js",
+        "scripts/langsuggest.js",
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",
@@ -67,6 +69,7 @@ function init() {
       [
         "styles/dialogs/schema-alignment-dialog.less",
         "styles/dialogs/manage-account-dialog.less",
+        "styles/dialogs/perform-edits.less",
       ]);
    
 }
