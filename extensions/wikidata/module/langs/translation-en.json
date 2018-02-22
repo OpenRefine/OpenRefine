@@ -16,6 +16,14 @@
         "wikidata-preview": {
                 "new-id": "new item"
         },
+        "perform-wikidata-edits": {
+                "dialog-header": "Perform edits on Wikidata",
+                "review-your-edits": "Please review your edits before pushing them to Wikidata. Consider requesting feedback at the <a href=\"https://www.wikidata.org/wiki/Wikidata:Data_Import_Hub\">Data Import Hub</a> for large datasets.",
+                "logged-in-as": "You are logged in as",
+                "edit-summary-label": "Edit summary:",
+                "perform-edits": "Perform edits",
+                "cancel": "Cancel"
+        },
         "warnings-messages": {
                 "new-item-created": {
                         "title": "This batch will create new Wikidata items.",

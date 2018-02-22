@@ -12,6 +12,13 @@ PerformEditsDialog.launch = function(logged_in_username) {
 
   this._level = DialogSystem.showDialog(frame);
 
+  this._elmts.dialogHeader.text($.i18n._('perform-wikidata-edits')["dialog-header"]);
+  this._elmts.reviewYourEdits.html($.i18n._('perform-wikidata-edits')["review-your-edits"]);
+  this._elmts.loggedInAs.text($.i18n._('perform-wikidata-edits')["logged-in-as"]);
+  this._elmts.editSummaryLabel.text($.i18n._('perform-wikidata-edits')["edit-summary-label"]);
+  this._elmts.performEditsButton.text($.i18n._('perform-wikidata-edits')["perform-edits"]);
+  this._elmts.cancelButton.text($.i18n._('perform-wikidata-edits')["cancel"]);
+
   var dismiss = function() {
     DialogSystem.dismissUntil(self._level - 1);
   };
