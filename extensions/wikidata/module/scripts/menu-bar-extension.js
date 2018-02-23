@@ -20,7 +20,7 @@ ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
         {
             "id" : "exportQuickStatements",
-            "label":"QuickStatements",
+            "label": $.i18n._('wikidata-extions')["quickstatements-export-name"],
             "click": function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
         }
 );
@@ -60,26 +60,26 @@ $(function(){
     ExtensionBar.MenuItems.push(
         {
             "id":"reconcile",
-                "label": "Wikidata",
+                "label": $.i18n._('wikidata-extension')["menu-label"],
                 "submenu" : [
                     {
                         id: "wikidata/edit-schema",
-                        label: "Edit Wikibase schema...",
+                        label: $.i18n._('wikidata-extension')["edit-wikidata-schema"],
                         click: function() { SchemaAlignmentDialog.launch(false); }
                     },
                     {
                         id:"wikidata/manage-account",
-                        label: "Manage account",
+                        label: $.i18n._('wikidata-extension')["manage-wikidata-account"],
                         click: function() { ManageAccountDialog.checkAndLaunch(); }
                     },
                     {
                         id:"wikidata/perform-edits",
-                        label: "Push to Wikidata...",
+                        label: $.i18n._('wikidata-extension')["perform-edits-on-wikidata"],
                         click: function() { PerformEditsDialog.checkAndLaunch(); }
                     },
                     {               
                         id:"wikidata/export-qs",
-                        label: "Export to QuickStatements",
+                        label: $.i18n._('wikidata-extension')["export-to-qs"],
                         click: function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
                     },
 

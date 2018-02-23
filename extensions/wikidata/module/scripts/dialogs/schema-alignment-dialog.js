@@ -156,7 +156,7 @@ SchemaAlignmentDialog._createDialog = function() {
     self._reset(null);
   });
   elmts.closeButton.click(function() {
-    if (!self._hasUnsavedChanges || window.confirm("There are unsaved changes. Close anyway?")) {
+    if (!self._hasUnsavedChanges || window.confirm($.i18n._('wikidata-schema')["unsaved-changes"])) {
       dismiss();
     }
   });
@@ -198,12 +198,12 @@ SchemaAlignmentDialog._addItem = function(json) {
   var right = $('<div></div>').addClass('wbs-right').appendTo(item);
   $('<div></div>').addClass('wbs-namedesc-container').appendTo(right);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-namedesc').text('add name/description').click(function() {
+  $('<a></a>').addClass('wbs-add-namedesc').text($.i18n._('wikidata-schema')["add-term"]).click(function() {
      SchemaAlignmentDialog._addNameDesc(item, null);
   }).appendTo(toolbar);
   $('<div></div>').addClass('wbs-statement-group-container').appendTo(right);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-statement-group').text('add statement').click(function() {
+  $('<a></a>').addClass('wbs-add-statement-group').text($.i18n._('wikidata-schema')["add-statement"]).click(function() {
      SchemaAlignmentDialog._addStatementGroup(item, null);
   }).appendTo(toolbar);
    
@@ -255,20 +255,20 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   var type_input = $('<select></select>').appendTo(type_container);
   $('<option></option>')
   .attr('value', 'LABEL')
-  .text('Label')
+  .text($.i18n._('wikidata-schema')["label"])
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'DESCRIPTION')
-  .text('Description')
+  .text($.i18n._('wikidata-schema')["description"])
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'ALIAS')
-  .text('Alias')
+  .text($.i18n._('wikidata-schema')["alias"])
   .appendTo(type_input);
   type_input.val(type);
 
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(namedesc);
-  $('<img src="images/close.png" />').attr('alt', 'remove name/description').click(function() {
+  $('<img src="images/close.png" />').attr('alt', $.i18n._('wikidata-schema')["remove-term"]).click(function() {
      namedesc.remove();
   }).appendTo(toolbar);
 
@@ -308,7 +308,7 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  var addValueButton = $('<a></a>').addClass('wbs-add-statement').text('add value').click(function() {
+  var addValueButton = $('<a></a>').addClass('wbs-add-statement').text($.i18n._('wikidata-schema')["add-value"]).click(function() {
      var datatype = inputContainer.data("jsonValue").datatype;
      SchemaAlignmentDialog._addStatement(statementContainer, datatype, null);
   }).appendTo(toolbar).hide();
@@ -350,7 +350,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
  
   var statement = $('<div></div>').addClass('wbs-statement');
   var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
-  $('<img src="images/close.png" />').attr('alt', 'remove statement').click(function() {
+  $('<img src="images/close.png" />').attr('alt', $.i18n._('wikidata-schema')["remove-statement"]).click(function() {
      SchemaAlignmentDialog._removeStatement(statement);
   }).appendTo(toolbar1);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
@@ -364,7 +364,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
     var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
     var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-    $('<a></a>').addClass('wbs-add-qualifier').text('add qualifier').click(function() {
+    $('<a></a>').addClass('wbs-add-qualifier').text($.i18n._('wikidata-schema')["add-qualifier"]).click(function() {
         SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
     }).appendTo(toolbar2);
     if (qualifiers) {
@@ -384,7 +384,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     referenceContainer.hide();
     var right2 = $('<div></div>').addClass('wbs-right').appendTo(right);
     var toolbar3 = $('<div></div>').addClass('wbs-toolbar').appendTo(right2);
-    $('<a></a>').addClass('wbs-add-reference').text('add reference').click(function() {
+    $('<a></a>').addClass('wbs-add-reference').text($.i18n._('wikidata-schema')["add-reference"]).click(function() {
         referenceContainer.show();
         SchemaAlignmentDialog._addReference(referenceContainer, null);
         SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
@@ -465,7 +465,7 @@ SchemaAlignmentDialog._addReference = function(container, json) {
   var reference = $('<div></div>').addClass('wbs-reference').appendTo(container);
   var referenceHeader = $('<div></div>').addClass('wbs-reference-header').appendTo(reference);
   var toolbarRef = $('<div></div>').addClass('wbs-toolbar').appendTo(referenceHeader);
-  $('<img src="images/close.png" />').attr('alt', 'remove reference').click(function() {
+  $('<img src="images/close.png" />').attr('alt', $.i18n._('wikidata-schema')["remove-reference"]).click(function() {
      reference.remove();
      SchemaAlignmentDialog._updateReferencesNumber(container);
      SchemaAlignmentDialog._hasChanged();
@@ -473,7 +473,7 @@ SchemaAlignmentDialog._addReference = function(container, json) {
   var right = $('<div></div>').addClass('wbs-right').appendTo(reference);
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
   var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-qualifier').text('add').click(function() {
+  $('<a></a>').addClass('wbs-add-qualifier').text($.i18n._('wikidata-schema')['add-reference-snak']).click(function() {
       SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
   }).appendTo(toolbar2);
 
@@ -499,7 +499,7 @@ SchemaAlignmentDialog._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
-  a.html(childrenCount+'&nbsp;references');
+  a.html(childrenCount+$.i18n._('wikidata-schema')["nb-references"]);
 }
 
 /************************
@@ -572,7 +572,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
   }
 
   if (this._reconService !== null && mode === "wikibase-item") {
-    input.attr("placeholder", "item or reconciled column");
+    input.attr("placeholder", $.i18n._('wikidata-schema')["item-or-reconciled-column"]);
     var endpoint = null;
     endpoint = this._reconService.suggest.entity;
     var suggestConfig = $.extend({}, endpoint);
@@ -616,7 +616,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
    } else if (mode === "quantity") {
-     alert("not supported yet!");
+     alert($.i18n._('wikidata-schema')["datatype-not-supported-yet"]);
    } else if (mode === "language") {
      var initial_language_width = "20%";
      var expanded_width = "90px";
@@ -682,7 +682,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     var columnDiv = $('<div></div>').appendTo(inputContainer);
     column.appendTo(columnDiv);
     var deleteButton = $('&nbsp;<img src="images/close.png" />').addClass('wbs-delete-column-button').appendTo(column);
-    deleteButton.attr('alt', 'remove column');
+    deleteButton.attr('alt', $.i18n._('wikidata-schema')["remove-column"]);
     deleteButton.click(function () {
         columnDiv.remove();
         input.show();

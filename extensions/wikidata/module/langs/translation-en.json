@@ -1,4 +1,12 @@
 {
+        "wikidata-extension": {
+                "menu-label": "Wikidata",
+                "edit-wikidata-schema": "Edit Wikidata schema",
+                "manage-wikidata-account": "Manage Wikidata account",
+                "perform-edits-on-wikidata": "Perform edits on Wikidata",
+                "export-to-qs": "Export to QuickStatements",
+                "quickstatements-export-name": "QuickStatements"
+        },
         "wikidata-schema": {
                 "dialog-header": "Align to Wikidata",
                 "dialog-explanation": "The schema alignment skeleton below specifies how your tabular data will be transformed into Wikibase statements. You can drag and drop columns in statements: they will be replaced by their values once you export the statements.",
@@ -7,14 +15,44 @@
                 "qs-preview-tab-header": "QuickStatements preview",
                 "draggable-columns-header": "Columns:",
                 "add-item-button": "add item",
+                "add-term": "add term",
+                "remove-term": "remove term",
+                "add-statement": "add statement",
+                "remove-statement": "remove statement",
+                "add-value": "add value",
+                "add-qualifier": "add qualifier",
+                "add-reference": "add reference",
+                "add-reference-snak": "add",
+                "remove-reference": "remove reference",
+                "nb-references": "&nbsp;references",
+                "remove-column": "remove column",
+                "label": "Label",
+                "description": "Description",
+                "alias": "Alias",
+                "item-or-reconciled-column": "item or reconciled column",
+                "datatype-not-supported-yet": "This datatype is not supported yet, sorry.",
                 "invalid-schema-warning-issues": "Your schema is incomplete, fix it to see the issues.",
                 "invalid-schema-warning-qs": "Your schema is incomplete, fix it to see the preview.",
                 "reset-button": "Reset",
                 "save-button": "Save",
-                "close-button": "Close"
+                "close-button": "Close",
+                "unsaved-changes": "There are unsaved changes. Close anyway?"
         },
         "wikidata-preview": {
                 "new-id": "new item"
+        },
+        "wikidata-account": {
+                "dialog-header": "Wikidata account",
+                "explain-log-in": "Logging in to Wikidata will allow you to perform edits directly from OpenRefine.",
+                "username-label": "Username:",
+                "username-placeholder": "Enter your username",
+                "password-label": "Password:",
+                "password-placeholder": "Enter your password",
+                "remember-credentials-label": "Remember credentials (stored unencrypted in OpenRefine's preferences)",
+                "close": "Close",
+                "log-in": "Log in",
+                "logged-in-as": "You are logged in as:",
+                "log-out": "Log out"
         },
         "perform-wikidata-edits": {
                 "dialog-header": "Perform edits on Wikidata",
@@ -42,6 +80,7 @@
                         "body": "There is probably something wrong in your schema or project."
                 },
                 "new-item-without-P31-or-P279": {
+
                         "title": "New items created without any type.",
                         "body": "You should provide an \"instance of\" (P31) or \"subclass of\" (P279) statement for each item that you create, such as {example_entity}."
                 },
