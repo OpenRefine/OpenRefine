@@ -185,6 +185,7 @@ public class QuickStatementsExporter implements WriterExporter {
             String unit = value.getUnit();
             if (!unit.startsWith(unitPrefix))
                 return null; // QuickStatements only accepts Qids as units
+            // TODO test this for values without bounds
             String unitID = "U"+unit.substring(unitPrefix.length());
             return String.format(
                     Locale.US,

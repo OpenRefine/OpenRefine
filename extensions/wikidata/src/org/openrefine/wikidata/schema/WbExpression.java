@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
     @Type(value = WbPropConstant.class, name = "wbpropconstant"),
     @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"), 
     @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
+    @Type(value = WbQuantityExpr.class, name="wbquantityexpr"),
   })
 public interface  WbExpression<T>  {
 
