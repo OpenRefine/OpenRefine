@@ -2,13 +2,10 @@
 package com.google.refine.tests.importing;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -60,11 +57,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         ImportingUtilities.inferColumnType(project);
         
         Assert.assertTrue(project.columnModel.columns.size() == 58);
-        
-        for (Column c : project.columnModel.columns) {
-            System.out.println("name:" + c.getName() + ", type:" + c.getType());
-        }
-
         Assert.assertTrue(project.columnModel.getColumnByName("result - source_id").getType().equals("string"));
         Assert.assertTrue(project.columnModel.getColumnByName("result - person - sexe").getType().equals("boolean"));
     }
