@@ -38,16 +38,7 @@
 	<classpathentry exported="true" kind="lib" path="server/lib/slf4j-log4j12-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="broker/appengine/WEB-INF/lib/slf4j-jdk14-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="broker/core/module/MOD-INF/lib/bdb-je-4.0.103.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-core-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jsoup-1.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-docs-meta-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-media-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-base-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-client-meta-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/gdata-spreadsheet-meta-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="extensions/gdata/module/MOD-INF/lib/mail.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/odfdom-java-0.8.7.jar" sourcepath="main/webapp/WEB-INF/lib-src/odfdom-java-0.8.7-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/resolver.jar"/>
@@ -63,10 +54,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-1.20.0.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-jackson2-1.20.0.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-1.20.0.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.20.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/transaction-api-1.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.13-20150929.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-ooxml-3.13-20150929.jar"/>
@@ -78,7 +65,6 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-core-2.9.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jackson-databind-2.9.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/json-20160810.jar"/>
-	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-digester-1.8.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-lang3-3.6.jar"/>
@@ -115,9 +101,17 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/testng-6.9.10.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/datapackage-java-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/tableschema-java-1.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-drive-v3-rev101-1.23.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-fusiontables-v2-rev21-1.23.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-1.23.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-client-servlet-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-http-client-jackson-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-servlet-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-drive-v3-rev101-1.23.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-api-services-sheets-v4-rev502-1.23.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-auth-library-oauth2-http-0.9.0.jar"/>
+	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-jetty-1.23.0.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>

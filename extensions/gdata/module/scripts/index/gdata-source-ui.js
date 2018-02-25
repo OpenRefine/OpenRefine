@@ -83,7 +83,13 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       } else {
         doc.type = 'table';
       }
-      self._controller.startImportingDocument(doc);
+      
+      if (GdataExtension.isAuthorized()) {
+          self._controller.startImportingDocument(doc);     
+      } else {
+          var fn = self._controller.startImportingDocument;
+          GdataExtension.showAuthorizationDialog(fn.bind(self._controller, doc));
+      }
     }
   });
    

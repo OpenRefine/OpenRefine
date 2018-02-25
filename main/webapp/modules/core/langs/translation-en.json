@@ -272,7 +272,10 @@
         "char-enc": "Character encoding",
         "line-sep": "Line separator",
         "upload-to": "Upload to",
-        "json-text": "The following JSON text encodes the options you have set in the other tabs. You can copy it out and save it for later, and paste it back in and click Apply to re-use the same options."
+        "json-text": "The following JSON text encodes the options you have set in the other tabs. You can copy it out and save it for later, and paste it back in and click Apply to re-use the same options.",
+        "choose-export-destination": "Please choose the destination for project export",
+        "export-to-local": "Export to local",
+  		"export-to-google-drive": "Export to google drive"
     },
     "core-facets": {
         "remove-facet": "Remove this facet",
