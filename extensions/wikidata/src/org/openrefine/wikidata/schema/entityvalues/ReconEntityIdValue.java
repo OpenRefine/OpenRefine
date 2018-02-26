@@ -117,7 +117,8 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
                 // This ensures compliance with OR's notion of new items
                 // (it is possible that two cells are reconciled to the same
                 // new item, in which case they share the same internal recon id).
-                return getRecon().judgmentHistoryEntry == reconOther.getRecon().judgmentHistoryEntry;
+                return (getReconInternalId() == reconOther.getReconInternalId() &&
+                        getEntityType().equals(reconOther.getEntityType()));
             }
         }
         
@@ -125,8 +126,15 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         return getIri().equals(otherNew.getIri());
     }
     
+    /**
+     * Returns the integer used internally in OpenRefine to identify the new
+     * item.
+     * 
+     * @return
+     *     the judgment history entry id of the reconciled cell
+     */
     public long getReconInternalId() {
-        return getRecon().id;
+        return getRecon().judgmentHistoryEntry;
     }
     
     @Override
@@ -134,10 +142,16 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         if (isMatched()) {
             return Hash.hashCode(this);
         } else {
-            return (int) _recon.id;
+            return (int) getReconInternalId();
         }
     }
     
+    /**
+     * Returns the reconciliation object corresponding to this entity.
+     * 
+     * @return
+     *     the full reconciliation metadata of the corresponding cell
+     */
     protected Recon getRecon() {
         return _recon;
     }
