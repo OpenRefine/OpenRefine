@@ -2,6 +2,7 @@ package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -54,10 +55,15 @@ public class QuickStatementsExporter implements WriterExporter {
     
     /**
      * Exports a project and a schema to a QuickStatements file
-     * @param project: the project to translate
-     * @param engine: the engine used for evaluation of the edits
-     * @param schema: the WikibaseSchema used for translation of tabular data to edits
-     * @param writer: the writer to which the QS should be written
+     * 
+     * @param project
+     *          the project to translate
+     * @param engine
+     *          the engine used for evaluation of the edits
+     * @param schema
+     *          the WikibaseSchema used for translation of tabular data to edits
+     * @param writer
+     *          the writer to which the QS should be written
      * @throws IOException
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer) throws IOException {
@@ -106,7 +112,7 @@ public class QuickStatementsExporter implements WriterExporter {
         Claim claim = statement.getClaim();
 
         Value val = claim.getValue();
-        ValueVisitor<String> vv = new ValuePrinter();
+        ValueVisitor<String> vv = new QSValuePrinter();
         String targetValue = val.accept(vv);
         if (targetValue != null) {
            if (! add) {
@@ -138,80 +144,12 @@ public class QuickStatementsExporter implements WriterExporter {
             pid = pid.replace('P', 'S');
         }
         Value val = s.getValue();
-        ValueVisitor<String> vv = new ValuePrinter();
+        ValueVisitor<String> vv = new QSValuePrinter();
         String valStr = val.accept(vv);
         if(valStr != null) {
             writer.write("\t" + pid + "\t" + valStr);
         }
     }
    
-    class ValuePrinter implements ValueVisitor<String> {
 
-        @Override
-        public String visit(DatatypeIdValue value) {
-            // unsupported according to
-            // https://tools.wmflabs.org/wikidata-todo/quick_statements.php?
-            return null;
-        }
-
-        @Override
-        public String visit(EntityIdValue value) {
-            if (value.equals(ItemIdValue.NULL)) {
-                return null;
-            }
-            return value.getId();
-        }
-
-        @Override
-        public String visit(GlobeCoordinatesValue value) {
-            return String.format(
-                Locale.US,
-                "@%f/%f",
-                value.getLatitude(),
-                value.getLongitude());
-        }
-
-        @Override
-        public String visit(MonolingualTextValue value) {
-            return String.format(
-                 "%s:\"%s\"",
-                 value.getLanguageCode(),
-                 value.getText());
-        }
-
-        @Override
-        public String visit(QuantityValue value) {
-            String unitPrefix = "http://www.wikidata.org/entity/Q";
-            String unit = value.getUnit();
-            if (!unit.startsWith(unitPrefix))
-                return null; // QuickStatements only accepts Qids as units
-            // TODO test this for values without bounds
-            String unitID = "U"+unit.substring(unitPrefix.length());
-            return String.format(
-                    Locale.US,
-                    "[%f,%f]%s",
-                    value.getLowerBound(),
-                    value.getUpperBound(),
-                    unitID);
-        }
-
-        @Override
-        public String visit(StringValue value) {
-            return "\"" + value.getString() + "\"";
-        }
-
-        @Override
-        public String visit(TimeValue value) {
-            return String.format(
-                "+%04d-%02d-%02dT%02d:%02d:%02dZ/%d",
-                value.getYear(),
-                value.getMonth(),
-                value.getDay(),
-                value.getHour(),
-                value.getMinute(),
-                value.getSecond(),
-                value.getPrecision());
-        }
-        
-    }
 }

@@ -22,6 +22,7 @@ import com.google.refine.model.Recon;
  * 
  * Storing the types also lets us perform some constraint checks
  * without re-fetching the types of many items.
+ * 
  * @author antonin
  *
  */
@@ -116,7 +117,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
                 // This ensures compliance with OR's notion of new items
                 // (it is possible that two cells are reconciled to the same
                 // new item, in which case they share the same internal recon id).
-                return getRecon().id == reconOther.getRecon().id;
+                return getRecon().judgmentHistoryEntry == reconOther.getRecon().judgmentHistoryEntry;
             }
         }
         
