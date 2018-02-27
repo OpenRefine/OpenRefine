@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * A constant property, that does not change depending on the row
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
 public class WbPropConstant implements WbExpression<PropertyIdValue> {
@@ -46,6 +46,15 @@ public class WbPropConstant implements WbExpression<PropertyIdValue> {
     @JsonProperty("datatype")
     public String getDatatype() {
         return datatype;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbPropConstant.class.isInstance(other)) {
+            return false;
+        }
+        WbPropConstant otherConstant = (WbPropConstant)other;
+        return pid.equals(otherConstant.getPid()) && label.equals(otherConstant.getLabel()) && datatype.equals(otherConstant.getDatatype());
     }
 
 }

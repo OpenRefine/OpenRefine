@@ -2,6 +2,9 @@ package org.openrefine.wikidata.testing;
 
 import java.util.Collections;
 
+import org.openrefine.wikidata.schema.WbLanguageConstant;
+import org.openrefine.wikidata.schema.WbMonolingualExpr;
+import org.openrefine.wikidata.schema.WbStringConstant;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
@@ -53,5 +56,9 @@ public class TestingDataGenerator {
     
     public static ReconEntityIdValue makeMatchedPropertyIdValue(String pid, String name) {
         return new ReconPropertyIdValue(makeMatchedRecon(pid, name), name);
+    }
+    
+    public static WbMonolingualExpr getTestMonolingualExpr(String langCode, String langLabel, String text) {
+        return new WbMonolingualExpr(new WbLanguageConstant(langCode, langLabel), new WbStringConstant(text));
     }
 }

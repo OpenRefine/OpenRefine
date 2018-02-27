@@ -13,14 +13,10 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
 
-public abstract class WbVariableTest<T> extends RefineTest {
+public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
     
     protected WbVariableExpr<T> variable;
-    protected Project project;
-    protected Row row;
-    protected ExpressionContext ctxt;
-    protected QAWarningStore warningStore;
-    
+
     /**
      * This should return a variable expression, to be tested with the helpers below.
      * @return
@@ -28,12 +24,7 @@ public abstract class WbVariableTest<T> extends RefineTest {
     public abstract WbVariableExpr<T> initVariableExpr();
     
     @BeforeMethod
-    public void createProject() throws IOException, ModelException {
-        project = createCSVProject("Wikidata variable test project", "column A\nrow1");
-        warningStore = new QAWarningStore();
-        row = project.rows.get(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0,
-                row, project.columnModel, warningStore);
+    public void setupVariable() throws IOException, ModelException {
         variable = initVariableExpr();
         variable.setColumnName("column A");
     }
@@ -59,12 +50,7 @@ public abstract class WbVariableTest<T> extends RefineTest {
      */
     public void evaluatesTo(T expected, Cell cell) {
         row.setCell(0, cell);
-        try {
-            T result = variable.evaluate(ctxt);
-            Assert.assertEquals(expected, result);
-        } catch (SkipSchemaExpressionException e) {
-            Assert.fail("Value was skipped by evaluator");
-        }
+        evaluatesTo(expected, variable);
     }
     
     /**
@@ -83,11 +69,6 @@ public abstract class WbVariableTest<T> extends RefineTest {
      */
     protected void isSkipped(Cell cell) {
         row.setCell(0, cell);
-        try {
-            variable.evaluate(ctxt);
-            Assert.fail("Value was not skipped by evaluator");
-        } catch (SkipSchemaExpressionException e) {
-            return;
-        }
+        isSkipped(variable);
     }
 }

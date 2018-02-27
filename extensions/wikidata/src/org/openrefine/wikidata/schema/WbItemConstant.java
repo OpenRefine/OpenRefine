@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
@@ -19,7 +20,9 @@ public class WbItemConstant implements WbExpression<ItemIdValue> {
     public WbItemConstant(
             @JsonProperty("qid") String qid,
             @JsonProperty("label") String label) {
+        Validate.notNull(qid);
         this.qid = qid;
+        Validate.notNull(label);
         this.label = label;
     }
 
@@ -39,5 +42,14 @@ public class WbItemConstant implements WbExpression<ItemIdValue> {
     @JsonProperty("label")
     public String getLabel() {
         return label;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbItemConstant.class.isInstance(other)) {
+            return false;
+        }
+        WbItemConstant otherConstant = (WbItemConstant)other;
+        return (qid.equals(otherConstant.getQid()) && label.equals(otherConstant.getLabel()));
     }
 }

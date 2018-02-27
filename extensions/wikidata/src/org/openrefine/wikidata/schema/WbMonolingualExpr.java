@@ -27,10 +27,11 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     public MonolingualTextValue evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         String text = getValueExpr().evaluate(ctxt).getString();
-        if (text.isEmpty())
-            throw new SkipSchemaExpressionException();
-        String lang = getLanguageExpr().evaluate(ctxt);
-        if (lang.isEmpty()) {
+        try {
+            String lang = getLanguageExpr().evaluate(ctxt);
+            return Datamodel.makeMonolingualTextValue(text, lang);
+            
+        } catch(SkipSchemaExpressionException e) {
             QAWarning warning = new QAWarning(
                   "monolingual-text-without-language",
                   null,
@@ -40,9 +41,6 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
             ctxt.addWarning(warning);
             throw new SkipSchemaExpressionException();
         }
-        
-        return Datamodel.makeMonolingualTextValue(text, lang);
-        
     }
 
     @JsonProperty("language")

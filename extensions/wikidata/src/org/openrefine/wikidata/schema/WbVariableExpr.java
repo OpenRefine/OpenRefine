@@ -21,18 +21,6 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
     private String columnName;
     
     /**
-     * Constructs a variable expression from a column name.
-     * 
-     * @param columnName
-     *     the name of the column the expression should draw its value from.
-     */
-    @JsonCreator
-    public WbVariableExpr(
-            @JsonProperty("columnName") String columnName) {
-        this.columnName = columnName;
-    }
-    
-    /**
      * Constructs a variable without setting the column name yet.
      */
     @JsonCreator
@@ -87,4 +75,28 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
      *          the corresponding Wikibase value
      */
     public abstract T fromCell(Cell cell, ExpressionContext ctxt) throws SkipSchemaExpressionException;
+    
+    /**
+     * Helper for equality methods of subclasses.
+     * 
+     * @param other
+     *      the object to compare
+     * @param columnName
+     *      the column name to compare to
+     * @param targetClass
+     *      the target class for equality
+     * @return
+     */
+    protected boolean equalAsVariables(Object other, Class<? extends WbVariableExpr<?>> targetClass) {
+        if(other == null || !targetClass.isInstance(other)) {
+            return false;
+        }
+        return columnName.equals(targetClass.cast(other).getColumnName());
+    }
+    
+    @Override
+    public int hashCode() {
+        return columnName.hashCode();
+    }
+    
 }

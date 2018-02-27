@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
@@ -16,9 +18,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.common.collect.ImmutableMap;
 
-
+/**
+ * A constant for a time value, accepting a number of formats
+ * which determine the precision of the parsed value.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class WbDateConstant implements WbExpression<TimeValue> {
 
+    /**
+     * Map of formats accepted by the parser. Each format is associated
+     * to the time precision it induces (an integer according to Wikibase's data model).
+     */
     public static Map<SimpleDateFormat,Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat,Integer>builder()
         .put(new SimpleDateFormat("yyyy"), 9)
         .put(new SimpleDateFormat("yyyy-MM"), 10)
@@ -31,30 +43,49 @@ public class WbDateConstant implements WbExpression<TimeValue> {
     private TimeValue parsed;
     private String origDatestamp;
     
+    /**
+     * Constructor. Used for deserialization from JSON.
+     * The object will be constructed even if the time cannot
+     * be parsed (it will evaluate to null) in {@link evaluate}.
+     * 
+     * @param origDatestamp
+     *          the date value as a string
+     */
     @JsonCreator
     public WbDateConstant(
             @JsonProperty("value") String origDatestamp) {
+        Validate.notNull(origDatestamp);
         this.setOrigDatestamp(origDatestamp);
     }
     
     @Override
     public TimeValue evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
-        if (parsed == null) {
-            throw new SkipSchemaExpressionException();
-        }
         return parsed;
     }
     
+    /**
+     * Parses a timestamp into a Wikibase {@link TimeValue}. The
+     * precision is automatically inferred from the format.
+     * 
+     * @param datestamp
+     *          the time to parse
+     * @return
+     * @throws ParseException
+     *          if the time cannot be parsed
+     */
     public static TimeValue parse(String datestamp) throws ParseException {
         Date date = null;
         int precision = 9; // default precision (will be overridden)
         for(Entry<SimpleDateFormat,Integer> entry : acceptedFormats.entrySet()) {
-            try {
-                date = entry.getKey().parse(datestamp);
+            ParsePosition position = new ParsePosition(0);
+            String trimmedDatestamp = datestamp.trim();
+            date = entry.getKey().parse(trimmedDatestamp, position);
+            
+            // Ignore parses which failed or do not consume all the input
+            if (date != null && position.getIndex() == trimmedDatestamp.length()) {
                 precision = entry.getValue();
-            } catch (ParseException e) {
-                continue;
+                break;
             }
         }
         if (date == null) {
@@ -71,13 +102,16 @@ public class WbDateConstant implements WbExpression<TimeValue> {
                     (byte) calendar.get(Calendar.MINUTE),
                     (byte) calendar.get(Calendar.SECOND),
                     (byte) precision,
-                    1,
+                    0,
                     1,
                     calendar.getTimeZone().getRawOffset()/3600000,
                     TimeValue.CM_GREGORIAN_PRO);
         }     
     }
     
+    /**
+     * @return the original datestamp
+     */
     @JsonProperty("value")
     public String getOrigDatestamp() {
         return origDatestamp;
@@ -88,9 +122,17 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         try {
            this.parsed = parse(origDatestamp);
         } catch(ParseException e) {
-            this.parsed = null;
+            throw new IllegalArgumentException("Invalid datestamp provided: "+origDatestamp);
         }
     }
     
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbDateConstant.class.isInstance(other)) {
+            return false;
+        }
+        WbDateConstant otherConstant = (WbDateConstant)other;
+        return origDatestamp.equals(otherConstant.getOrigDatestamp());
+    }
 
 }

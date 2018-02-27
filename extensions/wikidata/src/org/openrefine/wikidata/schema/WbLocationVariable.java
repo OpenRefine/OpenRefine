@@ -20,4 +20,9 @@ public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
             throw new SkipSchemaExpressionException();
         }
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        return equalAsVariables(other, WbLocationVariable.class);
+    }
 }

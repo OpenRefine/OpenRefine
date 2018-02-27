@@ -40,9 +40,7 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
     public QuantityValue evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         StringValue amount = getLanguageExpr().evaluate(ctxt);
-        if (amount == null || amount.getString().isEmpty()) {
-            throw new SkipSchemaExpressionException();
-        }
+        // we know the amount is nonnull, nonempty here
         
         BigDecimal parsedAmount = null;
         try {
