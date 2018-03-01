@@ -12,9 +12,17 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/**
+ * An expression for a reference (list of reference snaks).
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WbReferenceExpr {
+@JsonTypeInfo(use=JsonTypeInfo.Id.NONE)
+public class WbReferenceExpr implements WbExpression<Reference> {
     private List<WbSnakExpr> snakExprs;
     
     @JsonCreator
@@ -23,6 +31,7 @@ public class WbReferenceExpr {
         this.snakExprs = snakExprs;
     }
     
+    @Override
     public Reference evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
         for (WbSnakExpr expr : getSnaks()) {
@@ -46,4 +55,17 @@ public class WbReferenceExpr {
         return snakExprs;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbReferenceExpr.class.isInstance(other)) {
+            return false;
+        }
+        WbReferenceExpr otherExpr = (WbReferenceExpr)other;
+        return snakExprs.equals(otherExpr.getSnaks());
+    }
+    
+    @Override
+    public int hashCode() {
+        return snakExprs.hashCode();
+    }
 }

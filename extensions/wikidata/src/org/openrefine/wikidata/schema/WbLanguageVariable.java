@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.schema;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

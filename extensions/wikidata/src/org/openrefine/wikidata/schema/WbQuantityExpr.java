@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.schema;
 
 import java.math.BigDecimal;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;

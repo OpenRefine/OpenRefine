@@ -13,9 +13,6 @@ import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
-
 public class QSValuePrinterTest {
     
     private QSValuePrinter printer;

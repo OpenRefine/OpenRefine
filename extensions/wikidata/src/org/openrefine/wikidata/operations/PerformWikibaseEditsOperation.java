@@ -6,8 +6,10 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -199,7 +201,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
         @Override
         public void run() {
-            // TODO Auto-generated method stub
             
             WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
             ConnectionManager manager = ConnectionManager.getInstance();
@@ -208,8 +209,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             ApiConnection connection = manager.getConnection();
 
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseUri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseUri());
+            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
+            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
             wbde.setEditAsBot(true);
             //wbde.disableEditing();
             
@@ -284,9 +285,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                             
                             ItemDocument itemDocument = factory.getItemDocument(
                                     update.getItemId(),
-                                    update.getLabels(),
-                                    update.getDescriptions(),
-                                    update.getAliases(),
+                                    update.getLabels().stream().collect(Collectors.toList()),
+                                    update.getDescriptions().stream().collect(Collectors.toList()),
+                                    update.getAliases().stream().collect(Collectors.toList()),
                                     update.getAddedStatementGroups(),
                                     new HashMap<String,SiteLink>(),
                                     0L);
@@ -296,20 +297,14 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                         } else {
                             // Existing item
                             ItemDocument currentDocument = (ItemDocument)currentDocs.get(update.getItemId().getId());
-                            TermStatementUpdate itemUpdate = new TermStatementUpdate( currentDocument, update.getAddedStatements(),
-                                    update.getDeletedStatements(), update.getLabels(),
-                                    update.getDescriptions(),
-                                    update.getAliases(),
-                                    new ArrayList<MonolingualTextValue>()
-                                    );
-                            System.out.println(itemUpdate.getJsonUpdateString());
                             wbde.updateTermsStatements(currentDocument,
-                                    update.getLabels(),
-                                    update.getDescriptions(),
-                                    update.getAliases(),
+                                    update.getLabels().stream().collect(Collectors.toList()),
+                                    update.getDescriptions().stream().collect(Collectors.toList()),
+                                    update.getAliases().stream().collect(Collectors.toList()),
                                     new ArrayList<MonolingualTextValue>(),
-                                    update.getAddedStatements(),
-                                    update.getDeletedStatements(), _summary);
+                                    update.getAddedStatements().stream().collect(Collectors.toList()),
+                                    update.getDeletedStatements().stream().collect(Collectors.toList()),
+                                    _summary);
                         }
                     } catch (MediaWikiApiErrorException e) {
                         // TODO Auto-generated catch block

@@ -66,6 +66,28 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     public abstract String getEntityType();
 
     /**
+     * Returns the integer used internally in OpenRefine to identify the new
+     * item.
+     * 
+     * @return
+     *     the judgment history entry id of the reconciled cell
+     */
+    public long getReconInternalId() {
+        return getRecon().judgmentHistoryEntry;
+    }
+    
+    
+    /**
+     * Returns the reconciliation object corresponding to this entity.
+     * 
+     * @return
+     *     the full reconciliation metadata of the corresponding cell
+     */
+    protected Recon getRecon() {
+        return _recon;
+    }
+    
+    /**
      * Returns the id of the reconciled item
      */
     @Override
@@ -94,6 +116,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     public <T> T accept(ValueVisitor<T> valueVisitor) {
         return valueVisitor.visit(this);
     }
+    
 
     /**
      * Equality check is important when we gather
@@ -126,17 +149,6 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         return getIri().equals(otherNew.getIri());
     }
     
-    /**
-     * Returns the integer used internally in OpenRefine to identify the new
-     * item.
-     * 
-     * @return
-     *     the judgment history entry id of the reconciled cell
-     */
-    public long getReconInternalId() {
-        return getRecon().judgmentHistoryEntry;
-    }
-    
     @Override
     public int hashCode() {
         if (isMatched()) {
@@ -145,14 +157,13 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
             return (int) getReconInternalId();
         }
     }
-    
-    /**
-     * Returns the reconciliation object corresponding to this entity.
-     * 
-     * @return
-     *     the full reconciliation metadata of the corresponding cell
-     */
-    protected Recon getRecon() {
-        return _recon;
+
+    @Override
+    public String toString() {
+        if(isNew()) {
+            return "new item (reconciled from " + getReconInternalId() +")";
+        } else {
+            return getIri() + " (reconciled from " + getReconInternalId()+")";
+        }
     }
 }

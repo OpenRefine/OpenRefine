@@ -8,16 +8,20 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * The representation of an item document, which can contain
  * variables both for its own id and in its contents.
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
-public class WbItemDocumentExpr extends JacksonJsonizable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use=JsonTypeInfo.Id.NONE)
+public class WbItemDocumentExpr extends JacksonJsonizable implements WbExpression<ItemUpdate> {
 
     private WbExpression<? extends ItemIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
@@ -33,6 +37,7 @@ public class WbItemDocumentExpr extends JacksonJsonizable {
         this.statementGroups = statementGroupExprs;
     }
     
+    @Override
     public ItemUpdate evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         ItemIdValue subjectId = getSubject().evaluate(ctxt);
         ItemUpdate update = new ItemUpdate(subjectId);
@@ -64,5 +69,21 @@ public class WbItemDocumentExpr extends JacksonJsonizable {
     @JsonProperty("statementGroups")
     public List<WbStatementGroupExpr> getStatementGroups() {
         return statementGroups;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbItemDocumentExpr.class.isInstance(other)) {
+            return false;
+        }
+        WbItemDocumentExpr otherExpr = (WbItemDocumentExpr)other;
+        return subject.equals(otherExpr.getSubject()) &&
+               nameDescs.equals(otherExpr.getNameDescs()) &&
+               statementGroups.equals(otherExpr.getStatementGroups());
+    }
+    
+    @Override
+    public int hashCode() {
+        return subject.hashCode() + nameDescs.hashCode() + statementGroups.hashCode();
     }
 }

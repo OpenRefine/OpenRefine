@@ -29,15 +29,19 @@ public class JacksonSerializationTest {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void testDeserialize(Class targetClass, Object pojo, String inputJson) {
         try {
-            assertEquals(pojo, mapper.readValue(inputJson, targetClass));
+            Object deserialized = mapper.readValue(inputJson, targetClass);
+            assertEquals(pojo, deserialized);
+            assertEquals(pojo.hashCode(), deserialized.hashCode());
         } catch (IOException e) {
             e.printStackTrace();
             Assert.fail("Failed to deserialize object");
         }
     }
     
+    @SuppressWarnings("rawtypes")
     public static void canonicalSerialization(Class targetClass, Object pojo, String json) {
         testSerialize(pojo, json);
         testDeserialize(targetClass, pojo, json);

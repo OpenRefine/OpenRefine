@@ -23,40 +23,38 @@ import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.ExpressionContext;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 
+/**
+ * Main class representing a skeleton of Wikibase edits with
+ * OpenRefine columns as variables.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 	
     protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
     
-    protected String baseUri = "http://www.wikidata.org/entity/";
+    protected String baseIri = "http://www.wikidata.org/entity/";
 
-    @Override
-    public void onBeforeSave(Project project) {
-    }
-    
-    @Override
-    public void onAfterSave(Project project) {
-    }
-    
-   @Override
-    public void dispose(Project project) {
-
-    }
-
-    public void setBaseUri(String baseUri) {
-        this.baseUri = baseUri;
-    }
-
+    /**
+     * Constructor.
+    */
     public WikibaseSchema() {
     	
     }
     
-    
-    public String getBaseUri() {
-        return baseUri;
+    /**
+     * @return the site IRI of the Wikibase instance referenced by this schema
+     */
+    public String getBaseIri() {
+        return baseIri;
     }
 
+    /**
+     * @return the list of document expressions for this schema
+     */
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
     }
@@ -67,7 +65,11 @@ public class WikibaseSchema implements OverlayModel {
     
     /**
      * Evaluates all item documents in a particular expression context.
+     * This specifies, among others, a row where the values of the variables
+     * will be read.
+     * 
      * @param ctxt
+     *      the context in which the schema should be evaluated.
      * @return
      */
     public List<ItemUpdate> evaluateItemDocuments(ExpressionContext ctxt) {
@@ -92,9 +94,12 @@ public class WikibaseSchema implements OverlayModel {
      * for dates). Issues detected on candidate statements (such as constraint
      * violations) are not included at this stage.
      * 
-     * @param project: the project on which the schema should be evaluated
-     * @param engine: the engine, which gives access to the current facets
-     * @param warningStore: a store in which issues will be emitted
+     * @param project
+     *      the project on which the schema should be evaluated
+     * @param engine
+     *       the engine, which gives access to the current facets
+     * @param warningStore
+     *       a store in which issues will be emitted
      * @return item updates are stored in their
      * generating order (not merged yet).
      */
@@ -128,7 +133,7 @@ public class WikibaseSchema implements OverlayModel {
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             ExpressionContext ctxt = new ExpressionContext(
-                    baseUri,
+                    baseIri,
                     rowIndex,
                     row,
                     project.columnModel,
@@ -169,5 +174,18 @@ public class WikibaseSchema implements OverlayModel {
     
     static public WikibaseSchema load(Project project, JSONObject obj) throws Exception {
         return reconstruct(obj);
+    }
+    
+    @Override
+    public void onBeforeSave(Project project) {
+    }
+    
+    @Override
+    public void onAfterSave(Project project) {
+    }
+    
+    @Override
+    public void dispose(Project project) {
+
     }
 }

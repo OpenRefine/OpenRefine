@@ -2,16 +2,10 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 
-import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
 
 public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
     

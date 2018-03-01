@@ -1,8 +1,6 @@
 package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.io.Serializable;
 
 import org.openrefine.wikidata.qa.QAWarningStore;
@@ -27,8 +25,8 @@ public class WbExpressionTest<T> extends RefineTest {
     
     @BeforeMethod
     public void createProject() throws IOException, ModelException {
-        project = createCSVProject("Wikidata variable test project", "column A,column B,column C,column D\n"+
-                "value A,value B,value C,value D");
+        project = createCSVProject("Wikidata variable test project", "column A,column B,column C,column D,column E\n"+
+                "value A,value B,value C,value D,value E");
         warningStore = new QAWarningStore();
         row = project.rows.get(0);
         ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0,

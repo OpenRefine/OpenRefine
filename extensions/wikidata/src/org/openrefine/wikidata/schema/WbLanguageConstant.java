@@ -76,4 +76,9 @@ public class WbLanguageConstant implements WbExpression<String> {
         return _langId.equals(otherConstant.getLang()) && _langLabel.equals(otherConstant.getLabel());
     }
     
+    @Override
+    public int hashCode() {
+        return _langId.hashCode();
+    }
+    
 }

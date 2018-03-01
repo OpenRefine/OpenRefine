@@ -57,4 +57,8 @@ public class WbPropConstant implements WbExpression<PropertyIdValue> {
         return pid.equals(otherConstant.getPid()) && label.equals(otherConstant.getLabel()) && datatype.equals(otherConstant.getDatatype());
     }
 
+    @Override
+    public int hashCode() {
+        return pid.hashCode() + label.hashCode();
+    }
 }

@@ -12,7 +12,7 @@ import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 public class WbLocationConstantTest extends WbExpressionTest<GlobeCoordinatesValue> {
     
     private GlobeCoordinatesValue loc = Datamodel.makeGlobeCoordinatesValue(1.2345, 6.7890,
-            GlobeCoordinatesValue.PREC_TEN_MICRO_DEGREE, GlobeCoordinatesValue.GLOBE_EARTH);
+            WbLocationConstant.defaultPrecision, GlobeCoordinatesValue.GLOBE_EARTH);
     private GlobeCoordinatesValue locWithPrecision = Datamodel.makeGlobeCoordinatesValue(1.2345, 6.7890,
             0.1, GlobeCoordinatesValue.GLOBE_EARTH);
     private String input = "1.2345,6.7890";

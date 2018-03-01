@@ -1,8 +1,10 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -32,8 +34,15 @@ public class WbStatementExpr {
             @JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
             @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
             @JsonProperty("references") List<WbReferenceExpr> referenceExprs) {
+        Validate.notNull(mainSnakValueExpr);
         this.mainSnakValueExpr = mainSnakValueExpr;
+        if (qualifierExprs == null) {
+            qualifierExprs = Collections.emptyList();
+        }
         this.qualifierExprs = qualifierExprs;
+        if (referenceExprs == null) {
+            referenceExprs = Collections.emptyList();
+        }
         this.referenceExprs = referenceExprs;
     }
     
@@ -105,5 +114,21 @@ public class WbStatementExpr {
     @JsonProperty("references")
     public List<WbReferenceExpr> getReferences() {
         return referenceExprs;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !WbStatementExpr.class.isInstance(other)) {
+            return false;
+        }
+        WbStatementExpr otherExpr = (WbStatementExpr)other;
+        return mainSnakValueExpr.equals(otherExpr.getMainsnak()) &&
+                qualifierExprs.equals(otherExpr.getQualifiers()) &&
+                referenceExprs.equals(otherExpr.getReferences());
+    }
+    
+    @Override
+    public int hashCode() {
+        return mainSnakValueExpr.hashCode() + qualifierExprs.hashCode() + referenceExprs.hashCode();
     }
 }

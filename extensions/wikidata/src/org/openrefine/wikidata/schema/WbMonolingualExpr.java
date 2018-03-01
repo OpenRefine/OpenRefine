@@ -52,4 +52,19 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     public WbExpression<? extends StringValue> getValueExpr() {
         return valueExpr;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbMonolingualExpr.class.isInstance(other)) {
+            return false;
+        }
+        WbMonolingualExpr otherExpr = (WbMonolingualExpr)other;
+        return languageExpr.equals(otherExpr.getLanguageExpr()) &&
+                valueExpr.equals(otherExpr.getValueExpr());
+    }
+    
+    @Override
+    public int hashCode() {
+        return languageExpr.hashCode() + valueExpr.hashCode();
+    }
 }

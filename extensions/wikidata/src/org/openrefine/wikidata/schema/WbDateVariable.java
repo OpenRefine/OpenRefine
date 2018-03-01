@@ -3,8 +3,9 @@ package org.openrefine.wikidata.schema;
 import java.text.ParseException;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import com.google.refine.model.Cell;
 
@@ -16,6 +17,15 @@ import com.google.refine.model.Cell;
  *
  */
 public class WbDateVariable extends WbVariableExpr<TimeValue> {
+    
+    @JsonCreator
+    public WbDateVariable() {
+        
+    }
+    
+    public WbDateVariable(String columnName) {
+        setColumnName(columnName);
+    }
 
     @Override
     public TimeValue fromCell(Cell cell, ExpressionContext ctxt)

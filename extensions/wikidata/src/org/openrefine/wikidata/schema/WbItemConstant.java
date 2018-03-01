@@ -52,4 +52,9 @@ public class WbItemConstant implements WbExpression<ItemIdValue> {
         WbItemConstant otherConstant = (WbItemConstant)other;
         return (qid.equals(otherConstant.getQid()) && label.equals(otherConstant.getLabel()));
     }
+    
+    @Override
+    public int hashCode() {
+        return qid.hashCode() + label.hashCode();
+    }
 }

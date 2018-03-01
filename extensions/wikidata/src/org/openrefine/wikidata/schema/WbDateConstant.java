@@ -134,5 +134,10 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         WbDateConstant otherConstant = (WbDateConstant)other;
         return origDatestamp.equals(otherConstant.getOrigDatestamp());
     }
+    
+    @Override
+    public int hashCode() {
+        return origDatestamp.hashCode();
+    }
 
 }

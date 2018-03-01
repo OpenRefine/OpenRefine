@@ -5,10 +5,21 @@ import java.text.ParseException;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.google.refine.model.Cell;
 
 
 public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
+    
+    @JsonCreator
+    public WbLocationVariable() {
+        
+    }
+
+    public WbLocationVariable(String columnName) {
+        setColumnName(columnName);
+    }
 
     @Override
     public GlobeCoordinatesValue fromCell(Cell cell, ExpressionContext ctxt)

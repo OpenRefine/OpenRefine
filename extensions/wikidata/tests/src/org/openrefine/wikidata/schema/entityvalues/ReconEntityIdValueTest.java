@@ -94,4 +94,10 @@ public class ReconEntityIdValueTest {
     public void testGetRecon() {
         assertEquals(newItem.getReconInternalId(), newItem.getRecon().judgmentHistoryEntry);
     }
+    
+    @Test
+    public void testToString() {
+        assertTrue(existingItem.toString().contains("Q42"));
+        assertTrue(newItem.toString().contains("new"));
+    }
 }

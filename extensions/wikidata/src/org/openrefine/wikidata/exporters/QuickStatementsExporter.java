@@ -2,10 +2,9 @@ package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.WriterExporter;
@@ -16,18 +15,12 @@ import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
@@ -77,7 +70,7 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
     
-    protected void translateNameDescr(String qid, List<MonolingualTextValue> values, String prefix, ItemIdValue id, Writer writer) throws IOException {
+    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, ItemIdValue id, Writer writer) throws IOException {
         for (MonolingualTextValue value : values) {
             writer.write(qid+"\t");
             writer.write(prefix);

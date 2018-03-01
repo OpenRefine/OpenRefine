@@ -38,6 +38,14 @@ public class WbNameDescExpr {
         this.value = value;
     }
     
+    /**
+     * Evaluates the expression and adds the result to the item update.
+     * 
+     * @param item
+     *      the item update where the term should be stored
+     * @param ctxt
+     *       the evaluation context for the expression
+     */
     public void contributeTo(ItemUpdate item, ExpressionContext ctxt) {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
@@ -65,5 +73,20 @@ public class WbNameDescExpr {
     @JsonProperty("value")
     public WbMonolingualExpr getValue() {
         return value;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbNameDescExpr.class.isInstance(other)) {
+            return false;
+        }
+        WbNameDescExpr otherExpr = (WbNameDescExpr)other;
+        return type.equals(otherExpr.getType()) &&
+                value.equals(otherExpr.getValue());
+    }
+    
+    @Override
+    public int hashCode() {
+        return type.hashCode() + value.hashCode();
     }
 }

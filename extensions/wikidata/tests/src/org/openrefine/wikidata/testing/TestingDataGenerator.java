@@ -5,10 +5,8 @@ import java.util.Collections;
 import org.openrefine.wikidata.schema.WbLanguageConstant;
 import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
-import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;
@@ -42,19 +40,19 @@ public class TestingDataGenerator {
         return new Cell(name, makeMatchedRecon(qid, name));
     }
     
-    public static ReconEntityIdValue makeNewItemIdValue(long judgementId, String name) {
+    public static ReconItemIdValue makeNewItemIdValue(long judgementId, String name) {
         return new ReconItemIdValue(makeNewItemRecon(judgementId), name);
     }
     
-    public static ReconEntityIdValue makeMatchedItemIdValue(String qid, String name) {
+    public static ReconItemIdValue makeMatchedItemIdValue(String qid, String name) {
         return new ReconItemIdValue(makeMatchedRecon(qid, name), name);
     }
 
-    public static ReconEntityIdValue makeNewPropertyIdValue(long judgmentId, String name) {
+    public static ReconPropertyIdValue makeNewPropertyIdValue(long judgmentId, String name) {
         return new ReconPropertyIdValue(makeNewItemRecon(judgmentId), name);
     }
     
-    public static ReconEntityIdValue makeMatchedPropertyIdValue(String pid, String name) {
+    public static ReconPropertyIdValue makeMatchedPropertyIdValue(String pid, String name) {
         return new ReconPropertyIdValue(makeMatchedRecon(pid, name), name);
     }
     
