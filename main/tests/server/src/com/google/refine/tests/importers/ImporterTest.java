@@ -5,8 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 
@@ -38,7 +41,9 @@ abstract public class ImporterTest extends RefineTest {
         ImportingManager.initialize(servlet);
         project = new Project();
         metadata = new ProjectMetadata();
-        job = ImportingManager.createJob();
+        ImportingJob spiedJob = ImportingManager.createJob();
+        job = Mockito.spy(spiedJob);
+        when(job.getRetrievalRecord()).thenReturn(new JSONObject());
         
         options = Mockito.mock(JSONObject.class);
     }
