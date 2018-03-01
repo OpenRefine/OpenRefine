@@ -1,7 +1,9 @@
 package org.openrefine.wikidata.updates;
 
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -17,7 +19,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  */
 public class ItemUpdateBuilder {
     private ItemIdValue qid;
-    private Set<Statement> addedStatements;
+    private List<Statement> addedStatements;
     private Set<Statement> deletedStatements;
     private Set<MonolingualTextValue> labels;
     private Set<MonolingualTextValue> descriptions;
@@ -33,7 +35,7 @@ public class ItemUpdateBuilder {
     public ItemUpdateBuilder(ItemIdValue qid) {
         Validate.notNull(qid);
         this.qid = qid;
-        this.addedStatements = new HashSet<>();
+        this.addedStatements = new ArrayList<>();
         this.deletedStatements = new HashSet<Statement>();
         this.labels = new HashSet<MonolingualTextValue>();
         this.descriptions = new HashSet<MonolingualTextValue>();
@@ -103,6 +105,19 @@ public class ItemUpdateBuilder {
         labels.add(label);
         return this;
     }
+    
+    /**
+     * Adds a list of labels to the item. It will override any
+     * existing label in each language.
+     * 
+     * @param labels
+     *      the labels to add
+     */
+    public ItemUpdateBuilder addLabels(Set<MonolingualTextValue> labels) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        this.labels.addAll(labels);
+        return this;
+    }
 
     /**
      * Adds a description to the item. It will override any existing
@@ -116,6 +131,19 @@ public class ItemUpdateBuilder {
         descriptions.add(description);
         return this;
     }
+    
+    /**
+     * Adds a list of descriptions to the item. It will override any
+     * existing description in each language.
+     * 
+     * @param descriptions
+     *      the descriptions to add
+     */
+    public ItemUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        this.descriptions.addAll(descriptions);
+        return this;
+    }
 
     /**
      * Adds an alias to the item. It will be added to any existing
@@ -127,6 +155,19 @@ public class ItemUpdateBuilder {
     public ItemUpdateBuilder addAlias(MonolingualTextValue alias) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         aliases.add(alias); 
+        return this;
+    }
+    
+    /**
+     * Adds a list of aliases to the item. They will be added to any
+     * existing aliases in each language.
+     * 
+     * @param aliases
+     *      the aliases to add
+     */
+    public ItemUpdateBuilder addAliases(Set<MonolingualTextValue> aliases) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        this.aliases.addAll(aliases);
         return this;
     }
   

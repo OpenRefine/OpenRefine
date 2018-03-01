@@ -62,6 +62,16 @@ public class ItemUpdateTest {
     public void testIsNull() {
         ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
         assertTrue(update.isNull());
+        ItemUpdate update2 = new ItemUpdateBuilder(newSubject).build();
+        assertFalse(update2.isNull());
+    }
+    
+    @Test
+    public void testIsEmpty() {
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
+        assertTrue(update.isEmpty());
+        ItemUpdate update2 = new ItemUpdateBuilder(newSubject).build();
+        assertTrue(update2.isEmpty());
     }
     
     @Test
@@ -78,8 +88,8 @@ public class ItemUpdateTest {
            .addStatement(statement1)
            .addStatement(statement2)
            .build();
-        assertEquals(Arrays.asList(statement1, statement2).stream().collect(Collectors.toSet()), 
-                update.getAddedStatements());
+        assertFalse(update.isNull());
+        assertEquals(Arrays.asList(statement1, statement2), update.getAddedStatements());
         assertEquals(statementGroups, update.getAddedStatementGroups().stream().collect(Collectors.toSet()));
     }
     
@@ -130,6 +140,7 @@ public class ItemUpdateTest {
                 .addAlias(aliasEn)
                 .addAlias(aliasFr)
                 .build();
+        assertFalse(updateA.isNull());
         ItemUpdate normalized = updateA.normalizeLabelsAndAliases();
         ItemUpdate expectedUpdate = new ItemUpdateBuilder(newSubject)
                 .addLabel(label)

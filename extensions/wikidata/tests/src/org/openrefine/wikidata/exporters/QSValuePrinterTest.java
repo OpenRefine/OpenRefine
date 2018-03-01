@@ -40,15 +40,11 @@ public class QSValuePrinterTest {
     @Test
     public void printNewItemId() {
         ReconEntityIdValue id = TestingDataGenerator.makeNewItemIdValue(12345L, "my new item");
-        assertNull(id.accept(printer));
+        assertEquals("LAST", id.accept(printer));
         // because no entity was previously created
-
-        QSValuePrinter printerAfterCreate = new QSValuePrinter(id);
-        ReconEntityIdValue equalId = TestingDataGenerator.makeNewItemIdValue(12345L, "my other new item");
-        assertEquals("LAST", printerAfterCreate.visit(equalId));
         
-        ReconEntityIdValue differentId = TestingDataGenerator.makeNewItemIdValue(34567L, "my new item");
-        assertNull(printerAfterCreate.visit(differentId));
+        ReconEntityIdValue differentId = TestingDataGenerator.makeMatchedItemIdValue("Q78", "my existing item");
+        assertEquals("Q78", differentId.accept(printer));
     }
     
     // Globe coordinates

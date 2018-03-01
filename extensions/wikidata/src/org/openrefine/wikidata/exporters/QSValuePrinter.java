@@ -18,35 +18,15 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
  * Format documentation:
  * https://www.wikidata.org/wiki/Help:QuickStatements
  * 
+ * Any new entity id will be
+ * assumed to be the last one created, represented with "LAST". It is
+ * fine to do this assumption because we are working on edit batches
+ * previously scheduled by {@link QuickStatementsUpdateScheduler}.
+ * 
  * @author Antonin Delpeuch
  *
  */
 public class QSValuePrinter implements ValueVisitor<String> {
-    
-    private final ReconEntityIdValue lastCreatedEntityIdValue;
-    
-    /**
-     * Constructor.
-     * 
-     * Creates a printer for a context where no entity was previously
-     * created with the "CREATE" command. Any new entity id will not
-     * be printed.
-     */
-    public QSValuePrinter() {
-        lastCreatedEntityIdValue = null;
-    }
-    
-    /**
-     * Creates a printer for a context where an entity was previously
-     * created with the "CREATE" command. If this id is encountered,
-     * it will be printed as "LAST".
-     * 
-     * @param lastCreatedEntityIdValue
-     *      the virtual id of the last created entity
-     */
-    public QSValuePrinter(ReconEntityIdValue lastCreatedEntityIdValue) {
-        this.lastCreatedEntityIdValue = lastCreatedEntityIdValue;
-    }
 
     @Override
     public String visit(DatatypeIdValue value) {
@@ -57,11 +37,8 @@ public class QSValuePrinter implements ValueVisitor<String> {
 
     @Override
     public String visit(EntityIdValue value) {
-        if (lastCreatedEntityIdValue != null && lastCreatedEntityIdValue.equals(value)) {
+        if (ReconEntityIdValue.class.isInstance(value) && ((ReconEntityIdValue)value).isNew()) {
             return "LAST";
-        } else if (ReconEntityIdValue.class.isInstance(value)) {
-            // oops, we are trying to print another newly created entity (not the last one)
-            return null;
         }
         return value.getId();
     }

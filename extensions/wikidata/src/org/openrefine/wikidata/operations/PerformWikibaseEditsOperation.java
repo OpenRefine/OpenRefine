@@ -17,6 +17,9 @@ import org.json.JSONWriter;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.NewItemLibrary;
 import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikidata.updates.scheduler.UpdateScheduler;
+import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.slf4j.Logger;
@@ -29,6 +32,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.TermStatementUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -215,8 +219,10 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
             
-            // Group statements by item
-            Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(itemDocuments);
+            // Schedule the edit batch
+            WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
+            List<ItemUpdate> updates = null;
+            updates = scheduler.schedule(itemDocuments);
             
             /**
              * TODO:
@@ -228,7 +234,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             NewItemLibrary newItemLibrary = new NewItemLibrary();
             DataObjectFactory factory = new DataObjectFactoryImpl();
             List<ItemUpdate> remainingItemUpdates = new ArrayList<>();
-            remainingItemUpdates.addAll(updates.values());
+            remainingItemUpdates.addAll(updates);
             int totalItemUpdates = updates.size();
             int updatesDone = 0;
             int batchSize = 50;
@@ -295,6 +301,20 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                         } else {
                             // Existing item
                             ItemDocument currentDocument = (ItemDocument)currentDocs.get(update.getItemId().getId());
+                            /*
+                            TermStatementUpdate tsUpdate = new TermStatementUpdate(
+                                    currentDocument,
+                                    update.getAddedStatements().stream().collect(Collectors.toList()),
+                                    update.getDeletedStatements().stream().collect(Collectors.toList()),
+                                    update.getLabels().stream().collect(Collectors.toList()),
+                                    update.getDescriptions().stream().collect(Collectors.toList()),
+                                    update.getAliases().stream().collect(Collectors.toList()),
+                                    new ArrayList<MonolingualTextValue>() 
+                                    );
+                            ObjectMapper mapper = new ObjectMapper();
+                            logger.info(mapper.writeValueAsString(update));
+                            logger.info(update.toString());
+                            logger.info(tsUpdate.getJsonUpdateString()); */
                             wbde.updateTermsStatements(currentDocument,
                                     update.getLabels().stream().collect(Collectors.toList()),
                                     update.getDescriptions().stream().collect(Collectors.toList()),

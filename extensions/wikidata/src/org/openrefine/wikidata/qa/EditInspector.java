@@ -18,11 +18,15 @@ import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikidata.updates.scheduler.UpdateScheduler;
+import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
- * Runs a collection of edit scrutinizers on an edit batch
- * @author antonin
+ * Runs a collection of edit scrutinizers on an edit batch.
+ * 
+ * @author Antonin Delpeuch
  *
  */
 public class EditInspector {
@@ -63,10 +67,19 @@ public class EditInspector {
      * @param editBatch
      */
     public void inspect(List<ItemUpdate> editBatch) {
-        Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(editBatch);
-        List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
-        for(EditScrutinizer scrutinizer : scrutinizers.values()) {
-            scrutinizer.scrutinize(mergedUpdates);
+        // First, schedule them with some scheduler,
+        // so that all newly created entities appear in the batch
+        UpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
+        try {
+            editBatch = scheduler.schedule(editBatch);
+            Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(editBatch);
+            List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
+            for(EditScrutinizer scrutinizer : scrutinizers.values()) {
+                scrutinizer.scrutinize(mergedUpdates);
+            }
+        } catch(ImpossibleSchedulingException e) {
+            warningStore.addWarning(new QAWarning(
+                "scheduling-failed", null, QAWarning.Severity.CRITICAL, 1));
         }
         
         if (warningStore.getNbWarnings() == 0) {

@@ -8,6 +8,8 @@ import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.google.refine.model.Recon;
 
 /**
@@ -38,11 +40,13 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
                 Recon.Judgment.New.equals(_recon.judgment));
     }
     
-    protected boolean isMatched() {
+    @JsonIgnore
+    public boolean isMatched() {
         return Recon.Judgment.Matched.equals(_recon.judgment) && _recon.match != null;
     }
     
-    protected boolean isNew() {
+    @JsonIgnore
+    public boolean isNew() {
         return !isMatched();
     }
     

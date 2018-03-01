@@ -12,6 +12,8 @@ import com.google.refine.model.Project;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
+import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -27,6 +29,9 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 public class QuickStatementsExporter implements WriterExporter {
 
     final static Logger logger = LoggerFactory.getLogger("QuickStatementsExporter");
+    
+    public static final String impossibleSchedulingErrorMessage =
+            "This edit batch cannot be performed with QuickStatements due to the structure of its new items.";
 
     public QuickStatementsExporter(){
     }
@@ -64,10 +69,17 @@ public class QuickStatementsExporter implements WriterExporter {
         translateItemList(items, writer);
     }
     
-    public void translateItemList(List<ItemUpdate> editBatch, Writer writer) throws IOException {
-        for (ItemUpdate item : editBatch) {
-            translateItem(item, writer);
+    public void translateItemList(List<ItemUpdate> updates, Writer writer) throws IOException {
+        QuickStatementsUpdateScheduler scheduler = new QuickStatementsUpdateScheduler();
+        try {
+            List<ItemUpdate> scheduled = scheduler.schedule(updates);
+            for (ItemUpdate item : scheduled) {
+                translateItem(item, writer);
+            }
+        } catch(ImpossibleSchedulingException e) {
+            writer.write(impossibleSchedulingErrorMessage);
         }
+        
     }
     
     protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, ItemIdValue id, Writer writer) throws IOException {
@@ -86,7 +98,7 @@ public class QuickStatementsExporter implements WriterExporter {
         if (item.isNew()) {
             writer.write("CREATE\n");
             qid = "LAST";
-            item.normalizeLabelsAndAliases();
+            item = item.normalizeLabelsAndAliases();
         }
         
         translateNameDescr(qid, item.getLabels(), "L", item.getItemId(), writer);

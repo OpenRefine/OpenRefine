@@ -18,6 +18,7 @@ import org.json.JSONWriter;
 import org.openrefine.wikidata.testing.TestingDataGenerator;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -63,10 +64,22 @@ public class WikibaseSchemaTest extends RefineTest {
             Collections.singletonList(Datamodel.makeReference(Collections.singletonList(retrievedSnakGroup))),
             StatementRank.NORMAL, "");
     
+    private Project project;
+    
     static JSONObject jsonFromFile(String filename) throws IOException, JSONException {
         byte[] contents = Files.readAllBytes(Paths.get(filename));
         String decoded = new String(contents, "utf-8");
         return ParsingUtilities.evaluateJsonStringToObject(decoded);
+    }
+    
+    @BeforeMethod
+    public void setUpProject() {
+        project = this.createCSVProject(
+                "subject,inception,reference\n"+
+                "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n"+
+                "Q865528,1965,");
+        project.rows.get(0).cells.set(0, TestingDataGenerator.makeMatchedCell("Q1377", "University of Ljubljana"));
+        project.rows.get(1).cells.set(0, TestingDataGenerator.makeMatchedCell("Q865528", "University of Warwick"));
     }
     
     @Test
@@ -94,12 +107,6 @@ public class WikibaseSchemaTest extends RefineTest {
     public void testEvaluate() throws JSONException, IOException {
         JSONObject serialized = jsonFromFile("data/schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        Project project = this.createCSVProject(
-                "subject,inception,reference\n"+
-                "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n"+
-                "Q865528,1965,");
-        project.rows.get(0).cells.set(0, TestingDataGenerator.makeMatchedCell("Q1377", "University of Ljubljana"));
-        project.rows.get(1).cells.set(0, TestingDataGenerator.makeMatchedCell("Q865528", "University of Warwick"));
         Engine engine = new Engine(project);
         List<ItemUpdate> updates = schema.evaluate(project, engine);
         List<ItemUpdate> expected = new ArrayList<>();
@@ -107,6 +114,33 @@ public class WikibaseSchemaTest extends RefineTest {
         expected.add(update1);
         ItemUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
+        assertEquals(expected, updates);
+    }
+    
+    @Test
+    public void testEvaluateRespectsFacets() throws JSONException, IOException {
+        JSONObject serialized = jsonFromFile("data/schema/inception.json");
+        WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+        Engine engine = new Engine(project);
+        JSONObject engineConfig = new JSONObject("{\n" + 
+                "      \"mode\": \"row-based\",\n" + 
+                "      \"facets\": [\n" + 
+                "        {\n" + 
+                "          \"mode\": \"text\",\n" + 
+                "          \"invert\": false,\n" + 
+                "          \"caseSensitive\": false,\n" + 
+                "          \"query\": \"www\",\n" + 
+                "          \"name\": \"reference\",\n" + 
+                "          \"type\": \"text\",\n" + 
+                "          \"columnName\": \"reference\"\n" + 
+                "        }\n" + 
+                "      ]\n" + 
+                "    }");
+        engine.initializeFromJSON(engineConfig);
+        List<ItemUpdate> updates = schema.evaluate(project, engine);
+        List<ItemUpdate> expected = new ArrayList<>();
+        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        expected.add(update1);
         assertEquals(expected, updates);
     }
 }

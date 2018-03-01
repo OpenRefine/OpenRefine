@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ItemUpdate {
     private final ItemIdValue qid;
-    private final Set<Statement> addedStatements;
+    private final List<Statement> addedStatements;
     private final Set<Statement> deletedStatements;
     private final Set<MonolingualTextValue> labels;
     private final Set<MonolingualTextValue> descriptions;
@@ -42,11 +42,24 @@ public class ItemUpdate {
      * 
      * @param qid
      *      the subject of the document. It can be a reconciled item value for new items.
+     * @param addedStatements
+     *      the statements to add on the item. They should be distinct. They
+     *      are modelled as a list because their insertion order matters.
+     * @param deletedStatements
+     *      the statements to remove from the item
+     * @param labels
+     *      the labels to add on the item
+     * @param descriptions
+     *      the descriptions to add on the item
+     * @param aliases
+     *      the aliases to add on the item. In theory their order should matter
+     *      but in practice people rarely rely on the order of aliases so this
+     *      is just kept as a set for simplicity.
      */
     @JsonCreator
     public ItemUpdate(
             @JsonProperty("subject") ItemIdValue qid,
-            @JsonProperty("addedStatements") Set<Statement> addedStatements,
+            @JsonProperty("addedStatements") List<Statement> addedStatements,
             @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
             @JsonProperty("labels") Set<MonolingualTextValue> labels,
             @JsonProperty("descriptions") Set<MonolingualTextValue> descriptions,
@@ -54,7 +67,7 @@ public class ItemUpdate {
         Validate.notNull(qid);
         this.qid = qid;
         if(addedStatements == null) {
-            addedStatements = Collections.emptySet();
+            addedStatements = Collections.emptyList();
         }
         this.addedStatements = addedStatements;
         if(deletedStatements == null) {
@@ -84,10 +97,13 @@ public class ItemUpdate {
     }
     
     /**
-     * @return the set of all added statements
+     * Added statements are recorded as a list because
+     * their order of insertion matters.
+     * 
+     * @return the list of all added statements
      */
     @JsonProperty("addedStatements")
-    public Set<Statement> getAddedStatements() {
+    public List<Statement> getAddedStatements() {
         return addedStatements;
     }
     
@@ -124,11 +140,18 @@ public class ItemUpdate {
     }
     
     /**
-     * @return true when this change is empty
-     *          (no statements or terms changed)
+     * @return true when this change is empty and its subject is not new
      */
     @JsonIgnore
     public boolean isNull() {
+        return isEmpty() && !isNew();
+    }
+    
+    /**
+     * @return true when this change leaves the content of the document untouched
+     */
+    @JsonIgnore
+    public boolean isEmpty() {
         return (addedStatements.isEmpty()
                 && deletedStatements.isEmpty()
                 && labels.isEmpty()
@@ -145,8 +168,12 @@ public class ItemUpdate {
      */
     public ItemUpdate merge(ItemUpdate other) {
         Validate.isTrue(qid.equals(other.getItemId()));
-        Set<Statement> newAddedStatements = new HashSet<>(addedStatements);
-        newAddedStatements.addAll(other.getAddedStatements());
+        List<Statement> newAddedStatements = new ArrayList<>(addedStatements);
+        for(Statement statement : other.getAddedStatements()) {
+            if (!newAddedStatements.contains(statement)) {
+                newAddedStatements.add(statement);
+            }
+        }
         Set<Statement> newDeletedStatements = new HashSet<>(deletedStatements);
         newDeletedStatements.addAll(other.getDeletedStatements());
         Set<MonolingualTextValue> newLabels = new HashSet<>(labels);
@@ -264,16 +291,29 @@ public class ItemUpdate {
         StringBuilder builder = new StringBuilder();
         builder.append("<Update on ");
         builder.append(qid);
-        builder.append("\n  Labels: ");
-        builder.append(labels);
-        builder.append("\n  Descriptions: ");
-        builder.append(descriptions);
-        builder.append("\n  Aliases: ");
-        builder.append(aliases);
-        builder.append("\n  Added statements: ");
-        builder.append(addedStatements);
-        builder.append("\n Deleted statements: ");
-        builder.append(deletedStatements);
+        if (!labels.isEmpty()) {
+            builder.append("\n  Labels: ");
+            builder.append(labels);
+        }
+        if (!descriptions.isEmpty()) {
+            builder.append("\n  Descriptions: ");
+            builder.append(descriptions);
+        }
+        if (!aliases.isEmpty()) {
+            builder.append("\n  Aliases: ");
+            builder.append(aliases);
+        }
+        if (!addedStatements.isEmpty()) {
+            builder.append("\n  Added statements: ");
+            builder.append(addedStatements);
+        }
+        if (!deletedStatements.isEmpty()) {
+            builder.append("\n  Deleted statements: ");
+            builder.append(deletedStatements);
+        }
+        if (isNull()) {
+            builder.append(" (null update)");
+        }
         builder.append("\n>");
         return builder.toString();
     }
