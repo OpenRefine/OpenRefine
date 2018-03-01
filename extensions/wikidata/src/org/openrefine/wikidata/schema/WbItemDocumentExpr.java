@@ -3,6 +3,8 @@ package org.openrefine.wikidata.schema;
 import java.util.List;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -40,7 +42,7 @@ public class WbItemDocumentExpr extends JacksonJsonizable implements WbExpressio
     @Override
     public ItemUpdate evaluate(ExpressionContext ctxt) throws SkipSchemaExpressionException {
         ItemIdValue subjectId = getSubject().evaluate(ctxt);
-        ItemUpdate update = new ItemUpdate(subjectId);
+        ItemUpdateBuilder update = new ItemUpdateBuilder(subjectId);
         for(WbStatementGroupExpr expr : getStatementGroups()) {
             try {
                 for(Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {
@@ -53,7 +55,7 @@ public class WbItemDocumentExpr extends JacksonJsonizable implements WbExpressio
         for(WbNameDescExpr expr : getNameDescs()) {
             expr.contributeTo(update, ctxt);
         }
-        return update;
+        return update.build();
     }
 
     @JsonProperty("subject")

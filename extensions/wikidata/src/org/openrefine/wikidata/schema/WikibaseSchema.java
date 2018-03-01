@@ -19,6 +19,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import org.openrefine.wikidata.schema.WbItemDocumentExpr;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.ExpressionContext;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
@@ -73,7 +75,7 @@ public class WikibaseSchema implements OverlayModel {
      * @return
      */
     public List<ItemUpdate> evaluateItemDocuments(ExpressionContext ctxt) {
-        List<ItemUpdate> result = new ArrayList<ItemUpdate>();
+        List<ItemUpdate> result = new ArrayList<>();
         for (WbItemDocumentExpr expr : itemDocumentExprs) {
             
             try {
@@ -104,7 +106,7 @@ public class WikibaseSchema implements OverlayModel {
      * generating order (not merged yet).
      */
     public List<ItemUpdate> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
-        List<ItemUpdate> result = new ArrayList<ItemUpdate>();
+        List<ItemUpdate> result = new ArrayList<>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));
         return result;

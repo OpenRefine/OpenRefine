@@ -1,13 +1,12 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.List;
-import java.util.Map;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.schema.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdate;
 
 /**
  * Interface for any class that 

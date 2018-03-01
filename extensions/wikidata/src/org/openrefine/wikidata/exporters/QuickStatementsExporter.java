@@ -10,8 +10,8 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 
-import org.openrefine.wikidata.schema.ItemUpdate;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.updates.ItemUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;

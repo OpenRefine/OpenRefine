@@ -3,6 +3,8 @@ package org.openrefine.wikidata.schema;
 import java.util.Collections;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -39,9 +41,7 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("Q23"));
-        ItemUpdate result = new ItemUpdate(subject);
-        result.addAlias(alias);
-        result.addStatement(fullStatement);
+        ItemUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
     
@@ -54,16 +54,14 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
     @Test
     public void testStatementSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,invalid4.389", "my alias", recon("Q23"));
-        ItemUpdate result = new ItemUpdate(subject);
-        result.addAlias(alias);
+        ItemUpdate result = new ItemUpdateBuilder(subject).addAlias(alias).build();
         evaluatesTo(result, expr);
     }
     
     @Test
     public void testAliasSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "", recon("Q23"));
-        ItemUpdate result = new ItemUpdate(subject);
-        result.addStatement(fullStatement);
+        ItemUpdate result = new ItemUpdateBuilder(subject).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
     

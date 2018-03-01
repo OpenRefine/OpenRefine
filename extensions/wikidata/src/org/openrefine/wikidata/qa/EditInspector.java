@@ -17,7 +17,7 @@ import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
-import org.openrefine.wikidata.schema.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**

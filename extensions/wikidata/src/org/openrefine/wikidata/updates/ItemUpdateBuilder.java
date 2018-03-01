@@ -1,0 +1,143 @@
+package org.openrefine.wikidata.updates;
+
+import java.util.Set;
+import java.util.HashSet;
+
+import org.jsoup.helper.Validate;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+
+/**
+ * Constructs a {@link ItemUpdate} incrementally.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class ItemUpdateBuilder {
+    private ItemIdValue qid;
+    private Set<Statement> addedStatements;
+    private Set<Statement> deletedStatements;
+    private Set<MonolingualTextValue> labels;
+    private Set<MonolingualTextValue> descriptions;
+    private Set<MonolingualTextValue> aliases;
+    private boolean built;
+    
+    /**
+     * Constructor.
+     * 
+     * @param qid
+     *      the subject of the document. It can be a reconciled item value for new items.
+     */
+    public ItemUpdateBuilder(ItemIdValue qid) {
+        Validate.notNull(qid);
+        this.qid = qid;
+        this.addedStatements = new HashSet<>();
+        this.deletedStatements = new HashSet<Statement>();
+        this.labels = new HashSet<MonolingualTextValue>();
+        this.descriptions = new HashSet<MonolingualTextValue>();
+        this.aliases = new HashSet<MonolingualTextValue>();
+        this.built = false;
+    }
+    
+    /**
+     * Mark a statement for insertion. If it matches an existing
+     * statement, it will update the statement instead.
+     * 
+     * @param statement
+     *      the statement to add or update
+     */
+    public ItemUpdateBuilder addStatement(Statement statement) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        addedStatements.add(statement);
+        return this;
+    }
+    
+    /**
+     * Mark a statement for deletion. If no such statement exists,
+     * nothing will be deleted.
+     * 
+     * @param statement
+     *          the statement to delete
+     */
+    public ItemUpdateBuilder deleteStatement(Statement statement) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        deletedStatements.add(statement);
+        return this;
+    }
+    
+    /**
+     * Add a list of statement, as in {@link addStatement}.
+     * 
+     * @param statements
+     *        the statements to add
+     */
+    public ItemUpdateBuilder addStatements(Set<Statement> statements) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        addedStatements.addAll(statements);
+        return this;
+    }
+    
+    /**
+     * Delete a list of statements, as in {@link deleteStatement}.
+     * 
+     * @param statements
+     *          the statements to delete
+     */
+    public ItemUpdateBuilder deleteStatements(Set<Statement> statements) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        deletedStatements.addAll(statements);
+        return this;
+    }
+
+    /**
+     * Adds a label to the item. It will override any
+     * existing label in this language.
+     * 
+     * @param label
+     *      the label to add
+     */
+    public ItemUpdateBuilder addLabel(MonolingualTextValue label) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        labels.add(label);
+        return this;
+    }
+
+    /**
+     * Adds a description to the item. It will override any existing
+     * description in this language.
+     * 
+     * @param description
+     *      the description to add
+     */
+    public ItemUpdateBuilder addDescription(MonolingualTextValue description) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        descriptions.add(description);
+        return this;
+    }
+
+    /**
+     * Adds an alias to the item. It will be added to any existing
+     * aliases in that language.
+     * 
+     * @param alias
+     *      the alias to add
+     */
+    public ItemUpdateBuilder addAlias(MonolingualTextValue alias) {
+        Validate.isTrue(!built, "ItemUpdate has already been built");
+        aliases.add(alias); 
+        return this;
+    }
+  
+    /**
+     * Constructs the {@link ItemUpdate}.
+     * @return
+     */
+    public ItemUpdate build() {
+        built = true;
+        return new ItemUpdate(qid, addedStatements, deletedStatements,
+                labels, descriptions, aliases);
+    }
+
+}

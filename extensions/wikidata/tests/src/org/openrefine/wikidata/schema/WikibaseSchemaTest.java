@@ -16,6 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -101,11 +103,9 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(project);
         List<ItemUpdate> updates = schema.evaluate(project, engine);
         List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdate(qid1);
-        update1.addStatement(statement1);
+        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        ItemUpdate update2 = new ItemUpdate(qid2);
-        update2.addStatement(statement2);
+        ItemUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }

@@ -2,7 +2,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.List;
 
-import org.openrefine.wikidata.schema.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdate;
 
 
 public class NoEditsMadeScrutinizer extends EditScrutinizer {

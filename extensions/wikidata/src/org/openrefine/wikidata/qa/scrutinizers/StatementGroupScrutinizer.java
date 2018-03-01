@@ -1,6 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.schema.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 public abstract class StatementGroupScrutinizer extends ItemEditScrutinizer {

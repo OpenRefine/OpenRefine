@@ -1,4 +1,4 @@
-package org.openrefine.wikidata.schema;
+package org.openrefine.wikidata.updates;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -31,8 +32,7 @@ public class ItemUpdateTest {
     private ItemIdValue newSubject = TestingDataGenerator.makeNewItemIdValue(1234L, "new item");
     private ItemIdValue sameNewSubject = TestingDataGenerator.makeNewItemIdValue(1234L, "other new item");
     private ItemIdValue matchedSubject = TestingDataGenerator.makeMatchedItemIdValue("Q78", "well known item");
-    private ItemUpdate update = new ItemUpdate(existingSubject);
-    
+
     private PropertyIdValue pid1 = Datamodel.makeWikidataPropertyIdValue("P348");
     private PropertyIdValue pid2 = Datamodel.makeWikidataPropertyIdValue("P52");
     private Claim claim1 = Datamodel.makeClaim(existingSubject,
@@ -55,26 +55,29 @@ public class ItemUpdateTest {
     
     @Test(expectedExceptions=IllegalArgumentException.class)
     public void testCreateWithoutSubject() {
-        new ItemUpdate(null);
+        new ItemUpdateBuilder(null);
     }
     
     @Test
     public void testIsNull() {
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
         assertTrue(update.isNull());
     }
     
     @Test
     public void testIsNew() {
-        ItemUpdate newUpdate = new ItemUpdate(newSubject);
+        ItemUpdate newUpdate = new ItemUpdateBuilder(newSubject).build();
         assertTrue(newUpdate.isNew());
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject).build();
         assertFalse(update.isNew());
     }
     
     @Test
     public void testAddStatements() {
-        ItemUpdate update = new ItemUpdate(existingSubject);
-        update.addStatement(statement1);
-        update.addStatement(statement2);
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject)
+           .addStatement(statement1)
+           .addStatement(statement2)
+           .build();
         assertEquals(Arrays.asList(statement1, statement2).stream().collect(Collectors.toSet()), 
                 update.getAddedStatements());
         assertEquals(statementGroups, update.getAddedStatementGroups().stream().collect(Collectors.toSet()));
@@ -82,39 +85,36 @@ public class ItemUpdateTest {
     
     @Test
     public void testDeleteStatements() {
-        ItemUpdate update = new ItemUpdate(existingSubject);
-        update.deleteStatement(statement1);
-        update.deleteStatement(statement2);
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject)
+           .deleteStatement(statement1)
+           .deleteStatement(statement2)
+           .build();
         assertEquals(Arrays.asList(statement1, statement2).stream().collect(Collectors.toSet()),
                 update.getDeletedStatements());
     }
     
     @Test
     public void testMerge() {
-        ItemUpdate updateA = new ItemUpdate(existingSubject);
-        updateA.addStatement(statement1);
-        ItemUpdate updateB = new ItemUpdate(existingSubject);
-        updateB.addStatement(statement2);
+        ItemUpdate updateA = new ItemUpdateBuilder(existingSubject).addStatement(statement1).build();
+        ItemUpdate updateB = new ItemUpdateBuilder(existingSubject).addStatement(statement2).build();
         assertNotEquals(updateA, updateB);
-        updateA.merge(updateB);
+        ItemUpdate merged = updateA.merge(updateB);
         assertEquals(statementGroups,
-                updateA.getAddedStatementGroups().stream().collect(Collectors.toSet()));
+                merged.getAddedStatementGroups().stream().collect(Collectors.toSet()));
     }
     
     @Test
     public void testGroupBySubject() {
-        ItemUpdate updateA = new ItemUpdate(newSubject);
-        updateA.addStatement(statement1);
-        ItemUpdate updateB = new ItemUpdate(sameNewSubject);
-        updateB.addStatement(statement2);
-        ItemUpdate updateC = new ItemUpdate(existingSubject);
-        updateC.addLabel(label);
-        ItemUpdate updateD = new ItemUpdate(matchedSubject);
+        ItemUpdate updateA = new ItemUpdateBuilder(newSubject).addStatement(statement1).build();
+        ItemUpdate updateB = new ItemUpdateBuilder(sameNewSubject).addStatement(statement2).build();
+        ItemUpdate updateC = new ItemUpdateBuilder(existingSubject).addLabel(label).build();
+        ItemUpdate updateD = new ItemUpdateBuilder(matchedSubject).build();
         Map<EntityIdValue, ItemUpdate> grouped = ItemUpdate.groupBySubject(
                 Arrays.asList(updateA, updateB, updateC, updateD));
-        ItemUpdate mergedUpdate = new ItemUpdate(newSubject);
-        mergedUpdate.addStatement(statement1);
-        mergedUpdate.addStatement(statement2);
+        ItemUpdate mergedUpdate = new ItemUpdateBuilder(newSubject)
+                .addStatement(statement1)
+                .addStatement(statement2)
+                .build();
         Map<EntityIdValue, ItemUpdate> expected = new HashMap<>();
         expected.put(newSubject, mergedUpdate);
         expected.put(existingSubject, updateC);
@@ -125,15 +125,17 @@ public class ItemUpdateTest {
     public void testNormalizeTerms() {
         MonolingualTextValue aliasEn = Datamodel.makeMonolingualTextValue("alias", "en");
         MonolingualTextValue aliasFr = Datamodel.makeMonolingualTextValue("coucou", "fr");
-        ItemUpdate updateA = new ItemUpdate(newSubject);
-        updateA.addLabel(label);
-        updateA.addAlias(aliasEn);
-        updateA.addAlias(aliasFr);
-        updateA.normalizeLabelsAndAliases();
-        ItemUpdate expectedUpdate = new ItemUpdate(newSubject);
-        expectedUpdate.addLabel(label);
-        expectedUpdate.addAlias(aliasEn);
-        expectedUpdate.addLabel(aliasFr);
-        assertEquals(expectedUpdate, updateA);
+        ItemUpdate updateA = new ItemUpdateBuilder(newSubject)
+                .addLabel(label)
+                .addAlias(aliasEn)
+                .addAlias(aliasFr)
+                .build();
+        ItemUpdate normalized = updateA.normalizeLabelsAndAliases();
+        ItemUpdate expectedUpdate = new ItemUpdateBuilder(newSubject)
+                .addLabel(label)
+                .addAlias(aliasEn)
+                .addLabel(aliasFr)
+                .build();
+        assertEquals(expectedUpdate, normalized);
     }
 }

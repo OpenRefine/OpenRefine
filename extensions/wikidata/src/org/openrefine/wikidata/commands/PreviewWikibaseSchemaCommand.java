@@ -54,8 +54,9 @@ import org.openrefine.wikidata.exporters.QuickStatementsExporter;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.schema.ItemUpdate;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.updates.ItemUpdate;
+
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 

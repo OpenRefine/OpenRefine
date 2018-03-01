@@ -1,6 +1,7 @@
-package org.openrefine.wikidata.schema;
+package org.openrefine.wikidata.updates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,9 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A class to plan an update of an item, after evaluating the statements
@@ -26,12 +30,12 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
  * @author Antonin Delpeuch
  */
 public class ItemUpdate {
-    private ItemIdValue qid;
-    private Set<Statement> addedStatements;
-    private Set<Statement> deletedStatements;
-    private Set<MonolingualTextValue> labels;
-    private Set<MonolingualTextValue> descriptions;
-    private Set<MonolingualTextValue> aliases;
+    private final ItemIdValue qid;
+    private final Set<Statement> addedStatements;
+    private final Set<Statement> deletedStatements;
+    private final Set<MonolingualTextValue> labels;
+    private final Set<MonolingualTextValue> descriptions;
+    private final Set<MonolingualTextValue> aliases;
     
     /**
      * Constructor.
@@ -39,61 +43,42 @@ public class ItemUpdate {
      * @param qid
      *      the subject of the document. It can be a reconciled item value for new items.
      */
-    public ItemUpdate(ItemIdValue qid) {
+    @JsonCreator
+    public ItemUpdate(
+            @JsonProperty("subject") ItemIdValue qid,
+            @JsonProperty("addedStatements") Set<Statement> addedStatements,
+            @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
+            @JsonProperty("labels") Set<MonolingualTextValue> labels,
+            @JsonProperty("descriptions") Set<MonolingualTextValue> descriptions,
+            @JsonProperty("addedAliases") Set<MonolingualTextValue> aliases) {
         Validate.notNull(qid);
         this.qid = qid;
-        this.addedStatements = new HashSet<>();
-        this.deletedStatements = new HashSet<Statement>();
-        this.labels = new HashSet<MonolingualTextValue>();
-        this.descriptions = new HashSet<MonolingualTextValue>();
-        this.aliases = new HashSet<MonolingualTextValue>();
-    }
-    
-    /**
-     * Mark a statement for insertion. If it matches an existing
-     * statement, it will update the statement instead.
-     * 
-     * @param statement
-     *      the statement to add or update
-     */
-    public void addStatement(Statement statement) {
-        addedStatements.add(statement);
-    }
-    
-    /**
-     * Mark a statement for deletion. If no such statement exists,
-     * nothing will be deleted.
-     * 
-     * @param statement
-     *          the statement to delete
-     */
-    public void deleteStatement(Statement statement) {
-        deletedStatements.add(statement);
-    }
-    
-    /**
-     * Add a list of statement, as in {@link addStatement}.
-     * 
-     * @param statements
-     *        the statements to add
-     */
-    public void addStatements(Set<Statement> statements) {
-        addedStatements.addAll(statements);
-    }
-    
-    /**
-     * Delete a list of statements, as in {@link deleteStatement}.
-     * 
-     * @param statements
-     *          the statements to delete
-     */
-    public void deleteStatements(Set<Statement> statements) {
-        deletedStatements.addAll(statements);
+        if(addedStatements == null) {
+            addedStatements = Collections.emptySet();
+        }
+        this.addedStatements = addedStatements;
+        if(deletedStatements == null) {
+            deletedStatements = Collections.emptySet();
+        }
+        this.deletedStatements = deletedStatements;
+        if(labels == null) {
+            labels = Collections.emptySet();
+        }
+        this.labels = labels;
+        if(descriptions == null) {
+            descriptions = Collections.emptySet();
+        }
+        this.descriptions = descriptions;
+        if(aliases == null) {
+            aliases = Collections.emptySet();
+        }
+        this.aliases = aliases;
     }
     
     /**
      * @return the subject of the item
      */
+    @JsonProperty("subject")
     public ItemIdValue getItemId() {
         return qid;
     }
@@ -101,6 +86,7 @@ public class ItemUpdate {
     /**
      * @return the set of all added statements
      */
+    @JsonProperty("addedStatements")
     public Set<Statement> getAddedStatements() {
         return addedStatements;
     }
@@ -108,74 +94,15 @@ public class ItemUpdate {
     /**
      * @return the list of all deleted statements
      */
+    @JsonProperty("deletedStatements")
     public Set<Statement> getDeletedStatements() {
         return deletedStatements;
-    }
-
-    /**
-     * Merges all the changes in other into this instance.
-     * Both updates should have the same subject.
-     * 
-     * @param other
-     *          the other change that should be merged
-     */
-    public void merge(ItemUpdate other) {
-        Validate.isTrue(qid.equals(other.getItemId()));
-        addStatements(other.getAddedStatements());
-        deleteStatements(other.getDeletedStatements());
-        labels.addAll(other.getLabels());
-        descriptions.addAll(other.getDescriptions());
-        aliases.addAll(other.getAliases());
-    }
-
-    /**
-     * @return true when this change is empty
-     *          (no statements or terms changed)
-     */
-    public boolean isNull() {
-        return (addedStatements.isEmpty()
-                && deletedStatements.isEmpty()
-                && labels.isEmpty()
-                && descriptions.isEmpty()
-                && aliases.isEmpty());
-    }
-
-    /**
-     * Adds a label to the item. It will override any
-     * existing label in this language.
-     * 
-     * @param label
-     *      the label to add
-     */
-    public void addLabel(MonolingualTextValue label) {
-        labels.add(label);
-    }
-
-    /**
-     * Adds a description to the item. It will override any existing
-     * description in this language.
-     * 
-     * @param description
-     *      the description to add
-     */
-    public void addDescription(MonolingualTextValue description) {
-        descriptions.add(description);
-    }
-
-    /**
-     * Adds an alias to the item. It will be added to any existing
-     * aliases in that language.
-     * 
-     * @param alias
-     *      the alias to add
-     */
-    public void addAlias(MonolingualTextValue alias) {
-        aliases.add(alias);        
     }
     
     /**
      * @return the list of updated labels
      */
+    @JsonProperty("labels")
     public Set<MonolingualTextValue> getLabels() {
         return labels;
     }
@@ -183,6 +110,7 @@ public class ItemUpdate {
     /**
      * @return the list of updated descriptions
      */
+    @JsonProperty("descriptions")
     public Set<MonolingualTextValue> getDescriptions() {
         return descriptions;
     }
@@ -190,8 +118,46 @@ public class ItemUpdate {
     /**
      * @return the list of updated aliases
      */
+    @JsonProperty("addedAliases")
     public Set<MonolingualTextValue> getAliases() {
         return aliases;
+    }
+    
+    /**
+     * @return true when this change is empty
+     *          (no statements or terms changed)
+     */
+    @JsonIgnore
+    public boolean isNull() {
+        return (addedStatements.isEmpty()
+                && deletedStatements.isEmpty()
+                && labels.isEmpty()
+                && descriptions.isEmpty()
+                && aliases.isEmpty());
+    }
+    
+    /**
+     * Merges all the changes in other into this instance.
+     * Both updates should have the same subject.
+     * 
+     * @param other
+     *          the other change that should be merged
+     */
+    public ItemUpdate merge(ItemUpdate other) {
+        Validate.isTrue(qid.equals(other.getItemId()));
+        Set<Statement> newAddedStatements = new HashSet<>(addedStatements);
+        newAddedStatements.addAll(other.getAddedStatements());
+        Set<Statement> newDeletedStatements = new HashSet<>(deletedStatements);
+        newDeletedStatements.addAll(other.getDeletedStatements());
+        Set<MonolingualTextValue> newLabels = new HashSet<>(labels);
+        newLabels.addAll(other.getLabels());
+        Set<MonolingualTextValue> newDescriptions = new HashSet<>(descriptions);
+        newDescriptions.addAll(other.getDescriptions());
+        Set<MonolingualTextValue> newAliases = new HashSet<>(aliases);
+        newAliases.addAll(other.getDescriptions());
+        return new ItemUpdate(
+                qid, newAddedStatements, newDeletedStatements,
+                newLabels, newDescriptions, newAliases);
     }
     
     /**
@@ -215,7 +181,7 @@ public class ItemUpdate {
         }
         return result;
     }
-
+    
     /**
      * Group a list of ItemUpdates by subject: this is useful to make one single edit
      * per item.
@@ -224,7 +190,7 @@ public class ItemUpdate {
      * @return a map from item ids to merged ItemUpdate for that id
      */
     public static Map<EntityIdValue, ItemUpdate> groupBySubject(List<ItemUpdate> itemDocuments) {
-        Map<EntityIdValue, ItemUpdate> map = new HashMap<EntityIdValue, ItemUpdate>();
+        Map<EntityIdValue, ItemUpdate> map = new HashMap<>();
         for(ItemUpdate update : itemDocuments) {
             if (update.isNull()) {
                 continue;
@@ -233,43 +199,44 @@ public class ItemUpdate {
             ItemIdValue qid = update.getItemId();
             if (map.containsKey(qid)) {
                 ItemUpdate oldUpdate = map.get(qid);
-                oldUpdate.merge(update);
+                map.put(qid, oldUpdate.merge(update));
             } else {
                 map.put(qid, update);
             }
         }
         return map;
     }
-
-    /**
-     * This should only be used when creating a new item.
-     * This ensures that we never add an alias without adding
-     * a label in the same language.
-     */
-    public void normalizeLabelsAndAliases() {
-        // Ensure that we are only adding aliases with labels
-        Set<String> labelLanguages = labels.stream()
-                .map(l -> l.getLanguageCode())
-                .collect(Collectors.toSet());
-        System.out.println(labelLanguages);
-
-        Set<MonolingualTextValue> filteredAliases = new HashSet<>();
-        for(MonolingualTextValue alias : aliases) {
-            if(!labelLanguages.contains(alias.getLanguageCode())) {
-                labelLanguages.add(alias.getLanguageCode());
-                labels.add(alias);
-            } else {
-                filteredAliases.add(alias);
-            }
-        }
-        aliases = filteredAliases;
-    }
-
+    
     /**
      * Is this update about a new item?
      */
     public boolean isNew() {
         return "Q0".equals(getItemId().getId());
+    }
+    
+    /**
+     * This should only be used when creating a new item.
+     * This ensures that we never add an alias without adding
+     * a label in the same language.
+     */
+    public ItemUpdate normalizeLabelsAndAliases() {
+        // Ensure that we are only adding aliases with labels
+        Set<String> labelLanguages = labels.stream()
+                .map(l -> l.getLanguageCode())
+                .collect(Collectors.toSet());
+
+        Set<MonolingualTextValue> filteredAliases = new HashSet<>();
+        Set<MonolingualTextValue> newLabels = new HashSet<>(labels);
+        for(MonolingualTextValue alias : aliases) {
+            if(!labelLanguages.contains(alias.getLanguageCode())) {
+                labelLanguages.add(alias.getLanguageCode());
+                newLabels.add(alias);
+            } else {
+                filteredAliases.add(alias);
+            }
+        }
+        return new ItemUpdate(qid, addedStatements, deletedStatements,
+                newLabels, descriptions, filteredAliases);
     }
     
     @Override
@@ -310,4 +277,5 @@ public class ItemUpdate {
         builder.append("\n>");
         return builder.toString();
     }
+    
 }

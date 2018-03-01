@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -25,38 +26,38 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     public void testContributeToLabel() {
         WbNameDescExpr labelExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.LABEL,
                 TestingDataGenerator.getTestMonolingualExpr("fr", "français", "le croissant magnifique"));
-        ItemUpdate update = new ItemUpdate(subject);
+        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         labelExpr.contributeTo(update, ctxt);
         assertEquals(Collections.singleton(Datamodel.makeMonolingualTextValue("le croissant magnifique", "fr")),
-                update.getLabels());
+                update.build().getLabels());
     }
 
     @Test
     public void testContributeToDescription() {
         WbNameDescExpr descriptionExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.DESCRIPTION,
                 TestingDataGenerator.getTestMonolingualExpr("de", "Deutsch", "wunderschön"));
-        ItemUpdate update = new ItemUpdate(subject);
+        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         descriptionExpr.contributeTo(update, ctxt);
         assertEquals(Collections.singleton(Datamodel.makeMonolingualTextValue("wunderschön", "de")),
-                update.getDescriptions());
+                update.build().getDescriptions());
     }
     
     @Test
     public void testContributeToAlias() {
         WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.ALIAS,
                 TestingDataGenerator.getTestMonolingualExpr("en", "English", "snack"));
-        ItemUpdate update = new ItemUpdate(subject);
+        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         aliasExpr.contributeTo(update, ctxt);
         assertEquals(Collections.singleton(Datamodel.makeMonolingualTextValue("snack", "en")),
-                update.getAliases());
+                update.build().getAliases());
     }
     
     @Test
     public void testSkipped() {
-        ItemUpdate update = new ItemUpdate(subject);
+        ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         setRow("");
         expr.contributeTo(update, ctxt);
-        assertEquals(new ItemUpdate(subject), update);
+        assertEquals(new ItemUpdateBuilder(subject).build(), update.build());
     }
     
     @Test
