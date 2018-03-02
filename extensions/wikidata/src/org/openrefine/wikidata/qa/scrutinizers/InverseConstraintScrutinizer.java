@@ -17,10 +17,12 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
  * A scrutinizer that checks for missing inverse statements in
  * edit batches.
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
 public class InverseConstraintScrutinizer extends StatementScrutinizer {
+    
+    public static final String type = "missing-inverse-statements";
 
     private Map<PropertyIdValue, PropertyIdValue> _inverse;
     private Map<PropertyIdValue, Map<EntityIdValue, Set<EntityIdValue> >> _statements;
@@ -83,7 +85,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
                     PropertyIdValue missingProperty = propertyPair.getValue();
                     Set<EntityIdValue> reciprocalLinks = _statements.get(missingProperty).get(idValue);
                     if (reciprocalLinks == null || !reciprocalLinks.contains(itemLinks.getKey())) {
-                        QAWarning issue = new QAWarning("missing-inverse-statements",
+                        QAWarning issue = new QAWarning(type,
                                 ourProperty.getId(),
                                 QAWarning.Severity.IMPORTANT,
                                 1);

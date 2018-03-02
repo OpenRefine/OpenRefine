@@ -11,7 +11,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  * A scrutinizer that inspects snaks individually, no matter whether they
  * appear as main snaks, qualifiers or references.
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
 public abstract class SnakScrutinizer extends StatementScrutinizer {

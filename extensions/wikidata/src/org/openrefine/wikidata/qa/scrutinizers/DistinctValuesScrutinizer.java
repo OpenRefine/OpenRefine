@@ -15,10 +15,12 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
  * A scrutinizer that checks for properties using the same value
  * on different items.
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
 public class DistinctValuesScrutinizer extends StatementScrutinizer {
+    
+    public final static String type = "identical-values-for-distinct-valued-property";
     
     private Map<PropertyIdValue, Map<Value, EntityIdValue>> _seenValues;
     
@@ -39,7 +41,7 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
             if (seen.containsKey(mainSnakValue)) {
                 EntityIdValue otherId = seen.get(mainSnakValue);
                 QAWarning issue = new QAWarning(
-                        "identical-values-for-distinct-valued-property",
+                        type,
                         pid.getId(),
                         QAWarning.Severity.IMPORTANT,
                         1);

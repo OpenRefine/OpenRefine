@@ -7,7 +7,7 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import java.util.regex.Pattern;
 
-public class ConstraintFetcherTests {
+public class WikidataConstraintFetcherTests {
     
     private ConstraintFetcher fetcher;
     
@@ -21,8 +21,8 @@ public class ConstraintFetcherTests {
     private PropertyIdValue referenceURL;
     private PropertyIdValue reasonForDeprecation;
     
-    public ConstraintFetcherTests() {
-        fetcher = new ConstraintFetcher();
+    public WikidataConstraintFetcherTests() {
+        fetcher = new WikidataConstraintFetcher();
         headOfGovernment = Datamodel.makeWikidataPropertyIdValue("P6");
         startTime = Datamodel.makeWikidataPropertyIdValue("P580");
         endTime = Datamodel.makeWikidataPropertyIdValue("P582");

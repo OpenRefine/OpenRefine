@@ -12,15 +12,15 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
  *
  */
 public class SelfReferentialScrutinizer extends SnakScrutinizer {
+    
+    public static final String type = "self-referential-statements";
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         if (entityId.equals(snak.getValue())) {
             QAWarning issue = new QAWarning(
-                 "self-referential-statements",
-                 null,
-                 QAWarning.Severity.WARNING,
-                 1);
+                 type, null,
+                 QAWarning.Severity.WARNING, 1);
             issue.setProperty("example_entity", entityId);
             addIssue(issue);
         }

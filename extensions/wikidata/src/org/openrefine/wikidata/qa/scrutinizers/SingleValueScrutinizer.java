@@ -11,10 +11,13 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 /**
  * For now this scrutinizer only checks for uniqueness at
  * the item level (it ignores qualifiers and references).
- * @author antonin
+ * 
+ * @author Antonin Delpeuch
  *
  */
-public class SingleValueScrutinizer extends ItemEditScrutinizer {
+public class SingleValueScrutinizer extends ItemUpdateScrutinizer {
+    
+    public static final String type = "single-valued-property-added-more-than-once";
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -25,10 +28,8 @@ public class SingleValueScrutinizer extends ItemEditScrutinizer {
             if (seenSingleProperties.contains(pid)) {
                 
                 QAWarning issue = new QAWarning(
-                        "single-valued-property-added-more-than-once",
-                        pid.getId(),
-                        QAWarning.Severity.WARNING,
-                        1);
+                        type, pid.getId(),
+                        QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getItemId());
                 addIssue(issue);

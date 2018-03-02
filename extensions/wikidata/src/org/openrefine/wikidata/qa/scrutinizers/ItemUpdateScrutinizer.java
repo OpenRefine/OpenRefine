@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.updates.ItemUpdate;
 
-public abstract class ItemEditScrutinizer extends EditScrutinizer {
+public abstract class ItemUpdateScrutinizer extends EditScrutinizer {
 
     @Override
     public void scrutinize(List<ItemUpdate> edit) {

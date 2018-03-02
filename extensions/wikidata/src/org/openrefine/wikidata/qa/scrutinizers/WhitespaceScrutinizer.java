@@ -12,21 +12,27 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * Scrutinizes strings for trailing / leading whitespace, and others
- * @author antonin
+ * 
+ * @author Antonin Delpeuch
  *
  */
 public class WhitespaceScrutinizer extends ValueScrutinizer {
     
     private Map<String,Pattern> _issuesMap;
     
+    public static final String leadingWhitespaceType = "leading-whitespace";
+    public static final String trailingWhitespaceType = "trailing-whitespace";
+    public static final String duplicateWhitespaceType = "duplicate-whitespace";
+    public static final String nonPrintableCharsType = "non-printable-characters";
+    
     public WhitespaceScrutinizer() {
         _issuesMap = new HashMap<>();
-        _issuesMap.put("leading-whitespace", Pattern.compile("^\\s"));
-        _issuesMap.put("trailing-whitespace", Pattern.compile("\\s$"));
-        _issuesMap.put("duplicate-whitespace", Pattern.compile("\\s\\s"));
+        _issuesMap.put(leadingWhitespaceType, Pattern.compile("^\\s"));
+        _issuesMap.put(trailingWhitespaceType, Pattern.compile("\\s$"));
+        _issuesMap.put(duplicateWhitespaceType, Pattern.compile("\\s\\s"));
         
         // https://stackoverflow.com/questions/14565934/regular-expression-to-remove-all-non-printable-characters
-        _issuesMap.put("non-printable-characters", Pattern.compile("[\\x00\\x08\\x0B\\x0C\\x0E-\\x1F]"));
+        _issuesMap.put(nonPrintableCharsType, Pattern.compile("[\\x00\\x03\\x08\\x0B\\x0C\\x0E-\\x1F]"));
     }
 
     @Override

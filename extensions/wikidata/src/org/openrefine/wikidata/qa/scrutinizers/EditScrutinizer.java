@@ -2,6 +2,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.List;
 
+import org.openrefine.wikidata.qa.WikidataConstraintFetcher;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
@@ -9,9 +10,9 @@ import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.updates.ItemUpdate;
 
 /**
- * Interface for any class that 
- * @author antonin
- *
+ * Inspects an edit batch and emits warnings.
+ * 
+ * @author Antonin Delpeuch
  */
 public abstract class EditScrutinizer {
     
@@ -19,11 +20,16 @@ public abstract class EditScrutinizer {
     protected ConstraintFetcher _fetcher;
     
     public EditScrutinizer() {
-        _fetcher = new ConstraintFetcher();
+        _fetcher = null;
+        _store = null;
     }
     
     public void setStore(QAWarningStore store) {
         _store = store;
+    }
+    
+    public void setFetcher(ConstraintFetcher fetcher) {
+        _fetcher = fetcher;
     }
     
     /**

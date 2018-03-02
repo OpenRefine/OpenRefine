@@ -14,10 +14,13 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 /**
  * A scrutinizer that checks the compatibility of the qualifiers
  * and the property of a statement, and looks for mandatory qualifiers.
- * @author antonin
- *
+ * 
+ * @author Antonin Delpeuch
  */
 public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
+    
+    public static final String missingMandatoryQualifiersType = "missing-mandatory-qualifiers";
+    public static final String disallowedQualifiersType = "disallowed-qualifiers";
     
     private Map<PropertyIdValue, Set<PropertyIdValue>> _allowedQualifiers;
     private Map<PropertyIdValue, Set<PropertyIdValue>> _mandatoryQualifiers;
@@ -65,7 +68,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         
         for (PropertyIdValue missing : missingQualifiers) {
             QAWarning issue = new QAWarning(
-                    "missing-mandatory-qualifiers",
+                    missingMandatoryQualifiersType,
                     statementProperty.getId()+"-"+missing.getId(),
                     QAWarning.Severity.WARNING,
                     1);
@@ -76,7 +79,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         }
         for (PropertyIdValue disallowed : disallowedQualifiers) {
             QAWarning issue = new QAWarning(
-                    "disallowed-qualifiers",
+                    disallowedQualifiersType,
                     statementProperty.getId()+"-"+disallowed.getId(),
                     QAWarning.Severity.WARNING,
                     1);

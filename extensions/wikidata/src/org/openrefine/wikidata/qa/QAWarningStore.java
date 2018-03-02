@@ -6,16 +6,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A store for QA warnings which aggregates them by type.
- * @author antonin
+ * 
+ * @author Antonin Delpeuch
  */
 public class QAWarningStore {
     
+    @JsonIgnore
     private Map<String, QAWarning> map;
+    @JsonIgnore
     private QAWarning.Severity maxSeverity;
+    @JsonIgnore
     private int totalWarnings;
     
     public QAWarningStore() {
@@ -36,7 +41,7 @@ public class QAWarningStore {
         totalWarnings += warning.getCount();
         if (map.containsKey(aggregationKey)) {
             QAWarning existing = map.get(aggregationKey);
-            existing.aggregate(warning);
+            map.put(aggregationKey, existing.aggregate(warning));
         } else {
             map.put(aggregationKey, warning);
         }

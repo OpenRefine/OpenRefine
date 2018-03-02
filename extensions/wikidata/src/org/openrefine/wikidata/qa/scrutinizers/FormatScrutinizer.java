@@ -15,14 +15,16 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
  * A scrutinizer that detects incorrect formats in text values
  * (mostly identifiers).
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
-public class FormatConstraintScrutinizer extends SnakScrutinizer {
+public class FormatScrutinizer extends SnakScrutinizer {
+    
+    public static final String type = "add-statements-with-invalid-format";
     
     private Map<PropertyIdValue, Pattern> _patterns;
     
-    public FormatConstraintScrutinizer() {
+    public FormatScrutinizer() {
         _patterns = new HashMap<>();
     }
     
@@ -59,7 +61,7 @@ public class FormatConstraintScrutinizer extends SnakScrutinizer {
             if (!pattern.matcher(value).matches()) {
                 if (added) {
                     QAWarning issue = new QAWarning(
-                            "add-statements-with-invalid-format",
+                            type,
                             pid.getId(),
                             QAWarning.Severity.IMPORTANT,
                             1);

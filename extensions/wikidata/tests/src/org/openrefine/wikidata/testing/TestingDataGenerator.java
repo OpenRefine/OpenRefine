@@ -68,10 +68,19 @@ public class TestingDataGenerator {
         return new WbMonolingualExpr(new WbLanguageConstant(langCode, langLabel), new WbStringConstant(text));
     }
     
-    public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
+    public static Statement generateStatement(ItemIdValue from, PropertyIdValue pid, ItemIdValue to) {
         Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
         return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
     }
+    
+    public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
+        return generateStatement(from, pid, to);
+    }
+
+    public static ItemIdValue newIdA = makeNewItemIdValue(1234L, "new item A");
+    public static ItemIdValue newIdB = makeNewItemIdValue(4567L, "new item B");
+    public static ItemIdValue matchedId = makeMatchedItemIdValue("Q89","eist");
+    public static ItemIdValue existingId = Datamodel.makeWikidataItemIdValue("Q43");
     
     
 }

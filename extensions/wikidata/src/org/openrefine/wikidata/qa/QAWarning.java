@@ -1,20 +1,25 @@
 package org.openrefine.wikidata.qa;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A class to represent a QA warning emited by the Wikidata schema
+ * A class to represent a QA warning emitted by the Wikidata schema
  * This could probably be reused at a broader scale, for instance for
  * Data Package validation.
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
 public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning> {
@@ -27,42 +32,30 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     }
     
     /// The type of QA warning emitted
-    private String type;
+    private final String type;
     // The key for aggregation of other QA warnings together - this specializes the id
-    private String bucketId;
+    private final String bucketId;
     // The severity of the issue
-    private Severity severity;
+    private final Severity severity;
     // The number of times this issue was found
-    private int count;
+    private final int count;
     // Other details about the warning, that can be displayed to the user
-    private Map<String,Object> properties;
+    private final Map<String,Object> properties;
     
     public QAWarning(String type, String bucketId, Severity severity, int count) {
+        Validate.notNull(type);
         this.type = type;
         this.bucketId = bucketId;
+        Validate.notNull(severity);
         this.severity = severity;
         this.count = count;
-        this.properties = new HashMap<String,Object>();
-    }
-
-    @JsonCreator
-    public QAWarning(
-            @JsonProperty("type") String type,
-            @JsonProperty("bucket_id") String bucketId,
-            @JsonProperty("severity") Severity severity,
-            @JsonProperty("count") int count,
-            @JsonProperty("properties") Map<String,Object> properties) {
-        this.type = type;
-        this.bucketId = bucketId;
-        this.severity = severity;
-        this.count = count;
-        this.properties = properties;
+        this.properties = new HashMap<>();
     }
     
     /**
-     * Returns the full key for aggregation of QA warnings
-     * @return
+     * @return the full key for aggregation of QA warnings
      */
+    @JsonIgnore
     public String getAggregationId() {
         if (this.bucketId != null) {
             return this.type + "_" + this.bucketId;
@@ -75,12 +68,22 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
      * Aggregates another QA warning of the same aggregation id.
      * @param other
      */
-    public void aggregate(QAWarning other) {
-        assert other.getAggregationId() == getAggregationId();
-        this.count += other.getCount();
-        if(this.severity.compareTo(other.getSeverity()) < 0) {
-            this.severity = other.getSeverity();
+    public QAWarning aggregate(QAWarning other) {
+        assert other.getAggregationId().equals(getAggregationId());
+        int newCount = count+other.getCount();
+        Severity newSeverity = severity;
+        if (other.getSeverity().compareTo(severity) > 0) {
+            newSeverity = other.getSeverity();
         }
+        QAWarning merged = new QAWarning(getType(), getBucketId(), newSeverity,
+                newCount);
+        for(Entry<String,Object> entry : properties.entrySet()) {
+            merged.setProperty(entry.getKey(),entry.getValue());
+        }
+        for(Entry<String,Object> entry : other.getProperties().entrySet()) {
+            merged.setProperty(entry.getKey(),entry.getValue());
+        }
+        return merged;
     }
     
     /**
@@ -114,6 +117,7 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     }
     
     @JsonProperty("properties")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public Map<String,Object> getProperties() {
         return properties;
     }
@@ -124,5 +128,18 @@ public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning
     @Override
     public int compareTo(QAWarning other) {
         return - severity.compareTo(other.getSeverity());
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !QAWarning.class.isInstance(other)) {
+            return false;
+        }
+        QAWarning otherWarning = (QAWarning)other;
+        return type.equals(otherWarning.getType()) &&
+                bucketId.equals(otherWarning.getBucketId()) &&
+                severity.equals(otherWarning.getSeverity()) &&
+                count == otherWarning.getCount() &&
+                properties.equals(otherWarning.getProperties());
     }
 }

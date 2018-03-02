@@ -10,11 +10,13 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  *
  */
 public class UnsourcedScrutinizer extends StatementScrutinizer {
+    
+    public static final String type = "unsourced-statements";
 
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
         if(statement.getReferences().isEmpty() && added) {
-            warning("unsourced-statements");
+            warning(type);
         }
     }
 

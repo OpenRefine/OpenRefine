@@ -4,7 +4,7 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-public abstract class StatementScrutinizer extends ItemEditScrutinizer {
+public abstract class StatementScrutinizer extends ItemUpdateScrutinizer {
 
     @Override
     public void scrutinize(ItemUpdate update) {

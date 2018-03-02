@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.FormatConstraintScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NoEditsMadeScrutinizer;
@@ -32,14 +32,16 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 public class EditInspector {
     private Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
+    private ConstraintFetcher fetcher;
     
     public EditInspector(QAWarningStore warningStore) {
         this.scrutinizers = new HashMap<>();
+        this.fetcher = new WikidataConstraintFetcher();
         this.warningStore = warningStore;
         
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
-        register(new FormatConstraintScrutinizer());
+        register(new FormatScrutinizer());
         register(new InverseConstraintScrutinizer());
         register(new SelfReferentialScrutinizer());
         register(new UnsourcedScrutinizer());
@@ -59,28 +61,25 @@ public class EditInspector {
         String key = scrutinizer.getClass().getName();
         scrutinizers.put(key, scrutinizer);
         scrutinizer.setStore(warningStore);
+        scrutinizer.setFetcher(fetcher);
     }
     
     
     /**
      * Inspect a batch of edits with the registered scrutinizers
-     * @param editBatch
+     * @param editBatch 
      */
     public void inspect(List<ItemUpdate> editBatch) {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
-        UpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-        try {
-            editBatch = scheduler.schedule(editBatch);
-            Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(editBatch);
-            List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
-            for(EditScrutinizer scrutinizer : scrutinizers.values()) {
-                scrutinizer.scrutinize(mergedUpdates);
-            }
-        } catch(ImpossibleSchedulingException e) {
-            warningStore.addWarning(new QAWarning(
-                "scheduling-failed", null, QAWarning.Severity.CRITICAL, 1));
+        WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
+        editBatch = scheduler.schedule(editBatch);
+        Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(editBatch);
+        List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
+        for(EditScrutinizer scrutinizer : scrutinizers.values()) {
+            scrutinizer.scrutinize(mergedUpdates);
         }
+
         
         if (warningStore.getNbWarnings() == 0) {
             warningStore.addWarning(new QAWarning(

@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -23,28 +22,23 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 public class PointerExtractorTest {
     
-    private ItemIdValue existingId = Datamodel.makeWikidataItemIdValue("Q43");
-    private ItemIdValue matchedId = TestingDataGenerator.makeMatchedItemIdValue("Q89","eist");
-    private ItemIdValue newIdA = TestingDataGenerator.makeNewItemIdValue(1234L, "new item A");
-    private ItemIdValue newIdB = TestingDataGenerator.makeNewItemIdValue(4567L, "new item B");
-    
     private PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P89");
-    private Snak snakWithNew = Datamodel.makeValueSnak(pid, newIdA);
-    private Snak snakWithoutNew = Datamodel.makeValueSnak(pid, matchedId);
+    private Snak snakWithNew = Datamodel.makeValueSnak(pid, TestingDataGenerator.newIdA);
+    private Snak snakWithoutNew = Datamodel.makeValueSnak(pid, TestingDataGenerator.matchedId);
     private SnakGroup snakGroupWithNew = Datamodel.makeSnakGroup(Collections.singletonList(snakWithNew));
     private SnakGroup snakGroupWithoutNew = Datamodel.makeSnakGroup(Collections.singletonList(snakWithoutNew));
-    private Claim claimWithNew = Datamodel.makeClaim(existingId, snakWithNew, Collections.emptyList());
-    private Claim claimNewSubject = Datamodel.makeClaim(newIdB, snakWithoutNew, Collections.emptyList());
-    private Claim claimNewQualifier = Datamodel.makeClaim(matchedId, snakWithoutNew,
+    private Claim claimWithNew = Datamodel.makeClaim(TestingDataGenerator.existingId, snakWithNew, Collections.emptyList());
+    private Claim claimNewSubject = Datamodel.makeClaim(TestingDataGenerator.newIdB, snakWithoutNew, Collections.emptyList());
+    private Claim claimNewQualifier = Datamodel.makeClaim(TestingDataGenerator.matchedId, snakWithoutNew,
             Collections.singletonList(snakGroupWithNew));
     
     private static PointerExtractor e = new PointerExtractor();
 
     @Test
     public void testExtractEntityId() {
-        assertEquals(Collections.singleton(newIdA), e.extractPointers(newIdA));
-        assertEmpty(e.extractPointers(existingId));
-        assertEmpty(e.extractPointers(matchedId));
+        assertEquals(Collections.singleton(TestingDataGenerator.newIdA), e.extractPointers(TestingDataGenerator.newIdA));
+        assertEmpty(e.extractPointers(TestingDataGenerator.existingId));
+        assertEmpty(e.extractPointers(TestingDataGenerator.matchedId));
     }
     
     @Test
@@ -62,26 +56,26 @@ public class PointerExtractorTest {
     @Test
     public void testSnak() {
         assertEmpty(e.extractPointers(snakWithoutNew));
-        assertEquals(Collections.singleton(newIdA), e.extractPointers(snakWithNew));
+        assertEquals(Collections.singleton(TestingDataGenerator.newIdA), e.extractPointers(snakWithNew));
         assertEmpty(e.extractPointers(Datamodel.makeNoValueSnak(pid)));
     }
     
     @Test
     public void testSnakGroup() {
         assertEmpty(e.extractPointers(snakGroupWithoutNew));
-        assertEquals(Collections.singleton(newIdA), e.extractPointers(snakGroupWithNew));
+        assertEquals(Collections.singleton(TestingDataGenerator.newIdA), e.extractPointers(snakGroupWithNew));
     }
     
     @Test
     public void testStatement() {
         assertEmpty(e.extractPointers(Datamodel.makeStatement(claimNewSubject,
                 Collections.emptyList(), StatementRank.NORMAL, "")));
-        assertEquals(Collections.singleton(newIdA), e.extractPointers(Datamodel.makeStatement(claimWithNew,
+        assertEquals(Collections.singleton(TestingDataGenerator.newIdA), e.extractPointers(Datamodel.makeStatement(claimWithNew,
                 Collections.emptyList(), StatementRank.NORMAL, "")));
-        assertEquals(Collections.singleton(newIdA), e.extractPointers(Datamodel.makeStatement(claimNewQualifier,
+        assertEquals(Collections.singleton(TestingDataGenerator.newIdA), e.extractPointers(Datamodel.makeStatement(claimNewQualifier,
                 Collections.emptyList(), StatementRank.NORMAL, "")));
         Reference reference = Datamodel.makeReference(Collections.singletonList(snakGroupWithNew));
-        assertEquals(Collections.singleton(newIdA), e.extractPointers(Datamodel.makeStatement(claimNewSubject,
+        assertEquals(Collections.singleton(TestingDataGenerator.newIdA), e.extractPointers(Datamodel.makeStatement(claimNewSubject,
                 Collections.singletonList(reference), StatementRank.NORMAL, "")));
     }
     

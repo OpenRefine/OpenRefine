@@ -3,7 +3,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
-public abstract class StatementGroupScrutinizer extends ItemEditScrutinizer {
+public abstract class StatementGroupScrutinizer extends ItemUpdateScrutinizer {
 
     @Override
     public void scrutinize(ItemUpdate update) {
