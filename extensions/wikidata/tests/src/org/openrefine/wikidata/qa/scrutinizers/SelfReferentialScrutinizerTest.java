@@ -1,6 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
@@ -13,15 +13,15 @@ public class SelfReferentialScrutinizerTest extends StatementScrutinizerTest {
     
     @Test
     public void testTrigger() {
-        ItemIdValue id = TestingDataGenerator.matchedId;
-        scrutinize(TestingDataGenerator.generateStatement(id, id));
+        ItemIdValue id = TestingData.matchedId;
+        scrutinize(TestingData.generateStatement(id, id));
         assertWarningsRaised(SelfReferentialScrutinizer.type);
     }
 
     @Test
     public void testNoProblem() {
-        ItemIdValue id = TestingDataGenerator.matchedId;
-        scrutinize(TestingDataGenerator.generateStatement(id, TestingDataGenerator.existingId));
+        ItemIdValue id = TestingData.matchedId;
+        scrutinize(TestingData.generateStatement(id, TestingData.existingId));
         assertNoWarningRaised();
     }
 }

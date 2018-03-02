@@ -1,6 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -16,6 +16,6 @@ public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
     }
     
     public void scrutinizeLabel(MonolingualTextValue text) {
-        scrutinize(new ItemUpdateBuilder(TestingDataGenerator.existingId).addLabel(text).build());
+        scrutinize(new ItemUpdateBuilder(TestingData.existingId).addLabel(text).build());
     }
 }

@@ -181,7 +181,7 @@ public class ItemUpdate {
         Set<MonolingualTextValue> newDescriptions = new HashSet<>(descriptions);
         newDescriptions.addAll(other.getDescriptions());
         Set<MonolingualTextValue> newAliases = new HashSet<>(aliases);
-        newAliases.addAll(other.getDescriptions());
+        newAliases.addAll(other.getAliases());
         return new ItemUpdate(
                 qid, newAddedStatements, newDeletedStatements,
                 newLabels, newDescriptions, newAliases);

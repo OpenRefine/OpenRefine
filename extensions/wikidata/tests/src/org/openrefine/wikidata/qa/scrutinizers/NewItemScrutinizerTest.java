@@ -2,7 +2,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Collections;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
@@ -14,8 +14,8 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public class NewItemScrutinizerTest extends ScrutinizerTest {
     
-    private Claim claim = Datamodel.makeClaim(TestingDataGenerator.newIdA,
-            Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P31"), TestingDataGenerator.existingId),
+    private Claim claim = Datamodel.makeClaim(TestingData.newIdA,
+            Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P31"), TestingData.existingId),
                     Collections.emptyList());
     private Statement p31Statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
 
@@ -26,7 +26,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     
     @Test
     public void testTrigger() {
-        ItemUpdate update = new ItemUpdateBuilder(TestingDataGenerator.newIdA).build();
+        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA).build();
         scrutinize(update);
         assertWarningsRaised(
                 NewItemScrutinizer.noDescType,
@@ -37,7 +37,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     
     @Test
     public void testEmptyItem() {
-        ItemUpdate update = new ItemUpdateBuilder(TestingDataGenerator.existingId).build();
+        ItemUpdate update = new ItemUpdateBuilder(TestingData.existingId).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -45,7 +45,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodNewItem() {
         
-        ItemUpdate update = new ItemUpdateBuilder(TestingDataGenerator.newIdA)
+        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"))
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"))
                 .addStatement(p31Statement)
@@ -56,12 +56,12 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     
     @Test
     public void testDeletedStatements() {
-        ItemUpdate update = new ItemUpdateBuilder(TestingDataGenerator.newIdA)
+        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"))
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"))
                 .addStatement(p31Statement)
-                .deleteStatement(TestingDataGenerator.generateStatement(TestingDataGenerator.newIdA,
-                        TestingDataGenerator.matchedId))
+                .deleteStatement(TestingData.generateStatement(TestingData.newIdA,
+                        TestingData.matchedId))
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.newItemType, NewItemScrutinizer.deletedStatementsType);

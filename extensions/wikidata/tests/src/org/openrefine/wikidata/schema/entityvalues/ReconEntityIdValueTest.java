@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 
@@ -15,12 +15,12 @@ import com.google.refine.model.Recon;
 
 public class ReconEntityIdValueTest {
     
-    private ReconEntityIdValue newItem = TestingDataGenerator.makeNewItemIdValue(1234L, "new item");
-    private ReconEntityIdValue sameNewItem = TestingDataGenerator.makeNewItemIdValue(1234L, "different text");
-    private ReconEntityIdValue differentNewItem = TestingDataGenerator.makeNewItemIdValue(7890L, "new item");
-    private ReconEntityIdValue newProp = TestingDataGenerator.makeNewPropertyIdValue(1234L, "new prop");
-    private ReconEntityIdValue existingProp = TestingDataGenerator.makeMatchedPropertyIdValue("P53", "new prop");
-    private ReconEntityIdValue existingItem = TestingDataGenerator.makeMatchedItemIdValue("Q42", "existing item");
+    private ReconEntityIdValue newItem = TestingData.makeNewItemIdValue(1234L, "new item");
+    private ReconEntityIdValue sameNewItem = TestingData.makeNewItemIdValue(1234L, "different text");
+    private ReconEntityIdValue differentNewItem = TestingData.makeNewItemIdValue(7890L, "new item");
+    private ReconEntityIdValue newProp = TestingData.makeNewPropertyIdValue(1234L, "new prop");
+    private ReconEntityIdValue existingProp = TestingData.makeMatchedPropertyIdValue("P53", "new prop");
+    private ReconEntityIdValue existingItem = TestingData.makeMatchedItemIdValue("Q42", "existing item");
     
     @Test
     public void testIsNew() {
@@ -37,7 +37,7 @@ public class ReconEntityIdValueTest {
     @Test
     public void testGetTypes() { 
         String[] types = {"Q5"};
-        Recon matchedRecon = TestingDataGenerator.makeMatchedRecon("Q453", "other item", types);
+        Recon matchedRecon = TestingData.makeMatchedRecon("Q453", "other item", types);
         ReconEntityIdValue existingIdWithTypes = new ReconItemIdValue(matchedRecon, "cell content");
         assertEquals(Collections.singletonList("Q5"), existingIdWithTypes.getTypes());
         assertEquals(Collections.emptyList(), existingItem.getTypes());

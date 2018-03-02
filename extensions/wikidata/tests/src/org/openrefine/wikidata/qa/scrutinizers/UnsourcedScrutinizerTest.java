@@ -1,6 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 
 public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
@@ -12,8 +12,8 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
     
     @Test
     public void testTrigger() {
-        scrutinize(TestingDataGenerator.generateStatement(TestingDataGenerator.existingId,
-                TestingDataGenerator.matchedId));
+        scrutinize(TestingData.generateStatement(TestingData.existingId,
+                TestingData.matchedId));
         assertWarningsRaised(UnsourcedScrutinizer.type);
     }
 

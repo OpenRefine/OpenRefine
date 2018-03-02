@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.math.BigDecimal;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
@@ -39,11 +39,11 @@ public class QSValuePrinterTest {
     
     @Test
     public void printNewItemId() {
-        ReconEntityIdValue id = TestingDataGenerator.makeNewItemIdValue(12345L, "my new item");
+        ReconEntityIdValue id = TestingData.makeNewItemIdValue(12345L, "my new item");
         assertEquals("LAST", id.accept(printer));
         // because no entity was previously created
         
-        ReconEntityIdValue differentId = TestingDataGenerator.makeMatchedItemIdValue("Q78", "my existing item");
+        ReconEntityIdValue differentId = TestingData.makeMatchedItemIdValue("Q78", "my existing item");
         assertEquals("Q78", differentId.accept(printer));
     }
     

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -29,9 +29,9 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 public class ItemUpdateTest {
     
     private ItemIdValue existingSubject = Datamodel.makeWikidataItemIdValue("Q34");
-    private ItemIdValue newSubject = TestingDataGenerator.makeNewItemIdValue(1234L, "new item");
-    private ItemIdValue sameNewSubject = TestingDataGenerator.makeNewItemIdValue(1234L, "other new item");
-    private ItemIdValue matchedSubject = TestingDataGenerator.makeMatchedItemIdValue("Q78", "well known item");
+    private ItemIdValue newSubject = TestingData.makeNewItemIdValue(1234L, "new item");
+    private ItemIdValue sameNewSubject = TestingData.makeNewItemIdValue(1234L, "other new item");
+    private ItemIdValue matchedSubject = TestingData.makeMatchedItemIdValue("Q78", "well known item");
 
     private PropertyIdValue pid1 = Datamodel.makeWikidataPropertyIdValue("P348");
     private PropertyIdValue pid2 = Datamodel.makeWikidataPropertyIdValue("P52");

@@ -1,6 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 
@@ -19,13 +19,13 @@ public class NoEditsMadeScrutinizerTest extends ScrutinizerTest {
     
     @Test
     public void testNonNull() {
-        scrutinize(new ItemUpdateBuilder(TestingDataGenerator.newIdA).build());
+        scrutinize(new ItemUpdateBuilder(TestingData.newIdA).build());
         assertNoWarningRaised();
     }
     
     @Test
     public void testNull() {
-        scrutinize(new ItemUpdateBuilder(TestingDataGenerator.existingId).build());
+        scrutinize(new ItemUpdateBuilder(TestingData.existingId).build());
         assertWarningsRaised(NoEditsMadeScrutinizer.type);
     }
 }

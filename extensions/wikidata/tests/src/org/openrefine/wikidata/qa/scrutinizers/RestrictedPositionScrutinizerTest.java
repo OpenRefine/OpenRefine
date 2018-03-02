@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -15,7 +15,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
     
-    private ItemIdValue qid = TestingDataGenerator.existingId;
+    private ItemIdValue qid = TestingData.existingId;
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -24,19 +24,19 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
     
     @Test
     public void testTriggerMainSnak() {
-        scrutinize(TestingDataGenerator.generateStatement(qid, MockConstraintFetcher.qualifierPid, qid));
+        scrutinize(TestingData.generateStatement(qid, MockConstraintFetcher.qualifierPid, qid));
         assertWarningsRaised("property-restricted-to-qualifier-found-in-mainsnak");
     }
     
     @Test
     public void testNoProblem() {
-        scrutinize(TestingDataGenerator.generateStatement(qid, MockConstraintFetcher.mainSnakPid, qid));
+        scrutinize(TestingData.generateStatement(qid, MockConstraintFetcher.mainSnakPid, qid));
         assertNoWarningRaised();
     }
     
     @Test
     public void testNotRestricted() {
-        scrutinize(TestingDataGenerator.generateStatement(qid, Datamodel.makeWikidataPropertyIdValue("P3748"), qid));
+        scrutinize(TestingData.generateStatement(qid, Datamodel.makeWikidataPropertyIdValue("P3748"), qid));
         assertNoWarningRaised();
     }
     
@@ -45,7 +45,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Snak snak = Datamodel.makeValueSnak(MockConstraintFetcher.mainSnakPid, qid);
         List<SnakGroup> snakGroups = Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(snak)));
         Statement statement = Datamodel.makeStatement(
-                TestingDataGenerator.generateStatement(qid, MockConstraintFetcher.mainSnakPid, qid).getClaim(),
+                TestingData.generateStatement(qid, MockConstraintFetcher.mainSnakPid, qid).getClaim(),
                 Collections.singletonList(Datamodel.makeReference(snakGroups)),
                 StatementRank.NORMAL, "");
         scrutinize(statement);

@@ -45,10 +45,8 @@ public abstract class JacksonJsonizable implements Jsonizable {
         try {
             return mapper.readValue(json, klass);
         } catch (JsonParseException e) {
-            e.printStackTrace();
             throw new JSONException(e.toString());
         } catch (JsonMappingException e) {
-            e.printStackTrace();
             throw new JSONException(e.toString());
         } catch (IOException e) {
             throw new JSONException(e.toString());

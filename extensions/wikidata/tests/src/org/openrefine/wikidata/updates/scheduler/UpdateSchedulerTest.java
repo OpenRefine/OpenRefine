@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
@@ -22,16 +22,16 @@ public abstract class UpdateSchedulerTest {
 
     protected ItemIdValue existingIdA = Datamodel.makeWikidataItemIdValue("Q43");
     protected ItemIdValue existingIdB = Datamodel.makeWikidataItemIdValue("Q538");
-    protected ItemIdValue newIdA = TestingDataGenerator.makeNewItemIdValue(1234L, "new item A");
-    protected ItemIdValue newIdB = TestingDataGenerator.makeNewItemIdValue(5678L, "new item B");
+    protected ItemIdValue newIdA = TestingData.makeNewItemIdValue(1234L, "new item A");
+    protected ItemIdValue newIdB = TestingData.makeNewItemIdValue(5678L, "new item B");
     
-    protected Statement sAtoB = TestingDataGenerator.generateStatement(existingIdA, existingIdB);
-    protected Statement sBtoA = TestingDataGenerator.generateStatement(existingIdB, existingIdA);
-    protected Statement sAtoNewA = TestingDataGenerator.generateStatement(existingIdA, newIdA);
-    protected Statement sAtoNewB = TestingDataGenerator.generateStatement(existingIdA, newIdB);
-    protected Statement sNewAtoB = TestingDataGenerator.generateStatement(newIdA, existingIdB);
-    protected Statement sNewAtoNewB = TestingDataGenerator.generateStatement(newIdA, newIdB);
-    protected Statement sNewAtoNewA = TestingDataGenerator.generateStatement(newIdA, newIdA);
+    protected Statement sAtoB = TestingData.generateStatement(existingIdA, existingIdB);
+    protected Statement sBtoA = TestingData.generateStatement(existingIdB, existingIdA);
+    protected Statement sAtoNewA = TestingData.generateStatement(existingIdA, newIdA);
+    protected Statement sAtoNewB = TestingData.generateStatement(existingIdA, newIdB);
+    protected Statement sNewAtoB = TestingData.generateStatement(newIdA, existingIdB);
+    protected Statement sNewAtoNewB = TestingData.generateStatement(newIdA, newIdB);
+    protected Statement sNewAtoNewA = TestingData.generateStatement(newIdA, newIdA);
     
     public abstract UpdateScheduler getScheduler();
     

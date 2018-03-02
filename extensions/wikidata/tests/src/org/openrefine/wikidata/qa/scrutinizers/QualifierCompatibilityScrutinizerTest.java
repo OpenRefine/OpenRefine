@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
-import org.openrefine.wikidata.testing.TestingDataGenerator;
+import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -45,7 +45,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
     }
     
     private Statement makeStatement(Snak... qualifiers) {
-        Claim claim = Datamodel.makeClaim(TestingDataGenerator.existingId, 
+        Claim claim = Datamodel.makeClaim(TestingData.existingId, 
                 Datamodel.makeNoValueSnak(MockConstraintFetcher.mainSnakPid), makeQualifiers(qualifiers));
         return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
     }

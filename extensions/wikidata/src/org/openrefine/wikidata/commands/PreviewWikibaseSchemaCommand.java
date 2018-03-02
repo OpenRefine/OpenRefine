@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
@@ -56,6 +57,7 @@ import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.utils.FirstLinesExtractor;
 
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -76,8 +78,13 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
             WikibaseSchema schema = null;
             if (jsonString != null) {
-                JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-                schema = WikibaseSchema.reconstruct(json);
+                try {
+                    JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
+                    schema = WikibaseSchema.reconstruct(json);
+                } catch(JSONException e) {
+                    respond(response, "error", "Wikibase schema could not be parsed.");
+                    return;
+                }
             } else {
                 schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             }
@@ -85,6 +92,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 respond(response, "error", "No Wikibase schema provided.");
                 return;
             }
+            
             QAWarningStore warningStore = new QAWarningStore();
             
             // Evaluate project
@@ -117,24 +125,8 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 QuickStatementsExporter exporter = new QuickStatementsExporter(); 
                 exporter.translateItemList(editBatch, stringWriter);
                 
-                String fullQS = stringWriter.toString();
-                stringWriter = new StringWriter();
-                LineNumberReader reader = new LineNumberReader(new StringReader(fullQS));
-                
-                // Only keep the first 50 lines
-                int maxQSLinesForPreview = 50;
-                reader.setLineNumber(0);
-                String line = reader.readLine();
-                for(int i = 1; i != maxQSLinesForPreview && line != null; i++) {
-                    stringWriter.write(line+"\n");
-                    line = reader.readLine();
-                }
-                if (reader.getLineNumber() == maxQSLinesForPreview) {
-                    stringWriter.write("...");
-                }
-                
                 writer.key("quickstatements");
-                writer.value(stringWriter.toString());
+                writer.value(FirstLinesExtractor.extractFirstLines(stringWriter.toString(), 50));
             }
             
             writer.endObject();
