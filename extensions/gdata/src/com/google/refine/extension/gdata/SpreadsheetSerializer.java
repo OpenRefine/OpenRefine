@@ -1,6 +1,8 @@
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +117,8 @@ final class SpreadsheetSerializer implements TabularSerializer {
         requests.add(batchRequest);
     }
     
-    public String getUrl() {
-        return "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit#gid=0";
+    public String getUrl() throws UnsupportedEncodingException {
+        String urlString= "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit#gid=0";
+        return URLEncoder.encode(urlString, "UTF-8");
     }
 }
