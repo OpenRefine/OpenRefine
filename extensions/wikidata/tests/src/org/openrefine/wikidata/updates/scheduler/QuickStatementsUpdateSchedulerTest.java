@@ -43,6 +43,12 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
         ItemUpdate update = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoNewB).build();
         schedule(update);
     }
+    
+    @Test
+    public void testSelfEditOnNewITem() throws ImpossibleSchedulingException {
+        ItemUpdate update = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoNewA).build();
+        assertEquals(Arrays.asList(update), schedule(update));
+    }
 
     @Override
     public UpdateScheduler getScheduler() {

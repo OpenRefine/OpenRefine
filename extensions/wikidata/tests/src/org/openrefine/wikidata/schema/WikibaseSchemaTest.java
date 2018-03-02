@@ -66,7 +66,7 @@ public class WikibaseSchemaTest extends RefineTest {
     
     private Project project;
     
-    static JSONObject jsonFromFile(String filename) throws IOException, JSONException {
+    public static JSONObject jsonFromFile(String filename) throws IOException, JSONException {
         byte[] contents = Files.readAllBytes(Paths.get(filename));
         String decoded = new String(contents, "utf-8");
         return ParsingUtilities.evaluateJsonStringToObject(decoded);

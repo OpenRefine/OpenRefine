@@ -7,12 +7,20 @@ import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 
 public class TestingDataGenerator {
+    
+    protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
     
     public static Recon makeNewItemRecon(long judgementId) {
         Recon recon = Recon.makeWikidataRecon(judgementId);
@@ -59,4 +67,11 @@ public class TestingDataGenerator {
     public static WbMonolingualExpr getTestMonolingualExpr(String langCode, String langLabel, String text) {
         return new WbMonolingualExpr(new WbLanguageConstant(langCode, langLabel), new WbStringConstant(text));
     }
+    
+    public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
+        Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
+        return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
+    }
+    
+    
 }

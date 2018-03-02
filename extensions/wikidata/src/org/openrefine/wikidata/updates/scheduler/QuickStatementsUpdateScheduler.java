@@ -62,6 +62,8 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
                 }
                 referencingBuilder.addStatement(statement);
                 referencingUpdates.put(pointer, referencingBuilder);
+            } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getItemId())) {
+                remainingUpdateBuilder.addStatement(statement);
             } else {
                 throw new ImpossibleSchedulingException();
             }

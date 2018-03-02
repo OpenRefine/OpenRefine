@@ -25,19 +25,13 @@ public abstract class UpdateSchedulerTest {
     protected ItemIdValue newIdA = TestingDataGenerator.makeNewItemIdValue(1234L, "new item A");
     protected ItemIdValue newIdB = TestingDataGenerator.makeNewItemIdValue(5678L, "new item B");
     
-    protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
-    
-    protected Statement sAtoB = generateStatement(existingIdA, existingIdB);
-    protected Statement sBtoA = generateStatement(existingIdB, existingIdA);
-    protected Statement sAtoNewA = generateStatement(existingIdA, newIdA);
-    protected Statement sAtoNewB = generateStatement(existingIdA, newIdB);
-    protected Statement sNewAtoB = generateStatement(newIdA, existingIdB);
-    protected Statement sNewAtoNewB = generateStatement(newIdA, newIdB);
-    
-    public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
-        Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
-        return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
-    }
+    protected Statement sAtoB = TestingDataGenerator.generateStatement(existingIdA, existingIdB);
+    protected Statement sBtoA = TestingDataGenerator.generateStatement(existingIdB, existingIdA);
+    protected Statement sAtoNewA = TestingDataGenerator.generateStatement(existingIdA, newIdA);
+    protected Statement sAtoNewB = TestingDataGenerator.generateStatement(existingIdA, newIdB);
+    protected Statement sNewAtoB = TestingDataGenerator.generateStatement(newIdA, existingIdB);
+    protected Statement sNewAtoNewB = TestingDataGenerator.generateStatement(newIdA, newIdB);
+    protected Statement sNewAtoNewA = TestingDataGenerator.generateStatement(newIdA, newIdA);
     
     public abstract UpdateScheduler getScheduler();
     

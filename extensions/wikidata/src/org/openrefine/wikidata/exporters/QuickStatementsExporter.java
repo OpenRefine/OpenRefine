@@ -32,13 +32,15 @@ public class QuickStatementsExporter implements WriterExporter {
     
     public static final String impossibleSchedulingErrorMessage =
             "This edit batch cannot be performed with QuickStatements due to the structure of its new items.";
+    public static final String noSchemaErrorMessage =
+            "No schema was provided. You need to align your project with Wikidata first.";
 
     public QuickStatementsExporter(){
     }
      
     @Override
     public String getContentType() {
-        return "text";
+        return "text/plain";
     }
 
     @Override
@@ -46,9 +48,10 @@ public class QuickStatementsExporter implements WriterExporter {
             throws IOException {
         WikibaseSchema schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
         if (schema == null) {
-            return;
+            writer.write(noSchemaErrorMessage);
+        } else {
+            translateSchema(project, engine, schema, writer);
         }
-        translateSchema(project, engine, schema, writer);
     }
     
     /**
