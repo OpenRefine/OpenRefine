@@ -316,7 +316,7 @@ ReconStandardServicePanel.prototype.start = function() {
         type: (type) ? { id: type.id, name: type.name } : null,
         autoMatch: this._elmts.automatchCheck[0].checked,
         columnDetails: columnDetails,
-        limit: parseInt(this._elmts.maxCandidates[0].value) || 0
+        limit: this._elmts.maxCandidates[0].value
       })
     },
     { cellsChanged: true, columnStatsChanged: true }
