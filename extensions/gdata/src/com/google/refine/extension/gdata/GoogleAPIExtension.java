@@ -101,8 +101,8 @@ abstract public class GoogleAPIExtension {
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
                 credential.initialize(httpRequest);
-                httpRequest.setConnectTimeout(300 * 60000);  // 300 minutes connect timeout
-                httpRequest.setReadTimeout(300 * 60000);  // 300 minutes read timeout
+                httpRequest.setConnectTimeout(3 * 60000);  // 3 minutes connect timeout
+                httpRequest.setReadTimeout(3 * 60000);  // 3 minutes read timeout
             }
         })
           .setApplicationName(SERVICE_APP_NAME).build();
