@@ -10,6 +10,7 @@ import java.util.Collections;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import com.google.refine.model.Recon;
 
@@ -47,21 +48,21 @@ public class ReconEntityIdValueTest {
     @Test
     public void testGetId() {
         assertEquals("Q42", existingItem.getId());
-        assertEquals("Q0", newItem.getId());
+        assertEquals("Q1234", newItem.getId());
         assertEquals("P53", existingProp.getId());
-        assertEquals("P0", newProp.getId());
+        assertEquals("P1234", newProp.getId());
     }
     
     @Test
     public void testGetIri() {
         assertEquals("http://www.wikidata.org/entity/Q42", existingItem.getIri());
-        assertEquals("http://www.wikidata.org/entity/Q0", newItem.getIri());
+        assertEquals(EntityIdValue.SITE_LOCAL+"Q1234", newItem.getIri());
     }
     
     @Test
     public void testGetSiteIri() {
         assertEquals("http://www.wikidata.org/entity/", existingItem.getSiteIri());
-        assertEquals("http://www.wikidata.org/entity/", newItem.getSiteIri());
+        assertEquals(EntityIdValue.SITE_LOCAL, newItem.getSiteIri());
     }
     
     @Test

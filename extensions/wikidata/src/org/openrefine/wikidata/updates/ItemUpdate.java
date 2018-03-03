@@ -238,7 +238,7 @@ public class ItemUpdate {
      * Is this update about a new item?
      */
     public boolean isNew() {
-        return "Q0".equals(getItemId().getId());
+        return EntityIdValue.SITE_LOCAL.equals(getItemId().getSiteIri());
     }
     
     /**

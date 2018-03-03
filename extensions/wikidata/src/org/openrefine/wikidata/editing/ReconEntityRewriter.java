@@ -65,7 +65,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
                             "Trying to rewrite an update where a new item was not created yet.");
                 }
                 return Datamodel.makeItemIdValue(newId,
-                        recon.getSiteIri());
+                        recon.getRecon().identifierSpace);
             }
         }
         return super.copy(value);

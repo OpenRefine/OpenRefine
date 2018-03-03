@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.wikidata.wdtk.datamodel.helpers.Equality;
 import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
@@ -87,7 +88,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
      * @return
      *     the full reconciliation metadata of the corresponding cell
      */
-    protected Recon getRecon() {
+    public Recon getRecon() {
         return _recon;
     }
     
@@ -99,16 +100,20 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         if (isMatched()) {
             return _recon.match.id;
         } else if (ET_ITEM.equals(getEntityType())) {
-            return "Q0";
+            return "Q"+getReconInternalId();
         } else if (ET_PROPERTY.equals(getEntityType())) {
-            return "P0";
+            return "P"+getReconInternalId();
         }
         return null;
     }
 
     @Override
     public String getSiteIri() {
-        return _recon.identifierSpace;
+        if (isMatched()) {
+            return _recon.identifierSpace;
+        } else {
+            return EntityIdValue.SITE_LOCAL;
+        }
     }
 
     @Override
@@ -121,45 +126,15 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         return valueVisitor.visit(this);
     }
     
-
-    /**
-     * Equality check is important when we gather
-     * all ItemUpdates related to an ItemId.
-     * 
-     * The label is ignored in the equality check.
-     */
     @Override
     public boolean equals(Object other) {
-        if (other == null ||
-            !EntityIdValue.class.isInstance(other)) {
-            return false;
-        }
-        
-        if (ReconEntityIdValue.class.isInstance(other)) {
-            final ReconEntityIdValue reconOther = (ReconEntityIdValue)other;
-            
-            if (isNew() != reconOther.isNew()) {
-                return false;
-            } else if (isNew()) {
-                // This ensures compliance with OR's notion of new items
-                // (it is possible that two cells are reconciled to the same
-                // new item, in which case they share the same internal recon id).
-                return (getReconInternalId() == reconOther.getReconInternalId() &&
-                        getEntityType().equals(reconOther.getEntityType()));
-            }
-        }
-        
-        final EntityIdValue otherNew = (EntityIdValue)other;
-        return getIri().equals(otherNew.getIri());
+        return Equality.equalsEntityIdValue(this, other);
+
     }
     
     @Override
     public int hashCode() {
-        if (isMatched()) {
-            return Hash.hashCode(this);
-        } else {
-            return (int) getReconInternalId();
-        }
+        return Hash.hashCode(this);
     }
 
     @Override

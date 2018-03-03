@@ -56,7 +56,7 @@ public class EditBatchProcessorTest extends RefineTest {
                 .build());
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("better label", "en");
         batch.add(new ItemUpdateBuilder(TestingData.newIdA)
-                .addLabel(label)
+                .addAlias(label)
                 .build());
         
         // Plan expected edits
@@ -67,7 +67,7 @@ public class EditBatchProcessorTest extends RefineTest {
         when(fetcher.getEntityDocuments(Collections.singletonList(TestingData.existingId.getId())))
            .thenReturn(Collections.singletonMap(TestingData.existingId.getId(), existingItem));
            
-        ItemDocument expectedNewItem = ItemDocumentBuilder.forItemId(ItemIdValue.NULL)
+        ItemDocument expectedNewItem = ItemDocumentBuilder.forItemId(TestingData.newIdA)
                 .withLabel(label).build();
         ItemDocument createdNewItem = ItemDocumentBuilder.forItemId(Datamodel.makeWikidataItemIdValue("Q1234"))
                 .withLabel(label).withRevisionId(37828L).build();

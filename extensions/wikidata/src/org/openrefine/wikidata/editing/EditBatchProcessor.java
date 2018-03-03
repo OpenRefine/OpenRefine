@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
@@ -112,9 +111,9 @@ public class EditBatchProcessor {
              // New item
              if (update.isNew()) {
                  ReconEntityIdValue newCell = (ReconEntityIdValue)update.getItemId();
-                 update.normalizeLabelsAndAliases();
+                 update = update.normalizeLabelsAndAliases();
                  
-                 ItemDocument itemDocument = Datamodel.makeItemDocument(ItemIdValue.NULL,
+                 ItemDocument itemDocument = Datamodel.makeItemDocument(update.getItemId(),
                          update.getLabels().stream().collect(Collectors.toList()),
                          update.getDescriptions().stream().collect(Collectors.toList()),
                          update.getAliases().stream().collect(Collectors.toList()),
