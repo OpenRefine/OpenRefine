@@ -74,6 +74,7 @@ public class EditInspector {
         // so that all newly created entities appear in the batch
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         editBatch = scheduler.schedule(editBatch);
+
         Map<EntityIdValue, ItemUpdate> updates =  ItemUpdate.groupBySubject(editBatch);
         List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
         for(EditScrutinizer scrutinizer : scrutinizers.values()) {

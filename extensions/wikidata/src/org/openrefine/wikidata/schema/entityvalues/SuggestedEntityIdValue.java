@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.wikidata.wdtk.datamodel.helpers.Hash;
+import org.wikidata.wdtk.datamodel.helpers.ToString;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
@@ -70,4 +71,5 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
     public int hashCode() {
         return Hash.hashCode(this);
     }
+
 }

@@ -1,7 +1,9 @@
 package org.openrefine.wikidata.schema;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
@@ -34,8 +36,15 @@ public class WbItemDocumentExpr extends JacksonJsonizable implements WbExpressio
             @JsonProperty("subject") WbExpression<? extends ItemIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
+        Validate.notNull(subjectExpr);
         this.subject = subjectExpr;
+        if(nameDescExprs == null) {
+            nameDescExprs = Collections.emptyList();
+        }
         this.nameDescs = nameDescExprs;
+        if(statementGroupExprs == null) {
+            statementGroupExprs = Collections.emptyList();
+        }
         this.statementGroups = statementGroupExprs;
     }
     

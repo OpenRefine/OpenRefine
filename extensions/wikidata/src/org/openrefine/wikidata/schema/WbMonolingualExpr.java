@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -19,7 +20,9 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
     public WbMonolingualExpr(
             @JsonProperty("language") WbExpression<? extends String> languageExpr,
             @JsonProperty("value") WbExpression<? extends StringValue> valueExpr) {
+        Validate.notNull(languageExpr);
         this.languageExpr = languageExpr;
+        Validate.notNull(valueExpr);
         this.valueExpr = valueExpr;
     }
 

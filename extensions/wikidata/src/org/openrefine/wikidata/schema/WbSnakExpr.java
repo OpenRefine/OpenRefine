@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -28,7 +29,9 @@ public class WbSnakExpr implements WbExpression<Snak> {
     public WbSnakExpr(
             @JsonProperty("prop") WbExpression<? extends PropertyIdValue> propExpr,
             @JsonProperty("value") WbExpression<? extends Value> valueExpr) {
+        Validate.notNull(propExpr);
         this.prop = propExpr;
+        Validate.notNull(valueExpr);
         this.value = valueExpr;
     }
 

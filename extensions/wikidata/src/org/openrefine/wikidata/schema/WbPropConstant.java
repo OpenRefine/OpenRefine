@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
@@ -23,7 +24,9 @@ public class WbPropConstant implements WbExpression<PropertyIdValue> {
             @JsonProperty("pid") String pid,
             @JsonProperty("label") String label,
             @JsonProperty("datatype") String datatype) {
+        Validate.notNull(pid);
         this.pid = pid;
+        Validate.notNull(label);
         this.label = label;
         this.datatype = datatype;
     }

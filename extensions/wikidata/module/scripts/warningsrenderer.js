@@ -15,10 +15,15 @@ WarningsRenderer._renderEntity = function(entity) {
       fullLabel = entity.label + ' (' + id + ')';
   }
 
+  var url = entity.iri;
+  if (!url && entity.value) {
+     url = 'http://www.wikidata.org/entity/'+entity.value.id;
+  }
+
   if (is_new) {
      return '<span class="wb-preview-new-entity">'+fullLabel+'</span>';
   } else {
-     return '<a href="'+entity.iri+'" class="wb-preview-entity" target="_blank">'+fullLabel+'</a>';
+     return '<a href="'+url+'" class="wb-preview-entity" target="_blank">'+fullLabel+'</a>';
   }
 }
 

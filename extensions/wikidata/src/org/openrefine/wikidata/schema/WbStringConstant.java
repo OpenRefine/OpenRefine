@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema;
 
+import org.apache.commons.lang.Validate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
@@ -13,6 +14,7 @@ public class WbStringConstant implements WbExpression<StringValue> {
     
     @JsonCreator
     public WbStringConstant(@JsonProperty("value") String value) {
+        Validate.notNull(value);
         this.value = value;
     }
     

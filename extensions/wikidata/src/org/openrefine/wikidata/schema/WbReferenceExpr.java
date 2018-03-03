@@ -3,6 +3,7 @@ package org.openrefine.wikidata.schema;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -28,6 +29,7 @@ public class WbReferenceExpr implements WbExpression<Reference> {
     @JsonCreator
     public WbReferenceExpr(
             @JsonProperty("snaks") List<WbSnakExpr> snakExprs) {
+        Validate.notNull(snakExprs);
         this.snakExprs = snakExprs;
     }
     
