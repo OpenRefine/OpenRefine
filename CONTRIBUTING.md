@@ -31,7 +31,7 @@ You can help us [translate OpenRefine](https://github.com/OpenRefine/OpenRefine/
 ##  Contributing code 
 
 You can contribute code in three different ways:
-- Fix minor bugs - you can check the [issues flagged as easy](https://github.com/OpenRefine/OpenRefine/labels/easy)
+- Fix minor bugs - you can check the issues flagged as [help wanted](https://github.com/OpenRefine/OpenRefine/labels/help%20wanted) or [good first issue](https://github.com/OpenRefine/OpenRefine/labels/good%20first%20issue)
 - Develop an OpenRefine extension 
 - Start your own distribution or fork
 
