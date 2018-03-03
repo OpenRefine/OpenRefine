@@ -190,4 +190,13 @@ public class WikibaseSchema implements OverlayModel {
     public void dispose(Project project) {
 
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WikibaseSchema.class.isInstance(other)) {
+            return false;
+        }
+        WikibaseSchema otherSchema = (WikibaseSchema)other;
+        return itemDocumentExprs.equals(otherSchema.getItemDocumentExpressions());
+    }
 }
