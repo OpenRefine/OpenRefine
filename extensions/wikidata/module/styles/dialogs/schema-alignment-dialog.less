@@ -62,6 +62,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding-bottom: 3px;
 }
 
+.wbs-target-input .wbs-draggable-column {
+    margin: 0px;
+}
+
 .wbs-reconciled-column {
     border-bottom: 3px solid #282;
     padding-bottom: 1px;
@@ -71,6 +75,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     box-shadow: inset 0 0 10px #a7cdff;
 }
 
+// The following two rules are taken from Wikibase
+.wbs-icon {
+    background-position: center;
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    opacity: 0.7;
+}
+
+.wbs-remove .wbs-icon {
+    background-image:linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2224%22%20height=%2224%22%20viewBox=%220%200%2024%2024%22%3E%20%3Cg%20id=%22remove%22%3E%20%3Cpath%20id=%22trash-can%22%20d=%22M12%2010h-1v6h1v-6zm-2%200H9v6h1v-6zm4%200h-1v6h1v-6zm0-4V5H9v1H6v3h1v7.966l1%201.03v-.073V18h6.984l.016-.018v.015l1-1.03V9h1V6h-3zm1%2011H8V9h7v8zm1-9H7V7h9v1z%22/%3E%20%3C/g%3E%20%3C/svg%3E");
+}
+
+.wbs-rank-selector-icon {
+   background-position: -36px;
+   width: 8px;
+   height: 20px;
+   margin-right: 2px;
+   background-image:linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20xmlns:xlink=%22http://www.w3.org/1999/xlink%22%20width=%22107%22%20height=%2220%22%3E%20%3Cdefs%3E%20%3Cpath%20d=%22M3.1%2C0%200%2C3.8%200%2C6%208%2C6%208%2C3.8%204.9%2C0zm8.2%2C7%20-2.3%2C2%200%2C2%202.3%2C2%203.4%2C0%202.3%2C-2%200%2C-2%20-2.3%2C-2zm6.7%2C7%200%2C2.2%203.1%2C3.8%201.8%2C0%203.1%2C-3.8%200%2C-2.2z%22%20id=%22a%22/%3E%20%3Cpath%20d=%22m18.5%2C10.75%200%2C-1.5%202%2C-1.75%203%2C0%202%2C1.75%200%2C1.5%20-2%2C1.75%20-3%2C0zm0%2C-6.75%200%2C1.5%207%2C0%200%2C-1.5%20-2.875%2C-3.5%20-1.25%2C0zm-9%2C12%200%2C-1.5%207%2C0%200%2C1.5%20-2.875%2C3.5%20-1.25%2C0zm0%2C-12%200%2C1.5%207%2C0%200%2C-1.5%20-2.875%2C-3.5%20-1.25%2C0zm-9%2C12%200%2C-1.5%207%2C0%200%2C1.5%20-2.875%2C3.5%20-1.25%2C0zm0%2C-5.25%200%2C-1.5%202%2C-1.75%203%2C0%202%2C1.75%200%2C1.5%20-2%2C1.75%20-3%2C0z%22%20id=%22b%22%20fill=%22none%22/%3E%20%3C/defs%3E%20%3Cuse%20fill=%22%23000%22%20x=%220%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%23000%22%20x=%220%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%2372777d%22%20x=%2227%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%2372777d%22%20x=%2227%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%2336c%22%20x=%2254%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%2336c%22%20x=%2254%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3Cuse%20fill=%22%23447ff5%22%20x=%2281%22%20y=%220%22%20xlink:href=%22%23a%22/%3E%20%3Cuse%20stroke=%22%23447ff5%22%20x=%2281%22%20y=%220%22%20xlink:href=%22%23b%22/%3E%20%3C/svg%3E");
+}
+
 .wbs-item-input, .wbs-prop-input, .wbs-target-input {
     width: 160px;
     height: 20px;
@@ -78,6 +105,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     display: inline-block;
     /* background: white; */
     margin: 5px;
+}
+
+.wbs-target-input {
+    display: inline-flex;
 }
 
 .wbs-prop-input {
@@ -102,10 +133,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: 2px;
 }
 
+.wbs-remove,
 .wbs-add-item, .wbs-add-statement-group, .wbs-add-statement,
 .wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc {
     color: #0645ad !important;
     font-size: 0.9em;
+}
+
+.wbs-add-item b, .wbs-add-statement-group b, .wbs-add-statement b,
+.wbs-add-qualifier b, .wbs-add-reference b, .wbs-add-namedesc b {
+    font-size: 1em;
+    color: grey;
+    width: 20px;
+    height: 20px;
 }
 
 .wbs-statement-group-container, .wbs-statement-container, .wbs-qualifier-container, .wbs-reference-container {
