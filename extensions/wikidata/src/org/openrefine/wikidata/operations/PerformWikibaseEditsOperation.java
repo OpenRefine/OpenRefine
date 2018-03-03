@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import org.openrefine.wikidata.editing.ConnectionManager;
+import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
 import org.openrefine.wikidata.editing.ReconEntityRewriter;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -57,26 +58,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     static final Logger logger = LoggerFactory
             .getLogger(PerformWikibaseEditsOperation.class);
     
-    public enum DuplicateDetectionStrategy {
-        PROPERTY, SNAK, SNAK_QUALIFIERS
-    }
-    
-    public enum OnDuplicateAction {
-        SKIP, MERGE
-    }
-    
-    private DuplicateDetectionStrategy strategy;
-    private OnDuplicateAction duplicateAction;
     private String summary;
     
     public PerformWikibaseEditsOperation(
             JSONObject engineConfig,
-            DuplicateDetectionStrategy strategy,
-            OnDuplicateAction duplicateAction,
             String summary) {
         super(engineConfig);
-        this.strategy = strategy;
-        this.duplicateAction = duplicateAction;
         this.summary = summary;
 
         // getEngine(request, project);
@@ -85,16 +72,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj)
             throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String strategy = obj.getString("duplicate_strategy");
-        String action = obj.getString("duplicate_action");
         String summary = null;
         if (obj.has("summary")) {
             summary = obj.getString("summary");
         }
         return new PerformWikibaseEditsOperation(
                 engineConfig,
-                DuplicateDetectionStrategy.valueOf(strategy),
-                OnDuplicateAction.valueOf(action),
                 summary);
     }
 
@@ -107,10 +90,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description");
         writer.value("Perform Wikibase edits");
-        writer.key("duplicate_strategy");
-        writer.value(strategy.name());
-        writer.key("duplicate_action");
-        writer.value(duplicateAction.name());
         writer.key("summary");
         writer.value(summary);
         writer.key("engineConfig");
@@ -214,137 +193,29 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
-            wbde.setEditAsBot(true);
-            //wbde.disableEditing();
             
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
             
-            // Schedule the edit batch
-            WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-            List<ItemUpdate> updates = null;
-            updates = scheduler.schedule(itemDocuments);
-            
-            /**
-             * TODO:
-             * - support for new items
-             * - support for duplicate strategy and action
-             */
+            // Prepare the edits
+            NewItemLibrary newItemLibrary = new NewItemLibrary();
+            EditBatchProcessor processor = new EditBatchProcessor(wbdf,
+                    wbde, itemDocuments, newItemLibrary, _summary, 50);
             
             // Perform edits
-            NewItemLibrary newItemLibrary = new NewItemLibrary();
-            DataObjectFactory factory = new DataObjectFactoryImpl();
-            List<ItemUpdate> remainingItemUpdates = new ArrayList<>();
-            remainingItemUpdates.addAll(updates);
-            int totalItemUpdates = updates.size();
-            int updatesDone = 0;
-            int batchSize = 50;
-            while(updatesDone < totalItemUpdates) {
-                // Split the remaining updates in batches
-                List<ItemUpdate> batch = null;
-                if(totalItemUpdates - updatesDone < batchSize) {
-                    batch = remainingItemUpdates;
-                } else {
-                    batch = remainingItemUpdates.subList(0, batchSize);
+            logger.info("Performing edits");
+            while(processor.remainingEdits() > 0) {
+                try {
+                    processor.performEdit();
+                } catch(InterruptedException e) {
+                    _canceled = true;
                 }
-                List<String> qids = new ArrayList<>(batch.size());
-                for(ItemUpdate update : batch) {
-                    String qid = update.getItemId().getId();
-                    if (!update.isNew()) {
-                        qids.add(qid);
-                    }
-                }
-                
-                // Get the current documents for this batch of updates
-                logger.info("Requesting documents");
-                Map<String, EntityDocument> currentDocs = null;
-                int retries = 3;
-                while (currentDocs == null && retries > 0) {
-                    try {
-                        currentDocs = wbdf.getEntityDocuments(qids);
-                    } catch (MediaWikiApiErrorException e) {
-                        e.printStackTrace();
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e1) {
-                            _canceled = true;
-                            break;
-                        }
-                    }
-                    retries--;
-                }
-                
+                _progress = processor.progress();
                 if (_canceled) {
                     break;
                 }
-                logger.info("Performing edits");
-                
-                for(ItemUpdate update : batch) {
-                    // Rewrite the update
-                    ReconEntityRewriter rewriter = new ReconEntityRewriter(newItemLibrary, update.getItemId());
-                    update = rewriter.rewrite(update);
-                    
-                    try {
-                        // New item
-                        if (update.getItemId().getId().equals("Q0")) {
-                            ReconEntityIdValue newCell = (ReconEntityIdValue)update.getItemId();
-                            update.normalizeLabelsAndAliases();
-
-                            
-                            ItemDocument itemDocument = factory.getItemDocument(
-                                    update.getItemId(),
-                                    update.getLabels().stream().collect(Collectors.toList()),
-                                    update.getDescriptions().stream().collect(Collectors.toList()),
-                                    update.getAliases().stream().collect(Collectors.toList()),
-                                    update.getAddedStatementGroups(),
-                                    new HashMap<String,SiteLink>(),
-                                    0L);
-                                    
-                            ItemDocument createdDoc = wbde.createItemDocument(itemDocument, _summary);
-                            newItemLibrary.setQid(newCell.getReconInternalId(), createdDoc.getItemId().getId());
-                        } else {
-                            // Existing item
-                            ItemDocument currentDocument = (ItemDocument)currentDocs.get(update.getItemId().getId());
-                            /*
-                            TermStatementUpdate tsUpdate = new TermStatementUpdate(
-                                    currentDocument,
-                                    update.getAddedStatements().stream().collect(Collectors.toList()),
-                                    update.getDeletedStatements().stream().collect(Collectors.toList()),
-                                    update.getLabels().stream().collect(Collectors.toList()),
-                                    update.getDescriptions().stream().collect(Collectors.toList()),
-                                    update.getAliases().stream().collect(Collectors.toList()),
-                                    new ArrayList<MonolingualTextValue>() 
-                                    );
-                            ObjectMapper mapper = new ObjectMapper();
-                            logger.info(mapper.writeValueAsString(update));
-                            logger.info(update.toString());
-                            logger.info(tsUpdate.getJsonUpdateString()); */
-                            wbde.updateTermsStatements(currentDocument,
-                                    update.getLabels().stream().collect(Collectors.toList()),
-                                    update.getDescriptions().stream().collect(Collectors.toList()),
-                                    update.getAliases().stream().collect(Collectors.toList()),
-                                    new ArrayList<MonolingualTextValue>(),
-                                    update.getAddedStatements().stream().collect(Collectors.toList()),
-                                    update.getDeletedStatements().stream().collect(Collectors.toList()),
-                                    _summary);
-                        }
-                    } catch (MediaWikiApiErrorException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    
-                    updatesDone++;
-                    _progress = (100*updatesDone) / totalItemUpdates;
-                    if(_canceled) {
-                        break;
-                    }
-                }
-                
-                batch.clear();
             }
+            
             _progress = 100;
             
             if (!_canceled) {
