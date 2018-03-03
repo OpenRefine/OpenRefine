@@ -606,6 +606,24 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         });
         changedCallback();
     });
+
+  } else if (this._reconService !== null && mode === "wikibase-property") {
+    var endpoint = null;
+    endpoint = this._reconService.suggest.property;
+    var suggestConfig = $.extend({}, endpoint);
+    suggestConfig.key = null;
+    suggestConfig.query_param_name = "prefix";
+
+    input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
+        inputContainer.data("jsonValue", {
+            type : "wbpropconstant",
+            pid : data.id,
+            label: data.name,
+            datatype: "not-important",
+        });
+        changedCallback();
+    });
+
   } else if (mode === "time") {
      input.attr("placeholder", "YYYY(-MM(-DD))...");
      var propagateValue = function(val) {
@@ -620,6 +638,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       propagateValue($(this).val());
       changedCallback();
     });
+
    } else if (mode === "globe-coordinate") {
      input.attr("placeholder", "lat/lon");
      var propagateValue = function(val) {
@@ -634,6 +653,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       propagateValue($(this).val());
       changedCallback();
     });
+
    } else if (mode === "language") {
      input.attr("placeholder", "lang");
      input.addClass("wbs-language-input");
@@ -645,6 +665,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         });
         changedCallback();
      });
+
    } else if (mode === "monolingualtext") {
      input.remove();
      var inputContainerLanguage = $('<div></div>')
@@ -674,6 +695,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
 
      SchemaAlignmentDialog._initField(inputContainerLanguage, "language", langValue, propagateValue);
      SchemaAlignmentDialog._initField(inputContainerValue, "string", strValue, propagateValue);
+
    } else if (mode === "quantity") {
      input.remove();
      var inputContainerAmount = $('<div></div>')
@@ -703,7 +725,8 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      
      SchemaAlignmentDialog._initField(inputContainerAmount, "amount", amountValue, propagateValue);
      SchemaAlignmentDialog._initField(inputContainerUnit, "unit", unitValue, propagateValue);
-   } else if (mode === "external-id" || mode === "string" || mode === "amount") {
+
+   } else {
     var propagateValue = function(val) {
         inputContainer.data("jsonValue", {
            type: "wbstringconstant",
@@ -717,9 +740,27 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     });
     if (mode === "amount") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["amount"]);
+    } else if (mode === "url") {
+        input.attr("placeholder", $.i18n._('wikidata-schema')["full-url"]);
+    } else if (mode === "tabular-data") {
+        input.attr("placeholder", $.i18n._('wikidata-schema')["tabular-data-with-prefix"]);
+    } else if (mode === "commonsMedia") {
+        input.attr("placeholder", $.i18n._('wikidata-schema')["commons-media"]);
+    } else if (mode === "math") {
+        input.attr("placeholder", $.i18n._('wikidata-schema')["math-expression"]);
+    } else if (mode === "geo-shape") {
+        input.attr("placeholder", $.i18n._('wikidata-schema')["geoshape-with-prefix"]);
     }
-  } else {
-     alert($.i18n._('wikidata-schema')["datatype-not-supported-yet"]);
+    if (mode !== "external-id" &&
+        mode !== "url" &&
+        mode !== "string" &&
+        mode !== "amount" &&
+        mode !== "tabular-data" &&
+        mode !== "commonsMedia" &&
+        mode !== "geo-shape" &&
+        mode !== "math") {
+       alert($.i18n._('wikidata-schema')["datatype-not-supported-yet"]);
+    }
   }
 
   var acceptDraggableColumn = function(column) {
