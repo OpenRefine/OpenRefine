@@ -7,6 +7,10 @@ import java.util.Set;
 import java.util.HashSet;
 
 import com.google.refine.model.Project;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Recon;
@@ -27,6 +31,11 @@ public class NewItemLibrary {
     
     public NewItemLibrary() {
         map = new HashMap<>();
+    }
+    
+    @JsonCreator
+    public NewItemLibrary(@JsonProperty("qidMap") Map<Long, String> map) {
+        this.map = map;
     }
     
     /**
@@ -67,23 +76,26 @@ public class NewItemLibrary {
          */
         
         for(Row row : project.rows) {
-            for(Cell cell : row.cells) {
+            for(int i = 0; i != row.cells.size(); i++) {
+                Cell cell = row.cells.get(i);
                 if (cell == null || cell.recon == null) {
                     continue;
                 }
                 Recon recon = cell.recon;
                 if (Recon.Judgment.New.equals(recon.judgment) && !reset &&
-                        map.containsKey(recon.id))  {
+                        map.containsKey(recon.judgmentHistoryEntry))  {
                     recon.judgment = Recon.Judgment.Matched;
                     recon.match = new ReconCandidate(
-                            map.get(recon.id),
+                            map.get(recon.judgmentHistoryEntry),
                             cell.value.toString(),
                             new String[0],
                             100);
+                    impactedColumns.add(i);
                 } else if (Recon.Judgment.Matched.equals(recon.judgment) && reset &&
-                        map.containsKey(recon.id))  {
+                        map.containsKey(recon.judgmentHistoryEntry))  {
                     recon.judgment = Recon.Judgment.New;
                     recon.match = null;
+                    impactedColumns.add(i);
                 }
             }
         }
@@ -98,14 +110,27 @@ public class NewItemLibrary {
      * Getter, only meant to be used by Jackson
      * @return the underlying map
      */
+    @JsonProperty("qidMap")
     public Map<Long, String> getQidMap() {
         return map;
     }
     
-    /**
-     * Setter, only meant to be used by Jackson
-     */
-    public void setQidMap(Map<Long, String> newMap) {
-        map = newMap;
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !NewItemLibrary.class.isInstance(other)) {
+            return false;
+        }
+        NewItemLibrary otherLibrary = (NewItemLibrary)other;
+        return map.equals(otherLibrary.getQidMap());
+    }
+    
+    @Override
+    public int hashCode() {
+        return map.hashCode();
+    }
+    
+    @Override
+    public String toString() {
+        return map.toString();
     }
 }

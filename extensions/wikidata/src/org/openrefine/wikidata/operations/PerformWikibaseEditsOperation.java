@@ -16,6 +16,7 @@ import org.json.JSONWriter;
 
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.NewItemLibrary;
+import org.openrefine.wikidata.editing.ReconEntityRewriter;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.UpdateScheduler;
@@ -279,10 +280,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 logger.info("Performing edits");
                 
                 for(ItemUpdate update : batch) {
+                    // Rewrite the update
+                    ReconEntityRewriter rewriter = new ReconEntityRewriter(newItemLibrary, update.getItemId());
+                    update = rewriter.rewrite(update);
                     
                     try {
                         // New item
-                        if (update.getItemId().getId() == "Q0") {
+                        if (update.getItemId().getId().equals("Q0")) {
                             ReconEntityIdValue newCell = (ReconEntityIdValue)update.getItemId();
                             update.normalizeLabelsAndAliases();
 
