@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package org.openrefine.wikidata.schema.entityvalues;
 
 import java.util.ArrayList;
@@ -14,43 +37,41 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.refine.model.Recon;
 
 /**
- * An EntityIdValue that holds not just the id but also
- * the label as fetched by either the reconciliation interface
- * or the suggester and its type, both stored as reconciliation
- * candidates.
+ * An EntityIdValue that holds not just the id but also the label as fetched by
+ * either the reconciliation interface or the suggester and its type, both
+ * stored as reconciliation candidates.
  * 
- * This label will be localized depending on the language chosen
- * by the user for OpenRefine's interface. Storing it lets us
- * reuse it later on without having to re-fetch it.
+ * This label will be localized depending on the language chosen by the user for
+ * OpenRefine's interface. Storing it lets us reuse it later on without having
+ * to re-fetch it.
  * 
- * Storing the types also lets us perform some constraint checks
- * without re-fetching the types of many items.
+ * Storing the types also lets us perform some constraint checks without
+ * re-fetching the types of many items.
  * 
- * @author antonin
+ * @author Antonin Delpeuch
  *
  */
 public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
-    
+
     private Recon _recon;
     private String _cellValue;
-    
+
     public ReconEntityIdValue(Recon match, String cellValue) {
         _recon = match;
         _cellValue = cellValue;
-        assert (Recon.Judgment.Matched.equals(_recon.judgment) ||
-                Recon.Judgment.New.equals(_recon.judgment));
+        assert (Recon.Judgment.Matched.equals(_recon.judgment) || Recon.Judgment.New.equals(_recon.judgment));
     }
-    
+
     @JsonIgnore
     public boolean isMatched() {
         return Recon.Judgment.Matched.equals(_recon.judgment) && _recon.match != null;
     }
-    
+
     @JsonIgnore
     public boolean isNew() {
         return !isMatched();
     }
-    
+
     public String getLabel() {
         if (isMatched()) {
             return _recon.match.name;
@@ -66,32 +87,28 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
             return new ArrayList<>();
         }
     }
-    
+
     @Override
     public abstract String getEntityType();
 
     /**
-     * Returns the integer used internally in OpenRefine to identify the new
-     * item.
+     * Returns the integer used internally in OpenRefine to identify the new item.
      * 
-     * @return
-     *     the judgment history entry id of the reconciled cell
+     * @return the judgment history entry id of the reconciled cell
      */
     public long getReconInternalId() {
         return getRecon().judgmentHistoryEntry;
     }
-    
-    
+
     /**
      * Returns the reconciliation object corresponding to this entity.
      * 
-     * @return
-     *     the full reconciliation metadata of the corresponding cell
+     * @return the full reconciliation metadata of the corresponding cell
      */
     public Recon getRecon() {
         return _recon;
     }
-    
+
     /**
      * Returns the id of the reconciled item
      */
@@ -100,9 +117,9 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         if (isMatched()) {
             return _recon.match.id;
         } else if (ET_ITEM.equals(getEntityType())) {
-            return "Q"+getReconInternalId();
+            return "Q" + getReconInternalId();
         } else if (ET_PROPERTY.equals(getEntityType())) {
-            return "P"+getReconInternalId();
+            return "P" + getReconInternalId();
         }
         return null;
     }
@@ -125,13 +142,13 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     public <T> T accept(ValueVisitor<T> valueVisitor) {
         return valueVisitor.visit(this);
     }
-    
+
     @Override
     public boolean equals(Object other) {
         return Equality.equalsEntityIdValue(this, other);
 
     }
-    
+
     @Override
     public int hashCode() {
         return Hash.hashCode(this);
@@ -139,10 +156,10 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
 
     @Override
     public String toString() {
-        if(isNew()) {
-            return "new item (reconciled from " + getReconInternalId() +")";
+        if (isNew()) {
+            return "new item (reconciled from " + getReconInternalId() + ")";
         } else {
-            return getIri() + " (reconciled from " + getReconInternalId()+")";
+            return getIri() + " (reconciled from " + getReconInternalId() + ")";
         }
     }
 }

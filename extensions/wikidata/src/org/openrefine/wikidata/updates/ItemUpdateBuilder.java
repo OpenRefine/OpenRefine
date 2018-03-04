@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package org.openrefine.wikidata.updates;
 
 import java.util.Set;
@@ -10,7 +33,6 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-
 /**
  * Constructs a {@link ItemUpdate} incrementally.
  * 
@@ -18,6 +40,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  *
  */
 public class ItemUpdateBuilder {
+
     private ItemIdValue qid;
     private List<Statement> addedStatements;
     private Set<Statement> deletedStatements;
@@ -25,12 +48,13 @@ public class ItemUpdateBuilder {
     private Set<MonolingualTextValue> descriptions;
     private Set<MonolingualTextValue> aliases;
     private boolean built;
-    
+
     /**
      * Constructor.
      * 
      * @param qid
-     *      the subject of the document. It can be a reconciled item value for new items.
+     *            the subject of the document. It can be a reconciled item value for
+     *            new items.
      */
     public ItemUpdateBuilder(ItemIdValue qid) {
         Validate.notNull(qid);
@@ -42,50 +66,50 @@ public class ItemUpdateBuilder {
         this.aliases = new HashSet<MonolingualTextValue>();
         this.built = false;
     }
-    
+
     /**
-     * Mark a statement for insertion. If it matches an existing
-     * statement, it will update the statement instead.
+     * Mark a statement for insertion. If it matches an existing statement, it will
+     * update the statement instead.
      * 
      * @param statement
-     *      the statement to add or update
+     *            the statement to add or update
      */
     public ItemUpdateBuilder addStatement(Statement statement) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         addedStatements.add(statement);
         return this;
     }
-    
+
     /**
-     * Mark a statement for deletion. If no such statement exists,
-     * nothing will be deleted.
+     * Mark a statement for deletion. If no such statement exists, nothing will be
+     * deleted.
      * 
      * @param statement
-     *          the statement to delete
+     *            the statement to delete
      */
     public ItemUpdateBuilder deleteStatement(Statement statement) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         deletedStatements.add(statement);
         return this;
     }
-    
+
     /**
      * Add a list of statement, as in {@link addStatement}.
      * 
      * @param statements
-     *        the statements to add
+     *            the statements to add
      */
     public ItemUpdateBuilder addStatements(Set<Statement> statements) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         addedStatements.addAll(statements);
         return this;
     }
-    
+
     /**
      * Delete a list of statements, as in {@link deleteStatement}.
      * 
      * @param statements
-     *          the statements to delete
+     *            the statements to delete
      */
     public ItemUpdateBuilder deleteStatements(Set<Statement> statements) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
@@ -94,24 +118,24 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Adds a label to the item. It will override any
-     * existing label in this language.
+     * Adds a label to the item. It will override any existing label in this
+     * language.
      * 
      * @param label
-     *      the label to add
+     *            the label to add
      */
     public ItemUpdateBuilder addLabel(MonolingualTextValue label) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         labels.add(label);
         return this;
     }
-    
+
     /**
-     * Adds a list of labels to the item. It will override any
-     * existing label in each language.
+     * Adds a list of labels to the item. It will override any existing label in
+     * each language.
      * 
      * @param labels
-     *      the labels to add
+     *            the labels to add
      */
     public ItemUpdateBuilder addLabels(Set<MonolingualTextValue> labels) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
@@ -120,24 +144,24 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Adds a description to the item. It will override any existing
-     * description in this language.
+     * Adds a description to the item. It will override any existing description in
+     * this language.
      * 
      * @param description
-     *      the description to add
+     *            the description to add
      */
     public ItemUpdateBuilder addDescription(MonolingualTextValue description) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         descriptions.add(description);
         return this;
     }
-    
+
     /**
-     * Adds a list of descriptions to the item. It will override any
-     * existing description in each language.
+     * Adds a list of descriptions to the item. It will override any existing
+     * description in each language.
      * 
      * @param descriptions
-     *      the descriptions to add
+     *            the descriptions to add
      */
     public ItemUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
@@ -146,39 +170,39 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Adds an alias to the item. It will be added to any existing
-     * aliases in that language.
+     * Adds an alias to the item. It will be added to any existing aliases in that
+     * language.
      * 
      * @param alias
-     *      the alias to add
+     *            the alias to add
      */
     public ItemUpdateBuilder addAlias(MonolingualTextValue alias) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
-        aliases.add(alias); 
+        aliases.add(alias);
         return this;
     }
-    
+
     /**
-     * Adds a list of aliases to the item. They will be added to any
-     * existing aliases in each language.
+     * Adds a list of aliases to the item. They will be added to any existing
+     * aliases in each language.
      * 
      * @param aliases
-     *      the aliases to add
+     *            the aliases to add
      */
     public ItemUpdateBuilder addAliases(Set<MonolingualTextValue> aliases) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
         this.aliases.addAll(aliases);
         return this;
     }
-  
+
     /**
      * Constructs the {@link ItemUpdate}.
+     * 
      * @return
      */
     public ItemUpdate build() {
         built = true;
-        return new ItemUpdate(qid, addedStatements, deletedStatements,
-                labels, descriptions, aliases);
+        return new ItemUpdate(qid, addedStatements, deletedStatements, labels, descriptions, aliases);
     }
 
 }

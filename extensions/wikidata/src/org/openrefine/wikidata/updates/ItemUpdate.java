@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package org.openrefine.wikidata.updates;
 
 import java.util.ArrayList;
@@ -23,42 +46,43 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A class to plan an update of an item, after evaluating the statements
- * but before fetching the current content of the item (this is why it does not
+ * A class to plan an update of an item, after evaluating the statements but
+ * before fetching the current content of the item (this is why it does not
  * extend StatementsUpdate).
  * 
  * @author Antonin Delpeuch
  */
 public class ItemUpdate {
+
     private final ItemIdValue qid;
     private final List<Statement> addedStatements;
     private final Set<Statement> deletedStatements;
     private final Set<MonolingualTextValue> labels;
     private final Set<MonolingualTextValue> descriptions;
     private final Set<MonolingualTextValue> aliases;
-    
+
     /**
      * Constructor.
      * 
      * @param qid
-     *      the subject of the document. It can be a reconciled item value for new items.
+     *            the subject of the document. It can be a reconciled item value for
+     *            new items.
      * @param addedStatements
-     *      the statements to add on the item. They should be distinct. They
-     *      are modelled as a list because their insertion order matters.
+     *            the statements to add on the item. They should be distinct. They
+     *            are modelled as a list because their insertion order matters.
      * @param deletedStatements
-     *      the statements to remove from the item
+     *            the statements to remove from the item
      * @param labels
-     *      the labels to add on the item
+     *            the labels to add on the item
      * @param descriptions
-     *      the descriptions to add on the item
+     *            the descriptions to add on the item
      * @param aliases
-     *      the aliases to add on the item. In theory their order should matter
-     *      but in practice people rarely rely on the order of aliases so this
-     *      is just kept as a set for simplicity.
+     *            the aliases to add on the item. In theory their order should
+     *            matter but in practice people rarely rely on the order of aliases
+     *            so this is just kept as a set for simplicity.
      */
     @JsonCreator
-    public ItemUpdate(
-            @JsonProperty("subject") ItemIdValue qid,
+    public ItemUpdate(@JsonProperty("subject") ItemIdValue qid,
             @JsonProperty("addedStatements") List<Statement> addedStatements,
             @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
             @JsonProperty("labels") Set<MonolingualTextValue> labels,
@@ -66,28 +90,28 @@ public class ItemUpdate {
             @JsonProperty("addedAliases") Set<MonolingualTextValue> aliases) {
         Validate.notNull(qid);
         this.qid = qid;
-        if(addedStatements == null) {
+        if (addedStatements == null) {
             addedStatements = Collections.emptyList();
         }
         this.addedStatements = addedStatements;
-        if(deletedStatements == null) {
+        if (deletedStatements == null) {
             deletedStatements = Collections.emptySet();
         }
         this.deletedStatements = deletedStatements;
-        if(labels == null) {
+        if (labels == null) {
             labels = Collections.emptySet();
         }
         this.labels = labels;
-        if(descriptions == null) {
+        if (descriptions == null) {
             descriptions = Collections.emptySet();
         }
         this.descriptions = descriptions;
-        if(aliases == null) {
+        if (aliases == null) {
             aliases = Collections.emptySet();
         }
         this.aliases = aliases;
     }
-    
+
     /**
      * @return the subject of the item
      */
@@ -95,10 +119,10 @@ public class ItemUpdate {
     public ItemIdValue getItemId() {
         return qid;
     }
-    
+
     /**
-     * Added statements are recorded as a list because
-     * their order of insertion matters.
+     * Added statements are recorded as a list because their order of insertion
+     * matters.
      * 
      * @return the list of all added statements
      */
@@ -106,7 +130,7 @@ public class ItemUpdate {
     public List<Statement> getAddedStatements() {
         return addedStatements;
     }
-    
+
     /**
      * @return the list of all deleted statements
      */
@@ -114,7 +138,7 @@ public class ItemUpdate {
     public Set<Statement> getDeletedStatements() {
         return deletedStatements;
     }
-    
+
     /**
      * @return the list of updated labels
      */
@@ -122,7 +146,7 @@ public class ItemUpdate {
     public Set<MonolingualTextValue> getLabels() {
         return labels;
     }
-    
+
     /**
      * @return the list of updated descriptions
      */
@@ -130,7 +154,7 @@ public class ItemUpdate {
     public Set<MonolingualTextValue> getDescriptions() {
         return descriptions;
     }
-    
+
     /**
      * @return the list of updated aliases
      */
@@ -138,7 +162,7 @@ public class ItemUpdate {
     public Set<MonolingualTextValue> getAliases() {
         return aliases;
     }
-    
+
     /**
      * @return true when this change is empty and its subject is not new
      */
@@ -146,30 +170,27 @@ public class ItemUpdate {
     public boolean isNull() {
         return isEmpty() && !isNew();
     }
-    
+
     /**
      * @return true when this change leaves the content of the document untouched
      */
     @JsonIgnore
     public boolean isEmpty() {
-        return (addedStatements.isEmpty()
-                && deletedStatements.isEmpty()
-                && labels.isEmpty()
-                && descriptions.isEmpty()
+        return (addedStatements.isEmpty() && deletedStatements.isEmpty() && labels.isEmpty() && descriptions.isEmpty()
                 && aliases.isEmpty());
     }
-    
+
     /**
-     * Merges all the changes in other into this instance.
-     * Both updates should have the same subject.
+     * Merges all the changes in other into this instance. Both updates should have
+     * the same subject.
      * 
      * @param other
-     *          the other change that should be merged
+     *            the other change that should be merged
      */
     public ItemUpdate merge(ItemUpdate other) {
         Validate.isTrue(qid.equals(other.getItemId()));
         List<Statement> newAddedStatements = new ArrayList<>(addedStatements);
-        for(Statement statement : other.getAddedStatements()) {
+        for (Statement statement : other.getAddedStatements()) {
             if (!newAddedStatements.contains(statement)) {
                 newAddedStatements.add(statement);
             }
@@ -182,20 +203,17 @@ public class ItemUpdate {
         newDescriptions.addAll(other.getDescriptions());
         Set<MonolingualTextValue> newAliases = new HashSet<>(aliases);
         newAliases.addAll(other.getAliases());
-        return new ItemUpdate(
-                qid, newAddedStatements, newDeletedStatements,
-                newLabels, newDescriptions, newAliases);
+        return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newDescriptions, newAliases);
     }
-    
+
     /**
-     * Group added statements in StatementGroups: useful if the
-     * item is new.
+     * Group added statements in StatementGroups: useful if the item is new.
      * 
      * @return a grouped version of getAddedStatements()
      */
     public List<StatementGroup> getAddedStatementGroups() {
         Map<PropertyIdValue, List<Statement>> map = new HashMap<>();
-        for(Statement statement : getAddedStatements()) {
+        for (Statement statement : getAddedStatements()) {
             PropertyIdValue propertyId = statement.getClaim().getMainSnak().getPropertyId();
             if (!map.containsKey(propertyId)) {
                 map.put(propertyId, new ArrayList<Statement>());
@@ -203,26 +221,26 @@ public class ItemUpdate {
             map.get(propertyId).add(statement);
         }
         List<StatementGroup> result = new ArrayList<>();
-        for(Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
+        for (Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
             result.add(new StatementGroupImpl(entry.getValue()));
         }
         return result;
     }
-    
+
     /**
-     * Group a list of ItemUpdates by subject: this is useful to make one single edit
-     * per item.
+     * Group a list of ItemUpdates by subject: this is useful to make one single
+     * edit per item.
      * 
      * @param itemDocuments
      * @return a map from item ids to merged ItemUpdate for that id
      */
     public static Map<EntityIdValue, ItemUpdate> groupBySubject(List<ItemUpdate> itemDocuments) {
         Map<EntityIdValue, ItemUpdate> map = new HashMap<>();
-        for(ItemUpdate update : itemDocuments) {
+        for (ItemUpdate update : itemDocuments) {
             if (update.isNull()) {
                 continue;
             }
-            
+
             ItemIdValue qid = update.getItemId();
             if (map.containsKey(qid)) {
                 ItemUpdate oldUpdate = map.get(qid);
@@ -233,59 +251,53 @@ public class ItemUpdate {
         }
         return map;
     }
-    
+
     /**
      * Is this update about a new item?
      */
     public boolean isNew() {
         return EntityIdValue.SITE_LOCAL.equals(getItemId().getSiteIri());
     }
-    
+
     /**
-     * This should only be used when creating a new item.
-     * This ensures that we never add an alias without adding
-     * a label in the same language.
+     * This should only be used when creating a new item. This ensures that we never
+     * add an alias without adding a label in the same language.
      */
     public ItemUpdate normalizeLabelsAndAliases() {
         // Ensure that we are only adding aliases with labels
-        Set<String> labelLanguages = labels.stream()
-                .map(l -> l.getLanguageCode())
-                .collect(Collectors.toSet());
+        Set<String> labelLanguages = labels.stream().map(l -> l.getLanguageCode()).collect(Collectors.toSet());
 
         Set<MonolingualTextValue> filteredAliases = new HashSet<>();
         Set<MonolingualTextValue> newLabels = new HashSet<>(labels);
-        for(MonolingualTextValue alias : aliases) {
-            if(!labelLanguages.contains(alias.getLanguageCode())) {
+        for (MonolingualTextValue alias : aliases) {
+            if (!labelLanguages.contains(alias.getLanguageCode())) {
                 labelLanguages.add(alias.getLanguageCode());
                 newLabels.add(alias);
             } else {
                 filteredAliases.add(alias);
             }
         }
-        return new ItemUpdate(qid, addedStatements, deletedStatements,
-                newLabels, descriptions, filteredAliases);
+        return new ItemUpdate(qid, addedStatements, deletedStatements, newLabels, descriptions, filteredAliases);
     }
-    
+
     @Override
     public boolean equals(Object other) {
-        if(other == null || !ItemUpdate.class.isInstance(other)) {
+        if (other == null || !ItemUpdate.class.isInstance(other)) {
             return false;
         }
-        ItemUpdate otherUpdate = (ItemUpdate)other;
-        return qid.equals(otherUpdate.getItemId())&&
-                addedStatements.equals(otherUpdate.getAddedStatements()) &&
-                deletedStatements.equals(otherUpdate.getDeletedStatements()) &&
-                labels.equals(otherUpdate.getLabels()) &&
-                descriptions.equals(otherUpdate.getDescriptions()) &&
-                aliases.equals(otherUpdate.getAliases());
+        ItemUpdate otherUpdate = (ItemUpdate) other;
+        return qid.equals(otherUpdate.getItemId()) && addedStatements.equals(otherUpdate.getAddedStatements())
+                && deletedStatements.equals(otherUpdate.getDeletedStatements())
+                && labels.equals(otherUpdate.getLabels()) && descriptions.equals(otherUpdate.getDescriptions())
+                && aliases.equals(otherUpdate.getAliases());
     }
-    
+
     @Override
     public int hashCode() {
-        return qid.hashCode() + addedStatements.hashCode() + deletedStatements.hashCode() +
-                labels.hashCode() + descriptions.hashCode() + aliases.hashCode();
+        return qid.hashCode() + addedStatements.hashCode() + deletedStatements.hashCode() + labels.hashCode()
+                + descriptions.hashCode() + aliases.hashCode();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -317,5 +329,5 @@ public class ItemUpdate {
         builder.append("\n>");
         return builder.toString();
     }
-    
+
 }

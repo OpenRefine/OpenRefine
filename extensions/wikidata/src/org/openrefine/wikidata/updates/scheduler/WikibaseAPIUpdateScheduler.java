@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.ArrayList;
@@ -15,33 +38,32 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 /**
  * A simple scheduler for batches commited via the Wikibase API.
  * 
- * The strategy is quite simple and makes at most two edits
- * per touched item (which is not minimal though). Each update
- * is split between statements making references to new items,
- * and statements not making these references. All updates with no
- * references to new items are done first (which creates all new
+ * The strategy is quite simple and makes at most two edits per touched item
+ * (which is not minimal though). Each update is split between statements making
+ * references to new items, and statements not making these references. All
+ * updates with no references to new items are done first (which creates all new
  * items), then all other updates are done.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
-    
+
     /**
-     * The first part of updates: the ones which create new items
-     * without referring to any other new item.
+     * The first part of updates: the ones which create new items without referring
+     * to any other new item.
      */
     private UpdateSequence pointerFreeUpdates;
     /**
-     * The second part of the updates: all existing items, plus
-     * all parts of new items that refer to other new items.
+     * The second part of the updates: all existing items, plus all parts of new
+     * items that refer to other new items.
      */
     private UpdateSequence pointerFullUpdates;
     /**
      * The set of all new items referred to in the whole batch.
      */
     private Set<ItemIdValue> allPointers;
-    
+
     private PointerExtractor extractor = new PointerExtractor();
 
     @Override
@@ -50,22 +72,20 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         pointerFreeUpdates = new UpdateSequence();
         pointerFullUpdates = new UpdateSequence();
         allPointers = new HashSet<>();
-        
-        for(ItemUpdate update : updates) {
+
+        for (ItemUpdate update : updates) {
             splitUpdate(update);
         }
-        
+
         // Part 1: add all the pointer free updates
         result.addAll(pointerFreeUpdates.getUpdates());
-        
+
         // Part 1': add the remaining new items that have not been touched
         Set<ItemIdValue> unseenPointers = new HashSet<>(allPointers);
         unseenPointers.removeAll(pointerFreeUpdates.getSubjects());
-        
-        result.addAll(unseenPointers.stream()
-                .map(e -> new ItemUpdateBuilder(e).build())
-                .collect(Collectors.toList()));
-        
+
+        result.addAll(unseenPointers.stream().map(e -> new ItemUpdateBuilder(e).build()).collect(Collectors.toList()));
+
         // Part 2: add all the pointer full updates
         result.addAll(pointerFullUpdates.getUpdates());
 
@@ -74,17 +94,16 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
 
     /**
      * Splits an update into two parts
+     * 
      * @param update
      */
     protected void splitUpdate(ItemUpdate update) {
-        ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId())
-                .addLabels(update.getLabels())
-                .addDescriptions(update.getDescriptions())
-                .addAliases(update.getAliases())
+        ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId()).addLabels(update.getLabels())
+                .addDescriptions(update.getDescriptions()).addAliases(update.getAliases())
                 .deleteStatements(update.getDeletedStatements());
         ItemUpdateBuilder pointerFullBuilder = new ItemUpdateBuilder(update.getItemId());
-        
-        for(Statement statement : update.getAddedStatements()) {
+
+        for (Statement statement : update.getAddedStatements()) {
             Set<ReconItemIdValue> pointers = extractor.extractPointers(statement);
             if (pointers.isEmpty()) {
                 pointerFreeBuilder.addStatement(statement);
@@ -93,8 +112,8 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
             }
             allPointers.addAll(pointers);
         }
-        
-        if(update.isNew()) {
+
+        if (update.isNew()) {
             // If the update is new, we might need to split it
             // in two (if it refers to any other new entity).
             ItemUpdate pointerFree = pointerFreeBuilder.build();
@@ -111,5 +130,5 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
             pointerFullUpdates.add(update);
         }
     }
-    
+
 }

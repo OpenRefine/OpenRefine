@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.Collections;
@@ -5,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -21,33 +43,29 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
- * A class that extracts the new entity ids referred to
- * in a statement.
+ * A class that extracts the new entity ids referred to in a statement.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
-    
+
     /**
-     * Extracts all the new entities mentioned by this statement. This
-     * does not include the subject of the statement.
+     * Extracts all the new entities mentioned by this statement. This does not
+     * include the subject of the statement.
      * 
      * @param statement
-     *     the statement to inspect
-     * @return
-     *     the set of all new entities mentioned by the statement
+     *            the statement to inspect
+     * @return the set of all new entities mentioned by the statement
      */
     public Set<ReconItemIdValue> extractPointers(Statement statement) {
         Set<ReconItemIdValue> result = new HashSet<>();
         result.addAll(extractPointers(statement.getClaim().getMainSnak()));
         result.addAll(extractPointers(statement.getClaim().getQualifiers()));
-        statement.getReferences().stream()
-            .map(l -> extractPointers(l.getSnakGroups()))
-            .forEach(s -> result.addAll(s));
+        statement.getReferences().stream().map(l -> extractPointers(l.getSnakGroups())).forEach(s -> result.addAll(s));
         return result;
     }
-    
+
     /**
      * Extracts all the new entities mentioned by this list of snak groups.
      * 
@@ -56,12 +74,10 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      */
     public Set<ReconItemIdValue> extractPointers(List<SnakGroup> snakGroups) {
         Set<ReconItemIdValue> result = new HashSet<>();
-        snakGroups.stream()
-                .map(s -> extractPointers(s))
-                .forEach(s -> result.addAll(s));
-        return result; 
+        snakGroups.stream().map(s -> extractPointers(s)).forEach(s -> result.addAll(s));
+        return result;
     }
-    
+
     /***
      * Extracts all the new entities mentioned by this snak group.
      * 
@@ -70,16 +86,14 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
      */
     public Set<ReconItemIdValue> extractPointers(SnakGroup snakGroup) {
         Set<ReconItemIdValue> result = new HashSet<>();
-        snakGroup.getSnaks().stream()
-                .map(s -> extractPointers(s))
-                .forEach(s -> result.addAll(s));
-        return result;                 
+        snakGroup.getSnaks().stream().map(s -> extractPointers(s)).forEach(s -> result.addAll(s));
+        return result;
     }
-    
+
     /**
-     * Extracts all new entities mentioned by this snak group.
-     * Currently there will be at most one: the target of the snak
-     * (as property ids cannot be new for now).
+     * Extracts all new entities mentioned by this snak group. Currently there will
+     * be at most one: the target of the snak (as property ids cannot be new for
+     * now).
      * 
      * @param snak
      * @return
@@ -90,7 +104,7 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
         result.addAll(extractPointers(snak.getValue()));
         return result;
     }
-    
+
     /**
      * Extracts any new entity from the value.
      * 
@@ -115,9 +129,9 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
 
     @Override
     public Set<ReconItemIdValue> visit(EntityIdValue value) {
-        if(ReconItemIdValue.class.isInstance(value)) {
-            ReconItemIdValue recon = (ReconItemIdValue)value;
-            if(recon.isNew()) {
+        if (ReconItemIdValue.class.isInstance(value)) {
+            ReconItemIdValue recon = (ReconItemIdValue) value;
+            if (recon.isNew()) {
                 return Collections.singleton(recon);
             }
         }
@@ -146,7 +160,7 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(TimeValue value) { 
+    public Set<ReconItemIdValue> visit(TimeValue value) {
         return null;
     }
 }

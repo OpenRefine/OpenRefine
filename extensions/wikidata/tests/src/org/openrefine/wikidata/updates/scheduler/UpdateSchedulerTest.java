@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
 import static org.junit.Assert.assertEquals;
@@ -12,11 +35,8 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public abstract class UpdateSchedulerTest {
 
@@ -24,7 +44,7 @@ public abstract class UpdateSchedulerTest {
     protected ItemIdValue existingIdB = Datamodel.makeWikidataItemIdValue("Q538");
     protected ItemIdValue newIdA = TestingData.makeNewItemIdValue(1234L, "new item A");
     protected ItemIdValue newIdB = TestingData.makeNewItemIdValue(5678L, "new item B");
-    
+
     protected Statement sAtoB = TestingData.generateStatement(existingIdA, existingIdB);
     protected Statement sBtoA = TestingData.generateStatement(existingIdB, existingIdA);
     protected Statement sAtoNewA = TestingData.generateStatement(existingIdA, newIdA);
@@ -32,55 +52,52 @@ public abstract class UpdateSchedulerTest {
     protected Statement sNewAtoB = TestingData.generateStatement(newIdA, existingIdB);
     protected Statement sNewAtoNewB = TestingData.generateStatement(newIdA, newIdB);
     protected Statement sNewAtoNewA = TestingData.generateStatement(newIdA, newIdA);
-    
+
     public abstract UpdateScheduler getScheduler();
-    
-    protected List<ItemUpdate> schedule(ItemUpdate... itemUpdates) throws ImpossibleSchedulingException {
+
+    protected List<ItemUpdate> schedule(ItemUpdate... itemUpdates)
+            throws ImpossibleSchedulingException {
         return getScheduler().schedule(Arrays.asList(itemUpdates));
     }
-    
+
     protected static void assertSetEquals(List<ItemUpdate> expected, List<ItemUpdate> actual) {
-        assertEquals(expected.stream().collect(Collectors.toSet()),
-                actual.stream().collect(Collectors.toSet()));
+        assertEquals(expected.stream().collect(Collectors.toSet()), actual.stream().collect(Collectors.toSet()));
     }
-    
+
     @Test
-    public void testNewItemNotMentioned() throws ImpossibleSchedulingException {
+    public void testNewItemNotMentioned()
+            throws ImpossibleSchedulingException {
         ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
         List<ItemUpdate> scheduled = schedule(updateA);
         ItemUpdate newUpdate = new ItemUpdateBuilder(newIdA).build();
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
-    
+
     @Test
-    public void testNewItemMentioned() throws ImpossibleSchedulingException {
+    public void testNewItemMentioned()
+            throws ImpossibleSchedulingException {
         ItemUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
         ItemUpdate newUpdate = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
         List<ItemUpdate> scheduled = schedule(updateA, newUpdate);
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
-    
+
     @Test
-    public void testMerge() throws ImpossibleSchedulingException {
-        ItemUpdate update1 = new ItemUpdateBuilder(existingIdA)
-                .addStatement(sAtoB)
-                .build();
+    public void testMerge()
+            throws ImpossibleSchedulingException {
+        ItemUpdate update1 = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
-                .addStatement(sAtoB)
-                .build();
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr")).addStatement(sAtoB).build();
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
     }
-    
+
     @Test
-    public void testMergeNew() throws ImpossibleSchedulingException {
-        ItemUpdate update1 = new ItemUpdateBuilder(newIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
-                .addStatement(sNewAtoB)
-                .build();
-        ItemUpdate update2 = new ItemUpdateBuilder(newIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
+    public void testMergeNew()
+            throws ImpossibleSchedulingException {
+        ItemUpdate update1 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
+                .addStatement(sNewAtoB).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
                 .build();
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));

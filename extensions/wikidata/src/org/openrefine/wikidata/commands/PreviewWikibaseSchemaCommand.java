@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antonin Delpeuch
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
 /*
 
 Copyright 2010, Google Inc.
@@ -34,8 +57,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.wikidata.commands;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
@@ -63,25 +84,25 @@ import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Project project = getProject(request);
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            
+
             String jsonString = request.getParameter("schema");
-            
 
             WikibaseSchema schema = null;
             if (jsonString != null) {
                 try {
                     JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
                     schema = WikibaseSchema.reconstruct(json);
-                } catch(JSONException e) {
+                } catch (JSONException e) {
                     respond(response, "error", "Wikibase schema could not be parsed.");
                     return;
                 }
@@ -92,20 +113,20 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 respond(response, "error", "No Wikibase schema provided.");
                 return;
             }
-            
+
             QAWarningStore warningStore = new QAWarningStore();
-            
+
             // Evaluate project
             Engine engine = getEngine(request, project);
             List<ItemUpdate> editBatch = schema.evaluate(project, engine, warningStore);
-            
+
             StringWriter sb = new StringWriter(2048);
             JSONWriter writer = new JSONWriter(sb);
             writer.object();
-            
+
             {
                 StringWriter stringWriter = new StringWriter();
-                
+
                 // Inspect the edits and generate warnings
                 EditInspector inspector = new EditInspector(warningStore);
                 inspector.inspect(editBatch);
@@ -115,22 +136,22 @@ public class PreviewWikibaseSchemaCommand extends Command {
                     warning.write(writer, new Properties());
                 }
                 writer.endArray();
-                
+
                 // this is not the length of the warnings array written before,
                 // but the total number of issues raised (before deduplication)
                 writer.key("nb_warnings");
                 writer.value(warningStore.getNbWarnings());
-                
+
                 // Export to QuickStatements
-                QuickStatementsExporter exporter = new QuickStatementsExporter(); 
+                QuickStatementsExporter exporter = new QuickStatementsExporter();
                 exporter.translateItemList(editBatch, stringWriter);
-                
+
                 writer.key("quickstatements");
                 writer.value(FirstLinesExtractor.extractFirstLines(stringWriter.toString(), 50));
             }
-            
+
             writer.endObject();
-            
+
             respond(response, sb.toString());
         } catch (Exception e) {
             respondException(response, e);
