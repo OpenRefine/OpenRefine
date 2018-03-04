@@ -279,10 +279,14 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   .text($.i18n._('wikidata-schema')["alias"])
   .appendTo(type_input);
   type_input.val(type);
+  type_input.on('change', function(e) {
+    SchemaAlignmentDialog._hasChanged();
+  });
 
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(namedesc);
   SchemaAlignmentDialog._makeDeleteButton().click(function() {
      namedesc.remove();
+     SchemaAlignmentDialog._hasChanged();
   }).appendTo(toolbar);
 
   var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);

@@ -28,6 +28,7 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -186,13 +187,17 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
+            
+            // Generate batch token
+            long token = (new Random()).nextLong();
+            String summary = _summary + " #OR:"+(Long.toHexString(token).substring(0, 7));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
 
             // Prepare the edits
             NewItemLibrary newItemLibrary = new NewItemLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, _summary,
+            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
                     50);
 
             // Perform edits

@@ -6,7 +6,8 @@ WarningsRenderer._renderEntity = function(entity) {
       entity.id = entity.value.id;
   }
   var id = entity.id;
-  var is_new = id == "Q0";
+  console.log(entity);
+  var is_new = entity.siteIri == "http://localhost/entity/";
   if (is_new) {
      id = $.i18n._('wikidata-preview')['new-id'];
   }

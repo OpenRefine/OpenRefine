@@ -1,12 +1,6 @@
 var ManageAccountDialog = {};
-/*
-  $.post(
-      "command/core/get-all-preferences",
-      null,
-      populatePreferences,
-      "json"
-  );
-*/
+
+ManageAccountDialog.firstLogin = true;
 
 ManageAccountDialog.launch = function(logged_in_username, callback) {
    $.post(
@@ -23,10 +17,10 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   var self = this;
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/manage-account-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
-  console.log(saved_credentials);
+  ManageAccountDialog.firstLaunch = false;
 
   this._elmts.dialogHeader.text($.i18n._('wikidata-account')["dialog-header"]);
-  this._elmts.explainLogIn.text($.i18n._('wikidata-account')["explain-log-in"]);
+  this._elmts.explainLogIn.html($.i18n._('wikidata-account')["explain-log-in"]);
   this._elmts.usernameLabel.text($.i18n._('wikidata-account')["username-label"]);
   this._elmts.usernameInput.attr("placeholder", $.i18n._('wikidata-account')["username-placeholder"]);
   this._elmts.passwordLabel.text($.i18n._('wikidata-account')["password-label"]);
@@ -51,7 +45,9 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
       elmts.logoutArea.hide();
   }
 
-  elmts.loggedInUsername.text(logged_in_username);
+  elmts.loggedInUsername
+     .text(logged_in_username)
+     .attr('href', 'https://www.wikidata.org/wiki/User:'+logged_in_username);
   
   frame.find('.cancel-button').click(function() {
      dismiss();
@@ -88,9 +84,15 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
 };
 
 ManageAccountDialog.isLoggedIn = function(callback) {
+   var discardWaiter = function() { };
+   if(ManageAccountDialog.firstLogin) {
+       discardWaiter = DialogSystem.showBusy($.i18n._('wikidata-account')["connecting-to-wikidata"]);
+   }
    $.get(
       "command/wikidata/login",
        function(data) {
+          discardWaiter();
+          ManageAccountDialog.firstLogin = false;
           callback(data.username);
    });
 }; 

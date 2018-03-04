@@ -1,8 +1,12 @@
 <div class="dialog-frame" style="width: 800px;">
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
-    <p class="body-text" bind="explainLogIn">
-    </p>
+    <a href="https://www.wikidata.org/" target="_blank">
+        <img src="extension/wikidata/images/wikidata.png" class="wikidata-logo" alt="Wikidata logo" />
+    </a>
+    <div class="right-of-logo">
+        <p class="body-text" bind="explainLogIn">
+        </p>
         <div class="wikibase-user-management-area">
           <div class="wikibase-user-login" bind="loginArea">
             <div bind="invalidCredentials" class="wikibase-invalid-credentials"></div>
@@ -29,7 +33,7 @@
           </div>
           <div class="wikibase-user-logout" bind="logoutArea">
             <p><span bind="loggedInAs"></span>
-               <span bind="loggedInUsername"></span></p>
+               <a bind="loggedInUsername" target="_blank"></a></p>
             <form bind="logoutForm" method="post">
               <input type="hidden" name="wb-username" value="null" />
               <input name="wb-password" type="hidden" value="null" />
@@ -40,5 +44,6 @@
             </div>
           </div>
         </div>
+     </div>
   </div>
 </div>

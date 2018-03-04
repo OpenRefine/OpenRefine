@@ -1,11 +1,10 @@
 var PerformEditsDialog = {};
 
-PerformEditsDialog.launch = function(logged_in_username) {
+PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   var self = this;
   var elmts = this._elmts;
   var frame = this.frame;
 
-  console.log(this.missingSchema);
   if (this.missingSchema) {
     return;
   }
@@ -16,6 +15,7 @@ PerformEditsDialog.launch = function(logged_in_username) {
   this._elmts.reviewYourEdits.html($.i18n._('perform-wikidata-edits')["review-your-edits"]);
   this._elmts.loggedInAs.text($.i18n._('perform-wikidata-edits')["logged-in-as"]);
   this._elmts.editSummaryLabel.text($.i18n._('perform-wikidata-edits')["edit-summary-label"]);
+  this._elmts.editSummary.attr('placeholder', $.i18n._('perform-wikidata-edits')["edit-summary-placeholder"]);
   this._elmts.performEditsButton.text($.i18n._('perform-wikidata-edits')["perform-edits"]);
   this._elmts.cancelButton.text($.i18n._('perform-wikidata-edits')["cancel"]);
 
@@ -23,27 +23,33 @@ PerformEditsDialog.launch = function(logged_in_username) {
     DialogSystem.dismissUntil(self._level - 1);
   };
 
-  elmts.loggedInUsername.text(logged_in_username);
+  elmts.loggedInUsername
+   .text(logged_in_username)
+   .attr('href','https://www.wikidata.org/wiki/User:'+logged_in_username);
   
   frame.find('.cancel-button').click(function() {
      dismiss();
   });
 
-   elmts.performEditsButton.click(function() {
-    Refine.postProcess(
-       "wikidata",
-       "perform-wikibase-edits",
-       {},
-       {
-         summary: elmts.editSummary.val(),
-       },
-       { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-       { onDone:
-          function() {
-           dismiss();
-          }
-       });
-  });
+  if (max_severity === 'CRITICAL') {
+      elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
+  } else {
+    elmts.performEditsButton.click(function() {
+        Refine.postProcess(
+        "wikidata",
+        "perform-wikibase-edits",
+        {},
+        {
+            summary: elmts.editSummary.val(),
+        },
+        { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+        { onDone:
+            function() {
+            dismiss();
+            }
+        });
+    });
+  }
 };
 
 PerformEditsDialog._updateWarnings = function(data) {
@@ -68,13 +74,15 @@ PerformEditsDialog.checkAndLaunch = function () {
 
    ManageAccountDialog.ensureLoggedIn(function(logged_in_username) {
        if (logged_in_username) {
+            var discardWaiter = DialogSystem.showBusy($.i18n._('perform-wikidata-edits')["analyzing-edits"]);
             $.post(
                 "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
                 { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
                 function(data) {
+                   discardWaiter();
                    if(data['status'] != 'error') {
                        PerformEditsDialog._updateWarnings(data);
-                       PerformEditsDialog.launch(logged_in_username);
+                       PerformEditsDialog.launch(logged_in_username, data['max_severity']);
                    } else {
                        SchemaAlignmentDialog.launch(
                            PerformEditsDialog.checkAndLaunch);

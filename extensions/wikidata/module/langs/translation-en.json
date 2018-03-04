@@ -48,7 +48,7 @@
         },
         "wikidata-account": {
                 "dialog-header": "Wikidata account",
-                "explain-log-in": "Logging in to Wikidata will allow you to perform edits directly from OpenRefine.",
+                "explain-log-in": "Logging in to <a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a> lets you to perform edits directly from OpenRefine.",
                 "username-label": "Username:",
                 "username-placeholder": "Enter your username",
                 "password-label": "Password:",
@@ -57,20 +57,23 @@
                 "close": "Close",
                 "log-in": "Log in",
                 "logged-in-as": "You are logged in as:",
-                "log-out": "Log out"
+                "log-out": "Log out",
+                "connecting-to-wikidata": "Connecting to Wikidata..."
         },
         "perform-wikidata-edits": {
                 "dialog-header": "Perform edits on Wikidata",
-                "review-your-edits": "Please review your edits before pushing them to Wikidata. Consider requesting feedback at the <a href=\"https://www.wikidata.org/wiki/Wikidata:Data_Import_Hub\">Data Import Hub</a> for large datasets.",
+                "review-your-edits": "Please check your edits carefully before pushing them to Wikidata. Large edit batches should be submitted for <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a> first.",
                 "logged-in-as": "You are logged in as",
                 "edit-summary-label": "Edit summary:",
+                "edit-summary-placeholder": "a few words to describe your edits",
                 "perform-edits": "Perform edits",
-                "cancel": "Cancel"
+                "cancel": "Cancel",
+                "analyzing-edits": "Analyzing your edits..."
         },
         "warnings-messages": {
                 "new-item-created": {
                         "title": "This batch will create new Wikidata items.",
-                        "body": "Please make sure that these items do not exist yet and are suitable for inclusion in Wikidata."
+                        "body": "Please make sure that these items do not exist yet and are <a href=\"https://www.wikidata.org/wiki/Wikidata:Notability\" target=\"_blank\">suitable for inclusion in Wikidata</a>."
                 },
                 "new-item-without-labels-or-aliases": {
                         "title": "New items created without any label or alias.",
