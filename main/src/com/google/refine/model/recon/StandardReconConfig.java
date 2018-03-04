@@ -111,8 +111,13 @@ public class StandardReconConfig extends ReconConfig {
         }
         
         JSONObject t = obj.has("type") && !obj.isNull("type") ? obj.getJSONObject("type") : null;
-        
-        int limit = obj.has("limit") && !obj.isNull("limit") ? obj.getInt("limit") : 0;
+
+        int limit;
+        try {
+            limit = obj.has("limit") && !obj.isNull("limit") ? obj.getInt("limit") : 0;
+        } catch(JSONException e) {
+            limit = 0;
+        }
         
         return new StandardReconConfig(
             obj.getString("service"),

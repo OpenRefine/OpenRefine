@@ -53,7 +53,7 @@ public class ReconTests extends RefineTest {
      * @throws Exception
      */
     @Test
-    public void limitJSONKeyTest() throws Exception {
+    public void limitJSONKeyAsIntTest() throws Exception {
         JSONObject obj = new JSONObject(
                 " {\n" + 
                 "        \"mode\": \"standard-service\",\n" + 
@@ -74,4 +74,35 @@ public class ReconTests extends RefineTest {
         // Assert the object is created
         Assert.assertTrue(config != null);
     }
+    
+    /**
+     * Regression for issue #1526:
+     * the UI used to send an empty limit as an empty string, which
+     * failed to be parsed by the backend.
+     * @throws Exception
+     */
+    @Test
+    public void limitJSONKeyAsEmptyStringTest() throws Exception {
+        JSONObject obj = new JSONObject(
+                " {\n" + 
+                "        \"mode\": \"standard-service\",\n" + 
+                "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" + 
+                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
+                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" + 
+                "        \"type\": {\n" + 
+                "                \"id\": \"Q13442814\",\n" + 
+                "                \"name\": \"scientific article\"\n" + 
+                "        },\n" + 
+                "        \"autoMatch\": true,\n" + 
+                "        \"columnDetails\": [],\n" + 
+                "        \"limit\": \"\"\n" + 
+                " }");
+        
+        ReconConfig config = StandardReconConfig.reconstruct(obj);
+        
+        // Assert the object is created
+        Assert.assertTrue(config != null);
+    }
+    
+
 }
