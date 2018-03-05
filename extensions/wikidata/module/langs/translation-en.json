@@ -27,7 +27,7 @@
                 "label": "Label",
                 "description": "Description",
                 "alias": "Alias",
-                "item-or-reconciled-column": "item or reconciled column",
+                "item-or-reconciled-column": "type item or drag reconciled column here",
                 "amount": "amount",
                 "unit": "unit",
                 "full-url": "full URL including the protocol",

@@ -28,6 +28,8 @@ import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 
@@ -48,6 +50,8 @@ import com.google.refine.preference.PreferenceStore;
  */
 
 public class ConnectionManager {
+    
+    final static Logger logger = LoggerFactory.getLogger("connection_mananger");
 
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
 
@@ -76,7 +80,7 @@ public class ConnectionManager {
                 array.put(obj);
                 prefStore.put(PREFERENCE_STORE_KEY, array);
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
 
@@ -108,7 +112,7 @@ public class ConnectionManager {
             try {
                 return array.getJSONObject(0);
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
         return null;
@@ -121,7 +125,7 @@ public class ConnectionManager {
                 connection.logout();
                 connection = null;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
     }

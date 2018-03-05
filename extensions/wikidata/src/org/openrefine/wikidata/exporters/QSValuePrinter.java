@@ -51,9 +51,8 @@ public class QSValuePrinter implements ValueVisitor<String> {
 
     @Override
     public String visit(DatatypeIdValue value) {
-        // unsupported according to
-        // https://tools.wmflabs.org/wikidata-todo/quick_statements.php?
-        return null;
+        // impossible case (this is actually a bug in WDTK, DatatypeIdValue should not subclass Value)
+        throw new IllegalArgumentException();
     }
 
     @Override
