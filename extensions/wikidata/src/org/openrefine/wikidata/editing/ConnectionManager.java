@@ -54,13 +54,10 @@ public class ConnectionManager {
     private PreferenceStore prefStore;
     private ApiConnection connection;
 
-    private static class ConnectionManagerHolder {
-
-        private static final ConnectionManager instance = new ConnectionManager();
-    }
+    private static final ConnectionManager instance = new ConnectionManager();
 
     public static ConnectionManager getInstance() {
-        return ConnectionManagerHolder.instance;
+        return instance;
     }
 
     private ConnectionManager() {
@@ -78,7 +75,6 @@ public class ConnectionManager {
                 obj.put("password", password);
                 array.put(obj);
                 prefStore.put(PREFERENCE_STORE_KEY, array);
-                // TODO save preferences (find out how)
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -108,7 +104,7 @@ public class ConnectionManager {
 
     public JSONObject getStoredCredentials() {
         JSONArray array = (JSONArray) prefStore.get(PREFERENCE_STORE_KEY);
-        if (array.length() > 0) {
+        if (array != null && array.length() > 0) {
             try {
                 return array.getJSONObject(0);
             } catch (JSONException e) {
