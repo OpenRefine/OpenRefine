@@ -190,7 +190,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             
             // Generate batch token
             long token = (new Random()).nextLong();
-            String summary = _summary + " #OR:"+(Long.toHexString(token).substring(0, 7));
+            String summary = _summary + String.format(" ([[Wikidata:Edit groups/OR/%s|discuss]])",
+                    (Long.toHexString(token).substring(0, 7)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
