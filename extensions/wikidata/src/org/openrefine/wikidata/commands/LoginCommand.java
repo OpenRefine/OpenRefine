@@ -64,7 +64,7 @@ public class LoginCommand extends Command {
             writer.value(manager.getUsername());
             writer.endObject();
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         respond(response, sb.toString());
     }
