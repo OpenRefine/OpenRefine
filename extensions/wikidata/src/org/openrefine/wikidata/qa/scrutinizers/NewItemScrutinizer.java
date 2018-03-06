@@ -32,7 +32,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
  * 
  * @author Antonin Delpeuch
  */
-public class NewItemScrutinizer extends ItemUpdateScrutinizer {
+public class NewItemScrutinizer extends EditScrutinizer {
 
     public static final String noLabelType = "new-item-without-labels-or-aliases";
     public static final String noDescType = "new-item-without-descriptions";

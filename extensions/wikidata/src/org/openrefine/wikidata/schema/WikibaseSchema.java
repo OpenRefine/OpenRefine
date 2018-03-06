@@ -23,20 +23,26 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -52,6 +58,7 @@ import com.google.refine.model.Row;
  * @author Antonin Delpeuch
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
@@ -65,6 +72,14 @@ public class WikibaseSchema implements OverlayModel {
      */
     public WikibaseSchema() {
 
+    }
+    
+    /**
+     * Constructor for deserialization via Jackson
+     */
+    @JsonCreator
+    public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs) {
+        this.itemDocumentExprs = exprs;
     }
 
     /**
@@ -80,7 +95,7 @@ public class WikibaseSchema implements OverlayModel {
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
     }
-
+    
     public void setItemDocumentExpressions(List<WbItemDocumentExpr> exprs) {
         this.itemDocumentExprs = exprs;
     }
@@ -168,17 +183,22 @@ public class WikibaseSchema implements OverlayModel {
 
     static public WikibaseSchema reconstruct(JSONObject o)
             throws JSONException {
-
-        JSONArray changeArr = o.getJSONArray("itemDocuments");
-        WikibaseSchema schema = new WikibaseSchema();
-        for (int i = 0; i != changeArr.length(); i++) {
-            WbItemDocumentExpr changeExpr = JacksonJsonizable.fromJSONClass(changeArr.getJSONObject(i),
-                    WbItemDocumentExpr.class);
-            schema.itemDocumentExprs.add(changeExpr);
+        return reconstruct(o.toString());
+    }    
+    
+    static public WikibaseSchema reconstruct(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(json, WikibaseSchema.class);
+        } catch (JsonParseException e) {
+            throw new JSONException(e.toString());
+        } catch (JsonMappingException e) {
+            throw new JSONException(e.toString());
+        } catch (IOException e) {
+            throw new JSONException(e.toString());
         }
-        return schema;
     }
-
+    
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {

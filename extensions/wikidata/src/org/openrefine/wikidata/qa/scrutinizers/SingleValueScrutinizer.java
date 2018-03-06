@@ -38,7 +38,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  * @author Antonin Delpeuch
  *
  */
-public class SingleValueScrutinizer extends ItemUpdateScrutinizer {
+public class SingleValueScrutinizer extends EditScrutinizer {
 
     public static final String type = "single-valued-property-added-more-than-once";
 

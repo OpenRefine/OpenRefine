@@ -100,8 +100,21 @@ public class EditInspector {
 
         Map<EntityIdValue, ItemUpdate> updates = ItemUpdate.groupBySubject(editBatch);
         List<ItemUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
+        
         for (EditScrutinizer scrutinizer : scrutinizers.values()) {
-            scrutinizer.scrutinize(mergedUpdates);
+            scrutinizer.batchIsBeginning();
+        }
+        
+        for(ItemUpdate update : mergedUpdates) {
+            if(!update.isNull()) {
+                for (EditScrutinizer scrutinizer : scrutinizers.values()) {
+                    scrutinizer.scrutinize(update);
+                }
+            }
+        }
+        
+        for(EditScrutinizer scrutinizer : scrutinizers.values()) {
+            scrutinizer.batchIsFinished();
         }
 
         if (warningStore.getNbWarnings() == 0) {

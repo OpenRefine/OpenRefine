@@ -53,6 +53,13 @@ public abstract class EditScrutinizer {
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
     }
+    
+    /**
+     * Called before an edit batch is scrutinized.
+     */
+    public void batchIsBeginning() {
+        
+    }
 
     /**
      * Reads the candidate edits and emits warnings in the store
@@ -60,8 +67,22 @@ public abstract class EditScrutinizer {
      * @param edit:
      *            the list of ItemUpdates to scrutinize
      */
-    public abstract void scrutinize(List<ItemUpdate> edit);
-
+    public abstract void scrutinize(ItemUpdate edit);
+    
+    /**
+     * Method called once the edit batch has been read entirely
+     */
+    public void batchIsFinished() {
+        
+    }
+    
+    /**
+     * Emits an issue that will be reported to the user,
+     * after mergin with other issues of the same kind.
+     * 
+     * @param warning
+     *    the issue to report
+     */
     protected void addIssue(QAWarning warning) {
         _store.addWarning(warning);
     }

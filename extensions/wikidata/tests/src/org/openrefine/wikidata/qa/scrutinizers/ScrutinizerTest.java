@@ -55,7 +55,13 @@ public abstract class ScrutinizerTest {
     }
 
     public void scrutinize(ItemUpdate... updates) {
-        scrutinizer.scrutinize(Arrays.asList(updates));
+        scrutinizer.batchIsBeginning();
+        for(ItemUpdate update : Arrays.asList(updates)) {
+            if(!update.isNull()) {
+                scrutinizer.scrutinize(update);
+            }
+        }
+        scrutinizer.batchIsFinished();
     }
 
     public void assertWarningsRaised(String... types) {

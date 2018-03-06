@@ -30,13 +30,24 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 public class NoEditsMadeScrutinizer extends EditScrutinizer {
 
     public static final String type = "no-edit-generated";
+    
+    private boolean nonNullUpdateSeen = false;
+    
+    @Override
+    public void batchIsBeginning() {
+        nonNullUpdateSeen = false;
+    }
 
     @Override
-    public void scrutinize(List<ItemUpdate> edit) {
-        if (edit.stream().allMatch(e -> e.isNull())) {
+    public void scrutinize(ItemUpdate edit) {
+        nonNullUpdateSeen = true;
+    }
+    
+    @Override
+    public void batchIsFinished() {
+        if(!nonNullUpdateSeen) {
             info(type);
         }
-
     }
 
 }
