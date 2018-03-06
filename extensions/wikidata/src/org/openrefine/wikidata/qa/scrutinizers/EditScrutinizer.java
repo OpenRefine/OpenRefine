@@ -78,7 +78,7 @@ public abstract class EditScrutinizer {
     
     /**
      * Emits an issue that will be reported to the user,
-     * after mergin with other issues of the same kind.
+     * after merging with other issues of the same kind.
      * 
      * @param warning
      *    the issue to report
