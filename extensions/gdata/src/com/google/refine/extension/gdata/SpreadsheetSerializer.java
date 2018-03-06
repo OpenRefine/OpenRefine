@@ -60,12 +60,12 @@ final class SpreadsheetSerializer implements TabularSerializer {
 
         Sheets.Spreadsheets.BatchUpdate request;
         try {
-            logger.info("spreadsheetId: " + spreadsheetId);
-            logger.info("requestBody:" + requestBody.toString());
+            logger.debug("spreadsheetId: " + spreadsheetId);
+            logger.debug("requestBody:" + requestBody.toString());
             request = service.spreadsheets().batchUpdate(spreadsheetId, requestBody);
             
             BatchUpdateSpreadsheetResponse response = request.execute();
-            logger.info("response:" + response.toPrettyString());
+            logger.debug("response:" + response.toPrettyString());
         } catch (IOException e) {
             exceptions.add(e);
         }
@@ -77,7 +77,7 @@ final class SpreadsheetSerializer implements TabularSerializer {
             batchRequest = new Request();
             rows = new ArrayList<RowData>(BATCH_SIZE);
         }
-        List<com.google.api.services.sheets.v4.model.CellData> cellDatas = new ArrayList<com.google.api.services.sheets.v4.model.CellData>();
+        List<com.google.api.services.sheets.v4.model.CellData> cellDatas = new ArrayList<>();
         RowData rowData = new RowData();
         
         for (int c = 0; c < cells.size(); c++) {
