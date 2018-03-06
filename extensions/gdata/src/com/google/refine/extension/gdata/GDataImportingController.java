@@ -146,7 +146,7 @@ public class GDataImportingController implements ImportingController {
         Fusiontables.Table.List listTables = service.table().list();
         TableList tablelist = listTables.execute();
         
-        if (tablelist == null)
+        if (tablelist == null || tablelist.getItems() == null)
             return;
         
         for (Table table : tablelist.getItems()) {
