@@ -32,7 +32,7 @@ Contact us
 Licensing and legal issues
 --------------------------
 OpenRefine is open source software and is licensed under the BSD license
-located in the [LICENSE.txt](LICENSE.txt). See that file also for information on open source
+located in the [LICENSE.txt](LICENSE.txt). See the folder `licenses` for information on open source
 libraries that OpenRefine depends on.
 
 Credits
