@@ -92,7 +92,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
-import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
@@ -1133,17 +1132,7 @@ public class ImportingUtilities {
                              .stream()
                              .limit(INFER_ROW_LIMIT)
                              .collect(Collectors.toList());
-                    
-                    // convert the null object to prevent the NPE
-                    for (Row row : rows) {
-                        for (int i = 0; i < row.cells.size(); i++) {
-                            Cell cell = row.cells.get(i);
-                            if (cell == null) {
-                                row.cells.set(i, new Cell(StringUtils.EMPTY, null));
-                            }
-                        }
-                        listCells.add(row.cells.toArray());
-                    }
+                    rows.forEach(r->listCells.add(r.cells.toArray()));
                     try {
                         JSONObject fieldsJSON = TypeInferrer.getInstance().infer(listCells, 
                                 project.columnModel.getColumnNames().toArray(new String[0]),
