@@ -40,9 +40,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.OffsetDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -200,13 +199,13 @@ public class CsvExporterTests extends RefineTest {
     }
     
     @Test
-    public void exportDateColumns(){
+    public void exportDateColumnsPreVersion28(){
         CreateGrid(1,2);
-        LocalDateTime localDate = LocalDateTime.now();
-        OffsetDateTime date = OffsetDateTime.now(ZoneId.of("Z"));
+        Calendar calendar = Calendar.getInstance();
+        Date date = new Date();
 
         when(options.getProperty("printColumnHeader")).thenReturn("false");
-        project.rows.get(0).cells.set(0, new Cell(localDate, null));
+        project.rows.get(0).cells.set(0, new Cell(calendar, null));
         project.rows.get(0).cells.set(1, new Cell(date, null));
 
         try {
@@ -215,12 +214,11 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        String expectedOutput = alignFractionalDigits(ParsingUtilities.localDateToString(localDate)) + "," +
-                alignFractionalDigits(ParsingUtilities.dateToString(date)) + "\n";
+        String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
+            ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
 
         Assert.assertEquals(writer.toString(), expectedOutput);
     }
-
     //helper methods
 
     protected void CreateColumns(int noOfColumns){

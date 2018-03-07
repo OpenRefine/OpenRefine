@@ -292,11 +292,8 @@ public class ProjectMetadata  extends AbstractMetadata {
 
     private void extractModifiedLocalTime(JSONObject obj) {
         String modified = JSONUtilities.getString(obj, "modified", LocalDateTime.now().toString());
-        if (modified.endsWith("Z")) {
-            this._modified = ParsingUtilities.stringToDate(modified).toLocalDateTime();
-        } else {
-            this._modified = ParsingUtilities.stringToLocalDate(modified);
-        }
+        
+        this._modified = ParsingUtilities.stringToLocalDate(modified);
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
