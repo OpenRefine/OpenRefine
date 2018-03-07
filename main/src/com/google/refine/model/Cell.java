@@ -35,8 +35,12 @@ package com.google.refine.model;
 
 import java.io.Serializable;
 import java.io.Writer;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -87,11 +91,19 @@ public class Cell implements HasFields, Jsonizable {
         } else {
             writer.key("v");
             if (value != null) {
-                if (value instanceof LocalDateTime) {
-                    writer.value(ParsingUtilities.localDateToString((LocalDateTime)value));
-                    writer.key("t"); writer.value("date");
+                Instant instant = null;
+                if (value instanceof Calendar) {
+                    instant = ((Calendar)value).toInstant();
+                } else if (value instanceof Date) {
+                    instant = ((Date)value).toInstant();
                 } else if (value instanceof OffsetDateTime) {
-                    writer.value(ParsingUtilities.dateToString((OffsetDateTime) value));
+                    instant = ((OffsetDateTime)value).toInstant();
+                } else if (value instanceof LocalDateTime) {
+                    instant = ((LocalDateTime)value).toInstant(ZoneOffset.of("Z"));
+                }
+                
+                if (instant != null) {
+                    writer.value(ParsingUtilities.instantToString(instant));
                     writer.key("t"); writer.value("date");
                 } else if (value instanceof Double 
                         && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
