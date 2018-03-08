@@ -365,6 +365,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                 }
                             }
                         }
+                        encoding = encoding.replaceAll("(^[\" ]*|[ \";]*$)", "");
                         return ParsingUtilities.inputStreamToString(
                                                 is, (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
 
