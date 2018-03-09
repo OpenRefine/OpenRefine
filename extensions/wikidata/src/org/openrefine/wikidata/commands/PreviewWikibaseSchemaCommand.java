@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
@@ -49,7 +48,6 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.utils.FirstLinesExtractor;
 
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommand extends Command {
 
@@ -68,8 +66,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             WikibaseSchema schema = null;
             if (jsonString != null) {
                 try {
-                    JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-                    schema = WikibaseSchema.reconstruct(json);
+                    schema = WikibaseSchema.reconstruct(jsonString);
                 } catch (JSONException e) {
                     respond(response, "error", "Wikibase schema could not be parsed.");
                     return;
