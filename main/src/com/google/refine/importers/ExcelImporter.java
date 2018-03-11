@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
@@ -60,13 +60,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 
@@ -191,7 +191,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 // value is fileName#sheetIndex
                 fileNameAndSheetIndex = sheetObj.getString("fileNameAndSheetIndex").split("#");
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
             
             if (!fileNameAndSheetIndex[0].equals(fileSource))

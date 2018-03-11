@@ -40,11 +40,11 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.OffsetDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -199,13 +199,13 @@ public class CsvExporterTests extends RefineTest {
     }
     
     @Test
-    public void exportDateColumns(){
+    public void exportDateColumnsPreVersion28(){
         CreateGrid(1,2);
-        LocalDateTime localDate = LocalDateTime.now();
-        OffsetDateTime date = OffsetDateTime.now(ZoneId.of("Z"));
+        Calendar calendar = Calendar.getInstance();
+        Date date = new Date();
 
         when(options.getProperty("printColumnHeader")).thenReturn("false");
-        project.rows.get(0).cells.set(0, new Cell(localDate, null));
+        project.rows.get(0).cells.set(0, new Cell(calendar, null));
         project.rows.get(0).cells.set(1, new Cell(date, null));
 
         try {
@@ -214,12 +214,11 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        String expectedOutput = ParsingUtilities.localDateToString(localDate) + "," +
-            ParsingUtilities.dateToString(date) + "\n";
+        String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
+            ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
 
         Assert.assertEquals(writer.toString(), expectedOutput);
     }
-
     //helper methods
 
     protected void CreateColumns(int noOfColumns){
@@ -243,4 +242,36 @@ public class CsvExporterTests extends RefineTest {
             project.rows.add(row);
         }
     }
+    
+    /**
+     * Given 2017-12-15T22:30:36.65(Z), convert to 2017-12-15T22:30:36.650(Z)
+     * @param dateTime
+     * @return
+     */
+    protected String alignFractionalDigits(String dateTime) {
+        String[] parts = dateTime.split("\\.");
+        if (parts.length < 2)
+            return dateTime;
+        
+        String fraction = parts[1].replace("Z", "");
+        
+        return parts[0] + "." + 
+                StringUtils.rightPad(fraction, 3, "0") +
+                (dateTime.endsWith("Z") ? "Z" : "");
+    }
+    
+    @Test
+    public void alignFractionalDigitsTest(){
+        String input = "2017-12-15T22:30:36.65";
+        String expected = "2017-12-15T22:30:36.650";
+        Assert.assertEquals(alignFractionalDigits(input), expected);
+    }
+    
+    @Test
+    public void alignFractionalDigitsWithZTest(){
+        String input = "2017-12-15T22:30:36.65Z";
+        String expected = "2017-12-15T22:30:36.650Z";
+        Assert.assertEquals(alignFractionalDigits(input), expected);
+    }
+    
 }

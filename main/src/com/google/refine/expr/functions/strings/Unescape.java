@@ -37,7 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -56,13 +56,13 @@ public class Unescape implements Function {
                 String s = (String) o1;
                 String mode = ((String) o2).toLowerCase();
                 if ("html".equals(mode)) {
-                    return StringEscapeUtils.unescapeHtml(s);
+                    return StringEscapeUtils.unescapeHtml4(s);
                 } else if ("xml".equals(mode)) {
                     return StringEscapeUtils.unescapeXml(s);
                 } else if ("csv".equals(mode)) {
                     return StringEscapeUtils.unescapeCsv(s);
                 } else if ("javascript".equals(mode)) {
-                    return StringEscapeUtils.unescapeJavaScript(s);
+                    return StringEscapeUtils.escapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
                         return URLDecoder.decode(s,"UTF-8");

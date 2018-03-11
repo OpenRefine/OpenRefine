@@ -333,7 +333,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
      for(var i = 0; i < fields.length; i++) {
         var field = fields[i];
         var fieldHTML = '';
-        var currentValue = field.default;
+        var currentValue = field['default'];
         if (property.settings != null && property.settings[field.name] != null) {
             currentValue = property.settings[field.name];
         }

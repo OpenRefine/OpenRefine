@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class ToNumber implements Function {
@@ -58,12 +59,15 @@ public class ToNumber implements Function {
                     try {
                         return Double.parseDouble(s);
                     } catch (NumberFormatException e) {
-                        return new EvalError("Cannot parse to number");
+                        return new EvalError("Unable to parse as number");
                     }
+                } else {
+                    return new EvalError("Unable to parse as number");
                 }
             }
+        } else {
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
         }
-        return null;
     }
     
     @Override

@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
 package com.google.refine.tests.expr.functions;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -47,27 +44,22 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 
 public class FunctionTests extends RefineTest {
 
     static Properties bindings;
     Project project;
-    Properties options;
     JSONObject engine_config;
     Engine engine;
 
@@ -80,21 +72,9 @@ public class FunctionTests extends RefineTest {
     
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
+        
+        project = createProjectWithColumns("FunctionTests", "Column A");
         bindings = new Properties();
-        
-        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        FileProjectManager.initialize(dir);
-        project = new Project();
-        ProjectMetadata pm = new ProjectMetadata();
-        pm.setName("TNG Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
-
-        int index = project.columnModel.allocateNewCellIndex();
-        Column column = new Column(index,"Column A");
-        project.columnModel.addColumn(index, column, true);
-        
-        options = mock(Properties.class);
-      
         bindings.put("project", project);
         
         // Five rows of a's and five of 1s

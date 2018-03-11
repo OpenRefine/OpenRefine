@@ -35,11 +35,10 @@ package com.google.refine.tests.recon;
 
 import static org.mockito.Mockito.mock;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,26 +49,18 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.RowVisitor;
-import com.google.refine.grel.Function;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.Row;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
-import com.google.refine.operations.OnError;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.recon.ExtendDataOperation;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 
 public class DataExtensionTests extends RefineTest {
@@ -90,29 +81,16 @@ public class DataExtensionTests extends RefineTest {
     Properties options;
     JSONObject engine_config;
     Engine engine;
-    Properties bindings;
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {
-        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        FileProjectManager.initialize(dir);
-        project = new Project();
-        ProjectMetadata pm = new ProjectMetadata();
-        pm.setName("Data Extension Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
-
-        int index = project.columnModel.allocateNewCellIndex();
-        Column column = new Column(index,"country");
-        project.columnModel.addColumn(index, column, true);
+        project = createProjectWithColumns("DataExtensionTests", "country");
         
         options = mock(Properties.class);
         engine = new Engine(project);
         engine_config = new JSONObject(ENGINE_JSON_URLS);
         engine.initializeFromJSON(engine_config);
         engine.setMode(Engine.Mode.RowBased);
-        
-        bindings = new Properties();
-        bindings.put("project", project);
 
                Row row = new Row(2);
         row.setCell(0, reconciledCell("Iran", "Q794"));
@@ -133,7 +111,6 @@ public class DataExtensionTests extends RefineTest {
         project = null;
         options = null;
         engine = null;
-        bindings = null;
     }
 
     static public Cell reconciledCell(String name, String id) {

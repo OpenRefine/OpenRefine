@@ -3,7 +3,6 @@ package com.google.refine.tests.model.changes;
 
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +12,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.history.Change;
-import com.google.refine.io.FileProjectManager;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 
 public class MassChangeTests extends RefineTest {
 
@@ -38,12 +33,7 @@ public class MassChangeTests extends RefineTest {
     @BeforeMethod
     public void SetUp()
             throws IOException, ModelException {
-        File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
-        FileProjectManager.initialize(dir);
-        project = new Project();
-        ProjectMetadata pm = new ProjectMetadata();
-        pm.setName("TNG Test Project");
-        ProjectManager.singleton.registerProject(project, pm);
+        project = createProjectWithColumns("MassChangeTest");
     }
 
     /**

@@ -45,6 +45,9 @@ import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
+import com.google.refine.commands.HttpHeadersSupport;
+import com.google.refine.commands.HttpHeadersSupport.HttpHeaderInfo;
+
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.MetaParser.LanguageInfo;
 import com.google.refine.importing.ImportingJob;
@@ -113,6 +116,18 @@ public class GetModelsCommand extends Command {
                 writer.object();
                     writer.key("name"); writer.value(info.name);
                     writer.key("defaultExpression"); writer.value(info.defaultExpression);
+                writer.endObject();
+            }
+            writer.endObject();
+
+            writer.key("httpHeaders");
+            writer.object();
+            for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
+                HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
+                writer.key(headerLabel);
+                writer.object();
+                    writer.key("header"); writer.value(info.header);
+                    writer.key("defaultValue"); writer.value(info.defaultValue);
                 writer.endObject();
             }
             writer.endObject();

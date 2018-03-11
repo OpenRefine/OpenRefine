@@ -42,7 +42,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
@@ -50,29 +50,30 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.util.ParsingUtilities;
 
 public class ToDate implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 0) {
-            // missing value, can this happen?
-            return null;
-        }
-        Object arg0 = args[0];
         String o1;
-        if (arg0 instanceof Date) {
-            return arg0;
-        } else if (arg0 instanceof Calendar) {
-            return ((Calendar) arg0).getTime();
-        } else if (arg0 instanceof Long) {
-            o1 =  ((Long) arg0).toString(); // treat integers as years
-        } else if (arg0 instanceof String) {
-            o1 = (String) arg0;
+        if (args.length == 0) {
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
         } else {
-            // ignore cell values that aren't strings
-            return new EvalError("Not a String - cannot parse to date");
+            Object arg0 = args[0];
+            if (arg0 instanceof Date) {
+                return arg0;
+            } else if (arg0 instanceof Calendar) {
+                return ((Calendar) arg0).getTime();
+            } else if (arg0 instanceof Long) {
+                o1 =  ((Long) arg0).toString(); // treat integers as years
+            } else if (arg0 instanceof String && arg0.toString().trim().length() > 0) {
+                o1 = (String) arg0;
+            } else {
+                // ignore cell values that aren't Date, Calendar, Long or String 
+                return new EvalError("Unable to parse as date");
+            }
         }
 
         // "o, boolean month_first (optional)"
@@ -98,13 +99,12 @@ public class ToDate implements Function {
 //                    } catch (DatatypeConfigurationException e2) {     
 //                    }
                 }
-                return new EvalError("Cannot parse to date");
+                return new EvalError("Unable to parse as date");
             }
-        }
-
-        // "o, format1, format2 (optional), ..."
-        Locale locale = Locale.getDefault();
-        if (args.length>=2) {
+        } else if (args.length>=2) {
+            // "o, format1, format2 (optional), ..."
+            Locale locale = Locale.getDefault();
+        
             for (int i=1;i<args.length;i++) {
                 if (!(args[i] instanceof String)) {
                     // skip formats that aren't strings
@@ -156,9 +156,9 @@ public class ToDate implements Function {
                 }
             }
             return new EvalError("Unable to parse as date");
+        } else {
+            return new EvalError("Unable to parse as date");
         }
-
-        return null;
     }
 
 

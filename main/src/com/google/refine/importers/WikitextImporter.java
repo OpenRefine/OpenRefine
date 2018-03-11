@@ -29,6 +29,7 @@ import org.sweble.wikitext.parser.nodes.WtTemplateArguments;
 import org.sweble.wikitext.parser.nodes.WtText;
 import org.sweble.wikitext.parser.nodes.WtInternalLink;
 import org.sweble.wikitext.parser.nodes.WtExternalLink;
+import org.sweble.wikitext.parser.nodes.WtImageLink;
 import org.sweble.wikitext.parser.nodes.WtLinkTitle;
 import org.sweble.wikitext.parser.nodes.WtLinkTitle.WtNoLinkTitle;
 import org.sweble.wikitext.parser.nodes.WtUrl;
@@ -56,13 +57,13 @@ import org.sweble.wikitext.parser.preprocessor.PreprocessedWikitext;
 
 import xtc.parser.ParseException;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconStats;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.model.recon.StandardReconConfig;
@@ -129,7 +130,6 @@ public class WikitextImporter extends TabularImportingParserBase {
     public class WikitextTableVisitor extends AstVisitor<WtNode> {
         
         public String caption;
-        public List<String> header;
         public List<List<String>> rows;
         public List<List<String>> references;
         public List<WikilinkedCell> wikilinkedCells;
@@ -163,7 +163,6 @@ public class WikitextImporter extends TabularImportingParserBase {
             this.blankSpanningCells = blankSpanningCells;
             this.includeRawTemplates = includeRawTemplates;
             caption = null;
-            header = new ArrayList<String>();
             rows = new ArrayList<List<String>>();
             references = new ArrayList<List<String>>();
             wikilinkedCells = new ArrayList<WikilinkedCell>();
@@ -178,7 +177,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             currentReferenceName = null;
             colspan = 0;
             rowspan = 0;
-            rowId = -1;
+            rowId = 0;
             spanningCellIdx = 0;
             internalLinksInCell = new ArrayList<String>();
             namedReferences = new HashMap<String, String>();
@@ -202,77 +201,80 @@ public class WikitextImporter extends TabularImportingParserBase {
             iterate(e);
         }
         
-        public void visit(WtTableHeader e) {
-            String columnName = renderCellAsString(e);
-            header.add(columnName);
-            // For the header, we ignore rowspan and manually add cells for colspan
-            if (colspan > 1) {
-                for (int i = 0; i < colspan-1; i++) {
-                    header.add(columnName);
-                }
-            }
-        }
-        
         public void visit(WtTableCaption e) {
             caption = renderCellAsString(e);
         }
  
         public void visit(WtTableRow e)
         {
-            if (currentRow == null) {
-                if (rowId == -1) {
-                    // no header was found, start on the first row
-                    rowId = 0;
-                }
-                currentRow = new ArrayList<String>();
-                currentRowReferences = new ArrayList<String>();
-                spanningCellIdx = 0;
-                addSpanningCells();
-                iterate(e);
-                if(currentRow.size() > 0) {
-                    rows.add(currentRow);
-                    references.add(currentRowReferences);
-                    rowId++;
-                } 
-                currentRow = null;
+            if (currentRow != null) {
+                finishRow();
             }
+            startRow();
+            iterate(e);
+            finishRow();
+        }
+        
+        private void startRow() {
+            currentRow = new ArrayList<String>();
+            currentRowReferences = new ArrayList<String>();
+            spanningCellIdx = 0;
+            addSpanningCells();
+        }
+        
+        private void finishRow() {
+            if(currentRow.size() > 0) {
+                rows.add(currentRow);
+                references.add(currentRowReferences);
+                rowId++;
+            } 
+            currentRow = null;
         }
         
         public void visit(WtTableCell e)
         {
-            if (currentRow != null) {
-                rowspan = 1;
-                colspan = 1;
-                internalLinksInCell.clear();
-                currentReference = null;
-                currentReferenceName = null;
-                
-                String value = renderCellAsString(e);
-                
-                int colId = currentRow.size();
-                
-                // Add the cell to the row we are currently building
-                currentRow.add(value);
-                currentRowReferences.add(currentReference);
-                
-                // Reconcile it if we found exactly one link in the cell
-                String reconciled = null;
-                if (internalLinksInCell.size() == 1) {
-                    reconciled = internalLinksInCell.get(0);
-                    wikilinkedCells.add(new WikilinkedCell(reconciled, rowId, colId));
-                }
-                
-                // Mark it as spanning if we found the tags
-                if (colspan > 1 || rowspan > 1) {
-                    SpanningCell spanningCell = new SpanningCell(
-                        value, reconciled, currentReference,
-                        rowId, colId, rowspan, colspan);
-                    spanningCells.add(spanningCellIdx, spanningCell);
-                }
-                
-                // Add all spanning cells that need to be inserted after this one.
-                addSpanningCells();
+            addCell(e);
+        }
+        
+        public void visit(WtTableHeader e) {
+            addCell(e);
+        }
+        
+        public void addCell(WtNode e) {
+            if (currentRow == null) {
+                startRow();
             }
+            rowspan = 1;
+            colspan = 1;
+            internalLinksInCell.clear();
+            currentReference = null;
+            currentReferenceName = null;
+            
+            String value = renderCellAsString(e);
+            
+            int colId = currentRow.size();
+            
+            // Add the cell to the row we are currently building
+            currentRow.add(value);
+            currentRowReferences.add(currentReference);
+            
+            // Reconcile it if we found exactly one link in the cell
+            String reconciled = null;
+            if (internalLinksInCell.size() == 1) {
+                reconciled = internalLinksInCell.get(0);
+                wikilinkedCells.add(new WikilinkedCell(reconciled, rowId, colId));
+            }
+            
+            // Mark it as spanning if we found the tags
+            if (colspan > 1 || rowspan > 1) {
+                SpanningCell spanningCell = new SpanningCell(
+                    value, reconciled, currentReference,
+                    rowId, colId, rowspan, colspan);
+                spanningCells.add(spanningCellIdx, spanningCell);
+            }
+            
+            // Add all spanning cells that need to be inserted after this one.
+            addSpanningCells();
         }
         
         public String renderCellAsString(WtNode e) {
@@ -403,28 +405,25 @@ public class WikitextImporter extends TabularImportingParserBase {
         }
         
         public void visit(WtXmlAttribute e) {
-            if (currentXmlAttr == null) {
-                xmlAttrStringBuilder = new StringBuilder();
-                iterate(e);
-                try {
-                    if ("colspan".equals(currentXmlAttr)) {
-                        colspan = Integer.parseInt(xmlAttrStringBuilder.toString());
-                    } else if ("rowspan".equals(currentXmlAttr)) {
-                        rowspan = Integer.parseInt(xmlAttrStringBuilder.toString());
-                    } else if ("name".equals(currentXmlAttr)) {
-                        currentReferenceName = xmlAttrStringBuilder.toString();
-                    }
-                } catch (NumberFormatException nfe) {
+            xmlAttrStringBuilder = new StringBuilder();
+            iterate(e);
+            try {
+                if ("colspan".equals(currentXmlAttr)) {
+                    colspan = Integer.parseInt(xmlAttrStringBuilder.toString());
+                } else if ("rowspan".equals(currentXmlAttr)) {
+                    rowspan = Integer.parseInt(xmlAttrStringBuilder.toString());
+                } else if ("name".equals(currentXmlAttr)) {
+                    currentReferenceName = xmlAttrStringBuilder.toString();
                 }
-                currentXmlAttr = null;
-                xmlAttrStringBuilder = null;
+            } catch (NumberFormatException nfe) {
             }
+            currentXmlAttr = null;
+            xmlAttrStringBuilder = null;
         }
         
         public void visit(WtName e) {
             try {
-                currentXmlAttr = e.getAsString();
-               
+                currentXmlAttr = e.getAsString();  
             } catch (UnsupportedOperationException soe) {
                 currentXmlAttr = null;
             }
@@ -507,6 +506,14 @@ public class WikitextImporter extends TabularImportingParserBase {
             iterate(e.getValue());
         }
         
+        public void visit(WtImageLink e) {
+            if(includeRawTemplates) {
+                writeText("[[");
+                writeText(e.getTarget().getAsString());
+                writeText("]]");
+            }
+        }
+        
         /* Content blocks */
         
         public void visit(WtParsedWikitextPage e) {
@@ -537,7 +544,7 @@ public class WikitextImporter extends TabularImportingParserBase {
     }
     
     public class WikiTableDataReader implements TableDataReader {
-        private int currentRow = -1;
+        private int currentRow = 0;
         private WikitextTableVisitor visitor = null;
         private List<List<Recon>> reconList = null;
         private List<Boolean> columnReconciled = null;
@@ -545,7 +552,7 @@ public class WikitextImporter extends TabularImportingParserBase {
     
         public WikiTableDataReader(WikitextTableVisitor visitor, boolean references) {
             this.visitor = visitor;
-            currentRow = -1;
+            currentRow = 0;
             reconList = null;
             
             if (references) {
@@ -569,9 +576,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             List<Object> row = null;
             List<String> origRow = null;
             List<String> refRow = null;
-            if (currentRow == -1) {
-                origRow = this.visitor.header;
-            } else if(currentRow < this.visitor.rows.size()) {
+            if(currentRow < this.visitor.rows.size()) {
                 origRow = this.visitor.rows.get(currentRow);
                 refRow = this.visitor.references.get(currentRow);
             }
@@ -583,10 +588,15 @@ public class WikitextImporter extends TabularImportingParserBase {
                     if (currentRow >= 0 && reconList != null) {
                         recon = reconList.get(currentRow).get(i);
                     }
-                    row.add(new Cell(origRow.get(i), recon));
+                    String value = origRow.get(i);
+                    if (value != null) {
+                        row.add(new Cell(value, recon));
+                    } else {
+                        row.add(null);
+                    }
                     
-                    // if we should add reference colums…
-                    if (columnReferenced != null && columnReferenced.get(i)) {
+                    // if we should add reference columns…
+                    if (columnReferenced != null && i < columnReferenced.size() && columnReferenced.get(i)) {
                         String refValue = null;
                         // for headers
                         if(currentRow == -1) {
@@ -594,7 +604,11 @@ public class WikitextImporter extends TabularImportingParserBase {
                         } else {
                             refValue = refRow.get(i);
                         }
-                        row.add(new Cell(refValue, null));
+                        if (refValue != null) {
+                            row.add(new Cell(refValue, null));
+                        } else {
+                            row.add(null);
+                        }
                     }
                 }
             }
@@ -704,8 +718,6 @@ public class WikitextImporter extends TabularImportingParserBase {
             if (wikiUrl != null) {
                 dataReader.reconcileToQids(wikiUrl, cfg);
             }
-            
-            JSONUtilities.safePut(options, "headerLines", 1);
             
             // Set metadata
             if (vs.caption != null && vs.caption.length() > 0) {

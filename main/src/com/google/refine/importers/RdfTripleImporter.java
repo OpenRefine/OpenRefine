@@ -50,7 +50,6 @@ import org.jrdf.parser.RdfReader;
 import org.jrdf.util.ClosableIterable;
 import org.json.JSONObject;
 
-import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
@@ -58,6 +57,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.medadata.ProjectMetadata;
 
 public class RdfTripleImporter extends ImportingParserBase {
     private RdfReader rdfReader;

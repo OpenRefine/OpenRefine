@@ -58,10 +58,10 @@ public class TsvCsvImporterTests extends ImporterTest {
     }
 
     //constants
-    String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
+    private String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
 
     //System Under Test
-    SeparatorBasedImporter SUT = null;
+    private SeparatorBasedImporter SUT = null;
 
     @Override
     @BeforeMethod
@@ -487,6 +487,33 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
+
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
+    public void customQuoteCharacter(String sep){
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = "'col1'" + inputSeparator + "'col2'" + inputSeparator + "'col3'\n" +
+                       "'data1'" + inputSeparator + "'data2'" + inputSeparator + "'data3'";
+        
+        
+        try {
+            prepareOptions(sep, -1, 0, 0, 1, false, false, "'");
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+    
     //---------------------read tests------------------------
     @Test
     public void readCsvWithProperties() {
@@ -543,11 +570,18 @@ public class TsvCsvImporterTests extends ImporterTest {
         };
     }
     
-    private void prepareOptions(
+    protected void prepareOptions(
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
+    }
+
+    protected void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
-        int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
         
         whenGetStringOption("separator", options, sep);
+        whenGetStringOption("quoteCharacter", options, quoteCharacter);
         whenGetIntegerOption("limit", options, limit);
         whenGetIntegerOption("skipDataLines", options, skip);
         whenGetIntegerOption("ignoreLines", options, ignoreLines);

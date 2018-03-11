@@ -39,7 +39,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -157,7 +157,7 @@ public class JSObject extends Properties {
             writeJSONObject(writer, (JSONObject) o);
             
         } else {
-            writer.print("\"" + StringEscapeUtils.escapeJavaScript(o.toString()) + "\"");
+            writer.print("\"" + StringEscapeUtils.escapeEcmaScript(o.toString()) + "\"");
         }
     }
 }

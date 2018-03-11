@@ -80,16 +80,45 @@ public class WikitextImporterTests extends ImporterTest {
 		+ "|-\n"
 		+ "|}\n";
     	try {
-    	        prepareOptions(0, true, true, null);
-    		parse(input);
+    	   prepareOptions(0, 0, true, true, null);
+    	   parse(input);
     	} catch (Exception e) {
-    		Assert.fail("Parsing failed", e);
+    	   Assert.fail("Parsing failed", e);
     	}
     	Assert.assertEquals(project.columnModel.columns.size(), 3);
     	Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "a");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b\n2");
+        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
+    }
+    
+    /**
+     * Issue #1448
+     * https://github.com/OpenRefine/OpenRefine/issues/1448
+     */
+    @Test
+    public void readTableWithMisplacedHeaders() {
+        String input = "\n"
+                + "{|\n"
+                + "|-\n"
+                + "| a || b<br/>2 || c \n"
+                + "|-\n"
+                + "| d\n"
+                + "! e\n"
+                + "| f<br>\n"
+                + "|-\n"
+                + "|}\n";
+        try {
+           prepareOptions(0, 0, true, true, null);
+           parse(input);
+        } catch (Exception e) {
+           Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 2);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "e");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
     
@@ -108,10 +137,10 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-                prepareOptions(0, true, true, "https://de.wikipedia.org/wiki/");
-                parse(input);
+           prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/");
+           parse(input);
         } catch (Exception e) {
-                Assert.fail("Parsing failed", e);
+           Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.rows.size(), 3);
@@ -153,10 +182,10 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-                prepareOptions(-1, true, true, null);
-                parse(input);
+           prepareOptions(-1, 1, true, true, null);
+           parse(input);
         } catch (Exception e) {
-                Assert.fail("Parsing failed", e);
+           Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 7);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
@@ -186,14 +215,14 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-            prepareOptions(-1, true, true, null);
-            parse(input);
+           prepareOptions(-1, 1, true, true, null);
+           parse(input);
         } catch (Exception e) {
-                Assert.fail("Parsing failed", e);
+           Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 6);
-        Assert.assertNull(project.rows.get(1).cells.get(2).value);
-        Assert.assertNull(project.rows.get(1).cells.get(3).value);
+        Assert.assertNull(project.rows.get(1).cells.get(2));
+        Assert.assertNull(project.rows.get(1).cells.get(3));
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "Butter");
     }
     
@@ -212,10 +241,10 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-            prepareOptions(-1, true, true, null);
-            parse(input);
+           prepareOptions(-1, 1, true, true, null);
+           parse(input);
         } catch (Exception e) {
-                Assert.fail("Parsing failed", e);
+           Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
@@ -240,10 +269,10 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-            prepareOptions(-1, true, true, null);
-            parse(input);
+           prepareOptions(-1, 1, true, true, null);
+           parse(input);
         } catch (Exception e) {
-                Assert.fail("Parsing failed", e);
+           Assert.fail("Parsing failed", e);
         }
         Assert.assertEquals(project.columnModel.columns.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
@@ -251,6 +280,34 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
+    }
+    
+    /**
+     * Include templates and image filenames
+     */
+    @Test
+    public void readTableWithTemplates() {
+        String input = "\n"
+                + "{|\n"
+                + "|-\n"
+                + "| {{free to read}} || b || c \n"
+                + "|-\n"
+                + "| d\n"
+                + "| [[File:My logo.svg|70px]]\n"
+                + "| f<br>\n"
+                + "|-\n"
+                + "|}\n";
+        try {
+           prepareOptions(0, 0, true, true, null);
+           parse(input);
+        } catch (Exception e) {
+           Assert.fail("Parsing failed", e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 2);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "{{free to read}}");
+        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "[[File:My logo.svg]]");
     }
 
     //--helpers--
@@ -260,16 +317,17 @@ public class WikitextImporterTests extends ImporterTest {
     }
 
     private void prepareOptions(
-        int limit, boolean blankSpanningCells,
+        int limit, int headerLines, boolean blankSpanningCells,
         boolean guessValueType, String wikiUrl) {
         
         whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("headerLines", options, headerLines);
         whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
         whenGetBooleanOption("blankSpanningCells", options, blankSpanningCells);
         whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
         whenGetBooleanOption("parseReferences", options, true);
+        whenGetBooleanOption("includeRawTemplates", options, true);
         whenGetStringOption("wikiUrl", options, wikiUrl);
-        whenGetIntegerOption("headerLines", options, 1);
         whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
     }
 }

@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,8 +112,7 @@ public class StandardReconConfig extends ReconConfig {
         
         JSONObject t = obj.has("type") && !obj.isNull("type") ? obj.getJSONObject("type") : null;
         
-        String limitString = obj.has("limit") && !obj.isNull("limit") ? obj.getString("limit") : "";
-        int limit = "".equals(limitString) ? 0 : Integer.parseInt(limitString); 
+        int limit = obj.has("limit") && !obj.isNull("limit") ? obj.getInt("limit") : 0;
         
         return new StandardReconConfig(
             obj.getString("service"),

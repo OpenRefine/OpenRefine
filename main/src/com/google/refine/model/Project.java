@@ -55,9 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
+import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
@@ -77,14 +77,13 @@ public class Project {
     transient private LocalDateTime _lastSave = LocalDateTime.now();
 
     final static Logger logger = LoggerFactory.getLogger("project");
-
+    
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
 
     public Project() {
-        id = generateID();
-        history = new History(this);
+        this(generateID());
     }
 
     protected Project(long id) {
@@ -119,10 +118,6 @@ public class Project {
      */
     public void setLastSave(){
         this._lastSave = LocalDateTime.now();
-    }
-
-    public ProjectMetadata getMetadata() {
-        return ProjectManager.singleton.getProjectMetadata(id);
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
@@ -258,11 +253,14 @@ public class Project {
         columnModel.update();
         recordModel.update(this);
     }
-
-
+    
     //wrapper of processManager variable to allow unit testing
     //TODO make the processManager variable private, and force all calls through this method
     public ProcessManager getProcessManager() {
         return this.processManager;
+    }
+    
+    public ProjectMetadata getMetadata() {
+        return ProjectManager.singleton.getProjectMetadata(id);
     }
 }
