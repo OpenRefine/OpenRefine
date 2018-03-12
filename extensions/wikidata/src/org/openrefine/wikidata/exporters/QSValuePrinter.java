@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;

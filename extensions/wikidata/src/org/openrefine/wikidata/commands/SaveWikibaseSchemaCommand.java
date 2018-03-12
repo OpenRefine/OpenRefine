@@ -30,10 +30,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
-import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
+import org.openrefine.wikidata.schema.WikibaseSchema;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;

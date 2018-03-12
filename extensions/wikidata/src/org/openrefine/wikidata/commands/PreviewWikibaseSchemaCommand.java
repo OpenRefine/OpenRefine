@@ -35,10 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.commands.Command;
-
 import org.openrefine.wikidata.exporters.QuickStatementsExporter;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarning;
@@ -47,6 +43,8 @@ import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.utils.FirstLinesExtractor;
 
+import com.google.refine.browsing.Engine;
+import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
 public class PreviewWikibaseSchemaCommand extends Command {

@@ -20,7 +20,7 @@ ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
         {
             "id" : "exportQuickStatements",
-            "label": $.i18n._('wikidata-extions')["quickstatements-export-name"],
+            "label": $.i18n._('wikidata-extension')["quickstatements-export-name"],
             "click": function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
         }
 );

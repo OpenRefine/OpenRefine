@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONWriter;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonParseException;
