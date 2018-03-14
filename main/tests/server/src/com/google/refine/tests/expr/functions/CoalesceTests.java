@@ -50,7 +50,7 @@ import com.google.refine.tests.RefineTest;
 
 public class CoalesceTests extends RefineTest {
 
-    static Properties bindings;
+    private static Properties bindings;
     private static final Integer[] ZERO_TO_TWO = new Integer[] {0, 1, 2};
 
     @Override
@@ -60,12 +60,12 @@ public class CoalesceTests extends RefineTest {
     }
     
     @BeforeMethod
-    public void SetUp() {
+    public void setUp() {
         bindings = new Properties();
     }
 
     @AfterMethod
-    public void TearDown() {
+    public void tearDown() {
         bindings = null;
     }
     
