@@ -208,17 +208,17 @@ SchemaAlignmentDialog._addItem = function(json) {
   SchemaAlignmentDialog._initField(inputContainer, "wikibase-item", subject);
   var right = $('<div></div>').addClass('wbs-right').appendTo(item);
   $('<div></div>').addClass('wbs-namedesc-container').appendTo(right);
-  var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+  var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   $('<a></a>').addClass('wbs-add-namedesc').html('<b>+</b>&nbsp;'+
          $.i18n._('wikidata-schema')["add-term"])
   .click(function() {
      SchemaAlignmentDialog._addNameDesc(item, null);
-  }).appendTo(toolbar);
+  }).appendTo(termToolbar);
   $('<div></div>').addClass('wbs-statement-group-container').appendTo(right);
-  var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
+  var statementToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   $('<a></a>').addClass('wbs-add-statement-group').html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')["add-statement"]).click(function() {
      SchemaAlignmentDialog._addStatementGroup(item, null);
-  }).appendTo(toolbar);
+  }).appendTo(statementToolbar);
    
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
