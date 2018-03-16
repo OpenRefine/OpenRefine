@@ -141,6 +141,7 @@ import com.google.refine.grel.controls.ForRange;
 import com.google.refine.grel.controls.If;
 import com.google.refine.grel.controls.IsBlank;
 import com.google.refine.grel.controls.IsError;
+import com.google.refine.grel.controls.IsEmptyString;
 import com.google.refine.grel.controls.IsNonBlank;
 import com.google.refine.grel.controls.IsNotNull;
 import com.google.refine.grel.controls.IsNull;
@@ -305,6 +306,7 @@ public class ControlFunctionRegistry {
 
         registerControl("isNull", new IsNull());
         registerControl("isNotNull", new IsNotNull());
+        registerControl("isEmptyString", new IsEmptyString());
         registerControl("isBlank", new IsBlank());
         registerControl("isNonBlank", new IsNonBlank());
         registerControl("isNumeric", new IsNumeric());

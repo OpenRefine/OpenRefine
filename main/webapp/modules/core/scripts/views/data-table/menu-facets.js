@@ -246,15 +246,29 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           }
         },
         {
-          id: "core/blank-facet",
-          label: $.i18n._('core-views')["facet-blank"],
+          id: "core/null-facet",
+          label: $.i18n._('core-views')["facet-null"],
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isBlank(value)"
+                  "expression": "isNull(value)"
+                }
+            );
+          }
+        },
+        {
+          id: "core/empty-string-facet",
+          label: $.i18n._('core-views')["facet-empty-string"],
+          click: function() {
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name": column.name,
+                  "columnName": column.name,
+                  "expression": "isEmptyString(value)"
                 }
             );
           }
