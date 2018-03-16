@@ -715,10 +715,13 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      var unitValue = null;
      if (initialValue) {
         amountValue = initialValue.amount;
-        unitValue = initalValue.unit;
+        unitValue = initialValue.unit;
      }
  
      var propagateValue = function() {
+        console.log('quantity changed callback');
+        console.log('unit jsonValue is');
+        console.log(inputContainerUnit.data("jsonValue"));
         inputContainer.data("jsonValue", {
            type: "wbquantityexpr",
            amount: inputContainerAmount.data("jsonValue"),
@@ -769,6 +772,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
 
   var acceptDraggableColumn = function(column) {
     input.hide();
+    input.val("");
     var columnDiv = $('<div></div>').appendTo(inputContainer);
     column.appendTo(columnDiv);
     var origText = column.text();
@@ -779,6 +783,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     deleteButton.click(function () {
         columnDiv.remove();
         input.show();
+        inputContainer.data("jsonValue", null);
         changedCallback();
     });
   };
@@ -786,14 +791,14 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
   // Make it droppable
   var acceptClass = ".wbs-draggable-column";
   var wbVariableType = "wbstringvariable";
-  if (mode === "wikibase-item") {
+  if (mode === "wikibase-item" || mode === "unit") {
       acceptClass = ".wbs-reconciled-column";
       wbVariableType = "wbitemvariable";
   } else if (mode === "time") {
       wbVariableType = "wbdatevariable";
   } else if (mode === "globe-coordinate") {
       wbVariableType = "wblocationvariable";
-  } else if (mode === "monolingualtext") {
+  } else if (mode === "monolingualtext" || mode === "quantity") {
       wbVariableType = null; // not droppable directly
   } else if (mode === "language") {
       wbVariableType = "wblanguagevariable";
