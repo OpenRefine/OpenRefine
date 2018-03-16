@@ -518,6 +518,8 @@
         "columnize": "Columnize ayon sa Key / Value Columns",
         "add-col-fetch": "Magdagdag ng haligi sa pamamagitan ng pagkuha ng mga URL batay sa haligi",
         "facet-blank": "Blangko ang facet",
+        "facet-null": "Wala ang facet",
+        "facet-empty-string": "walang laman na string ang facet",
         "best-cand-edit-dist": "Ang distansya ng pag-edit ng pangalan ng pinakamahusay na kandidato",
         "spec-separator": "Mangyaring tukuyin ang separator sa pagitan ng mga orihinal na pangalan ng haligi at mga halaga ng cell.",
         "split-into": "Na hati sa",

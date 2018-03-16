@@ -491,6 +491,8 @@
 		"unicode-facet": "Faceta por caracteres Unicode",
 		"facet-error": "Faceta por error",
 		"facet-blank": "Faceta por blanco",
+		"facet-null": "Faceta por nulo",
+        "facet-empty-string": "Faceta por cuerda vacía",
 		"text-filter": "Filtro de texto",
 		"add-col-col": "Agregar columna basada en la columna",
 		"new-col-name": "Nuevo nombre de la columna",

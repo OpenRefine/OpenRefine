@@ -508,6 +508,8 @@
         "columnize": "Criar colunas a partir de colunas chave/valor",
         "add-col-fetch": "Add column by fetching URLs based on column",
         "facet-blank": "Faceta por valores em branco",
+        "facet-null": "Faceta por nulo",
+        "facet-empty-string": "Faceta por cadeia vazia",
         "best-cand-edit-dist": "best candidate's name edit distance",
         "spec-separator": "Por favor, especifique o separador entre os nomes das colunas e os valores das células.",
         "milli": "milissegundos",

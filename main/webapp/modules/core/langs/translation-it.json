@@ -516,6 +516,8 @@
         "columnize": "Colonnizza per colonne Chiave/Valore",
         "add-col-fetch": "Aggiungi colonna con URL, basandoti su",
         "facet-blank": "Per blank",
+        "facet-null": "Per nullo",
+        "facet-empty-string": "Per stringa vuota",
         "best-cand-edit-dist": "migliore 'edit distance' del nome candidati",
         "spec-separator": "Per favore, specifica il separatore tra il nome della colonna originale ed il valore delle celle.",
         "split-into": "Dividi in",

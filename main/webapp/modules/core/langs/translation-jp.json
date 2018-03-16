@@ -517,6 +517,8 @@
         "columnize": "行をカラムに転置する",
         "add-col-fetch": "URLフェッチでカラムを作る",
         "facet-blank": "空白ファセット",
+        "facet-null": "ヌルファセット",
+        "facet-empty-string": "空の文字列ファセット",
         "best-cand-edit-dist": "最良候補の名前の編集距離",
         "spec-separator": "カラム名とセル値の区切り文字を指定してください。",
         "by": "基準",

@@ -491,6 +491,8 @@
         "unicode-facet": "Unicode字符归类",
         "facet-error": "按错误归类",
         "facet-blank": "按空白归类",
+        "facet-null": "按空值归类",
+        "facet-empty-string": "按空字符串归类",
         "text-filter": "文本过滤器",
         "add-col-col": "基于当前列添加列",
         "new-col-name": "新列名称",

@@ -515,6 +515,8 @@
         "columnize": "Kolumnays pinaagi sa Key/ Bili sa mga Kolum",
         "add-col-fetch": "Pun-i ang kolum sa pagkuha sa URLs basi sa kolum",
         "facet-blank": "Bahin sa blangko",
+        "facet-null": "Bahin sa null",
+        "facet-empty-string": "Bahin sa walay sulod nga pisi",
         "best-cand-edit-dist": "labing maayong ngalan sa kandidata nga usbon",
         "spec-separator": "Palihug hinganli ang separator sa tunga sa orihinal nga ngalan sa mga kolum ug bili sa cells.",
         "milli": "millisegundo",
