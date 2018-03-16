@@ -719,9 +719,6 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      }
  
      var propagateValue = function() {
-        console.log('quantity changed callback');
-        console.log('unit jsonValue is');
-        console.log(inputContainerUnit.data("jsonValue"));
         inputContainer.data("jsonValue", {
            type: "wbquantityexpr",
            amount: inputContainerAmount.data("jsonValue"),
