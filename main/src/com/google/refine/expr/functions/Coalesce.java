@@ -46,7 +46,7 @@ public class Coalesce implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length> 0) {
+        if (args.length> 1) {
             for (int i = 0; i < args.length; i++){
                 if (args[i] == null) {
                     continue;
@@ -56,7 +56,7 @@ public class Coalesce implements Function {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least two arguments");
     }
 
     @Override
@@ -65,8 +65,8 @@ public class Coalesce implements Function {
     
         writer.object();
         writer.key("description"); writer.value("Returns the first non-null from a series of values");
-        writer.key("params"); writer.value("one or more objects");
-        writer.key("returns"); writer.value("object");
+        writer.key("params"); writer.value("two or more objects");
+        writer.key("returns"); writer.value("object or null");
         writer.endObject();
     }
 }

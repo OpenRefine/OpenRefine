@@ -88,13 +88,12 @@ public class CoalesceTests extends RefineTest {
     @Test
     public void testCoalesceInvalidParams() {        
         Assert.assertTrue(invoke("coalesce") instanceof EvalError);
+        Assert.assertTrue(invoke("coalesce", 1) instanceof EvalError);
     }
     
     @Test
-    public void testCoalesce() {        
-        Assert.assertNull(invoke("coalesce", (Object) null));
-        Assert.assertEquals(invoke("coalesce", "string"),"string");
-        Assert.assertEquals(invoke("coalesce", 1),1);
+    public void testCoalesce() {
+        Assert.assertNull(invoke("coalesce", (Object) null, (Object) null));
         Assert.assertEquals(invoke("coalesce", (Object) null, "string"),"string");
         Assert.assertEquals(invoke("coalesce", (Object) null, (Object) null, "string"),"string");
         Assert.assertEquals(invoke("coalesce", (Object) null, 1),1);
