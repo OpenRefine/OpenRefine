@@ -515,7 +515,7 @@
         "transpose": "Transposer",
         "columnize": "Convertir en liste les colonnes de clé/valeur",
         "add-col-fetch": "Ajouter une colonne en moissonnant les données depuis les URL d’une colonne",
-        "facet-blank": "Facette par valeur vide",
+        "facet-blank": "Facette par valeur vide (nul ou chaîne vide)",
         "facet-null": "Facette par nul",
         "facet-empty-string": "Facette par chaîne vide",
         "best-cand-edit-dist": "meilleure distance d’édition du nom des candidats",

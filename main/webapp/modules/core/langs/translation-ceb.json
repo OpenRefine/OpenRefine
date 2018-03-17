@@ -514,7 +514,7 @@
         "transpose": "Pagbalhin",
         "columnize": "Kolumnays pinaagi sa Key/ Bili sa mga Kolum",
         "add-col-fetch": "Pun-i ang kolum sa pagkuha sa URLs basi sa kolum",
-        "facet-blank": "Bahin sa blangko",
+        "facet-blank": "Bahin sa blangko (null o walay sulod nga pisi)",
         "facet-null": "Bahin sa null",
         "facet-empty-string": "Bahin sa walay sulod nga pisi",
         "best-cand-edit-dist": "labing maayong ngalan sa kandidata nga usbon",

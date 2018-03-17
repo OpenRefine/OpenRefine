@@ -515,7 +515,7 @@
         "transpose": "Trasponi",
         "columnize": "Colonnizza per colonne Chiave/Valore",
         "add-col-fetch": "Aggiungi colonna con URL, basandoti su",
-        "facet-blank": "Per blank",
+        "facet-blank": "Per blank (nullo o stringa vuota)",
         "facet-null": "Per nullo",
         "facet-empty-string": "Per stringa vuota",
         "best-cand-edit-dist": "migliore 'edit distance' del nome candidati",

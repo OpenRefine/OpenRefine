@@ -490,7 +490,7 @@
         "log-length-facet": "文本长度的对数值归类",
         "unicode-facet": "Unicode字符归类",
         "facet-error": "按错误归类",
-        "facet-blank": "按空白归类",
+        "facet-blank": "按空白归类 (空值或空字符串)",
         "facet-null": "按空值归类",
         "facet-empty-string": "按空字符串归类",
         "text-filter": "文本过滤器",
