@@ -272,6 +272,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 }
             );
           }
+        },
+        {
+          id: "core/blank-facet",
+          label: $.i18n._('core-views')["facet-blank"],
+          click: function() {
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name": column.name,
+                  "columnName": column.name,
+                  "expression": "isBlank(value)"
+                }
+            );
+          }
         }
       ]
     }
