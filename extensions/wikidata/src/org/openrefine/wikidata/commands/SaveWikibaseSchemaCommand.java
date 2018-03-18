@@ -69,7 +69,7 @@ public class SaveWikibaseSchemaCommand extends Command {
             // We do not use respondException here because this is an expected
             // exception which happens every time a user tries to save an incomplete
             // schema - the exception should not be logged.
-            respondError(response, "Invalid Wikibase schema provided.");
+            respondError(response, "Wikibase schema could not be parsed.");
         } catch (Exception e) {
             // This is an unexpected exception, so we log it.
             respondException(response, e);

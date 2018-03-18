@@ -39,7 +39,7 @@ public abstract class SchemaCommandTest extends CommandTest {
             throws ServletException, IOException {
         command.doPost(request, response);
 
-        assertEquals("{\"status\":\"error\",\"message\":\"No Wikibase schema provided.\"}", writer.toString());
+        assertEquals("{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}", writer.toString());
     }
 
     @Test
@@ -48,6 +48,6 @@ public abstract class SchemaCommandTest extends CommandTest {
         when(request.getParameter("schema")).thenReturn("{bogus json");
         command.doPost(request, response);
 
-        assertEquals("{\"status\":\"error\",\"message\":\"Wikibase schema could not be parsed.\"}", writer.toString());
+        assertEquals("{\"code\":\"error\",\"message\":\"Wikibase schema could not be parsed.\"}", writer.toString());
     }
 }

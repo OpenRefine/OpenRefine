@@ -67,14 +67,14 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 try {
                     schema = WikibaseSchema.reconstruct(jsonString);
                 } catch (JSONException e) {
-                    respondError(response, e.toString());
+                    respondError(response, "Wikibase schema could not be parsed.");
                     return;
                 }
             } else {
                 schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             }
             if (schema == null) {
-                respondError(response, "No schema provided.");
+                respondError(response, "No Wikibase schema provided.");
                 return;
             }
 
