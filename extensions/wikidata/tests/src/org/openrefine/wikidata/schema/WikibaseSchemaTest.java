@@ -52,6 +52,8 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
@@ -131,6 +133,13 @@ public class WikibaseSchemaTest extends RefineTest {
         ItemUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
+    }
+    
+    @Test(expectedExceptions = JSONException.class)
+    public void testDeserializeEmpty() throws JSONException {
+        String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
+                +"\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
+        WikibaseSchema.reconstruct(schemaJson);
     }
 
     @Test

@@ -186,7 +186,7 @@ public class WikibaseSchema implements OverlayModel {
         return reconstruct(o.toString());
     }    
     
-    static public WikibaseSchema reconstruct(String json) {
+    static public WikibaseSchema reconstruct(String json) throws JSONException {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(json, WikibaseSchema.class);

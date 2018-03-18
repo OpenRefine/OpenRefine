@@ -41,7 +41,8 @@
                 "reset-button": "Reset",
                 "save-button": "Save",
                 "close-button": "Close",
-                "unsaved-changes": "There are unsaved changes. Close anyway?"
+                "unsaved-changes": "There are unsaved changes. Close anyway?",
+                "incomplete-schema-could-not-be-saved": "Your schema is incomplete so it cannot be saved yet."
         },
         "wikidata-preview": {
                 "new-id": "new item"

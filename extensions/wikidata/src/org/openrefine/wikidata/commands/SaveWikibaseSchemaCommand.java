@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
@@ -52,7 +53,7 @@ public class SaveWikibaseSchemaCommand extends Command {
 
             String jsonString = request.getParameter("schema");
             if (jsonString == null) {
-                respond(response, "error", "No Wikibase schema provided.");
+                respondError(response, "No Wikibase schema provided.");
                 return;
             }
 
@@ -65,8 +66,12 @@ public class SaveWikibaseSchemaCommand extends Command {
             performProcessAndRespond(request, response, project, process);
 
         } catch (JSONException e) {
-            respond(response, "error", "Wikibase schema could not be parsed.");
+            // We do not use respondException here because this is an expected
+            // exception which happens every time a user tries to save an incomplete
+            // schema - the exception should not be logged.
+            respondError(response, "Invalid Wikibase schema provided.");
         } catch (Exception e) {
+            // This is an unexpected exception, so we log it.
             respondException(response, e);
         }
     }

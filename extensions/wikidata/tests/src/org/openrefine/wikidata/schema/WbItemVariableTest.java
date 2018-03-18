@@ -78,4 +78,6 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         JacksonSerializationTest.canonicalSerialization(WbExpression.class, variable,
                 "{\"type\":\"wbitemvariable\",\"columnName\":\"column A\"}");
     }
+
+    // TODO: test with column reconciled against different identifier space
 }

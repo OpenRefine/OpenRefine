@@ -42,6 +42,7 @@ import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.utils.FirstLinesExtractor;
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
@@ -66,14 +67,14 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 try {
                     schema = WikibaseSchema.reconstruct(jsonString);
                 } catch (JSONException e) {
-                    respond(response, "error", "Wikibase schema could not be parsed.");
+                    respondError(response, e.toString());
                     return;
                 }
             } else {
                 schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             }
             if (schema == null) {
-                respond(response, "error", "No Wikibase schema provided.");
+                respondError(response, "No schema provided.");
                 return;
             }
 

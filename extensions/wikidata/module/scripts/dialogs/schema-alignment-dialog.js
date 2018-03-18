@@ -84,7 +84,10 @@ SchemaAlignmentDialog._save = function(onDone) {
         self._hasUnsavedChanges = false;
 
         if (onDone) onDone();
-      }
+      },
+      onError: function(e) {
+        alert($.i18n._('wikidata-schema')["incomplete-schema-could-not-be-saved"]);
+      },
     }
   );
 };

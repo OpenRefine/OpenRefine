@@ -51,4 +51,15 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         assertTrue(writer.toString().contains("\"ok\""));
     }
+    
+    @Test
+    public void testInvalidSchema() throws ServletException, IOException {
+        String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
+                +"\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
+        
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        command.doPost(request, response);
+        
+        assertTrue(writer.toString().contains("\"error\""));
+    }
 }
