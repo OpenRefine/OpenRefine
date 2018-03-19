@@ -118,7 +118,6 @@ SchemaAlignmentDialog._createDialog = function() {
   this._elmts.schemaTabHeader.text($.i18n._('wikidata-schema')["schema-tab-header"]);
   this._elmts.warningsTabHeader.text($.i18n._('wikidata-schema')["warnings-tab-header"]);
   this._elmts.qsPreviewTabHeader.text($.i18n._('wikidata-schema')["qs-preview-tab-header"]);
-  this._elmts.draggableColumnsHeader.text($.i18n._('wikidata-schema')["draggable-columns-header"]);
   SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-item-button"], this._elmts.addItemButton);
   this._elmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
   this._elmts.invalidSchemaWarningQs.text($.i18n._('wikidata-schema')["invalid-schema-warning-qs"]);
@@ -382,6 +381,8 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
         addValueButton.show();
         removeButton.hide();
      }
+  } else {
+     inputContainer.find('input').focus();
   }
      
 }
@@ -635,12 +636,15 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
         addValueButtons.hide();
         removeGroupButton.show();
     });
+   // adds tweaks to display the validation status more clearly, like in Wikidata
+   fixSuggestInput(input);
   }
 
   // Init with the provided initial value.
   if (initialValue) {
      if (initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
+        input.addClass('wbs-validated-input');
      } 
      inputContainer.data("jsonValue", initialValue);
   }
@@ -674,6 +678,8 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         });
         changedCallback();
     });
+    // adds tweaks to display the validation status more clearly, like in Wikidata
+    fixSuggestInput(input);
 
   } else if (this._reconService !== null && mode === "wikibase-property") {
     var endpoint = null;
@@ -691,6 +697,8 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         });
         changedCallback();
     });
+    // adds tweaks to display the validation status more clearly, like in Wikidata
+    fixSuggestInput(input);
 
   } else if (mode === "time") {
      input.attr("placeholder", "YYYY(-MM(-DD))...");
@@ -733,6 +741,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         });
         changedCallback();
      });
+     fixSuggestInput(input);
 
    } else if (mode === "monolingualtext") {
      input.remove();
@@ -886,8 +895,9 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
 
   // Init with the provided initial value.
   if (initialValue) {
-     if (initialValue.type === "wbitemconstant") {
+     if (initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
+        input.addClass("wbs-validated-input");
      } else if (initialValue.type == "wbitemvariable") {
         var cell = SchemaAlignmentDialog._createDraggableColumn(initialValue.columnName, true);
         acceptDraggableColumn(cell);

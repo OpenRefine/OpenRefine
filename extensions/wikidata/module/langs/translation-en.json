@@ -9,11 +9,10 @@
         },
         "wikidata-schema": {
                 "dialog-header": "Align to Wikidata",
-                "dialog-explanation": "The Wikidata schema below specifies how your tabular data will be transformed into Wikidata edits. You can drag and drop columns in most input boxes: for each row, the values in these columns will generate Wikidata edits.",
+                "dialog-explanation": "The Wikidata schema below specifies how your tabular data will be transformed into Wikidata edits. You can drag and drop the column names below in most input boxes: for each row, edits will be generated with the values in these columns.",
                 "schema-tab-header": "Schema",
                 "warnings-tab-header": "Issues",
                 "qs-preview-tab-header": "QuickStatements preview",
-                "draggable-columns-header": "Columns:",
                 "statements-header": "Statements",
                 "terms-header": "Terms",
                 "empty-statements": "no statements added",
