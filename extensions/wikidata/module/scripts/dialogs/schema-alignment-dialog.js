@@ -102,6 +102,12 @@ SchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
   return cell;
 }
 
+SchemaAlignmentDialog._plusButton = function(label, element) {
+   var plus = $('<b></b>').html('+&nbsp;').appendTo(element);
+   var span = $('<span></span>').text(label)
+        .appendTo(element);
+}
+
 SchemaAlignmentDialog._createDialog = function() {
   var self = this;
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/schema-alignment-dialog.html"));
@@ -113,7 +119,7 @@ SchemaAlignmentDialog._createDialog = function() {
   this._elmts.warningsTabHeader.text($.i18n._('wikidata-schema')["warnings-tab-header"]);
   this._elmts.qsPreviewTabHeader.text($.i18n._('wikidata-schema')["qs-preview-tab-header"]);
   this._elmts.draggableColumnsHeader.text($.i18n._('wikidata-schema')["draggable-columns-header"]);
-  this._elmts.addItemButton.html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')["add-item-button"]);
+  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-item-button"], this._elmts.addItemButton);
   this._elmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
   this._elmts.invalidSchemaWarningQs.text($.i18n._('wikidata-schema')["invalid-schema-warning-qs"]);
   this._elmts.resetButton.text($.i18n._('wikidata-schema')["reset-button"]);
@@ -166,6 +172,7 @@ SchemaAlignmentDialog._createDialog = function() {
 
   elmts.addItemButton.click(function() {
     self._addItem();
+    SchemaAlignmentDialog._hasChanged();
   });
 
   $("#schema-alignment-tabs").tabs();
@@ -207,28 +214,55 @@ SchemaAlignmentDialog._addItem = function(json) {
 
   var item = $('<div></div>').addClass('wbs-item');
   $('#schema-alignment-statements-container').append(item);
+  var deleteToolbar = $('<div></div>').addClass('wbs-toolbar')
+        .attr('style', 'margin-top: 10px')
+        .appendTo(item);
+  var deleteButton = SchemaAlignmentDialog._makeDeleteButton()
+        .appendTo(deleteToolbar)
+        .click(function() {
+     item.remove();
+     SchemaAlignmentDialog._hasChanged();
+  });
   var inputContainer = $('<div></div>').addClass('wbs-item-input').appendTo(item);
   SchemaAlignmentDialog._initField(inputContainer, "wikibase-item", subject);
-  var right = $('<div></div>').addClass('wbs-right').appendTo(item);
-  $('<div></div>').addClass('wbs-namedesc-container').appendTo(right);
+  var right = $('<div></div>').addClass('wbs-item-contents').appendTo(item);
+
+  // Terms
+  $('<span></span>').addClass('wbs-namedesc-header')
+       .text($.i18n._('wikidata-schema')["terms-header"]).appendTo(right);
+  $('<div></div>').addClass('wbs-namedesc-container')
+        .attr('data-emptyplaceholder', $.i18n._('wikidata-schema')['empty-terms'])
+        .appendTo(right);
   var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-namedesc').html('<b>+</b>&nbsp;'+
-         $.i18n._('wikidata-schema')["add-term"])
+  var addNamedescButton = $('<a></a>').addClass('wbs-add-namedesc')
   .click(function() {
      SchemaAlignmentDialog._addNameDesc(item, null);
   }).appendTo(termToolbar);
-  $('<div></div>').addClass('wbs-statement-group-container').appendTo(right);
+  SchemaAlignmentDialog._plusButton(
+         $.i18n._('wikidata-schema')["add-term"], addNamedescButton);
+
+  // Clear the float
+  $('<div></div>').attr('style', 'clear: right').appendTo(right);
+
+  // Statements
+  $('<div></div>').addClass('wbs-statements-header')
+        .text($.i18n._('wikidata-schema')['statements-header']).appendTo(right);
+  $('<div></div>').addClass('wbs-statement-group-container')
+        .attr('data-emptyplaceholder', $.i18n._('wikidata-schema')['empty-statements'])
+        .appendTo(right);
   var statementToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-statement-group').html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')["add-statement"]).click(function() {
+  var addStatementButton = $('<a></a>').addClass('wbs-add-statement-group')
+        .click(function() {
      SchemaAlignmentDialog._addStatementGroup(item, null);
   }).appendTo(statementToolbar);
+
+  SchemaAlignmentDialog._plusButton(
+         $.i18n._('wikidata-schema')["add-statement"], addStatementButton);
    
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
         SchemaAlignmentDialog._addStatementGroup(item, statementGroups[i]);
      }
-  } else if (!nameDescs) {
-     SchemaAlignmentDialog._addStatementGroup(item);
   }
   
   if (nameDescs) {
@@ -328,10 +362,17 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  var addValueButton = $('<a></a>').addClass('wbs-add-statement').html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')["add-value"]).click(function() {
+  var addValueButton = $('<a></a>').addClass('wbs-add-statement').click(function() {
      var datatype = inputContainer.data("jsonValue").datatype;
      SchemaAlignmentDialog._addStatement(statementContainer, datatype, null);
   }).appendTo(toolbar).hide();
+  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-value"], addValueButton);
+  var removeButton = SchemaAlignmentDialog._makeDeleteButton()
+        .addClass('wbs-remove-statement-group')
+        .appendTo(toolbar)
+        .click(function() {
+     statementGroup.remove();
+  });
 
   container.append(statementGroup);
 
@@ -339,6 +380,7 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
      for (var i = 0; i != statements.length; i++) {
         SchemaAlignmentDialog._addStatement(statementContainer, property.datatype, statements[i]);
         addValueButton.show();
+        removeButton.hide();
      }
   }
      
@@ -369,16 +411,18 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
   }
  
   var statement = $('<div></div>').addClass('wbs-statement');
-  var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
-  SchemaAlignmentDialog._makeDeleteButton().click(function() {
-     SchemaAlignmentDialog._removeStatement(statement);
-  }).appendTo(toolbar1);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignmentDialog._initField(inputContainer, datatype, value);
   
   // If we are in a mainsnak...
   // (see https://www.mediawiki.org/wiki/Wikibase/DataModel#Snaks)
   if (container.parents('.wbs-statement').length == 0) {
+    // add delete button
+    var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
+    SchemaAlignmentDialog._makeDeleteButton().click(function() {
+        SchemaAlignmentDialog._removeStatement(statement);
+    }).appendTo(toolbar1);
+
     // add rank
     var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
 
@@ -386,9 +430,12 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
     var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
     var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-    $('<a></a>').addClass('wbs-add-qualifier').html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')["add-qualifier"]).click(function() {
+    var addQualifierButton = $('<a></a>').addClass('wbs-add-qualifier')
+        .click(function() {
         SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
     }).appendTo(toolbar2);
+    SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-qualifier"], addQualifierButton);
+
     if (qualifiers) {
        for (var i = 0; i != qualifiers.length; i++) {
          SchemaAlignmentDialog._addQualifier(qualifierContainer, qualifiers[i]);
@@ -396,21 +443,27 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     }
 
     // and references
+    $('<div></div>').attr('style', 'clear: right').appendTo(statement);
     var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(statement);
+    var triangle = $('<div></div>').addClass('triangle-icon').addClass('pointing-right').appendTo(referencesToggleContainer);
     var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
     right = $('<div></div>').addClass('wbs-right').appendTo(statement);
     var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
     referencesToggle.click(function () {
+        triangle.toggleClass('pointing-down');
+        triangle.toggleClass('pointing-right');
         referenceContainer.toggle(100);
     });
     referenceContainer.hide();
     var right2 = $('<div></div>').addClass('wbs-right').appendTo(right);
     var toolbar3 = $('<div></div>').addClass('wbs-toolbar').appendTo(right2);
-    $('<a></a>').addClass('wbs-add-reference').html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')["add-reference"]).click(function() {
+    var addReferenceButton = $('<a></a>').addClass('wbs-add-reference')
+        .click(function() {
         referenceContainer.show();
         SchemaAlignmentDialog._addReference(referenceContainer, null);
         SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
     }).appendTo(toolbar3);
+    SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-reference"], addReferenceButton);
     if (references) {
         for (var i = 0; i != references.length; i++) {
           SchemaAlignmentDialog._addReference(referenceContainer, references[i]);
@@ -454,15 +507,17 @@ SchemaAlignmentDialog._addQualifier = function(container, json) {
   var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(qualifier);
   var inputContainer = $('<div></div>').addClass('wbs-prop-input').appendTo(qualifier);
   var right = $('<div></div>').addClass('wbs-right').appendTo(qualifier);
+  var deleteButton = SchemaAlignmentDialog._makeDeleteButton()
+            .addClass('wbs-remove-statement-group')
+            .appendTo(toolbar1).click(function() {
+    qualifier.remove();
+    SchemaAlignmentDialog._hasChanged();
+  });
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
   if (value && property) {
     SchemaAlignmentDialog._addStatement(statementContainer, property.datatype, {value:value});
   }
-}
-
-SchemaAlignmentDialog._removeQualifier = function(qualifier) {
-  qualifier.remove();
 }
 
 SchemaAlignmentDialog._qualifierToJSON = function(elem) {
@@ -495,9 +550,11 @@ SchemaAlignmentDialog._addReference = function(container, json) {
   var right = $('<div></div>').addClass('wbs-right').appendTo(reference);
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
   var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
-  $('<a></a>').addClass('wbs-add-qualifier').html('<b>+</b>&nbsp;'+$.i18n._('wikidata-schema')['add-reference-snak']).click(function() {
+  var addSnakButton = $('<a></a>').addClass('wbs-add-qualifier')
+        .click(function() {
       SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
   }).appendTo(toolbar2);
+  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')['add-reference-snak'], addSnakButton);
 
   if (snaks) {
      for (var i = 0; i != snaks.length; i++) {
@@ -521,7 +578,7 @@ SchemaAlignmentDialog._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
-  a.html('▼&nbsp;'+childrenCount+$.i18n._('wikidata-schema')["nb-references"]);
+  a.html(childrenCount+$.i18n._('wikidata-schema')["nb-references"]);
 }
 
 /************************
@@ -545,7 +602,7 @@ SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
 
 SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContainer, initialValue) {
   var input = $('<input></input>').appendTo(inputContainer);
-  input.attr("placeholder", "property");
+  input.attr("placeholder", $.i18n._('wikidata-schema')["property-placeholder"]);
 
   if (this._reconService !== null) {
     endpoint = this._reconService.suggest.property;
@@ -565,6 +622,8 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
           });
           SchemaAlignmentDialog._addStatement(targetContainer, datatype, null);
           var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
+          var removeGroupButton = targetContainer.parent().find('.wbs-remove-statement-group');
+          removeGroupButton.hide();
           addValueButtons.show();
         });
         SchemaAlignmentDialog._hasChanged();
@@ -572,7 +631,9 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
         inputContainer.data("jsonValue", null);
         targetContainer.find('.wbs-statement').remove();
         var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
+        var removeGroupButton = targetContainer.parent().find('.wbs-remove-statement-group');
         addValueButtons.hide();
+        removeGroupButton.show();
     });
   }
 

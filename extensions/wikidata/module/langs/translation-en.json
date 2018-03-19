@@ -9,11 +9,15 @@
         },
         "wikidata-schema": {
                 "dialog-header": "Align to Wikidata",
-                "dialog-explanation": "The schema alignment skeleton below specifies how your tabular data will be transformed into Wikibase statements. You can drag and drop columns in statements: they will be replaced by their values once you export the statements.",
+                "dialog-explanation": "The Wikidata schema below specifies how your tabular data will be transformed into Wikidata edits. You can drag and drop columns in most input boxes: for each row, the values in these columns will generate Wikidata edits.",
                 "schema-tab-header": "Schema",
                 "warnings-tab-header": "Issues",
                 "qs-preview-tab-header": "QuickStatements preview",
                 "draggable-columns-header": "Columns:",
+                "statements-header": "Statements",
+                "terms-header": "Terms",
+                "empty-statements": "no statements added",
+                "empty-terms": "no labels, descriptions or aliases added",
                 "add-item-button": "add item",
                 "add-term": "add term",
                 "remove": "remove",
@@ -22,6 +26,7 @@
                 "add-qualifier": "add qualifier",
                 "add-reference": "add reference",
                 "add-reference-snak": "add",
+                "property-placeholder": "property",
                 "nb-references": "&nbsp;references",
                 "remove-column": "remove column",
                 "label": "Label",
@@ -62,18 +67,18 @@
                 "connecting-to-wikidata": "Connecting to Wikidata..."
         },
         "perform-wikidata-edits": {
-                "dialog-header": "Perform edits on Wikidata",
+                "dialog-header": "Upload edits to Wikidata",
                 "review-your-edits": "Please check your edits carefully before pushing them to Wikidata. Large edit batches should be submitted for <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a> first.",
                 "logged-in-as": "You are logged in as",
                 "edit-summary-label": "Edit summary:",
                 "edit-summary-placeholder": "a few words to describe your edits",
-                "perform-edits": "Perform edits",
+                "perform-edits": "Upload edits",
                 "cancel": "Cancel",
                 "analyzing-edits": "Analyzing your edits..."
         },
         "warnings-messages": {
                 "new-item-created": {
-                        "title": "This batch will create new Wikidata items.",
+                        "title": "This edit batch will create new Wikidata items.",
                         "body": "Please make sure that these items do not exist yet and are <a href=\"https://www.wikidata.org/wiki/Wikidata:Notability\" target=\"_blank\">suitable for inclusion in Wikidata</a>."
                 },
                 "new-item-without-labels-or-aliases": {

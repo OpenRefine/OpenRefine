@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     box-shadow: inset 0 0 10px #a7cdff;
 }
 
-// The following two rules are taken from Wikibase
+// The following three rules are taken from Wikibase
 .wbs-icon {
     background-position: center;
     background-size: 20px 20px;
@@ -99,6 +99,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .wbs-remove .wbs-icon {
     background-image:linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2224%22%20height=%2224%22%20viewBox=%220%200%2024%2024%22%3E%20%3Cg%20id=%22remove%22%3E%20%3Cpath%20id=%22trash-can%22%20d=%22M12%2010h-1v6h1v-6zm-2%200H9v6h1v-6zm4%200h-1v6h1v-6zm0-4V5H9v1H6v3h1v7.966l1%201.03v-.073V18h6.984l.016-.018v.015l1-1.03V9h1V6h-3zm1%2011H8V9h7v8zm1-9H7V7h9v1z%22/%3E%20%3C/g%3E%20%3C/svg%3E");
+}
+
+.wbs-remove span:last-child:hover {
+    text-decoration: underline;
 }
 
 .wbs-rank-selector-icon {
@@ -158,8 +162,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     font-size: 0.9em;
 }
 
+.wbs-add-item:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
+.wbs-add-qualifier:hover, .wbs-add-reference:hover, .wbs-add-namedesc:hover {
+    text-decoration: none;
+}
+
+.wbs-add-item span:hover, .wbs-add-statement-group span:hover, .wbs-add-statement span:hover,
+.wbs-add-qualifier span:hover, .wbs-add-reference span:hover, .wbs-add-namedesc span:hover {
+    text-decoration: underline;
+}
+
 .wbs-remove {
     display: inline-block;
+}
+
+.wbs-item-contents {
+    padding-left: 10px;
+    margin-left: 20px;
+    border-left: 3px solid gray;
 }
 
 .wbs-add-item b, .wbs-add-statement-group b, .wbs-add-statement b,
@@ -168,6 +188,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: grey;
     width: 20px;
     height: 20px;
+}
+
+.wbs-statement-group-container:empty:before {
+    content: attr(data-emptyplaceholder);
+    color: gray;
 }
 
 .wbs-statement-group-container, .wbs-statement-container, .wbs-qualifier-container, .wbs-reference-container {
@@ -182,7 +207,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .wbs-item {
-    border: 1px solid #c8ccd1;
     margin-bottom: 5px;
     padding-right: 5px;
 }
@@ -216,7 +240,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .wbs-qualifier .wbs-right {
-    width: 71%;
+    width: auto;
     position: absolute;
     top: 0px;
     margin-left: 100px;
@@ -235,8 +259,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: #0645ad !important;
 }
 
+
+.wbs-references-toggle .triangle-icon {
+    background: transparent url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%0A%3Csvg%0A%20%20%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%0A%20%20%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%0A%20%20%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%0A%20%20%20xmlns%3Asvg%3D%22http%3A//www.w3.org/2000/svg%22%0A%20%20%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%0A%20%20%20id%3D%22svg8%22%0A%20%20%20version%3D%221.1%22%0A%20%20%20viewBox%3D%220%200%202.6458332%202.6458332%22%0A%20%20%20height%3D%2210%22%0A%20%20%20width%3D%2210%22%3E%0A%20%20%3Cdefs%0A%20%20%20%20%20id%3D%22defs2%22%20/%3E%0A%20%20%3Cmetadata%0A%20%20%20%20%20id%3D%22metadata5%22%3E%0A%20%20%20%20%3Crdf%3ARDF%3E%0A%20%20%20%20%20%20%3Ccc%3AWork%0A%20%20%20%20%20%20%20%20%20rdf%3Aabout%3D%22%22%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Atype%0A%20%20%20%20%20%20%20%20%20%20%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22%20/%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Atitle%3E%3C/dc%3Atitle%3E%0A%20%20%20%20%20%20%3C/cc%3AWork%3E%0A%20%20%20%20%3C/rdf%3ARDF%3E%0A%20%20%3C/metadata%3E%0A%20%20%3Cg%0A%20%20%20%20%20transform%3D%22translate%280%2C-294.35416%29%22%0A%20%20%20%20%20id%3D%22layer1%22%3E%0A%20%20%20%20%3Cpath%0A%20%20%20%20%20%20%20id%3D%22path12%22%0A%20%20%20%20%20%20%20d%3D%22m%200.21601809%2C294.5035%202.28763941%2C1.14744%20-2.29850705%2C1.20871%20z%22%0A%20%20%20%20%20%20%20style%3D%22fill%3A%23645eea%3Bfill-opacity%3A1%3Bfill-rule%3Aevenodd%3Bstroke%3A%23645eea%3Bstroke-width%3A0.06161711px%3Bstroke-linecap%3Abutt%3Bstroke-linejoin%3Amiter%3Bstroke-opacity%3A1%22%20/%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E%0A) no-repeat center center;
+    background-size: 100% auto;
+    height: 8px;
+    width: 8px;
+    margin-right: 4px;
+    display: inline-block;
+}
+
+.pointing-right {
+    transform: rotate(0deg);
+    transition: .3s cubic-bezier(.17,.67,.21,1.69);
+}
+.pointing-down {
+    transform: rotate(90deg);
+    transition: .3s cubic-bezier(.17,.67,.21,1.69);
+}
+
 .wbs-qualifier .wbs-statement {
     overflow: hidden;
+    background: transparent;
 }
 
 .wbs-monolingual-container, .wbs-quantity-container {
@@ -259,8 +303,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: #eaf3ff;
 } 
 
-.wbs-namedesc-container {
-   border: 1px solid #c8ccd1;
+.wbs-namedesc-header, .wbs-statements-header {
+   font-size: 1.2em;
+}
+
+.wbs-namedesc {
+   border-left: 1px solid #c8ccd1;
+   border-right: 1px solid #c8ccd1;
+}
+
+.wbs-namedesc:first-child {
+   border-top: 1px solid #c8ccd1;
+}
+
+.wbs-namedesc:last-child {
+   border-bottom: 1px solid #c8ccd1;
+}
+
+
+.wbs-namedesc-container:empty:before {
+    content: attr(data-emptyplaceholder);
+    color: gray;
+    padding: 5px;
+    border: none;
 }
 
 .wbs-namedesc {
