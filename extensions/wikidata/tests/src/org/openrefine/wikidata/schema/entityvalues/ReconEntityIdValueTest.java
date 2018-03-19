@@ -101,7 +101,7 @@ public class ReconEntityIdValueTest {
         // just checking this is symmetrical
         assertEquals(existingItem, Datamodel.makeWikidataItemIdValue("Q42"));
 
-        // new cell equality relies on the judgmentHistoryEntry parameter
+        // new item equality relies on the cell's recon id
         assertEquals(newItem, sameNewItem);
         assertNotEquals(newItem, differentNewItem);
         // and on datatype
@@ -116,7 +116,7 @@ public class ReconEntityIdValueTest {
 
     @Test
     public void testGetRecon() {
-        assertEquals(newItem.getReconInternalId(), newItem.getRecon().judgmentHistoryEntry);
+        assertEquals(newItem.getReconInternalId(), newItem.getRecon().id);
     }
 
     @Test

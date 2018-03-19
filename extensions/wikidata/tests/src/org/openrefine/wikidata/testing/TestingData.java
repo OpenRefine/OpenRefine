@@ -67,9 +67,17 @@ public class TestingData {
     public static ItemIdValue existingId = Datamodel.makeWikidataItemIdValue("Q43");
 
     protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
+    
+    public static class ReconStub extends Recon {
+        public ReconStub(long id, long judgmentHistoryEntry) {
+            super(id, judgmentHistoryEntry);
+        }  
+    }
 
-    public static Recon makeNewItemRecon(long judgementId) {
-        Recon recon = Recon.makeWikidataRecon(judgementId);
+    public static Recon makeNewItemRecon(long id) {
+        Recon recon = new ReconStub(id, 382398L); // we keep the same judgment id because it is ignored
+        recon.identifierSpace = "http://www.wikidata.org/entity/";
+        recon.schemaSpace = "http://www.wikidata.org/prop/direct/";
         recon.judgment = Recon.Judgment.New;
         return recon;
     }

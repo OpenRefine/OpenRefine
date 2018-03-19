@@ -83,6 +83,6 @@ public class NewItemLibraryTest extends RefineTest {
 
     private void isNewTo(long id, Cell cell) {
         assertEquals(Recon.Judgment.New, cell.recon.judgment);
-        assertEquals(id, cell.recon.judgmentHistoryEntry);
+        assertEquals(id, cell.recon.id);
     }
 }

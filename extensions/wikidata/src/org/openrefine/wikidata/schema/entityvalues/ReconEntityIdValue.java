@@ -94,10 +94,10 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     /**
      * Returns the integer used internally in OpenRefine to identify the new item.
      * 
-     * @return the judgment history entry id of the reconciled cell
+     * @return the reconciliation id of the reconciled cell
      */
     public long getReconInternalId() {
-        return getRecon().judgmentHistoryEntry;
+        return getRecon().id;
     }
 
     /**

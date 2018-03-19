@@ -42,8 +42,8 @@ public abstract class UpdateSchedulerTest {
 
     protected ItemIdValue existingIdA = Datamodel.makeWikidataItemIdValue("Q43");
     protected ItemIdValue existingIdB = Datamodel.makeWikidataItemIdValue("Q538");
-    protected ItemIdValue newIdA = TestingData.makeNewItemIdValue(1234L, "new item A");
-    protected ItemIdValue newIdB = TestingData.makeNewItemIdValue(5678L, "new item B");
+    protected ItemIdValue newIdA = TestingData.newIdA;
+    protected ItemIdValue newIdB = TestingData.newIdB;
 
     protected Statement sAtoB = TestingData.generateStatement(existingIdA, existingIdB);
     protected Statement sBtoA = TestingData.generateStatement(existingIdB, existingIdA);

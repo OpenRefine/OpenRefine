@@ -108,13 +108,13 @@ public class NewItemLibrary {
                 }
                 Recon recon = cell.recon;
                 if (Recon.Judgment.New.equals(recon.judgment) && !reset
-                        && map.containsKey(recon.judgmentHistoryEntry)) {
+                        && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.Matched;
-                    recon.match = new ReconCandidate(map.get(recon.judgmentHistoryEntry), cell.value.toString(),
+                    recon.match = new ReconCandidate(map.get(recon.id), cell.value.toString(),
                             new String[0], 100);
                     impactedColumns.add(i);
                 } else if (Recon.Judgment.Matched.equals(recon.judgment) && reset
-                        && map.containsKey(recon.judgmentHistoryEntry)) {
+                        && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.New;
                     recon.match = null;
                     impactedColumns.add(i);

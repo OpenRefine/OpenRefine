@@ -53,8 +53,8 @@ import com.google.refine.tests.RefineTest;
 public class QuickStatementsExporterTest extends RefineTest {
 
     private QuickStatementsExporter exporter = new QuickStatementsExporter();
-    private ItemIdValue newIdA = TestingData.makeNewItemIdValue(1234L, "new item A");
-    private ItemIdValue newIdB = TestingData.makeNewItemIdValue(5678L, "new item B");
+    private ItemIdValue newIdA = TestingData.newIdA;
+    private ItemIdValue newIdB = TestingData.newIdB;
     private ItemIdValue qid1 = Datamodel.makeWikidataItemIdValue("Q1377");
     private ItemIdValue qid2 = Datamodel.makeWikidataItemIdValue("Q865528");
 
