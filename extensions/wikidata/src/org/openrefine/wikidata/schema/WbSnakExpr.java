@@ -24,6 +24,7 @@
 package org.openrefine.wikidata.schema;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.schema.entityvalues.FullyPropertySerializingValueSnak;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -62,7 +63,7 @@ public class WbSnakExpr implements WbExpression<Snak> {
             throws SkipSchemaExpressionException {
         PropertyIdValue propertyId = getProp().evaluate(ctxt);
         Value evaluatedValue = value.evaluate(ctxt);
-        return Datamodel.makeValueSnak(propertyId, evaluatedValue);
+        return new FullyPropertySerializingValueSnak(propertyId, evaluatedValue);
     }
 
     @JsonProperty("prop")

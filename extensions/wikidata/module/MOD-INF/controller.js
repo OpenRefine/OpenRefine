@@ -58,6 +58,7 @@ function init() {
         "scripts/warningsrenderer.js",
         "scripts/langsuggest.js",
         "scripts/bettersuggest.js",
+        "scripts/previewrenderer.js",
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",

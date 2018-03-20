@@ -5,7 +5,7 @@
       <ul>
           <li><a href="#schema-alignment-tabs-schema" bind="schemaTabHeader"></a></li>
           <li><a href="#schema-alignment-tabs-warnings"><span bind="warningsTabHeader"></span> <span class="schema-alignment-total-warning-count" bind="warningsTabCount"></span></a></li>
-          <li><a href="#schema-alignment-tabs-preview-qs" bind="qsPreviewTabHeader"></a></li>
+          <li><a href="#schema-alignment-tabs-preview-edits" bind="editsPreviewTabHeader"></a></li>
       </ul>
       <div id="schema-alignment-tabs-schema">
           <p class="body-text" bind="dialogExplanation"></p>
@@ -23,8 +23,9 @@
           <div class="invalid-schema-warning" bind="invalidSchemaWarningIssues"></div>
          <div class="schema-alignment-dialog-warnings" bind="warningsArea"></div>
       </div>
-      <div id="schema-alignment-tabs-preview-qs" style="display: none;">
-          <div class="invalid-schema-warning" bind="invalidSchemaWarningQs"></div>
+      <div id="schema-alignment-tabs-preview-edits" style="display: none;">
+          <p class="body-text" bind="previewExplanation"></p>
+          <div class="invalid-schema-warning" bind="invalidSchemaWarningPreview"></div>
           <div class="schema-alignment-dialog-preview"></div>
       </div>
     </div>

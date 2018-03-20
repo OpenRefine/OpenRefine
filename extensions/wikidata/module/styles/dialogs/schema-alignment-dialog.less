@@ -204,6 +204,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: gray;
 }
 
+.schema-alignment-dialog-preview .wbs-qualifier .wbs-statement-container {
+    display: table-cell;
+    vertical-align: bottom;
+    padding-left: 10px;
+    height: 20px;
+}
+
 .wbs-statement-group-container, .wbs-statement-container, .wbs-qualifier-container, .wbs-reference-container {
     width: 100%;
     display: block;
@@ -228,6 +235,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .wbs-statement {
     background: white;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.wbs-statement:last-child {
+    border-bottom: 0;
 }
 
 .wbs-right {
@@ -236,7 +248,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .wbs-statement-group .wbs-right {
-    width: 70%;
+    width: 75%;
 }
 
 .wbs-statement .wbs-right {
@@ -450,6 +462,5 @@ div.schema-alignment-dialog-preview {
   padding: 10px;
   margin-top: 3px;
   white-space: pre;
-  font-family: monospace;
   font-size: 9pt;
 }

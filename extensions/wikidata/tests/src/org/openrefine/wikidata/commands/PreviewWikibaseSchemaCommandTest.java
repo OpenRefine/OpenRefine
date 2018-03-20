@@ -31,8 +31,10 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -56,7 +58,8 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         command.doPost(request, response);
 
         JSONObject response = ParsingUtilities.evaluateJsonStringToObject(writer.toString());
-        assertEquals(TestingData.inceptionWithNewQS, response.getString("quickstatements"));
+        JSONArray edits = response.getJSONArray("edits_preview");
+        assertEquals(4, edits.length());
     }
 
 }

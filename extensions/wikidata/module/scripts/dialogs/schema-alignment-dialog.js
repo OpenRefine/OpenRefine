@@ -115,12 +115,13 @@ SchemaAlignmentDialog._createDialog = function() {
 
   this._elmts.dialogHeader.text($.i18n._('wikidata-schema')["dialog-header"]);
   this._elmts.dialogExplanation.text($.i18n._('wikidata-schema')["dialog-explanation"]);
+  this._elmts.previewExplanation.text($.i18n._('wikidata-schema')["preview-explanation"]);
   this._elmts.schemaTabHeader.text($.i18n._('wikidata-schema')["schema-tab-header"]);
   this._elmts.warningsTabHeader.text($.i18n._('wikidata-schema')["warnings-tab-header"]);
-  this._elmts.qsPreviewTabHeader.text($.i18n._('wikidata-schema')["qs-preview-tab-header"]);
+  this._elmts.editsPreviewTabHeader.text($.i18n._('wikidata-schema')["edits-preview-tab-header"]);
   SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-item-button"], this._elmts.addItemButton);
   this._elmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
-  this._elmts.invalidSchemaWarningQs.text($.i18n._('wikidata-schema')["invalid-schema-warning-qs"]);
+  this._elmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
   this._elmts.resetButton.text($.i18n._('wikidata-schema')["reset-button"]);
   this._elmts.saveButton.text($.i18n._('wikidata-schema')["save-button"]);
   this._elmts.closeButton.text($.i18n._('wikidata-schema')["close-button"]);
@@ -939,7 +940,7 @@ SchemaAlignmentDialog._removeStatement = function(statement) {
 
 SchemaAlignmentDialog.getJSON = function() {
   var list = new Array();
-  $('.wbs-item').each(function () {
+  $('#schema-alignment-statements-container .wbs-item').each(function () {
      list.push(SchemaAlignmentDialog._itemToJSON($(this)));
   });
   return {
@@ -963,8 +964,9 @@ SchemaAlignmentDialog.preview = function(initial) {
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
-      if ("quickstatements" in data) {
-        $(self._previewPanes[0]).text(data.quickstatements);
+      if ("edits_preview" in data) {
+        var previewContainer = self._previewPanes[0];
+        EditRenderer.renderEdits(data.edits_preview, previewContainer);
       }
 
       if (data.warnings) {

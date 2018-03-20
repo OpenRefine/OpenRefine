@@ -105,6 +105,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
      * 
      * @return the full reconciliation metadata of the corresponding cell
      */
+    @JsonIgnore // just to clean up a bit the json serialization
     public Recon getRecon() {
         return _recon;
     }

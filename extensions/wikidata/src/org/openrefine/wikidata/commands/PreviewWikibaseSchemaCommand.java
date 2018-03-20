@@ -28,21 +28,26 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
-import org.openrefine.wikidata.exporters.QuickStatementsExporter;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.utils.FirstLinesExtractor;
+import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
+
 import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
@@ -110,12 +115,17 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 writer.key("nb_warnings");
                 writer.value(warningStore.getNbWarnings());
 
-                // Export to QuickStatements
-                QuickStatementsExporter exporter = new QuickStatementsExporter();
-                exporter.translateItemList(editBatch, stringWriter);
+                // Dump the first 10 edits, scheduled with the default scheduler
+                WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
+                List<ItemUpdate> firstEdits = scheduler.schedule(editBatch).stream()
+                        .filter(e -> !e.isNull())
+                        .limit(10)
+                        .collect(Collectors.toList());
+                ObjectMapper mapper = new ObjectMapper();
+                String firstEditsJson = mapper.writeValueAsString(firstEdits);
 
-                writer.key("quickstatements");
-                writer.value(FirstLinesExtractor.extractFirstLines(stringWriter.toString(), 50));
+                writer.key("edits_preview");
+                writer.value(new JSONArray(firstEditsJson));
             }
 
             writer.endObject();
