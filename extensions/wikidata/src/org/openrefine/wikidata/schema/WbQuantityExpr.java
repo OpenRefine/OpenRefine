@@ -64,8 +64,21 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         // we know the amount is nonnull, nonempty here
 
         BigDecimal parsedAmount = null;
+        BigDecimal lowerBound = null;
+        BigDecimal upperBound = null;
         try {
-            parsedAmount = new BigDecimal(amount.getString());
+            String originalAmount = amount.getString().toUpperCase();
+            parsedAmount = new BigDecimal(originalAmount);
+            
+            
+            if (originalAmount.contains("E")) {
+                // engineering notation: we derive the precision from
+                // the expression (feature!)
+                BigDecimal uncertainty = new BigDecimal("0.5").scaleByPowerOfTen(-parsedAmount.scale());
+                lowerBound = new BigDecimal(parsedAmount.subtract(uncertainty).toPlainString());
+                upperBound = new BigDecimal(parsedAmount.add(uncertainty).toPlainString());  
+            }
+            // workaround for https://github.com/Wikidata/Wikidata-Toolkit/issues/341
             parsedAmount = new BigDecimal(parsedAmount.toPlainString());
         } catch (NumberFormatException e) {
             throw new SkipSchemaExpressionException();
@@ -73,10 +86,10 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
 
         if (getUnitExpr() != null) {
             ItemIdValue unit = getUnitExpr().evaluate(ctxt);
-            return Datamodel.makeQuantityValue(parsedAmount, unit.getIri());
+            return Datamodel.makeQuantityValue(parsedAmount, lowerBound, upperBound, unit.getIri());
         }
 
-        return Datamodel.makeQuantityValue(parsedAmount);
+        return Datamodel.makeQuantityValue(parsedAmount, lowerBound, upperBound);
     }
 
     @JsonProperty("amount")

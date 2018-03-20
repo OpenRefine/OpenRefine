@@ -83,6 +83,8 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         setRow("38.4E+3", recon("Q42"));
         QuantityValue val = exprWithUnit.evaluate(ctxt);
         assertEquals("38400", val.getNumericValue().toString());
+        assertEquals("38350", val.getLowerBound().toString());
+        assertEquals("38450", val.getUpperBound().toString());
     }
 
 }
