@@ -59,7 +59,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         JSONObject response = ParsingUtilities.evaluateJsonStringToObject(writer.toString());
         JSONArray edits = response.getJSONArray("edits_preview");
-        assertEquals(4, edits.length());
+        assertEquals(3, edits.length());
     }
 
 }

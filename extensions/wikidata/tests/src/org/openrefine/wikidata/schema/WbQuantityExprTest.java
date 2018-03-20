@@ -23,12 +23,17 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
 
@@ -43,6 +48,7 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         evaluatesTo(Datamodel.makeQuantityValue(new BigDecimal("4.00"), null, null, "1"), exprWithoutUnit);
     }
 
+    @Test
     public void testInvalidAmountWithoutUnit() {
         setRow("hello");
         isSkipped(exprWithoutUnit);
@@ -57,16 +63,26 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
                 exprWithUnit);
     }
 
+    @Test
     public void testInvalidAmountWithUnit()
             throws SkipSchemaExpressionException {
         setRow("invalid", recon("Q42"));
         isSkipped(exprWithUnit);
     }
 
+    @Test
     public void testInvalidUnitWithAmount()
             throws SkipSchemaExpressionException {
         setRow("56.094", "not reconciled");
         isSkipped(exprWithUnit);
+    }
+    
+    // for issue #341: https://github.com/Wikidata/Wikidata-Toolkit/issues/341
+    @Test
+    public void testExponent() throws SkipSchemaExpressionException, JsonProcessingException {
+        setRow("38.4E+3", recon("Q42"));
+        QuantityValue val = exprWithUnit.evaluate(ctxt);
+        assertEquals("38400", val.getNumericValue().toString());
     }
 
 }

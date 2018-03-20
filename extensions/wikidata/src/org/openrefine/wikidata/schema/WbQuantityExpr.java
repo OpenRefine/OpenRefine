@@ -66,6 +66,7 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         BigDecimal parsedAmount = null;
         try {
             parsedAmount = new BigDecimal(amount.getString());
+            parsedAmount = new BigDecimal(parsedAmount.toPlainString());
         } catch (NumberFormatException e) {
             throw new SkipSchemaExpressionException();
         }
