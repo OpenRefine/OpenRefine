@@ -74,6 +74,10 @@ var CustomSuggest = {};
           );
 
           data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+          if (data.description) {
+             var descriptionSpan = $("<span></span>").text(data.description);
+             name.append(descriptionSpan);
+          }
           li.append(name);
 
           name.prepend($("<div>").addClass(css.item_type).text(data.id));
@@ -134,6 +138,11 @@ var CustomSuggest = {};
               .append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
 
           data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+          if (data.description) {
+             var descriptionSpan = $("<span></span>").text(data.description);
+             name.append(descriptionSpan);
+          }
+
           li.append(name);
 
           name.prepend($("<div>").addClass(css.item_type).text(data.id));
