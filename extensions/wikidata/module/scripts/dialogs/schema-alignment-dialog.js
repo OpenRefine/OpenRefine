@@ -716,8 +716,9 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
 
+    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d(T[0-2]\d(:[0-5]\d(:[0-5]\dZ)?)?)?)?)?$/);
    } else if (mode === "globe-coordinate") {
-     input.attr("placeholder", "lat/lon");
+     input.attr("placeholder", "lat,lon");
      var propagateValue = function(val) {
         // TODO add validation here
         inputContainer.data("jsonValue", {
@@ -731,6 +732,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
 
+    SchemaAlignmentDialog.setupStringInputValidation(input, /^[\-+]?\d+(\.\d*)?[,\/][\-+]?\d+(\.\d*)?([,\/]\d+(\.\d*)?)?$/);
    } else if (mode === "language") {
      input.attr("placeholder", "lang");
      input.addClass("wbs-language-input");
@@ -818,16 +820,22 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     });
     if (mode === "amount") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["amount"]);
+        SchemaAlignmentDialog.setupStringInputValidation(input, /^[\-+]?\d+(\.\d*)?(E[\-+]\d+)?$/);
     } else if (mode === "url") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["full-url"]);
+        SchemaAlignmentDialog.setupStringInputValidation(input, /^https?:\/\/.+$/);
     } else if (mode === "tabular-data") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["tabular-data-with-prefix"]);
+        SchemaAlignmentDialog.setupStringInputValidation(input, /^Data:.+$/);
     } else if (mode === "commonsMedia") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["commons-media"]);
     } else if (mode === "math") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["math-expression"]);
     } else if (mode === "geo-shape") {
         input.attr("placeholder", $.i18n._('wikidata-schema')["geoshape-with-prefix"]);
+        SchemaAlignmentDialog.setupStringInputValidation(input, /^Data:.+$/);
+    } else {
+        SchemaAlignmentDialog.setupStringInputValidation(input, /^.+$/);
     }
     if (mode !== "external-id" &&
         mode !== "url" &&
@@ -917,6 +925,19 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      }
      inputContainer.data("jsonValue", initialValue);
   }
+}
+
+SchemaAlignmentDialog.setupStringInputValidation = function(input, regex) {
+  input.focus(function() {
+    input.removeClass('wbs-unvalidated-input');
+  }).blur(function() {
+    var currentValue = input.val();
+    if (regex.test(currentValue)) {
+       input.addClass('wbs-validated-input');
+    } else {
+       input.addClass('wbs-unvalidated-input');
+    }
+  });
 }
 
 SchemaAlignmentDialog._inputContainerToJSON = function (inputContainer) {
