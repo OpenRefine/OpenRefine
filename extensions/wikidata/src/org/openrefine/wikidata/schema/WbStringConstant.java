@@ -37,6 +37,8 @@ public class WbStringConstant implements WbExpression<StringValue> {
     @JsonCreator
     public WbStringConstant(@JsonProperty("value") String value) {
         Validate.notNull(value);
+        Validate.isTrue(!value.isEmpty()); // for now we don't accept empty strings
+        // because in the variable counterpart of this expression, they are skipped
         this.value = value;
     }
 
@@ -48,5 +50,18 @@ public class WbStringConstant implements WbExpression<StringValue> {
     @JsonProperty("value")
     public String getValue() {
         return value;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other == null || !WbStringConstant.class.isInstance(other)) {
+            return false;
+        }
+        return value.equals(((WbStringConstant)other).getValue());
+    }
+    
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 }
