@@ -98,6 +98,11 @@ ExporterManager.MenuItems = [
     "click": function() { new CustomTabularExporterDialog(); }
   },
   {
+      "id" : "core/export-sql",
+      "label": $.i18n._('core-project')["sql-export"],
+      "click": function() { new SqlExporterDialog(); }
+  },
+  {
     "id" : "core/export-templating",
     "label": $.i18n._('core-project')["templating"],
     "click": function() { new TemplatingExporterDialog(); }
@@ -142,6 +147,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
   var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+  //alert("name:" + name);
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
