@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.refine.expr.functions.Coalesce;
 import com.google.refine.expr.functions.Cross;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.expr.functions.Get;
@@ -186,6 +187,7 @@ public class ControlFunctionRegistry {
     }
 
     static {
+        registerFunction("coalesce", new Coalesce());
         registerFunction("type", new Type());
 
         registerFunction("toString", new ToString());
