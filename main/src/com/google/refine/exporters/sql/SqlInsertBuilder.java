@@ -73,7 +73,9 @@ public class SqlInsertBuilder {
     * @return
     */
     public String getInsertSQL() {
-       // logger.info("options values::::{}", options);
+        if(logger.isDebugEnabled()) {
+            logger.debug("Insert SQL with columns: {}", columns);
+        }
         JSONArray columnOptionArray = options == null ? null :
             JSONUtilities.getArray(options, "columns");
         //logger.info("columnOptionArray::::{}", columnOptionArray);
@@ -130,8 +132,7 @@ public class SqlInsertBuilder {
                 values.append(","); 
             }
             values.append("\n");
-//            logger.info("running values:{}", values.toString());
-            
+           
         }
 
         

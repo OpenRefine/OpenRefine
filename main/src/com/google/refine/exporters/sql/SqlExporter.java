@@ -66,7 +66,9 @@ public class SqlExporter implements WriterExporter {
     @Override
     public void export(final Project project, Properties params, Engine engine, final Writer writer)
             throws IOException {
-
+        if(logger.isDebugEnabled()) {
+            logger.debug("export sql with params: {}", params);
+        }
         TabularSerializer serializer = new TabularSerializer() {
 
             @Override

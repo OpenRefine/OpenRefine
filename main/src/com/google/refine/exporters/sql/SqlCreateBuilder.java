@@ -44,7 +44,7 @@ public class SqlCreateBuilder {
 
     private String table;
 
-    @SuppressWarnings("unused")
+   
     private List<String> columns;
 
     private JSONObject options;
@@ -56,13 +56,15 @@ public class SqlCreateBuilder {
     }
 
     public String getCreateSQL() {
+        if(logger.isDebugEnabled()) {
+            logger.debug("Create SQL with columns: {}", columns);
+        }
         StringBuffer createSB = new StringBuffer();
 
         JSONArray columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
         
         final boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-                
-        //logger.info("Trim Column Names::" + trimColNames);
+      
         int count = columnOptionArray.length();
 
         for (int i = 0; i < count; i++) {
@@ -138,12 +140,6 @@ public class SqlCreateBuilder {
         return createSQL;
     }
     
-//    public static void main(String[] args) {
-//        String column = "Column 1 With Spaces";
-//        String newCol = column.replaceAll("\\s", "");
-//        
-//        logger.info("Column after trim:" + newCol);
-//        
-//    }
+
 
 }
