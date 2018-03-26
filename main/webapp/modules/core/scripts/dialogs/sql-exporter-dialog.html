@@ -51,9 +51,15 @@
             <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
               <tr>
           
-                <td width="1%"><input type="checkbox" bind="outputEmptyRowsCheckbox" id="$sql-output-empty-rows" /></td>
-                <td width="25%"><label for="$sql-output-empty-rows" bind="or_dialog_outEmptyRow"></label></td>
-              	<td width="25%"><div bind="sqlTypeApplyAllDiv" id="sqlTypeApplyAllDivId"></div></td>
+                 <td width="1%"><input type="checkbox" bind="sqlExportOutputEmptyRowsCheckbox" id="sqlExportOutputEmptyRowsCheckboxId" /></td>
+			     <td width="25%"><label for="sqlExportOutputEmptyRowsCheckbox" bind="sqlExportOutputEmptyRowsLabel"></label></td>
+			  
+			     <td width="1%"><input type="checkbox" bind="sqlExportAllRowsCheckbox" id="sqlExportAllRowsCheckboxId" /></td>
+			     <td width="25%"><label for="sqlExportAllRowsCheckbox" bind="sqlExportIgnoreFacetsLabel"></label></td>
+			     
+			     <td width="1%"><input type="checkbox" bind="sqlExportTrimAllColumnsCheckbox" id="sqlExportTrimAllColumnsCheckboxId" /></td>
+			     <td width="25%"><label for="sqlExportTrimAllColumnsCheckbox" bind="sqlExportTrimAllColumnsLabel"></label></td>
+                
               </tr>
             </table></div></td>
           </tr>

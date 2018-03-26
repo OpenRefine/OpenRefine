@@ -59,6 +59,9 @@ public class SqlCreateBuilder {
         StringBuffer createSB = new StringBuffer();
 
         JSONArray columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
+        
+        final boolean trimColNames = options == null ? true
+                : JSONUtilities.getBoolean(options, "trimColumnNames", false);
 
         int count = columnOptionArray.length();
 
@@ -68,9 +71,14 @@ public class SqlCreateBuilder {
                 String name = JSONUtilities.getString(columnOptions, "name", null);
                 String type = JSONUtilities.getString(columnOptions, "type", "VARCHAR");
                 String size = JSONUtilities.getString(columnOptions, "size", "");
+               
                 if (name != null) {
-                    createSB.append(name + " ");
-
+                    if(trimColNames) {
+                        createSB.append(name.trim() + " ");
+                    }else{
+                        createSB.append(name + " ");
+                    }
+                   
                     if (type.equals("VARCHAR")) {
                         if (size.isEmpty()) {
                             size = "255";

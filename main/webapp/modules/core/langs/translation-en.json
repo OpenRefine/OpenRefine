@@ -278,7 +278,11 @@
    		"for-include-structure-checkbox": "Include Schema",
         "for-include-drop-statement-checkbox": "Include Drop Statement",
         "for-include-content-checkbox": "Include Content",
-        "tableNameLabel": "Table Name:"
+        "tableNameLabel": "Table Name:",
+        "sqlExporterTrimColumns": "Trim Column Names",
+        "sqlExporterIgnoreFacets": "Ignore facets and filters and export all rows",
+        "sqlExporterOutputEmptyRows":"Output empty row (i.e. all cells null)"
+
    	
     },
     "core-facets": {

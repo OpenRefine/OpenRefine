@@ -57,7 +57,7 @@ function SqlExporterDialog(options) {
     this._elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
     this._elmts.deselectAllButton.html($.i18n._('core-buttons')["deselect-all"]);
  
-    this._elmts.or_dialog_outEmptyRow.html($.i18n._('core-dialogs')["out-empty-row"]);
+    
 
     this._elmts.downloadPreviewButton.html($.i18n._('core-buttons')["preview"]);
     this._elmts.downloadButton.html($.i18n._('core-buttons')["download"]);
@@ -70,7 +70,13 @@ function SqlExporterDialog(options) {
     this._elmts.includeStructureLabel.html($.i18n._('core-dialogs')["for-include-structure-checkbox"]);
     this._elmts.includeDropStatementLabel.html($.i18n._('core-dialogs')["for-include-drop-statement-checkbox"]);
     this._elmts.includeContentLabel.html($.i18n._('core-dialogs')["for-include-content-checkbox"]);
-
+    
+    
+    this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n._('core-dialogs')["sqlExporterIgnoreFacets"]);
+    this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n._('core-dialogs')["sqlExporterTrimColumns"]);
+    this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n._('core-dialogs')["sqlExporterOutputEmptyRows"]);
+   
+ 
   
     $("#sql-exporter-tabs-content").css("display", "");
     $("#sql-exporter-tabs-download").css("display", "");
@@ -88,20 +94,29 @@ function SqlExporterDialog(options) {
       var sizeInputName = 'sizeInputRow' + i;
       var applyAllBtnName = 'applyAllBtn' + i;
       
-      var arr = [
-          {val : 'VARCHAR', text: 'VARCHAR'},
-          {val : 'TEXT', text: 'TEXT'},
-          {val : 'INT', text: 'INT'},
-          {val : 'NUMERIC', text: 'NUMERIC'},
-          {val : 'CHAR', text: 'CHAR'},
-          {val : 'DATE', text: 'DATE'},
-          {val : 'TIMESTAMP', text: 'TIMESTAMP'}
-        ];
+//      var arr = [
+//          {val : 'VARCHAR', text: 'VARCHAR'},
+//          {val : 'TEXT', text: 'TEXT'},
+//          {val : 'INT', text: 'INT'},
+//          {val : 'NUMERIC', text: 'NUMERIC'},
+//          {val : 'CHAR', text: 'CHAR'},
+//          {val : 'DATE', text: 'DATE'},
+//          {val : 'TIMESTAMP', text: 'TIMESTAMP'}
+//        ];
 
         var sel = $('<select>').appendTo('body');
-        $(arr).each(function() {
-            sel.append($("<option>").attr('value',this.val).text(this.text));
-        });
+        sel.append($("<option>").attr('value','VARCHAR').text('VARCHAR'));
+        sel.append($("<option>").attr('value','TEXT').text('TEXT'));
+        sel.append($("<option>").attr('value','INT').text('INT'));
+        sel.append($("<option>").attr('value','NUMERIC').text('NUMERIC'));
+        sel.append($("<option>").attr('value','CHAR').text('CHAR'));
+        sel.append($("<option>").attr('value','DATE').text('DATE'));
+        sel.append($("<option>").attr('value','TIMESTAMP').text('TIMESTAMP'));
+      
+        
+//        $(arr).each(function() {
+//            sel.append($("<option>").attr('value',this.val).text(this.text));
+//        });
         sel.attr('id', selectBoxName);
         sel.attr('rowIndex', i);
         sel.addClass('typeSelectClass');
@@ -109,7 +124,7 @@ function SqlExporterDialog(options) {
        
         $(sel).on('change', function() {
               var rowIndex = this.getAttribute('rowIndex');
-              if (this.value == 'VARCHAR' || this.value == 'CHAR' || this.value == 'NUMERIC' || this.value == 'INT') {
+              if (this.value === 'VARCHAR' || this.value === 'CHAR' || this.value === 'NUMERIC' || this.value === 'INT') {
                   $('#sizeInputRow'+ rowIndex).prop("disabled", false);
               }else{
                   $('#sizeInputRow'+ rowIndex).val("");
@@ -199,13 +214,13 @@ function SqlExporterDialog(options) {
     
     this._elmts.selectAllButton.click(function() {
        $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
-           $(this).attr('checked', true)
+           $(this).attr('checked', true);
         });
       self._updateOptionCode();
     });
     this._elmts.deselectAllButton.click(function() {
         $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
-           $(this).attr('checked', false)
+           $(this).attr('checked', false);
         });
        self._updateOptionCode();
     });
@@ -232,7 +247,9 @@ function SqlExporterDialog(options) {
   SqlExporterDialog.prototype._configureUIFromOptionCode = function(options) {
       
       this._elmts.tableNameTextBox.val(theProject.metadata.name);
-      this._elmts.outputEmptyRowsCheckbox.attr('checked', 'checked');
+      this._elmts.sqlExportOutputEmptyRowsCheckbox.attr('checked', 'checked');
+      this._elmts.sqlExportTrimAllColumnsCheckbox.attr('checked', 'checked');
+      
 
   };
   
@@ -254,7 +271,7 @@ function SqlExporterDialog(options) {
   };
   
   SqlExporterDialog.prototype._postExport = function(preview) {
-   // var exportAllRowsCheckbox = this._elmts.exportAllRowsCheckbox[0].checked;
+    var exportAllRowsCheckbox = this._elmts.sqlExportAllRowsCheckbox[0].checked;
     var options = this._getOptionCode();
     
     if(options.columns == null || options.columns.length == 0){
@@ -272,7 +289,7 @@ function SqlExporterDialog(options) {
     }
     
   // var ext = SqlExporterDialog.formats[format].extension;
-    var form = this._prepareSqlExportRowsForm(format, false, "sql");
+    var form = this._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
     $('<input />')
     .attr("name", "options")
     .attr("value", JSON.stringify(options))
@@ -365,11 +382,12 @@ function SqlExporterDialog(options) {
     options.separator = ';';
     options.encoding = 'UTF-8';
   
-    options.outputBlankRows = this._elmts.outputEmptyRowsCheckbox[0].checked;
+    options.outputBlankRows = this._elmts.sqlExportOutputEmptyRowsCheckbox[0].checked;
     options.includeStructure = this._elmts.includeStructureCheckbox[0].checked;
     options.includeDropStatement = this._elmts.includeDropStatementCheckbox[0].checked;
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
     options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    options.trimColumnNames = this._elmts.sqlExportTrimAllColumnsCheckbox[0].checked;
      
         
     options.columns = [];
