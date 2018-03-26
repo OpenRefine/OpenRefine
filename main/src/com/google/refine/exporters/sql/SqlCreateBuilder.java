@@ -60,9 +60,9 @@ public class SqlCreateBuilder {
 
         JSONArray columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
         
-        final boolean trimColNames = options == null ? true
-                : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-
+        final boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
+                
+        //logger.info("Trim Column Names::" + trimColNames);
         int count = columnOptionArray.length();
 
         for (int i = 0; i < count; i++) {
@@ -71,10 +71,13 @@ public class SqlCreateBuilder {
                 String name = JSONUtilities.getString(columnOptions, "name", null);
                 String type = JSONUtilities.getString(columnOptions, "type", "VARCHAR");
                 String size = JSONUtilities.getString(columnOptions, "size", "");
-               
+                //logger.info("Before Trim Column Names::" + name);
+                
                 if (name != null) {
                     if(trimColNames) {
-                        createSB.append(name.trim() + " ");
+                        String trimmedCol = name.replaceAll("\\s", "");
+                        createSB.append( trimmedCol + " ");
+                        //logger.info("After Trim Column Names::" + name);
                     }else{
                         createSB.append(name + " ");
                     }
@@ -134,5 +137,13 @@ public class SqlCreateBuilder {
         }
         return createSQL;
     }
+    
+//    public static void main(String[] args) {
+//        String column = "Column 1 With Spaces";
+//        String newCol = column.replaceAll("\\s", "");
+//        
+//        logger.info("Column after trim:" + newCol);
+//        
+//    }
 
 }

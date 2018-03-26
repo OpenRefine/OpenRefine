@@ -85,9 +85,15 @@ public class SqlInsertBuilder {
                 colOptionsMap.put("" + json.get("name"), json);
             });
         }
-        
-        String colNamesWithSep = columns.stream()
-                .collect(Collectors.joining(","));
+        final boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
+        String colNamesWithSep = null;
+        if(trimColNames) {
+            colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));
+        }else {
+            colNamesWithSep = columns.stream().collect(Collectors.joining(","));  
+        }
+      
+                
         StringBuffer values = new StringBuffer();
        
         int idx = 0;
