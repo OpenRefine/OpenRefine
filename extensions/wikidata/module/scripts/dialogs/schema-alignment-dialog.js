@@ -39,11 +39,110 @@ SchemaAlignment._cleanName = function(s) {
 
 var SchemaAlignmentDialog = {};
 
+/**
+ * Installs the tabs in the UI the first time the Wikidata 
+ * extension is called.
+ */
+SchemaAlignmentDialog.setUpTabs = function() {
+  var self = this;
+  this._rightPanel = $('#right-panel');
+  this._viewPanel = $('#view-panel').addClass('main-view-panel-tab');
+  this._toolPanel = $('#tool-panel');
+  this._summaryBar = $('#summary-bar')
+        .addClass('main-view-panel-tab-header')
+        .addClass('active')
+        .attr('href', '#view-panel');
+
+  this._schemaPanel = $('<div id="wikidata-schema-panel"></div>')
+        .addClass('main-view-panel-tab')
+        .appendTo(this._rightPanel);
+  this._issuesPanel = $('<div id="wikidata-issues-panel"></div>')
+        .addClass('main-view-panel-tab')
+        .appendTo(this._rightPanel);
+  
+  var schemaButton = $('<div></div>')
+        .addClass('main-view-panel-tab-header')
+        .attr('href', '#wikidata-schema-panel')
+        .appendTo(this._toolPanel);
+  var issuesButton = $('<div></div>')
+        .addClass('main-view-panel-tab-header')
+        .attr('href', '#wikidata-issues-panel')
+        .text($.i18n._('wikidata-schema')["warnings-tab-header"]+' ')
+        .appendTo(this._toolPanel);
+  this.issuesTabCount = $('<span></span>').addClass('schema-alignment-total-warning-count').appendTo(issuesButton);
+
+  schemaButton.text($.i18n._('wikidata-schema')["schema-tab-header"]);
+  // this._elmts.editsPreviewTabHeader.text($.i18n._('wikidata-schema')["edits-preview-tab-header"]);
+  
+  $('.main-view-panel-tab-header').click(function() {
+     var targetTab = $(this).attr('href');
+     SchemaAlignmentDialog.switchTab(targetTab);
+  });
+
+  var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
+  var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
+  schemaElmts.dialogExplanation.text($.i18n._('wikidata-schema')["dialog-explanation"]);
+  this._plusButton($.i18n._('wikidata-schema')["add-item-button"], schemaElmts.addItemButton);
+  schemaElmts.addItemButton.click(function() {
+    self._addItem();
+    SchemaAlignmentDialog._hasChanged();
+  });
+
+  this._wikibasePrefix = "http://www.wikidata.org/entity/"; // hardcoded for now
+
+  // Init the column area
+  var columns = theProject.columnModel.columns;
+  this._columnArea = $(".schema-alignment-dialog-columns-area");
+  for (var i = 0; i < columns.length; i++) {
+     var column = columns[i];
+     var reconConfig = column.reconConfig;
+     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name, 
+        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
+     this._columnArea.append(cell);
+  }
+
+  $('.wbs-reconciled-column').draggable({
+     helper: "clone",
+     cursor: "crosshair",
+     snap: ".wbs-item-input input, .wbs-target-input input",
+     zIndex: 100,
+  });
+  $('.wbs-unreconciled-column').draggable({
+     helper: "clone",
+     cursor: "crosshair",
+     snap: ".wbs-target-input input",
+     zIndex: 100,
+  });
+
+  var url = ReconciliationManager.ensureDefaultServicePresent();
+  SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
+
+  this._previewPanes = $(".schema-alignment-dialog-preview");
+  this.preview();
+}
+
+SchemaAlignmentDialog.switchTab = function(targetTab) {
+  $('.main-view-panel-tab').hide();
+  $('.main-view-panel-tab-header').removeClass('active');
+  $('.main-view-panel-tab-header[href="'+targetTab+'"]').addClass('active');
+  $(targetTab).show();
+  resizeAll();
+}
+
+SchemaAlignmentDialog.isSetUp = function() {
+  return $('#wikidata-schema-panel').length !== 0;
+}
+
 SchemaAlignmentDialog.launch = function(onDone) {
   this._onDone = onDone;
   this._hasUnsavedChanges = false;
 
-  this._createDialog();
+  if (!SchemaAlignmentDialog.isSetUp()) {
+     SchemaAlignmentDialog.setUpTabs();
+  }
+  SchemaAlignmentDialog.switchTab('#wikidata-schema-panel');
+
+  // this._createDialog();
   this._reset(theProject.overlayModels.wikibaseSchema, true);
 }
 
@@ -113,13 +212,12 @@ SchemaAlignmentDialog._createDialog = function() {
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/schema-alignment-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
 
-  this._elmts.dialogHeader.text($.i18n._('wikidata-schema')["dialog-header"]);
-  this._elmts.dialogExplanation.text($.i18n._('wikidata-schema')["dialog-explanation"]);
+  // this._elmts.dialogHeader.text($.i18n._('wikidata-schema')["dialog-header"]);
+  //
+
+
   this._elmts.previewExplanation.text($.i18n._('wikidata-schema')["preview-explanation"]);
-  this._elmts.schemaTabHeader.text($.i18n._('wikidata-schema')["schema-tab-header"]);
-  this._elmts.warningsTabHeader.text($.i18n._('wikidata-schema')["warnings-tab-header"]);
-  this._elmts.editsPreviewTabHeader.text($.i18n._('wikidata-schema')["edits-preview-tab-header"]);
-  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-item-button"], this._elmts.addItemButton);
+
   this._elmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
   this._elmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
   this._elmts.resetButton.text($.i18n._('wikidata-schema')["reset-button"]);
@@ -127,31 +225,6 @@ SchemaAlignmentDialog._createDialog = function() {
   this._elmts.closeButton.text($.i18n._('wikidata-schema')["close-button"]);
 
   this._level = DialogSystem.showDialog(frame);
-  this._wikibasePrefix = "http://www.wikidata.org/entity/"; // hardcoded for now
-
-  // Init the column area
-  var columns = theProject.columnModel.columns;
-  this._columnArea = $(".schema-alignment-dialog-columns-area");
-  for (var i = 0; i < columns.length; i++) {
-     var column = columns[i];
-     var reconConfig = column.reconConfig;
-     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name, 
-        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
-     this._columnArea.append(cell);
-  }
-
-  $('.wbs-reconciled-column').draggable({
-     helper: "clone",
-     cursor: "crosshair",
-     snap: ".wbs-item-input input, .wbs-target-input input",
-     zIndex: 100,
-  });
-  $('.wbs-unreconciled-column').draggable({
-     helper: "clone",
-     cursor: "crosshair",
-     snap: ".wbs-target-input input",
-     zIndex: 100,
-  });
 
 
   var dismiss = function() {
@@ -170,21 +243,12 @@ SchemaAlignmentDialog._createDialog = function() {
     }
   });
 
-  elmts.addItemButton.click(function() {
-    self._addItem();
-    SchemaAlignmentDialog._hasChanged();
-  });
-
   $("#schema-alignment-tabs").tabs();
 
-  this._previewPanes = $(".schema-alignment-dialog-preview");
 
   this._canvas = $(".schema-alignment-dialog-canvas");
   this._nodeTable = $('<table></table>').addClass("schema-alignment-table-layout").appendTo(this._canvas)[0];
 
-  var url = ReconciliationManager.ensureDefaultServicePresent();
-  SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
-  this.preview();
 };
 
 SchemaAlignmentDialog._makeDeleteButton = function (noText) {
@@ -1004,13 +1068,20 @@ SchemaAlignmentDialog.preview = function(initial) {
   );
 };
 
+Refine.registerUpdateFunction(function(options) {
+   if (SchemaAlignmentDialog.isSetUp() && (options.everythingChanged || options.modelsChanged ||
+       options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged)) {
+       SchemaAlignmentDialog.preview(false);
+   }
+});
+
 /*************************
  * WARNINGS RENDERING *
  *************************/
 
 SchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
-   var mainDiv = this._elmts.warningsArea;
-   var countsElem = this._elmts.warningsTabCount;
+   var mainDiv = $('#wikidata-issues-panel');
+   var countsElem = this.issuesTabCount;
 
    // clear everything
    mainDiv.empty();
