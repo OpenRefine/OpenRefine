@@ -176,6 +176,14 @@ SchemaAlignmentDialog.launch = function(onDone) {
   this._reset(theProject.overlayModels.wikibaseSchema, true);
 }
 
+
+$(window).bind('beforeunload', function(e) {
+  if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges) {
+     return (e = $.i18n._('wikidata-schema')["unsaved-warning"]);
+  }
+  return null;
+});
+
 SchemaAlignmentDialog._reset = function(schema, initial) {
   this._originalSchema = schema || { itemDocuments: [] };
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
