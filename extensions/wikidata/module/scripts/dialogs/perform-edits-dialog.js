@@ -72,6 +72,10 @@ PerformEditsDialog.checkAndLaunch = function () {
   this._elmts = DOM.bind(this.frame);
   this.missingSchema = false;
 
+  if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges) {
+     SchemaAlignmentDialog._save();
+  }
+
    ManageAccountDialog.ensureLoggedIn(function(logged_in_username) {
        if (logged_in_username) {
             var discardWaiter = DialogSystem.showBusy($.i18n._('perform-wikidata-edits')["analyzing-edits"]);
@@ -80,7 +84,7 @@ PerformEditsDialog.checkAndLaunch = function () {
                 { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
                 function(data) {
                    discardWaiter();
-                   if(data['status'] != 'error') {
+                   if(data['code'] != 'error') {
                        PerformEditsDialog._updateWarnings(data);
                        PerformEditsDialog.launch(logged_in_username, data['max_severity']);
                    } else {

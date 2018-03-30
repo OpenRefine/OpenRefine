@@ -39,12 +39,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   position: initial;
 }
 
-#wikidata-schema-panel, #wikidata-issues-panel {
+#wikidata-schema-panel, #wikidata-issues-panel, #wikidata-preview-panel {
   display: block;
   overflow: hidden;
   height: 100%;
   background-color: white;
   font-size: 1.2em;
+}
+
+#schema-preview-tab, #schema-issues-tab, #schema-alignment-tab {
+  overflow: auto;
+  height: 100%;
 }
 
 .main-view-panel-tab-header {
@@ -58,13 +63,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .main-view-panel-tab-header.active {
-  background-color: #f2f2f2;
+  background-color: white;
   color: black;
   border: 1px solid #818fb7;
   border-bottom: none;
 }
 
-
+.main-view-panel-tab-header.active:first-child {
+  background-color: #f2f2f2;
+}
 
 .schema-alignment-dialog-canvas {
   padding: 0px
@@ -74,12 +81,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .schema-alignment-dialog-statements-area {
   padding: 10px;
-  max-height: 350px;
-  min-height: 250px;
+  max-width: 900px;
   overflow-y: auto;
 }
 
-.schema-alignment-explanation {
+.panel-explanation {
   margin: 1em;
 }
 
@@ -420,7 +426,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-size: 1.2em;
 }
 
-.schema-alignment-dialog-warnings table,
+.schema-issues-area table,
 .perform-edits-warnings-area table {
   width: 100%;
 }
@@ -475,7 +481,6 @@ tr.wb-warning:nth-of-type(odd) {
   float: clear;
 }
 
-div.schema-alignment-dialog-warnings, 
 div.perform-edits-warnings-area {
   min-height: 340px;
   max-height: 400px;
@@ -499,7 +504,7 @@ div.perform-edits-warnings-area {
 
 div.schema-alignment-dialog-preview {
   min-height: 340px;
-  max-height: 400px;
+  max-width: 900px;
   overflow: auto;
   background: white;
   padding: 10px;

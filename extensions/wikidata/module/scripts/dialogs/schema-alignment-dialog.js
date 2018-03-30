@@ -59,10 +59,14 @@ SchemaAlignmentDialog.setUpTabs = function() {
   this._issuesPanel = $('<div id="wikidata-issues-panel"></div>')
         .addClass('main-view-panel-tab')
         .appendTo(this._rightPanel);
+  this._previewPanel = $('<div id="wikidata-preview-panel"></div>')
+        .addClass('main-view-panel-tab')
+        .appendTo(this._rightPanel);
   
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikidata-schema-panel')
+        .text($.i18n._('wikidata-schema')["schema-tab-header"])
         .appendTo(this._toolPanel);
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
@@ -70,14 +74,20 @@ SchemaAlignmentDialog.setUpTabs = function() {
         .text($.i18n._('wikidata-schema')["warnings-tab-header"]+' ')
         .appendTo(this._toolPanel);
   this.issuesTabCount = $('<span></span>').addClass('schema-alignment-total-warning-count').appendTo(issuesButton);
-
-  schemaButton.text($.i18n._('wikidata-schema')["schema-tab-header"]);
-  // this._elmts.editsPreviewTabHeader.text($.i18n._('wikidata-schema')["edits-preview-tab-header"]);
+  var previewButton = $('<div></div>')
+        .addClass('main-view-panel-tab-header')
+        .attr('href', '#wikidata-preview-panel')
+        .text($.i18n._('wikidata-schema')["edits-preview-tab-header"])
+        .appendTo(this._toolPanel);
   
   $('.main-view-panel-tab-header').click(function() {
      var targetTab = $(this).attr('href');
      SchemaAlignmentDialog.switchTab(targetTab);
   });
+
+  /**
+   * Init the schema tab
+   */
 
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
@@ -117,6 +127,22 @@ SchemaAlignmentDialog.setUpTabs = function() {
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
 
+  /**
+   * Init the issues tab
+   */
+  var issuesTab = $(DOM.loadHTML("wikidata", "scripts/issues-tab.html")).appendTo(this._issuesPanel);
+  var issuesElmts = this._schemaElmts = DOM.bind(issuesTab);
+  issuesElmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
+
+  /**
+   * Init the preview tab
+   */
+
+  var previewTab = $(DOM.loadHTML("wikidata", "scripts/preview-tab.html")).appendTo(this._previewPanel);
+  var previewElmts = this._schemaElmts = DOM.bind(previewTab);
+  previewElmts.previewExplanation.text($.i18n._('wikidata-schema')["preview-explanation"]);
+  previewElmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
+
   this._previewPanes = $(".schema-alignment-dialog-preview");
   this.preview();
 }
@@ -127,6 +153,10 @@ SchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab-header[href="'+targetTab+'"]').addClass('active');
   $(targetTab).show();
   resizeAll();
+  var panelHeight = this._viewPanel.height();
+  this._schemaPanel.height(panelHeight);
+  this._issuesPanel.height(panelHeight);
+  this._previewPanel.height(panelHeight);
 }
 
 SchemaAlignmentDialog.isSetUp = function() {
@@ -216,10 +246,7 @@ SchemaAlignmentDialog._createDialog = function() {
   //
 
 
-  this._elmts.previewExplanation.text($.i18n._('wikidata-schema')["preview-explanation"]);
 
-  this._elmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
-  this._elmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
   this._elmts.resetButton.text($.i18n._('wikidata-schema')["reset-button"]);
   this._elmts.saveButton.text($.i18n._('wikidata-schema')["save-button"]);
   this._elmts.closeButton.text($.i18n._('wikidata-schema')["close-button"]);
