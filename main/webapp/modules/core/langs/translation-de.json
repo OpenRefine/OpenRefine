@@ -1,22 +1,30 @@
 {
     "name": "Deutsch",
     "core-index": {
-        "preferences": "Einstellungen",
-        "about": "Über",
-        "slogan": "Ein leistungsstarkes Werkzeug für die Bearbeitung von unordentlichen Daten",
         "help": "Hilfe",
         "new-proj-name": "Neuer Projektname:",
-        "edit": "Ändern",
-        "add-pref": "Einstellung hinzufügen",
-        "value": "Wert",
+        "download": "Herunterladen",
+        "delete-key": "Präferenzschlüssel löschen",
+        "preferences": "Einstellungen",
         "no-proj": "Kein Projekt vorhanden. Wählen Sie auf der linken Seite \"Projekt erstellen\", um ein neues Projekt zu erstellen.",
         "version": "Version",
-        "key": "Schlüssel",
         "error-rename": "Fehler beim Umbenennen des Projekts:",
-        "download": "Herunterladen",
+        "pref-key": "Präferenzschlüsselwert:",
+        "change-metadata-value": "Wert des Metadatenschlüssels ändern",
         "sample-data": "Beispieldatensätze",
+        "try-these": "Wenn Sie keine Daten zu verarbeiten haben, versuchen Sie, diese",
+        "add-pref": "Einstellung hinzufügen",
+        "key": "Schlüssel",
         "new-version": "Neue Version!",
         "now": "jetzt",
+        "change-value": "Wert des Präferenzschlüssels ändern",
+        "about": "Über",
+        "slogan": "Ein leistungsstarkes Werkzeug für die Bearbeitung von unordentlichen Daten",
+        "name": "Projektname:",
+        "created": "Erstellungszeit:",
+        "edit": "Ändern",
+        "modified": "Zeitpunkt der letzten Änderung",
+        "value": "Wert",
         "delete": "Löschen"
     },
     "core-index-create": {
@@ -71,19 +79,19 @@
         "name": "Name"
     },
     "core-index-lang": {
-        "lang-settings": "Spracheinstellungen",
+        "label": "Bevorzugte Sprache auswählen",
         "send-req": "Sprache ändern",
         "page-reload": "Die Seite wird aktualisiert, um die Änderung zu übernehmen.",
-        "label": "Bevorzugte Sprache auswählen"
+        "lang-settings": "Spracheinstellungen"
     },
     "core-index-parser": {
         "commas": "Kommas (CSV)",
         "tabs": "Tabs (TSV)",
         "invalid-wikitext": "Es konnte keine Tabelle geparst werden. Sind Sie sicher, dass dies eine gültige Wiki-Tabelle ist?",
         "custom": "benutzerdefiniert",
-        "json-parser": "Klicken Sie auf den ersten JSON {} Knoten, der dem ersten zu ladenden Datensatz entspricht.",
         "escape": "Makiere Sonderzeichen mit \\",
-        "click-xml": "Klicken Sie auf das erste XML-Element, das dem ersten zu ladenden Datensatz entspricht."
+        "click-xml": "Klicken Sie auf das erste XML-Element, das dem ersten zu ladenden Datensatz entspricht.",
+        "json-parser": "Klicken Sie auf den ersten JSON {} Knoten, der dem ersten zu ladenden Datensatz entspricht."
     },
     "core-dialogs": {
         "cluster-size": "Clustergröße",
@@ -91,13 +99,13 @@
         "no-cluster-found": "Mit der ausgewählten Methode wurden keine Cluster gefunden",
         "row-count": "Reihenanzahl",
         "choice-avg-length": "Durchschnittliche Länge der Auswahl",
-        "choice-var-length": "Längenabweichung der Auswahl",
+        "fingerprint": "Fingerabdruck",
         "reorder-column": "Spalten neu ordnen / entfernen",
         "cluster-values": "Werte im Cluster",
         "nearest-neighbor": "nächster Nachbar",
         "try-another-method": "Versuchen Sie eine andere Methode oben auszuwählen oder ändern Sie ihre Parameter",
         "new-cell-val": "Neuer Zellenwert",
-        "fingerprint": "Fingerabdruck",
+        "choice-var-length": "Längenabweichung der Auswahl",
         "use-this-val": "Diesen Wert verwenden",
         "found": "gefunden",
         "template-suffix": "Suffix"
