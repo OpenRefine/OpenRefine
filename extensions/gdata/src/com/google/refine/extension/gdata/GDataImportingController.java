@@ -1,41 +1,7 @@
-/*
-
-Copyright 2011, Google Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
-
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -44,25 +10,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.User;
 import com.google.api.services.fusiontables.Fusiontables;
 import com.google.api.services.fusiontables.model.Table;
 import com.google.api.services.fusiontables.model.TableList;
-import com.google.gdata.client.docs.DocsService;
-import com.google.gdata.client.spreadsheet.FeedURLFactory;
-import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.DateTime;
-import com.google.gdata.data.Person;
-import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
-import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.data.spreadsheet.WorksheetFeed;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
@@ -77,7 +42,7 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class GDataImportingController implements ImportingController {
-
+    private static final Logger logger = LoggerFactory.getLogger("GDataImportingController");
     protected RefineServlet servlet;
     
     @Override
@@ -128,13 +93,11 @@ public class GDataImportingController implements ImportingController {
             writer.array();
             
             try {
-                listSpreadsheets(GDataExtension.getDocsService(token), writer);
+                listSpreadsheets(GoogleAPIExtension.getDriveService(token), writer);
                 listFusionTables(FusionTableHandler.getFusionTablesService(token), writer);
-            } catch (AuthenticationException e) {
-                TokenCookie.deleteToken(request, response);
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            } finally {
+            }  catch (Exception e) {
+                logger.error("doListDocuments exception:" + ExceptionUtils.getStackTrace(e));
+            }  finally {
                 writer.endArray();
                 writer.endObject();
             }
@@ -146,26 +109,30 @@ public class GDataImportingController implements ImportingController {
         }
     }
     
-    private void listSpreadsheets(DocsService service, JSONWriter writer)
-            throws IOException, ServiceException, JSONException {
-        URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/private/full");
-        SpreadsheetFeed feed = service.getFeed(metafeedUrl, SpreadsheetFeed.class);
-        for (SpreadsheetEntry entry : feed.getEntries()) {
+    private void listSpreadsheets(Drive drive, JSONWriter writer)
+            throws IOException, JSONException {
+         com.google.api.services.drive.Drive.Files.List files = drive.files().list();
+         files.setQ("mimeType = 'application/vnd.google-apps.spreadsheet'");
+         files.setFields("nextPageToken, files(id, name, webViewLink, owners, modifiedTime)");
+         FileList fileList = files.execute();
+         
+        for (File entry : fileList.getFiles()) {
             writer.object();
             writer.key("docId"); writer.value(entry.getId());
-            writer.key("docLink"); writer.value(entry.getHtmlLink().getHref());
-            writer.key("docSelfLink"); writer.value(entry.getSelfLink().getHref());
-            writer.key("title"); writer.value(entry.getTitle().getPlainText());
+            writer.key("docLink"); writer.value(entry.getWebViewLink());
+            writer.key("docSelfLink"); writer.value(entry.getWebViewLink());
+            writer.key("title"); writer.value(entry.getName());
+            
             writer.key("type"); writer.value("spreadsheet");
             
-            DateTime updated = entry.getUpdated();
+            com.google.api.client.util.DateTime updated = entry.getModifiedTime();
             if (updated != null) {
-                writer.key("updated"); writer.value(updated.toStringRfc822());
+                writer.key("updated"); writer.value(updated.toString());
             }
             
             writer.key("authors"); writer.array();
-            for (Person person : entry.getAuthors()) {
-                writer.value(person.getName());
+            for (User user : entry.getOwners()) {
+                writer.value(user.getDisplayName());
             }
             writer.endArray();
             
@@ -174,10 +141,14 @@ public class GDataImportingController implements ImportingController {
     }
     
     private void listFusionTables(Fusiontables service, JSONWriter writer)
-        throws IOException, ServiceException, JSONException {
+        throws IOException, JSONException {
         
         Fusiontables.Table.List listTables = service.table().list();
         TableList tablelist = listTables.execute();
+        
+        if (tablelist == null || tablelist.getItems() == null)
+            return;
+        
         for (Table table : tablelist.getItems()) {
             String id = table.getTableId();
             String name = table.getName();
@@ -197,95 +168,56 @@ public class GDataImportingController implements ImportingController {
     private void doInitializeParserUI(
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
-        
         String token = TokenCookie.getToken(request);
-        
         String type = parameters.getProperty("docType");
         String urlString = parameters.getProperty("docUrl");
+        JSONObject result = new JSONObject();
+        JSONObject options = new JSONObject();
         
-        URL url = new URL(urlString);
-        try {
-            JSONObject result = new JSONObject();
-            JSONObject options = new JSONObject();
-            JSONUtilities.safePut(result, "status", "ok");
-            JSONUtilities.safePut(result, "options", options);
+        JSONUtilities.safePut(result, "status", "ok");
+        JSONUtilities.safePut(result, "options", options);
+        JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
+        JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        
+        if ("spreadsheet".equals(type)) {
+            JSONArray worksheets = new JSONArray();
+            // extract spreadSheetId from URL
+            String spreadSheetId = GoogleAPIExtension.extractSpreadSheetId(urlString);
             
-            JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
-            JSONUtilities.safePut(options, "storeBlankRows", true);
-            JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+            JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
+            JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+            JSONUtilities.safePut(options, "worksheets", worksheets);
             
-            if ("spreadsheet".equals(type)) {
-                JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
-                JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+            List<Sheet> worksheetEntries =
+                    getWorksheetEntriesForDoc(token, spreadSheetId);
+            for (Sheet sheet : worksheetEntries) {
+                JSONObject worksheetO = new JSONObject();
+                JSONUtilities.safePut(worksheetO, "name", sheet.getProperties().getTitle());
+                JSONUtilities.safePut(worksheetO, "rows", sheet.getProperties().getGridProperties().getRowCount());
+                JSONUtilities.safePut(worksheetO, "link", 
+                        "https://sheets.googleapis.com/v4/spreadsheets/" + spreadSheetId + "/values/" + sheet.getProperties().getTitle());
                 
-                JSONArray worksheets = new JSONArray();
-                JSONUtilities.safePut(options, "worksheets", worksheets);
-                
-                List<WorksheetEntry> worksheetEntries =
-                    reallyTryToGetWorksheetEntriesForDoc(url, token);
-                for (WorksheetEntry worksheetEntry : worksheetEntries) {
-                    JSONObject worksheetO = new JSONObject();
-                    JSONUtilities.safePut(worksheetO, "name", worksheetEntry.getTitle().getPlainText());
-                    JSONUtilities.safePut(worksheetO, "rows", worksheetEntry.getRowCount());
-                    JSONUtilities.safePut(worksheetO, "link", worksheetEntry.getSelfLink().getHref());
-                    
-                    JSONUtilities.append(worksheets, worksheetO);
-                }
-            } else if ("table".equals(type)) {
-                // No metadata for a fusion table.
+                JSONUtilities.append(worksheets, worksheetO);
             }
-            /* TODO: else */
+        } else if ("table".equals(type)) {
+            // No metadata for a fusion table.
+        }
             
-            HttpUtilities.respond(response, result.toString());
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            HttpUtilities.respond(response, "error", "Internal error: " + e.getLocalizedMessage());
-        }
+        HttpUtilities.respond(response, result.toString());
     }
-    
-    private List<WorksheetEntry> reallyTryToGetWorksheetEntriesForDoc(URL docUrl, String token) throws IOException, ServiceException {
-        try {
-            return getWorksheetEntriesForDoc(docUrl, token);
-        } catch (ServiceException e) {
-            /*
-             * TODO: figure out if we can rewire the URL somehow. This code below
-             * doesn't work but maybe we need to try something similar to it.
-             * 
-            String urlString = docUrl.toString();
-            if (urlString.startsWith("https://docs.google.com/spreadsheet/ccc?key=") ||
-                urlString.startsWith("http://docs.google.com/spreadsheet/ccc?key=")) {
-                
-                String urlString2 = "https://spreadsheets.google.com/spreadsheet/ccc?key=" +
-                    urlString.substring(urlString.indexOf("?key=") + 5);
-                
-                return getWorksheetEntriesForDoc(new URL(urlString2), token);
-            }
-            */
-            throw e;
-        }
-    }
-    
-    private List<WorksheetEntry> getWorksheetEntriesForDoc(URL docUrl, String token) throws IOException, ServiceException {
-        if (token != null) {
-            try {
-                SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
-                SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(docUrl, SpreadsheetEntry.class);
-                return spreadsheetEntry.getWorksheets();
-            } catch (ServiceException e) {
-                // Ignore and fall through, pretending that we're not logged in.
-            }
-        }
-        return getWorksheetEntriesForDoc(docUrl);
-    }
-    
-    private List<WorksheetEntry> getWorksheetEntriesForDoc(URL docUrl) throws IOException, ServiceException {
-        SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(null);
-        String visibility = "public";
-        FeedURLFactory factory = FeedURLFactory.getDefault();
-        String key = GDataExtension.getSpreadsheetID(docUrl);
-        docUrl = factory.getWorksheetFeedUrl(key, visibility, "values");
-        WorksheetFeed feed = spreadsheetService.getFeed(docUrl, WorksheetFeed.class);
-        return feed.getEntries(); 
+
+    private List<Sheet> getWorksheetEntriesForDoc(String token, String spreadsheetId) throws IOException {
+        Sheets sheetsService = GoogleAPIExtension.getSheetsService(token);
+        
+        boolean includeGridData = true; 
+
+        Sheets.Spreadsheets.Get request = sheetsService.spreadsheets().get(spreadsheetId);
+        request.setIncludeGridData(includeGridData);
+
+        Spreadsheet response = request.execute();
+        
+        return response.getSheets();
     }
     
     private void doParsePreview(
@@ -381,15 +313,19 @@ public class GDataImportingController implements ImportingController {
                     pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
                     pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
                     
-                    GDataImporter.parse(
-                        token,
-                        project,
-                        pm,
-                        job,
-                        -1,
-                        optionObj,
-                        exceptions
-                    );
+                    try {
+                        GDataImporter.parse(
+                            token,
+                            project,
+                            pm,
+                            job,
+                            -1,
+                            optionObj,
+                            exceptions
+                        );
+                    } catch (IOException e) {
+                        logger.error(ExceptionUtils.getStackTrace(e));
+                    }
                     
                     if (!job.canceled) {
                         if (exceptions.size() > 0) {

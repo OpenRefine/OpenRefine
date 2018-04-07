@@ -44,6 +44,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -471,5 +472,16 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public HistoryEntryManager getHistoryEntryManager(){
         return new FileHistoryEntryManager();
+    }
+    
+    public static void gzipTarToOutputStream(Project project, OutputStream os) throws IOException {
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+        TarOutputStream tos = new TarOutputStream(gos);
+        try {
+            ProjectManager.singleton.exportProject(project.id, tos);
+        } finally {
+            tos.close();
+            gos.close();
+        }
     }
 }

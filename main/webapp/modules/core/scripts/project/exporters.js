@@ -169,23 +169,85 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
 
 ExporterManager.handlers.exportProject = function() {
   var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
-  var form = document.createElement("form");
-  $(form)
-  .css("display", "none")
-  .attr("method", "post")
-  .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
-  .attr("target", "refine-export");
-  $('<input />')
-  .attr("name", "project")
-  .attr("value", theProject.id)
-  .appendTo(form);
+  // dialog
+  var dialog = $(DOM.loadHTML("core", "scripts/dialogs/export-project-dialog.html"));
+  var _elmts = DOM.bind(dialog);
+  
+  _elmts.dialogHeader.html($.i18n._('core-dialogs')["choose-export-destination"]);
+  _elmts.toLocalRadio.html($.i18n._('core-dialogs')["export-to-local"]);
+  _elmts.toGoogleDriveRadio.html($.i18n._('core-dialogs')["export-to-google-drive"]);
+  _elmts.exportButton.html($.i18n._('core-buttons')["export"]);
+  _elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+  
+  _elmts.exportButton.click(function() { 
+      if ($("input[name='export-destination']")[0].checked) {
+          exportToLocal(name);
+      } else {
+          exportToGoogleDrive(name);
+      }
+      
+      DialogSystem.dismissAll(); 
+  });
+  
+  _elmts.cancelButton.click(function() { DialogSystem.dismissAll(); });
+  
+  DialogSystem.showDialog(dialog);
+  
+  // save to google drive
+  var doExportToGoogleDrive = function() {
+      var name = window.prompt(prompt, theProject.metadata.name);
+      if (name) {
+        var dismiss = DialogSystem.showBusy($.i18n._('gdata-exporter')["uploading"]);
+        $.post(
+          "command/gdata/upload",
+          {
+            "project" : theProject.id,
+            "name" : name,
+            "format" : "raw/openrefine-project"
+          },
+          function(o) {
+            dismiss();
 
-  document.body.appendChild(form);
+            if (o.url) {
+                alert($.i18n._('gdata-exporter')["upload-success"] + o.url);
+            } else {
+                alert($.i18n._('gdata-exporter')["upload-error"] + o.message)
+            }
+            onDone();
+          },
+          "json"
+        );
+      }
+    };
 
-  window.open("about:blank", "refine-export");
-  form.submit();
-
-  document.body.removeChild(form);
+  function exportToGoogleDrive(name) {
+    if (GdataExtension.isAuthorized()) {
+        doExportToGoogleDrive();
+    } else {
+        GdataExtension.showAuthorizationDialog(doExportToGoogleDrive);
+    }
+  }
+  
+  // save to local
+  function exportToLocal(name) {
+      var form = document.createElement("form");
+      $(form)
+      .css("display", "none")
+      .attr("method", "post")
+      .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
+      .attr("target", "refine-export");
+      $('<input />')
+      .attr("name", "project")
+      .attr("value", theProject.id)
+      .appendTo(form);
+    
+      document.body.appendChild(form);
+    
+      window.open("about:blank", "refine-export");
+      form.submit();
+    
+      document.body.removeChild(form);
+  }
 };
 
 ExporterManager.handlers.projectDataPackage = function() {

@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var html = "text/html";
 var encoding = "UTF-8";
-var version = "0.2";
+var version = "0.3";
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
 
 /*
@@ -61,10 +61,6 @@ function init() {
     new Packages.com.google.refine.extension.gdata.GDataImportingController()
   );
   
-
-//Packages.com.google.refine.exporters.ExporterRegistry.registerExporter(
-//"gdata-exporter", new Packages.com.google.refine.extension.gdata.GDataExporter());
-
   // Script files to inject into /index page
   ClientSideResourceManager.addPaths(
     "index/scripts",
@@ -102,7 +98,7 @@ function process(path, request, response) {
   // Analyze path and handle this request yourself.
   if (path == "authorize") {
     var context = {};
-    context.authorizationUrl = Packages.com.google.refine.extension.gdata.GDataExtension.getAuthorizationUrl(module, request);
+    context.authorizationUrl = Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getAuthorizationUrl(module, request);
     
     send(request, response, "authorize.vt", context);
   } else if (path == "authorized") {
@@ -111,9 +107,10 @@ function process(path, request, response) {
     context.callback = request.getParameter("cb");
     
     (function() {
-      var token =  Packages.com.google.refine.extension.gdata.GDataExtension.getTokenFromCode(module,request);
-      if (token) {
-        Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, token);
+      var tokenAndExpiresInSeconds =  Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getTokenFromCode(module,request);
+      if (tokenAndExpiresInSeconds) {
+        var tokenInfo = tokenAndExpiresInSeconds.split(",");
+        Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, tokenInfo[0], tokenInfo[1]);
         return;
       }
       Packages.com.google.refine.extension.gdata.TokenCookie.deleteToken(request, response);
