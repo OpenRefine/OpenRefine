@@ -210,7 +210,8 @@ function registerImporting() {
   IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf+n3", "RDF/N3 files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
+  IM.registerFormat("text/rdf+n3", "RDF/N3 files", "RdfTriplesParserUI", 
+          new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
 
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
