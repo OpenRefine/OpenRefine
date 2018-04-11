@@ -171,10 +171,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .wbs-item-input, .wbs-prop-input, .wbs-target-input {
     width: 250px;
     height: 20px;
-    /* border: 1px solid #a2a9b1; */
     display: inline-block;
-    /* background: white; */
     margin: 5px;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .wbs-target-input {
@@ -193,7 +193,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 120px;
 }
 
-.wbs-item-input input, .wbs-prop-input input, .wbs-target-input input {
+// Fix input rendering for Firefox
+.wbs-item-input input, .wbs-prop-input input, .wbs-target-input input,
+.wbs-monolingual-container input {
     width: 100%;
     border: solid #b5b5b5 1px;
     padding: 2px;

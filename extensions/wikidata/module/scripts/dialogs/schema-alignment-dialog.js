@@ -176,13 +176,14 @@ SchemaAlignmentDialog.launch = function(onDone) {
   this._reset(theProject.overlayModels.wikibaseSchema, true);
 }
 
-
-$(window).bind('beforeunload', function(e) {
-  if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges) {
+var beforeUnload = function(e) {
+  console.log(SchemaAlignmentDialog._hasUnsavedChanges);
+  if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges === true) {
      return (e = $.i18n._('wikidata-schema')["unsaved-warning"]);
   }
-  return null;
-});
+};
+
+$(window).bind('beforeunload', beforeUnload);
 
 SchemaAlignmentDialog._reset = function(schema, initial) {
   this._originalSchema = schema || { itemDocuments: [] };
@@ -1015,6 +1016,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         input.val(initialValue.value);
      } else if (initialValue.type === "wblanguageconstant") {
         input.val(initialValue.id);
+        input.addClass("wbs-validated-input");
      } else if (initialValue.type === "wbstringvariable" ||
                 initialValue.type === "wbdatevariable" ||
                 initialValue.type === "wblocationvariable" ||
