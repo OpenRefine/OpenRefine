@@ -10,7 +10,7 @@
         "subject": "Thema:",
         "preferences": "Einstellungen",
         "creator": "Erstellt von:",
-        "no-proj": "Kein Projekt vorhanden. Wählen Sie auf der linken Seite \"Projekt erstellen\", um ein neues Projekt zu erstellen.",
+        "no-proj": "Kein Projekt vorhanden. Wählen Sie \"Projekt erstellen\" auf der linken Seite , um ein neues Projekt zu erstellen.",
         "version": "Version",
         "error-rename": "Fehler beim Umbenennen des Projekts:",
         "pref-key": "Präferenzschlüsselwert:",
