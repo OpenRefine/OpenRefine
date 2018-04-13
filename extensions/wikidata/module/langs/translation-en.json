@@ -193,6 +193,10 @@
                 "non-printable-characters": {
                         "title": "Non-printable characters in strings.",
                         "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> contain non-printable characters."
+                },
+                "invalid-identifier-space": {
+                        "title": "Invalid identifier space for reconciled cells.",
+                        "body": "Some reconciled cells such as <span class=\"wb-issue-preformat\">{example_cell}</span> were ignored because they are not reconciled to Wikidata."
                 }
        }
 }

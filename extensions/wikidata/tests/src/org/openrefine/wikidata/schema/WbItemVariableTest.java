@@ -67,6 +67,16 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
+    
+    @Test
+    public void testInvalidSpace() {
+        Recon recon = Recon.makeWikidataRecon(34989L);
+        recon.identifierSpace = "http://my.own.wikiba.se/";
+        recon.candidates = Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0));
+        recon.judgment = Recon.Judgment.Matched;
+        Cell cell = new Cell("some value", recon);
+        isSkipped(cell);
+    }
 
     @Test
     public void testUnreconciledCell() {
