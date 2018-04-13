@@ -101,28 +101,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
   this._wikibasePrefix = "http://www.wikidata.org/entity/"; // hardcoded for now
 
   // Init the column area
-  var columns = theProject.columnModel.columns;
-  this._columnArea = $(".schema-alignment-dialog-columns-area");
-  for (var i = 0; i < columns.length; i++) {
-     var column = columns[i];
-     var reconConfig = column.reconConfig;
-     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name, 
-        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
-     this._columnArea.append(cell);
-  }
-
-  $('.wbs-reconciled-column').draggable({
-     helper: "clone",
-     cursor: "crosshair",
-     snap: ".wbs-item-input input, .wbs-target-input input",
-     zIndex: 100,
-  });
-  $('.wbs-unreconciled-column').draggable({
-     helper: "clone",
-     cursor: "crosshair",
-     snap: ".wbs-target-input input",
-     zIndex: 100,
-  });
+  this.updateColumns();
 
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
@@ -144,7 +123,37 @@ SchemaAlignmentDialog.setUpTabs = function() {
   previewElmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
+
+  // Load the existing schema
+  this._reset(theProject.overlayModels.wikibaseSchema, true);
+  // Perform initial preview
   this.preview();
+}
+
+SchemaAlignmentDialog.updateColumns = function() {
+  var columns = theProject.columnModel.columns;
+  this._columnArea = $(".schema-alignment-dialog-columns-area");
+  this._columnArea.empty();
+  for (var i = 0; i < columns.length; i++) {
+     var column = columns[i];
+     var reconConfig = column.reconConfig;
+     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name, 
+        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
+     this._columnArea.append(cell);
+  }
+
+  $('.wbs-reconciled-column').draggable({
+     helper: "clone",
+     cursor: "crosshair",
+     snap: ".wbs-item-input input, .wbs-target-input input",
+     zIndex: 100,
+  });
+  $('.wbs-unreconciled-column').draggable({
+     helper: "clone",
+     cursor: "crosshair",
+     snap: ".wbs-target-input input",
+     zIndex: 100,
+  });
 }
 
 SchemaAlignmentDialog.switchTab = function(targetTab) {
@@ -173,11 +182,16 @@ SchemaAlignmentDialog.launch = function(onDone) {
   SchemaAlignmentDialog.switchTab('#wikidata-schema-panel');
 
   // this._createDialog();
-  this._reset(theProject.overlayModels.wikibaseSchema, true);
 }
 
+// Inject tabs in any project where the schema has been defined
+Refine.registerUpdateFunction(function(options) {
+    if(theProject.overlayModels.wikibaseSchema && !SchemaAlignmentDialog.isSetUp()) {
+    SchemaAlignmentDialog.setUpTabs();
+    }
+});
+
 var beforeUnload = function(e) {
-  console.log(SchemaAlignmentDialog._hasUnsavedChanges);
   if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges === true) {
      return (e = $.i18n._('wikidata-schema')["unsaved-warning"]);
   }
@@ -1108,6 +1122,7 @@ SchemaAlignmentDialog.preview = function(initial) {
 Refine.registerUpdateFunction(function(options) {
    if (SchemaAlignmentDialog.isSetUp() && (options.everythingChanged || options.modelsChanged ||
        options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged)) {
+       SchemaAlignmentDialog.updateColumns();
        SchemaAlignmentDialog.preview(false);
    }
 });
