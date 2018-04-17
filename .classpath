@@ -17,7 +17,6 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/clojure-1.5.1-slim.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jcl-over-slf4j-1.5.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/jrdf-0.5.6.jar" sourcepath="main/webapp/WEB-INF/lib-src/jrdf-0.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/lessen-trunk-r8.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/marc4j-2.4.jar"/>
@@ -113,5 +112,20 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-auth-library-oauth2-http-0.9.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/google-oauth-client-jetty-1.23.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-arq-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-base-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-cmds-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-core-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-dboe-base-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-dboe-index-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-dboe-trans-data-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-dboe-transaction-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-iri-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-rdfconnection-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-shaded-guava-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-tdb-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-tdb2-3.6.0.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jsonld-java-0.11.1.jar"/>
+	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/libthrift-0.10.0.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>
