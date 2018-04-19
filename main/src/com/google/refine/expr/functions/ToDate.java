@@ -85,7 +85,7 @@ public class ToDate implements Function {
             try {
                 return CalendarParser.parse( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
             } catch (CalendarParserException e) {
-                OffsetDateTime d = ParsingUtilities.stringToDate(o1);
+                OffsetDateTime d = OffsetDateTime.parse(o1);
                 if (d != null) {
                     return d;
                 } else {
