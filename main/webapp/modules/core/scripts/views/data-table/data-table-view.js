@@ -752,6 +752,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           click: function() {
             $(".data-table-null").toggle();
             self._shownulls = !(self._shownulls);
+          }
         }
       ]
     }
