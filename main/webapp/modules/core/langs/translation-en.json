@@ -600,6 +600,7 @@
         "view": "View",
         "collapse-all": "Collapse all columns",
         "expand-all": "Expand all columns",
+        "display-null": "Show/Hide 'null' values in cells",
         "reorder-perma": "Reorder rows permanently",
         "by": "By",
         "custom-text-trans": "Custom text transform on column",
