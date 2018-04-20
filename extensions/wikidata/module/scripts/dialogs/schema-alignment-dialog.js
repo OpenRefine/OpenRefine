@@ -73,12 +73,23 @@ SchemaAlignmentDialog.setUpTabs = function() {
         .attr('href', '#wikidata-issues-panel')
         .text($.i18n._('wikidata-schema')["warnings-tab-header"]+' ')
         .appendTo(this._toolPanel);
-  this.issuesTabCount = $('<span></span>').addClass('schema-alignment-total-warning-count').appendTo(issuesButton);
+  this.issuesTabCount = $('<span></span>')
+        .addClass('schema-alignment-total-warning-count')
+        .appendTo(issuesButton)
+        .hide();
+  this.issueSpinner = $('<img />')
+        .attr('src', 'images/large-spinner.gif')
+        .attr('width', '16px')
+        .appendTo(issuesButton);
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikidata-preview-panel')
         .text($.i18n._('wikidata-schema')["edits-preview-tab-header"])
         .appendTo(this._toolPanel);
+  this.previewSpinner = $('<img />')
+        .attr('src', 'images/large-spinner.gif')
+        .attr('width', '16px')
+        .appendTo(previewButton);
 
   this._unsavedIndicator = $('<span></span>')
         .html('&nbsp;*')
@@ -1101,11 +1112,15 @@ SchemaAlignmentDialog.preview = function() {
 
   $('.invalid-schema-warning').hide();
   this._previewPanes.empty();
+  this.issueSpinner.show();
+  this.previewSpinner.show();
   var schema = this.getJSON();
   $.post(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
+      self.issueSpinner.hide();
+      self.previewSpinner.hide();
       if ("edits_preview" in data) {
         var previewContainer = self._previewPanes[0];
         EditRenderer.renderEdits(data.edits_preview, previewContainer);
