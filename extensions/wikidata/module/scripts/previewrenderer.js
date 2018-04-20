@@ -208,6 +208,8 @@ EditRenderer._updateReferencesNumber = function(container) {
  * VALUE RENDERING *
  *******************/
 
+EditRenderer.renderedValueCache = {};
+
 EditRenderer._renderEntity = function(json, container) {
   var html = WarningsRenderer._renderEntity(json);
   $(html).appendTo(container);
@@ -220,71 +222,35 @@ EditRenderer._renderValue = function(json, container) {
   if (mode === "wikibase-item" || mode === "wikibase-property") {
     EditRenderer._renderEntity(json.datavalue, container);
   } else {
-    var params = {
-          action: 'wbformatvalue',
-          generate: 'text/html',
-          datavalue: JSON.stringify(json.datavalue),
-          options: '{"lang":"'+$.i18n._('core-recon')["wd-recon-lang"]+'"}',
-          format: 'json'
-    };
-    if ('property' in json) {
-       params.property = json.property;
+    var jsonValue = JSON.stringify(json.datavalue);
+    if (jsonValue in EditRenderer.renderedValueCache) {
+        $('<span>'+EditRenderer.renderedValueCache[jsonValue]+'</span>').appendTo(container);
     } else {
-       params.datatype = json.datatype;
+        var params = {
+            action: 'wbformatvalue',
+            generate: 'text/html',
+            datavalue: jsonValue,
+            options: '{"lang":"'+$.i18n._('core-recon')["wd-recon-lang"]+'"}',
+            format: 'json'
+        };
+        if ('property' in json) {
+            params.property = json.property;
+        } else {
+            params.datatype = json.datatype;
+        }
+        $.get(
+            'https://www.wikidata.org/w/api.php',
+            params,
+            function (data) {
+                if('result' in data) {
+                    EditRenderer.renderedValueCache[jsonValue] = data.result;
+                    $('<span>'+data.result+'</span>').appendTo(container);
+                }
+            },
+            'jsonp'
+        );
     }
-    $.get(
-        'https://www.wikidata.org/w/api.php',
-        params,
-        function (data) {
-           if('result' in data) {
-              $('<span>'+data.result+'</span>').appendTo(container);
-           }
-        },
-        'jsonp'
-    );
   }
-
-/*
-if (mode === "time") {
-    input.text(json.datavalue.value.time);
-  } else if (mode === "globe-coordinate") {
-    // TODO
-  } else if (mode === "language") {
-    // TODO
-  } else if (mode === "monolingualtext") {
-     input.remove();
-     var inputContainerLanguage = $('<div></div>')
-     .addClass('wbs-monolingual-container')
-     .width('30%')
-     .appendTo(container);
-     var inputContainerValue = $('<div></div>')
-     .addClass('wbs-monolingual-container')
-     .width('70%')
-     .appendTo(container);
-
-     EditRenderer._renderValue({datatype:"language",datavalue:json.language}, inputContainerLanguage);
-     EditRenderer._renderValue({datatype:"string",datavalue:{value:json.value}}, inputContainerValue);
-   } else if (mode === "quantity") {
-     input.remove();
-     var inputContainerAmount = $('<div></div>')
-     .addClass('wbs-quantity-container')
-     .width('60%')
-     .appendTo(inputContainer);
-     var inputContainerUnit = $('<div></div>')
-     .addClass('wbs-quantity-container')
-     .width('40%')
-     .appendTo(inputContainer);
-   
-     var amountValue = null;
-     var unitValue = null;
- 
-     // TODO
-     //EditRenderer._renderValue(inputContainerAmount, "amount", amountValue, propagateValue);
-     // EditRenderer._renderEntity(  , inputContainerUnit);
-
-   } else {
-      input.text(json.datavalue.value);
-   } */
 }
 
 
