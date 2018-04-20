@@ -195,6 +195,9 @@ SchemaAlignmentDialog.switchTab = function(targetTab) {
   this._schemaPanel.height(panelHeight);
   this._issuesPanel.height(panelHeight);
   this._previewPanel.height(panelHeight);
+  // Resize the inside of the schema panel
+  var headerHeight = this._schemaElmts.schemaHeader.outerHeight();
+  this._schemaElmts.canvas.height(panelHeight - headerHeight - 10);
 }
 
 SchemaAlignmentDialog.isSetUp = function() {
