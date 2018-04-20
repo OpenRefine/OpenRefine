@@ -69,7 +69,7 @@ function init() {
       "project/styles",
       module,
       [
-        "styles/dialogs/schema-alignment-dialog.less",
+        "styles/dialogs/schema-alignment-dialog.css",
         "styles/dialogs/manage-account-dialog.less",
         "styles/dialogs/perform-edits.less",
       ]);
