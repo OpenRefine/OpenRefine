@@ -4,6 +4,10 @@
 
 var EditRenderer = {};
 
+// settings
+EditRenderer.maxTerms = 15; // max number of terms displayed
+EditRenderer.maxStatements = 25; // max number of statements per statement group
+
 // main method: takes a DOM element and a list
 // of edits to render there.
 EditRenderer.renderEdits = function(edits, container) {
@@ -35,20 +39,12 @@ EditRenderer._renderItem = function(json, container) {
   if ((json.labels && json.labels.length) ||
       (json.descriptions && json.descriptions.length) ||
       (json.addedAliases && json.addedAliases.length)) {
-    //$('<span></span>').addClass('wbs-namedesc-header')
-    //    .text($.i18n._('wikidata-schema')["terms-header"]).appendTo(right);
     var termsContainer = $('<div></div>').addClass('wbs-namedesc-container')
         .appendTo(right);
     
-    for(var i = 0; i != json.labels.length; i++) {
-        EditRenderer._renderTerm("label", json.labels[i], termsContainer);
-    }
-    for(var i = 0; i != json.descriptions.length; i++) {
-        EditRenderer._renderTerm("description", json.descriptions[i], termsContainer);
-    }
-    for(var i = 0; i != json.addedAliases.length; i++) {
-        EditRenderer._renderTerm("alias", json.addedAliases[i], termsContainer);
-    }
+    this._renderTermsList(json.labels, "label", termsContainer);
+    this._renderTermsList(json.descriptions, "description", termsContainer);
+    this._renderTermsList(json.aliases, "alias", termsContainer);
 
     // Clear the float
     $('<div></div>').attr('style', 'clear: right').appendTo(right);
@@ -69,6 +65,18 @@ EditRenderer._renderItem = function(json, container) {
 /**************************
  * NAMES AND DESCRIPTIONS *
  **************************/
+
+EditRenderer._renderTermsList = function(termList, termType, termsContainer) {
+    if(!termList) {
+        return;
+    }
+    for(var i = 0; i != Math.min(termList.length, this.maxTerms); i++) {
+        EditRenderer._renderTerm(termType, termList[i], termsContainer);
+    }
+    if(termList.length > this.maxTerms) {
+        $('<div></div>').addClass('wbs-namedesc').text('...').appendTo(termsContainer);
+    }
+}
 
 EditRenderer._renderTerm = function(termType, json, container) {
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
@@ -95,6 +103,12 @@ EditRenderer._renderStatementGroup = function(json, container) {
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   for (var i = 0; i != json.statements.length; i++) {
      EditRenderer._renderStatement(json.statements[i], statementContainer);
+  }
+  if(json.statements.length > EditRenderer.maxStatements) {
+     $('<div></div>')
+         .text('...')
+         .addClass('wbs-statement')
+         .appendTo(statementContainer);
   }
 }
 

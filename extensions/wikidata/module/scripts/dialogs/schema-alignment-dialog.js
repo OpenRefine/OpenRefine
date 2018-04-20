@@ -1110,13 +1110,13 @@ SchemaAlignmentDialog.getJSON = function() {
 };
 
 SchemaAlignmentDialog._hasChanged = function() {
-  this._hasUnsavedChanges = true;
+  SchemaAlignmentDialog._hasUnsavedChanges = true;
   SchemaAlignmentDialog.preview(false);
-  this._unsavedIndicator.show();
-  this._schemaElmts.saveButton
+  SchemaAlignmentDialog._unsavedIndicator.show();
+  SchemaAlignmentDialog._schemaElmts.saveButton
         .prop('disabled', false)
         .removeClass('disabled');
-  this._schemaElmts.discardButton
+  SchemaAlignmentDialog._schemaElmts.discardButton
         .prop('disabled', false)
         .removeClass('disabled');
 }
