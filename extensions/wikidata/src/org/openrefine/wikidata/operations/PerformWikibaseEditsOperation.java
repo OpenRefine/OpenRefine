@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.commons.lang.Validate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -66,9 +67,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     public PerformWikibaseEditsOperation(JSONObject engineConfig, String summary) {
         super(engineConfig);
+        Validate.notNull(summary, "An edit summary must be provided.");
+        Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
-
-        // getEngine(request, project);
     }
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj)

@@ -35,19 +35,23 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
       elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
     elmts.performEditsButton.click(function() {
-        Refine.postProcess(
-        "wikidata",
-        "perform-wikibase-edits",
-        {},
-        {
-            summary: elmts.editSummary.val(),
-        },
-        { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-        { onDone:
-            function() {
-            dismiss();
-            }
-        });
+        if(elmts.editSummary.val().length == 0) {
+            elmts.editSummary.focus();
+        } else {
+            Refine.postProcess(
+            "wikidata",
+            "perform-wikibase-edits",
+            {},
+            {
+                summary: elmts.editSummary.val(),
+            },
+            { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+            { onDone:
+                function() {
+                dismiss();
+                }
+            });
+        }
     });
   }
 };
