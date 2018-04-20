@@ -79,7 +79,13 @@ SchemaAlignmentDialog.setUpTabs = function() {
         .attr('href', '#wikidata-preview-panel')
         .text($.i18n._('wikidata-schema')["edits-preview-tab-header"])
         .appendTo(this._toolPanel);
-  
+
+  this._unsavedIndicator = $('<span></span>')
+        .html('&nbsp;*')
+        .attr('title', $.i18n._('wikidata-schema')["unsaved-changes-alt"])
+        .hide()
+        .appendTo(schemaButton);
+ 
   $('.main-view-panel-tab-header').click(function() {
      var targetTab = $(this).attr('href');
      SchemaAlignmentDialog.switchTab(targetTab);
@@ -88,7 +94,6 @@ SchemaAlignmentDialog.setUpTabs = function() {
   /**
    * Init the schema tab
    */
-
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.dialogExplanation.text($.i18n._('wikidata-schema')["dialog-explanation"]);
@@ -97,6 +102,18 @@ SchemaAlignmentDialog.setUpTabs = function() {
     self._addItem();
     SchemaAlignmentDialog._hasChanged();
   });
+  schemaElmts.saveButton
+        .text($.i18n._('wikidata-schema')["save-button"])
+        .attr('title', $.i18n._('wikidata-schema')["save-schema-alt"])
+        .prop('disabled', true)
+        .addClass('disabled')
+        .click(function() { SchemaAlignmentDialog._save(); });
+  schemaElmts.discardButton
+        .text($.i18n._('wikidata-schema')["discard-button"])
+        .attr('title', $.i18n._('wikidata-schema')["discard-schema-changes-alt"])
+        .prop('disabled', true)
+        .addClass('disabled')
+        .click(function() { SchemaAlignmentDialog._discardChanges(); });
 
   this._wikibasePrefix = "http://www.wikidata.org/entity/"; // hardcoded for now
 
@@ -110,22 +127,21 @@ SchemaAlignmentDialog.setUpTabs = function() {
    * Init the issues tab
    */
   var issuesTab = $(DOM.loadHTML("wikidata", "scripts/issues-tab.html")).appendTo(this._issuesPanel);
-  var issuesElmts = this._schemaElmts = DOM.bind(issuesTab);
+  var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
   issuesElmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
 
   /**
    * Init the preview tab
    */
-
   var previewTab = $(DOM.loadHTML("wikidata", "scripts/preview-tab.html")).appendTo(this._previewPanel);
-  var previewElmts = this._schemaElmts = DOM.bind(previewTab);
+  var previewElmts = this._previewElmts = DOM.bind(previewTab);
   previewElmts.previewExplanation.text($.i18n._('wikidata-schema')["preview-explanation"]);
   previewElmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
   // Load the existing schema
-  this._reset(theProject.overlayModels.wikibaseSchema, true);
+  this._reset(theProject.overlayModels.wikibaseSchema);
   // Perform initial preview
   this.preview();
 }
@@ -184,12 +200,6 @@ SchemaAlignmentDialog.launch = function(onDone) {
   // this._createDialog();
 }
 
-// Inject tabs in any project where the schema has been defined
-Refine.registerUpdateFunction(function(options) {
-    if(theProject.overlayModels.wikibaseSchema && !SchemaAlignmentDialog.isSetUp()) {
-    SchemaAlignmentDialog.setUpTabs();
-    }
-});
 
 var beforeUnload = function(e) {
   if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges === true) {
@@ -199,7 +209,7 @@ var beforeUnload = function(e) {
 
 $(window).bind('beforeunload', beforeUnload);
 
-SchemaAlignmentDialog._reset = function(schema, initial) {
+SchemaAlignmentDialog._reset = function(schema) {
   this._originalSchema = schema || { itemDocuments: [] };
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
 
@@ -214,7 +224,6 @@ SchemaAlignmentDialog._reset = function(schema, initial) {
   if (!this._schema.itemDocuments.length) {
     // this._addItem();
   }
-  this.preview(initial);
 };
 
 SchemaAlignmentDialog._save = function(onDone) {
@@ -231,9 +240,8 @@ SchemaAlignmentDialog._save = function(onDone) {
       onDone: function() {
         theProject.overlayModels.wikibaseSchema = schema;
 
-        self._elmts.statusIndicator.hide();
         $('.invalid-schema-warning').hide();
-        self._hasUnsavedChanges = false;
+        self._changesCleared();
 
         if (onDone) onDone();
       },
@@ -243,6 +251,22 @@ SchemaAlignmentDialog._save = function(onDone) {
     }
   );
 };
+
+SchemaAlignmentDialog._discardChanges = function() {
+  this._reset(theProject.overlayModels.wikibaseSchema);
+  this._changesCleared();
+}
+
+SchemaAlignmentDialog._changesCleared = function() {
+  this._hasUnsavedChanges = false;
+  this._unsavedIndicator.hide();
+  this._schemaElmts.saveButton
+        .prop('disabled', true)
+        .addClass('disabled');
+  this._schemaElmts.discardButton
+        .prop('disabled', true)
+        .addClass('disabled');
+}
 
 SchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
@@ -1088,6 +1112,13 @@ SchemaAlignmentDialog.getJSON = function() {
 SchemaAlignmentDialog._hasChanged = function() {
   this._hasUnsavedChanges = true;
   SchemaAlignmentDialog.preview(false);
+  this._unsavedIndicator.show();
+  this._schemaElmts.saveButton
+        .prop('disabled', false)
+        .removeClass('disabled');
+  this._schemaElmts.discardButton
+        .prop('disabled', false)
+        .removeClass('disabled');
 }
 
 SchemaAlignmentDialog.preview = function(initial) {
@@ -1120,10 +1151,17 @@ SchemaAlignmentDialog.preview = function(initial) {
 };
 
 Refine.registerUpdateFunction(function(options) {
+   // Inject tabs in any project where the schema has been defined
+   if(theProject.overlayModels.wikibaseSchema && !SchemaAlignmentDialog.isSetUp()) {
+       SchemaAlignmentDialog.setUpTabs();
+   }
    if (SchemaAlignmentDialog.isSetUp() && (options.everythingChanged || options.modelsChanged ||
        options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged)) {
+       if (!SchemaAlignmentDialog._hasUnsavedChanges) {
+          SchemaAlignmentDialog._discardChanges();
+       }
        SchemaAlignmentDialog.updateColumns();
-       SchemaAlignmentDialog.preview(false);
+       SchemaAlignmentDialog.preview();
    }
 });
 
