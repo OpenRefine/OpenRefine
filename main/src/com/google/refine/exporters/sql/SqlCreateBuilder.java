@@ -62,8 +62,9 @@ public class SqlCreateBuilder {
         StringBuffer createSB = new StringBuffer();
 
         JSONArray columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
+        boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
         
-        final boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
+        
       
         int count = columnOptionArray.length();
 
@@ -71,39 +72,45 @@ public class SqlCreateBuilder {
             JSONObject columnOptions = JSONUtilities.getObjectElement(columnOptionArray, i);
             if (columnOptions != null) {
                 String name = JSONUtilities.getString(columnOptions, "name", null);
-                String type = JSONUtilities.getString(columnOptions, "type", "VARCHAR");
+                String type = JSONUtilities.getString(columnOptions, "type", SqlData.SQL_TYPE_VARCHAR);
                 String size = JSONUtilities.getString(columnOptions, "size", "");
-                //logger.info("Before Trim Column Names::" + name);
+                boolean allowNull = JSONUtilities.getBoolean(columnOptions, "allowNull", true);
+                String defaultValue = JSONUtilities.getString(columnOptions, "defaultValue", null);
+                
+                String allowNullStr = "NULL";
+                if(!allowNull) {
+                    allowNullStr = "NOT NULL";
+                }
+      
                 
                 if (name != null) {
                     if(trimColNames) {
                         String trimmedCol = name.replaceAll("\\s", "");
                         createSB.append( trimmedCol + " ");
-                        //logger.info("After Trim Column Names::" + name);
                     }else{
                         createSB.append(name + " ");
                     }
                    
-                    if (type.equals("VARCHAR")) {
+                    if (type.equals(SqlData.SQL_TYPE_VARCHAR)) {
                         if (size.isEmpty()) {
                             size = "255";
                         }
                         createSB.append(type + "(" + size + ")");
 
-                    } else if (type.equals("CHAR")) {
+                    } else if (type.equals(SqlData.SQL_TYPE_CHAR)) {
                         if (size.isEmpty()) {
                             size = "10";
                         }
                         createSB.append(type + "(" + size + ")");
 
-                    } else if (type.equals("INT") || type.equals("INTEGER")) {
+                    } else if (type.equals(SqlData.SQL_TYPE_INT) || type.equals(SqlData.SQL_TYPE_INTEGER)) {
                         if (size.isEmpty()) {
                             createSB.append(type);
                         } else {
                             createSB.append(type + "(" + size + ")");
                         }
 
-                    } else if (type.equals("NUMERIC")) {
+                    } else if (type.equals(SqlData.SQL_TYPE_NUMERIC)) {
                         if (size.isEmpty()) {
                             createSB.append(type);
                         } else {
@@ -112,7 +119,17 @@ public class SqlCreateBuilder {
                     } else {
                         createSB.append(type);
                     }
-
+                    
+                    createSB.append(" " + allowNullStr);
+                    if(defaultValue != null && !defaultValue.isEmpty()) {
+                        if(type.equals(SqlData.SQL_TYPE_VARCHAR) || type.equals(SqlData.SQL_TYPE_CHAR) || type.equals(SqlData.SQL_TYPE_TEXT)) {
+                            createSB.append(" DEFAULT " + "'" + defaultValue + "'"); 
+                        }else {
+                            createSB.append(" DEFAULT " + defaultValue); 
+                        }
+                        
+                    }
+                    
                     if (i < count - 1) {
                         createSB.append(",");
                     }
@@ -124,8 +141,14 @@ public class SqlCreateBuilder {
         StringBuffer sql = new StringBuffer();
 
         boolean includeDrop = JSONUtilities.getBoolean(options, "includeDropStatement", false);
+        boolean addIfExist = options == null ? false : JSONUtilities.getBoolean(options, "includeIfExistWithDropStatement", true);
         if (includeDrop) {
-            sql.append("DROP TABLE " + table + ";\n");
+            if(addIfExist) {
+                sql.append("DROP TABLE IF EXISTS " + table + ";\n");
+            }else {
+                sql.append("DROP TABLE " + table + ";\n");
+            }
+           
         }
 
         sql.append("CREATE TABLE ").append(table);

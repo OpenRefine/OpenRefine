@@ -32,9 +32,17 @@ package com.google.refine.exporters.sql;
 
 public class SqlData {
     
-    final public String columnName;
-    final public Object value;
-    final public String text;
+    private String columnName;
+    private Object value;
+    private String text;
+    public static final String SQL_TYPE_VARCHAR = "VARCHAR";
+    public static final String SQL_TYPE_CHAR = "CHAR";
+    public static final String SQL_TYPE_TEXT = "TEXT";
+    public static final String SQL_TYPE_INTEGER = "INTEGER";
+    public static final String SQL_TYPE_INT = "INT";
+    public static final String SQL_TYPE_NUMERIC = "NUMERIC";
+    
+    
     
     public SqlData(String columnName, Object value, String text) {
         this.columnName = columnName;
@@ -56,6 +64,12 @@ public class SqlData {
     
     public String getText() {
         return text;
+    }
+
+
+    @Override
+    public String toString() {
+        return "SqlData [columnName=" + columnName + ", value=" + value + ", text=" + text + "]";
     }
 
 }

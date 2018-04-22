@@ -49,11 +49,14 @@ import com.google.refine.util.JSONUtilities;
 
 public class SqlExporter implements WriterExporter {
     
+    private static final Logger logger = LoggerFactory.getLogger("SqlExporter");
     public static final String NO_COL_SELECTED_ERROR = "****NO COLUMNS SELECTED****";
     public static final String NO_OPTIONS_PRESENT_ERROR = "****NO OPTIONS PRESENT****";
-
-    private final static Logger logger = LoggerFactory.getLogger("SqlExporter");
-
+    //JSON Property names
+    public static final String JSON_INCLUDE_STRUCTURE = "includeStructure";
+    public static final String JSON_INCLUDE_CONTENT = "includeContent";
+    public static final String JSON_TABLE_NAME = "tableName";
+ 
     private List<String> columnNames = new ArrayList<String>();
     private List<ArrayList<SqlData>> sqlDataList = new ArrayList<ArrayList<SqlData>>();
     private JSONObject sqlOptions;
@@ -92,7 +95,7 @@ public class SqlExporter implements WriterExporter {
                     }
                     String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
 
-                    Object tableNameManual = sqlOptions.get("tableName");
+                    Object tableNameManual = sqlOptions.get(JSON_TABLE_NAME);
 
                     if (tableNameManual != null && !tableNameManual.toString().isEmpty()) {
                         tableName = tableNameManual.toString();
@@ -103,15 +106,14 @@ public class SqlExporter implements WriterExporter {
                             sqlOptions);
 
                     final boolean includeStructure = sqlOptions == null ? true
-                            : JSONUtilities.getBoolean(sqlOptions, "includeStructure", true);
+                            : JSONUtilities.getBoolean(sqlOptions, JSON_INCLUDE_STRUCTURE, true);
 
                     final boolean includeContent = sqlOptions == null ? true
-                            : JSONUtilities.getBoolean(sqlOptions, "includeContent", true);
+                            : JSONUtilities.getBoolean(sqlOptions, JSON_INCLUDE_CONTENT, true);
 
                     if (includeStructure) {
                         String sqlCreateStr = createBuilder.getCreateSQL();
                         writer.write(sqlCreateStr);
-
                     }
 
                     if (includeContent) {
@@ -143,9 +145,12 @@ public class SqlExporter implements WriterExporter {
                     ArrayList<SqlData> values = new ArrayList<>();
                     for (CellData cellData : cells) {
 
-                        if (cellData != null && cellData.text != null) {
-                            SqlData newSql = new SqlData(cellData.columnName, cellData.value, cellData.text);
-                            values.add(newSql);
+                        if (cellData != null) {
+                           if(cellData.text == null || cellData.text.isEmpty()) {
+                               values.add(new SqlData(cellData.columnName, "", ""));
+                           }else {
+                               values.add(new SqlData(cellData.columnName, cellData.value, cellData.text)); 
+                           }
 
                         }
 
@@ -157,5 +162,12 @@ public class SqlExporter implements WriterExporter {
         };
 
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+    }
+    
+    public List<SqlDataError> validateSqlData(Project project, Properties params){
+        
+        logger.info("Param Name:{}, Param Value:{}", project, params);
+        return null;
+        
     }
 }

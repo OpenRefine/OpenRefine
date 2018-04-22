@@ -48,16 +48,12 @@ function SqlExporterDialog(options) {
     this._dialog = $(DOM.loadHTML("core", "scripts/dialogs/sql-exporter-dialog.html"));
     this._elmts = DOM.bind(this._dialog);
     this._level = DialogSystem.showDialog(this._dialog);
- 
-    
     this._elmts.dialogHeader.html($.i18n._('core-dialogs')["custom-tab-exp"]);
     this._elmts.or_dialog_content.html($.i18n._('core-dialogs')["content"]);
     this._elmts.or_dialog_download.html($.i18n._('core-dialogs')["download"]);
 
     this._elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
     this._elmts.deselectAllButton.html($.i18n._('core-buttons')["deselect-all"]);
- 
-    
 
     this._elmts.downloadPreviewButton.html($.i18n._('core-buttons')["preview"]);
     this._elmts.downloadButton.html($.i18n._('core-buttons')["download"]);
@@ -65,44 +61,33 @@ function SqlExporterDialog(options) {
     this._elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
 //    this._elmts.nextButton.html($.i18n._('core-buttons')["next"]);
     
- 
     this._elmts.tableNameLabel.html($.i18n._('core-dialogs')["tableNameLabel"]);
     this._elmts.includeStructureLabel.html($.i18n._('core-dialogs')["for-include-structure-checkbox"]);
     this._elmts.includeDropStatementLabel.html($.i18n._('core-dialogs')["for-include-drop-statement-checkbox"]);
     this._elmts.includeContentLabel.html($.i18n._('core-dialogs')["for-include-content-checkbox"]);
+    this._elmts.includeIfExistDropStatementLabel.html($.i18n._('core-dialogs')["for-include-if-exist-drop-stmt-checkbox"]);
     
-    
+    this._elmts.nullCellValueToEmptyStringLabel.html($.i18n._('core-dialogs')["for-null-cell-value-to-empty-str-label"]);
+  
     this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n._('core-dialogs')["sqlExporterIgnoreFacets"]);
     this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n._('core-dialogs')["sqlExporterTrimColumns"]);
     this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n._('core-dialogs')["sqlExporterOutputEmptyRows"]);
-   
- 
   
     $("#sql-exporter-tabs-content").css("display", "");
     $("#sql-exporter-tabs-download").css("display", "");
     $("#sql-exporter-tabs").tabs();
-    
-  
-    /*
-     * Populate column list.
-     */
+   
     for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-      var column = theProject.columnModel.columns[i];
-      var name = column.name;
-      var rowId = "sql-exporter-dialog-row" + i;
-      var selectBoxName = 'selectBoxRow' + i;
-      var sizeInputName = 'sizeInputRow' + i;
-      var applyAllBtnName = 'applyAllBtn' + i;
+        var column = theProject.columnModel.columns[i];
+        var name = column.name;
+        var rowId = "sql-exporter-dialog-row" + i;
+        var selectBoxName = 'selectBoxRow' + i;
+        var sizeInputName = 'sizeInputRow' + i;
+        var applyAllBtnName = 'applyAllBtn' + i;
       
-//      var arr = [
-//          {val : 'VARCHAR', text: 'VARCHAR'},
-//          {val : 'TEXT', text: 'TEXT'},
-//          {val : 'INT', text: 'INT'},
-//          {val : 'NUMERIC', text: 'NUMERIC'},
-//          {val : 'CHAR', text: 'CHAR'},
-//          {val : 'DATE', text: 'DATE'},
-//          {val : 'TIMESTAMP', text: 'TIMESTAMP'}
-//        ];
+        var allowNullChkBoxName = 'allowNullChkBox' + i;
+        var defaultValueTextBoxName = 'defaultValueTextBox' + i;
+
 
         var sel = $('<select>').appendTo('body');
         sel.append($("<option>").attr('value','VARCHAR').text('VARCHAR'));
@@ -112,11 +97,7 @@ function SqlExporterDialog(options) {
         sel.append($("<option>").attr('value','CHAR').text('CHAR'));
         sel.append($("<option>").attr('value','DATE').text('DATE'));
         sel.append($("<option>").attr('value','TIMESTAMP').text('TIMESTAMP'));
-      
-        
-//        $(arr).each(function() {
-//            sel.append($("<option>").attr('value',this.val).text(this.text));
-//        });
+    
         sel.attr('id', selectBoxName);
         sel.attr('rowIndex', i);
         sel.addClass('typeSelectClass');
@@ -131,14 +112,15 @@ function SqlExporterDialog(options) {
                   $('#sizeInputRow'+ rowIndex).prop("disabled", true);
               }
         });
-    
-          var row = $('<tr>')
+         //create and add Row
+         var row = $('<tr>')
               .addClass("sql-exporter-dialog-row")
               .attr('id', rowId)
               .attr("column", name)
               .attr("rowIndex", i)
               .appendTo(this._elmts.columnListTable);
           
+         //create and add column
           var columnCell =  $('<td>')
           .attr('width', '150px')
           .appendTo(row);
@@ -166,15 +148,40 @@ function SqlExporterDialog(options) {
                .addClass("sql-exporter-dialog-input")
                .appendTo(sizeCell);
             
-          var applyAllCell =  $('<td>')
-          .attr('width', '60px')
-          .appendTo(row);
+            var applyAllCell =  $('<td>')
+            .attr('width', '60px')
+            .appendTo(row);
+              $('<input>')
+              .attr('type', 'button')
+              .attr('value', 'Apply All')
+              .attr('id', applyAllBtnName)
+              .attr("rowIndex", i)
+              .appendTo(applyAllCell);
+            
+          var nullableCell =  $('<td>')
+            .attr('width', '90px')
+            .addClass("allowNullCellStyle")
+            .appendTo(row);
             $('<input>')
-            .attr('type', 'button')
-            .attr('value', 'Apply All')
-            .attr('id', applyAllBtnName)
-            .attr("rowIndex", i)
-            .appendTo(applyAllCell);
+              .attr('type', 'checkbox')
+              .attr('checked', 'checked')
+              .attr('id', allowNullChkBoxName)
+              .attr("rowIndex", i)
+              .addClass("allowNullCheckboxStyle")
+              .appendTo(nullableCell);
+         
+          var defValueCell =  $('<td>')
+            .attr('width', '30px')
+            .appendTo(row);
+             $('<input>')
+                .attr('type', 'text')
+                .attr('size', '8px')
+                .attr('id', defaultValueTextBoxName)
+                .attr("rowIndex", i)
+                .addClass("defaultValueTextBoxStyle")
+                .appendTo(defValueCell);
+            
+    
      
             $('#' + applyAllBtnName).on('click', function() {
                 var rowIndex = this.getAttribute('rowIndex');
@@ -191,18 +198,29 @@ function SqlExporterDialog(options) {
        
                 });
                 $('input.sql-exporter-dialog-input').each(function() {
-                    //alert("Value:" + this.value + " RowIndex:" + rowIndex + " TypeValue:" + typeValue + "" + this.value);
                     var rowId = this.getAttribute('rowIndex');
                     var id = this.getAttribute('id');
                     if(rowIndex !== rowId){
                         $("#" + id).val(sizeValue);
                     }
-                   
-         
+              
                 });
          
             });
             
+            $('#' + allowNullChkBoxName).on('click', function() {
+                var rowIndex = this.getAttribute('rowIndex');
+                var id = this.getAttribute('id');
+                var checked =  $(this).is(':checked');;
+                
+                if(checked == false){
+                    $('#defaultValueTextBox'+ rowIndex).prop("disabled", false);
+                }else{
+                    $('#defaultValueTextBox'+ rowIndex).val("");
+                    $('#defaultValueTextBox'+ rowIndex).prop("disabled", true);
+                }
+            });
+           
           this._columnOptionMap[name] = {
             name: name,
             type: '',
@@ -210,7 +228,27 @@ function SqlExporterDialog(options) {
     
           };
     }
-
+   
+    this._elmts.allowNullToggleCheckbox.click(function() {
+        var checked =  $(this).is(':checked');
+        if(checked == true){
+            $("input:checkbox[class=allowNullCheckboxStyle]").each(function () {
+                $(this).attr('checked', true);
+            });
+            $("input:text[class=defaultValueTextBoxStyle]").each(function () {
+                $(this).attr('disabled', true);
+            });
+            
+        }else{
+            $("input:checkbox[class=allowNullCheckboxStyle]").each(function () {
+                $(this).attr('checked', false);
+            });
+            $("input:text[class=defaultValueTextBoxStyle]").each(function () {
+                $(this).attr('disabled', false);
+            });
+        }
+        
+    });
     
     this._elmts.selectAllButton.click(function() {
        $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
@@ -230,8 +268,20 @@ function SqlExporterDialog(options) {
         //alert('checked ' + checked);
         if(checked == true){
             $('#includeDropStatementCheckboxId').removeAttr("disabled");
+            $('#includeIfExistDropStatementCheckboxId').removeAttr("disabled");
         }else{
             $('#includeDropStatementCheckboxId').attr("disabled", true);
+            $('#includeIfExistDropStatementCheckboxId').attr("disabled", true);
+        }
+    });
+    
+    this._elmts.includeContentCheckbox.click(function() {
+        var checked =  $(this).is(':checked');
+        if(checked == true){
+            $('#nullCellValueToEmptyStringCheckboxId').removeAttr("disabled");
+        }else{
+            $('#nullCellValueToEmptyStringCheckboxId').attr("disabled", true);
+          
         }
     });
     
@@ -249,8 +299,13 @@ function SqlExporterDialog(options) {
       this._elmts.tableNameTextBox.val(theProject.metadata.name);
       this._elmts.sqlExportOutputEmptyRowsCheckbox.attr('checked', 'checked');
       this._elmts.sqlExportTrimAllColumnsCheckbox.attr('checked', 'checked');
+      this._elmts.nullCellValueToEmptyStringLabel.attr('checked', 'checked');
       
-
+      $("input:text[class=defaultValueTextBoxStyle]").each(function () {
+          $(this).prop("disabled", true);
+       });
+ 
+ 
   };
   
   SqlExporterDialog.prototype._dismiss = function() {
@@ -271,6 +326,7 @@ function SqlExporterDialog(options) {
   };
   
   SqlExporterDialog.prototype._postExport = function(preview) {
+    var self = this;
     var exportAllRowsCheckbox = this._elmts.sqlExportAllRowsCheckbox[0].checked;
     var options = this._getOptionCode();
     
@@ -279,42 +335,71 @@ function SqlExporterDialog(options) {
         return false;
     }
     
-    var format = options.format;
-    var encoding = options.encoding;
+    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    var sqlExportInput = {};
+    sqlExportInput.name = name;
+    sqlExportInput.options = JSON.stringify(options);
+    sqlExportInput.project =  theProject.id;
     
-    delete options.format;
-    delete options.encoding;
-    if (preview) {
-      options.limit = 10;
-    }
+    //validate form @ backend
+    $.post(
+        "command/core/preview-sql-export",
+        sqlExportInput,
+        function(sqlValidationResult) {
+            if(sqlValidationResult && sqlValidationResult.code === 'OK'){
+                //generate code
+                
+                var format = options.format;
+                var encoding = options.encoding;
+                
+                delete options.format;
+                delete options.encoding;
+                if (preview) {
+                  options.limit = 10;
+                }
+                
+              // var ext = SqlExporterDialog.formats[format].extension;
+                var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
+                $('<input />')
+                .attr("name", "options")
+                .attr("value", JSON.stringify(options))
+                .appendTo(form);
+                if (encoding) {
+                  $('<input />')
+                  .attr("name", "encoding")
+                  .attr("value", encoding)
+                  .appendTo(form);
+                }
+                if (!preview) {
+                  $('<input />')
+                  .attr("name", "contentType")
+                  .attr("value", "application/x-unknown") // force download
+                  .appendTo(form);
+                }
+                
+               // alert("form::" + form);
+                document.body.appendChild(form);
+              
+                window.open("about:blank", "refine-export");
+                form.submit();
+              
+                document.body.removeChild(form);
+                return true;
+      
+            }else{
+                window.alert("Problem with sql code genration");
+                return false;
+            }
+                
+        },
+        "json"
+      ).fail(function( jqXhr, textStatus, errorThrown ){
+          alert( textStatus + ':' + errorThrown );
+          return false;
+      });
     
-  // var ext = SqlExporterDialog.formats[format].extension;
-    var form = this._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
-    $('<input />')
-    .attr("name", "options")
-    .attr("value", JSON.stringify(options))
-    .appendTo(form);
-    if (encoding) {
-      $('<input />')
-      .attr("name", "encoding")
-      .attr("value", encoding)
-      .appendTo(form);
-    }
-    if (!preview) {
-      $('<input />')
-      .attr("name", "contentType")
-      .attr("value", "application/x-unknown") // force download
-      .appendTo(form);
-    }
-    
-   // alert("form::" + form);
-    document.body.appendChild(form);
+     return true;
   
-    window.open("about:blank", "refine-export");
-    form.submit();
-  
-    document.body.removeChild(form);
-    return true;
   };
   
   SqlExporterDialog.prototype._prepareSqlExportRowsForm = function(format, includeEngine, ext) {
@@ -386,8 +471,11 @@ function SqlExporterDialog(options) {
     options.includeStructure = this._elmts.includeStructureCheckbox[0].checked;
     options.includeDropStatement = this._elmts.includeDropStatementCheckbox[0].checked;
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
-    options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
     options.trimColumnNames = this._elmts.sqlExportTrimAllColumnsCheckbox[0].checked;
+    
+    options.convertNulltoEmptyString = this._elmts.nullCellValueToEmptyStringCheckbox[0].checked;
+    options.includeIfExistWithDropStatement = this._elmts.includeIfExistDropStatementCheckbox[0].checked;
      
         
     options.columns = [];
@@ -397,21 +485,28 @@ function SqlExporterDialog(options) {
       if ($(this).find('input[type="checkbox"]')[0].checked) {
         var name = this.getAttribute('column');
         var rowIndex = this.getAttribute('rowIndex');
-       // alert("column::"+ name + " rowIndex::" + rowIndex);
         
         var selectedValue = $('#selectBoxRow' + rowIndex).val();
-        //alert("selectedValue::"+ selectedValue);
+     
         var typeSize = 0;
-        if(selectedValue == 'VARCHAR' || selectedValue == 'CHAR' || selectedValue == 'INT' || selectedValue == 'NUMERIC'){    
+        if(selectedValue === 'VARCHAR' || selectedValue === 'CHAR' || selectedValue === 'INT' || selectedValue === 'NUMERIC'){    
             typeSize = $('#sizeInputRow' + rowIndex).val();
            // alert("typeSize::" + typeSize);
         }
+        
+        var allowNullChkBoxName = $('#allowNullChkBox' + rowIndex).is(':checked');
+        var defaultValueTextBoxName = $('#defaultValueTextBox' + rowIndex).val();
+       // alert("allowNullChkBoxName::" + allowNullChkBoxName);
+       // alert("defaultValueTextBoxName::" + defaultValueTextBoxName);
         
         var fullColumnOptions = self._columnOptionMap[name];
         var columnOptions = {
           name: name,
           type: selectedValue,
-          size: typeSize
+          size: typeSize,
+          allowNull: allowNullChkBoxName,
+          defaultValue: defaultValueTextBoxName,
+          nullValueToEmptyStr: options.convertNulltoEmptyString
        
         };
 

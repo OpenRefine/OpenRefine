@@ -281,7 +281,9 @@
         "tableNameLabel": "Table Name:",
         "sqlExporterTrimColumns": "Trim Column Names",
         "sqlExporterIgnoreFacets": "Ignore facets and filters and export all rows",
-        "sqlExporterOutputEmptyRows":"Output empty row (i.e. all cells null)"
+        "sqlExporterOutputEmptyRows":"Output empty row (i.e. all cells null)",
+        "for-include-if-exist-drop-stmt-checkbox": "Include 'If Exists' in Drop Statement",
+        "for-null-cell-value-to-empty-str-label": "Convert Null Value to null in Insert"
 
    	
     },

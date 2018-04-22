@@ -72,55 +72,77 @@ public class SqlInsertBuilder {
     * Get Insert Sql
     * @return
     */
-    public String getInsertSQL() {
+    public String getInsertSQL(){
         if(logger.isDebugEnabled()) {
             logger.debug("Insert SQL with columns: {}", columns);
         }
-        JSONArray columnOptionArray = options == null ? null :
-            JSONUtilities.getArray(options, "columns");
-        //logger.info("columnOptionArray::::{}", columnOptionArray);
         
+        JSONArray colOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
         Map<String, JSONObject> colOptionsMap = new HashMap<String, JSONObject>();
-        if(columnOptionArray != null) {
-            columnOptionArray.forEach(c -> {
+        if(colOptionArray != null) {
+            colOptionArray.forEach(c -> {
                 JSONObject json = (JSONObject)c;  
                 colOptionsMap.put("" + json.get("name"), json);
             });
         }
-        final boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        String colNamesWithSep = null;
-        if(trimColNames) {
-            colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));
-        }else {
-            colNamesWithSep = columns.stream().collect(Collectors.joining(","));  
-        }
       
-                
+        boolean nullValueToEmptyStr = options == null ? false : JSONUtilities.getBoolean(options, "convertNulltoEmptyString", true);
+               
         StringBuffer values = new StringBuffer();
        
         int idx = 0;
-        for(ArrayList<SqlData> sqlCellData : sqlDataList) {
+        for(ArrayList<SqlData> sqlRow : sqlDataList) {
             StringBuilder rowValue = new StringBuilder();
-            //logger.info(" row.size:{}", row.size());
-            for(SqlData val : sqlCellData) {
-               
+
+            for(SqlData val : sqlRow) {
+             
                 JSONObject jsonOb = colOptionsMap.get(val.getColumnName());
                 String type = (String)jsonOb.get("type");
+                String defaultValue = (String)jsonOb.get("defaultValue");
+                boolean allowNullChkBox = (boolean)jsonOb.get("allowNull");
+                
+                
                 if(type == null) {
-                    type = "VARCHAR";
+                    type = SqlData.SQL_TYPE_VARCHAR;
                 }
-                if(type.equals("VARCHAR") || type.equals("CHAR") || type.equals("TEXT")) {
+                //Character Types
+                if(type.equals(SqlData.SQL_TYPE_VARCHAR) || type.equals(SqlData.SQL_TYPE_CHAR) || type.equals(SqlData.SQL_TYPE_TEXT)) {
                     
-                    String value = "'" + val.text + "'";
-                    rowValue.append(value);
-                }else {
-                    rowValue.append(val.text);
+                    if(!allowNullChkBox) {
+                        throw new RuntimeException("bad input");
+                    }
+                    if((val.getText() == null || val.getText().isEmpty()) && nullValueToEmptyStr ) {
+                       // logger.info("Appending empty String:::{}" , val.getText());
+                        if(defaultValue != null && !defaultValue.isEmpty()) {
+                            rowValue.append("'" + defaultValue + "'");
+                        }else {
+                            rowValue.append("null");
+                        }
+                        
+                    }else {
+                        rowValue.append("'" + val.getText() + "'"); 
+                    }
+                 
+                }else {//Numeric Types
+                    
+                    if((val.getText() == null || val.getText().isEmpty()) && nullValueToEmptyStr ) {
+                      //  logger.info("Appending empty String others:::{}" , val.getText());
+                        if(defaultValue != null && !defaultValue.isEmpty()) {
+                            rowValue.append("'" + defaultValue + "'");
+                        }else {
+                            rowValue.append("null");
+                        }
+                    }else {
+                        rowValue.append(val.getText());
+                    }
+                    
                 }
                 
                 rowValue.append(",");
-                //logger.info("jsonObject:{}", jsonOb);
-                
+               
             }
+            
+            
             idx++;
             String rowValString = rowValue.toString();
             rowValString = rowValString.substring(0, rowValString.length() - 1);
@@ -135,6 +157,11 @@ public class SqlInsertBuilder {
            
         }
 
+        boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
+        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));;
+        if(!trimColNames) {
+           colNamesWithSep = columns.stream().collect(Collectors.joining(","));  
+        }
         
         String valuesString = values.toString();
         valuesString = valuesString.substring(0, valuesString.length() - 1);

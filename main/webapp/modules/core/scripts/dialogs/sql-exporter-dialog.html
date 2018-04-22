@@ -25,13 +25,11 @@
 							      <th>Field Name</th>
 							      <th>SQL Type</th>
 							      <th>Size</th>
+							      <th></th>
+							      <th> Allow Null <span style="text-align:center;"><input type="checkbox" bind="allowNullToggleCheckbox" id="allowNullToggleCheckbox" checked /></span></th>
+							      <th>  Default</th>
 							   </tr>
-							   <!-- 
-								    <tr>
-								      <th><input type="checkbox" bind="allRowsToggleCheckbox" id="allRowsToggleCheckboxId" /></th>
-								     
-								   </tr>
-							    -->
+						
 							 </thead>
 	            				
 	            			</table>
@@ -75,12 +73,17 @@
 		          	<td width="90%"><input type="text" bind="tableNameTextBox" id="tableNameTextBoxId" size="50%"/></td>
 	          	    
 	          	</tr>
+	          	<tr>
+	          	</tr>
 	        </table>
         
         </div>
         
         <div class="grid-layout grid-layout-for-text layout-tightest"><table>
          
+         <tr>
+         <td><span style="margin:2px; padding:2px;"></span></td>
+	     </tr>
           <tr>
           	<td width="1%"><input type="checkbox" bind="includeStructureCheckbox" id="includeStructureCheckboxId" checked/></td>
           	<td><label for="includeStructureCheckboxId" bind="includeStructureLabel"></label></td>
@@ -89,9 +92,21 @@
           	<td width="1%"><input type="checkbox" bind="includeDropStatementCheckbox" id="includeDropStatementCheckboxId"/></td>
           	<td><label for="includeDropStatementCheckboxId" bind="includeDropStatementLabel"></label></td>
           </tr>
+           <tr>
+          	<td width="1%"><input type="checkbox" bind="includeIfExistDropStatementCheckbox" id="includeIfExistDropStatementCheckboxId"/></td>
+          	<td><label for="includeIfExistDropStatementCheckboxId" bind="includeIfExistDropStatementLabel"></label></td>
+          </tr>
+           <tr>
+           <td><span style="margin:2px; padding:2px;"></span></td>
+          </tr>
           <tr>
           	<td width="1%"><input type="checkbox" bind="includeContentCheckbox" id="includeContentCheckboxId" checked/></td>
           	<td><label for="includeContentCheckboxId" bind="includeContentLabel"></label></td>
+          </tr>
+         
+          <tr>
+          	<td width="1%"><input type="checkbox" bind="nullCellValueToEmptyStringCheckbox" id="nullCellValueToEmptyStringCheckboxId" checked/></td>
+          	<td><label for="nullCellValueToEmptyStringCheckbox" bind="nullCellValueToEmptyStringLabel"></label></td>
           </tr>
          
         
