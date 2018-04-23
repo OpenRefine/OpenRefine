@@ -310,8 +310,6 @@
 		"excel": "Excel (.xls)",
 		"excel-xml": "Excel en XML (.xlsx)",
 		"odf": "Hoja de cálculo ODF",
-		"triple-loader": "Triple loader (Freebase)",
-		"mqlwrite": "MQLWrite (Freebase)",
 		"custom-tabular": "Configurar exportación ...",
 		"templating": "Plantilla ...",
 		"warning-align": "No ha realizado ningun esquema de alineamiento aún,\n por lo tanto no hay triple para exportar.\n\n Use el comando Freebase > Editar esquema de alineamiento...\n para alinear sus datos con el esquema de Freebase.",

@@ -82,17 +82,6 @@ ExporterManager.MenuItems = [
   },
   {},
   {
-    "id" : "core/export-tripleloader",
-    "label": $.i18n._('core-project')["triple-loader"],
-    "click": function() { ExporterManager.handlers.exportTripleloader("tripleloader"); }
-  },
-  {
-    "id" : "core/export-mqlwrite",
-    "label": $.i18n._('core-project')["mqlwrite"],
-    "click": function() { ExporterManager.handlers.exportTripleloader("mqlwrite"); }
-  },
-  {},
-  {
     "id" : "core/export-custom-tabular",
     "label": $.i18n._('core-project')["custom-tabular"],
     "click": function() { new CustomTabularExporterDialog(); }

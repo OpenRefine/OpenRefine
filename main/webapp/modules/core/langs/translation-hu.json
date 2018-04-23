@@ -581,7 +581,6 @@
         "json-invalid": "A beillesztett JSON érvénytelen",
         "last-op-er": "Az utolsó művelet hibára futott",
         "apply-operation": "Tevékenységelőzmények alkalmazása",
-        "mqlwrite": "MQLWrite",
         "update-facets": "Összes facetta frissítése",
         "undo-redo": "Visszavonás / Ismétlés",
         "export-project": "Projekt exportálása",
