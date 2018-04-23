@@ -120,7 +120,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
                                                                                                                    // 0
                     (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 1,
-                    calendar.getTimeZone().getRawOffset() / 3600000, TimeValue.CM_GREGORIAN_PRO);
+                    0, TimeValue.CM_GREGORIAN_PRO);
         }
     }
 
