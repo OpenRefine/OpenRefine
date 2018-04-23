@@ -344,8 +344,6 @@
         "excel": "Excel (.xls)",
         "excel-xml": "Excel 2007+ (.xlsx)",
         "odf": "ODF spreadsheet",
-        "triple-loader": "Triple loader",
-        "mqlwrite": "MQLWrite",
         "custom-tabular": "Custom tabular exporter...",
         "templating": "Templating...",
         "warning-align": "You haven't done any schema alignment yet,\n so there is no triple to export.\n\n Use the Freebase > Edit Schema Alignment Skeleton...\n command to align your data with Freebase schemas first.",
