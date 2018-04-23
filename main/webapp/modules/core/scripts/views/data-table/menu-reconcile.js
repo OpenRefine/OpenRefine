@@ -73,6 +73,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doSearchToMatch = function() {
+    var serviceUrl = null;
+    var service = null;
+    var suggestOptions = {};
+    if (column.reconConfig) {
+        serviceUrl = column.reconConfig.service;
+    }
+    if (serviceUrl) {
+        service = ReconciliationManager.getServiceFromUrl(serviceUrl);
+    }
+    if (service && service.suggest && service.suggest.entity) {
+       suggestOptions = $.extend({}, service.suggest.entity);
+       suggestOptions.query_param_name = "prefix";
+    }
+
     var frame = DialogSystem.createDialog();
     frame.width("400px");
 
@@ -84,36 +98,24 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
 
-    input.suggest({}).bind("fb-select", function(e, data) {
-      var query = {
-        "id" : data.id,
-        "type" : []
-      };
-      var baseUrl = "https://www.googleapis.com/freebase/v1/mqlread?key=" + Freebase.API_KEY + "&";
-      var url = baseUrl + $.param({ query: JSON.stringify(query) }) + "&callback=?";
+    input.suggest(suggestOptions).bind("fb-select", function(e, data) {
+        var types = [];
 
-      $.getJSON(
-        url,
+        Refine.postCoreProcess(
+        "recon-match-specific-topic-to-cells",
+        {
+            columnName: column.name,
+            topicID: data.id,
+            topicName: data.name,
+            types: types.join(","),
+            identifierSpace: service.identifierSpace,
+            schemaSpace: service.schemaSpace
+        },
         null,
-        function(o) {
-          var types = "result" in o ? o.result.type : [];
+        { cellsChanged: true, columnStatsChanged: true }
+        );
 
-          Refine.postCoreProcess(
-            "recon-match-specific-topic-to-cells",
-            {
-              columnName: column.name,
-              topicID: data.id,
-              topicGUID: data.guid,
-              topicName: data.name,
-              types: types.join(",")
-            },
-            null,
-            { cellsChanged: true, columnStatsChanged: true }
-          );
-
-          DialogSystem.dismissUntil(level - 1);
-        }
-      );
+        DialogSystem.dismissUntil(level - 1);
     });
 
     $('<button class="button"></button>').text($.i18n._('core-buttons')["cancel"]).click(function() {
