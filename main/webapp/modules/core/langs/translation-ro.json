@@ -1,3 +1,11 @@
 {
-    "name": "Engleza"
+    "name": "Engleza",
+    "core-index": {
+        "about": "Despre",
+        "slogan": "O aplicatie puternica pentru lucrul cu seturi de date dezordonate",
+        "help": "Ajutor",
+        "version": "Versiune",
+        "download": "Descarcare",
+        "new-version": "Versiune noua!"
+    }
 }
