@@ -99,7 +99,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var input = $('<input />').appendTo($('<p></p>').appendTo(body));
 
     input.suggest(suggestOptions).bind("fb-select", function(e, data) {
-        var types = [];
+        var types = data.notable ? data.notable : [];
 
         Refine.postCoreProcess(
         "recon-match-specific-topic-to-cells",
