@@ -34,6 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -44,10 +48,13 @@ import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONException;
+
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
 public class ExpressionUtils {
     
@@ -140,7 +147,8 @@ public class ExpressionUtils {
             v instanceof Boolean ||
             v instanceof Date ||
             v instanceof Calendar ||
-            v instanceof EvalError;
+            v instanceof EvalError ||
+            isArrayOrList(v);
     }
 
     static public Serializable wrapStorable(Object v) {
@@ -148,6 +156,10 @@ public class ExpressionUtils {
             return ((JSONArray) v).toString();
         } else if (v instanceof JSONObject) {
             return ((JSONObject) v).toString();
+         } else if (isArrayOrList(v)) {
+            StringBuffer sb = new StringBuffer();
+            writeValue(sb, v, false);
+            return sb.toString();
         } else {
             return isStorable(v) ?
                 (Serializable) v :
@@ -175,5 +187,70 @@ public class ExpressionUtils {
     @SuppressWarnings("unchecked")
     static public Collection<Object> toObjectCollection(Object v) {
         return (Collection<Object>) v;
+    }
+
+    static public void writeValue(StringBuffer sb, Object v, boolean quote) throws JSONException {
+        if (isError(v)) {
+            sb.append("[error: " + ((EvalError) v).message + "]");
+        } else {
+            if (v == null) {
+                sb.append("null");
+            } else {
+                if (v instanceof WrappedCell) {
+                    sb.append("[object Cell]");
+                } else if (v instanceof WrappedRow) {
+                    sb.append("[object Row]");
+                } else if (v instanceof JSONObject) {
+                   sb.append(((JSONObject) v).toString());
+                } else if (v instanceof JSONArray) {
+                    sb.append(((JSONArray) v).toString());
+                } else if (isArray(v)) {
+                    Object[] a = (Object[]) v;
+                    sb.append("[ ");
+                    for (int i = 0; i < a.length; i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        writeValue(sb, a[i], true);
+                    }
+                    sb.append(" ]");
+                } else if (isArrayOrList(v)) {
+                    List<Object> list = toObjectList(v);
+                    sb.append("[ ");
+                    for (int i = 0; i < list.size(); i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        writeValue(sb, list.get(i), true);
+                    }
+                    sb.append(" ]");
+                } else if (v instanceof HasFields) {
+                    sb.append("[object " + v.getClass().getSimpleName() + "]");
+                } else if (v instanceof Calendar) {
+                    Calendar c = (Calendar) v;
+                    
+                    sb.append("[date " + 
+                        ParsingUtilities.dateToString(OffsetDateTime.ofInstant(c.toInstant(), ZoneId.systemDefault())) +"]");
+                } else if (v instanceof LocalDateTime) {
+                    sb.append("[date " + 
+                            ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
+                } else if (v instanceof String) {
+                    if (quote) {
+                        sb.append(JSONObject.quote((String) v));
+                    } else {
+                        sb.append((String) v);
+                    }
+                } else if (v instanceof Double || v instanceof Float) {
+                    Number n = (Number) v;
+                    if (n.doubleValue() - n.longValue() == 0.0) {
+                        sb.append(n.longValue());
+                    } else {
+                        sb.append(n.doubleValue());
+                    }
+                } else {
+                    sb.append(v.toString());
+                }
+            }
+        }
     }
 }
