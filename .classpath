@@ -45,7 +45,7 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xercesImpl-2.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xml-apis.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.5.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.4.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
