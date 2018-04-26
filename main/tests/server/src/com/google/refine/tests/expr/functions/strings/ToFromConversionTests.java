@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.tests.expr.functions.strings;
 
 import java.text.DateFormat;
+import java.time.OffsetDateTime;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 
@@ -127,6 +128,7 @@ public class ToFromConversionTests extends RefineTest {
     
     @Test
     public void testToDate() throws CalendarParserException {
+      Assert.assertEquals(invoke("toDate", "2006-01-01T00:00:00+00:00"),OffsetDateTime.parse("2006-01-01T00:00Z"));
       Assert.assertTrue(invoke("toDate") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", (Object) null) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "") instanceof EvalError);
