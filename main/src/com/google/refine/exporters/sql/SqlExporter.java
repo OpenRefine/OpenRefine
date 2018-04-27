@@ -60,6 +60,7 @@ public class SqlExporter implements WriterExporter {
     private List<String> columnNames = new ArrayList<String>();
     private List<ArrayList<SqlData>> sqlDataList = new ArrayList<ArrayList<SqlData>>();
     private JSONObject sqlOptions;
+ 
 
     @Override
     public String getContentType() {
@@ -72,6 +73,7 @@ public class SqlExporter implements WriterExporter {
         if(logger.isDebugEnabled()) {
             logger.debug("export sql with params: {}", params);
         }
+       
         TabularSerializer serializer = new TabularSerializer() {
 
             @Override
@@ -84,14 +86,14 @@ public class SqlExporter implements WriterExporter {
             public void endFile() {
                 try {
                     if (columnNames.isEmpty()) {
-                        writer.write(NO_COL_SELECTED_ERROR);
                         logger.error("No Columns Selected!!");
-                        return;
+                        throw new SqlExporterException(NO_COL_SELECTED_ERROR);
+                 
                     }
                     if (sqlOptions == null) {
-                        writer.write(NO_OPTIONS_PRESENT_ERROR);
                         logger.error("No Options Selected!!");
-                        return;
+                        throw new SqlExporterException(NO_OPTIONS_PRESENT_ERROR);
+                       
                     }
                     String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
 
@@ -163,11 +165,6 @@ public class SqlExporter implements WriterExporter {
 
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
     }
-    
-    public List<SqlDataError> validateSqlData(Project project, Properties params){
-        
-        logger.info("Param Name:{}, Param Value:{}", project, params);
-        return null;
-        
-    }
+  
+
 }

@@ -151,8 +151,7 @@ function registerCommands() {
   
   RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
   RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
-  
-  RS.registerCommand(module, "preview-sql-export", new Packages.com.google.refine.commands.exporting.SqlExporterCommand());
+
 }
 
 function registerOperations() {

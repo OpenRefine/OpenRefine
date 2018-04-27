@@ -41,6 +41,8 @@ public class SqlData {
     public static final String SQL_TYPE_INTEGER = "INTEGER";
     public static final String SQL_TYPE_INT = "INT";
     public static final String SQL_TYPE_NUMERIC = "NUMERIC";
+    public static final String SQL_TYPE_DATE = "DATE";
+    public static final String SQL_TYPE_TIMESTAMP = "TIMESTAMP";
     
     
     

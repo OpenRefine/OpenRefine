@@ -43,16 +43,15 @@ public class SqlCreateBuilder {
     private final static Logger logger = LoggerFactory.getLogger("SqlCreateBuilder");
 
     private String table;
-
-   
     private List<String> columns;
-
     private JSONObject options;
+
 
     public SqlCreateBuilder(String table, List<String> columns, JSONObject options) {
         this.table = table;
         this.columns = columns;
         this.options = options;
+      
     }
 
     public String getCreateSQL() {
@@ -76,6 +75,7 @@ public class SqlCreateBuilder {
                 String size = JSONUtilities.getString(columnOptions, "size", "");
                 boolean allowNull = JSONUtilities.getBoolean(columnOptions, "allowNull", true);
                 String defaultValue = JSONUtilities.getString(columnOptions, "defaultValue", null);
+                logger.info("allowNull::{}" , allowNull);
                 
                 String allowNullStr = "NULL";
                 if(!allowNull) {
@@ -125,6 +125,11 @@ public class SqlCreateBuilder {
                         if(type.equals(SqlData.SQL_TYPE_VARCHAR) || type.equals(SqlData.SQL_TYPE_CHAR) || type.equals(SqlData.SQL_TYPE_TEXT)) {
                             createSB.append(" DEFAULT " + "'" + defaultValue + "'"); 
                         }else {
+                            try {
+                                Integer.parseInt(defaultValue);
+                            }catch(NumberFormatException nfe) {
+                                throw new SqlExporterException(defaultValue + " is not compatible with column type :" + type);
+                            }
                             createSB.append(" DEFAULT " + defaultValue); 
                         }
                         

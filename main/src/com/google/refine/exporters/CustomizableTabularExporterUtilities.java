@@ -229,12 +229,16 @@ abstract public class CustomizableTabularExporterUtilities {
         
         Map<String, String> identifierSpaceToUrl = null;
         
+        //SQLExporter parameter to convert null cell value to empty string
+        boolean includeNullFieldValue = false;
+        
         CellFormatter() {
             dateFormatter = new SimpleDateFormat(fullIso8601);
         }
         
         CellFormatter(JSONObject options) {
             JSONObject reconSettings = JSONUtilities.getObject(options, "reconSettings");
+            includeNullFieldValue = JSONUtilities.getBoolean(options, "nullValueToEmptyStr", false);
             if (reconSettings != null) {
                 String reconOutputString = JSONUtilities.getString(reconSettings, "output", null);
                 if ("entity-name".equals(reconOutputString)) {
@@ -354,6 +358,12 @@ abstract public class CustomizableTabularExporterUtilities {
                     }
                     return new CellData(column.getName(), value, text, link);
                 }
+            }else {//added for sql exporter
+            
+                if(includeNullFieldValue) {
+                    return new CellData(column.getName(), "", "", "");
+                }
+                
             }
             return null;
         }

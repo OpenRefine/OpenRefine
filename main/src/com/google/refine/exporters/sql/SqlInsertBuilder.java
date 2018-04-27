@@ -53,6 +53,7 @@ public class SqlInsertBuilder {
     private List<ArrayList<SqlData>> sqlDataList;
 
     private JSONObject options;
+
     
     /**
      * 
@@ -60,12 +61,16 @@ public class SqlInsertBuilder {
      * @param columns
      * @param rows
      * @param options
+     * @param sqlErrors 
      */
-    public SqlInsertBuilder(String table, List<String> columns, List<ArrayList<SqlData>> rows, JSONObject options) {
+    public SqlInsertBuilder(String table, List<String> columns, List<ArrayList<SqlData>> rows, JSONObject options
+            ) {
         this.table = table;
         this.columns = columns;
         this.sqlDataList = rows;
         this.options = options;
+        //logger.info("Column Size:{}", columns.size());
+    
     }
 
    /**
@@ -86,65 +91,74 @@ public class SqlInsertBuilder {
             });
         }
       
-        boolean nullValueToEmptyStr = options == null ? false : JSONUtilities.getBoolean(options, "convertNulltoEmptyString", true);
+        boolean nullValueNull = options == null ? true : JSONUtilities.getBoolean(options, "convertNulltoEmptyString", true);
                
         StringBuffer values = new StringBuffer();
        
         int idx = 0;
         for(ArrayList<SqlData> sqlRow : sqlDataList) {
             StringBuilder rowValue = new StringBuilder();
-
+            
+            //int fieldCount = 0;
             for(SqlData val : sqlRow) {
              
                 JSONObject jsonOb = colOptionsMap.get(val.getColumnName());
                 String type = (String)jsonOb.get("type");
-                String defaultValue = (String)jsonOb.get("defaultValue");
-                boolean allowNullChkBox = (boolean)jsonOb.get("allowNull");
                 
-                
+                String defaultValue = JSONUtilities.getString(jsonOb, "defaultValue", null);
+              
+                boolean allowNullChkBox = JSONUtilities.getBoolean(jsonOb, "defaultValue", true);;
                 if(type == null) {
                     type = SqlData.SQL_TYPE_VARCHAR;
                 }
                 //Character Types
                 if(type.equals(SqlData.SQL_TYPE_VARCHAR) || type.equals(SqlData.SQL_TYPE_CHAR) || type.equals(SqlData.SQL_TYPE_TEXT)) {
-                    
-                    if(!allowNullChkBox) {
-                        throw new RuntimeException("bad input");
-                    }
-                    if((val.getText() == null || val.getText().isEmpty()) && nullValueToEmptyStr ) {
-                       // logger.info("Appending empty String:::{}" , val.getText());
-                        if(defaultValue != null && !defaultValue.isEmpty()) {
-                            rowValue.append("'" + defaultValue + "'");
-                        }else {
-                            rowValue.append("null");
-                        }
+
+                    if((val.getText() == null || val.getText().isEmpty()) ) {
+                      
+                        handleNullField(allowNullChkBox, defaultValue, nullValueNull, val.getColumnName(), rowValue, true);
                         
                     }else {
                         rowValue.append("'" + val.getText() + "'"); 
+                        
                     }
                  
-                }else {//Numeric Types
+                }else if(type.equals(SqlData.SQL_TYPE_INT) || type.equals(SqlData.SQL_TYPE_INTEGER) || type.equals(SqlData.SQL_TYPE_NUMERIC)) {//Numeric Types : INT, NUMERIC
                     
-                    if((val.getText() == null || val.getText().isEmpty()) && nullValueToEmptyStr ) {
-                      //  logger.info("Appending empty String others:::{}" , val.getText());
-                        if(defaultValue != null && !defaultValue.isEmpty()) {
-                            rowValue.append("'" + defaultValue + "'");
-                        }else {
-                            rowValue.append("null");
+                    if((val.getText() == null || val.getText().isEmpty())) {
+                        
+                        handleNullField(allowNullChkBox, defaultValue, nullValueNull, val.getColumnName(), rowValue, false);
+                 
+                    }else {//value not null
+                        
+                        try {
+                            Integer.parseInt(val.getText());
+                        } catch (NumberFormatException nfe) {
+                            throw new SqlExporterException(
+                                    val.getText() + " is not compatible with column type :" + type);
                         }
-                    }else {
+
                         rowValue.append(val.getText());
+                       
                     }
                     
+                }else if(type.equals(SqlData.SQL_TYPE_DATE) || type.equals(SqlData.SQL_TYPE_TIMESTAMP)) {
+                    if((val.getText() == null || val.getText().isEmpty())) {
+                        handleNullField(allowNullChkBox, defaultValue, nullValueNull, val.getColumnName(), rowValue, true);
+                    }else {
+                        rowValue.append("'" + val.getText() + "'"); 
+                    }
                 }
                 
                 rowValue.append(",");
-               
+            
             }
             
+         
             
             idx++;
             String rowValString = rowValue.toString();
+//            logger.info("rowValString::" + rowValString);
             rowValString = rowValString.substring(0, rowValString.length() - 1);
             
             values.append("( ");
@@ -182,4 +196,58 @@ public class SqlInsertBuilder {
         return sqlString;
     }
 
+    /**
+     * 
+     * @param allowNullChkBox
+     * @param defaultValue
+     * @param nullValueNull
+     * @param col
+     * @param rowValue
+     * @param quote
+     * @param fieldCount
+     */
+    public void handleNullField(
+            boolean allowNullChkBox, 
+            String defaultValue, 
+            boolean nullValueNull, 
+            String col,
+            StringBuilder rowValue, 
+            boolean quote
+            ) {
+
+        if(allowNullChkBox) {//cell nullable
+            if(defaultValue != null && !defaultValue.isEmpty()) {
+                if(quote) {
+                    rowValue.append("'" + defaultValue + "'");  
+                }else {
+                    rowValue.append(defaultValue);
+                } 
+               
+            }else {
+                if(nullValueNull) {
+                    rowValue.append("null"); 
+                   
+                }else {
+                    throw new SqlExporterException("Null value not allowed for Field :" + col); 
+                }
+                
+            }
+            
+        }else {
+            if(defaultValue != null && !defaultValue.isEmpty()) {
+                if(quote) {
+                    rowValue.append("'" + defaultValue + "'"); 
+                }else {
+                    rowValue.append(defaultValue);
+                }    
+               
+            }else {
+                throw new SqlExporterException("Null value not allowed for Field :" + col);
+            }
+           
+        }
+        
+    }
+    
+    
 }

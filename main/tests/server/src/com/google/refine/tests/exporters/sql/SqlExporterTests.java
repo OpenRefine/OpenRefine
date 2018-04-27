@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -212,19 +214,23 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
+        //logger.info("result = " + result);
         
         Assert.assertNotNull(result);
-        assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
-        assertNotEquals(writer.toString(), SqlExporter.NO_COL_SELECTED_ERROR);
+//        assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
+//        assertNotEquals(writer.toString(), SqlExporter.NO_COL_SELECTED_ERROR);
         
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
         Assert.assertEquals(checkResult,  true);
+        //logger.info("checkResult1 = " + checkResult);
        
         checkResult = result.contains("INSERT INTO " + tableName );
         Assert.assertEquals(checkResult,  true);
+        //logger.info("checkResult2 = " + checkResult);
         
-        checkResult = result.contains("DROP TABLE " + tableName + ";");
+        checkResult = result.contains("DROP TABLE IF EXISTS " + tableName + ";");
         Assert.assertEquals(checkResult,  true);
+        //logger.info("checkResult3 = " + checkResult);
    
     }
 
@@ -246,8 +252,82 @@ public class SqlExporterTests extends RefineTest {
         Assert.assertEquals(result,  true);
         
     }
+    
+    @Test
+    public void testExportSqlWithNullFields(){
+        int inNull = 8;
+        createGridWithNullFields(3, 3, inNull);
+        String tableName = "sql_table_test";
+        JSONObject optionsJson = createOptionsFromProject(tableName, null, null);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("convertNulltoEmptyString", true);
+        
+        
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        //logger.info("Options = " + optionsJson.toString());
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        String result = writer.toString();
+        Assert.assertNotNull(result);
+        //logger.info("\nresult = " + result);
+       // logger.info("\nNull Count:" + countWordInString(result, "null"));
+        
+        int countNull = countWordInString(result, "null");
+        Assert.assertEquals(countNull, inNull);
+
+    }
+    
+    @Test
+    public void testExportSqlWithNotNullColumns(){
+        int noOfCols = 4;
+        int noOfRows = 3;
+        createGrid(noOfRows, noOfCols);
+        String tableName = "sql_table_test";
+        JSONObject optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("convertNulltoEmptyString", true);
+        
+       when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        String result = writer.toString();
+        logger.info("\nresult:={} ", result);
+        Assert.assertNotNull(result);
+     
+        int countNull = countWordInString(result, "NOT NULL");
+        logger.info("\nNot Null Count: {}" , countNull);
+        Assert.assertEquals(countNull, noOfCols);
+
+    }
   
     //helper methods
+    
+   public int countWordInString(String input, String word){
+       if(input == null || input.isEmpty()) {
+           return 0;
+       }
+       int i = 0;
+       Pattern p = Pattern.compile(word);
+       Matcher m = p.matcher( input );
+       while (m.find()) {
+           i++;
+       }
+       
+       return i;
+       
+   }
+    
    protected void createColumns(int noOfColumns){
         for(int i = 0; i < noOfColumns; i++){
             try {
@@ -269,6 +349,27 @@ public class SqlExporterTests extends RefineTest {
             project.rows.add(row);
         }
     }
+    
+    protected void createGridWithNullFields(int noOfRows, int noOfColumns, int noOfNullFields){
+        createColumns(noOfColumns);
+        if(noOfNullFields > (noOfColumns * noOfRows)) {
+            noOfNullFields = noOfColumns * noOfRows;
+        }
+        int k = 0;
+        for(int i = 0; i < noOfRows; i++){
+            Row row = new Row(noOfColumns);
+            for(int j = 0; j < noOfColumns; j++){
+                if(k < noOfNullFields) {
+                    row.cells.add(new Cell("", null)); 
+                    k++;
+                }else {
+                    row.cells.add(new Cell("row" + i + "cell" + j, null));
+                }
+                
+            }
+            project.rows.add(row);
+        }
+    }
   
    protected JSONObject createOptionsFromProject(String tableName, String type, String size) {
        
@@ -283,8 +384,17 @@ public class SqlExporterTests extends RefineTest {
            //logger.info("Column Name = " + c.getName());
            JSONObject columnModel = new JSONObject();
            columnModel.put("name", c.getName());
-           columnModel.put("type", "VARCHAR");
-           columnModel.put("size", "100");
+           if(type != null) {
+               columnModel.put("type", type);
+           }else {
+               columnModel.put("type", "VARCHAR");
+           }
+           if(size != null) {
+               columnModel.put("size", size); 
+           }else {
+               columnModel.put("size", "100");
+           }
+           
            if(type != null) {
                columnModel.put("type", type);
            }
@@ -292,6 +402,49 @@ public class SqlExporterTests extends RefineTest {
               // logger.info(" Size = " + size);
                columnModel.put("size", size);
            }
+           
+           columns.put(columnModel);
+      
+       });
+       
+      return json;
+   }
+   
+    protected JSONObject createOptionsFromProject(String tableName, String type, String size, String defaultValue,
+            boolean allowNull) {
+       
+       JSONObject json = new JSONObject();
+       JSONArray columns = new JSONArray();
+       json.put("columns", columns);
+       json.put("tableName", tableName);
+       
+       List<Column> cols = project.columnModel.columns;
+     
+       cols.forEach(c -> {
+           //logger.info("Column Name = " + c.getName());
+           JSONObject columnModel = new JSONObject();
+           columnModel.put("name", c.getName());
+           if(type != null) {
+               columnModel.put("type", type);
+           }else {
+               columnModel.put("type", "VARCHAR");
+           }
+           if(size != null) {
+               columnModel.put("size", size); 
+           }else {
+               columnModel.put("size", "100");
+           }
+           
+           if(type != null) {
+               columnModel.put("type", type);
+           }
+           if(size != null) {
+              // logger.info(" Size = " + size);
+               columnModel.put("size", size);
+           }
+          
+           columnModel.put("defaultValue", defaultValue);
+           columnModel.put("allowNull", allowNull);
            
            columns.put(columnModel);
       

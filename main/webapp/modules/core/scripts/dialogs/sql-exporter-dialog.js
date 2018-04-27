@@ -336,69 +336,43 @@ function SqlExporterDialog(options) {
     }
     
     var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
-    var sqlExportInput = {};
-    sqlExportInput.name = name;
-    sqlExportInput.options = JSON.stringify(options);
-    sqlExportInput.project =  theProject.id;
+  
+    var format = options.format;
+    var encoding = options.encoding;
     
-    //validate form @ backend
-    $.post(
-        "command/core/preview-sql-export",
-        sqlExportInput,
-        function(sqlValidationResult) {
-            if(sqlValidationResult && sqlValidationResult.code === 'OK'){
-                //generate code
-                
-                var format = options.format;
-                var encoding = options.encoding;
-                
-                delete options.format;
-                delete options.encoding;
-                if (preview) {
-                  options.limit = 10;
-                }
-                
-              // var ext = SqlExporterDialog.formats[format].extension;
-                var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
-                $('<input />')
-                .attr("name", "options")
-                .attr("value", JSON.stringify(options))
-                .appendTo(form);
-                if (encoding) {
-                  $('<input />')
-                  .attr("name", "encoding")
-                  .attr("value", encoding)
-                  .appendTo(form);
-                }
-                if (!preview) {
-                  $('<input />')
-                  .attr("name", "contentType")
-                  .attr("value", "application/x-unknown") // force download
-                  .appendTo(form);
-                }
-                
-               // alert("form::" + form);
-                document.body.appendChild(form);
-              
-                window.open("about:blank", "refine-export");
-                form.submit();
-              
-                document.body.removeChild(form);
-                return true;
-      
-            }else{
-                window.alert("Problem with sql code genration");
-                return false;
-            }
-                
-        },
-        "json"
-      ).fail(function( jqXhr, textStatus, errorThrown ){
-          alert( textStatus + ':' + errorThrown );
-          return false;
-      });
+    delete options.format;
+    delete options.encoding;
+    if (preview) {
+      options.limit = 10;
+    }
     
-     return true;
+  // var ext = SqlExporterDialog.formats[format].extension;
+    var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
+    $('<input />')
+    .attr("name", "options")
+    .attr("value", JSON.stringify(options))
+    .appendTo(form);
+    if (encoding) {
+      $('<input />')
+      .attr("name", "encoding")
+      .attr("value", encoding)
+      .appendTo(form);
+    }
+    if (!preview) {
+      $('<input />')
+      .attr("name", "contentType")
+      .attr("value", "application/x-unknown") // force download
+      .appendTo(form);
+    }
+    
+   // alert("form::" + form);
+    document.body.appendChild(form);
+  
+    window.open("about:blank", "refine-export");
+    form.submit();
+  
+    document.body.removeChild(form);
+    return true;
   
   };
   
