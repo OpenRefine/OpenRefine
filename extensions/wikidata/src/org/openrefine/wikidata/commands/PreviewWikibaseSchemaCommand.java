@@ -94,8 +94,6 @@ public class PreviewWikibaseSchemaCommand extends Command {
             writer.object();
 
             {
-                StringWriter stringWriter = new StringWriter();
-
                 // Inspect the edits and generate warnings
                 EditInspector inspector = new EditInspector(warningStore);
                 inspector.inspect(editBatch);
@@ -117,8 +115,12 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
                 // Dump the first 10 edits, scheduled with the default scheduler
                 WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-                List<ItemUpdate> firstEdits = scheduler.schedule(editBatch).stream()
+                List<ItemUpdate> nonNullEdits = scheduler.schedule(editBatch).stream()
                         .filter(e -> !e.isNull())
+                        .collect(Collectors.toList());
+                writer.key("edit_count");
+                writer.value(nonNullEdits.size());
+                List<ItemUpdate> firstEdits = nonNullEdits.stream()
                         .limit(10)
                         .collect(Collectors.toList());
                 ObjectMapper mapper = new ObjectMapper();

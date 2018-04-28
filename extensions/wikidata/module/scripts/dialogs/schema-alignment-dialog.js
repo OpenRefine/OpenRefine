@@ -148,7 +148,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
    */
   var previewTab = $(DOM.loadHTML("wikidata", "scripts/preview-tab.html")).appendTo(this._previewPanel);
   var previewElmts = this._previewElmts = DOM.bind(previewTab);
-  previewElmts.previewExplanation.text($.i18n._('wikidata-schema')["preview-explanation"]);
+  SchemaAlignmentDialog.updateNbEdits(0);
   previewElmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
@@ -1110,11 +1110,17 @@ SchemaAlignmentDialog._hasChanged = function() {
         .removeClass('disabled');
 }
 
+SchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
+   this._previewElmts.previewExplanation.text(
+      $.i18n._('wikidata-schema')["preview-explanation"].replace('{nb_edits}',nb_edits));
+}
+
 SchemaAlignmentDialog.preview = function() {
   var self = this;
 
   $('.invalid-schema-warning').hide();
   this._previewPanes.empty();
+  this.updateNbEdits(0);
   this.issueSpinner.show();
   this.previewSpinner.show();
   var schema = this.getJSON();
@@ -1127,6 +1133,7 @@ SchemaAlignmentDialog.preview = function() {
       if ("edits_preview" in data) {
         var previewContainer = self._previewPanes[0];
         EditRenderer.renderEdits(data.edits_preview, previewContainer);
+        self.updateNbEdits(data["edit_count"]);
       }
 
       if (data.warnings) {

@@ -71,7 +71,7 @@
         },
         "perform-wikidata-edits": {
                 "dialog-header": "Upload edits to Wikidata",
-                "review-your-edits": "Please check your edits carefully before pushing them to Wikidata. Large edit batches should be submitted for <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a> first.",
+                "review-your-edits": "You are about to upload {nb_edits} edits to Wikidata. Please check them carefully. Large edit batches should be submitted for <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a> first.",
                 "logged-in-as": "You are logged in as",
                 "edit-summary-label": "Edit summary:",
                 "edit-summary-placeholder": "a few words to describe your edits",

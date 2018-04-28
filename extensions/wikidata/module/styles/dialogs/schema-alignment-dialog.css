@@ -486,7 +486,8 @@ div.perform-edits-warnings-area {
   min-height: 340px;
   max-height: 400px;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
+  border: 1px solid #bbb;
 }
 
 .wb-issue-preformat {
