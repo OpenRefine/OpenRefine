@@ -3,14 +3,14 @@
                 "menu-label": "Wikidata",
                 "edit-wikidata-schema": "Edit Wikidata schema",
                 "manage-wikidata-account": "Manage Wikidata account",
-                "perform-edits-on-wikidata": "Perform edits on Wikidata",
+                "perform-edits-on-wikidata": "Upload edits to Wikidata",
                 "export-to-qs": "Export to QuickStatements",
                 "quickstatements-export-name": "QuickStatements"
         },
         "wikidata-schema": {
                 "dialog-header": "Align to Wikidata",
                 "dialog-explanation": "The Wikidata schema below specifies how your tabular data will be transformed into Wikidata edits. You can drag and drop the column names below in most input boxes: for each row, edits will be generated with the values in these columns.",
-                "preview-explanation": "This tab shows the first 10 edits that will be made once you upload the changes to Wikidata. You can use facets to inspect the edits on particular items.",
+                "preview-explanation": "This tab shows the first edits (out of {nb_edits}) that will be made once you upload the changes to Wikidata. You can use facets to inspect the edits on particular items.",
                 "schema-tab-header": "Schema",
                 "warnings-tab-header": "Issues",
                 "edits-preview-tab-header": "Preview",
@@ -57,7 +57,7 @@
         },
         "wikidata-account": {
                 "dialog-header": "Wikidata account",
-                "explain-log-in": "Logging in to <a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a> lets you to perform edits directly from OpenRefine.",
+                "explain-log-in": "Logging in to <a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a> lets you to upload edits directly from OpenRefine.",
                 "username-label": "Username:",
                 "username-placeholder": "Enter your username",
                 "password-label": "Password:",

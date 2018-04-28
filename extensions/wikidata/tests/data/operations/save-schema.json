@@ -1,6 +1,6 @@
 {
     "op": "wikidata/save-wikibase-schema",
-    "description": "Save Wikibase schema skeleton",
+    "description": "Save Wikibase schema",
     "schema": {
       "itemDocuments": [
         {

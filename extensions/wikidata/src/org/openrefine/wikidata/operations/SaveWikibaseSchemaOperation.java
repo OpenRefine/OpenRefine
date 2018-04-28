@@ -43,6 +43,7 @@ import com.google.refine.util.Pool;
 
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
+    final public String operationDescription = "Save Wikibase schema";
     final protected WikibaseSchema _schema;
 
     public SaveWikibaseSchemaOperation(WikibaseSchema schema) {
@@ -61,7 +62,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         writer.key("op");
         writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description");
-        writer.value("Save Wikibase schema skeleton");
+        writer.value(operationDescription);
         writer.key("schema");
         _schema.write(writer, options);
         writer.endObject();
@@ -76,7 +77,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID)
             throws Exception {
-        String description = "Save Wikibase schema skeleton";
+        String description = operationDescription;
 
         Change change = new WikibaseSchemaChange(_schema);
 
