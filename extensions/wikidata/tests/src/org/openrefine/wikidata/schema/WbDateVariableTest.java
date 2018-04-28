@@ -28,6 +28,8 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
+import com.google.refine.model.Cell;
+
 public class WbDateVariableTest extends WbVariableTest<TimeValue> {
 
     private TimeValue year = Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
@@ -57,6 +59,13 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
         isSkipped("invalid format");
     }
 
+    @Test
+    public void testNumber() {
+        // numbers are evaluated as years
+        evaluatesTo(year, new Cell(2018, null));
+        isSkipped(new Cell(1234.56, null));
+    }
+    
     // TODO accept parsed dates with default precision
 
     @Test
