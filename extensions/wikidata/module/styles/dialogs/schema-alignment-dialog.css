@@ -31,6 +31,7 @@
   background-color: transparent;
   color: #11c;
   padding: 3px 7px;
+  cursor: pointer;
 }
 
 .main-view-panel-tab-header.active {
@@ -161,7 +162,7 @@
 
 .wbs-item-input, .wbs-prop-input, .wbs-target-input {
     width: 250px;
-    height: 20px;
+    min-height: 20px;
     display: inline-block;
     margin: 5px;
     white-space: normal;
@@ -184,7 +185,9 @@
     width: 120px;
 }
 
-// Fix input rendering for Firefox
+/* Fix input rendering for Firefox */
+
+
 .wbs-item-input input, .wbs-prop-input input, .wbs-target-input input,
 .wbs-monolingual-container input {
     width: 100%;
@@ -202,11 +205,16 @@
     padding: 2px;
 }
 
+.wbs-toolbar a {
+    cursor: pointer;
+}
+
 .wbs-remove,
 .wbs-add-item, .wbs-add-statement-group, .wbs-add-statement,
 .wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc {
     color: #0645ad !important;
     font-size: 0.9em;
+    cursor: pointer;
 }
 
 .wbs-add-item:hover, .wbs-add-statement-group:hover, .wbs-add-statement:hover,
