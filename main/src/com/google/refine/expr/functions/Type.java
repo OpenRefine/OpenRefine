@@ -33,8 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -55,7 +54,7 @@ public class Type implements Function {
             if (v != null) {
                 if (v instanceof String) {
                     return "string";
-                } else if (v instanceof Calendar || v instanceof Date) {
+                } else if (v instanceof OffsetDateTime) {
                     return "date";
                 } else if (v instanceof Number) {
                     return "number";

@@ -38,11 +38,8 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.ZoneId;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -307,11 +304,7 @@ public class StandardReconConfig extends ReconConfig {
                                 jsonWriter.key("id"); jsonWriter.value(cell2.recon.match.id);
                                 jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.name);
                                 jsonWriter.endObject();
-                            } else if (cell2.value instanceof Calendar) {
-                                Calendar calendar = (Calendar) cell2.value;
-                                OffsetDateTime d = OffsetDateTime.ofInstant(calendar.toInstant(), ZoneId.of("Z"));
-                                jsonWriter.value(ParsingUtilities.dateToString(d));
-                            } else if (cell2.value instanceof Date) {
+                            } else if (cell2.value instanceof OffsetDateTime) {
                                 jsonWriter.value(ParsingUtilities.dateToString((OffsetDateTime) cell2.value));
                             } else {
                                 jsonWriter.value(cell2.value.toString());

@@ -45,6 +45,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Calendar;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -222,5 +223,9 @@ public class ParsingUtilities {
     
     static public String instantToLocalDateTimeString(Instant instant) {
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(ISO8601);
+    }
+    
+    static public OffsetDateTime calendarToOffsetDateTime(Calendar calendar) {
+        return calendar.toInstant().atOffset(ZoneOffset.of("Z"));
     }
 }

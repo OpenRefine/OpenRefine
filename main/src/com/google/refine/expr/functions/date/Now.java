@@ -33,7 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.date;
 
-import java.util.Calendar;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -46,7 +47,7 @@ public class Now implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 0) {
-            return Calendar.getInstance();
+            return OffsetDateTime.now(ZoneId.of("Z"));
         }
         return null;
     }

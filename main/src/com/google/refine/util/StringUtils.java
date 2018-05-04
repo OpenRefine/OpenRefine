@@ -1,9 +1,7 @@
 package com.google.refine.util;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class StringUtils {
 
@@ -13,9 +11,10 @@ public class StringUtils {
      * @return string representing object
      */
     public static String toString(Object o) {
-        if (o instanceof Calendar || o instanceof Date) {
-            DateFormat formatter = DateFormat.getDateInstance();
-            return formatter.format(o instanceof Date ? ((Date) o) : ((Calendar) o).getTime());
+        // to replace the DateFormat with java.time.format.DateTimeFormatter 
+        if (o instanceof OffsetDateTime) {
+            OffsetDateTime odt = (OffsetDateTime)o;
+            return odt.format(DateTimeFormatter.ISO_INSTANT);
         } else if (o == null) {
             return "null";
         } else {
