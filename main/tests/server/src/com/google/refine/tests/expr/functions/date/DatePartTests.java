@@ -168,15 +168,10 @@ public class DatePartTests extends RefineTest {
     }
     
     private DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            // here is the same as your code
             .append(DateTimeFormatter.BASIC_ISO_DATE).appendLiteral('-')
-            // time (hour/minute/seconds)
             .appendPattern("HH:mm:ss")
-            // optional nanos, with 9, 6 or 3 digits
-            .appendPattern("[.SSSSSSSSS][.SSSSSS][.SSS]")
-            // offset
+            .appendPattern("[.SSSSSSSSS][.SSSSSS][.SSS]")       // optional nanos, with 9, 6 or 3 digits
             .appendOffset("+HH:mm", "Z")
-            // create formatter
             .toFormatter();
     
     @Test

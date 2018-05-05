@@ -33,8 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.expr.functions.strings;
 
-import java.text.DateFormat;
-import java.util.GregorianCalendar;
+import java.time.OffsetDateTime;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
+import com.google.refine.expr.util.CalenderParser;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
@@ -118,11 +117,9 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
       
-      String expectedDate = DateFormat.getDateInstance().format(new GregorianCalendar(2013,5,1).getTime());
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01")), expectedDate);
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01").getTime()), expectedDate);
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy"),"2013");      
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy-MM-dd"),"2013-06-01");
+      String expectedDate = "2013-06-01T00:00:00Z";
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime("2013-06-01")), expectedDate);
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime("2013-06-01"),"yyyy-MM-dd"),expectedDate);
     }
     
     @Test
@@ -132,21 +129,16 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertTrue(invoke("toDate", "") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
-      Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof GregorianCalendar);
-      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalendarParser.parse("2012-03-01"));
-      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parse("2012-03-01"));
+      Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof OffsetDateTime);
+      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalenderParser.parseAsOffsetDateTime("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalenderParser.parseAsOffsetDateTime("2012-03-01"));
+      
       // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
-      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parse("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalenderParser.parseAsOffsetDateTime("2012-03-01"));
+      
       // First string can be a locale identifier instead of a format string
-      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_HK","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_TW","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_CN","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-
-        // Date
-        // Calendar
-        // String
+      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalenderParser.parseAsOffsetDateTime("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalenderParser.parseAsOffsetDateTime("2013-06-01")); 
     }
     
     @Test

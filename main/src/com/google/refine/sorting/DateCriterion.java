@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -48,10 +48,8 @@ public class DateCriterion extends Criterion {
             @Override
             protected Object makeKey(Object value) {
                 if (ExpressionUtils.isNonBlankData(value)) {
-                    if (value instanceof Date) {
-                        return value;
-                    } else if (value instanceof Calendar) {
-                        return ((Calendar) value).getTime();
+                    if (value instanceof OffsetDateTime) {
+                        return ((OffsetDateTime) value).toInstant();
                     } else {
                         return s_error;
                     }
@@ -61,7 +59,7 @@ public class DateCriterion extends Criterion {
 
             @Override
             public int compareKeys(Object key1, Object key2) {
-                return ((Date) key1).compareTo((Date) key2);
+                return ((Instant) key1).compareTo((Instant) key2);
             }
         };
     }

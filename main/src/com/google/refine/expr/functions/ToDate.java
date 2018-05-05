@@ -36,21 +36,22 @@ package com.google.refine.expr.functions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
-import java.util.Calendar;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
-import com.google.refine.grel.Function;
+import com.google.refine.expr.util.CalenderParser;
 import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
 
 public class ToDate implements Function {
@@ -62,10 +63,8 @@ public class ToDate implements Function {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
         } else {
             Object arg0 = args[0];
-            if (arg0 instanceof Date) {
+            if (arg0 instanceof OffsetDateTime) {
                 return arg0;
-            } else if (arg0 instanceof Calendar) {
-                return ((Calendar) arg0).getTime();
             } else if (arg0 instanceof Long) {
                 o1 =  ((Long) arg0).toString(); // treat integers as years
             } else if (arg0 instanceof String && arg0.toString().trim().length() > 0) {
@@ -83,21 +82,16 @@ public class ToDate implements Function {
                 month_first = (Boolean) args[1];
             }
             try {
-                return CalendarParser.parse( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
+                return CalenderParser.parseAsOffsetDateTime( o1, (month_first) ? CalenderParser.MM_DD_YY : CalenderParser.DD_MM_YY);
             } catch (CalendarParserException e) {
                 OffsetDateTime d = ParsingUtilities.stringToDate(o1);
                 if (d != null) {
                     return d;
                 } else {
                     try {
-                        return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime();
+                        return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant().atOffset(ZoneOffset.of("Z"));
                     } catch (IllegalArgumentException e2) {
                     }
-                    // alternate implementation which may be useful on some JVMs?
-//                    try {
-//                        return javax.xml.datatype.DatatypeFactory.newInstance().newXMLGregorianCalendar(o1).toGregorianCalendar().getTime();
-//                    } catch (DatatypeConfigurationException e2) {     
-//                    }
                 }
                 return new EvalError("Unable to parse as date");
             }
@@ -114,14 +108,7 @@ public class ToDate implements Function {
                 DateFormat formatter;
                 // Attempt to parse first string as a language tag
                 if (i == 1) {
-                    // Locale possibleLocale = Locale.forLanguageTag(format); // Java 1.7+ only
-                    Locale possibleLocale;
-                    int c = format.indexOf('_');
-                    if (c > 0) {
-                        possibleLocale = new Locale(format.substring(0, c),format.substring(c+1));
-                    } else {
-                        possibleLocale = new Locale(format);
-                    }
+                    Locale possibleLocale = Locale.forLanguageTag(format); // Java 1.7+ 
                     boolean valid = false;
                     for (Locale l : DateFormat.getAvailableLocales()) {
                         if (l.equals(possibleLocale)) {
@@ -133,8 +120,7 @@ public class ToDate implements Function {
                     if (valid) { // If we got a valid locale
                         if (args.length == 2) { // No format strings to try, process using default
                           formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-                          formatter.setLenient(true);
-                          GregorianCalendar date = parse(o1, formatter);
+                          OffsetDateTime date = parse(o1, formatter);
                           if (date != null) {
                               return date;
                           } else {
@@ -150,30 +136,30 @@ public class ToDate implements Function {
                     return new EvalError("Unknown date format");
                 }
                 formatter.setLenient(true);
-                GregorianCalendar date = parse(o1, formatter);
+                OffsetDateTime date = parse(o1, formatter);
                 if (date != null) {
                     return date;
                 }
+                
             }
             return new EvalError("Unable to parse as date");
         } else {
             return new EvalError("Unable to parse as date");
         }
     }
-
-
-    private GregorianCalendar parse(String o1, DateFormat formatter) {
+    
+    private OffsetDateTime parse(String o1, DateFormat formatter) {
         try {
+            formatter.setTimeZone(TimeZone.getTimeZone("Z"));
             Date date = formatter.parse(o1);
             GregorianCalendar c = new GregorianCalendar();
             c.setTime(date);
-            return c;
+            return ParsingUtilities.calendarToOffsetDateTime(c);
         } catch (java.text.ParseException e) {
             return null;
         }
     }
-
-
+    
     @Override
     public void write(JSONWriter writer, Properties options)
     throws JSONException {
