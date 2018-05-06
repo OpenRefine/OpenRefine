@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
@@ -50,6 +51,11 @@ public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
         try {
             return WbLocationConstant.parse(expr);
         } catch (ParseException e) {
+            if (!expr.trim().isEmpty()) {
+                QAWarning issue = new QAWarning("ignored-coordinates", null, QAWarning.Severity.WARNING, 1);
+                issue.setProperty("example_value", expr);
+                ctxt.addWarning(issue);
+            }
             throw new SkipSchemaExpressionException();
         }
     }

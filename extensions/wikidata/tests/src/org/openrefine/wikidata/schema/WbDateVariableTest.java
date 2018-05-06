@@ -35,7 +35,9 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
     private TimeValue year = Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             0, 1, 0, TimeValue.CM_GREGORIAN_PRO);
     private TimeValue day = Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, TimeValue.CM_GREGORIAN_PRO);
+    private TimeValue minute = Datamodel.makeTimeValue(2001, (byte) 2, (byte) 3, (byte)4, (byte)5, (byte)0, (byte)9, (byte)0, (byte)1, (byte)0, TimeValue.CM_GREGORIAN_PRO);
 
+    
     @Override
     public WbVariableExpr<TimeValue> initVariableExpr() {
         return new WbDateVariable();
@@ -66,7 +68,10 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
         isSkipped(new Cell(1234.56, null));
     }
     
-    // TODO accept parsed dates with default precision
+    @Test
+    public void testMinutesISO() {
+        evaluatesTo(minute, "2001-02-03T04:05Z");
+    }
 
     @Test
     public void testSerialize() {

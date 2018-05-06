@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
@@ -57,6 +58,11 @@ public class WbDateVariable extends WbVariableExpr<TimeValue> {
             // TODO accept parsed dates (without converting them to strings)
             return WbDateConstant.parse(cell.value.toString());
         } catch (ParseException e) {
+            if(!cell.value.toString().isEmpty()) {
+                QAWarning issue = new QAWarning("ignored-date", null, QAWarning.Severity.WARNING, 1);
+                issue.setProperty("example_value", cell.value.toString());
+                ctxt.addWarning(issue);
+            }
             throw new SkipSchemaExpressionException();
         }
     }

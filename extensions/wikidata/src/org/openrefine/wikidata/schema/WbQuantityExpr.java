@@ -26,6 +26,7 @@ package org.openrefine.wikidata.schema;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.Validate;
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -66,8 +67,8 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
         BigDecimal parsedAmount = null;
         BigDecimal lowerBound = null;
         BigDecimal upperBound = null;
-        try {
-            String originalAmount = amount.getString().toUpperCase();
+        String originalAmount = amount.getString().toUpperCase();
+        try { 
             parsedAmount = new BigDecimal(originalAmount);
             
             
@@ -81,6 +82,11 @@ public class WbQuantityExpr implements WbExpression<QuantityValue> {
             // workaround for https://github.com/Wikidata/Wikidata-Toolkit/issues/341
             parsedAmount = new BigDecimal(parsedAmount.toPlainString());
         } catch (NumberFormatException e) {
+            if (!originalAmount.isEmpty()) {
+                QAWarning issue = new QAWarning("ignored-amount", null, QAWarning.Severity.WARNING, 1);
+                issue.setProperty("example_value", originalAmount);
+                ctxt.addWarning(issue);
+            }
             throw new SkipSchemaExpressionException();
         }
 
