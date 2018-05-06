@@ -60,7 +60,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             .put(new SimpleDateFormat("yyyy-MM-dd"), 11)
             .put(new SimpleDateFormat("yyyy-MM-dd'T'HH"), 12)
             .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm"), 13)
-            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ"), 13)
+            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"), 13)
             .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"), 14).build();
 
     private TimeValue parsed;
