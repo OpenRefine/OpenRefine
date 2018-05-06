@@ -461,7 +461,7 @@
         "valid-values": "Valid values",
         "blanks": "Blanks",
         "errors": "Errors",
-        "search-fb-topic": "Search Freebase for a topic to match all filtered cells:",
+        "search-fb-topic": "Search for an item to match all filtered cells:",
         "copy-recon-judg": "Copy recon judgments from column",
         "copy-to-col": "Copy to Columns",
         "copy-opt": "Copying Options",

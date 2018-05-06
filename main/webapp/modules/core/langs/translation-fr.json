@@ -504,7 +504,7 @@
         "re-trans": "Retransformer",
         "custom-text-facet": "Personnaliser la facette textuelle",
         "match-other": "Apparier les autres cellules avec le même contenu",
-        "search-fb-topic": "Chercher dans Freebase un sujet qui correspond à toutes les cellules filtrées :",
+        "search-fb-topic": "Chercher un item qui correspond à toutes les cellules filtrées :",
         "from-col": "De la colonne",
         "custom-numeric-label": "Facette numérique personnalisée sur la colonne",
         "start-recon": "Démarrer la réconciliation",
