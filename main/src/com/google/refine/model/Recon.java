@@ -51,8 +51,14 @@ import com.google.refine.util.Pool;
  
 public class Recon implements HasFields, Jsonizable {
     
+    /**
+     * Freebase schema URLs kept for compatibility with legacy reconciliation results
+     */
     private static final String FREEBASE_SCHEMA_SPACE = "http://rdf.freebase.com/ns/type.object.id";
     private static final String FREEBASE_IDENTIFIER_SPACE = "http://rdf.freebase.com/ns/type.object.mid";
+    
+    private static final String WIKIDATA_SCHEMA_SPACE = "http://www.wikidata.org/prop/direct/";
+    private static final String WIKIDATA_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
 
     static public enum Judgment {
         None,
@@ -110,11 +116,19 @@ public class Recon implements HasFields, Jsonizable {
     public ReconCandidate        match = null;
     public int                   matchRank = -1;
     
+    @Deprecated
     static public Recon makeFreebaseRecon(long judgmentHistoryEntry) {
         return new Recon(
             judgmentHistoryEntry,
             FREEBASE_IDENTIFIER_SPACE,
             FREEBASE_SCHEMA_SPACE);
+    }
+    
+    static public Recon makeWikidataRecon(long judgmentHistoryEntry) {
+        return new Recon(
+            judgmentHistoryEntry,
+            WIKIDATA_IDENTIFIER_SPACE,
+            WIKIDATA_SCHEMA_SPACE);
     }
     
     public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
