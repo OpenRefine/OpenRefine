@@ -20,8 +20,13 @@ import com.google.refine.tests.RefineTest;
 
 
 public class IncTests extends RefineTest {
-
-    static Properties bindings;
+    private static Properties bindings;
+    private DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+            .append(DateTimeFormatter.BASIC_ISO_DATE).appendLiteral('-')
+            .appendPattern("HH:mm:ss")
+            .appendPattern("[.SSSSSSSSS][.SSSSSS][.SSS]")       // optional nanos, with 9, 6 or 3 digits
+            .appendOffset("+HH:mm", "Z")
+            .toFormatter();
     
     @Override
     @BeforeTest
@@ -30,12 +35,12 @@ public class IncTests extends RefineTest {
     }
     
     @BeforeMethod
-    public void SetUp() {
+    public void setUp() {
         bindings = new Properties();
     }
 
     @AfterMethod
-    public void TearDown() {
+    public void tearDown() {
         bindings = null;
     }
     
@@ -55,13 +60,6 @@ public class IncTests extends RefineTest {
         }
     }
     
-    private DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .append(DateTimeFormatter.BASIC_ISO_DATE).appendLiteral('-')
-            .appendPattern("HH:mm:ss")
-            .appendPattern("[.SSSSSSSSS][.SSSSSS][.SSS]")       // optional nanos, with 9, 6 or 3 digits
-            .appendOffset("+HH:mm", "Z")
-            .toFormatter();
-
     @Test
     public void testInc() {        
         OffsetDateTime source = OffsetDateTime.parse("20180510-23:55:44.000789000Z",
