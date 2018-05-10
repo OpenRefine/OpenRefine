@@ -101,6 +101,18 @@ public class IncTests extends RefineTest {
         Assert.assertEquals(invoke("inc",  source, 2, "sec"), source.plus(2, ChronoUnit.SECONDS));
         Assert.assertEquals(invoke("inc",  source, 2, "s"), source.plus(2, ChronoUnit.SECONDS));
         
+        // add milliseconds
+        Assert.assertTrue(invoke("inc",  source, 2, "milliseconds") instanceof OffsetDateTime);
+        Assert.assertEquals(invoke("inc",  source, 2, "milliseconds"), source.plus(2, ChronoUnit.MILLIS));
+        Assert.assertEquals(invoke("inc",  source, 2, "ms"), source.plus(2, ChronoUnit.MILLIS));
+        Assert.assertEquals(invoke("inc",  source, 2, "S"), source.plus(2, ChronoUnit.MILLIS));
+        
+        // add nanos
+        Assert.assertTrue(invoke("inc",  source, 2, "nanos") instanceof OffsetDateTime);
+        Assert.assertEquals(invoke("inc",  source, 2, "nanos"), source.plus(2, ChronoUnit.NANOS));
+        Assert.assertEquals(invoke("inc",  source, 2, "nano"), source.plus(2, ChronoUnit.NANOS));
+        Assert.assertEquals(invoke("inc",  source, 2, "n"), source.plus(2, ChronoUnit.NANOS));
+        
         // exception
         Assert.assertTrue(invoke("inc", source, 99) instanceof EvalError);
         Assert.assertTrue(invoke("inc", source.toInstant().toEpochMilli(), 99, "h") instanceof EvalError);

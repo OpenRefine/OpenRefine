@@ -60,7 +60,17 @@ public class Diff implements Function {
                             OffsetDateTime c1 = (OffsetDateTime)o1;
                             OffsetDateTime c2 = (OffsetDateTime)o2;
 
-                            long delta = (c1.toInstant().toEpochMilli() - c2.toInstant().toEpochMilli()) / 1000;
+                            long delta = getNano(c1) - getNano(c2);
+                            if ("nanos".equals(unit)) {
+                                return delta;
+                            }
+                            
+                            delta /= 1000;
+                            if ("milliseconds".equals(unit)) {
+                                return delta;
+                            }
+                            
+                            delta /= 1000000;
                             if ("seconds".equals(unit)) {
                                 return delta;
                             }
@@ -100,5 +110,9 @@ public class Diff implements Function {
         writer.key("params"); writer.value("o1, o2, time unit (optional)");
         writer.key("returns"); writer.value("string for strings, number for dates");
         writer.endObject();
+    }
+    
+    private long getNano(OffsetDateTime odt) {
+        return odt.toEpochSecond() * 1000000000l + odt.toInstant().getNano();
     }
 }

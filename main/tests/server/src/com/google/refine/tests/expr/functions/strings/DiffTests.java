@@ -28,8 +28,8 @@ public class DiffTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        odt1 = OffsetDateTime.parse("2011-09-01T10:15:30+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        odt2 = OffsetDateTime.parse("2011-12-02T10:16:30+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        odt1 = OffsetDateTime.parse("2011-09-01T10:15:30.123456+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        odt2 = OffsetDateTime.parse("2011-12-02T10:16:30.123467+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
     
     @BeforeMethod
@@ -77,5 +77,7 @@ public class DiffTests extends RefineTest {
         Assert.assertEquals(invoke("diff",odt2,odt1,"months"),Long.valueOf(3));
         Assert.assertEquals(invoke("diff",odt2,odt1,"hours"),Long.valueOf(2208));
         Assert.assertEquals(invoke("diff",odt2,odt1,"seconds"),Long.valueOf(7948860));
+        Assert.assertEquals(invoke("diff",odt2,odt1,"milliseconds"),Long.valueOf(7948860000011l));
+        Assert.assertEquals(invoke("diff",odt2,odt1,"nanos"),Long.valueOf(7948860000011000l));
     }
 }

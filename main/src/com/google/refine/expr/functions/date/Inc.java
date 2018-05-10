@@ -78,6 +78,10 @@ public class Inc implements Function {
             return ChronoUnit.WEEKS;
         } else if ("seconds".equals(unit) || "sec".equals(unit) || "s".equals(unit)) {
             return ChronoUnit.SECONDS;
+        } else if ("milliseconds".equals(unit) || "ms".equals(unit) || "S".equals(unit)) {
+            return ChronoUnit.MILLIS;
+        } else if ("nanos".equals(unit) || "nano".equals(unit) || "n".equals(unit)) {
+            return ChronoUnit.NANOS;
         } else {
             throw new RuntimeException("Unit '" + unit + "' not recognized.");
         }
