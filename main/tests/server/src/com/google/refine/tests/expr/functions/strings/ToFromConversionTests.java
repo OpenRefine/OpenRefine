@@ -117,12 +117,32 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
       
-      String intputDate = "2013-06-01";
-      String expectedDate = "2013-06-01";
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(intputDate)), 
-              expectedDate);
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(intputDate), "yyyy-MM-dd"),
-              expectedDate);
+      String inputDate = "2013-06-01";
+      String inputDateTime = "2013-06-01 13:12:11";
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate)
+              ), 
+              "01-Jun-2013");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), 
+              "yyyy-MM-dd"),
+              "2013-06-01");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), 
+              "yyyy/dd/MM"),
+              "2013/01/06");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), 
+              "yyyy-MMM"),
+              "2013-Jun");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), 
+              "yyyy-MM-dd hh:mm:ss"),
+              "2013-06-01 12:00:00");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime)
+              ),
+              "01-Jun-2013");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime), 
+              "yyyy-MM-dd"),
+              "2013-06-01");
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime),
+               "yyyy-MM-dd hh:mm:ss"),
+              "2013-06-01 01:12:11");
     }
     
     @Test
