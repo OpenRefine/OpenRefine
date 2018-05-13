@@ -117,9 +117,12 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
       
-      String expectedDate = "2013-06-01T00:00:00Z";
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime("2013-06-01")), expectedDate);
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime("2013-06-01"),"yyyy-MM-dd"),expectedDate);
+      String intputDate = "2013-06-01";
+      String expectedDate = "2013-06-01";
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(intputDate)), 
+              expectedDate);
+      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(intputDate), "yyyy-MM-dd"),
+              expectedDate);
     }
     
     @Test

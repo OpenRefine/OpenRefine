@@ -55,7 +55,7 @@ public class ToString implements Function {
                 Object o2 = args[1];
                 if (o1 instanceof OffsetDateTime) {
                     OffsetDateTime odt = (OffsetDateTime)o1;
-                    return odt.format(DateTimeFormatter.ISO_INSTANT);
+                    return odt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 } else if (o1 instanceof Number) {
                     return String.format((String) o2, (Number) o1);
                 }
