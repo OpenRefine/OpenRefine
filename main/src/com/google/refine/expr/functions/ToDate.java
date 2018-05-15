@@ -36,6 +36,7 @@ package com.google.refine.expr.functions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -87,7 +88,7 @@ public class ToDate implements Function {
             } catch (CalendarParserException e) {
                 OffsetDateTime d = ParsingUtilities.stringToDate(o1);
                 if (d != null) {
-                    return d;
+                    return GregorianCalendar.from(d.atZoneSameInstant(ZoneId.of("Z")));
                 } else {
                     try {
                         return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime();

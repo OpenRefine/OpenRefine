@@ -35,6 +35,7 @@ package com.google.refine.commands.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -168,6 +169,8 @@ public class PreviewExtendDataCommand extends Command {
                                         writer.key("id"); writer.value(rc.id);
                                         writer.key("name"); writer.value(rc.name);
                                         writer.endObject();
+                                    } else if (cell instanceof Calendar){
+                                        writer.value(((Calendar)cell).toInstant().toString());
                                     } else {
                                         writer.value(cell);
                                     }
