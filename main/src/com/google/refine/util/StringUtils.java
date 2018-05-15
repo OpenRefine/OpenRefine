@@ -4,7 +4,8 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class StringUtils {
-
+    private static String DEFAULT_PATTERN = "dd-MMM-yyyy";
+    
     /**
      * String formatting method that knows how to format dates (using the default locale's date formatter)
      * @param o object to be converted to a string
@@ -14,7 +15,7 @@ public class StringUtils {
         // to replace the DateFormat with java.time.format.DateTimeFormatter 
         if (o instanceof OffsetDateTime) {
             OffsetDateTime odt = (OffsetDateTime)o;
-            return odt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            return odt.format(DateTimeFormatter.ofPattern(DEFAULT_PATTERN));
         } else if (o == null) {
             return "null";
         } else {
