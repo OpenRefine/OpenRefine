@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParserException;
-import com.google.refine.expr.util.CalenderParser;
+import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
@@ -118,19 +118,19 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
       
       String inputDate = "2013-06-01";
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate)), 
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), 
               "01-Jun-2013");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd"),
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd"),
               "2013-06-01");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), "yyyy/dd/MM"), "2013/01/06");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), "yyyy-MMM"), "2013-Jun");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 12:00:00");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy/dd/MM"), "2013/01/06");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MMM"), "2013-Jun");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 12:00:00");
       
       String inputDateTime = "2013-06-01 13:12:11";
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime)), "01-Jun-2013");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd"), "2013-06-01");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"),"2013-06-01 01:12:11");
-      Assert.assertEquals(invoke("toString", CalenderParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"),"2013-06-01 13:12:11");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime)), "01-Jun-2013");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd"), "2013-06-01");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"),"2013-06-01 01:12:11");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"),"2013-06-01 13:12:11");
     }
     
     @Test
@@ -141,15 +141,15 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
       Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof OffsetDateTime);
-      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalenderParser.parseAsOffsetDateTime("2012-03-01"));
-      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalenderParser.parseAsOffsetDateTime("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
       
       // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
-      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalenderParser.parseAsOffsetDateTime("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
       
       // First string can be a locale identifier instead of a format string
-      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalenderParser.parseAsOffsetDateTime("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalenderParser.parseAsOffsetDateTime("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalendarParser.parseAsOffsetDateTime("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parseAsOffsetDateTime("2013-06-01")); 
     }
     
     @Test
