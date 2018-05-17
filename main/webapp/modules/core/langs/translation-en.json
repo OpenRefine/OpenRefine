@@ -274,21 +274,19 @@
         "line-sep": "Line separator",
         "upload-to": "Upload to",
         "json-text": "The following JSON text encodes the options you have set in the other tabs. You can copy it out and save it for later, and paste it back in and click Apply to re-use the same options.",
-   		"columnType": "SQL Type",
-   		"for-include-structure-checkbox": "Include Schema",
+        "columnType": "SQL Type",
+   	"for-include-structure-checkbox": "Include Schema",
         "for-include-drop-statement-checkbox": "Include Drop Statement",
         "for-include-content-checkbox": "Include Content",
         "tableNameLabel": "Table Name:",
         "sqlExporterTrimColumns": "Trim Column Names",
         "sqlExporterIgnoreFacets": "Ignore facets and filters and export all rows",
         "sqlExporterOutputEmptyRows":"Output empty row (i.e. all cells null)",
-        "for-include-if-exist-drop-stmt-checkbox": "Include 'If Exists' in Drop Statement",
-        "for-null-cell-value-to-empty-str-label": "Convert Null Value to null in Insert"
-
-   	
+        "for-include-if-exist-drop-stmt-checkbox": "Include 'IF EXISTS' in DROP statement",
+        "for-null-cell-value-to-empty-str-label": "Convert null value to NULL in INSERT",
         "choose-export-destination": "Please choose the destination for project export",
         "export-to-local": "Export to local",
-  		"export-to-google-drive": "Export to Google Drive"
+        "export-to-google-drive": "Export to Google Drive"
     },
     "core-facets": {
         "remove-facet": "Remove this facet",
