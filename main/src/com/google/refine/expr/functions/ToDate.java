@@ -49,7 +49,7 @@ import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParserException;
-import com.google.refine.expr.util.CalenderParser;
+import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
@@ -82,7 +82,7 @@ public class ToDate implements Function {
                 month_first = (Boolean) args[1];
             }
             try {
-                return CalenderParser.parseAsOffsetDateTime( o1, (month_first) ? CalenderParser.MM_DD_YY : CalenderParser.DD_MM_YY);
+                return CalendarParser.parseAsOffsetDateTime( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
             } catch (CalendarParserException e) {
                 OffsetDateTime d = ParsingUtilities.stringToDate(o1);
                 if (d != null) {

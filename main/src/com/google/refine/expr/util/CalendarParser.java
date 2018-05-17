@@ -494,7 +494,7 @@ class ParserState {
 /**
  * A parser for arbitrary date/time strings.
  */
-public class CalenderParser {
+public class CalendarParser {
     /** bit indicating that the year comes before the month. */
     public static final int YEAR_BEFORE_MONTH = ParserState.YEAR_BEFORE_MONTH;
     /** bit indicating that the year comes before the day. */
