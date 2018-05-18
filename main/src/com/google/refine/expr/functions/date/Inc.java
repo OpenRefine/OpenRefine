@@ -33,8 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.date;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -49,42 +50,38 @@ public class Inc implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3 && 
-                args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date) && 
+                args[0] != null && (args[0] instanceof OffsetDateTime) && 
                 args[1] != null && args[1] instanceof Number && 
                 args[2] != null && args[2] instanceof String) {
-            Calendar date;
-            if (args[0] instanceof Calendar) {
-                date = (Calendar) ((Calendar) args[0]).clone(); // must copy so not to modify original
-            } else {
-                date = Calendar.getInstance();
-                date.setTime((Date) args[0]);
-            }
+            OffsetDateTime date = (OffsetDateTime)args[0];
             
             int amount = ((Number) args[1]).intValue();
             String unit = (String) args[2];
             
-            date.add(getField(unit), amount);
-            
-            return date; 
+            return date.plus(amount, getField(unit));
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
     }
 
-    private int getField(String unit) {
+    private TemporalUnit getField(String unit) {
         if ("hours".equals(unit) || "hour".equals(unit) || "h".equals(unit)) {
-            return Calendar.HOUR;
+            return ChronoUnit.HOURS;
         } else if ("days".equals(unit) || "day".equals(unit) || "d".equals(unit)) {
-            return Calendar.DAY_OF_MONTH;
+            return ChronoUnit.DAYS;
         } else if ("years".equals(unit) || "year".equals(unit)) {
-            return Calendar.YEAR;
+            return ChronoUnit.YEARS;
         } else if ("months".equals(unit) || "month".equals(unit)) { // avoid 'm' to avoid confusion with minute
-            return Calendar.MONTH;
+            return ChronoUnit.MONTHS;
         } else if ("minutes".equals(unit) || "minute".equals(unit) || "min".equals(unit)) { // avoid 'm' to avoid confusion with month
-            return Calendar.MINUTE;
+            return ChronoUnit.MINUTES;
         } else if ("weeks".equals(unit) || "week".equals(unit) || "w".equals(unit)) {
-            return Calendar.WEEK_OF_MONTH;
+            return ChronoUnit.WEEKS;
         } else if ("seconds".equals(unit) || "sec".equals(unit) || "s".equals(unit)) {
-            return Calendar.SECOND;
+            return ChronoUnit.SECONDS;
+        } else if ("milliseconds".equals(unit) || "ms".equals(unit) || "S".equals(unit)) {
+            return ChronoUnit.MILLIS;
+        } else if ("nanos".equals(unit) || "nano".equals(unit) || "n".equals(unit)) {
+            return ChronoUnit.NANOS;
         } else {
             throw new RuntimeException("Unit '" + unit + "' not recognized.");
         }

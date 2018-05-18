@@ -35,9 +35,9 @@ package com.google.refine.exporters;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -348,10 +348,8 @@ abstract public class CustomizableTabularExporterUtilities {
                     if (text == null) {
                         if (value instanceof String) {
                             text = (String) value;
-                        } else if (value instanceof Calendar) {
-                            text = dateFormatter.format(((Calendar) value).getTime()); 
-                        } else if (value instanceof Date) {
-                            text = dateFormatter.format((Date) value); 
+                        } else if (value instanceof OffsetDateTime) {
+                            text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
                         } else {
                             text = value.toString();
                         }

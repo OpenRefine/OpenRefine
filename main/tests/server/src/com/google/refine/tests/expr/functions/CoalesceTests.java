@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-package com.google.refine.tests.expr.functions.strings;
+package com.google.refine.tests.expr.functions;
 
 import java.util.Properties;
 

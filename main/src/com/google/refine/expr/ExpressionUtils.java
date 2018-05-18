@@ -34,9 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -138,8 +137,7 @@ public class ExpressionUtils {
             v instanceof Number ||
             v instanceof String ||
             v instanceof Boolean ||
-            v instanceof Date ||
-            v instanceof Calendar ||
+            v instanceof OffsetDateTime ||
             v instanceof EvalError;
     }
 

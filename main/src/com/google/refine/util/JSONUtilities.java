@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -197,8 +196,6 @@ public class JSONUtilities {
             obj.put(key, ((Double) value).doubleValue());
         } else if (value instanceof Boolean) {
             obj.put(key, value);
-        } else if (value instanceof Date) {
-            obj.put(key, ParsingUtilities.dateToString((OffsetDateTime) value));
         } else if (value instanceof Calendar) {
             obj.put(key, ParsingUtilities.dateToString(OffsetDateTime.ofInstant(((Calendar)value).toInstant(), ZoneId.of("Z"))));
         } else if (value instanceof String) {
