@@ -17,7 +17,7 @@
 		"alert-invalid-query-select": "クエリーはSELECTで始まります",
 		"form-validation-failure" : "接続は無効です！",
 		"alert-connection-edit": "接続の設定に成功しました",
-		"connectionNameLabel": "接続名:",
+		"connectionNameLabel": "接続先:",
 		"databaseTypeLabel": "Type:",
 		"databaseHostLabel": "Host:",
 		"databasePortLabel": "Port:",
@@ -29,7 +29,7 @@
 		"databaseSaveButton": "保存",
 		"databaseConnectButton": "接続",
 		"newConnectionButtonDiv": "新しい接続",
-		"savedConnectionSpan": "保存した接続"
+		"savedConnectionSpan": "保存済み接続"
 	},
 	"database-parsing": {
 		"start-over": "&laquo; やり直し",
