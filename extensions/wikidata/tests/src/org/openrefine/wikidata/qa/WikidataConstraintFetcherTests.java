@@ -43,6 +43,8 @@ public class WikidataConstraintFetcherTests {
     private PropertyIdValue partOf;
     private PropertyIdValue referenceURL;
     private PropertyIdValue reasonForDeprecation;
+    private PropertyIdValue mother;
+    private PropertyIdValue child;
 
     public WikidataConstraintFetcherTests() {
         fetcher = new WikidataConstraintFetcher();
@@ -55,6 +57,8 @@ public class WikidataConstraintFetcherTests {
         partOf = Datamodel.makeWikidataPropertyIdValue("P361");
         referenceURL = Datamodel.makeWikidataPropertyIdValue("P854");
         reasonForDeprecation = Datamodel.makeWikidataPropertyIdValue("P2241");
+        mother = Datamodel.makeWikidataPropertyIdValue("P25");
+        child = Datamodel.makeWikidataPropertyIdValue("P40");
     }
 
     @Test
@@ -70,7 +74,7 @@ public class WikidataConstraintFetcherTests {
 
     @Test
     public void testGetInverseConstraint() {
-        Assert.assertEquals(fetcher.getInversePid(partOf), hasPart);
+        Assert.assertEquals(fetcher.getInversePid(mother), child);
     }
 
     @Test
