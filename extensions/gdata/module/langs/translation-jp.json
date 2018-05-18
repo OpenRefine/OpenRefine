@@ -5,7 +5,7 @@
 		"title": "一般公開文書(public document)",
 		"import-by-url": "一般公開している(<em>public</em>)Google SpreadsheetかFusion TableのURLを入力してください:",
 		"next->": "次へ &raquo;",
-		"auth-doc": "認証済み文書(authorized document)",
+		"auth-doc": "制限付き文書(authorized document)",
 		"please": "まず",
 		"sign-in": "サインインして認証",
 		"sign-out": "サインアウト",
