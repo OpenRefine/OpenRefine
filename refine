@@ -839,10 +839,11 @@ checkJavaMajorVersion() {
     # Java 9+ starts with x using semver versioning
     major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
   fi
-  
-  JAVA_VERSION=$(echo ${major} | egrep '^(6|7|8|9)')
-  if [ -z "$JAVA_VERSION" ] ; then
-    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  if (( ${major} < 7 )); then
+    error "OpenRefine requires Java version 7 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  fi
+  if (( ${major} > 9 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 9."
   fi
 }
 
