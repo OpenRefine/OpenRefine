@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -59,6 +60,10 @@ public class WbLanguageVariable extends WbVariableExpr<String> {
             String normalized = WbLanguageConstant.normalizeLanguageCode(code);
             if (normalized != null) {
                 return normalized;
+            } else {
+                QAWarning issue = new QAWarning("ignored-language", null, QAWarning.Severity.WARNING, 1);
+                issue.setProperty("example_value", cell.value.toString());
+                ctxt.addWarning(issue);
             }
         }
         throw new SkipSchemaExpressionException();

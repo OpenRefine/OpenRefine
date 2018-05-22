@@ -55,9 +55,12 @@ public class WbDateConstant implements WbExpression<TimeValue> {
      * precision it induces (an integer according to Wikibase's data model).
      */
     public static Map<SimpleDateFormat, Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat, Integer> builder()
-            .put(new SimpleDateFormat("yyyy"), 9).put(new SimpleDateFormat("yyyy-MM"), 10)
-            .put(new SimpleDateFormat("yyyy-MM-dd"), 11).put(new SimpleDateFormat("yyyy-MM-dd'T'HH"), 12)
+            .put(new SimpleDateFormat("yyyy"), 9)
+            .put(new SimpleDateFormat("yyyy-MM"), 10)
+            .put(new SimpleDateFormat("yyyy-MM-dd"), 11)
+            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH"), 12)
             .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm"), 13)
+            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"), 13)
             .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"), 14).build();
 
     private TimeValue parsed;
@@ -114,10 +117,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             Calendar calendar = Calendar.getInstance();
             calendar = Calendar.getInstance();
             calendar.setTime(date);
-            return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1), // java
-                                                                                                                   // starts
-                                                                                                                   // at
-                                                                                                                   // 0
+            return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1), 
                     (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 1,
                     0, TimeValue.CM_GREGORIAN_PRO);

@@ -200,6 +200,22 @@
                 "invalid-identifier-space": {
                         "title": "Invalid identifier space for reconciled cells.",
                         "body": "Some reconciled cells such as <span class=\"wb-issue-preformat\">{example_cell}</span> were ignored because they are not reconciled to Wikidata."
+                },
+                "ignored-language": {
+                        "title": "Invalid language identifiers.",
+                        "body": "Some language identifiers are invalid, such as <span class=\"wb-issue-preformat\">{example_value}</span>. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Languages\" target=\"_blank\">allowed values</a>."
+                },
+                "ignored-date": {
+                        "title": "Invalid date formats.",
+                        "body": "Some dates are incorrectly formatted, such as <span class=\"wb-issue-preformat\">{example_value}</span>. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">allowed formats</a>."
+                },
+                "ignored-amount": {
+                        "title": "Invalid amount formats.",
+                        "body": "Some amounts are incorrectly formatted, such as <span class=\"wb-issue-preformat\">{example_value}</span>. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">allowed formats</a>."
+                },
+                "ignored-coordinates": {
+                        "title": "Invalid geographic coordinates.",
+                        "body": "Some coordinates are incorrectly formatted, such as <span class=\"wb-issue-preformat\">{example_value}</span>. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Globe_coordinates\" target=\"_blank\">allowed formats</a>."
                 }
        }
 }
