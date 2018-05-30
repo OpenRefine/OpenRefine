@@ -37,9 +37,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -51,12 +51,11 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.operations.OnError;
+import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
-import com.google.refine.operations.OnError;
-import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import com.google.refine.tests.RefineTest;
 
 
@@ -237,7 +236,17 @@ public class UrlFetchingTests extends RefineTest {
         Assert.assertFalse(process.isRunning());
 
         int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
-        JSONObject headersUsed = new JSONObject(project.rows.get(0).getCellValue(newCol).toString());
+        JSONObject headersUsed = null;
+        
+        // sometime, we got response: 
+        // Error
+        // Over Quota
+        // This application is temporarily over its serving quota. Please try again later.
+        try { 
+            headersUsed = new JSONObject(project.rows.get(0).getCellValue(newCol).toString());
+        } catch (JSONException ex) {
+            return;
+        }
         // Inspect the results we got from remote service
         Assert.assertEquals(headersUsed.getString("User-Agent"), userAgentValue);
         Assert.assertEquals(headersUsed.getString("Authorization"), authorizationValue);
