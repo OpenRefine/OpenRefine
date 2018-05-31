@@ -2,9 +2,9 @@
 
 [![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/OpenRefine/OpenRefine.png?branch=master)](https://travis-ci.org/OpenRefine/OpenRefine) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/210578308bba42c5922c767493e83cf4)](https://www.codacy.com/app/OpenRefine/OpenRefine) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/210578308bba42c5922c767493e83cf4)](https://www.codacy.com/app/OpenRefine/OpenRefine) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget)
 
-OpenRefine is a power tool that allows you to load data, understand it,
+OpenRefine is a Java-based power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
-the web. All with the comfort and privacy of your own computer.
+the web. All from a web browser and the comfort and privacy of your own computer.
 
 [<img src="https://github.com/OpenRefine/OpenRefine/blob/master/graphics/icon/open-refine-320px.png" align="right">](http://openrefine.org)
 
