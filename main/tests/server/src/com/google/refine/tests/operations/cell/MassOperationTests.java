@@ -1,52 +1,91 @@
 package com.google.refine.tests.operations.cell;
 
-import java.util.Properties;
+import java.util.List;
 
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.Project;
-import com.google.refine.process.Process;
+import com.google.refine.operations.cell.MassEditOperation;
+import com.google.refine.operations.cell.MassEditOperation.Edit;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 public class MassOperationTests extends RefineTest {
-    
-    List editList = null;
+
+    List<Edit> editList;
     String editsString = null;
-    
+
     @BeforeMethod
     public void setUp() {
     }
-    
+
     @AfterMethod
     public void tearDown() {
     }
-    
+
     @Test
     public void testReconstructEditString() throws Exception {
         editsString = "[{\"from\":[\"String\"],\"to\":\"newString\",\"type\":\"text\"}]";
-        
+
         editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
-        
-        Assert.assertEquals(editList.from, "String");
-        Assert.assertEquals(editList.to,"newString" );
-        Assert.assertEquals(editList.fromBlank, false);
-        Assert.assertEquals(editList.fromError, false);
+
+        Assert.assertEquals(editList.get(0).from.get(0), "String");
+        Assert.assertEquals(editList.get(0).to,"newString" );
+        Assert.assertFalse(editList.get(0).fromBlank);
+        Assert.assertFalse(editList.get(0).fromError);
+    }
+
+    @Test
+    public void testReconstructEditBoolean() throws Exception {
+      editsString = "[{\"from\":[true],\"to\":\"newString\",\"type\":\"text\"}]";
+
+      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+
+      Assert.assertEquals(editList.get(0).from.get(0), "true");
+      Assert.assertEquals(editList.get(0).to,"newString" );
+      Assert.assertFalse(editList.get(0).fromBlank);
+      Assert.assertFalse(editList.get(0).fromError);
     }
 
     @Test
     public void testReconstructEditNumber() throws Exception {
-        
+      editsString = "[{\"from\":[1],\"to\":\"newString\",\"type\":\"text\"}]";
+
+      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+
+      Assert.assertEquals(editList.get(0).from.get(0), "1");
+      Assert.assertEquals(editList.get(0).to,"newString" );
+      Assert.assertFalse(editList.get(0).fromBlank);
+      Assert.assertFalse(editList.get(0).fromError);
+    }
+
+    @Test
+    public void testReconstructEditDate() throws Exception {
+      editsString = "[{\"from\":[\"2018-10-04T00:00:00Z\"],\"to\":\"newString\",\"type\":\"text\"}]";
+
+      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+
+      Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00Z");
+      Assert.assertEquals(editList.get(0).to,"newString" );
+      Assert.assertFalse(editList.get(0).fromBlank);
+      Assert.assertFalse(editList.get(0).fromError);
     }
 
     @Test
     public void testReconstructEditEmpty() throws Exception {
+      editsString = "[{\"from\":[\"\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-    }  
+      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+
+      Assert.assertEquals(editList.get(0).from.get(0), "");
+      Assert.assertEquals(editList.get(0).to,"newString" );
+      Assert.assertTrue(editList.get(0).fromBlank);
+      Assert.assertFalse(editList.get(0).fromError);
+
+    }
+
+    //Not yet testing for editing a cell containing an OR error
 
 }
