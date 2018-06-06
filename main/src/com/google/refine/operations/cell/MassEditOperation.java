@@ -121,7 +121,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 
                 from = new ArrayList<String>(fromCount);
                 for (int j = 0; j < fromCount; j++) {
-                  from.add(fromA.get(j).toString());
+                    from.add(fromA.get(j).toString());
                 }
             } else {
                 from = new ArrayList<String>();
