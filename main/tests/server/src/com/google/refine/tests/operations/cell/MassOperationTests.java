@@ -31,7 +31,22 @@ public class MassOperationTests extends RefineTest {
 
         editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
 
+        Assert.assertEquals(editList.get(0).from.size(), 1);
         Assert.assertEquals(editList.get(0).from.get(0), "String");
+        Assert.assertEquals(editList.get(0).to,"newString" );
+        Assert.assertFalse(editList.get(0).fromBlank);
+        Assert.assertFalse(editList.get(0).fromError);
+    }
+
+    @Test
+    public void testReconstructEditMultiString() throws Exception {
+        editsString = "[{\"from\":[\"String1\",\"String2\"],\"to\":\"newString\",\"type\":\"text\"}]";
+
+        editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+
+        Assert.assertEquals(editList.get(0).from.size(), 2);
+        Assert.assertEquals(editList.get(0).from.get(0), "String1");
+        Assert.assertEquals(editList.get(0).from.get(1), "String2");
         Assert.assertEquals(editList.get(0).to,"newString" );
         Assert.assertFalse(editList.get(0).fromBlank);
         Assert.assertFalse(editList.get(0).fromError);
@@ -43,6 +58,7 @@ public class MassOperationTests extends RefineTest {
 
       editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
 
+      Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "true");
       Assert.assertEquals(editList.get(0).to,"newString" );
       Assert.assertFalse(editList.get(0).fromBlank);
@@ -55,6 +71,7 @@ public class MassOperationTests extends RefineTest {
 
       editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
 
+      Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "1");
       Assert.assertEquals(editList.get(0).to,"newString" );
       Assert.assertFalse(editList.get(0).fromBlank);
@@ -67,6 +84,7 @@ public class MassOperationTests extends RefineTest {
 
       editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
 
+      Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00Z");
       Assert.assertEquals(editList.get(0).to,"newString" );
       Assert.assertFalse(editList.get(0).fromBlank);
@@ -79,6 +97,7 @@ public class MassOperationTests extends RefineTest {
 
       editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
 
+      Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "");
       Assert.assertEquals(editList.get(0).to,"newString" );
       Assert.assertTrue(editList.get(0).fromBlank);
