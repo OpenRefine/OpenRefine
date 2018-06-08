@@ -3,8 +3,6 @@ package com.google.refine.tests.operations.cell;
 import java.util.List;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.operations.cell.MassEditOperation;
@@ -15,7 +13,7 @@ import com.google.refine.util.ParsingUtilities;
 public class MassOperationTests extends RefineTest {
 
     private List<Edit> editList;
-    private String editsString = null;
+    private String editsString;
 
     @Test
     public void testReconstructEditString() throws Exception {
