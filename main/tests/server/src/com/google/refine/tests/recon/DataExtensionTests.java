@@ -144,8 +144,8 @@ public class DataExtensionTests extends RefineTest {
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
-            // We have 4 rows so 4000 ms should be largely enough.
-            Thread.sleep(5000);
+            // This is 10 seconds because for some reason running this test on Travis takes longer.
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
@@ -181,7 +181,8 @@ public class DataExtensionTests extends RefineTest {
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
-            Thread.sleep(5000);
+            // This is 10 seconds because for some reason running this test on Travis takes longer.
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
@@ -214,7 +215,8 @@ public class DataExtensionTests extends RefineTest {
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
-            Thread.sleep(5000);
+            // This is 10 seconds because for some reason running this test on Travis takes longer.
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
@@ -253,7 +255,8 @@ public class DataExtensionTests extends RefineTest {
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
-            Thread.sleep(5000);
+            // This is 10 seconds because for some reason running this test on Travis takes longer.
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
