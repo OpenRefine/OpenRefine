@@ -14,16 +14,8 @@ import com.google.refine.util.ParsingUtilities;
 
 public class MassOperationTests extends RefineTest {
 
-    List<Edit> editList;
-    String editsString = null;
-
-    @BeforeMethod
-    public void setUp() {
-    }
-
-    @AfterMethod
-    public void tearDown() {
-    }
+    private List<Edit> editList;
+    private String editsString = null;
 
     @Test
     public void testReconstructEditString() throws Exception {
