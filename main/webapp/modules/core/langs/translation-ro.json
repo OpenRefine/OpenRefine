@@ -1,5 +1,5 @@
 {
-    "name": "Engleza",
+    "name": "Română",
     "core-index": {
         "help": "Ajutor",
         "contributors": "Contribuitori:",
@@ -49,7 +49,7 @@
         "locate": "Localizeaza un fisier de proiect Refine existent (.tar sau .tar.gz):",
         "rename": "Redenumeste proiect (optional):",
         "import-proj": "Importa Proiect",
-        "inspecting": "Inspecteaza fisierele selectate ...",
-        "file": "Fisier proiect:"
+        "file": "Fisier proiect:",
+        "inspecting": "Inspecteaza fisierele selectate ..."
     }
 }
