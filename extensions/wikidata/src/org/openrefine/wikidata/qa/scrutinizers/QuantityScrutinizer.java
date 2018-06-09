@@ -58,7 +58,9 @@ public class QuantityScrutinizer extends SnakScrutinizer {
                 issue.setProperty("example_value", value.getNumericValue().toString());
                 issue.setProperty("example_item_entity", entityId);
                 if (currentUnit != null) {
-                    issue.setProperty("unit_entity", currentUnit);
+                    issue.setProperty("unit_entity",
+                            // this is a hack but it will not be needed anymore in the upcoming version of Wikidata-Toolkit
+                            Datamodel.makeWikidataItemIdValue(currentUnit.substring(currentUnit.indexOf("Q"))));
                 }
                 addIssue(issue);
             }

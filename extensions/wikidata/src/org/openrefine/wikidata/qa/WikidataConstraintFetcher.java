@@ -213,11 +213,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
         if (specs != null) {
             List<Value> properties = findValues(specs, ALLOWED_UNITS_CONSTRAINT_PID);
-            if (properties.contains(null)) {
-                return Collections.emptySet();
-            } else {
-                return properties.stream().map(e -> (ItemIdValue) e).collect(Collectors.toSet());
-            }
+            return properties.stream().map(e -> e == null ? null : (ItemIdValue) e).collect(Collectors.toSet());
         }
         return null;
     }
