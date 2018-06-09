@@ -59,6 +59,9 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
             return _inverse.get(pid);
         } else {
             PropertyIdValue inversePid = _fetcher.getInversePid(pid);
+            if (inversePid == null && _fetcher.isSymmetric(pid)) {
+                inversePid = pid;
+            }
             _inverse.put(pid, inversePid);
             _statements.put(pid, new HashMap<EntityIdValue, Set<EntityIdValue>>());
 
