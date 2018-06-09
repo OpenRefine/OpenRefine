@@ -45,9 +45,10 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public static PropertyIdValue qualifierPid = Datamodel.makeWikidataPropertyIdValue("P987");
     public static PropertyIdValue referencePid = Datamodel.makeWikidataPropertyIdValue("P384");
     
-    public static PropertyIdValue restrictedValuesPid = Datamodel.makeWikidataPropertyIdValue("P8121");
-    public static ItemIdValue particularValue1 = Datamodel.makeWikidataItemIdValue("Q389");
-    public static ItemIdValue particularValue2 = Datamodel.makeWikidataItemIdValue("Q378");
+    public static PropertyIdValue allowedValuesPid = Datamodel.makeWikidataPropertyIdValue("P8121");
+    public static ItemIdValue allowedValueQid = Datamodel.makeWikidataItemIdValue("Q389");
+    public static PropertyIdValue forbiddenValuesPid = Datamodel.makeWikidataPropertyIdValue("P8141");
+    public static ItemIdValue forbiddenValueQid = Datamodel.makeWikidataItemIdValue("Q378");
     
     public static PropertyIdValue allowedUnitsPid = Datamodel.makeWikidataPropertyIdValue("P34787");
     public static ItemIdValue allowedUnit = Datamodel.makeWikidataItemIdValue("Q7887");
@@ -115,16 +116,16 @@ public class MockConstraintFetcher implements ConstraintFetcher {
 
     @Override
     public Set<Value> allowedValues(PropertyIdValue pid) {
-        if (restrictedValuesPid.equals(pid)) {
-            return Collections.singleton(particularValue1);
+        if (allowedValuesPid.equals(pid)) {
+            return Arrays.asList(allowedValueQid, null).stream().collect(Collectors.toSet());
         }
         return null;
     }
 
     @Override
     public Set<Value> disallowedValues(PropertyIdValue pid) {
-        if (restrictedValuesPid.equals(pid)) {
-            return Collections.singleton(particularValue2);
+        if (forbiddenValuesPid.equals(pid)) {
+            return Collections.singleton(forbiddenValueQid);
         }
         return null;
     }
