@@ -104,6 +104,11 @@ public interface ConstraintFetcher {
      * Is this property expected to have at most one value per item?
      */
     boolean hasSingleValue(PropertyIdValue pid);
+    
+    /**
+     * Is this property expected to have a single best value only?
+     */
+    boolean hasSingleBestValue(PropertyIdValue pid);
 
     /**
      * Is this property expected to have distinct values?

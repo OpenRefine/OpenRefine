@@ -79,6 +79,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String DISALLOWED_VALUES_CONSTRAINT_PID = "P2305";
 
     public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
+    public static String SINGLE_BEST_VALUE_CONSTRAINT_QID = "Q52060874";
     public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
     
     public static String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
@@ -163,6 +164,11 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     @Override
     public boolean hasSingleValue(PropertyIdValue pid) {
         return getSingleConstraint(pid, SINGLE_VALUE_CONSTRAINT_QID) != null;
+    }
+    
+    @Override
+    public boolean hasSingleBestValue(PropertyIdValue pid) {
+        return getSingleConstraint(pid, SINGLE_BEST_VALUE_CONSTRAINT_QID) != null;
     }
 
     @Override

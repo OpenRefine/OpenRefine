@@ -103,6 +103,11 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public boolean hasSingleValue(PropertyIdValue pid) {
         return true;
     }
+    
+    @Override
+    public boolean hasSingleBestValue(PropertyIdValue pid) {
+        return false;
+    }
 
     @Override
     public boolean hasDistinctValues(PropertyIdValue pid) {
