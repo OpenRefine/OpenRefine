@@ -56,6 +56,8 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     
     public static PropertyIdValue noBoundsPid = Datamodel.makeWikidataPropertyIdValue("P8932");
     public static PropertyIdValue integerPid = Datamodel.makeWikidataPropertyIdValue("P389");
+    
+    public static PropertyIdValue propertyOnlyPid = Datamodel.makeWikidataPropertyIdValue("P372");
 
     @Override
     public String getFormatRegex(PropertyIdValue pid) {
@@ -153,5 +155,10 @@ public class MockConstraintFetcher implements ConstraintFetcher {
             return Collections.singleton(null);
         }
         return null;
+    }
+
+    @Override
+    public boolean usableOnItems(PropertyIdValue pid) {
+        return !propertyOnlyPid.equals(pid);
     }
 }

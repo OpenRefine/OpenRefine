@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openrefine.wikidata.utils.EntityCache;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
@@ -87,6 +88,10 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     
     public static String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
     public static String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
+    
+    public static String ALLOWED_ENTITY_TYPES_QID = "Q52004125";
+    public static String ALLOWED_ITEM_TYPE_QID = "Q29934200";
+    public static String ALLOWED_ENTITY_TYPES_PID = "P2305";
     
 
     // The following constraints still need to be implemented:
@@ -222,6 +227,16 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
             return properties.stream().map(e -> e == null ? null : (ItemIdValue) e).collect(Collectors.toSet());
         }
         return null;
+    }
+    
+    @Override
+    public boolean usableOnItems(PropertyIdValue pid) {
+        List<SnakGroup> constraint = getSingleConstraint(pid, ALLOWED_ENTITY_TYPES_QID);
+        if (constraint != null) {
+            return findValues(constraint, ALLOWED_ENTITY_TYPES_PID).contains(
+                    Datamodel.makeWikidataItemIdValue(ALLOWED_ITEM_TYPE_QID));
+        }
+        return true;
     }
 
     /**

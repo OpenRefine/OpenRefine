@@ -236,6 +236,10 @@
                 "no-unit-provided": {
                         "title": "Unit missing for {property_entity}",
                         "body": "Values such as <span class=\"wb-issue-preformat\">{example_value}</span> on {example_item_entity} are expected to have units."
+                },
+                "invalid-entity-type": {
+                        "title": "{property_entity} used on items",
+                        "body": "Uses of {property_entity} on items such as {example_entity} are invalid."
                 }
        }
 }

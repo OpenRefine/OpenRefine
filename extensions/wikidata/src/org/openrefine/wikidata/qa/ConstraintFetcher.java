@@ -129,4 +129,9 @@ public interface ConstraintFetcher {
      * Returns the allowed units for this property. If empty, no unit is allowed. If null, any unit is allowed.
      */
     Set<ItemIdValue> allowedUnits(PropertyIdValue pid);
+    
+    /**
+     * Can this property be used on items?
+     */
+    boolean usableOnItems(PropertyIdValue pid);
 }
