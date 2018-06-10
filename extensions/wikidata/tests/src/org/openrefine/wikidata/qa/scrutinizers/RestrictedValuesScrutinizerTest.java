@@ -54,15 +54,5 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
                 MockConstraintFetcher.forbiddenValueQid));
         assertWarningsRaised(RestrictedValuesScrutinizer.type);
     }
-    
-    @Test
-    public void testNoValueAllowed() {
-        
-    }
-    
-    @Test
-    public void testNoValueDisallowed() {
-        
-    }
 
 }
