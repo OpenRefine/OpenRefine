@@ -25,7 +25,9 @@ package org.openrefine.wikidata.qa;
 
 import java.util.Set;
 
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * An object that fetches constraints about properties.
@@ -53,6 +55,11 @@ public interface ConstraintFetcher {
      * @return the pid of the inverse property
      */
     PropertyIdValue getInversePid(PropertyIdValue pid);
+    
+    /**
+     * Is this property supposed to be symmetric (its own inverse)?
+     */
+    boolean isSymmetric(PropertyIdValue pid);
 
     /**
      * Is this property for values only?
@@ -80,6 +87,18 @@ public interface ConstraintFetcher {
      * (null if any)
      */
     Set<PropertyIdValue> mandatoryQualifiers(PropertyIdValue pid);
+    
+    /**
+     * Get the set of allowed values for this property (null if no such constraint).
+     * This set may contain null if one of the allowed values in novalue or somevalue.
+     */
+    Set<Value> allowedValues(PropertyIdValue pid);
+    
+    /**
+     * Get the set of disallowed values for this property (null if no such constraint).
+     * This set may contain null if one of the allowed values in novalue or somevalue.
+     */
+    Set<Value> disallowedValues(PropertyIdValue pid);
 
     /**
      * Is this property expected to have at most one value per item?
@@ -91,4 +110,18 @@ public interface ConstraintFetcher {
      */
     boolean hasDistinctValues(PropertyIdValue pid);
 
+    /**
+     * Can statements using this property have uncertainty bounds?
+     */
+    boolean boundsAllowed(PropertyIdValue pid);
+
+    /**
+     * Is this property expected to have integer values only?
+     */
+    boolean integerValued(PropertyIdValue pid);
+    
+    /**
+     * Returns the allowed units for this property. If empty, no unit is allowed. If null, any unit is allowed.
+     */
+    Set<ItemIdValue> allowedUnits(PropertyIdValue pid);
 }

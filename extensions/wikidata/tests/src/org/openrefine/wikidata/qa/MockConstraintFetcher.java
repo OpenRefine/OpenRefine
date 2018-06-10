@@ -29,18 +29,32 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 public class MockConstraintFetcher implements ConstraintFetcher {
 
     public static PropertyIdValue pidWithInverse = Datamodel.makeWikidataPropertyIdValue("P350");
     public static PropertyIdValue inversePid = Datamodel.makeWikidataPropertyIdValue("P57");
+    public static PropertyIdValue symmetricPid = Datamodel.makeWikidataPropertyIdValue("P783");
     public static PropertyIdValue allowedQualifierPid = Datamodel.makeWikidataPropertyIdValue("P34");
     public static PropertyIdValue mandatoryQualifierPid = Datamodel.makeWikidataPropertyIdValue("P97");
 
     public static PropertyIdValue mainSnakPid = Datamodel.makeWikidataPropertyIdValue("P1234");
     public static PropertyIdValue qualifierPid = Datamodel.makeWikidataPropertyIdValue("P987");
     public static PropertyIdValue referencePid = Datamodel.makeWikidataPropertyIdValue("P384");
+    
+    public static PropertyIdValue restrictedValuesPid = Datamodel.makeWikidataPropertyIdValue("P8121");
+    public static ItemIdValue particularValue1 = Datamodel.makeWikidataItemIdValue("Q389");
+    public static ItemIdValue particularValue2 = Datamodel.makeWikidataItemIdValue("Q378");
+    
+    public static PropertyIdValue allowedUnitsPid = Datamodel.makeWikidataPropertyIdValue("P34787");
+    public static ItemIdValue allowedUnit = Datamodel.makeWikidataItemIdValue("Q7887");
+    public static PropertyIdValue noUnitsPid = Datamodel.makeWikidataPropertyIdValue("P334211");
+    
+    public static PropertyIdValue noBoundsPid = Datamodel.makeWikidataPropertyIdValue("P8932");
+    public static PropertyIdValue integerPid = Datamodel.makeWikidataPropertyIdValue("P389");
 
     @Override
     public String getFormatRegex(PropertyIdValue pid) {
@@ -94,4 +108,44 @@ public class MockConstraintFetcher implements ConstraintFetcher {
         return true;
     }
 
+    @Override
+    public boolean isSymmetric(PropertyIdValue pid) {
+        return pid.equals(symmetricPid);
+    }
+
+    @Override
+    public Set<Value> allowedValues(PropertyIdValue pid) {
+        if (restrictedValuesPid.equals(pid)) {
+            return Collections.singleton(particularValue1);
+        }
+        return null;
+    }
+
+    @Override
+    public Set<Value> disallowedValues(PropertyIdValue pid) {
+        if (restrictedValuesPid.equals(pid)) {
+            return Collections.singleton(particularValue2);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean boundsAllowed(PropertyIdValue pid) {
+        return !noBoundsPid.equals(pid);
+    }
+
+    @Override
+    public boolean integerValued(PropertyIdValue pid) {
+        return integerPid.equals(pid);
+    }
+
+    @Override
+    public Set<ItemIdValue> allowedUnits(PropertyIdValue pid) {
+        if(allowedUnitsPid.equals(pid)) {
+            return Collections.singleton(allowedUnit);
+        } else if(noUnitsPid.equals(pid)) {
+            return Collections.singleton(null);
+        }
+        return null;
+    }
 }

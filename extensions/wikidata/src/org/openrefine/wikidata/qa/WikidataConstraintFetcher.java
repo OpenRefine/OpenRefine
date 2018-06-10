@@ -24,6 +24,7 @@
 package org.openrefine.wikidata.qa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 
 import org.openrefine.wikidata.utils.EntityCache;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -56,6 +58,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
     public static String INVERSE_CONSTRAINT_QID = "Q21510855";
     public static String INVERSE_PROPERTY_PID = "P2306";
+    public static String SYMMETRIC_CONSTRAINT_QID = "Q21510862";
 
     public static String USED_ONLY_AS_VALUES_CONSTRAINT_QID = "Q21528958";
 
@@ -68,9 +71,22 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
     public static String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
     public static String MANDATORY_QUALIFIERS_CONSTRAINT_PID = "P2306";
+    
+    public static String ALLOWED_VALUES_CONSTRAINT_QID = "Q21510859";
+    public static String ALLOWED_VALUES_CONSTRAINT_PID = "P2305";
+
+    public static String DISALLOWED_VALUES_CONSTRAINT_QID = "Q52558054";
+    public static String DISALLOWED_VALUES_CONSTRAINT_PID = "P2305";
 
     public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
     public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
+    
+    public static String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
+    public static String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
+    
+    public static String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
+    public static String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
+    
 
     // The following constraints still need to be implemented:
 
@@ -122,7 +138,10 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
         if (specs != null) {
             List<Value> properties = findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
-            return properties.stream().map(e -> (PropertyIdValue) e).collect(Collectors.toSet());
+            return properties.stream()
+                    .filter(e -> e != null)
+                    .map(e -> (PropertyIdValue) e)
+                    .collect(Collectors.toSet());
         }
         return null;
     }
@@ -133,7 +152,10 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
         if (specs != null) {
             List<Value> properties = findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
-            return properties.stream().map(e -> (PropertyIdValue) e).collect(Collectors.toSet());
+            return properties.stream()
+                    .filter(e -> e != null)
+                    .map(e -> (PropertyIdValue) e)
+                    .collect(Collectors.toSet());
         }
         return null;
     }
@@ -146,6 +168,58 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     @Override
     public boolean hasDistinctValues(PropertyIdValue pid) {
         return getSingleConstraint(pid, DISTINCT_VALUES_CONSTRAINT_QID) != null;
+    }
+    
+    @Override
+    public boolean isSymmetric(PropertyIdValue pid) {
+        return getSingleConstraint(pid, SYMMETRIC_CONSTRAINT_QID) != null;
+    }
+
+    @Override
+    public Set<Value> allowedValues(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, ALLOWED_VALUES_CONSTRAINT_QID);
+
+        if (specs != null) {
+            List<Value> properties = findValues(specs, ALLOWED_VALUES_CONSTRAINT_PID);
+            return properties.stream().collect(Collectors.toSet());
+        }
+        return null;
+    }
+
+    @Override
+    public Set<Value> disallowedValues(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DISALLOWED_VALUES_CONSTRAINT_QID);
+
+        if (specs != null) {
+            List<Value> properties = findValues(specs, DISALLOWED_VALUES_CONSTRAINT_PID);
+            return properties.stream().collect(Collectors.toSet());
+        }
+        return null;
+    }
+    
+    @Override
+    public boolean boundsAllowed(PropertyIdValue pid) {
+        return getSingleConstraint(pid, NO_BOUNDS_CONSTRAINT_QID) == null;
+    }
+    
+    @Override
+    public boolean integerValued(PropertyIdValue pid) {
+        return getSingleConstraint(pid, INTEGER_VALUED_CONSTRAINT_QID) != null;
+    }
+    
+    @Override
+    public Set<ItemIdValue> allowedUnits(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, ALLOWED_UNITS_CONSTRAINT_QID);
+
+        if (specs != null) {
+            List<Value> properties = findValues(specs, ALLOWED_UNITS_CONSTRAINT_PID);
+            if (properties.contains(null)) {
+                return Collections.emptySet();
+            } else {
+                return properties.stream().map(e -> (ItemIdValue) e).collect(Collectors.toSet());
+            }
+        }
+        return null;
     }
 
     /**
@@ -193,7 +267,9 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
         PropertyDocument doc = (PropertyDocument) EntityCache.getEntityDocument(pid);
         StatementGroup group = doc.findStatementGroup(WIKIDATA_CONSTRAINT_PID);
         if (group != null) {
-            return group.getStatements();
+            return group.getStatements().stream()
+                    .filter(s -> s.getValue() != null && s.getValue() instanceof EntityIdValue)
+                    .collect(Collectors.toList());
         } else {
             return new ArrayList<Statement>();
         }

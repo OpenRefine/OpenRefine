@@ -35,7 +35,11 @@ public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
     public static final PropertyIdValue defaultPid = Datamodel.makeWikidataPropertyIdValue("P328");
 
     public void scrutinize(Value value) {
-        scrutinize(Datamodel.makeValueSnak(defaultPid, value));
+        scrutinize(defaultPid, value);
+    }
+    
+    public void scrutinize(PropertyIdValue pid, Value value) {
+        scrutinize(Datamodel.makeValueSnak(pid, value));
     }
 
     public void scrutinizeLabel(MonolingualTextValue text) {
