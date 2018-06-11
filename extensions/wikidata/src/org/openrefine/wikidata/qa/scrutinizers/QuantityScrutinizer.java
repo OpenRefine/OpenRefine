@@ -46,7 +46,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
             }
             Set<ItemIdValue> allowedUnits = _fetcher.allowedUnits(pid);
             String currentUnit = null;
-            if (value.getUnit() != null && value.getUnit() != "") {
+            if (value.getUnit() != null && !value.getUnit().equals("")) {
                 currentUnit = value.getUnit();
             }
             if(allowedUnits != null &&
