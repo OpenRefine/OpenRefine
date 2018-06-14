@@ -17,7 +17,7 @@ public class StringUtils {
             OffsetDateTime odt = (OffsetDateTime)o;
             return odt.format(DateTimeFormatter.ofPattern(DEFAULT_PATTERN));
         } else if (o == null) {
-            return "null";
+            return "";
         } else {
             return o.toString();
         }

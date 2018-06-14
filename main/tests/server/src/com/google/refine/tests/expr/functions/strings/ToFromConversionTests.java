@@ -112,7 +112,7 @@ public class ToFromConversionTests extends RefineTest {
     @Test
     public void testToString() throws CalendarParserException {
       Assert.assertTrue(invoke("toString") instanceof EvalError);
-      Assert.assertEquals(invoke("toString", (Object) null), "null");
+      Assert.assertEquals(invoke("toString", (Object) null), "");
       Assert.assertEquals(invoke("toString", Long.valueOf(100)),"100");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
