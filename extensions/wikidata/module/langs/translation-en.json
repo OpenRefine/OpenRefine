@@ -121,29 +121,17 @@
                         "title": "Statements without references.",
                         "body": "Most statements should have references. You can add them easily in the schema."
                 },
-                "property-restricted-to-reference-found-in-mainsnak": {
+                "property-found-in-mainsnak": {
                         "title": "{property_entity} used as statement.",
-                        "body": "You are using {property_entity} in a statement but it is designed to be used in references only."
+                        "body": "You are using {property_entity} as a main statement but it is not designed for that."
                 },
-                "property-restricted-to-reference-found-in-qualifier": {
+                "property-found-in-qualifier": {
                         "title": "{property_entity} used as qualifier.",
-                        "body": "You are using in {property_entity} in a qualifier but it is designed to be used in references only."
+                        "body": "You are using in {property_entity} as a qualifier but it is not designed for that ."
                 },
-                "property-restricted-to-qualifier-found-in-mainsnak": {
-                        "title": "{property_entity} used as statement.",
-                        "body": "You are using {property_entity} in a statement but it is designed to be used in qualifiers only."
-                },
-                "property-restricted-to-qualifier-found-in-reference": {
+                "property-found-in-reference": {
                         "title": "{property_entity} used as reference.",
-                        "body": "You are using {property_entity} in a reference but it is designed to be used in qualifiers only."
-                },
-                "property-restricted-to-mainsnak-found-in-qualifier": {
-                        "title": "{property_entity} used as qualifier.",
-                        "body": "You are using {property_entity} in a qualifier but it is designed to be used as a statement only."
-                },
-                "property-restricted-to-mainsnak-found-in-reference": {
-                        "title": "{property_entity} used as reference.",
-                        "body": "You are using {property_entity} in a reference but it is designed to be used as a statement only."
+                        "body": "You are using {property_entity} in a reference but it is not designed for that."
                 },
                 "missing-mandatory-qualifiers": {
                         "title": "{statement_property_entity} is missing a {missing_property_entity} qualifier.",
