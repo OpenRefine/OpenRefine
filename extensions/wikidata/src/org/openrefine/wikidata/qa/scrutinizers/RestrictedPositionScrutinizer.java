@@ -23,11 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -40,40 +36,6 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
     protected enum SnakPosition {
         MAINSNAK, QUALIFIER, REFERENCE
-    }
-
-    private Map<PropertyIdValue, SnakPosition> _restrictedPids;
-    private Set<PropertyIdValue> _unrestrictedPids;
-
-    public RestrictedPositionScrutinizer() {
-        _restrictedPids = new HashMap<>();
-        _unrestrictedPids = new HashSet<>();
-    }
-
-    SnakPosition positionRestriction(PropertyIdValue pid) {
-        if (_unrestrictedPids.contains(pid)) {
-            return null;
-        }
-        SnakPosition restriction = _restrictedPids.get(pid);
-        if (restriction != null) {
-            return restriction;
-        } else {
-            if (_fetcher.isForValuesOnly(pid)) {
-                restriction = SnakPosition.MAINSNAK;
-            } else if (_fetcher.isForQualifiersOnly(pid)) {
-                restriction = SnakPosition.QUALIFIER;
-            } else if (_fetcher.isForReferencesOnly(pid)) {
-                restriction = SnakPosition.REFERENCE;
-            }
-
-            // Cache these results:
-            if (restriction != null) {
-                _restrictedPids.put(pid, restriction);
-            } else {
-                _unrestrictedPids.add(pid);
-            }
-            return restriction;
-        }
     }
 
     @Override
@@ -99,16 +61,25 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     }
 
     public void scrutinize(Snak snak, EntityIdValue entityId, SnakPosition position, boolean added) {
-        SnakPosition restriction = positionRestriction(snak.getPropertyId());
-        if (restriction != null && position != restriction) {
+        if (!positionAllowed(snak.getPropertyId(), position)) {
             String positionStr = position.toString().toLowerCase();
-            String restrictionStr = restriction.toString().toLowerCase();
 
-            QAWarning issue = new QAWarning("property-restricted-to-" + restrictionStr + "-found-in-" + positionStr,
+            QAWarning issue = new QAWarning("property-found-in-" + positionStr,
                     snak.getPropertyId().getId(), QAWarning.Severity.IMPORTANT, 1);
             issue.setProperty("property_entity", snak.getPropertyId());
             addIssue(issue);
         }
+    }
+    
+    public boolean positionAllowed(PropertyIdValue pid, SnakPosition position) {
+        if(position.equals(SnakPosition.MAINSNAK)) {
+            return _fetcher.allowedAsValue(pid);
+        } else if(position.equals(SnakPosition.QUALIFIER)) {
+            return _fetcher.allowedAsQualifier(pid);
+        } else if(position.equals(SnakPosition.REFERENCE)) {
+            return _fetcher.allowedAsReference(pid);
+        }
+        return true;
     }
 
 }

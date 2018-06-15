@@ -55,19 +55,19 @@ public interface ConstraintFetcher {
     PropertyIdValue getInversePid(PropertyIdValue pid);
 
     /**
-     * Is this property for values only?
+     * Can this property be used as values?
      */
-    boolean isForValuesOnly(PropertyIdValue pid);
+    boolean allowedAsValue(PropertyIdValue pid);
 
     /**
-     * Is this property for qualifiers only?
+     * Can this property be used as qualifiers?
      */
-    boolean isForQualifiersOnly(PropertyIdValue pid);
+    boolean allowedAsQualifier(PropertyIdValue pid);
 
     /**
-     * Is this property for references only?
+     * Can this property be used in a reference?
      */
-    boolean isForReferencesOnly(PropertyIdValue pid);
+    boolean allowedAsReference(PropertyIdValue pid);
 
     /**
      * Get the list of allowed qualifiers (as property ids) for this property (null
