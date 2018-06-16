@@ -20,8 +20,8 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.exporters.CsvExporter;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.DataPackageMetadata;
-import com.google.refine.model.medadata.PackageExtension;
+import com.google.refine.model.metadata.DataPackageMetadata;
+import com.google.refine.model.metadata.PackageExtension;
 
 public class PackageProjectCommand extends Command {
     @Override

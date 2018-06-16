@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 
 public class DeleteProjectCommand extends Command {
 

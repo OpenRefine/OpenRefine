@@ -53,7 +53,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 
 public class RdfTripleImporter extends ImportingParserBase {
     private Mode mode;

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.importers.TabularImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 public class PCAxisImporter extends TabularImportingParserBase {

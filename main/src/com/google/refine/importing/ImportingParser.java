@@ -38,7 +38,7 @@ import java.util.List;
 import org.json.JSONObject;
 
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 
 public interface ImportingParser {
     /**
