@@ -53,7 +53,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.model.ProjectStub;
 

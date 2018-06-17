@@ -11,9 +11,9 @@ import org.json.JSONException;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.MetadataFactory;
-import com.google.refine.model.medadata.MetadataFormat;
+import com.google.refine.model.metadata.IMetadata;
+import com.google.refine.model.metadata.MetadataFactory;
+import com.google.refine.model.metadata.MetadataFormat;
 
 public class GetMetadataCommand extends Command {
     @Override

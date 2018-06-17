@@ -281,7 +281,7 @@ function registerImporting() {
 
   IM.registerMimeType("application/marc", "text/marc");
   
-  IM.registerUrlRewriter(new Packages.com.google.refine.model.medadata.DataPackageUrlRewriter());
+  IM.registerUrlRewriter(new Packages.com.google.refine.model.metadata.DataPackageUrlRewriter());
 
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
