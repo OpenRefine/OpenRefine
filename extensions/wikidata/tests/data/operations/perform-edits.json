@@ -1,9 +1,0 @@
-{
-  "op": "wikidata/perform-wikibase-edits",
-  "description": "Perform Wikibase edits",
-  "summary": "test null edit",
-  "engineConfig": {
-    "mode": "row-based",
-    "facets": []
-  }
-}

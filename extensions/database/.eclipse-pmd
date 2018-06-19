@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<eclipse-pmd xmlns="http://acanda.ch/eclipse-pmd/0.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acanda.ch/eclipse-pmd/0.8 http://acanda.ch/eclipse-pmd/eclipse-pmd-0.8.xsd">
-  <analysis enabled="true" />
-</eclipse-pmd>
