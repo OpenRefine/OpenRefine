@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/grefine"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-core-1.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-spreadsheet-3.0.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/butterfly-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/grefine/webapp/WEB-INF/lib/jackson-core-asl-1.9.12.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-base-1.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-client-1.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-client-meta-1.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-docs-3.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-docs-meta-3.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-media-1.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/gdata-spreadsheet-meta-3.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/jsr305-1.3.9.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/mail.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-api-client-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-api-client-servlet-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-api-services-drive-v2-rev168-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-api-services-fusiontables-v2-rev3-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-http-client-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-http-client-jackson2-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-oauth-client-1.20.0.jar"/>
+	<classpathentry kind="lib" path="module/MOD-INF/lib/google-oauth-client-servlet-1.20.0.jar"/>
+	<classpathentry kind="output" path="module/MOD-INF/classes"/>
+</classpath>

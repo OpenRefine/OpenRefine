@@ -1,0 +1,143 @@
+/*
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+/*
+ *  External Licenses
+ */
+
+See the 'licenses' directory for a list of the licenses for the libraries we depend on,
+ordered here by license:
+
+Apache License 2.0
+------------------
+
+licenses/apache2.0.LICENSE.txt
+    calendar-parser (package com.google.refine.expr.util)
+    ant-tools 
+    commons-lang
+    commons-codec
+    commons-fileupload
+    jackson
+    jdatapath
+    jetty
+    jetty-util
+    log4j
+    poi
+    poi-ooxml
+    poi-ooxml-schemas
+    servlet-api
+    xmlbeans
+    signpost
+    opencsv
+    textng
+    swc-parser-lazy
+
+Apache License 1.1
+------------------
+licenses/jrdf.LICENSE.txt
+    jrdf
+   
+LGPL
+----
+
+licenses/marc4j.LICENSE.txt
+    marc4j
+    
+     
+BSD
+---
+    
+licenses/secondstring.LICENSE.txt
+    secondstring
+
+licenses/dom4j.LICENSE.txt
+    dom4j
+    
+licenses/simile.LICENSE.txt
+    simile vicino
+
+licenses/simile-ajax.2.3.0.LICENSE.txt
+    Simile Ajax
+
+licenses/arithcode.LICENSE.txt
+    arithcode
+
+licenses/freebase_suggest.LICENSE.txt
+    freebase_suggest
+
+licenses/chrome_frame.LICENSE.txt
+    CFInstall
+
+MIT
+---
+
+licenses/jquery.LICENSE.txt
+    jquery
+
+licenses/jquery_ui.LICENSE.txt
+    jquery_ui
+    
+licenses/jquery.eventstack.LICENSE.txt
+    jquery eventstack
+
+licenses/datejs.LICENSE.txt
+    datejs
+
+licenses/imgareaselect.LICENSE.txt
+    imgareaselect
+       
+licenses/slf4j.LICENSE.txt
+    slf4j-api
+    slf4j-log4j12
+    jcl-over-slf4j
+       
+licenses/icu4j.LICENSE.txt
+    icu4j
+   
+licenses/json.LICENSE.txt
+    json
+
+licenses/mockito.LICENSE.txt
+    mockito
+
+licenses/jsoup.LICENSE.txt
+    jsoup
+    
+http://www.opensource.org/licenses/mit-license.php
+    jquery.cookie
+
+Others
+------
+
+Flag icon
+    http://pixel-mixer.com/category/free-icons/

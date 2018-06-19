@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+
+Copyright 2010, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>OpenRefine</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    $styleInjection
+    <script type="text/javascript">var theProject = { id : $projectID };</script>
+    <script type="text/javascript" src="wirings.js"></script>
+    $scriptInjection
+    <script>Refine.encodings = $encodingJson; Refine.defaultEncoding = $defaultEncoding;</script>
+  </head>
+  <body>
+    <div id="header">
+      <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" /></a>
+      <div id="project-title">
+        <span id="project-name-button" class="app-path-section"></span>
+        <a id="project-permalink-button" href="javascript:{}" class="secondary"></a>
+      </div>
+      <div id="project-controls">
+        <a href="./" class="button" target="_blank"><span id="or-proj-open"></span></a>
+        <a class="button" bind="exportButton" id="export-button" href="#export"><span class="button-menu" id="or-proj-export"></span></a>
+        <a href="https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users" target="_blank" class="button"><span id="or-proj-help"></span></a>
+      </div>
+    </div>
+    
+    <div id="loading-message"><img src="images/large-spinner.gif" /> <span id="or-proj-starting"></span></div>
+      
+    <div id="body">
+      <div bind="leftPanelDiv" id="left-panel">
+        <div bind="leftPanelTabs" class="refine-tabs">
+          <ul>
+            <li><a href="#refine-tabs-facets" id="or-proj-facFil"></a></li>
+            <li><a href="#refine-tabs-history" bind="historyTabHeader" id="or-proj-undoRedo"></a></li>
+          </ul>
+          <div id="refine-tabs-facets" bind="facetPanelDiv" id="facet-panel"></div>
+          <div id="refine-tabs-history" bind="historyPanelDiv" id="history-panel"></div>
+        </div>
+      </div>
+      <div bind="rightPanelDiv" id="right-panel">
+        <div bind="toolPanelDiv" id="tool-panel">
+          <div bind="summaryBarDiv" id="summary-bar">
+            <!-- row/record counts -->
+          </div>
+          <div bind="extensionBarDiv" id="extension-bar">
+            <span id="or-proj-ext"></span> <span bind="menuContainer" id="extension-bar-menu-container"></span>
+          </div>
+        </div>
+        <div bind="viewPanelDiv" id="view-panel"></div>
+      </div>
+      <div bind="processPanelDiv" id="notification-container"></div>
+    </div>
+  </body>
+</html>

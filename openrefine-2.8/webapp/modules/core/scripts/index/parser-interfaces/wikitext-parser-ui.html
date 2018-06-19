@@ -1,0 +1,31 @@
+<div class="grid-layout layout-tight"><table>
+      <tr><td colspan="2" id="or-import-colsep"></td></tr>
+         
+      <tr><td width="1%"><input type="checkbox" bind="wikiCheckbox" id="$reconcileWiki" /></td><td><label for="$reconcileWiki" id="or-import-wiki-base-url"></label>
+        <input bind="wikiUrlInput" type="text" class="lightweight" size="30" id="$wikiUrl" /></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
+        <td><label for="$limit" id="or-import-load"></label>
+          <input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+          <label for="$limit" id="or-import-rows2"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="guessCellValueTypesCheckbox" id="$guess" /></td>
+        <td><label for="$guess" id="or-import-parseCell"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="blankSpanningCellsCheckbox" id="$blank-spanning-cells" /></td>
+        <td><label for="$blank-spanning-cells" id="or-import-blankSpanningCells"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="storeBlankRowsCheckbox" id="$store-blank-rows" /></td>
+        <td colspan="2"><label for="$store-blank-rows" id="or-import-blank"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="includeRawTemplatesCheckbox" id="$include-raw-templates" /></td>
+        <td colspan="2"><label for="$include-raw-templates" id="or-import-includeRawTemplates"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="parseReferencesCheckbox" id="$parse-references" /></td>
+        <td colspan="2"><label for="$parse-references" id="or-import-parseReferences"></label></td></tr>
+
+      <tr><td width="1%"><input type="checkbox" bind="storeBlankCellsAsNullsCheckbox" id="$store-blank-cells" /></td>
+        <td colspan="2"><label for="$store-blank-cells" id="or-import-null"></label></td></tr>
+        
+      <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" /></td>
+        <td><label for="$include-file-sources" id="or-import-source"></label></td></tr>
+
+      <tr>
+        <td width="1%"></td>
+        <td><button class="button" bind="previewButton"></button></td>
+      </tr>
+</table></div>
