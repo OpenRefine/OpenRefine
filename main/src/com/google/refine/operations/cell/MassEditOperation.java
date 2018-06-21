@@ -121,13 +121,13 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 
                 from = new ArrayList<String>(fromCount);
                 for (int j = 0; j < fromCount; j++) {
-                    from.add(fromA.getString(j));
+                    from.add(fromA.get(j).toString());
                 }
             } else {
                 from = new ArrayList<String>();
             }
             
-            boolean fromBlank = editO.has("fromBlank") && editO.getBoolean("fromBlank");
+            boolean fromBlank = (editO.has("fromBlank") && editO.getBoolean("fromBlank") || from.get(0).length() == 0 && from.size() == 1);
             boolean fromError = editO.has("fromError") && editO.getBoolean("fromError");
             
             Serializable to = (Serializable) editO.get("to");
