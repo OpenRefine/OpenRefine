@@ -59,6 +59,7 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.StringUtils;
 
 public class MassEditOperation extends EngineDependentMassCellOperation {
     final protected String         _expression;
@@ -259,7 +260,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                         newCell = new Cell(fromErrorTo, (cell != null) ? cell.recon : null);
                     }
                 } else if (ExpressionUtils.isNonBlankData(v)) {
-                    String from = v.toString();
+                    String from = StringUtils.toString(v);
                     Serializable to = fromTo.get(from);
                     if (to != null) {
                         newCell = new Cell(to, (cell != null) ? cell.recon : null);
