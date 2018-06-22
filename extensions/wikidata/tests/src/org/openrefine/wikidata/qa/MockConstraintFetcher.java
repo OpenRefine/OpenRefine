@@ -77,18 +77,18 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     }
 
     @Override
-    public boolean isForValuesOnly(PropertyIdValue pid) {
-        return mainSnakPid.equals(pid);
+    public boolean allowedAsValue(PropertyIdValue pid) {
+        return (!qualifierPid.equals(pid) && !referencePid.equals(pid));
     }
 
     @Override
-    public boolean isForQualifiersOnly(PropertyIdValue pid) {
-        return qualifierPid.equals(pid);
+    public boolean allowedAsQualifier(PropertyIdValue pid) {
+        return (!mainSnakPid.equals(pid) && !referencePid.equals(pid));
     }
 
     @Override
-    public boolean isForReferencesOnly(PropertyIdValue pid) {
-        return referencePid.equals(pid);
+    public boolean allowedAsReference(PropertyIdValue pid) {
+        return (!mainSnakPid.equals(pid) && !qualifierPid.equals(pid));
     }
 
     @Override

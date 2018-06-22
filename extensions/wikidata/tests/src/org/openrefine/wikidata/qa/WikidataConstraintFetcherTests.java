@@ -39,10 +39,7 @@ public class WikidataConstraintFetcherTests {
     private PropertyIdValue endTime;
     private PropertyIdValue instanceOf;
     private PropertyIdValue gridId;
-    private PropertyIdValue hasPart;
     private PropertyIdValue partOf;
-    private PropertyIdValue referenceURL;
-    private PropertyIdValue reasonForDeprecation;
     private PropertyIdValue mother;
     private PropertyIdValue child;
 
@@ -53,10 +50,7 @@ public class WikidataConstraintFetcherTests {
         endTime = Datamodel.makeWikidataPropertyIdValue("P582");
         instanceOf = Datamodel.makeWikidataPropertyIdValue("P31");
         gridId = Datamodel.makeWikidataPropertyIdValue("P2427");
-        hasPart = Datamodel.makeWikidataPropertyIdValue("P527");
         partOf = Datamodel.makeWikidataPropertyIdValue("P361");
-        referenceURL = Datamodel.makeWikidataPropertyIdValue("P854");
-        reasonForDeprecation = Datamodel.makeWikidataPropertyIdValue("P2241");
         mother = Datamodel.makeWikidataPropertyIdValue("P25");
         child = Datamodel.makeWikidataPropertyIdValue("P40");
     }
@@ -75,24 +69,6 @@ public class WikidataConstraintFetcherTests {
     @Test
     public void testGetInverseConstraint() {
         Assert.assertEquals(fetcher.getInversePid(mother), child);
-    }
-
-    @Test
-    public void testOnlyReferences() {
-        Assert.assertTrue(fetcher.isForReferencesOnly(referenceURL));
-        Assert.assertFalse(fetcher.isForReferencesOnly(reasonForDeprecation));
-    }
-
-    @Test
-    public void testOnlyQualifiers() {
-        Assert.assertTrue(fetcher.isForQualifiersOnly(reasonForDeprecation));
-        Assert.assertFalse(fetcher.isForQualifiersOnly(headOfGovernment));
-    }
-
-    @Test
-    public void testOnlyValues() {
-        Assert.assertTrue(fetcher.isForValuesOnly(headOfGovernment));
-        Assert.assertFalse(fetcher.isForValuesOnly(referenceURL));
     }
 
     @Test

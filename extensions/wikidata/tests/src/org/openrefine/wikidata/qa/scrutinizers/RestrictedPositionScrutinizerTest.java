@@ -48,7 +48,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
     @Test
     public void testTriggerMainSnak() {
         scrutinize(TestingData.generateStatement(qid, MockConstraintFetcher.qualifierPid, qid));
-        assertWarningsRaised("property-restricted-to-qualifier-found-in-mainsnak");
+        assertWarningsRaised("property-found-in-mainsnak");
     }
 
     @Test
@@ -72,7 +72,7 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
                 TestingData.generateStatement(qid, MockConstraintFetcher.mainSnakPid, qid).getClaim(),
                 Collections.singletonList(Datamodel.makeReference(snakGroups)), StatementRank.NORMAL, "");
         scrutinize(statement);
-        assertWarningsRaised("property-restricted-to-mainsnak-found-in-reference");
+        assertWarningsRaised("property-found-in-reference");
     }
 
 }

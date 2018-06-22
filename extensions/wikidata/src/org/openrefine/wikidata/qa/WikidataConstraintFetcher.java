@@ -60,7 +60,11 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String INVERSE_PROPERTY_PID = "P2306";
     public static String SYMMETRIC_CONSTRAINT_QID = "Q21510862";
 
-    public static String USED_ONLY_AS_VALUES_CONSTRAINT_QID = "Q21528958";
+    public static String SCOPE_CONSTRAINT_QID = "Q53869507";
+    public static String SCOPE_CONSTRAINT_PID = "P5314";
+    public static String SCOPE_CONSTRAINT_VALUE_QID = "Q54828448";
+    public static String SCOPE_CONSTRAINT_QUALIFIER_QID = "Q54828449";
+    public static String SCOPE_CONSTRAINT_REFERENCE_QID = "Q54828450";
 
     public static String USED_ONLY_AS_QUALIFIER_CONSTRAINT_QID = "Q21510863";
 
@@ -123,18 +127,36 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     }
 
     @Override
-    public boolean isForValuesOnly(PropertyIdValue pid) {
-        return getSingleConstraint(pid, USED_ONLY_AS_VALUES_CONSTRAINT_QID) != null;
+    public boolean allowedAsValue(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, SCOPE_CONSTRAINT_QID);
+        
+        if (specs != null) {
+            ItemIdValue target = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_VALUE_QID);
+            return findValues(specs, SCOPE_CONSTRAINT_PID).contains(target);
+        }
+        return true;
     }
 
     @Override
-    public boolean isForQualifiersOnly(PropertyIdValue pid) {
-        return getSingleConstraint(pid, USED_ONLY_AS_QUALIFIER_CONSTRAINT_QID) != null;
+    public boolean allowedAsQualifier(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, SCOPE_CONSTRAINT_QID);
+        
+        if (specs != null) {
+            ItemIdValue target = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QUALIFIER_QID);
+            return findValues(specs, SCOPE_CONSTRAINT_PID).contains(target);
+        }
+        return true;
     }
 
     @Override
-    public boolean isForReferencesOnly(PropertyIdValue pid) {
-        return getSingleConstraint(pid, USED_ONLY_AS_REFERENCE_CONSTRAINT_QID) != null;
+    public boolean allowedAsReference(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, SCOPE_CONSTRAINT_QID);
+        
+        if (specs != null) {
+            ItemIdValue target = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_REFERENCE_QID);
+            return findValues(specs, SCOPE_CONSTRAINT_PID).contains(target);
+        }
+        return true;
     }
 
     @Override
