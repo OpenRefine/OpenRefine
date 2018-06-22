@@ -35,6 +35,9 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  * For now this scrutinizer only checks for uniqueness at the item level (it
  * ignores qualifiers and references).
  * 
+ * Given that all ranks are currently set to Normal, this also checks for
+ * single best values.
+ * 
  * @author Antonin Delpeuch
  *
  */
@@ -54,7 +57,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getItemId());
                 addIssue(issue);
-            } else if (_fetcher.hasSingleValue(pid)) {
+            } else if (_fetcher.hasSingleValue(pid) || _fetcher.hasSingleBestValue(pid)) {
                 seenSingleProperties.add(pid);
             }
         }

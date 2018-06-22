@@ -216,6 +216,30 @@
                 "ignored-coordinates": {
                         "title": "Invalid geographic coordinates.",
                         "body": "Some coordinates are incorrectly formatted, such as <span class=\"wb-issue-preformat\">{example_value}</span>. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Globe_coordinates\" target=\"_blank\">allowed formats</a>."
+                },
+                "forbidden-value": {
+                        "title": "Invalid values for {property_entity}",
+                        "body": "Items such as {example_value_entity} added on {example_subject_entity} are not allowed as values for {property_entity}."
+                },
+                "bounds-disallowed": {
+                        "title": "Quantity bounds supplied for {property_entity}",
+                        "body": "Values are not expected to have uncertainty bounds, but <span class=\"wb-issue-preformat\">{example_value}</span> added on {example_item_entity} has some. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manual</a> to learn how to fix their format."
+                },
+                "values-should-be-integers": {
+                        "title": "Non-integer values of {property_entity}",
+                        "body": "Values are expected to be integers, but <span class=\"wb-issue-preformat\">{example_value}</span> added on {example_item_entity} has a fractional part. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manual</a> to learn how to fix their format."
+                },
+                "invalid-unit": {
+                        "title": "{property_entity} with invalid units",
+                        "body": "Units such as {unit_entity} used on {example_item_entity} are invalid for {property_entity}."
+                },
+                "no-unit-provided": {
+                        "title": "Unit missing for {property_entity}",
+                        "body": "Values such as <span class=\"wb-issue-preformat\">{example_value}</span> on {example_item_entity} are expected to have units."
+                },
+                "invalid-entity-type": {
+                        "title": "{property_entity} used on items",
+                        "body": "Uses of {property_entity} on items such as {example_entity} are invalid."
                 }
        }
 }

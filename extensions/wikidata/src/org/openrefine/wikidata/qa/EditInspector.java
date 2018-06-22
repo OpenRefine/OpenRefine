@@ -30,12 +30,15 @@ import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.NoEditsMadeScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
@@ -73,6 +76,9 @@ public class EditInspector {
         register(new DistinctValuesScrutinizer());
         register(new NoEditsMadeScrutinizer());
         register(new WhitespaceScrutinizer());
+        register(new QuantityScrutinizer());
+        register(new RestrictedValuesScrutinizer());
+        register(new EntityTypeScrutinizer());
     }
 
     /**

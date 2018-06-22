@@ -37,6 +37,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
     private ItemIdValue idB = TestingData.newIdB;
     private PropertyIdValue pidWithInverse = MockConstraintFetcher.pidWithInverse;
     private PropertyIdValue inversePid = MockConstraintFetcher.inversePid;
+    private PropertyIdValue symmetricPid = MockConstraintFetcher.symmetricPid;
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -47,6 +48,14 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
     public void testTrigger() {
         ItemUpdate update = new ItemUpdateBuilder(idA)
                 .addStatement(TestingData.generateStatement(idA, pidWithInverse, idB)).build();
+        scrutinize(update);
+        assertWarningsRaised(InverseConstraintScrutinizer.type);
+    }
+    
+    @Test
+    public void testSymmetric() {
+        ItemUpdate update = new ItemUpdateBuilder(idA)
+                .addStatement(TestingData.generateStatement(idA, symmetricPid, idB)).build();
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
     }
