@@ -46,15 +46,17 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
     @Test
     public void testEvaluate() {
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 1, 0,
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), year);
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 1, 0,
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), month);
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, TimeValue.CM_GREGORIAN_PRO), day);
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 13, (byte) 0, (byte) 0, (byte) 12, 0, 1,
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), day);
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 13, (byte) 0, (byte) 0, (byte) 12, 0, 0,
                 0, TimeValue.CM_GREGORIAN_PRO), hour);
 
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, TimeValue.CM_GREGORIAN_PRO), whitespace);
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), whitespace);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

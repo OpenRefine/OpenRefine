@@ -119,7 +119,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             calendar.setTime(date);
             return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1), 
                     (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
-                    (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 1,
+                    (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,
                     0, TimeValue.CM_GREGORIAN_PRO);
         }
     }

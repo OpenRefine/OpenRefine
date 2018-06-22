@@ -62,7 +62,7 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
             Collections.singletonList(Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P43"),
                     Datamodel.makeWikidataItemIdValue("Q3434"))))));
     private Snak qualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
-            Datamodel.makeTimeValue(2010, (byte) 7, (byte) 23, TimeValue.CM_GREGORIAN_PRO));
+            Datamodel.makeTimeValue(2010, (byte) 7, (byte) 23, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO));
     private Snak mainsnak = Datamodel.makeValueSnak(property, Datamodel.makeGlobeCoordinatesValue(3.898, 4.389,
             WbLocationConstant.defaultPrecision, GlobeCoordinatesValue.GLOBE_EARTH));
     private Claim fullClaim = Datamodel.makeClaim(subject, mainsnak,

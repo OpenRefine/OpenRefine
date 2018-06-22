@@ -42,7 +42,7 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
             new WbSnakExpr(new WbPropConstant("P347", "reference URL", "url"), new WbStringVariable("column B"))));
 
     private Snak snak1 = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P87"),
-            Datamodel.makeTimeValue(2018, (byte) 3, (byte) 28, TimeValue.CM_GREGORIAN_PRO));
+            Datamodel.makeTimeValue(2018, (byte) 3, (byte) 28, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO));
     private Snak snak2 = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P347"),
             Datamodel.makeStringValue("http://gnu.org/"));
 
