@@ -69,6 +69,18 @@ public class MassOperationTests extends RefineTest {
     }
 
     @Test
+    public void testReconstructEditDate() throws Exception {
+      editsString = "[{\"from\":[\"2018-10-04T00:00:00Z\"],\"to\":\"newString\",\"type\":\"text\"}]";
+
+      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+
+      Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00:00Z");
+      Assert.assertEquals(editList.get(0).to,"newString" );
+      Assert.assertFalse(editList.get(0).fromBlank);
+      Assert.assertFalse(editList.get(0).fromError);
+    }
+
+    @Test
     public void testReconstructEditEmpty() throws Exception {
       editsString = "[{\"from\":[\"\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
@@ -83,6 +95,5 @@ public class MassOperationTests extends RefineTest {
     }
 
     //Not yet testing for mass edit from OR Error
-    //Not yet testing for mass edit from OR Date
 
 }
