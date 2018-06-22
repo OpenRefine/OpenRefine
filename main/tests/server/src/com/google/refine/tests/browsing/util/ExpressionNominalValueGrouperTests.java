@@ -53,7 +53,6 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.util.StringUtils;
 
 
 public class ExpressionNominalValueGrouperTests extends RefineTest {
@@ -61,8 +60,6 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     //Variables
     private static Project project;
     private static Properties bindings;
-    private static final String ENGINE_JSON_LISTFACET = "{\"facets\":[{\"type\":\"list\",\"name\":\"facet A\",\"columnName\":\"Column\",\"expression\":\"value\",\"omitBlank\":false,\"omitError\":false,\"selection\":[],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}}";
-    private static String projectid;
     
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     private static String dateTimeStringValue = "2017-05-12T05:45:00Z";
@@ -92,12 +89,12 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     }
     
     @AfterMethod
-    public void TearDown() {
+    public void tearDown() {
         project = null;
     }
 
     @Test
-    public void ExpressionNominalValueGrouperStrings() throws Exception {
+    public void expressionNominalValueGrouperStrings() throws Exception {
       //populate project
       // Five rows of a's
       for (int i = 0; i < numberOfRows; i++) {
@@ -126,7 +123,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     }
     
     @Test
-    public void ExpressionNominalValueGrouperInts() throws Exception {
+    public void expressionNominalValueGrouperInts() throws Exception {
       //populate project
       for (int i = 0; i < numberOfRows; i++) {
           Row row = new Row(1);
@@ -154,7 +151,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     }
     
     @Test
-    public void ExpressionNominalValueGrouperDates() throws Exception {
+    public void expressionNominalValueGrouperDates() throws Exception {
       //populate project
       for (int i = 0; i < numberOfRows; i++) {
           Row row = new Row(1);

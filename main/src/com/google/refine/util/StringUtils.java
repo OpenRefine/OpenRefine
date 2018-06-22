@@ -1,7 +1,6 @@
 package com.google.refine.util;
 
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class StringUtils {
     /**
