@@ -417,18 +417,23 @@ ListFacet.prototype._update = function(resetScroll) {
     renderChoice(i, choices[i]);
   }
   if (this._numberChoice !== null) {
+    renderEdit = false;
     renderChoice(-5, this._numberChoice, "(number)");
   }
   if (this._datetimeChoice !== null) {
+    renderEdit = false;
     renderChoice(-4, this._datetimeChoice, "(date)");
   }
   if (this._booleanChoice !== null) {
+    renderEdit = false;
     renderChoice(-3, this._booleanChoice, "(boolean)");
   }
   if (this._blankChoice !== null) {
+    renderEdit = false;
     renderChoice(-1, this._blankChoice, "(blank)");
   }
   if (this._errorChoice !== null) {
+    renderEdit = false;
     renderChoice(-2, this._errorChoice, "(error)");
   }
 
