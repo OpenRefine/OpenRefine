@@ -74,6 +74,9 @@ public class ListFacet implements Facet {
         public boolean omitError;
         
         public List<DecoratedValue> selection = new LinkedList<>();
+        public boolean selectNumber;
+        public boolean selectDateTime;
+        public boolean selectBoolean;
         public boolean selectBlank;
         public boolean selectError;
 
@@ -94,6 +97,9 @@ public class ListFacet implements Facet {
                 writer.endObject();
             }
             writer.endArray();
+            writer.key("selectNumber"); writer.value(selectNumber);
+            writer.key("selectDateTime"); writer.value(selectDateTime);
+            writer.key("selectBoolean"); writer.value(selectBoolean);
             writer.key("omitBlank"); writer.value(omitBlank);
             writer.key("selectBlank"); writer.value(selectBlank);
             writer.key("omitError"); writer.value(omitError);
@@ -124,6 +130,9 @@ public class ListFacet implements Facet {
             omitBlank = JSONUtilities.getBoolean(o, "omitBlank", false);
             omitError = JSONUtilities.getBoolean(o, "omitError", false);
             
+            selectNumber = JSONUtilities.getBoolean(o, "selectNumber", false);
+            selectDateTime = JSONUtilities.getBoolean(o, "selectDateTime", false);
+            selectBoolean = JSONUtilities.getBoolean(o, "selectBoolean", false);
             selectBlank = JSONUtilities.getBoolean(o, "selectBlank", false);
             selectError = JSONUtilities.getBoolean(o, "selectError", false);
         }
@@ -149,6 +158,9 @@ public class ListFacet implements Facet {
      * Computed results
      */
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
+    protected int _numberCount;
+    protected int _datetimeCount;
+    protected int _booleanCount;
     protected int _blankCount;
     protected int _errorCount;
     
@@ -176,7 +188,27 @@ public class ListFacet implements Facet {
                 choice.write(writer, options);
             }
             writer.endArray();
-            
+            if (_config.selectNumber || _numberCount > 0) {
+                writer.key("numberChoice");
+                writer.object();
+                writer.key("s"); writer.value(_config.selectNumber);
+                writer.key("c"); writer.value(_numberCount);
+                writer.endObject();
+            }
+            if (_config.selectDateTime || _datetimeCount > 0) {
+                writer.key("datetimeChoice");
+                writer.object();
+                writer.key("s"); writer.value(_config.selectDateTime);
+                writer.key("c"); writer.value(_datetimeCount);
+                writer.endObject();
+            }
+            if (_config.selectBoolean || _booleanCount > 0) {
+                writer.key("booleanChoice");
+                writer.object();
+                writer.key("s"); writer.value(_configselectBoolean);
+                writer.key("c"); writer.value(_booleanCount);
+                writer.endObject();
+            }
             if (!_config.omitBlank && (_config.selectBlank || _blankCount > 0)) {
                 writer.key("blankChoice");
                 writer.object();
@@ -245,6 +277,9 @@ public class ListFacet implements Facet {
                     _config.columnName,
                     _cellIndex, 
                     createMatches(), 
+                    _config.selectNumber,
+                    _config.selectDateTime,
+                    _config.selectBoolean,
                     _config.selectBlank, 
                     _config.selectError,
                     _config.invert);
@@ -310,6 +345,9 @@ public class ListFacet implements Facet {
             }
         }
         
+        _numberCount = grouper.numberCount;
+        _datetimeCount = grouper.datetimeCount;
+        _booleanCount = grouper.booleanCount;
         _blankCount = grouper.blankCount;
         _errorCount = grouper.errorCount;
     }
