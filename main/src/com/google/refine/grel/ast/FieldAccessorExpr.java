@@ -63,17 +63,17 @@ public class FieldAccessorExpr implements Evaluable {
         if (ExpressionUtils.isError(o)) {
             return o; // bubble the error up
         } else if (o == null) {
-            return new EvalError("Cannot retrieve field from null");
+            return null;
         } else if (o instanceof HasFields) {
             return ((HasFields) o).getField(_fieldName, bindings);
         } else if (o instanceof JSONObject) {
             try {
                 return ((JSONObject) o).get(_fieldName);
             } catch (JSONException e) {
-                return new EvalError("Object does not have any field, including " + _fieldName);
+                return null;
             }
         } else {
-            return new EvalError("Object does not have any field, including " + _fieldName);
+            return null;
         }
     }
 

@@ -167,10 +167,23 @@ public class ReconJudgeOneCellCommand extends Command {
             }
 
             Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
+            
+            Recon newRecon = null;
+            if (cell.recon != null) {
+                newRecon = cell.recon.dup(historyEntryID);
+            } else if (identifierSpace != null && schemaSpace != null) {
+                newRecon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+            } else if (column.getReconConfig() != null) {
+                newRecon = column.getReconConfig().createNewRecon(historyEntryID);
+            } else {
+                // This should only happen if we are judging a cell in a column that
+                // has never been reconciled before.
+               newRecon = new Recon(historyEntryID, null, null);
+            }
 
             newCell = new Cell(
                 cell.value,
-                cell.recon == null ? new Recon(historyEntryID, identifierSpace, schemaSpace) : cell.recon.dup(historyEntryID)
+                newRecon
             );
 
             String cellDescription =

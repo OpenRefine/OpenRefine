@@ -51,8 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.IMetadata;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.IMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");

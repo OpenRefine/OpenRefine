@@ -35,9 +35,9 @@ package com.google.refine.exporters;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,12 +229,16 @@ abstract public class CustomizableTabularExporterUtilities {
         
         Map<String, String> identifierSpaceToUrl = null;
         
+        //SQLExporter parameter to convert null cell value to empty string
+        boolean includeNullFieldValue = false;
+        
         CellFormatter() {
             dateFormatter = new SimpleDateFormat(fullIso8601);
         }
         
         CellFormatter(JSONObject options) {
             JSONObject reconSettings = JSONUtilities.getObject(options, "reconSettings");
+            includeNullFieldValue = JSONUtilities.getBoolean(options, "nullValueToEmptyStr", false);
             if (reconSettings != null) {
                 String reconOutputString = JSONUtilities.getString(reconSettings, "output", null);
                 if ("entity-name".equals(reconOutputString)) {
@@ -344,16 +348,20 @@ abstract public class CustomizableTabularExporterUtilities {
                     if (text == null) {
                         if (value instanceof String) {
                             text = (String) value;
-                        } else if (value instanceof Calendar) {
-                            text = dateFormatter.format(((Calendar) value).getTime()); 
-                        } else if (value instanceof Date) {
-                            text = dateFormatter.format((Date) value); 
+                        } else if (value instanceof OffsetDateTime) {
+                            text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
                         } else {
                             text = value.toString();
                         }
                     }
                     return new CellData(column.getName(), value, text, link);
                 }
+            }else {//added for sql exporter
+            
+                if(includeNullFieldValue) {
+                    return new CellData(column.getName(), "", "", "");
+                }
+                
             }
             return null;
         }

@@ -33,10 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -55,9 +53,9 @@ public class ToString implements Function {
             Object o1 = args[0];
             if (args.length == 2 && args[1] instanceof String) {
                 Object o2 = args[1];
-                if (o1 instanceof Calendar || o1 instanceof Date) {
-                    DateFormat formatter = new SimpleDateFormat((String) o2);
-                    return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
+                if (o1 instanceof OffsetDateTime) {
+                    OffsetDateTime odt = (OffsetDateTime)o1;
+                    return odt.format(DateTimeFormatter.ofPattern((String)o2));
                 } else if (o1 instanceof Number) {
                     return String.format((String) o2, (Number) o1);
                 }

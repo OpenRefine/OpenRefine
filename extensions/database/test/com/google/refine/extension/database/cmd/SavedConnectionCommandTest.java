@@ -25,7 +25,6 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.model.medadata.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;
@@ -36,6 +35,7 @@ import com.google.refine.extension.database.stub.RefineDbServletStub;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
+import com.google.refine.model.metadata.ProjectMetadata;
 
 public class SavedConnectionCommandTest extends DBExtensionTests{
     

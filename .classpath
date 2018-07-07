@@ -4,13 +4,15 @@
 	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="extensions/jython/tests/src"/>
 	<classpathentry kind="src" path="server/src"/>
+	<classpathentry kind="src" path="main/tests/server/src"/>
 	<classpathentry kind="src" path="extensions/gdata/src"/>
 	<classpathentry kind="src" path="extensions/database/src"/>
 	<classpathentry kind="src" path="extensions/database/test"/>
 	<classpathentry kind="src" path="extensions/jython/src"/>
 	<classpathentry kind="src" path="extensions/pc-axis/src"/>
 	<classpathentry kind="src" path="extensions/sample/src"/>
-	<classpathentry kind="src" path="main/tests/server/src"/>
+	<classpathentry kind="src" path="extensions/wikidata/src"/>
+	<classpathentry kind="src" path="extensions/wikidata/tests/src"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/ant-tools-1.8.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/arithcode-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/butterfly-1.0.1.jar" sourcepath="main/webapp/WEB-INF/lib-src/butterfly-1.0.1-sources.jar"/>
@@ -44,14 +46,14 @@
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/serializer.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xercesImpl-2.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/xml-apis.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpclient-4.5.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpcore-4.4.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-commonshttp4-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-commonshttp4-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/signpost-core-1.2.1.2.jar" sourcepath="main/webapp/WEB-INF/lib-src/signpost-core-1.2.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/guava-13.0.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/jsr305-1.3.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/fluent-hc-4.5.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/webapp/WEB-INF/lib/httpmime-4.5.5.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="extensions/gdata/module/MOD-INF/lib/transaction-api-1.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/poi-3.13-20150929.jar"/>
@@ -127,5 +129,7 @@
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jena-tdb2-3.6.0.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/jsonld-java-0.11.1.jar"/>
 	<classpathentry kind="lib" path="main/webapp/WEB-INF/lib/libthrift-0.10.0.jar"/>
+        <classpathentry kind="lib" path="extensions/wikidata/module/MOD-INF/lib/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar" sourcepath="extensions/wikidata/module/MOD-INF/lib-src/wdtk-datamodel-0.9.0-SNAPSHOT-sources.jar"/>
+        <classpathentry kind="lib" path="extensions/wikidata/module/MOD-INF/lib/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar" sourcepath="extensions/wikidata/module/MOD-INF/lib-src/wdtk-wikibaseapi-0.9.0-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="output" path="main/webapp/WEB-INF/classes"/>
 </classpath>

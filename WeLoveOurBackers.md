@@ -4,4 +4,4 @@ An evergrowing list of our forever immortalized OpenRefine Backers that we LOVE 
 2. PaulZH -
 3. Jens Willmer -
 4. mroswell -
-5. Google Inc. News Lab
+5. Google News Initiative - https://newsinitiative.withgoogle.com/

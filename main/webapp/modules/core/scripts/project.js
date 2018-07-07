@@ -234,6 +234,8 @@ Refine._renameProject = function() {
  *  Utility state functions
  */
 
+Refine.customUpdateCallbacks = [];
+
 Refine.createUpdateFunction = function(options, onFinallyDone) {
   var functions = [];
   var pushFunction = function(f) {
@@ -258,10 +260,35 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
     });
   }
 
+  // run the callbacks registered by extensions, passing them
+  // the options
+  pushFunction(function(onDone) {
+    for(var i = 0; i != Refine.customUpdateCallbacks.length; i++) {
+        Refine.customUpdateCallbacks[i](options);
+    }
+    onDone();
+  });
+
   functions.push(onFinallyDone || function() {});
 
   return functions[0];
 };
+
+/*
+ * Registers a callback function to be called after each update.
+ * This is provided for extensions which need to run some code when
+ * the project is updated. This was introduced for the Wikidata 
+ * extension as a means to avoid monkey-patching Refine's core
+ * methods (which was the solution adopted for GOKb, as they had
+ * no way to change Refine's code directly).
+ *
+ * The function will be called with an "options" object as above
+ * describing which change has happened, so that the code can run
+ * fine-grained updates.
+ */
+Refine.registerUpdateFunction = function(callback) {
+   Refine.customUpdateCallbacks.push(callback);
+}
 
 Refine.update = function(options, onFinallyDone) {
   var done = false;

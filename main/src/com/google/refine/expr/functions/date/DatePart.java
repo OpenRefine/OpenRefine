@@ -36,6 +36,12 @@ package com.google.refine.expr.functions.date;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.TimeZone;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -49,19 +55,59 @@ public class DatePart implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 && 
-                args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date) && 
+                args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date || args[0] instanceof OffsetDateTime) && 
                 args[1] != null && args[1] instanceof String) {
-            
             String part = (String) args[1];
             if (args[0] instanceof Calendar) {
                 return getPart((Calendar) args[0], part);
-            } else {
-                Calendar c = Calendar.getInstance();
+            } else if (args[0] instanceof Date) {
+                Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 c.setTime((Date) args[0]);
                 return getPart(c, part);
+            } else {
+                return getPart((OffsetDateTime) args[0], part);
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
+    }
+    
+    private Object getPart(OffsetDateTime offsetDateTime, String part) {
+        if ("hours".equals(part) || "hour".equals(part) || "h".equals(part)) {
+            return offsetDateTime.getHour();
+        } else if ("minutes".equals(part) || "minute".equals(part) || "min".equals(part)) { // avoid 'm' to avoid confusion with month
+            return offsetDateTime.getMinute();
+        } else if ("seconds".equals(part) || "sec".equals(part) || "s".equals(part)) {
+            return offsetDateTime.getSecond();
+        } else if ("milliseconds".equals(part) || "ms".equals(part) || "S".equals(part)) {
+            return Math.round(offsetDateTime.getNano() / 1000);
+        } else if ("nanos".equals(part) || "nano".equals(part) || "n".equals(part)) {
+            // JSR-310 is based on nanoseconds, not milliseconds.
+            return offsetDateTime.getNano();
+        } else if ("years".equals(part) || "year".equals(part)) {
+            return offsetDateTime.getYear();
+        } else if ("months".equals(part) || "month".equals(part)) { // avoid 'm' to avoid confusion with minute
+            return offsetDateTime.getMonth().getValue();
+        } else if ("weeks".equals(part) || "week".equals(part) || "w".equals(part)) {
+            return getWeekOfMonth(offsetDateTime);
+        } else if ("days".equals(part) || "day".equals(part) || "d".equals(part)) {
+            return offsetDateTime.getDayOfMonth();
+        } else if ("weekday".equals(part)) {
+            return offsetDateTime.getDayOfWeek().name();
+        } else if ("time".equals(part)) {       // get Time In Millis
+            return offsetDateTime.toInstant().toEpochMilli();
+        } else {
+            return new EvalError("Date unit '" + part + "' not recognized.");
+        }
+    }
+
+    private int getWeekOfMonth(OffsetDateTime offsetDateTime) {
+        LocalDate date = offsetDateTime.toLocalDate();
+        DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY;
+        int minDays = 1;
+        WeekFields week = WeekFields.of(firstDayOfWeek, minDays);
+        TemporalField womField = week.weekOfMonth();
+        
+        return date.get(womField);
     }
     
     static private String[] s_daysOfWeek = new String[] {

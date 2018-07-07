@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.validator.ValidateOperation;
+import com.google.refine.model.metadata.validator.ValidateOperation;
 import com.google.refine.util.ParsingUtilities;
 
 public class ValidateSchemaCommand extends Command {

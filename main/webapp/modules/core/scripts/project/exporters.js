@@ -1,5 +1,4 @@
 /*
-
 Copyright 2010, Google Inc.
 All rights reserved.
 
@@ -81,20 +80,14 @@ ExporterManager.MenuItems = [
   },
   {},
   {
-    "id" : "core/export-tripleloader",
-    "label": $.i18n._('core-project')["triple-loader"],
-    "click": function() { ExporterManager.handlers.exportTripleloader("tripleloader"); }
-  },
-  {
-    "id" : "core/export-mqlwrite",
-    "label": $.i18n._('core-project')["mqlwrite"],
-    "click": function() { ExporterManager.handlers.exportTripleloader("mqlwrite"); }
-  },
-  {},
-  {
     "id" : "core/export-custom-tabular",
     "label": $.i18n._('core-project')["custom-tabular"],
     "click": function() { new CustomTabularExporterDialog(); }
+  },
+  {
+      "id" : "core/export-sql",
+      "label": $.i18n._('core-project')["sql-export"],
+      "click": function() { new SqlExporterDialog(); }
   },
   {
     "id" : "core/export-templating",
@@ -145,7 +138,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
 };
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
-  var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
+  var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
   var form = document.createElement("form");
   $(form)
   .css("display", "none")

@@ -321,35 +321,6 @@ public class DataExtensionChange implements Change {
         for (Integer rowIndex : _rowIndices) {
             writer.write(rowIndex.toString()); writer.write('\n');
         }
-        writer.write("dataExtensionCount="); writer.write(Integer.toString(_dataExtensions.size())); writer.write('\n');
-        for (DataExtension dataExtension : _dataExtensions) {
-            if (dataExtension == null) {
-                writer.write('\n');
-                continue;
-            }
-            
-            writer.write(Integer.toString(dataExtension.data.length)); writer.write('\n');
-            
-            for (Object[] values : dataExtension.data) {
-                for (Object value : values) {
-                    if (value == null) {
-                        writer.write("null");
-                    } else if (value instanceof ReconCandidate) {
-                        try {
-                            JSONWriter jsonWriter = new JSONWriter(writer);
-                            ((ReconCandidate) value).write(jsonWriter, options);
-                        } catch (JSONException e) {
-                            // ???
-                        }
-                    } else if (value instanceof String) {
-                        writer.write(JSONObject.quote((String) value));
-                    } else {
-                        writer.write(value.toString());
-                    }
-                    writer.write('\n');
-                }
-            }
-        }
         
         writer.write("firstNewCellIndex="); writer.write(Integer.toString(_firstNewCellIndex)); writer.write('\n');
         
@@ -435,6 +406,9 @@ public class DataExtensionChange implements Change {
                     }
                 }
             } else if ("dataExtensionCount".equals(field)) {
+                // kept for compatibility with 2.8, but the data 
+                // deserialized here is not actually needed to apply/undo
+                // the change, so we ignore it.
                 int count = Integer.parseInt(value);
                 
                 dataExtensions = new ArrayList<DataExtension>(count);
@@ -451,20 +425,12 @@ public class DataExtensionChange implements Change {
                     }
                     
                     int rowCount = Integer.parseInt(line);
-                    Object[][] data = new Object[rowCount][];
                     
                     for (int r = 0; r < rowCount; r++) {
-                        Object[] row = new Object[columnNames.size()];
                         for (int c = 0; c < columnNames.size(); c++) {
                             line = reader.readLine();
-                            
-                            row[c] = ReconCandidate.loadStreaming(line);
                         }
-                        
-                        data[r] = row;
                     }
-                    
-                    dataExtensions.add(new DataExtension(data));
                 }
             } else if ("oldRowCount".equals(field)) {
                 int count = Integer.parseInt(value);

@@ -26,6 +26,8 @@ import com.google.api.services.fusiontables.FusiontablesScopes;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 
+import com.google.refine.ProjectManager;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -42,6 +44,13 @@ abstract public class GoogleAPIExtension {
     protected static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
     private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS, FusiontablesScopes.FUSIONTABLES};
+    
+    private static PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+    
+    private static final String CONNECT_TIME_OUT_KEY = "googleConnectTimeOut";
+    private static final String READ_TIME_OUT_KEY = "googleReadTimeOut";
+    private static final int CONNECT_TIME_OUT_DEFAULT = 3 * 60000;      // 3 minutes connect timeout
+    private static final int READ_TIME_OUT_DEFAULT = 3 * 60000;         // 3 minutes read timeout
     
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
@@ -101,8 +110,8 @@ abstract public class GoogleAPIExtension {
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
                 credential.initialize(httpRequest);
-                httpRequest.setConnectTimeout(3 * 60000);  // 3 minutes connect timeout
-                httpRequest.setReadTimeout(3 * 60000);  // 3 minutes read timeout
+                httpRequest.setConnectTimeout(3 * 60000);
+                httpRequest.setReadTimeout(3 * 60000);
             }
         })
           .setApplicationName(SERVICE_APP_NAME).build();
@@ -141,10 +150,29 @@ abstract public class GoogleAPIExtension {
      * @throws IOException
      */
     public static Sheets getSheetsService(String token) throws IOException {
-        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY,
-                new GoogleCredential().setAccessToken(token))
-                .setApplicationName(SERVICE_APP_NAME)
-                .build();
+        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
+        int connectTimeout = getConnectTimeout();
+        int readTimeout = getReadTimeout();
+        
+        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest httpRequest) throws IOException {
+                credential.initialize(httpRequest);
+                httpRequest.setConnectTimeout(connectTimeout);  
+                httpRequest.setReadTimeout(readTimeout);  // 3 minutes read timeout
+            }
+        })
+          .setApplicationName(SERVICE_APP_NAME).build();
+    }
+
+    private static int getConnectTimeout() {
+        return prefStore.get(CONNECT_TIME_OUT_KEY) == null ? CONNECT_TIME_OUT_DEFAULT :
+            Integer.parseInt((String) prefStore.get(CONNECT_TIME_OUT_KEY));
+    }
+    
+    private static int getReadTimeout() {
+        return prefStore.get(READ_TIME_OUT_KEY) == null ? READ_TIME_OUT_DEFAULT :
+            Integer.parseInt((String) prefStore.get(READ_TIME_OUT_KEY));
     }
 
     public static String extractSpreadSheetId(String url)

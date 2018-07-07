@@ -53,6 +53,7 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
+import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationRegistry;
 
@@ -109,6 +110,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        ReconConfig reconConfig = column.getReconConfig();
         
         return new RowVisitor() {
             int                 cellIndex;
@@ -133,6 +135,17 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 // nothing to do
             }
             
+            private Recon createNewRecon() {
+                if(reconConfig != null) {
+                    return reconConfig.createNewRecon(historyEntryID);
+                } else {
+                    // This should only happen when marking cells as reconciled
+                    // in a column that has never been reconciled before. In this case,
+                    // we just resort to the default reconciliation space.
+                    return new Recon(historyEntryID, null, null);
+                }
+            }
+            
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
@@ -144,7 +157,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             recon = sharedRecons.get(s);
                             recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon(historyEntryID, null, null);
+                            recon = createNewRecon();
                             recon.judgment = Judgment.New;
                             recon.judgmentBatchSize = 1;
                             recon.judgmentAction = "mass";
@@ -152,7 +165,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             sharedRecons.put(s, recon);
                         }
                     } else {
-                        recon = cell.recon == null ? new Recon(historyEntryID, null, null) : cell.recon.dup(historyEntryID);
+                        recon = cell.recon == null ? createNewRecon() : cell.recon.dup(historyEntryID);
                         recon.match = null;
                         recon.matchRank = -1;
                         recon.judgment = Judgment.New;

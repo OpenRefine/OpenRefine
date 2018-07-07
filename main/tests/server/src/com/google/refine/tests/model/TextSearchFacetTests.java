@@ -60,7 +60,7 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
