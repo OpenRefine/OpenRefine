@@ -338,16 +338,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             try {
                 URLConnection urlConnection = url.openConnection();
                 if (_httpHeadersJson != null) {
-                    Map<String, String> httpHeaders = new HashMap<>();
-                    for (int i = 0; i < _httpHeadersJson.length(); i++) {            
+                    for (int i = 0; i < _httpHeadersJson.length(); i++) {
                         String headerLabel = _httpHeadersJson.getJSONObject(i).getString("name");
                         String headerValue = _httpHeadersJson.getJSONObject(i).getString("value");
-                        httpHeaders.put(headerLabel, headerValue);
-                    }
-                    for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
-                        HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
-
-                        urlConnection.setRequestProperty(info.header, httpHeaders.get(headerLabel));
+                        if (headerValue != null && !headerValue.isEmpty()) {
+                            urlConnection.setRequestProperty(headerLabel, headerValue);
+                        }
                     }
                 }
 
