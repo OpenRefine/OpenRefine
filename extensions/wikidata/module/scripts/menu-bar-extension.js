@@ -21,7 +21,7 @@ ExporterManager.MenuItems.push(
         {
             "id" : "exportQuickStatements",
             "label": $.i18n._('wikidata-extension')["quickstatements-export-name"],
-            "click": function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
+            "click": function() { WikibaseSchemaExporterMenuBar.checkSchemaAndExport(); }
         }
 );
 
@@ -54,6 +54,19 @@ WikibaseExporterMenuBar.exportTo = function(format) {
     document.body.removeChild(form);
 };
 
+WikibaseExporterMenuBar.checkSchemaAndExport = function() {
+  var onSaved = function(callback) {
+     WikibaseExporterMenuBar.exportTo("quickstatements"); 
+  };
+  if (!SchemaAlignmentDialog.isSetUp()) {
+     SchemaAlignmentDialog.launch(null);
+  } else if (SchemaAlignmentDialog._hasUnsavedChanges) {
+     SchemaAlignmentDialog._save(onSaved);
+  } else {
+     onSaved();
+  }
+}
+
 //extend the column header menu
 $(function(){
     
@@ -80,7 +93,7 @@ $(function(){
                     {               
                         id:"wikidata/export-qs",
                         label: $.i18n._('wikidata-extension')["export-to-qs"],
-                        click: function() { WikibaseExporterMenuBar.exportTo("quickstatements"); }
+                        click: function() { WikibaseExporterMenuBar.checkSchemaAndExport(); }
                     },
 
                 ]
