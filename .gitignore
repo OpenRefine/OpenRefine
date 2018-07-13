@@ -26,3 +26,6 @@ tmp/
 test-out/
 /bin
 open-refine.log
+openrefine.deb
+deb-package
+

@@ -1,0 +1,2 @@
+#sudo ln -sfn '/opt/openrefine/refine' '/usr/local/bin/openrefine'
+sudo mv '/usr/local/bin//openrefine/openrefine.desktop' '/usr/share/applications'

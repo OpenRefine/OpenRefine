@@ -1,0 +1,8 @@
+.git
+.github
+.gitignore
+.gitattributes
+.travis.yml
+appveyor.yml
+DEBIAN
+refine.bat
