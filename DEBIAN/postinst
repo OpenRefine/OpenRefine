@@ -1,2 +1,1 @@
-#sudo ln -sfn '/opt/openrefine/refine' '/usr/local/bin/openrefine'
-sudo mv '/usr/local/bin//openrefine/openrefine.desktop' '/usr/share/applications'
+printf '[Desktop Entry]\nName=OpenRefine\nVersion=2.8\nExec=/usr/local/bin/openrefine/refine\nComment=Application for data cleanup\nIcon=/usr/local/bin/openrefine/icon.png\nType=Application\nTerminal=true\nStartupNotify=false\nEncoding=UTF-8\nCategories=Utility;\n' | sudo tee '/usr/share/applications/openrefine.desktop'

@@ -1,2 +1,2 @@
 sudo rm -rf '/usr/local/bin/openrefine'
-#sudo rm -d '/usr/local/bin/openrefine'
+
