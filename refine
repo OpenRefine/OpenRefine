@@ -354,24 +354,6 @@ launch4j_prepare() {
     LAUNCH4J_DIR="launch4j"
     
     tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
-
-    # Workaround: launch4j 3.0.2 & earlier does not work on versions of MacOS
-    # without PPC support (e.g. Lion) so we patch it to include Intel binaries; 
-    # the following lines can be removed once we update to a version of 
-    # launch4j that fixes the issue (not available yet).
-    # (3.1.0-beta1 fixes this, but introduces other bugs which make it unusable)
-    if [ "$OS" = "macosx" ] ; then
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/windres" "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/windres" $REFINE_TOOLS_DIR/launch4j/bin/windres
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/windres"
-        fi
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/ld" "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/ld" $REFINE_TOOLS_DIR/launch4j/bin/ld
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/ld"
-        fi
-    fi
 }
     
 appbundler_prepare() {
@@ -533,7 +515,7 @@ mac_dist() {
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=250
+    SIZE=350
     
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
