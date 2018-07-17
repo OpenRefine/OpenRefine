@@ -1,2 +1,5 @@
-sudo rm -rf '/usr/local/bin/openrefine'
+sudo rm -rf '/opt/openrefine'
+
+#sed -i '\nPATH="/opt/openrefine"\n/c\\n' ~/.profile
+#source ~/.profile
 
