@@ -1,5 +1,7 @@
+#!/bin/bash
+
 sudo rm -rf '/opt/openrefine'
 
-#sed -i '\nPATH="/opt/openrefine"\n/c\\n' ~/.profile
-#source ~/.profile
+sed -i '/export PATH=$PATH\:\/opt\/openrefine/d' ~/.profile
+source ~/.profile
 
