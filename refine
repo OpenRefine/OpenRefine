@@ -4,6 +4,18 @@
 #               OpenRefine Control System             #
 ##########################################################
 
+# ---------------- user settings ------------------------
+
+if [ ! -f $HOME/.openrefine ]; then
+	echo "Creating user directory"
+	mkdir $HOME/.openrefine
+fi
+
+if [ ! -f $HOME/.openrefine/settings.ini ]; then
+	echo "Creating default user settings"
+	cp /opt/openrefine/refine.ini $HOME/.openrefine/settings.ini
+fi
+
 # -------------- utility functions ----------------------
 
 fail () {
@@ -875,7 +887,7 @@ fi
 
 # ----- Load configurations -------------------------------------
 
-load_configs refine.ini
+load_configs $HOME/.openrefine/settings.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
