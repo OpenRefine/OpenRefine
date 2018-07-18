@@ -6,7 +6,7 @@
 
 # ---------------- user settings ------------------------
 
-if [ ! -f $HOME/.openrefine ]; then
+if [ ! -d $HOME/.openrefine ]; then
 	echo "Creating user directory"
 	mkdir $HOME/.openrefine
 fi
