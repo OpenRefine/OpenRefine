@@ -485,7 +485,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
+    "$ANT" -f /opt/openrefine/build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
