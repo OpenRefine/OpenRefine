@@ -44,7 +44,7 @@ EditRenderer._renderItem = function(json, container) {
     
     this._renderTermsList(json.labels, "label", termsContainer);
     this._renderTermsList(json.descriptions, "description", termsContainer);
-    this._renderTermsList(json.aliases, "alias", termsContainer);
+    this._renderTermsList(json.addedAliases, "alias", termsContainer);
 
     // Clear the float
     $('<div></div>').attr('style', 'clear: right').appendTo(right);
