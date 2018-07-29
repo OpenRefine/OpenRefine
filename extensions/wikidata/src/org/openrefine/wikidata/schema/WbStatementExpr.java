@@ -25,7 +25,10 @@ package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
@@ -69,13 +72,22 @@ public class WbStatementExpr {
     }
 
     public static List<SnakGroup> groupSnaks(List<Snak> snaks) {
-        List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
+        Map<PropertyIdValue, List<Snak>> snakGroups = new HashMap<>();
+        List<PropertyIdValue> propertyOrder = new ArrayList<PropertyIdValue>();
         for (Snak snak : snaks) {
-            List<Snak> singleton = new ArrayList<Snak>();
-            singleton.add(snak);
-            snakGroups.add(Datamodel.makeSnakGroup(singleton));
+            List<Snak> existingSnaks = snakGroups.get(snak.getPropertyId());
+            if(existingSnaks == null) {
+                existingSnaks = new ArrayList<Snak>();
+                snakGroups.put(snak.getPropertyId(), existingSnaks);
+                propertyOrder.add(snak.getPropertyId());
+            }
+            if (!existingSnaks.contains(snak)) {
+                existingSnaks.add(snak);
+            }
         }
-        return snakGroups;
+        return propertyOrder.stream()
+                .map(pid -> Datamodel.makeSnakGroup(snakGroups.get(pid)))
+                .collect(Collectors.toList());
     }
 
     public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId)

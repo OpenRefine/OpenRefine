@@ -59,16 +59,15 @@ public class WbReferenceExpr implements WbExpression<Reference> {
     @Override
     public Reference evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
-        List<SnakGroup> snakGroups = new ArrayList<SnakGroup>();
+        List<Snak> snakList = new ArrayList<Snak>();
         for (WbSnakExpr expr : getSnaks()) {
-            List<Snak> snakList = new ArrayList<Snak>(1);
             try {
                 snakList.add(expr.evaluate(ctxt));
-                snakGroups.add(Datamodel.makeSnakGroup(snakList));
             } catch (SkipSchemaExpressionException e) {
                 continue;
             }
         }
+        List<SnakGroup> snakGroups = WbStatementExpr.groupSnaks(snakList);
         if (!snakGroups.isEmpty()) {
             return Datamodel.makeReference(snakGroups);
         } else {

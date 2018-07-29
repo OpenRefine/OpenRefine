@@ -55,6 +55,11 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
     private WbLocationVariable mainValueExpr = new WbLocationVariable("column C");
     public WbStatementExpr statementExpr = new WbStatementExpr(mainValueExpr, Collections.singletonList(qualifierExpr),
             Collections.singletonList(refExpr));
+    private WbSnakExpr constantQualifierExpr = new WbSnakExpr(new WbPropConstant("P897", "point in time", "time"),
+            new WbDateConstant("2018-04-05"));
+    public WbStatementExpr statementWithConstantExpr = new WbStatementExpr(mainValueExpr,
+            Arrays.asList(qualifierExpr, constantQualifierExpr),
+            Collections.singletonList(refExpr));
 
     public ItemIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     private PropertyIdValue property = Datamodel.makeWikidataPropertyIdValue("P908");
@@ -63,11 +68,17 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
                     Datamodel.makeWikidataItemIdValue("Q3434"))))));
     private Snak qualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
             Datamodel.makeTimeValue(2010, (byte) 7, (byte) 23, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO));
+    private Snak constantQualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
+            Datamodel.makeTimeValue(2018, (byte) 4, (byte) 5, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO));
     private Snak mainsnak = Datamodel.makeValueSnak(property, Datamodel.makeGlobeCoordinatesValue(3.898, 4.389,
             WbLocationConstant.defaultPrecision, GlobeCoordinatesValue.GLOBE_EARTH));
     private Claim fullClaim = Datamodel.makeClaim(subject, mainsnak,
             Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(qualifier))));
     public Statement fullStatement = Datamodel.makeStatement(fullClaim, Collections.singletonList(reference),
+            StatementRank.NORMAL, "");
+    public Claim claimWithConstant = Datamodel.makeClaim(subject, mainsnak,
+            Collections.singletonList(Datamodel.makeSnakGroup(Arrays.asList(qualifier, constantQualifier))));
+    public Statement statementWithConstant = Datamodel.makeStatement(claimWithConstant, Collections.singletonList(reference),
             StatementRank.NORMAL, "");
 
     class Wrapper implements WbExpression<Statement> {
@@ -104,6 +115,12 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
         evaluatesTo(fullStatement, new Wrapper(statementExpr));
+    }
+    
+    @Test
+    public void testEvaluateWithConstant() {
+        setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
+        evaluatesTo(statementWithConstant, new Wrapper(statementWithConstantExpr));
     }
 
     @Test
