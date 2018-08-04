@@ -66,7 +66,7 @@ public class NumberCriterion extends Criterion {
                     }
                     return s_error;
                 }
-                return value;
+                return null;
             }
 
             @Override
