@@ -151,7 +151,7 @@
         "col-separated-by": "Columns are separated by",
         "commas": "commas (CSV)",
         "tabs": "tabs (TSV)",
-        "custom": "custom",
+        "custom": "custom:",
         "escape": "Escape special characters with \\",
         "use-quote": "Use character",
         "quote-delimits-cells": "to enclose cells containing column separators",
