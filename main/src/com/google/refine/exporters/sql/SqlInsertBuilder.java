@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -131,13 +133,23 @@ public class SqlInsertBuilder {
                  
                     }else {//value not null
                         
-                        try {
-                            Integer.parseInt(val.getText());
-                        } catch (NumberFormatException nfe) {
-                            throw new SqlExporterException(
-                                    val.getText() + " is not compatible with column type :" + type);
+                        if(type.equals(SqlData.SQL_TYPE_NUMERIC)) {//test if number is numeric (decimal number is valid)
+                           
+                            if(!NumberUtils.isNumber(val.getText())){
+                                throw new SqlExporterException(
+                                        val.getText() + " is not compatible with column type :" + type);
+                            }
+                        }else {
+                            
+                            try { //number should be an integer
+                                Integer.parseInt(val.getText());
+                            } catch (NumberFormatException nfe) {
+                                throw new SqlExporterException(
+                                        val.getText() + " is not compatible with column type :" + type);
+                            }
+                            
                         }
-
+                       
                         rowValue.append(val.getText());
                        
                     }
@@ -153,9 +165,7 @@ public class SqlInsertBuilder {
                 rowValue.append(",");
             
             }
-            
-         
-            
+       
             idx++;
             String rowValString = rowValue.toString();
 //            logger.info("rowValString::" + rowValString);
@@ -249,5 +259,5 @@ public class SqlInsertBuilder {
         
     }
     
-    
+ 
 }
