@@ -133,7 +133,7 @@ public class SqlInsertBuilder {
                  
                     }else {//value not null
                         
-                        if(type.equals(SqlData.SQL_TYPE_NUMERIC)) {//test if number is numeric (decimal number is valid)
+                        if(type.equals(SqlData.SQL_TYPE_NUMERIC)) {//test if number is numeric (decimal(p,s) number is valid)
                            
                             if(!NumberUtils.isNumber(val.getText())){
                                 throw new SqlExporterException(
