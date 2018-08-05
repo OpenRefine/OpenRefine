@@ -57,6 +57,7 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.sql.SqlCreateBuilder;
+import com.google.refine.exporters.sql.SqlData;
 import com.google.refine.exporters.sql.SqlExporter;
 import com.google.refine.exporters.sql.SqlInsertBuilder;
 import com.google.refine.model.Cell;
@@ -115,6 +116,54 @@ public class SqlExporterTests extends RefineTest {
         options = null;
         sqlCreateBuilder = null;
         sqlInsertBuilder = null;
+    }
+    
+    @Test
+    public void testExportSqlWithNonZeroScaleNumericValue(){
+        createNonZeroScaleNumericGrid(2, 2);
+        String tableName = "sql_table_test";
+        String optionsString = createOptionsFromProject(tableName, SqlData.SQL_TYPE_NUMERIC,null).toString();
+        when(options.getProperty("options")).thenReturn(optionsString);
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        String result = writer.toString();
+        logger.info("result = \n" + result);
+        Assert.assertNotNull(result);
+        assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
+        boolean checkResult = result.contains("CREATE TABLE " + tableName);
+        //logger.info("checkResult1 =" + checkResult);
+        checkResult = result.contains("INSERT INTO " + tableName);
+       // logger.info("checkResult2 =" + checkResult);
+        Assert.assertEquals(checkResult,  true);
+   
+    }
+
+    private void createNonZeroScaleNumericGrid(int noOfRows, int noOfColumns) {
+        createColumnsWithScaleEqualsTwo(noOfColumns);
+
+        for(int i = 0; i < noOfRows; i++){
+            Row row = new Row(noOfColumns);
+            for(int j = 0; j < noOfColumns; j++){
+                row.cells.add(new Cell(generateRandomNumericValues() , null));
+            }
+            project.rows.add(row);
+        }
+        
+    }
+    
+    protected void createColumnsWithScaleEqualsTwo(int noOfColumns){
+        for(int i = 0; i < noOfColumns; i++){
+            try {
+                project.columnModel.addColumn(i, new Column(i, "column" + i), true);
+            } catch (ModelException e1) {
+                Assert.fail("Could not create column");
+            }
+        }
     }
 
     @Test
@@ -370,6 +419,45 @@ public class SqlExporterTests extends RefineTest {
             project.rows.add(row);
         }
     }
+    
+    protected JSONObject createNumericColOptionsFromProject(String tableName, String type, String size) {
+        
+        JSONObject json = new JSONObject();
+        JSONArray columns = new JSONArray();
+        json.put("columns", columns);
+        json.put("tableName", tableName);
+        
+        List<Column> cols = project.columnModel.columns;
+      
+        cols.forEach(c -> {
+            //logger.info("Column Name = " + c.getName());
+            JSONObject columnModel = new JSONObject();
+            columnModel.put("name", c.getName());
+            if(type != null) {
+                columnModel.put("type", type);
+            }else {
+                columnModel.put("type", "VARCHAR");
+            }
+            if(size != null) {
+                columnModel.put("size", size); 
+            }else {
+                columnModel.put("size", "100");
+            }
+            
+            if(type != null) {
+                columnModel.put("type", type);
+            }
+            if(size != null) {
+               // logger.info(" Size = " + size);
+                columnModel.put("size", size);
+            }
+            
+            columns.put(columnModel);
+       
+        });
+        
+       return json;
+    }
   
    protected JSONObject createOptionsFromProject(String tableName, String type, String size) {
        
@@ -452,6 +540,13 @@ public class SqlExporterTests extends RefineTest {
        
       return json;
    }
+    
+    double generateRandomNumericValues(){
+        int precision = 100; //scale = 2
+        double randomnum = Math.floor(Math.random() * (10 * precision - 1 * precision) + 1 * precision) / (1*precision);
+        return randomnum;
+    }
+    
    
   
 }
