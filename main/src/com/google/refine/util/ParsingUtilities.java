@@ -44,7 +44,11 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -188,13 +192,31 @@ public class ParsingUtilities {
      * @return LocalDateTime or null if the parse failed
      */
     static public OffsetDateTime stringToDate(String s) {
-        Instant instant = Instant.parse(s);
-        return OffsetDateTime.ofInstant(instant, ZoneId.of("Z"));
+        // Accept timestamps with an explicit time zone
+        try {
+            return OffsetDateTime.parse(s);
+        } catch(DateTimeParseException e) {
+            
+        }
+        
+        // Also accept timestamps without an explicit zone and
+        // assume them to be in local time.
+        try {
+            LocalDateTime localTime = LocalDateTime.parse(s);
+            return OffsetDateTime.of(localTime, ZoneId.systemDefault().getRules().getOffset(localTime));
+        } catch(DateTimeParseException e) {
+            
+        }
+        return null;
     }
     
     static public LocalDateTime stringToLocalDate(String s) {
-        Instant instant = Instant.parse(s);
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        // parse the string as a date and express it in local time
+        OffsetDateTime parsed = stringToDate(s);
+        if (parsed == null) {
+            return null;
+        }
+        return parsed.toLocalDateTime();
     }
     
     static public String instantToString(Instant instant) {
@@ -203,5 +225,15 @@ public class ParsingUtilities {
     
     static public String instantToLocalDateTimeString(Instant instant) {
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(ISO8601);
+    }
+    
+    static public OffsetDateTime calendarToOffsetDateTime(Calendar calendar) {
+        return calendar.toInstant().atOffset(ZoneOffset.of("Z"));
+    }
+    
+    static public Calendar offsetDateTimeToCalendar(OffsetDateTime offsetDateTime) {
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("Z"));
+        cal.setTimeInMillis(offsetDateTime.toInstant().toEpochMilli());
+        return cal;
     }
 }

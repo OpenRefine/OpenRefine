@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.refine.expr.functions.Coalesce;
 import com.google.refine.expr.functions.Cross;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.expr.functions.Get;
@@ -141,6 +142,7 @@ import com.google.refine.grel.controls.ForRange;
 import com.google.refine.grel.controls.If;
 import com.google.refine.grel.controls.IsBlank;
 import com.google.refine.grel.controls.IsError;
+import com.google.refine.grel.controls.IsEmptyString;
 import com.google.refine.grel.controls.IsNonBlank;
 import com.google.refine.grel.controls.IsNotNull;
 import com.google.refine.grel.controls.IsNull;
@@ -186,6 +188,7 @@ public class ControlFunctionRegistry {
     }
 
     static {
+        registerFunction("coalesce", new Coalesce());
         registerFunction("type", new Type());
 
         registerFunction("toString", new ToString());
@@ -305,6 +308,7 @@ public class ControlFunctionRegistry {
 
         registerControl("isNull", new IsNull());
         registerControl("isNotNull", new IsNotNull());
+        registerControl("isEmptyString", new IsEmptyString());
         registerControl("isBlank", new IsBlank());
         registerControl("isNonBlank", new IsNonBlank());
         registerControl("isNumeric", new IsNumeric());

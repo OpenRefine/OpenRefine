@@ -60,7 +60,7 @@ DataTableCellUI.prototype._render = function() {
   .mouseleave(function() { editLink.css("visibility", "hidden"); });
 
   if (!cell || ("v" in cell && cell.v === null)) {
-    $('<span>').html("&nbsp;").appendTo(divContent);
+    $('<span>').addClass("data-table-null").html('null').appendTo(divContent);
   } else if ("e" in cell) {
     $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
   } else if (!("r" in cell) || !cell.r) {

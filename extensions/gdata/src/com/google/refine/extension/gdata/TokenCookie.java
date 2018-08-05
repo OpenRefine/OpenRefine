@@ -7,9 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.refine.util.CookiesUtilities;
 
 public class TokenCookie {
-
     private static final String COOKIE_NAME = "oauth2_token";
-    private static int MAX_AGE = 30 * 24 * 60 * 60; // 30 days
 
     public static String getToken(HttpServletRequest request) {
         Cookie cookie = CookiesUtilities.getCookie(request, COOKIE_NAME);
@@ -17,8 +15,9 @@ public class TokenCookie {
     }
 
     public static void setToken(HttpServletRequest request,
-            HttpServletResponse response, String token) {
-        CookiesUtilities.setCookie(request, response, COOKIE_NAME, token, MAX_AGE);
+            HttpServletResponse response, String token, String expiresInSeconds) {
+        CookiesUtilities.setCookie(request, response, COOKIE_NAME, token, 
+                Integer.parseInt(expiresInSeconds));
     }
 
     public static void deleteToken(HttpServletRequest request,

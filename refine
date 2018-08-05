@@ -354,24 +354,6 @@ launch4j_prepare() {
     LAUNCH4J_DIR="launch4j"
     
     tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
-
-    # Workaround: launch4j 3.0.2 & earlier does not work on versions of MacOS
-    # without PPC support (e.g. Lion) so we patch it to include Intel binaries; 
-    # the following lines can be removed once we update to a version of 
-    # launch4j that fixes the issue (not available yet).
-    # (3.1.0-beta1 fixes this, but introduces other bugs which make it unusable)
-    if [ "$OS" = "macosx" ] ; then
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/windres" "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/windres" $REFINE_TOOLS_DIR/launch4j/bin/windres
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/windres"
-        fi
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/ld" "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/ld" $REFINE_TOOLS_DIR/launch4j/bin/ld
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/ld"
-        fi
-    fi
 }
     
 appbundler_prepare() {
@@ -533,7 +515,7 @@ mac_dist() {
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=250
+    SIZE=350
     
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
@@ -839,10 +821,11 @@ checkJavaMajorVersion() {
     # Java 9+ starts with x using semver versioning
     major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
   fi
-  
-  JAVA_VERSION=$(echo ${major} | egrep '^(6|7|8|9)')
-  if [ -z "$JAVA_VERSION" ] ; then
-    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  if (( ${major} < 7 )); then
+    error "OpenRefine requires Java version 7 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  fi
+  if (( ${major} > 9 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 9."
   fi
 }
 

@@ -35,8 +35,7 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -49,6 +48,7 @@ import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class OdsExporter implements StreamExporter {
 
@@ -97,12 +97,9 @@ public class OdsExporter implements StreamExporter {
                             c.setDoubleValue(((Number) v).doubleValue());
                         } else if (v instanceof Boolean) {
                             c.setBooleanValue(((Boolean) v).booleanValue());
-                        } else if (v instanceof Date) {
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime((Date) v);
-                            c.setDateValue(cal);
-                        } else if (v instanceof Calendar) {
-                            c.setDateValue((Calendar) v);
+                        } else if (v instanceof OffsetDateTime) {
+                            OffsetDateTime odt = (OffsetDateTime)v;
+                            c.setDateValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
                         } else {
                             c.setStringValue(cellData.text);
                         }

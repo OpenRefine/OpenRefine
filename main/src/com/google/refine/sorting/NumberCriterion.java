@@ -33,8 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -53,10 +52,8 @@ public class NumberCriterion extends Criterion {
                         return value;
                     } else if (value instanceof Boolean) {
                         return ((Boolean) value).booleanValue() ? 1 : 0;
-                    } else if (value instanceof Date) {
-                        return ((Date) value).getTime();
-                    } else if (value instanceof Calendar) {
-                        return ((Calendar) value).getTime().getTime();
+                    } else if (value instanceof OffsetDateTime) {
+                        return ((OffsetDateTime) value).toInstant().toEpochMilli();
                     } else if (value instanceof String) {
                         try {
                             double d = Double.parseDouble((String) value);

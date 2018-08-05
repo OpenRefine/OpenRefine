@@ -44,6 +44,7 @@
 	"gdata-exporter": {
 		"uploading": "Uploading...",
 		"upload-error": "Upload error: ",
+  		"upload-success": "Project was uploaded successfully to Google Drive with Id ",
 		"new-spreadsheet": "A new Google spreadsheet",
 		"enter-spreadsheet": "Enter a name for the new Google spreadsheet",
 		"new-fusion": "A new Google Fusion table",

@@ -39,6 +39,7 @@ function DataTableView(div) {
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
+  this._shownulls = false;
 
   this._showRows(0);
 }
@@ -134,7 +135,10 @@ DataTableView.prototype.render = function() {
 
   this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
   this._div.empty().append(html);
-  
+
+  // show/hide null values in cells
+  $(".data-table-null").toggle(self._shownulls);
+
   this.resize();
   
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
@@ -741,6 +745,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
             self._collapsedColumnNames = [];
             self.render();
           }
+        },
+        {
+          label: $.i18n._('core-views')["display-null"],
+          id: "core/display-null",
+          click: function() {
+            $(".data-table-null").toggle();
+            self._shownulls = !(self._shownulls);
+          }
         }
       ]
     }
@@ -769,7 +781,10 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
         Refine.postCoreProcess(
           "reorder-rows",
           null,
-          { "sorting" : JSON.stringify(self._sorting) }, 
+          {
+            "sorting" : JSON.stringify(self._sorting),
+            "mode" : ui.browsingEngine.getMode()
+          },
           { rowMetadataChanged: true },
           {
             onDone: function() {

@@ -105,7 +105,24 @@ public class ParsingUtilitiesTests extends RefineTest {
         OffsetDateTime zdt = ParsingUtilities.stringToDate(historyEntryDate);
         String zdtString = ParsingUtilities.dateToString(zdt);
         Assert.assertEquals(zdtString, historyEntryDate);
-        
+    }
+    
+    @Test
+    public void stringToDate() {
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43+00:00").getYear());
+    }
+    
+    @Test
+    public void stringToLocalDate() {
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43+00:00").getYear());
     }
     
     @Test

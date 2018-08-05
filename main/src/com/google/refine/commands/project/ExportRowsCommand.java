@@ -44,6 +44,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
@@ -52,9 +56,12 @@ import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
+import com.google.refine.exporters.sql.SqlExporterException;
+
 import com.google.refine.model.Project;
 
 public class ExportRowsCommand extends Command {
+    private  static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
 
     @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {
@@ -73,6 +80,7 @@ public class ExportRowsCommand extends Command {
             throws ServletException, IOException {
 
         ProjectManager.singleton.setBusy(true);
+       
         try {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
@@ -100,7 +108,8 @@ public class ExportRowsCommand extends Command {
                 
                 ((WriterExporter) exporter).export(project, params, engine, writer);
                 writer.close();
-            } else if (exporter instanceof StreamExporter) {
+            }
+            else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
                 
                 OutputStream stream = response.getOutputStream();
@@ -108,12 +117,17 @@ public class ExportRowsCommand extends Command {
                 stream.close();
 //          } else if (exporter instanceof UrlExporter) {
 //              ((UrlExporter) exporter).export(project, options, engine);
+                
             } else {
                 // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
         } catch (Exception e) {
             // Use generic error handling rather than our JSON handling
+            logger.info("error:{}", e.getMessage());
+            if (e instanceof SqlExporterException) {
+                response.sendError(HttpStatus.SC_BAD_REQUEST, e.getMessage());
+            }
             throw new ServletException(e);
         } finally {
             ProjectManager.singleton.setBusy(false);

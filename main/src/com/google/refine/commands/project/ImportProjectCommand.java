@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.model.medadata.ProjectMetadata;
+import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.ParsingUtilities;
 
 public class ImportProjectCommand extends Command {

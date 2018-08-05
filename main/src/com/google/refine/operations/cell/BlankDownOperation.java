@@ -40,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.AbstractOperation;
@@ -97,15 +98,18 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        Mode engineMode = createEngine(project).getMode();
         
         return new RowVisitor() {
             int                 cellIndex;
             List<CellChange>    cellChanges;
             Cell                previousCell;
+            Mode                engineMode;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, Mode engineMode) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
+                this.engineMode = engineMode;
                 return this;
             }
 
@@ -121,6 +125,9 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
             
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
+                if (engineMode.equals(Mode.RecordBased) && ExpressionUtils.isNonBlankData(row.getCellValue(0))) {
+                    previousCell = null;
+                }
                 Object value = row.getCellValue(cellIndex);
                 if (ExpressionUtils.isNonBlankData(value)) {
                     Cell cell = row.getCell(cellIndex);
@@ -134,6 +141,6 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, engineMode);
     }
 }

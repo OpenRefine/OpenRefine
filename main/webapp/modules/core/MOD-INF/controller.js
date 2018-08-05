@@ -151,6 +151,7 @@ function registerCommands() {
   
   RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
   RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
+
 }
 
 function registerOperations() {
@@ -210,7 +211,8 @@ function registerImporting() {
   IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf+n3", "RDF/N3 files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfTripleImporter());
+  IM.registerFormat("text/rdf+n3", "RDF/N3 files", "RdfTriplesParserUI", 
+          new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
 
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
@@ -279,7 +281,7 @@ function registerImporting() {
 
   IM.registerMimeType("application/marc", "text/marc");
   
-  IM.registerUrlRewriter(new Packages.com.google.refine.model.medadata.DataPackageUrlRewriter());
+  IM.registerUrlRewriter(new Packages.com.google.refine.model.metadata.DataPackageUrlRewriter());
 
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
@@ -467,6 +469,7 @@ function init() {
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
+      "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/project/edit-general-metadata-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
@@ -506,7 +509,7 @@ function init() {
       "styles/dialogs/scatterplot-dialog.less",
       "styles/dialogs/column-reordering-dialog.less",
       "styles/dialogs/custom-tabular-exporter-dialog.less",
-
+      "styles/dialogs/sql-exporter-dialog.less",
       "styles/reconciliation/recon-dialog.less",
       "styles/reconciliation/standard-service-panel.less",
       "styles/reconciliation/extend-data-preview-dialog.less",
