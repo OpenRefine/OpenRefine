@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -348,6 +350,13 @@ abstract public class CustomizableTabularExporterUtilities {
                     if (text == null) {
                         if (value instanceof String) {
                             text = (String) value;
+                            
+                            if(text.contains(":")) {
+                                try {
+                                    link = new URL(text).toString();
+                                } catch (MalformedURLException e) {
+                                }
+                            }
                         } else if (value instanceof OffsetDateTime) {
                             text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
                         } else {
