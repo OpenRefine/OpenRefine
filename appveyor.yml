@@ -11,18 +11,18 @@ clone_depth: 5
 skip_branch_with_pr: true
 
 environment:
-  ANT_HOME: C:\apache-ant-1.10.3
+  ANT_HOME: C:\apache-ant-1.10.5
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
 
 matrix:
   fast_finish: true
 
 install:
-- cmd: if not exist %ANT_HOME% pushd . && cd \ && appveyor DownloadFile http://apache.spinellicreations.com/ant/binaries/apache-ant-1.10.3-bin.zip && 7z x apache-ant-1.10.3-bin.zip && popd
+- cmd: if not exist %ANT_HOME% pushd . && cd \ && appveyor DownloadFile http://www.mirrorservice.org/sites/ftp.apache.org//ant/binaries/apache-ant-1.10.5-bin.zip && 7z x apache-ant-1.10.5-bin.zip && popd
 
 cache:
-- C:\apache-ant-1.10.3
-- apache-ant-1.10.3-bin.zip
+- C:\apache-ant-1.10.5
+- apache-ant-1.10.5-bin.zip
 build: off
 
 # scripts to run before test
