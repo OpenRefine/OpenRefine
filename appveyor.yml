@@ -11,7 +11,7 @@ clone_depth: 5
 skip_branch_with_pr: true
 
 environment:
-  ANT_HOME: C:\apache-ant-1.10.3
+  ANT_HOME: C:\apache-ant-1.10.5
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
 
 matrix:
