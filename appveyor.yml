@@ -21,8 +21,8 @@ install:
 - cmd: if not exist %ANT_HOME% pushd . && cd \ && appveyor DownloadFile http://www.mirrorservice.org/sites/ftp.apache.org//ant/binaries/apache-ant-1.10.5-bin.zip && 7z x apache-ant-1.10.5-bin.zip && popd
 
 cache:
-- C:\apache-ant-1.10.3
-- apache-ant-1.10.3-bin.zip
+- C:\apache-ant-1.10.5
+- apache-ant-1.10.5-bin.zip
 build: off
 
 # scripts to run before test
