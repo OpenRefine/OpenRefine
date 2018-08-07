@@ -184,6 +184,33 @@ public class HtmlExporterTests extends RefineTest {
                 "</body>\n" +
                 "</html>\n");
         }
+    
+    @Test
+    public void exportHtmlTableWithURLs(){
+        CreateGrid(3,3);
+
+        project.rows.get(1).cells.set(1, new Cell("ftp://ftp.ripe.net/ripe/", null));
+        project.rows.get(2).cells.set(0, new Cell("https://gnu.org/", null));
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "<html>\n" +
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
+                "<meta charset=\"utf-8\" />\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<table>\n" +
+                "<tr><th>column0</th><th>column1</th><th>column2</th></tr>\n" +
+                "<tr><td>row0cell0</td><td>row0cell1</td><td>row0cell2</td></tr>\n" +
+                "<tr><td>row1cell0</td><td><a href=\"ftp://ftp.ripe.net/ripe/\">ftp://ftp.ripe.net/ripe/</a></td><td>row1cell2</td></tr>\n" +
+                "<tr><td><a href=\"https://gnu.org/\">https://gnu.org/</a></td><td>row2cell1</td><td>row2cell2</td></tr>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>\n");
+    }
 
     //helper methods
 
