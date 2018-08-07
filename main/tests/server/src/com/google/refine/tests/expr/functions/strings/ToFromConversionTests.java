@@ -177,5 +177,11 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "url"),"1.23");
       Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "javascript"),"1.23");
    }
+    
+    @Test
+    public void testUnescape() {
+        Assert.assertEquals(invoke("unescape", "&Auml;", "html"),"Ä");
+        Assert.assertEquals(invoke("unescape", "\\u00C4", "javascript"),"Ä");
+    }
 
 }
