@@ -2,6 +2,7 @@ package com.google.refine.tests.model.recon;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -11,8 +12,9 @@ import org.testng.annotations.Test;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
-public class ReconTests extends RefineTest {
+public class StandardReconConfigTests extends RefineTest {
 
     @Override
     @BeforeTest
@@ -20,8 +22,8 @@ public class ReconTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    private class StandardReconConfigTest extends StandardReconConfig {
-        public StandardReconConfigTest() {
+    private class StandardReconConfigStub extends StandardReconConfig {
+        public StandardReconConfigStub() {
             super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
         }
 
@@ -32,30 +34,24 @@ public class ReconTests extends RefineTest {
 
     @Test
     public void wordDistance() {
-        StandardReconConfigTest t = new StandardReconConfigTest();
+        StandardReconConfigStub t = new StandardReconConfigStub();
         double r = t.wordDistanceTest("Foo", "Foo bar");
 
-        Assert.assertEquals(r,0.5);
+        Assert.assertEquals(0.5, r);
     }
 
     @Test
     public void wordDistanceOnlyStopwords() {
-        StandardReconConfigTest t = new StandardReconConfigTest();
+        StandardReconConfigStub t = new StandardReconConfigStub();
         double r = t.wordDistanceTest("On and On", "On and On and On");
 
         Assert.assertTrue(!Double.isInfinite(r));
         Assert.assertTrue(!Double.isNaN(r));
     }
     
-    /**
-     * Regression for issue #1517:
-     * JSON deserialization exception due to the upgrade of org.json library in data package PR
-     * @throws Exception
-     */
     @Test
-    public void limitJSONKeyTest() throws Exception {
-        JSONObject obj = new JSONObject(
-                " {\n" + 
+    public void serializeStandardReconConfig() throws Exception {
+        String json = " {\n" + 
                 "        \"mode\": \"standard-service\",\n" + 
                 "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" + 
                 "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
@@ -65,13 +61,21 @@ public class ReconTests extends RefineTest {
                 "                \"name\": \"scientific article\"\n" + 
                 "        },\n" + 
                 "        \"autoMatch\": true,\n" + 
-                "        \"columnDetails\": [],\n" + 
+                "        \"columnDetails\": [\n" + 
+                "           {\n" + 
+                "             \"column\": \"organization_country\",\n" + 
+                "             \"propertyName\": \"SPARQL: P17/P297\",\n" + 
+                "             \"propertyID\": \"P17/P297\"\n" + 
+                "           },\n" + 
+                "           {\n" + 
+                "             \"column\": \"organization_id\",\n" + 
+                "             \"propertyName\": \"SPARQL: P3500|P2427\",\n" + 
+                "             \"propertyID\": \"P3500|P2427\"\n" + 
+                "           }\n" + 
+                "        ],\n" + 
                 "        \"limit\": 0\n" + 
-                " }");
-        
-        ReconConfig config = StandardReconConfig.reconstruct(obj);
-        
-        // Assert the object is created
-        Assert.assertTrue(config != null);
+                " }";
+        ReconConfig config = StandardReconConfig.reconstruct(new JSONObject(json));
+        TestUtils.isSerializedTo(config, json);
     }
 }
