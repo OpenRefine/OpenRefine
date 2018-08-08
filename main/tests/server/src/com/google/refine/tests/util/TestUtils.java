@@ -50,12 +50,8 @@ public class TestUtils {
             JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
             JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
             assertEquals(jsonA, jsonB);
-        } catch(JsonMappingException e) {
-            fail(e.getMessage());
-        } catch (JsonParseException e) {
-            fail(e.getMessage());
-        } catch (IOException e) {
-            fail(e.getMessage());
+        } catch(Exception e) {
+            fail("\""+expected+"\" and \""+actual+"\" are not equal as JSON strings.");
         }
     }
     
