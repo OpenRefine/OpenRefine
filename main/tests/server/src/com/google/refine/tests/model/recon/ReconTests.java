@@ -1,4 +1,4 @@
-package com.google.refine.tests.model;
+package com.google.refine.tests.model.recon;
 
 import java.util.ArrayList;
 
