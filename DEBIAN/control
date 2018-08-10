@@ -1,0 +1,12 @@
+Package: openrefine
+Version: 2.8
+Maintainer: Mauricio Vargas <mvargas@dcc.uchile.cl>
+Section: utils
+Source: OpenRefine
+Homepage: http://openrefine.org/
+Architecture: amd64
+Priority: optional
+Depends: default-jre
+Description: Application for data cleanup.
+ Standalone open source desktop application for data cleanup and transformation.
+

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#ln -s /opt/openrefine/refine /opt/openrefine/openrefine
+#ln -s /opt/openrefine/refine /usr/bin/openrefine
+
+printf '#!/bin/bash\n/opt/openrefine/refine\n' | tee /usr/bin/openrefine
+chmod a+x /usr/bin/openrefine
+
+printf '[Desktop Entry]\nName=OpenRefine\nVersion=2.8\nExec=/usr/bin/openrefine\nComment=Application for data cleanup\nIcon=/opt/openrefine/icon.png\nType=Application\nTerminal=true\nStartupNotify=false\nEncoding=UTF-8\nCategories=Utility;\n' | tee '/usr/share/applications/openrefine.desktop'
+
+#printf '\nexport PATH=$PATH:/opt/openrefine\n' | tee -a ~/.profile
+#source ~/.profile
+

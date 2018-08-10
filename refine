@@ -4,6 +4,18 @@
 #               OpenRefine Control System             #
 ##########################################################
 
+# ---------------- user settings ------------------------
+
+if [ ! -d $HOME/.openrefine ]; then
+	echo "Creating user directory"
+	mkdir $HOME/.openrefine
+fi
+
+if [ ! -f $HOME/.openrefine/settings.ini ]; then
+	echo "Creating default user settings"
+	cp /opt/openrefine/refine.ini $HOME/.openrefine/settings.ini
+fi
+
 # -------------- utility functions ----------------------
 
 fail () {
@@ -455,7 +467,7 @@ ant() {
     
     #export ANT_OPTS="-Xmx1024M"
     
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
+    "$ANT" -f /opt/openrefine/build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -857,7 +869,7 @@ fi
 
 # ----- Load configurations -------------------------------------
 
-load_configs refine.ini
+load_configs $HOME/.openrefine/settings.ini
 
 # ----- Make sure there is an appropriate java environment is available -------------
 

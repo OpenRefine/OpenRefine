@@ -1,0 +1,11 @@
+#!/bin/bash
+
+case "$1" in (remove)
+	rm /usr/bin/openrefine /usr/share/applications/openrefine.desktop
+	rm -rf /opt/openrefine	
+	rm -rf $HOME/.openrefine
+esac
+
+#sed -i '/export PATH=$PATH\:\/opt\/openrefine/d' ~/.profile
+#source ~/.profile
+

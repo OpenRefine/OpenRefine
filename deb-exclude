@@ -1,0 +1,10 @@
+.git
+.github
+.gitignore
+.gitattributes
+.travis.yml
+appveyor.yml
+DEBIAN
+refine.bat
+deb-exclude
+deb-creation.sh
