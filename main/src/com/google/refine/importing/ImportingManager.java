@@ -307,12 +307,13 @@ public class ImportingManager {
         synchronized(jobs) {
             keys = new ArrayList<Long>(jobs.keySet());
         }
+        logger.info("Cleaning Stale Import Jobs ...");
         for (Long id : keys) {
             ImportingJob job = jobs.get(id);
             if (job != null && !job.updating && now - job.lastTouched > STALE_PERIOD) {
                 job.dispose();
                 jobs.remove(id);
-                logger.info("Disposed " + id);
+                logger.info("Removed Job ID " + id);
             }
         }
     }
