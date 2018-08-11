@@ -44,8 +44,11 @@ import org.testng.annotations.Test;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.cell.BlankDownOperation;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class SplitMultiValuedCellsTests extends RefineTest {
@@ -54,6 +57,23 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
+        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
+    }
+    
+    @Test
+    public void serializeMultiValuedCellSplitOperation() {
+        AbstractOperation op = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                ":",
+                false);
+        TestUtils.isSerializedTo(op, "{\"op\":\"core/multivalued-cell-split\","
+                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"columnName\":\"Value\","
+                + "\"keyColumnName\":\"Key\","
+                + "\"mode\":\"separator\","
+                + "\"separator\":\":\","
+                + "\"regex\":false}");
     }
 
     /**

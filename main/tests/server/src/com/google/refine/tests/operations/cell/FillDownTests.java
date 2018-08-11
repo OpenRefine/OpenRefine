@@ -6,18 +6,26 @@ import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.FillDownOperation;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 import com.google.refine.process.Process;
 
 public class FillDownTests extends RefineTest {
     
     Project project = null;
+    
+    @BeforeSuite
+    public void registerOperation() {
+        OperationRegistry.registerOperation(getCoreModule(), "fill-down", FillDownOperation.class);
+    }
     
     @BeforeMethod
     public void setUp() {
@@ -32,6 +40,17 @@ public class FillDownTests extends RefineTest {
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
+    }
+    
+    @Test
+    public void serializeFillDownOperation() {
+        AbstractOperation op = new FillDownOperation(
+                new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}"),
+                "my key");
+        TestUtils.isSerializedTo(op, "{\"op\":\"core/fill-down\","
+                + "\"description\":\"Fill down cells in column my key\","
+                + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
+                + "\"columnName\":\"my key\"}");
     }
     
     @Test

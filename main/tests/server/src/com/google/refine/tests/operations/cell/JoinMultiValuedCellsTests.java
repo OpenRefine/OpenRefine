@@ -35,16 +35,21 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.cell.BlankDownOperation;
 import com.google.refine.operations.cell.MultiValuedCellJoinOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class JoinMultiValuedCellsTests extends RefineTest {
@@ -54,6 +59,25 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
+    
+    @BeforeSuite
+    public void registerOperation() {
+        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
+    }
+    
+    @Test
+    public void serializeMultiValuedCellJoinOperation() {
+        AbstractOperation op = new MultiValuedCellJoinOperation(
+                "value column",
+                "key column",
+                ",");
+        TestUtils.isSerializedTo(op, "{\"op\":\"core/multivalued-cell-join\","
+                + "\"description\":\"Join multi-valued cells in column value column\","
+                + "\"columnName\":\"value column\","
+                + "\"keyColumnName\":\"key column\","
+                + "\"separator\":\",\"}");
+    }
+    
 
     /*
      * Test to demonstrate the intended behaviour of the function

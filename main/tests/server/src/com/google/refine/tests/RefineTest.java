@@ -69,6 +69,8 @@ import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.JSONUtilities;
 
+import edu.mit.simile.butterfly.ButterflyModule;
+
 /**
  * A base class containing various utilities to help testing Refine.
  */
@@ -83,7 +85,7 @@ public class RefineTest {
     private List<ImportingJob> importingJobs = new ArrayList<ImportingJob>();
 
     @BeforeSuite
-    public void init() {
+    public void init() {       
         System.setProperty("log4j.configuration", "tests.log4j.properties");
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
@@ -93,6 +95,8 @@ public class RefineTest {
                     "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
                     "\"list\":[]},\"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}}}}");
             FileProjectManager.initialize(workspaceDir);
+            
+
         } catch (IOException e) {
             workspaceDir = null;
             e.printStackTrace();
@@ -314,5 +318,11 @@ public class RefineTest {
         } catch (JSONException e) {
             Assert.fail("JSONException",e);
         }
+    }
+
+    protected ButterflyModule getCoreModule() {
+        ButterflyModule coreModule = mock(ButterflyModule.class);
+        when(coreModule.getName()).thenReturn("core");
+        return coreModule;
     }
 }
