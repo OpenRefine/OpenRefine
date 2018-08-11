@@ -33,13 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.operations.cell;
 
+import static org.mockito.Mockito.mock;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.BlankDownOperation;
 import com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation;
@@ -57,12 +61,13 @@ public class TransposeTests extends RefineTest {
     }
     
     @Test
-    public void testTransposeRowsIntoColumnsOperation() {
-        AbstractOperation op = new TransposeRowsIntoColumnsOperation("start column", 3);
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/transpose-rows-into-columns\","
+    public void testTransposeRowsIntoColumnsOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/transpose-rows-into-columns\","
                 + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
                 + "\"columnName\":\"start column\","
-                + "\"rowCount\":3}");
+                + "\"rowCount\":3}";
+        Project project = mock(Project.class);
+        TestUtils.isSerializedTo(TransposeRowsIntoColumnsOperation.reconstruct(project , new JSONObject(json)), json);
     }
 
 }

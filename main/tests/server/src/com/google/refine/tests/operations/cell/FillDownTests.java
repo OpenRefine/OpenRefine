@@ -2,6 +2,7 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -43,14 +44,12 @@ public class FillDownTests extends RefineTest {
     }
     
     @Test
-    public void serializeFillDownOperation() {
-        AbstractOperation op = new FillDownOperation(
-                new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}"),
-                "my key");
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/fill-down\","
+    public void serializeFillDownOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/fill-down\","
                 + "\"description\":\"Fill down cells in column my key\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
-                + "\"columnName\":\"my key\"}");
+                + "\"columnName\":\"my key\"}";
+        TestUtils.isSerializedTo(FillDownOperation.reconstruct(project, new JSONObject(json)), json);
     }
     
     @Test

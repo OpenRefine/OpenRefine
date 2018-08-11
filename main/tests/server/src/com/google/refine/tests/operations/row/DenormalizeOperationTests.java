@@ -1,5 +1,7 @@
 package com.google.refine.tests.operations.row;
 
+import static org.mockito.Mockito.mock;
+
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 

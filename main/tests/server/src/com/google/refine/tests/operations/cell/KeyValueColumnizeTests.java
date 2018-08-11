@@ -114,15 +114,20 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
     
     @Test
-    public void serializeKeyValueColumnizeOperation() {
-        AbstractOperation op = new KeyValueColumnizeOperation("key column", "value column", null);
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/key-value-columnize\",\"description\":\"Columnize by key column key column and value column value column\",\"keyColumnName\":\"key column\",\"valueColumnName\":\"value column\",\"noteColumnName\":null}");
-        op = new KeyValueColumnizeOperation("key column", "value column", "note column");
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/key-value-columnize\","
+    public void serializeKeyValueColumnizeOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/key-value-columnize\","
+                + "\"description\":\"Columnize by key column key column and value column value column\","
+                + "\"keyColumnName\":\"key column\","
+                + "\"valueColumnName\":\"value column\","
+                + "\"noteColumnName\":null}";
+        TestUtils.isSerializedTo(KeyValueColumnizeOperation.reconstruct(project, new JSONObject(json)), json);
+
+        String jsonFull = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column with note column note column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
-                + "\"noteColumnName\":\"note column\"}");
+                + "\"noteColumnName\":\"note column\"}";
+        TestUtils.isSerializedTo(KeyValueColumnizeOperation.reconstruct(project, new JSONObject(jsonFull)), jsonFull);
     }
 
     /**

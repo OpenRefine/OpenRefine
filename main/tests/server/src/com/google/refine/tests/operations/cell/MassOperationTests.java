@@ -7,8 +7,9 @@ import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+import static org.mockito.Mockito.mock;
 
-import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation;
 import com.google.refine.operations.cell.MassEditOperation.Edit;
@@ -28,16 +29,13 @@ public class MassOperationTests extends RefineTest {
     
     @Test
     public void serializeMassEditOperation() throws JSONException, Exception {
-        editsString = "[{\"from\":[\"String\"],\"to\":\"newString\",\"type\":\"text\"}]";
-
-        editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
-        JSONObject engineConfig = new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}");
-        AbstractOperation op = new MassEditOperation(engineConfig, "my column", "value", editList);
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/mass-edit\","
+        Project project = mock(Project.class);
+        String json = "{\"op\":\"core/mass-edit\","
                 + "\"description\":\"Mass edit cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\",\"expression\":\"value\","
-                + "\"edits\":[{\"fromBlank\":false,\"fromError\":false,\"from\":[\"String\"],\"to\":\"newString\"}]}");
+                + "\"edits\":[{\"fromBlank\":false,\"fromError\":false,\"from\":[\"String\"],\"to\":\"newString\"}]}";
+        TestUtils.isSerializedTo(MassEditOperation.reconstruct(project, new JSONObject(json)), json);
     }
 
     @Test

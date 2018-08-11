@@ -4,6 +4,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Properties;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -45,14 +46,13 @@ public class BlankDownTests extends RefineTest {
     }
     
     @Test
-    public void serializeBlankDownOperation() {
-        AbstractOperation op = new BlankDownOperation(
-                new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}"),
-                "my column");
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/blank-down\","
+    public void serializeBlankDownOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/blank-down\","
                 + "\"description\":\"Blank down cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
-                + "\"columnName\":\"my column\"}");
+                + "\"columnName\":\"my column\"}";
+        AbstractOperation op = BlankDownOperation.reconstruct(project, new JSONObject(json));
+        TestUtils.isSerializedTo(op, json);
     }
     
     @Test

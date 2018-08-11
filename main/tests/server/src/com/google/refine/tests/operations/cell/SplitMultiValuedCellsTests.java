@@ -36,8 +36,11 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -52,6 +55,8 @@ import com.google.refine.tests.util.TestUtils;
 
 
 public class SplitMultiValuedCellsTests extends RefineTest {
+    
+    Project project;
 
     @Override
     @BeforeTest
@@ -60,20 +65,23 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
     }
     
+    @BeforeMethod
+    public void createProject() {
+        project = createCSVProject(
+                "Key,Value\n"
+              + "Record_1,one:two;three four\n");
+    }
+    
     @Test
-    public void serializeMultiValuedCellSplitOperation() {
-        AbstractOperation op = new MultiValuedCellSplitOperation(
-                "Value",
-                "Key",
-                ":",
-                false);
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/multivalued-cell-split\","
+    public void serializeMultiValuedCellSplitOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/multivalued-cell-split\","
                 + "\"description\":\"Split multi-valued cells in column Value\","
                 + "\"columnName\":\"Value\","
                 + "\"keyColumnName\":\"Key\","
                 + "\"mode\":\"separator\","
                 + "\"separator\":\":\","
-                + "\"regex\":false}");
+                + "\"regex\":false}";
+        TestUtils.isSerializedTo(MultiValuedCellSplitOperation.reconstruct(project, new JSONObject(json)), json);
     }
 
     /**
@@ -83,10 +91,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsTextSeparator() throws Exception {
-        Project project = createCSVProject(
-                "Key,Value\n"
-              + "Record_1,one:two;three four\n");
-
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
@@ -106,10 +110,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsRegExSeparator() throws Exception {
-        Project project = createCSVProject(
-                "Key,Value\n"
-            + "Record_1,one:two;three four\n");
-
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
@@ -133,10 +133,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsLengths() throws Exception {
-        Project project = createCSVProject(
-              "Key,Value\n"
-            + "Record_1,one:two;three four\n");
-
         int[] lengths = {4,4,6,4};
 
         AbstractOperation op = new MultiValuedCellSplitOperation(

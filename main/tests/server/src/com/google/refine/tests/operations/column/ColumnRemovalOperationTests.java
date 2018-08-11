@@ -1,11 +1,14 @@
 package com.google.refine.tests.operations.column;
 
+import static org.mockito.Mockito.mock;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnMoveOperation;
 import com.google.refine.operations.column.ColumnRemovalOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
@@ -19,10 +22,11 @@ public class ColumnRemovalOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnRemovalOperation() {
-        AbstractOperation op = new ColumnRemovalOperation("my column");
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/column-removal\","
+    public void serializeColumnRemovalOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove column my column\","
-                + "\"columnName\":\"my column\"}");
+                + "\"columnName\":\"my column\"}";
+        Project project = mock(Project.class);
+        TestUtils.isSerializedTo(ColumnRemovalOperation.reconstruct(project, new JSONObject(json)), json);
     }
 }
