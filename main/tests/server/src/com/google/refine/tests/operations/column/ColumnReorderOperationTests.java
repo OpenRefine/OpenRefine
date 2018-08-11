@@ -1,7 +1,5 @@
 package com.google.refine.tests.operations.column;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.Arrays;
 
 import org.testng.annotations.BeforeSuite;
@@ -9,7 +7,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnMoveOperation;
 import com.google.refine.operations.column.ColumnReorderOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;

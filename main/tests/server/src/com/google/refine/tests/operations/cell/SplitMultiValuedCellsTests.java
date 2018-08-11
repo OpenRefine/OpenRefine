@@ -46,10 +46,9 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.process.Process;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.BlankDownOperation;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
+import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 

@@ -1,7 +1,5 @@
 package com.google.refine.tests.operations.cell;
 
-import static org.mockito.Mockito.when;
-
 import java.util.Properties;
 
 import org.json.JSONException;
