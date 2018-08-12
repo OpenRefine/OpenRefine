@@ -26,3 +26,4 @@ tmp/
 test-out/
 /bin
 open-refine.log
+.vscode
