@@ -68,7 +68,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         
         JSONObject match = obj.getJSONObject("match");
         
-        JSONArray types = obj.getJSONArray("types");
+        JSONArray types = match.getJSONArray("types");
         String[] typeIDs = new String[types.length()];
         for (int i = 0; i < typeIDs.length; i++) {
             typeIDs[i] = types.getString(i);
