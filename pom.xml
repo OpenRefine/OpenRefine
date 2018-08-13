@@ -52,6 +52,7 @@
               <sources>
                 <source>src</source>
                 <source>main/src</source>
+                <source>server/src</source>
               </sources>
             </configuration>
           </execution>
@@ -139,7 +140,7 @@
       </plugin>
     </plugins>
     <pluginManagement>
-      <plugins>
+      <plugins> <!--
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
@@ -171,7 +172,7 @@
               </configuration>
             </execution>
           </executions>
-        </plugin>
+        </plugin> -->
       </plugins>
     </pluginManagement>
   </build>
@@ -185,8 +186,18 @@
     </dependency>
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>7.0.0.pre5</version>
+      <artifactId>jetty</artifactId>
+      <version>6.1.22</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>6.1.22</version>
+    </dependency>
+    <dependency>
+      <groupId>com.codeberry.jdatapath</groupId>
+      <artifactId>jdatapath</artifactId>
+      <version>alpha2</version>
     </dependency>
     <dependency>
       <groupId>edu.mit.simile</groupId>
@@ -255,7 +266,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
+      <artifactId>ant</artifactId> <!-- for org.apache.tools.bzip2 -->
       <version>1.8.0</version>
     </dependency>
     <dependency>
