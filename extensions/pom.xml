@@ -20,6 +20,7 @@
   <modules>
         <module>jython</module>
         <module>wikidata</module>
+        <module>database</module>
   </modules>
 </project>
 
