@@ -3,38 +3,28 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.openrefine</groupId>
-  <artifactId>server</artifactId>
+  <artifactId>jython</artifactId>
   <packaging>jar</packaging>
   <version>3.0-SNAPSHOT</version>
 
-  <name>OpenRefine - server</name>
-  <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
+  <name>OpenRefine - Jython extension</name>
+  <description>OpenRefine integration of Python as an expression language</description>
   <url>http://openrefine.org/</url>
   <parent>
     <groupId>org.openrefine</groupId>
-    <artifactId>openrefine</artifactId>
+    <artifactId>extensions</artifactId>
     <version>3.0-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <jee.path>/</jee.path>
-    <jee.port>3333</jee.port>
-    <refine.data>/tmp/refine</refine.data>
-  </properties>
-
-  <scm>
-    <connection>scm:git:http://github.com/OpenRefine/OpenRefine</connection>
-    <url>http://github.com/OpenRefine/OpenRefine</url>
-  </scm>
-
   <build>
-    <finalName>openrefine-server</finalName>
+    <finalName>openrefine-jython</finalName>
     <resources>
       <resource>
         <directory>src</directory>
       </resource>
     </resources>
-    <outputDirectory>classes</outputDirectory>
+    <testSourceDirectory>tests/src</testSourceDirectory>
+    <outputDirectory>module/MOD-INF/classes</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -78,7 +68,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.0</version>
         <configuration>
-          <skip>true</skip>
+          <suiteXmlFiles>
+            <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>
+          </suiteXmlFiles>
         </configuration>
       </plugin>
     </plugins>
@@ -89,7 +81,7 @@
             <artifactId>maven-dependency-plugin</artifactId>
             <version>3.1.1</version>
             <configuration>
-                <outputFile>classpath.txt</outputFile>
+                <skip>true</skip>
             </configuration>
         </plugin>
       </plugins>
@@ -101,7 +93,6 @@
       <groupId>org.openrefine</groupId>
       <artifactId>main</artifactId>
       <version>3.0-SNAPSHOT</version>
-      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -110,57 +101,19 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <version>6.1.22</version>
+      <groupId>org.python</groupId>
+      <artifactId>jython-standalone</artifactId>
+      <version>2.7.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty-util</artifactId>
-      <version>6.1.22</version>
-    </dependency>
-    <dependency>
-      <groupId>com.codeberry.jdatapath</groupId>
-      <artifactId>jdatapath</artifactId>
-      <version>alpha2</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.mit.simile</groupId>
-      <artifactId>butterfly</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
-      <version>1.7.10</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.18</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.18</version>
-    </dependency>
-  </dependencies>
 
-  <repositories>
-   <!-- <repository>
-      <id>nightlabs</id>
-      <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
-    </repository>
-    <repository>
-      <id>kint</id>
-      <url>http://developer.k-int.com/maven2</url>
-    </repository> -->
-   <!-- <repository>
-      <id>local-jars</id>
-      <name>Local JARs</name>
-      <url>file://${project.basedir}/../libs</url>
-    </repository> -->
-  </repositories>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.9.10</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 
 </project>
 

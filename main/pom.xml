@@ -361,11 +361,11 @@
       <id>kint</id>
       <url>http://developer.k-int.com/maven2</url>
     </repository> -->
-    <repository>
+   <!-- <repository>
       <id>local-jars</id>
       <name>Local JARs</name>
       <url>file://${project.basedir}/../libs</url>
-    </repository>
+    </repository> -->
   </repositories>
 
 </project>
