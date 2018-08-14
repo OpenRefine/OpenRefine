@@ -297,33 +297,40 @@ tools_prepare() {
         mkdir $REFINE_TOOLS_DIR || error "Error while making directory $REFINE_TOOLS_DIR"
     fi
 }
-                        
-ant_prepare() {
+
+mvn_prepare() {
     tools_prepare
 
-    ANT_VERSION="1.9.0"
-    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz"
-    ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
-    ANT_DIR="apache-ant-${ANT_VERSION}"
-    
-    ANT="`which ant 2> /dev/null`"
-    if [ -z "$ANT" ] ; then
-        if [ -z "$ANT_HOME" ] ; then
+    MVN_VERSION="3.2.2"
+    MVN_URL="https://archive.apache.org/dist/maven/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
+    MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
+    MVN_DIR="apache-maven-${MVN_VERSION}"
+
+    MVN="`which mvn 2> /dev/null`"
+   
+    if [ -z "$MVN" ] ; then
+        if [ -z "$MVN_HOME" ] ; then
             cd $REFINE_TOOLS_DIR
-                if [ ! -f "$ANT_FILE" ] ; then
-                    download $ANT_URL $ANT_FILE
+                if [ ! -f "$MVN_FILE" ] ; then
+                    download $MVN_URL $MVN_FILE
                 fi
-                if [ ! -d "$ANT_DIR" ] ; then
-                    tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
+                if [ ! -d "$MVN_DIR" ] ; then
+                    tar xzf $MVN_FILE -C . || error "Error while expanding $MVN_FILE"
                 fi
-                export ANT_HOME="`pwd`/$ANT_DIR"
+                export MVN_HOME="`pwd`/$MVN_DIR"
                 if [ "$OS" = "windows" ] ; then
-                    export ANT_HOME=`cygpath --unix "$ANT_HOME"`
+                    export MVN_HOME=`cygpath --unix "$MVN_HOME"`
                 fi
             cd ..
         fi
-        ANT="$ANT_HOME/bin/ant"
+        MVN="$MVN_HOME/bin/mvn"
     fi
+}
+
+classpath_prepare() {
+    mvn_prepare
+
+    $MVN -pl server dependency:build-classpath
 }
 
 appengine_prepare() {
@@ -450,12 +457,10 @@ jslint_prepare() {
             
 # ----------------------------------------------------------------------------------------------
 
-ant() {
-    ant_prepare   
+mvn() {
+    mvn_prepare   
     
-    #export ANT_OPTS="-Xmx1024M"
-    
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
+    "$MVN" $MVN_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running maven task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
@@ -489,8 +494,9 @@ windows_dist() {
 
     launch4j_prepare
     
-    ANT_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
-    ant windows
+    MVN_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
+    # TODO update this for Maven
+    mvn windows
 }
 
 linux_dist() {
@@ -498,10 +504,12 @@ linux_dist() {
     get_version $1
     get_revision
     
-    ant linux
+    # TODO update this for Maven
+    mvn linux
 }
     
 mac_dist() {
+    # TODO update this for Maven, maybe with https://github.com/federkasten/appbundle-maven-plugin ?
     check_macosx
     dist_prepare
     get_version $1
@@ -572,9 +580,7 @@ mac_dist() {
 }
 
 test() {
-    server_test $1
-    ui_test $1 
-    extensions_test $1
+    mvn test
 }
 
 ui_test() {
@@ -616,11 +622,11 @@ ui_test() {
 }
 
 server_test() {
-    ant server_test
+    mvn test -pl main
 }
 
 extensions_test() {
-    ant extensions_test
+    mvn test -pl extensions
 }
 
 run() {
@@ -635,7 +641,7 @@ run() {
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
-            ant build
+            mvn compile dependency:build-classpath
             echo ""
         fi
     fi
@@ -672,12 +678,13 @@ run() {
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
 
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+    LIB_PATHS=`cat server/classpath.txt`
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
-    #echo "$RUN_CMD"
-    #echo ""
+    echo "$RUN_CMD"
+    echo ""
   
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
@@ -693,7 +700,8 @@ run() {
 broker_build() {
     build_prepare
     get_revision    
-    ant prepare_broker
+    # TODO migrate to Maven
+    mvn prepare_broker
 }
 
 broker_run() {
@@ -715,7 +723,8 @@ broker_run() {
     add_option "-Drefine.port=$REFINE_PORT"
     add_option "-Drefine.host=0.0.0.0"
                     
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+    LIB_PATHS=`cat server/classpath.txt`
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
@@ -738,17 +747,18 @@ broker_appengine_build() {
     appengine_prepare
     get_revision
     
-    ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
+    MVN_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
 
     if [ "$1" ] ; then
-        ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
+        MVN_PARAMS="$MVN_PARAMS -Dappengine.app_id=$1"
     fi
     
     if [ "$2" ] ; then
-        ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
+        MVN_PARAMS="$MVN_PARAMS -Dappengine.version=$2"
     fi
         
-    ant prepare_broker_appengine
+    # TODO migrate this to Maven
+    mvn prepare_broker_appengine
 }
        
 broker_appengine_upload() {
@@ -764,7 +774,7 @@ broker_appengine_run() {
 findbugs() {
     findbugs_prepare
     
-    ANT_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
+    MVN_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
     
     display "$REFINE_BUILD_DIR/reports/findbugs.html"
@@ -997,10 +1007,10 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; ant build;;
-  clean) ant clean;;
+  build) build_prepare; mvn compile;;
+  clean) mvn clean;;
   whitespace) whitespace $1;;
-  distclean) ant distclean;;
+  distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
   ui_test) ui_test $1;;  
