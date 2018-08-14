@@ -8,7 +8,7 @@
   <version>3.0-SNAPSHOT</version>
 
   <name>OpenRefine - extensions</name>
-  <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
+  <description>Extensions add importers, exporters and other sorts of features to OpenRefine</description>
   <url>http://openrefine.org/</url>
 
   <parent>
@@ -22,6 +22,7 @@
         <module>wikidata</module>
         <module>database</module>
         <module>gdata</module>
+        <module>pc-axis</module>
         <!-- Add new extensions here -->
   </modules>
 </project>
