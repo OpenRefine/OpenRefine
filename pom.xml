@@ -77,6 +77,14 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.3</version>
+        <configuration>
+          <mainClass>com.google.refine.Refine</mainClass>
+        </configuration>
+      </plugin>
       <!-- <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-war-plugin</artifactId>
@@ -124,10 +132,6 @@
            </systemProperties>
            </configuration>
            </plugin> -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -207,7 +211,7 @@
     <dependency>
       <groupId>org.mozilla</groupId>
       <artifactId>rhino</artifactId>
-      <version>1.7.10</version>
+      <version>1.7R2</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -253,6 +257,11 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.2.1</version>
+    </dependency>
+    <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.2</version>
     </dependency>
     <dependency>
       <groupId>velocity</groupId>
@@ -374,6 +383,11 @@
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-core</artifactId>
       <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.metaweb</groupId>
+      <artifactId>lessen</artifactId>
+      <version>1.0</version>
     </dependency>
 
 
