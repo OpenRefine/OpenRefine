@@ -21,6 +21,8 @@
         <module>jython</module>
         <module>wikidata</module>
         <module>database</module>
+        <module>gdata</module>
+        <!-- Add new extensions here -->
   </modules>
 </project>
 
