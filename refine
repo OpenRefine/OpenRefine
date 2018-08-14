@@ -645,6 +645,10 @@ run() {
             echo ""
         fi
     fi
+
+    if [ ! -e "server/classpath.txt" ] ; then
+        mvn dependency:build-classpath
+    fi
             
     if [ -d $REFINE_CLASSES_DIR ] ; then
         add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
@@ -683,8 +687,8 @@ run() {
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
-    echo "$RUN_CMD"
-    echo ""
+    #echo "$RUN_CMD"
+    #echo ""
   
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
