@@ -3,18 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.openrefine</groupId>
-  <artifactId>openrefine</artifactId>
+  <artifactId>main</artifactId>
   <packaging>pom</packaging>
   <version>3.0-SNAPSHOT</version>
 
-  <name>OpenRefine</name>
+  <name>OpenRefine - main</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
   <url>http://openrefine.org/</url>
-
-  <modules>
-        <module>main</module>
-        <module>server</module>
-  </modules>
+  <parent>
+    <groupId>org.openrefine</groupId>
+    <artifactId>openrefine</artifactId>
+    <version>3.0-SNAPSHOT</version>
+  </parent>
 
   <properties>
     <jee.path>/</jee.path>
@@ -28,15 +28,18 @@
   </scm>
 
   <build>
-    <finalName>openrefine</finalName>
+    <finalName>openrefine-main</finalName>
     <resources>
-       <!-- <resource>
-        <directory>main/src</directory>
-        <includes>
-          <include>log4j.properties</include>
-        </includes>
-      </resource> -->
+      <resource>
+        <directory>src</directory>
+      </resource>
     </resources>
+    <testSourceDirectory>tests/server/src</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>tests/data</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -50,7 +53,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>server/src</source>
+                <source>src</source>
               </sources>
             </configuration>
           </execution>
@@ -76,106 +79,29 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.3</version>
-        <configuration>
-          <skip>true</skip>
-          <mainClass>none</mainClass>
-        </configuration>
-      </plugin>
-      <!-- <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-war-plugin</artifactId>
-           <version>2.2</version>
-           <configuration>
-           <webResources>
-           <resource>
-           <directory>main/webapp</directory>
-           <excludes>
-           <exclude>WEB-INF/butterfly.properties</exclude>
-           <exclude>WEB-INF/lib/*.jar</exclude>
-           <exclude>WEB-INF/lib-src/**</exclude>
-           </excludes>
-           </resource>
-           <resource>
-           <directory>patches</directory>
-           <includes>
-           <include>butterfly.properties</include>
-           </includes>
-           <targetPath>WEB-INF</targetPath>
-           </resource>
-           <resource>
-           <directory>extensions</directory>
-           <targetPath>extensions</targetPath>
-           <excludes>
-           <exclude>**/jackson-core-asl-*.jar</exclude>
-           <exclude>**/jackson-mapper-asl-*.jar</exclude>
-           <exclude>lmf/**/jena-*.jar</exclude>
-           </excludes>
-           </resource>
-           </webResources>
-           </configuration>
-           </plugin> -->
-      <!-- <plugin>
-           <groupId>org.apache.tomcat.maven</groupId>
-           <artifactId>tomcat7-maven-plugin</artifactId>
-           <version>2.2</version>
-           <configuration>
-           <warSourceDirectory>main/webapp</warSourceDirectory>
-           <path>${jee.path}</path>
-           <port>${jee.port}</port>
-           <systemProperties>
-           <refine.version>${project.version}</refine.version>
-           <refine.data>${refine.data}</refine.data>
-           </systemProperties>
-           </configuration>
-           </plugin> -->
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.0</version>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>main/tests/server/conf/tests.xml</suiteXmlFile>
+            <suiteXmlFile>tests/server/conf/tests.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.3</version>
+        <configuration>
+          <mainClass>com.google.refine.Refine</mainClass>
+          <skip>true</skip>
+          <executable>java</executable>
+        </configuration>
+      </plugin>
+
     </plugins>
     <pluginManagement>
-      <plugins> <!--
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.1.1</version>
-          <executions>
-            <execution>
-              <id>antclean</id>
-              <phase>clean</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <inherited>false</inherited>
-              <configuration>
-                <executable>ant</executable>
-                <arguments>
-                  <argument>clean</argument>
-                </arguments>
-              </configuration>
-            </execution>
-            <execution>
-              <id>ant</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <inherited>false</inherited>
-              <configuration>
-                <executable>ant</executable>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin> -->
+      <plugins>
       </plugins>
     </pluginManagement>
   </build>
@@ -187,7 +113,7 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+  <!--  <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
       <version>6.1.22</version>
@@ -201,7 +127,7 @@
       <groupId>com.codeberry.jdatapath</groupId>
       <artifactId>jdatapath</artifactId>
       <version>alpha2</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>edu.mit.simile</groupId>
       <artifactId>butterfly</artifactId>
@@ -212,11 +138,11 @@
       <artifactId>rhino</artifactId>
       <version>1.7.10</version>
     </dependency>
-    <dependency>
+  <!--  <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>13.0</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
@@ -302,11 +228,11 @@
       <artifactId>odfdom-java</artifactId>
       <version>0.8.8-incubating</version> <!-- in classpath: 0.8.7 -->
     </dependency>
-    <dependency>
+  <!--  <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>icu4j</artifactId>
       <version>4.0.1</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>edu.mit.simile</groupId>
       <artifactId>vicino</artifactId>
@@ -426,18 +352,18 @@
   </dependencies>
 
   <repositories>
-    <repository>
+   <!-- <repository>
       <id>nightlabs</id>
       <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
     </repository>
     <repository>
       <id>kint</id>
       <url>http://developer.k-int.com/maven2</url>
-    </repository>
+    </repository> -->
     <repository>
       <id>local-jars</id>
       <name>Local JARs</name>
-      <url>file://${project.basedir}/libs</url>
+      <url>file://${project.basedir}/../libs</url>
     </repository>
   </repositories>
 
