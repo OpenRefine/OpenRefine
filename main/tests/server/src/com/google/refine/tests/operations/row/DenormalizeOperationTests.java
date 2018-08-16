@@ -2,12 +2,13 @@ package com.google.refine.tests.operations.row;
 
 import static org.mockito.Mockito.mock;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
 import com.google.refine.operations.row.DenormalizeOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
@@ -20,10 +21,11 @@ public class DenormalizeOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeDenormalizeOperation() {
-        AbstractOperation op = new DenormalizeOperation();
-        TestUtils.isSerializedTo(op, "{"
+    public void serializeDenormalizeOperation() throws JSONException, Exception {
+        Project project = mock(Project.class);
+        String json = "{"
                 + "\"op\":\"core/denormalize\","
-                + "\"description\":\"Denormalize\"}");
+                + "\"description\":\"Denormalize\"}";
+        TestUtils.isSerializedTo(DenormalizeOperation.reconstruct(project, new JSONObject(json)), json);
     }
 }
