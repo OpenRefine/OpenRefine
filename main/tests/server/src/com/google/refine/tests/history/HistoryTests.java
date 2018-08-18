@@ -49,9 +49,12 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
+import com.google.refine.history.Change;
 
 
 public class HistoryTests extends RefineTest {
@@ -66,13 +69,23 @@ public class HistoryTests extends RefineTest {
 
     //dependencies
     Project proj;
+    ProjectMetadata projectMetadata;
     ProjectManager projectManager;
+    HistoryEntryManager historyEntryManager;
 
     @BeforeMethod
     public void SetUp(){
         projectManager = mock(ProjectManager.class);
+        historyEntryManager = mock(HistoryEntryManager.class);
         ProjectManager.singleton = projectManager;
+        
         proj = new Project();
+        projectMetadata = mock(ProjectMetadata.class);
+
+        when(projectManager.getProject(Mockito.anyLong())).thenReturn(proj);
+        when(projectManager.getProjectMetadata(Mockito.anyLong())).thenReturn(projectMetadata);
+        when(projectManager.getHistoryEntryManager()).thenReturn(historyEntryManager);
+
         SUT = new History(proj);
     }
 
@@ -86,17 +99,51 @@ public class HistoryTests extends RefineTest {
     public void canAddEntry(){
         //local dependencies
         HistoryEntry entry = mock(HistoryEntry.class);
-        Project project = mock(Project.class);
-        ProjectMetadata projectMetadata = mock(ProjectMetadata.class);
-
-        when(projectManager.getProject(Mockito.anyLong())).thenReturn(project);
-        when(projectManager.getProjectMetadata(Mockito.anyLong())).thenReturn(projectMetadata);
 
         SUT.addEntry(entry);
 
         verify(projectManager, times(1)).getProject(Mockito.anyLong());
-        verify(entry, times(1)).apply(project);
+        verify(entry, times(1)).apply(proj);
         verify(projectMetadata, times(1)).updateModified();
         Assert.assertEquals(SUT.getLastPastEntries(1).get(0), entry);
+    }
+    
+    @Test
+    public void serializeHistory() throws Exception {
+        String json1 = "{\"id\":1533650900300,"
+                + "\"description\":\"Reconcile cells in column organization_name to type Q43229\","
+                + "\"time\":\"2018-08-07T13:57:17Z\","
+                + "\"operation\":{"
+                + "    \"op\":\"core/recon\","
+                + "    \"description\":\"Reconcile cells in column organization_name to type Q43229\","
+                + "    \"columnName\":\"organization_name\","
+                + "    \"config\":{"
+                + "        \"mode\":\"standard-service\","
+                + "        \"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "        \"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "        \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "        \"type\":{\"id\":\"Q43229\",\"name\":\"organization\"},"
+                + "        \"autoMatch\":true,"
+                + "        \"columnDetails\":[],"
+                + "        \"limit\":0},"
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}}";
+        String json1simple = "{\"id\":1533650900300,"
+                + "\"description\":\"Reconcile cells in column organization_name to type Q43229\","
+                + "\"time\":\"2018-08-07T13:57:17Z\"}";
+        String json2 = "{\"id\":1533651586483,"
+                + "\"description\":\"Edit single cell on row 94, column organization_id\","
+                + "\"time\":\"2018-08-07T14:18:21Z\"}";
+        
+        String targetJson = "{\"past\":["+json1simple+","+json2+"],\"future\":[]}";
+        
+        com.google.refine.history.Change dummyChange = mock(Change.class);
+        
+        HistoryEntry firstEntry = HistoryEntry.load(proj, json1);
+        firstEntry.setChange(dummyChange);
+        HistoryEntry secondEntry = HistoryEntry.load(proj, json2);
+        secondEntry.setChange(dummyChange);
+        SUT.addEntry(firstEntry);
+        SUT.addEntry(secondEntry);
+        TestUtils.isSerializedTo(SUT, targetJson);
     }
 }
