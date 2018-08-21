@@ -2,7 +2,6 @@ package com.google.refine.tests.model.recon;
 
 import java.util.ArrayList;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

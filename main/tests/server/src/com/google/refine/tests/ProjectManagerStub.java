@@ -35,7 +35,6 @@ package com.google.refine.tests;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.apache.tools.tar.TarOutputStream;
 
@@ -43,7 +42,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.IMetadata;
-import com.google.refine.model.metadata.MetadataFormat;
 
 /**
  * Stub used to make protected methods public for testing
