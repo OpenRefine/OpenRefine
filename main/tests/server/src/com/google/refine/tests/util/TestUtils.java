@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.Jsonizable;
+import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 
@@ -59,10 +60,7 @@ public class TestUtils {
      * Checks that a serializable object is serialized to the target JSON string.
      */
     public static void isSerializedTo(Jsonizable o, String targetJson, Properties options) {
-        Writer w = new StringWriter();
-        JSONWriter jsonWriter = new JSONWriter(w);
-        o.write(jsonWriter, options);
-        equalAsJson(targetJson, w.toString());
+        equalAsJson(targetJson, JSONUtilities.serialize(o, options));
     }
     
     /**
