@@ -9,7 +9,7 @@
         "please": "まず",
         "sign-in": "サインインして認証",
         "sign-out": "サインアウト",
-        "access-data": "してから、あなたのGoogle文書にアクセスします",
+        "access-data": "してから、あなたのGoogle文書にアクセスします.",
         "retrieving": "Google Docsを取り込んでいます ...",
         "re-sign-in": "サインし直す",
         "another-account": "別のアカウント"
@@ -35,7 +35,7 @@
         "store-cell": "nullとして空白セルを保存"
     },
     "gdata-source": {
-        "alert-url": "インポートするアドレス(URL)を入力してください",
+        "alert-url": "インポートするアドレス(URL)を入力してください.",
         "type": "形式",
         "title": "題名",
         "authors": "著者",
@@ -43,7 +43,7 @@
     },
     "gdata-exporter": {
         "uploading": "アプロード中...",
-        "upload-error": "アップロードでエラー:",
+        "upload-error": "アップロードでエラー : ",
         "new-spreadsheet": "新しいGoogle spreadsheet",
         "enter-spreadsheet": "新しいGoogle spreadsheetの題名を入力してください",
         "new-fusion": "新しいFusion table",
@@ -52,6 +52,6 @@
     },
     "gdata-auth": {
         "authorize-label": "OpenRefine - 認証",
-        "authorized-label": "認証が完了しました。このウインドウを閉じてOpenRefineで作業できます"
+        "authorized-label": "認証が完了しました。このウインドウを閉じてOpenRefineで作業できます."
     }
 }
