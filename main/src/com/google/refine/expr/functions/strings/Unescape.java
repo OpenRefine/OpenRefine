@@ -62,7 +62,7 @@ public class Unescape implements Function {
                 } else if ("csv".equals(mode)) {
                     return StringEscapeUtils.unescapeCsv(s);
                 } else if ("javascript".equals(mode)) {
-                    return StringEscapeUtils.escapeEcmaScript(s);
+                    return StringEscapeUtils.unescapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
                         return URLDecoder.decode(s,"UTF-8");
