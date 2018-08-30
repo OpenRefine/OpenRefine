@@ -40,16 +40,16 @@
         "commons-media": "ファイル名",
         "math-expression": "数学的表現",
         "geoshape-with-prefix": "\"Data:\"で始まるファイル名",
-        "datatype-not-supported-yet": "このデータ型は未対応です",
-        "invalid-schema-warning-issues": "スキーマが不完全です。修正してください",
-        "invalid-schema-warning-preview": "スキーマが不完全です。修正してください",
+        "datatype-not-supported-yet": "このデータ型は未対応です.",
+        "invalid-schema-warning-issues": "スキーマが不完全です。修正してください.",
+        "invalid-schema-warning-preview": "スキーマが不完全です。修正してください.",
         "discard-button": "変更を破棄",
         "save-button": "スキーマを保存",
         "close-button": "閉じる",
-        "unsaved-changes-alt": "スキーマの変更は保存されていません",
+        "unsaved-changes-alt": "スキーマの変更は保存されていません.",
         "save-schema-alt": "スキーマをローカルのOpenRefineに保存。Wikidataには送信されません。",
-        "discard-schema-changes-alt": "スキーマの変更を破棄",
-        "incomplete-schema-could-not-be-saved": "スキーマが不完全なので保存できません",
+        "discard-schema-changes-alt": "スキーマの変更を破棄.",
+        "incomplete-schema-could-not-be-saved": "スキーマが不完全なので保存できません.",
         "unsaved-warning": "スキーマの変更を保存できていませんが、とにかく終了しますか？"
     },
     "wikidata-preview": {
@@ -57,7 +57,7 @@
     },
     "wikidata-account": {
         "dialog-header": "Wikidataアカウント",
-        "explain-log-in": "OpenRefineから直接データをアップロードするため、<a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a>にログインする",
+        "explain-log-in": "OpenRefineから直接データをアップロードするため、<a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a>にログインする.",
         "username-label": "ユーザー名:",
         "username-placeholder": "ユーザー名を入力",
         "password-label": "パスワード:",
@@ -81,44 +81,44 @@
     },
     "warnings-messages": {
         "new-item-created": {
-            "title": "このバッチ編集は新しい項目を作ります",
-            "body": "Wikidataに既存項目がないか、また、<a href=\"https://www.wikidata.org/wiki/Wikidata:Notability\" target=\"_blank\">Wikidataにふさわしいか</a>、確認してください"
+            "title": "このバッチ編集は新しい項目を作ります.",
+            "body": "Wikidataに既存項目がないか、また、<a href=\"https://www.wikidata.org/wiki/Wikidata:Notability\" target=\"_blank\">Wikidataにふさわしいか</a>、確認してください."
         },
         "new-item-without-labels-or-aliases": {
-            "title": "ラベルも別名もない項目が作られます",
-            "body": "少なくとも一つのラベル、たとえば{example_entity}が必要です"
+            "title": "ラベルも別名もない項目が作られます.",
+            "body": "少なくとも一つのラベル、たとえば{example_entity}が必要です."
         },
         "new-item-without-descriptions": {
-            "title": "記述のない項目が作られます",
-            "body": "記述がないと、{example_entity}項目が明確になります"
+            "title": "記述のない項目が作られます.",
+            "body": "記述がないと、{example_entity}項目が明確になります."
         },
         "new-item-with-deleted-statements": {
-            "title": "新しい項目のステートメントを削除します",
-            "body": "おそらくスキーマに問題があります"
+            "title": "新しい項目のステートメントを削除します.",
+            "body": "おそらくスキーマに問題があります."
         },
         "new-item-without-P31-or-P279": {
-            "title": "型(Type)のない項目が作られます",
-            "body": "(P31)のインスタンスか、(P279)のサブクラスが必要です"
+            "title": "型(Type)のない項目が作られます.",
+            "body": "(P31)のインスタンスか、(P279)のサブクラスが必要です."
         },
         "add-statements-with-invalid-format": {
-            "title": "{property_entity} ステートメントが無効なフォーマットです",
+            "title": "{property_entity} ステートメントが無効なフォーマットです.",
             "body": "この項目は、正規表現の<span class=\"wb-issue-preformat\">{regex}</span>に合致する必要があります。対象：{example_item_entity}の<span class=\"wb-issue-preformat\">{example_value}</span>"
         },
         "remove-statements-with-invalid-format": {
-            "title": "無効なフォーマットのステートメントが削除されました",
-            "body": "Wikidataにステートメントが存在する場合、問題が解消します"
+            "title": "無効なフォーマットのステートメントが削除されました.",
+            "body": "Wikidataにステートメントが存在する場合、問題が解消します."
         },
         "missing-inverse-statements": {
-            "title": "{added_property_entity}の逆ステートメントがありません",
-            "body": "Any {added_property_entity} statement such as the one from {source_entity} to {target_entity} should also be added in reverse with {inverse_property_entity}: in this case, {target_entity} {inverse_property_entity} {source_entity}."
+            "title": "{added_property_entity}の逆ステートメントがありません.",
+            "body": "{source_entity} から {target_entity} へのステートメント（{added_property_entity}）は {inverse_property_entity}の逆関係として追加する必要があります。この場合は {target_entity} {inverse_property_entity} {source_entity} です."
         },
         "self-referential-statements": {
-            "title": "自己参照ステートメントです",
-            "body": "禁止ではありませんが、{example_entity}の自己参照ステートメントは不自然です"
+            "title": "自己参照ステートメントです.",
+            "body": "禁止ではありませんが、{example_entity}の自己参照ステートメントは不自然です."
         },
         "unsourced-statements": {
-            "title": "参照のないステートメントです",
-            "body": "ほとんどのステートメントには参照があります。スキーマで簡単に追加できます"
+            "title": "参照のないステートメントです.",
+            "body": "ほとんどのステートメントには参照があります。スキーマで簡単に追加できます."
         },
         "property-restricted-to-reference-found-in-mainsnak": {
             "title": "{property_entity}がステートメントに使われています",
@@ -145,60 +145,60 @@
             "body": "参照にステートメント専用の{property_entity}が使われています"
         },
         "missing-mandatory-qualifiers": {
-            "title": "{statement_property_entity}には{missing_property_entity} 修飾子がありません",
-            "body": "{example_item_entity}の{statement_property_entity}のようなステートメントには、{missing_property_entity}修飾子が必須です"
+            "title": "{statement_property_entity}には{missing_property_entity} 修飾子がありません.",
+            "body": "{example_item_entity}の{statement_property_entity}のようなステートメントには、{missing_property_entity}修飾子が必須です."
         },
         "disallowed-qualifiers": {
-            "title": "修飾子 {disallowed_property_entity} は {statement_property_entity} と矛盾します",
-            "body": "{example_item_entity}の{statement_property_entity} 属性は {disallowed_property_entity} 修飾子を持てません"
+            "title": "修飾子 {disallowed_property_entity} は {statement_property_entity} と矛盾します.",
+            "body": "{example_item_entity}の{statement_property_entity} 属性は {disallowed_property_entity} 修飾子を持てません."
         },
         "single-valued-property-added-more-than-once": {
-            "title": "{property_entity} が同じ項目に複数あります",
-            "body": "この属性は各項目に一つだけですが、{example_entity}には複数追加されています"
+            "title": "{property_entity} が同じ項目に複数あります.",
+            "body": "この属性は各項目に一つだけですが、{example_entity}には複数追加されています."
         },
         "identical-values-for-distinct-valued-property": {
             "title": "{property_entity}と同じ値です",
-            "body": "この属性はユニークでなければなりませんが、{item1_entity} と {item2_entity} が同じです"
+            "body": "この属性はユニークでなければなりませんが、{item1_entity} と {item2_entity} が同じです."
         },
         "no-edit-generated": {
-            "title": "編集項目が生成されていません",
-            "body": "スキーマに問題があるかもしれません"
+            "title": "編集項目が生成されていません.",
+            "body": "スキーマに問題があるかもしれません."
         },
         "no-issue-detected": {
-            "title": "問題点は見当たりません",
-            "body": "ただし、Wikidataの編集項目の問題点をOpenRefineが網羅できるわけではありません"
+            "title": "問題点は見当たりません.",
+            "body": "ただし、Wikidataの編集項目の問題点をOpenRefineが網羅できるわけではありません."
         },
         "ignored-qualifiers": {
-            "title": "無視された修飾子があります",
-            "body": "修飾子が解析できませんでした。このためステートメントに追加できません"
+            "title": "無視された修飾子があります.",
+            "body": "修飾子が解析できませんでした。このためステートメントに追加できません."
         },
         "ignored-references": {
-            "title": "無視された参照があります",
-            "body": "参照の記述が解析できませんでした"
+            "title": "無視された参照があります.",
+            "body": "参照の記述が解析できませんでした."
         },
         "monolingual-text-without-language": {
-            "title": "言語指定がありません",
+            "title": "言語指定がありません.",
             "body": "言語指定がないので、ラベル・記述・別名・単一言語テキストが無視されました。例えば: <span class=\"wb-issue-preformat\">{example_text}</span>."
         },
         "leading-whitespace": {
-            "title": "文頭に空白文字があります",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文頭に空白文字があります"
+            "title": "文頭に空白文字があります.",
+            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文頭に空白文字があります."
         },
         "trailing-whitespace": {
-            "title": "文末に空白文字があります",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文末に空白文字があります"
+            "title": "文末に空白文字があります.",
+            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文末に空白文字があります."
         },
         "duplicate-whitespace": {
-            "title": "二重の空白文字があります",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>には二重の空白文字があります"
+            "title": "二重の空白文字があります.",
+            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>には二重の空白文字があります."
         },
         "non-printable-characters": {
-            "title": "印刷できない文字が含まれています",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>には印刷できない文字が含まれています"
+            "title": "印刷できない文字が含まれています.",
+            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>には印刷できない文字が含まれています."
         },
         "invalid-identifier-space": {
-            "title": "照合したセルの識別子が無効です",
-            "body": "<span class=\"wb-issue-preformat\">{example_cell}</span>のような照合セルはWikidataにないので無視されます"
+            "title": "照合したセルの識別子が無効です.",
+            "body": "<span class=\"wb-issue-preformat\">{example_cell}</span>のような照合セルはWikidataにないので無視されます."
         },
         "property-found-in-mainsnak": {
             "title": "{property_entity}がステートメントになります.",
@@ -250,7 +250,7 @@
         },
         "invalid-entity-type": {
             "title": "アイテムに使われる{property_entity}",
-            "body": "{example_entity}のようなアイテムに{property_entity}を使う琴は無効です."
+            "body": "{example_entity}のようなアイテムに{property_entity}を使うことは無効です."
         }
     }
 }
