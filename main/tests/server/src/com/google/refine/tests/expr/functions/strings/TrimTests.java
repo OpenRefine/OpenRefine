@@ -10,9 +10,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.strings.Trim;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class TrimTests extends RefineTest {
@@ -102,5 +104,11 @@ public class TrimTests extends RefineTest {
             Assert.assertEquals((String)(invoke("trim", c+"foo"+c)),"foo","Trim for whitespace char: '" + c + "' at index "+ i+ " failed");
         }
 
+    }
+    
+    @Test
+    public void serializeTrim() {
+        String json = "{\"description\":\"Returns copy of the string, with leading and trailing whitespace omitted.\",\"params\":\"string s\",\"returns\":\"string\"}";
+        TestUtils.isSerializedTo(new Trim(), json);
     }
 }
