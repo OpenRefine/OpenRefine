@@ -47,6 +47,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -228,6 +229,8 @@ abstract public class CustomizableTabularExporterUtilities {
         boolean date_omitTime = false;
         
         DateFormat dateFormatter;
+        String[] urlSchemes = {"http","https", "ftp"};
+        UrlValidator urlValidator = new UrlValidator(urlSchemes);
         
         Map<String, String> identifierSpaceToUrl = null;
         
@@ -352,9 +355,8 @@ abstract public class CustomizableTabularExporterUtilities {
                             text = (String) value;
                             
                             if(text.contains(":")) {
-                                try {
-                                    link = new URL(text).toString();
-                                } catch (MalformedURLException e) {
+                                if(urlValidator.isValid(text)) {
+                                    link = text;
                                 }
                             }
                         } else if (value instanceof OffsetDateTime) {
