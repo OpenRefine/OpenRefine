@@ -73,7 +73,7 @@ public class ListFacet implements Facet {
         public boolean omitBlank;
         public boolean omitError;
         
-        public List<NominalFacetChoice> selection = new LinkedList<NominalFacetChoice>();
+        public List<DecoratedValue> selection = new LinkedList<>();
         public boolean selectBlank;
         public boolean selectError;
 
@@ -81,15 +81,24 @@ public class ListFacet implements Facet {
         public void write(JSONWriter writer, Properties options)
                 throws JSONException {
             writer.object();
+            writer.key("type"); writer.value("list");
             writer.key("name"); writer.value(name);
             writer.key("expression"); writer.value(expression);
             writer.key("columnName"); writer.value(columnName);
             writer.key("invert"); writer.value(invert);
             writer.key("selection"); writer.array();
-            for (NominalFacetChoice choice : selection) {
+            for (DecoratedValue choice : selection) {
+                writer.object();
+                writer.key("v");
                 choice.write(writer, options);
+                writer.endObject();
             }
             writer.endArray();
+            writer.key("omitBlank"); writer.value(omitBlank);
+            writer.key("selectBlank"); writer.value(selectBlank);
+            writer.key("omitError"); writer.value(omitError);
+            writer.key("selectError"); writer.value(selectError);
+            writer.endObject();
         }
         
         public void initializeFromJSON(JSONObject o) {
@@ -108,10 +117,7 @@ public class ListFacet implements Facet {
                 DecoratedValue decoratedValue = new DecoratedValue(
                     ocv.get("v"), ocv.getString("l"));
                 
-                NominalFacetChoice nominalFacetChoice = new NominalFacetChoice(decoratedValue);
-                nominalFacetChoice.selected = true;
-                
-                selection.add(nominalFacetChoice);
+                selection.add(decoratedValue);
             }
             
             omitBlank = JSONUtilities.getBoolean(o, "omitBlank", false);
@@ -287,8 +293,8 @@ public class ListFacet implements Facet {
         _choices.clear();
         _choices.addAll(grouper.choices.values());
         
-        for (NominalFacetChoice choice : _config.selection) {
-            String valueString = choice.decoratedValue.value.toString();
+        for (DecoratedValue decoratedValue : _config.selection) {
+            String valueString = decoratedValue.value.toString();
             
             if (grouper.choices.containsKey(valueString)) {
                 grouper.choices.get(valueString).selected = true;
@@ -303,6 +309,7 @@ public class ListFacet implements Facet {
                  *  won't be able to detect the "bicycle" choice, so we need to inject
                  *  that choice into the choice list ourselves.
                  */
+                NominalFacetChoice choice = new NominalFacetChoice(decoratedValue);
                 choice.count = 0;
                 _choices.add(choice);
             }
@@ -315,7 +322,7 @@ public class ListFacet implements Facet {
     protected Object[] createMatches() {
         Object[] a = new Object[_config.selection.size()];
         for (int i = 0; i < a.length; i++) {
-            a[i] = _config.selection.get(i).decoratedValue.value;
+            a[i] = _config.selection.get(i).value;
         }
         return a;
     }
