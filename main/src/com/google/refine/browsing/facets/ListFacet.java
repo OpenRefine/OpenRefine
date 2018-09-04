@@ -214,6 +214,7 @@ public class ListFacet implements Facet {
     }
         
     public void initializeFromConfig(ListFacetConfig config, Project project) {
+        _config = config;
         if (_config.columnName.length() > 0) {
             Column column = project.columnModel.getColumnByName(_config.columnName);
             if (column != null) {
