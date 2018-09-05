@@ -238,13 +238,6 @@ public class BinningClusterer extends Clusterer {
         }
     }
     
-    @Deprecated
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
-        BinningClustererConfig config = new BinningClustererConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(project, config);
-    }
-    
     public void initializeFromConfig(Project project, BinningClustererConfig config) {
         super.initializeFromConfig(project, config);
         _keyer = config.getKeyer();

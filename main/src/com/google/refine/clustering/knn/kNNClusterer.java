@@ -253,13 +253,6 @@ public class kNNClusterer extends Clusterer {
             return _clusterer.getClusters(_radius);
         }
     }
-        
-    @Deprecated
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
-        kNNClustererConfig config = new kNNClustererConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(project, config);
-    }
     
     public void initializeFromConfig(Project project, kNNClustererConfig config) {
         super.initializeFromConfig(project, config);
