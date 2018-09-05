@@ -95,6 +95,7 @@ public class TimeRangeFacet implements Facet {
             writer.endObject();
         }
         
+        @Override
         public void initializeFromJSON(JSONObject o) throws JSONException {        
             _name = o.getString("name");
             _expression = o.getString("expression");

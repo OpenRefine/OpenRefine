@@ -144,6 +144,7 @@ public class ScatterplotFacet implements Facet {
             return facet;
         }
         
+        @Override
         public void initializeFromJSON(JSONObject o) {
             name = o.getString(NAME);
             l = size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;

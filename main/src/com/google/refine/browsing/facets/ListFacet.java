@@ -101,6 +101,7 @@ public class ListFacet implements Facet {
             writer.endObject();
         }
         
+        @Override
         public void initializeFromJSON(JSONObject o) {
             name = o.getString("name");
             expression = o.getString("expression");

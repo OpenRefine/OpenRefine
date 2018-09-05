@@ -1,5 +1,7 @@
 package com.google.refine.browsing.facets;
 
+import org.json.JSONObject;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.model.Project;
 
@@ -14,6 +16,11 @@ import com.google.refine.model.Project;
  *
  */
 public interface FacetConfig extends Jsonizable {
+    /**
+     * Reads the facet configuration from a JSON object (will be removed once we migrate to Jackson)
+     * @param fo
+     */
+    public void initializeFromJSON(JSONObject fo);
     
     /**
      * Instantiates the given facet on a particular project.

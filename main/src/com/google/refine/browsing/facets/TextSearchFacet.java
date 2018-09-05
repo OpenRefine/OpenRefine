@@ -86,6 +86,7 @@ public class TextSearchFacet implements Facet {
             return facet;
         }
         
+        @Override
         public void initializeFromJSON(JSONObject o) {
             _name = o.getString("name");
             _columnName = o.getString("columnName");

@@ -96,6 +96,7 @@ public class RangeFacet implements Facet {
             
         }
         
+        @Override
         public void initializeFromJSON(JSONObject o) {
             _name = o.getString("name");
             _expression = o.getString("expression");
