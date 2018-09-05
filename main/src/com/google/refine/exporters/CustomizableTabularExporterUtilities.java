@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -45,6 +47,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -226,6 +229,8 @@ abstract public class CustomizableTabularExporterUtilities {
         boolean date_omitTime = false;
         
         DateFormat dateFormatter;
+        String[] urlSchemes = {"http","https", "ftp"};
+        UrlValidator urlValidator = new UrlValidator(urlSchemes);
         
         Map<String, String> identifierSpaceToUrl = null;
         
@@ -348,6 +353,12 @@ abstract public class CustomizableTabularExporterUtilities {
                     if (text == null) {
                         if (value instanceof String) {
                             text = (String) value;
+                            
+                            if(text.contains(":")) {
+                                if(urlValidator.isValid(text)) {
+                                    link = text;
+                                }
+                            }
                         } else if (value instanceof OffsetDateTime) {
                             text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);
                         } else {
