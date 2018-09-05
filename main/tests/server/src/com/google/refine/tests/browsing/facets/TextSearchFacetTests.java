@@ -55,9 +55,9 @@ import com.google.refine.tests.util.TestUtils;
 public class TextSearchFacetTests extends RefineTest {
     // dependencies
     private Project project;
+    private TextSearchFacetConfig textfilterconfig;
     private TextSearchFacet textfilter;
     private RowFilter rowfilter;
-    private JSONObject textsearchfacet;
     private String sensitiveConfigJson = "{\"type\":\"text\","
             + "\"name\":\"Value\","
             + "\"columnName\":\"Value\","
@@ -89,6 +89,14 @@ public class TextSearchFacetTests extends RefineTest {
             + "Abc\n");
     }
     
+    private void configureFilter(String filter) {
+        //Add the facet to the project and create a row filter
+        textfilterconfig = new TextSearchFacetConfig();
+        textfilterconfig.initializeFromJSON(new JSONObject(filter));
+        textfilter = textfilterconfig.apply(project);
+        rowfilter = textfilter.getRowFilter(project);
+    }
+    
     /**
      * Test to demonstrate the intended behaviour of the function
      */
@@ -110,11 +118,7 @@ public class TextSearchFacetTests extends RefineTest {
                             + "\"invert\":false,"
                             + "\"query\":\"a\"}";
         
-        //Add the facet to the project and create a row filter
-        textfilter = new TextSearchFacet();
-        textsearchfacet = new JSONObject(filter);
-        textfilter.initializeFromJSON(project,textsearchfacet);
-        rowfilter = textfilter.getRowFilter(project);
+        configureFilter(filter);
 
         //Check each row in the project against the filter
         Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),true);
@@ -140,11 +144,7 @@ public class TextSearchFacetTests extends RefineTest {
                             + "\"invert\":true,"
                             + "\"query\":\"a\"}";
         
-        //Add the facet to the project and create a row filter
-        textfilter = new TextSearchFacet();
-        textsearchfacet = new JSONObject(filter);
-        textfilter.initializeFromJSON(project,textsearchfacet);
-        rowfilter = textfilter.getRowFilter(project);
+        configureFilter(filter);
 
         //Check each row in the project against the filter
         Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),false);
@@ -170,11 +170,7 @@ public class TextSearchFacetTests extends RefineTest {
                             + "\"invert\":false,"
                             + "\"query\":\"[bc]\"}";
         
-        //Add the facet to the project and create a row filter
-        textfilter = new TextSearchFacet();
-        textsearchfacet = new JSONObject(filter);
-        textfilter.initializeFromJSON(project,textsearchfacet);
-        rowfilter = textfilter.getRowFilter(project);
+        configureFilter(filter);
 
         //Check each row in the project against the filter
         Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),false);
@@ -186,14 +182,8 @@ public class TextSearchFacetTests extends RefineTest {
     @Test
     public void testCaseSensitiveFilter() throws Exception {
         //Apply case-sensitive filter "A"
-
         
-
-        //Add the facet to the project and create a row filter
-        textfilter = new TextSearchFacet();
-        textsearchfacet = new JSONObject(sensitiveConfigJson);
-        textfilter.initializeFromJSON(project,textsearchfacet);
-        rowfilter = textfilter.getRowFilter(project);
+        configureFilter(sensitiveConfigJson);
 
         //Check each row in the project against the filter
         //Expect to retrieve one row containing "Abc"

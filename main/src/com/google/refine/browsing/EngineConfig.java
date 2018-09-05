@@ -1,5 +1,6 @@
 package com.google.refine.browsing;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -29,9 +30,17 @@ public class EngineConfig implements Jsonizable {
         _mode = mode;
     }
     
+    public Mode getMode() {
+        return _mode;
+    }
+    
+    public List<FacetConfig> getFacetConfigs() {
+        return _facets;
+    }
+    
     public static EngineConfig reconstruct(JSONObject o) {
         if (o == null) {
-            return null;
+            return new EngineConfig(Collections.emptyList(), Mode.RowBased);
         }
 
         List<FacetConfig> facets = new LinkedList<>();

@@ -123,13 +123,6 @@ public class TextSearchFacet implements Facet {
         writer.key("invert"); writer.value(_config._invert);
         writer.endObject();
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        TextSearchFacetConfig config = new TextSearchFacetConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(config, project);
-    }
     
     public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
         _config = config;

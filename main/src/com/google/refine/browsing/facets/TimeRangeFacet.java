@@ -201,13 +201,6 @@ public class TimeRangeFacet implements Facet {
         }
         writer.endObject();
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        TimeRangeFacetConfig config = new TimeRangeFacetConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(config, project);
-    }
     
     public void initializeFromConfig(TimeRangeFacetConfig config, Project project) {
         _config = config;

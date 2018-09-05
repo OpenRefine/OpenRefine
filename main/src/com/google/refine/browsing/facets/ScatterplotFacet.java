@@ -296,13 +296,6 @@ public class ScatterplotFacet implements Facet {
         
         writer.endObject();
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        ScatterplotFacetConfig config = new ScatterplotFacetConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(config, project);
-    }
      
     public void initializeFromConfig(ScatterplotFacetConfig configuration, Project project) {
         config = configuration;

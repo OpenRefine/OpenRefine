@@ -229,13 +229,6 @@ public class RangeFacet implements Facet {
     }
 
     @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        RangeFacetConfig config = new RangeFacetConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(config, project);
-    }
-
-    @Override
     public RowFilter getRowFilter(Project project) {
         if (_eval != null && _errorMessage == null && _config._selected) {
             return new ExpressionNumberComparisonRowFilter(

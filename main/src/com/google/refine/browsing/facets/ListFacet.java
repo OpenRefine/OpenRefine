@@ -212,13 +212,6 @@ public class ListFacet implements Facet {
         }
         return 2000;
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        ListFacetConfig config = new ListFacetConfig();
-        config.initializeFromJSON(o);
-        initializeFromConfig(config, project);
-    }
         
     public void initializeFromConfig(ListFacetConfig config, Project project) {
         _config = config;
