@@ -45,6 +45,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.grel.Function;
@@ -72,7 +73,7 @@ public class CacheTests extends RefineTest {
     // dependencies
     Project project;
     Properties options;
-    JSONObject engine_config;
+    EngineConfig engine_config;
     Engine engine;
     Properties bindings;
 
@@ -81,8 +82,8 @@ public class CacheTests extends RefineTest {
         project = createProjectWithColumns("CacheTests", "Column A");
         
         engine = new Engine(project);
-        engine_config = new JSONObject(ENGINE_JSON_DUPLICATES);
-        engine.initializeFromJSON(engine_config);
+        engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_DUPLICATES));
+        engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
         
         bindings = new Properties();

@@ -35,8 +35,7 @@ package com.google.refine.commands.row;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
-
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -47,7 +46,7 @@ public class AnnotateRowsCommand extends EngineDependentCommand {
     
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String starredString = request.getParameter("starred");
         if (starredString != null) {

@@ -47,6 +47,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
@@ -72,7 +73,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         return new ReconCopyAcrossColumnsOperation(
-            engineConfig, 
+            EngineConfig.reconstruct(engineConfig), 
             obj.getString("fromColumnName"),
             JSONUtilities.getStringArray(obj, "toColumnNames"),
             JSONUtilities.getStringArray(obj, "judgments"),
@@ -81,7 +82,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     }
     
     public ReconCopyAcrossColumnsOperation(
-        JSONObject engineConfig,
+        EngineConfig engineConfig,
         String fromColumnName,
         String[] toColumnNames,
         String[] judgments,
@@ -100,7 +101,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("fromColumnName"); writer.value(_fromColumnName);
         writer.key("toColumnNames");
             writer.array();

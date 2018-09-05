@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
@@ -63,12 +64,12 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         String columnName = obj.getString("columnName");
         
         return new ReconMatchBestCandidatesOperation(
-            engineConfig, 
+            EngineConfig.reconstruct(engineConfig), 
             columnName
         );
     }
     
-    public ReconMatchBestCandidatesOperation(JSONObject engineConfig, String columnName) {
+    public ReconMatchBestCandidatesOperation(EngineConfig engineConfig, String columnName) {
         super(engineConfig, columnName, false);
     }
 
@@ -79,7 +80,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.endObject();
     }

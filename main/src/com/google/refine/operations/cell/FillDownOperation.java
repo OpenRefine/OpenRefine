@@ -42,6 +42,7 @@ import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.AbstractOperation;
@@ -59,13 +60,13 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         return new FillDownOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("columnName")
         );
     }
     
     public FillDownOperation(
-            JSONObject engineConfig, 
+            EngineConfig engineConfig, 
             String columnName
         ) {
         super(engineConfig, columnName, true);
@@ -78,7 +79,7 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.endObject();
     }

@@ -32,6 +32,7 @@ import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Recon;
@@ -58,7 +59,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     
     @Test(expectedExceptions=IllegalArgumentException.class)
     public void testConstructor() {
-        new PerformWikibaseEditsOperation(new JSONObject("{}"), "");
+        new PerformWikibaseEditsOperation(EngineConfig.reconstruct(new JSONObject("{}")), "");
     }
 
     @Test

@@ -36,9 +36,8 @@ package com.google.refine.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -53,7 +52,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
     final protected boolean _updateRowContextDependencies;
     
     protected EngineDependentMassCellOperation(
-            JSONObject engineConfig, String columnName, boolean updateRowContextDependencies) {
+            EngineConfig engineConfig, String columnName, boolean updateRowContextDependencies) {
         super(engineConfig);
         _columnName = columnName;
         _updateRowContextDependencies = updateRowContextDependencies;

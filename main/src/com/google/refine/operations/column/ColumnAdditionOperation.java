@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
@@ -75,7 +76,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         return new ColumnAdditionOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("baseColumnName"),
             obj.getString("expression"),
             TextTransformOperation.stringToOnError(obj.getString("onError")),
@@ -85,7 +86,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
     
     public ColumnAdditionOperation(
-        JSONObject     engineConfig,
+        EngineConfig   engineConfig,
         String         baseColumnName,
         String         expression,
         OnError        onError,
@@ -109,7 +110,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("newColumnName"); writer.value(_newColumnName);
         writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
         writer.key("baseColumnName"); writer.value(_baseColumnName);

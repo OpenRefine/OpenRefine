@@ -42,18 +42,20 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutionException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 import org.json.JSONWriter;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.EvalError;
@@ -69,8 +71,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
-import com.google.refine.commands.HttpHeadersSupport;
-import com.google.refine.commands.HttpHeadersSupport.HttpHeaderInfo;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
@@ -78,9 +78,6 @@ import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.CacheLoader;
 
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
@@ -98,7 +95,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
 
         return new ColumnAdditionByFetchingURLsOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("baseColumnName"),
             obj.getString("urlExpression"),
             TextTransformOperation.stringToOnError(obj.getString("onError")),
@@ -111,7 +108,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     }
 
     public ColumnAdditionByFetchingURLsOperation(
-        JSONObject     engineConfig,
+        EngineConfig   engineConfig,
         String         baseColumnName,
         String         urlExpression,
         OnError        onError,
@@ -142,7 +139,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("newColumnName"); writer.value(_newColumnName);
         writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
         writer.key("baseColumnName"); writer.value(_baseColumnName);
@@ -173,7 +170,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     @Override
     public Process createProcess(Project project, Properties options) throws Exception {
         Engine engine = createEngine(project);
-        engine.initializeFromJSON(_engineConfig);
+        engine.initializeFromConfig(_engineConfig);
 
         Evaluable eval = MetaParser.parse(_urlExpression);
 

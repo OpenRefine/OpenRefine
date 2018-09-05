@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
@@ -78,7 +79,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         
         if ("separator".equals(mode)) {
             return new ColumnSplitOperation(
-                engineConfig,
+                EngineConfig.reconstruct(engineConfig),
                 obj.getString("columnName"),
                 obj.getBoolean("guessCellType"),
                 obj.getBoolean("removeOriginalColumn"),
@@ -88,7 +89,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             );
         } else {
             return new ColumnSplitOperation(
-                engineConfig,
+                EngineConfig.reconstruct(engineConfig),
                 obj.getString("columnName"),
                 obj.getBoolean("guessCellType"),
                 obj.getBoolean("removeOriginalColumn"),
@@ -98,7 +99,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     }
     
     public ColumnSplitOperation(
-        JSONObject     engineConfig,
+        EngineConfig   engineConfig,
         String         columnName,
         boolean        guessCellType,
         boolean        removeOriginalColumn,
@@ -121,7 +122,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     }
     
     public ColumnSplitOperation(
-        JSONObject     engineConfig,
+        EngineConfig   engineConfig,
         String         columnName,
         boolean        guessCellType,
         boolean        removeOriginalColumn,
@@ -148,7 +149,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("guessCellType"); writer.value(_guessCellType);
         writer.key("removeOriginalColumn"); writer.value(_removeOriginalColumn);

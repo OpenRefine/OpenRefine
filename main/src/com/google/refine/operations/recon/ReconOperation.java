@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
@@ -77,14 +78,14 @@ public class ReconOperation extends EngineDependentOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         return new ReconOperation(
-            engineConfig, 
+            EngineConfig.reconstruct(engineConfig), 
             obj.getString("columnName"),
             ReconConfig.reconstruct(obj.getJSONObject("config"))
         );
     }
     
     public ReconOperation(
-        JSONObject engineConfig, 
+        EngineConfig engineConfig, 
         String columnName, 
         ReconConfig reconConfig
     ) {
@@ -116,7 +117,7 @@ public class ReconOperation extends EngineDependentOperation {
         writer.key("description"); writer.value(getBriefDescription(null));
         writer.key("columnName"); writer.value(_columnName);
         writer.key("config"); _reconConfig.write(writer, options);
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.endObject();
     }
 
@@ -140,15 +141,15 @@ public class ReconOperation extends EngineDependentOperation {
     }
     
     public class ReconProcess extends LongRunningProcess implements Runnable {
-        final protected Project     _project;
-        final protected JSONObject  _engineConfig;
-        final protected long        _historyEntryID;
-        protected List<ReconEntry>  _entries;
-        protected int               _cellIndex;
+        final protected Project      _project;
+        final protected EngineConfig _engineConfig;
+        final protected long         _historyEntryID;
+        protected List<ReconEntry>   _entries;
+        protected int                _cellIndex;
         
         public ReconProcess(
             Project project, 
-            JSONObject engineConfig, 
+            EngineConfig engineConfig, 
             String description
         ) {
             super(description);
@@ -208,7 +209,7 @@ public class ReconOperation extends EngineDependentOperation {
         
         protected void populateEntries() throws Exception {
             Engine engine = new Engine(_project);
-            engine.initializeFromJSON(_engineConfig);
+            engine.initializeFromConfig(_engineConfig);
             
             Column column = _project.columnModel.getColumnByName(_columnName);
             if (column == null) {

@@ -42,6 +42,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -62,12 +63,12 @@ public class RowFlagOperation extends EngineDependentOperation {
         boolean flagged = obj.getBoolean("flagged");
         
         return new RowFlagOperation(
-            engineConfig, 
+            EngineConfig.reconstruct(engineConfig),
             flagged
         );
     }
     
-    public RowFlagOperation(JSONObject engineConfig, boolean flagged) {
+    public RowFlagOperation(EngineConfig engineConfig, boolean flagged) {
         super(engineConfig);
         _flagged = flagged;
     }
@@ -79,7 +80,7 @@ public class RowFlagOperation extends EngineDependentOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("flagged"); writer.value(_flagged);
         writer.endObject();
     }

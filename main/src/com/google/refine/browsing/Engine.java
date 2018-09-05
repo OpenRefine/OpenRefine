@@ -168,6 +168,7 @@ public class Engine implements Jsonizable {
         throw new InternalError("This method should not be called when the engine is not in record mode.");
     }
 
+    @Deprecated
     public void initializeFromJSON(JSONObject o) throws JSONException {
         EngineConfig config = EngineConfig.reconstruct(o);
         initializeFromConfig(config);

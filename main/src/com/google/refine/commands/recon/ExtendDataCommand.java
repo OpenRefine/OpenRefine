@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.operations.recon.ExtendDataOperation;
 import com.google.refine.model.AbstractOperation;
@@ -46,7 +47,7 @@ import com.google.refine.util.ParsingUtilities;
 public class ExtendDataCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String baseColumnName = request.getParameter("baseColumnName");
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));

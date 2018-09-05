@@ -11,6 +11,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
@@ -55,7 +56,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecordKey() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
                 "key");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -71,7 +72,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecords() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -87,7 +88,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRows() throws Exception {       
         AbstractOperation op = new FillDownOperation(
-                new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}"),
+                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}")),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

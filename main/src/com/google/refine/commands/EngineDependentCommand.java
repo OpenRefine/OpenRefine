@@ -40,8 +40,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
@@ -85,5 +84,5 @@ abstract public class EngineDependentCommand extends Command {
     }
     
     abstract protected AbstractOperation createOperation(
-            Project project, HttpServletRequest request, JSONObject engineConfig) throws Exception;
+            Project project, HttpServletRequest request, EngineConfig engineConfig) throws Exception;
 }

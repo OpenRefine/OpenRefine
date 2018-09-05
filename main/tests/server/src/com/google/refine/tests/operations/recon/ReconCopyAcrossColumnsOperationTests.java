@@ -21,7 +21,7 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-copy-across-columns\","
                 + "\"description\":\"Copy recon judgments from column source column to firstsecond\","
-                + "\"engineConfig\":{\"mode\":\"row-based\"},"
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"fromColumnName\":\"source column\","
                 + "\"toColumnNames\":[\"first\",\"second\"],"
                 + "\"judgments\":[\"matched\",\"new\"],"

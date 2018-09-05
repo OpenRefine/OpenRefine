@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
@@ -93,7 +94,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         }
         
         return new ReconJudgeSimilarCellsOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("columnName"),
             obj.getString("similarValue"),
             judgment,
@@ -103,7 +104,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
     
     public ReconJudgeSimilarCellsOperation(
-        JSONObject         engineConfig, 
+        EngineConfig         engineConfig, 
         String             columnName, 
         String             similarValue,
         Judgment        judgment,
@@ -124,7 +125,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("similarValue"); writer.value(_similarValue);
         writer.key("judgment"); writer.value(Recon.judgmentToString(_judgment));
