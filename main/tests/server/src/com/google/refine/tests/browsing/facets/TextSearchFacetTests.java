@@ -43,12 +43,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
+import com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
+import com.google.refine.model.ModelException;
+import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class TextSearchFacetTests extends RefineTest {
@@ -57,6 +58,20 @@ public class TextSearchFacetTests extends RefineTest {
     private TextSearchFacet textfilter;
     private RowFilter rowfilter;
     private JSONObject textsearchfacet;
+    private String sensitiveConfigJson = "{\"type\":\"text\","
+            + "\"name\":\"Value\","
+            + "\"columnName\":\"Value\","
+            + "\"mode\":\"text\","
+            + "\"caseSensitive\":true,"
+            + "\"invert\":false,"
+            + "\"query\":\"A\"}";
+    
+    private String sensitiveFacetJson = "{\"name\":\"Value\","
+            + "\"columnName\":\"Value\","
+            + "\"query\":\"A\","
+            + "\"mode\":\"text\","
+            + "\"caseSensitive\":true,"
+            + "\"invert\":false}";
 
     @Override
     @BeforeTest
@@ -172,22 +187,11 @@ public class TextSearchFacetTests extends RefineTest {
     public void testCaseSensitiveFilter() throws Exception {
         //Apply case-sensitive filter "A"
 
-        //Column: "Value"
-        //Filter Query: "A"
-        //Mode: "text"
-        //Case sensitive: True
-        //Invert: False
-        String filter =     "{\"type\":\"text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"text\","
-                            + "\"caseSensitive\":true,"
-                            + "\"invert\":false,"
-                            + "\"query\":\"A\"}";
+        
 
         //Add the facet to the project and create a row filter
         textfilter = new TextSearchFacet();
-        textsearchfacet = new JSONObject(filter);
+        textsearchfacet = new JSONObject(sensitiveConfigJson);
         textfilter.initializeFromJSON(project,textsearchfacet);
         rowfilter = textfilter.getRowFilter(project);
 
@@ -197,6 +201,21 @@ public class TextSearchFacetTests extends RefineTest {
         Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)),false);
         Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)),false);
         Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)),true);
+    }
+    
+    @Test
+    public void serializeTextSearchFacetConfig() {
+        TextSearchFacetConfig config = new TextSearchFacetConfig();
+        config.initializeFromJSON(new JSONObject(sensitiveConfigJson));
+        TestUtils.isSerializedTo(config, sensitiveConfigJson);
+    }
+    
+    @Test
+    public void serializeTextSearchFacet() {
+        TextSearchFacetConfig config = new TextSearchFacetConfig();
+        config.initializeFromJSON(new JSONObject(sensitiveConfigJson));
+        TextSearchFacet facet = config.apply(project);
+        TestUtils.isSerializedTo(facet, sensitiveFacetJson);
     }
 }
 
