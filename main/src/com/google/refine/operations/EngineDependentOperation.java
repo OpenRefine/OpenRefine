@@ -33,23 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations;
 
-import org.json.JSONException;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
 
 abstract public class EngineDependentOperation extends AbstractOperation {
-    final private String _engineConfigString;
     
     transient protected EngineConfig    _engineConfig;
     
     protected EngineDependentOperation(EngineConfig engineConfig) {
         _engineConfig = engineConfig;
-        _engineConfigString = engineConfig == null
-            ? null : engineConfig.toString();
     }
     
     protected Engine createEngine(Project project) throws Exception {
@@ -59,14 +53,6 @@ abstract public class EngineDependentOperation extends AbstractOperation {
     }
     
     protected EngineConfig getEngineConfig() {
-        if (_engineConfig == null && _engineConfigString != null) {
-            try {
-                _engineConfig = EngineConfig.reconstruct(
-                        ParsingUtilities.evaluateJsonStringToObject(_engineConfigString));
-            } catch (JSONException e) {
-                // ignore
-            }
-        }
         return _engineConfig;
     }
 }

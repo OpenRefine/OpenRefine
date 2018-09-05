@@ -12,7 +12,6 @@ import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine.Mode;
-import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.facets.FacetConfig;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig;
