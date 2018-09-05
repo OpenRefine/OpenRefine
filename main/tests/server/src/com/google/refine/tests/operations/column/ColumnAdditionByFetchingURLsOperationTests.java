@@ -63,7 +63,7 @@ import com.google.refine.tests.util.TestUtils;
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
-    static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}}";
+    static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
 
     @Override
     @BeforeTest
