@@ -109,17 +109,9 @@
 
   <repositories>
     <repository>
-      <id>nightlabs</id>
-      <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
-    </repository>
-    <repository>
-      <id>kint</id>
-      <url>http://developer.k-int.com/maven2</url>
-    </repository>
-    <repository>
       <id>local-jars</id>
       <name>Local JARs</name>
-      <url>file://${project.basedir}/libs</url>
+      <url>file://${project.basedir}${file.separator}libs</url>
     </repository>
   </repositories>
 
