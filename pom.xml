@@ -103,7 +103,7 @@
                 <id>install-marc4j</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/libs/marc4j/marc4j/2.4/marc4j-0.0.1.jar</file>
+                    <file>${basedir}/libs/marc4j/marc4j/2.4/marc4j-2.4.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>marc4j.marc4j</groupId>
                     <artifactId>marc4j</artifactId>
