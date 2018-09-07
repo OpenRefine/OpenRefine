@@ -216,11 +216,15 @@ goto end
 
 :doMvn
 if not "%MAVEN_HOME%" == "" goto gotMvnHome
-echo You must have Apache Maven installed and the MAVEN_HOME environment variable to point to it
+echo You must have Apache Maven installed and the MAVEN_HOME environment variable to point to it.
 echo.
 echo You can download it from
 echo.
 echo   https://maven.apache.org/
+echo
+echo The environment variable MAVEN_HOME should not include the final "bin" directory, such as:
+echo
+echo   C:\Program Files (x86)\Apache\Maven
 echo.
 echo If you don't know how to set environment variables, follow the instructions at
 echo.
