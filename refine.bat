@@ -3,8 +3,8 @@ rem @echo off
 rem
 rem Configuration variables
 rem
-rem ANT_HOME
-rem   Home of Ant installation; copy is in the source as tools\apache-ant-*
+rem MAVEN_HOME
+rem   Home of Maven installation; copy is in the source as tools\apache-ant-*
 rem
 rem JAVA_HOME
 rem   Home of Java installation.
@@ -184,12 +184,11 @@ rem ----- Respond to the action ------------------------------------------------
 
 set ACTION=%1
 
-if ""%ACTION%"" == ""build"" goto doAnt
-if ""%ACTION%"" == ""server_test_debug"" goto doAntDebug
-if ""%ACTION%"" == ""server_test"" goto doAnt
-if ""%ACTION%"" == ""extensions_test"" goto doAnt
-if ""%ACTION%"" == ""clean"" goto doAnt
-if ""%ACTION%"" == ""distclean"" goto doAnt
+if ""%ACTION%"" == ""build"" goto doMvn
+if ""%ACTION%"" == ""server_test"" goto doMvn
+if ""%ACTION%"" == ""extensions_test"" goto doMvn
+if ""%ACTION%"" == ""clean"" goto doMvn
+if ""%ACTION%"" == ""distclean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
@@ -215,24 +214,24 @@ set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
-:doAnt
-if not "%ANT_HOME%" == "" goto gotAntHome
-echo You must have Apache Ant installed and the ANT_HOME environment variable to point to it
+:doMvn
+if not "%MAVEN_HOME%" == "" goto gotMvnHome
+echo You must have Apache Maven installed and the MAVEN_HOME environment variable to point to it
 echo.
 echo You can download it from
 echo.
-echo   http://ant.apache.org/
+echo   https://maven.apache.org/
 echo.
 echo If you don't know how to set environment variables, follow the instructions at
 echo.
 echo   http://bit.ly/1c2gkR
 echo.
-:gotAntHome
-"%ANT_HOME%\bin\ant.bat" -f build.xml %ACTION%
-goto end
-
-:doAntDebug
-"%ANT_HOME%\bin\ant.bat" -f -v -diagnostics build.xml %ACTION%
+:gotMvnHome
+set MVN_ACTION=""%ACTION%""
+if ""%ACTION%"" == ""build"" set MVN_ACTION=""compile""
+if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""test -pl main""
+if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""test -pl extensions""
+"%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
 goto end
 
 :end
