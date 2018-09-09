@@ -94,46 +94,6 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-        <executions>
-            <execution>
-                <id>install-marc4j</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/libs/marc4j/marc4j/2.4/marc4j-2.4.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>marc4j.marc4j</groupId>
-                    <artifactId>marc4j</artifactId>
-                    <version>2.4</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-butterfly</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/libs/edu/mit/simile/butterfly/1.0.1/butterfly-1.0.1.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>edu.mit.simile</groupId>
-                    <artifactId>butterfly</artifactId>
-                    <version>1.0.1</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-
-        </executions>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -146,14 +106,5 @@
           see main/pom.xml, server/pom.xml and each extension.
        -->
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>local-jars</id>
-      <name>Local JARs</name>
-      <url>file://${project.basedir}${file.separator}libs</url>
-    </repository>
-  </repositories>
-
 </project>
 

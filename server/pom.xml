@@ -81,6 +81,29 @@
           <skip>true</skip>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+            <execution>
+                <id>install-jdapath</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/libs/jdatapath-alpha2.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>com.codeberry.jdatapath</groupId>
+                    <artifactId>jdatapath</artifactId>
+                    <version>alpha2</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
