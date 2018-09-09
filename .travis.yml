@@ -22,6 +22,7 @@ before_install:
   - psql -c 'CREATE DATABASE test_db;' -U postgres
   - psql -U postgres test_db < extensions/database/test/conf/travis-pgsql.sql
   - cp extensions/database/test/conf/travis_tests.xml extensions/database/test/conf/tests.xml
+  - mvn process-resources
 
 script:
   - ./refine server_test
