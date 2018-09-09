@@ -90,7 +90,7 @@
                 <id>install-jdapath</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/libs/jdatapath-alpha2.jar</file>
+                    <file>${basedir}/lib/jdatapath-alpha2.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>com.codeberry.jdatapath</groupId>
                     <artifactId>jdatapath</artifactId>
