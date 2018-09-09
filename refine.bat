@@ -233,8 +233,8 @@ echo.
 :gotMvnHome
 set MVN_ACTION=""%ACTION%""
 if ""%ACTION%"" == ""build"" set MVN_ACTION=""process-resources compile""
-if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""test -pl main""
-if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""test -pl extensions""
+if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""process-resources test -pl main""
+if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""process-resources test -pl extensions""
 "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
 goto end
 
