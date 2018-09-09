@@ -330,7 +330,7 @@ mvn_prepare() {
 classpath_prepare() {
     mvn_prepare
 
-    $MVN -pl server dependency:build-classpath
+    $MVN compile dependency:build-classpath
 }
 
 appengine_prepare() {
@@ -647,7 +647,7 @@ run() {
     fi
 
     if [ ! -e "server/classpath.txt" ] ; then
-        mvn dependency:build-classpath
+        mvn compile dependency:build-classpath
     fi
             
     if [ -d $REFINE_CLASSES_DIR ] ; then
