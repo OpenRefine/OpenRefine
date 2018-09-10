@@ -37,7 +37,9 @@ before_test:
     psql -U postgres test_db < extensions\database\tests\conf\travis-pgsql.sql
 
     copy extensions\database\tests\conf\appveyor_tests.xml extensions\database\tests\conf\tests.xml
-- cmd: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+- cmd: |-
+    mvn process-resources
+    mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 test_script:
 - cmd: echo Running test_script...
