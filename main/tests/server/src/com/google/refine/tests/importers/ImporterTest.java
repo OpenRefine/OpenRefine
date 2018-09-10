@@ -1,15 +1,14 @@
 package com.google.refine.tests.importers;
 
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 

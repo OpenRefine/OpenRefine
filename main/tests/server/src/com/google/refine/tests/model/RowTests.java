@@ -48,8 +48,11 @@ import org.testng.annotations.Test;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.Pool;
 
 public class RowTests extends RefineTest {
 
@@ -104,7 +107,7 @@ public class RowTests extends RefineTest {
         Row row = new Row(5);
         row.setCell(0, new Cell("I'm not empty", null));
         row.save(writer, options);
-        Assert.assertEquals(writer.getBuffer().toString(),
+        TestUtils.equalAsJson(writer.getBuffer().toString(),
                 "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}");
     }
 
@@ -117,9 +120,38 @@ public class RowTests extends RefineTest {
         when(options.containsKey("recordIndex")).thenReturn(true);
         when(options.get("recordIndex")).thenReturn(1);
         row.save(writer, options);
-        Assert.assertEquals(
+        TestUtils.equalAsJson(
                 writer.getBuffer().toString(),
                 "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}],\"i\":0,\"j\":1}");
+    }
+    
+    @Test
+    public void serializeRowTest() throws Exception {
+        
+        String reconJson = "{\"id\":1533649346002675326,"
+                + "\"judgmentHistoryEntry\":1530278634724,"
+                + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+                + "\"j\":\"matched\","
+                + "\"m\":{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]},"
+                + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
+                + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"judgmentBatchSize\":1,\"matchRank\":0}";
+        Pool pool = mock(Pool.class);
+        Recon recon = Recon.loadStreaming(reconJson, pool);
+        when(pool.getRecon("1533649346002675326")).thenReturn(recon);
+        
+        String json = "{\"flagged\":false,"
+                + "\"starred\":false,"
+                + "\"cells\":["
+                + "    {\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":\"1533649346002675326\"},"
+                + "    {\"v\":\"0000-0002-5022-0488\"},"
+                + "    null,"
+                + "    {\"v\":\"\"}"
+                + "]}";
+        Row row = Row.load(json, pool);
+        when(options.get("pool")).thenReturn(pool);
+        TestUtils.isSerializedTo(row, json, options);
     }
 
     @Test

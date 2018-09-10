@@ -15,7 +15,6 @@ import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.importing.ImportingUtilities;
-import com.google.refine.model.Column;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.importers.ImporterTest;
 import com.google.refine.util.JSONUtilities;

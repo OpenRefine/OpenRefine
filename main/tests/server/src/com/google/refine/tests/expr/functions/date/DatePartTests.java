@@ -15,9 +15,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class DatePartTests extends RefineTest {
@@ -125,4 +127,11 @@ public class DatePartTests extends RefineTest {
         calendar.setTime(date);
         return calendar;
     }
+    
+    @Test
+    public void serializeDatePart() {
+        String json = "{\"description\":\"Returns part of a date\",\"params\":\"date d, string part\",\"returns\":\"date\"}";
+        TestUtils.isSerializedTo(new DatePart(), json);
+    }
+
 }

@@ -12,9 +12,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.expr.functions.date.Now;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class NowTests extends RefineTest {
@@ -67,4 +69,11 @@ public class NowTests extends RefineTest {
         Assert.assertTrue(invoke("now") instanceof OffsetDateTime);
         Assert.assertTrue(((OffsetDateTime)invoke("now")).isAfter(source));
     }
+
+    @Test
+    public void serializeNow() {
+        String json = "{\"description\":\"Returns the current time\",\"returns\":\"date\"}";
+        TestUtils.isSerializedTo(new Now(), json);
+    }
+    
 }

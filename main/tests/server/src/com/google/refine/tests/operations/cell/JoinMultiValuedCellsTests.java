@@ -35,25 +35,59 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MultiValuedCellJoinOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class JoinMultiValuedCellsTests extends RefineTest {
+    
+    Project project;
 
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
+    
+    @BeforeSuite
+    public void registerOperation() {
+        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
+    }
+    
+    @BeforeMethod
+    public void createProject() {
+        project = createCSVProject(
+                "Key,Value\n"
+                + "Record_1,one\n"
+                + ",two\n"
+                + ",three\n"
+                + ",four\n");
+    }
+    
+    @Test
+    public void serializeMultiValuedCellJoinOperation() throws JSONException, Exception {
+        String json = "{\"op\":\"core/multivalued-cell-join\","
+                + "\"description\":\"Join multi-valued cells in column value column\","
+                + "\"columnName\":\"value column\","
+                + "\"keyColumnName\":\"key column\","
+                + "\"separator\":\",\"}";
+        TestUtils.isSerializedTo(MultiValuedCellJoinOperation.reconstruct(project, new JSONObject(json)), json);
+    }
+    
 
     /*
      * Test to demonstrate the intended behaviour of the function
@@ -61,13 +95,6 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testJoinMultiValuedCells() throws Exception {
-        Project project = createCSVProject(
-                "Key,Value\n"
-                + "Record_1,one\n"
-                + ",two\n"
-                + ",three\n"
-                + ",four\n");
-
         AbstractOperation op = new MultiValuedCellJoinOperation(
             "Value",
             "Key",
@@ -84,14 +111,6 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
-        Project project = createCSVProject(
-            "Key,Value\n"
-            + "Record_1,one\n"
-            + ",two\n"
-            + ",three\n"
-            + ",four\n");
-
-
         AbstractOperation op = new MultiValuedCellJoinOperation(
             "Value",
             "Key",

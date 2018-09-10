@@ -43,9 +43,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Coalesce;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class CoalesceTests extends RefineTest {
@@ -98,6 +100,12 @@ public class CoalesceTests extends RefineTest {
         Assert.assertEquals(invoke("coalesce", (Object) null, (Object) null, "string"),"string");
         Assert.assertEquals(invoke("coalesce", (Object) null, 1),1);
         Assert.assertEquals(invoke("coalesce", (Object) null, ZERO_TO_TWO),ZERO_TO_TWO);
+    }
+    
+    @Test
+    public void serializeCoalesce() {
+        String json = "{\"description\":\"Returns the first non-null from a series of values\",\"params\":\"two or more objects\",\"returns\":\"object or null\"}";
+        TestUtils.isSerializedTo(new Coalesce(), json);
     }
     
 }

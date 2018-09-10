@@ -12,9 +12,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.strings.Diff;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class DiffTests extends RefineTest {
@@ -80,4 +82,11 @@ public class DiffTests extends RefineTest {
         Assert.assertEquals(invoke("diff",odt2,odt1,"milliseconds"),Long.valueOf(7948860000011l));
         Assert.assertEquals(invoke("diff",odt2,odt1,"nanos"),Long.valueOf(7948860000011000l));
     }
+    
+    @Test
+    public void serializeDiff() {
+        String json = "{\"description\":\"For strings, returns the portion where they differ. For dates, it returns the difference in given time units\",\"params\":\"o1, o2, time unit (optional)\",\"returns\":\"string for strings, number for dates\"}";
+        TestUtils.isSerializedTo(new Diff(), json);
+    }
+
 }

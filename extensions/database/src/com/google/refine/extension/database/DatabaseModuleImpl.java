@@ -45,7 +45,7 @@ import com.google.refine.Jsonizable;
 import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
 
-public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizable {
+public class DatabaseModuleImpl extends ButterflyModuleImpl {
     
     private static final Logger logger = LoggerFactory.getLogger("DatabaseModuleImpl");
     
@@ -131,13 +131,6 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl implements Jsonizabl
             logger.error("Error loading Database properties", e);
         }
         return ps;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        // TODO Auto-generated method stub
-
     }
     
   
