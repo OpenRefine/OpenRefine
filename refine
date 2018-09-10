@@ -622,10 +622,12 @@ ui_test() {
 }
 
 server_test() {
+    mvn_prepare
     $MVN test -pl main
 }
 
 extensions_test() {
+    mvn_prepare
     $MVN test -pl extensions
 }
 
