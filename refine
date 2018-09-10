@@ -580,6 +580,7 @@ mac_dist() {
 }
 
 test() {
+    mvn_prepare
     $MVN test
 }
 

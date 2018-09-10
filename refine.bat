@@ -188,6 +188,7 @@ set ACTION=%1
 if ""%ACTION%"" == ""build"" goto doMvn
 if ""%ACTION%"" == ""server_test"" goto doMvn
 if ""%ACTION%"" == ""extensions_test"" goto doMvn
+if ""%ACTION%"" == ""test"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
 if ""%ACTION%"" == ""distclean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
