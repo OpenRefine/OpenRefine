@@ -135,9 +135,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.openrefine</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>main</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -159,9 +159,9 @@
     <!-- testing dependencies -->
 
     <dependency>
-      <groupId>org.openrefine</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>main</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>tests</classifier>
       <type>test-jar</type>
       <scope>test</scope>
