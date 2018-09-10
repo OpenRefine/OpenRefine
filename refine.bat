@@ -210,7 +210,8 @@ echo REFINE_MEMORY = %REFINE_MEMORY%
 echo ----------------------- 
 ) > support.log
 
-set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
+set LIB_CLASSPATH=('type server/target/classpath.txt')
+set CLASSPATH="%REFINE_CLASSES_DIR%;%LIB_CLASSPATH%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
@@ -232,7 +233,7 @@ echo   http://bit.ly/1c2gkR
 echo.
 :gotMvnHome
 set MVN_ACTION=""%ACTION%""
-if ""%ACTION%"" == ""build"" set MVN_ACTION=""process-resources compile""
+if ""%ACTION%"" == ""build"" set MVN_ACTION=""process-resources compile dependency:build-classpath""
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""process-resources test -pl main""
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""process-resources test -pl extensions""
 "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
