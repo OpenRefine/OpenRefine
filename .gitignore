@@ -27,3 +27,8 @@ test-out/
 /bin
 open-refine.log
 .vscode
+
+main/target/
+server/target/
+extensions/*/target/
+extensions/*/module/MOD-INF/classes/
