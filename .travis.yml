@@ -30,3 +30,7 @@ script:
 after_success:
   - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/report/jacoco.xml
 
+cache:
+  directories:
+  - $HOME/.m2
+

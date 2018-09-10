@@ -49,3 +49,7 @@ test_script:
     path
 
     refine test
+
+cache:
+  - C:\Users\appveyor\.m2
+
