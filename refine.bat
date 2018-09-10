@@ -239,7 +239,7 @@ if ""%ACTION%"" == ""build"" set MVN_ACTION=""process-resources compile dependen
 if ""%ACTION%"" == ""test"" set MVN_ACTION=""process-resources compile test""
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""process-resources compile test -f main""
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""process-resources compile test -f extensions""
-"%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
+call "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
 goto end
 
 :end
