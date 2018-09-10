@@ -645,16 +645,15 @@ run() {
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
-            echo mvn process-resources compile dependency:build-classpath
-            $MVN process-resources compile dependency:build-classpath
+            $MVN process-resources
+            $MVN compile test-compile dependency:build-classpath
             echo ""
         fi
     fi
 
     if [ ! -e "server/target/classpath.txt" ] ; then
         mvn_prepare
-        echo mvn compile dependency:build-classpath
-        $MVN compile dependency:build-classpath
+        $MVN compile test-compile dependency:build-classpath
     fi
             
     if [ -d $REFINE_CLASSES_DIR ] ; then
@@ -1018,7 +1017,7 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; mvn process-resources compile;;
+  build) build_prepare; mvn process-resources; mvn compile test-compile dependency:build-classpath;;
   clean) mvn clean;;
   whitespace) whitespace $1;;
   distclean) mvn distclean;;
