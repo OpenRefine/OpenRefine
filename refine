@@ -496,7 +496,7 @@ windows_dist() {
     
     MVN_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
     # TODO update this for Maven
-    mvn windows
+    $MVN windows
 }
 
 linux_dist() {
@@ -505,7 +505,7 @@ linux_dist() {
     get_revision
     
     # TODO update this for Maven
-    mvn linux
+    $MVN linux
 }
     
 mac_dist() {
@@ -580,7 +580,7 @@ mac_dist() {
 }
 
 test() {
-    mvn test
+    $MVN test
 }
 
 ui_test() {
@@ -622,11 +622,11 @@ ui_test() {
 }
 
 server_test() {
-    mvn test -pl main
+    $MVN test -pl main
 }
 
 extensions_test() {
-    mvn test -pl extensions
+    $MVN test -pl extensions
 }
 
 run() {
@@ -641,13 +641,17 @@ run() {
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
-            mvn process-resources compile dependency:build-classpath
+            mvn_prepare
+            echo mvn process-resources compile dependency:build-classpath
+            $MVN process-resources compile dependency:build-classpath
             echo ""
         fi
     fi
 
-    if [ ! -e "server/classpath.txt" ] ; then
-        mvn compile dependency:build-classpath
+    if [ ! -e "server/target/classpath.txt" ] ; then
+        mvn_prepare
+        echo mvn compile dependency:build-classpath
+        $MVN compile dependency:build-classpath
     fi
             
     if [ -d $REFINE_CLASSES_DIR ] ; then
@@ -682,7 +686,7 @@ run() {
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
 
-    LIB_PATHS=`cat server/classpath.txt`
+    LIB_PATHS=`cat server/target/classpath.txt`
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
@@ -705,7 +709,7 @@ broker_build() {
     build_prepare
     get_revision    
     # TODO migrate to Maven
-    mvn prepare_broker
+    $MVN prepare_broker
 }
 
 broker_run() {
@@ -762,7 +766,7 @@ broker_appengine_build() {
     fi
         
     # TODO migrate this to Maven
-    mvn prepare_broker_appengine
+    $MVN prepare_broker_appengine
 }
        
 broker_appengine_upload() {
