@@ -47,6 +47,7 @@ echo.
 echo   build ..................... Build OpenRefine
 echo   run ....................... Run OpenRefine
 echo.
+echo   test ...................... Run all the tests
 echo   server_test ............... Run the server tests
 echo   extensions_test ........... Run the extensions tests
 echo.
@@ -234,8 +235,9 @@ echo.
 :gotMvnHome
 set MVN_ACTION=""%ACTION%""
 if ""%ACTION%"" == ""build"" set MVN_ACTION=""process-resources compile dependency:build-classpath""
-if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""process-resources compile test -pl main""
-if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""process-resources compile test -pl extensions""
+if ""%ACTION%"" == ""test"" set MVN_ACTION=""process-resources compile test""
+if ""%ACTION%"" == ""server_test"" set MVN_ACTION=""process-resources compile test -f main""
+if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=""process-resources compile test -f extensions""
 "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
 goto end
 

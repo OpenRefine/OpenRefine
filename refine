@@ -623,12 +623,12 @@ ui_test() {
 
 server_test() {
     mvn_prepare
-    $MVN test -pl main
+    $MVN test -f main
 }
 
 extensions_test() {
     mvn_prepare
-    $MVN test -pl extensions
+    $MVN test -f extensions
 }
 
 run() {
