@@ -35,7 +35,7 @@
                 <exclude name="requiresPgSQL"/>
                 <exclude name="requiresMariaDB" />
             </run>
-        </groups>
+        </groups> <!--
         <classes>
             <class name="com.google.refine.extension.database.DatabaseImportControllerTest"/>
             <class name="com.google.refine.extension.database.DatabaseServiceTest"/>
@@ -51,6 +51,10 @@
             <class name="com.google.refine.extension.database.mysql.MySQLDatabaseServiceTest"/>
             <class name="com.google.refine.extension.database.pgsql.PgSQLConnectionManagerTest"/>
             <class name="com.google.refine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
-        </classes>
+        </classes> -->
+        <packages>
+          <package name="org.openrefine.wikidata.*" />
+        </packages>
+
     </test>
 </suite>
