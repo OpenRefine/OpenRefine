@@ -113,6 +113,7 @@
             <version>3.1.1</version>
             <configuration>
                 <outputFile>target/classpath.txt</outputFile>
+                <includeScope>runtime</includeScope>
             </configuration>
         </plugin>
       </plugins>
@@ -125,12 +126,12 @@
       <artifactId>main</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
