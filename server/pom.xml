@@ -112,7 +112,6 @@
             <artifactId>maven-dependency-plugin</artifactId>
             <version>3.1.1</version>
             <configuration>
-                <outputFile>target/classpath.txt</outputFile>
                 <includeScope>runtime</includeScope>
             </configuration>
             <executions>

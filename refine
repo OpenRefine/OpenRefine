@@ -327,12 +327,6 @@ mvn_prepare() {
     fi
 }
 
-classpath_prepare() {
-    mvn_prepare
-
-    $MVN compile dependency:build-classpath
-}
-
 appengine_prepare() {
     if [ -z "$APPENGINE_HOME" ] ; then
         error "You have to have the APPENGINE_HOME environment variable set and pointing to the local installation of the Google AppEngine SDK."
@@ -646,16 +640,11 @@ run() {
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
             $MVN process-resources
-            $MVN compile test-compile dependency:build-classpath
+            $MVN compile
             echo ""
         fi
     fi
 
-    if [ ! -e "server/target/classpath.txt" ] ; then
-        mvn_prepare
-        $MVN compile test-compile dependency:build-classpath
-    fi
-            
     if [ -d $REFINE_CLASSES_DIR ] ; then
         add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
     fi
@@ -688,8 +677,7 @@ run() {
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
 
-    LIB_PATHS=`cat server/target/classpath.txt`
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
@@ -982,7 +970,7 @@ if [ -z "$REFINE_CLASSES_DIR" ] ; then
 fi
 
 if [ -z "$REFINE_LIB_DIR" ] ; then
-    REFINE_LIB_DIR="server/lib"
+    REFINE_LIB_DIR="server/target/lib"
 fi
 
 if [ -z "$REFINE_BUILD_DIR" ] ; then
@@ -1017,7 +1005,7 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; mvn process-resources; mvn compile test-compile dependency:build-classpath;;
+  build) build_prepare; mvn process-resources; mvn compile;;
   clean) mvn clean;;
   whitespace) whitespace $1;;
   distclean) mvn distclean;;
