@@ -78,17 +78,26 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
-    </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.1.1</version>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+            <outputFile>target/classpath.txt</outputFile>
+        </configuration>
+        <executions>
+            <execution>
+            <phase>compile</phase>
+            <goals>
+                <goal>copy-dependencies</goal>
+            </goals>
             <configuration>
-                <skip>true</skip>
+                <outputDirectory>module/MOD-INF/lib</outputDirectory>
+                <includeScope>runtime</includeScope>
             </configuration>
-        </plugin>
+            </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
@@ -98,7 +107,7 @@
                 <id>install-wdtk-datamodel</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/module/MOD-INF/lib/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar</file>
+                    <file>${basedir}/lib/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>org.wikidata.wdtk</groupId>
                     <artifactId>wdtk-datamodel</artifactId>
@@ -114,7 +123,7 @@
                 <id>install-wdtk-wikibaseapi</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/module/MOD-INF/lib/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>org.wikidata.wdtk</groupId>
                     <artifactId>wdtk-wikibaseapi</artifactId>
@@ -128,9 +137,7 @@
             </execution>
         </executions>
       </plugin>
-
-      </plugins>
-    </pluginManagement>
+    </plugins>
   </build>
 
   <dependencies>
@@ -138,6 +145,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>main</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>

@@ -94,8 +94,19 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.1.1</version>
         <configuration>
-            <skip>true</skip>
+            <outputFile>target/classpath.txt</outputFile>
         </configuration>
+        <executions>
+            <execution>
+            <phase>compile</phase>
+            <goals>
+                <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+            </configuration>
+            </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -118,7 +129,7 @@
                 <id>install-marc4j</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/webapp/WEB-INF/lib/marc4j-2.4.jar</file>
+                    <file>${basedir}/lib/marc4j-2.4.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>marc4j</groupId>
                     <artifactId>marc4j</artifactId>
@@ -134,7 +145,7 @@
                 <id>install-tableschema</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/webapp/WEB-INF/lib/tableschema-java-1.0-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib/tableschema-java-1.0-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>io.frictionlessdata</groupId>
                     <artifactId>tableschema-java</artifactId>
@@ -150,7 +161,7 @@
                 <id>install-datapackage</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/webapp/WEB-INF/lib/datapackage-java-1.0-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib/datapackage-java-1.0-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>io.frictionlessdata</groupId>
                     <artifactId>datapackage-java</artifactId>
@@ -166,7 +177,7 @@
                 <id>install-opencsv</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/webapp/WEB-INF/lib/opencsv-2.4-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib/opencsv-2.4-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>net.sf.opencsv</groupId>
                     <artifactId>opencsv</artifactId>
@@ -182,7 +193,7 @@
                 <id>install-butterfly</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/webapp/WEB-INF/lib/butterfly-1.0.1.jar</file>
+                    <file>${basedir}/lib/butterfly-1.0.1.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>edu.mit.simile</groupId>
                     <artifactId>butterfly</artifactId>
@@ -198,7 +209,7 @@
                 <id>install-vicino</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/webapp/WEB-INF/lib/vicino-1.1.jar</file>
+                    <file>${basedir}/lib/vicino-1.1.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>edu.mit.simile</groupId>
                     <artifactId>vicino</artifactId>
