@@ -640,7 +640,7 @@ run() {
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
             $MVN process-resources
-            $MVN compile
+            $MVN compile test-compile
             echo ""
         fi
     fi
@@ -677,11 +677,11 @@ run() {
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
 
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR"
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
-    #echo "$RUN_CMD"
+    echo "$RUN_CMD"
     #echo ""
   
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
@@ -1005,7 +1005,7 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; mvn process-resources; mvn compile;;
+  build) build_prepare; mvn process-resources; mvn compile test-compile;;
   clean) mvn clean;;
   whitespace) whitespace $1;;
   distclean) mvn distclean;;
