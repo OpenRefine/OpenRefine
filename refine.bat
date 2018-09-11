@@ -212,7 +212,7 @@ echo REFINE_MEMORY = %REFINE_MEMORY%
 echo ----------------------- 
 ) > support.log
 
-set LIB_CLASSPATH=('type server/target/classpath.txt')
+set /p LIB_CLASSPATH=<server/target/classpath.txt
 set CLASSPATH="%REFINE_CLASSES_DIR%;%LIB_CLASSPATH%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
