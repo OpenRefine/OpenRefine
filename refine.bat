@@ -178,7 +178,7 @@ set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
 
 if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
-set REFINE_LIB_DIR=server\lib
+set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
 
 rem ----- Respond to the action ----------------------------------------------------------
@@ -212,8 +212,7 @@ echo REFINE_MEMORY = %REFINE_MEMORY%
 echo ----------------------- 
 ) > support.log
 
-set /p LIB_CLASSPATH=<server/target/classpath.txt
-set CLASSPATH="%REFINE_CLASSES_DIR%;%LIB_CLASSPATH%\*"
+set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
