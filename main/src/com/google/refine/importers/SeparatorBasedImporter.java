@@ -101,6 +101,28 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
         
+        
+        List<Object> retrievedColumnNames = null;
+        if (options.has("columnNames")) {
+          String[] strings = JSONUtilities.getStringArray(options, "columnNames");
+          if (strings.length > 0) {
+            retrievedColumnNames = new ArrayList<Object>();
+            for (String s : strings) {
+              s = s.trim();
+              if (!s.isEmpty()) {
+                retrievedColumnNames.add(s);
+              }
+            }
+
+            if (retrievedColumnNames.size() > 0) {
+              JSONUtilities.safePut(options, "headerLines", 1);
+            } else {
+              retrievedColumnNames = null;
+            }
+          }
+        }
+        final List<Object> columnNames = retrievedColumnNames;
+        
         Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
         String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
         if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
@@ -118,14 +140,20 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         final LineNumberReader lnReader = new LineNumberReader(reader);
         
         TableDataReader dataReader = new TableDataReader() {
+            boolean usedColumnNames = false;
             @Override
             public List<Object> getNextRowOfCells() throws IOException {
+                if (columnNames != null && !usedColumnNames) {
+                    usedColumnNames = true;
+                    return columnNames;
+                  } else {
                 String line = lnReader.readLine();
                 if (line == null) {
                     return null;
                 } else {
                     return getCells(line, parser, lnReader);
                 }
+                  }
             }
         };
         
