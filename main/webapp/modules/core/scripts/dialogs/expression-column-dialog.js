@@ -31,7 +31,7 @@ ExpressionColumnDialog.prototype._createDialog = function() {
   this._level = DialogSystem.showDialog(this._dialog);
   
   
-  this._elmts.dialogHeader.html($.i18n._('core-dialogs')["custom-tab-exp"]);
+  this._elmts.dialogHeader.html($.i18n._('core-dialogs')["select-columns-dialog"]);
   this._elmts.or_dialog_content.html($.i18n._('core-dialogs')["content"]);
   this._elmts.or_dialog_selAndOrd.html($.i18n._('core-dialogs')["sel-and-ord"]);
   this._elmts.selectAllButton.html($.i18n._('core-buttons')["select-all"]);
