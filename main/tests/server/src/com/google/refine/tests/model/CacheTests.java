@@ -62,7 +62,7 @@ import com.google.refine.tests.RefineTest;
 public class CacheTests extends RefineTest {
     
     // Equivalent to duplicate facet on Column A with true selected
-    static final String ENGINE_JSON_DUPLICATES = "{\"facets\":[{\"type\":\"list\",\"name\":\"facet A\",\"columnName\":\"Column A\",\"expression\":\"(facetCount(value, 'value', 'Column A') > 1).toString()\",\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"true\",\"l\":\"true\"}}],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}}";
+    static private final String ENGINE_JSON_DUPLICATES = "{\"facets\":[{\"type\":\"list\",\"name\":\"facet A\",\"columnName\":\"Column A\",\"expression\":\"(facetCount(value, 'value', 'Column A') > 1).toString()\",\"omitBlank\":false,\"omitError\":false,\"selection\":[{\"v\":{\"v\":\"true\",\"l\":\"true\"}}],\"selectBlank\":false,\"selectError\":false,\"invert\":false}],\"mode\":\"row-based\"}}";
 
     @Override
     @BeforeTest
