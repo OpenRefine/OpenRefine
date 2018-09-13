@@ -227,6 +227,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainerElmts.columnNamesInput.bind("keyup",onChange);
 };
 
 Refine.SeparatorBasedParserUI.prototype._scheduleUpdatePreview = function() {
