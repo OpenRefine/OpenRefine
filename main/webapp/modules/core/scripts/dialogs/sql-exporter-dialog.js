@@ -48,7 +48,7 @@ function SqlExporterDialog(options) {
     this._dialog = $(DOM.loadHTML("core", "scripts/dialogs/sql-exporter-dialog.html"));
     this._elmts = DOM.bind(this._dialog);
     this._level = DialogSystem.showDialog(this._dialog);
-    this._elmts.dialogHeader.html($.i18n._('core-dialogs')["custom-tab-exp"]);
+    this._elmts.dialogHeader.html($.i18n._('core-dialogs')["sql-exporter"]);
     this._elmts.or_dialog_content.html($.i18n._('core-dialogs')["content"]);
     this._elmts.or_dialog_download.html($.i18n._('core-dialogs')["download"]);
 
