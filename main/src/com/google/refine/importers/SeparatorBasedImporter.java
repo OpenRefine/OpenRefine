@@ -114,7 +114,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
               }
             }
 
-            if (retrievedColumnNames.size() > 0) {
+            if (!retrievedColumnNames.isEmpty()) {
               JSONUtilities.safePut(options, "headerLines", 1);
             } else {
               retrievedColumnNames = null;

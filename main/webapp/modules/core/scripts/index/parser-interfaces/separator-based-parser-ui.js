@@ -118,9 +118,11 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
   
-  var columnNames = this._optionContainerElmts.columnNamesInput.val();
-  if (columnNames != undefined && columnNames != null && columnNames != '') {
-      options.columnNames = columnNames.split(",");
+  if (this._optionContainerElmts.columnNamesCheckbox[0].checked) {
+      var columnNames = this._optionContainerElmts.columnNamesInput.val();
+      if (columnNames != undefined && columnNames != null && columnNames != '') {
+          options.columnNames = columnNames.split(",");
+      }
   }
 
   return options;
@@ -174,10 +176,23 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
           var isDisabled = $('textbox').prop('disabled');
           if (!isDisabled) {
               self._optionContainerElmts.columnNamesInput.prop('disabled', true);
+              self._optionContainerElmts.columnNamesCheckbox.prop("checked", false);
               self._optionContainerElmts.columnNamesInput.val('');
           }
       } else {
           self._optionContainerElmts.columnNamesInput.prop('disabled', false);
+          self._optionContainerElmts.columnNamesCheckbox.prop("checked", true);
+      }
+  });
+  
+  this._optionContainerElmts.columnNamesCheckbox.on("click", function() {
+      if ($(this).is(':checked')) {
+          self._optionContainerElmts.headerLinesCheckbox.prop("checked", false);
+          self._optionContainerElmts.columnNamesInput.prop('disabled', false);
+      } else {
+          self._optionContainerElmts.headerLinesCheckbox.prop("checked", true);
+          self._optionContainerElmts.columnNamesInput.val('');
+          self._optionContainerElmts.columnNamesInput.prop('disabled', true);
       }
   });
   
