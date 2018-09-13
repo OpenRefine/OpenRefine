@@ -239,6 +239,7 @@
         "error-apply-code": "Error applying option code",
         "sql-exporter": "SQL Exporter",
         "custom-tab-exp": "Custom Tabular Exporter",
+        "select-columns-dialog": "Select columns",
         "content": "Content",
         "download": "Download",
         "upload": "Upload",

@@ -249,7 +249,7 @@
         "language": "Langue",
         "linear-plot": "Tracé linéaire",
         "excel-xml": "Excel en XML (.xlsx)",
-        "custom-tab-exp": "Exporteur SQL",
+        "sql-exporter": "Exporteur SQL",
         "custom-separator": "Séparateur personnalisé",
         "template-suffix": "Suffixe",
         "history": "Historique",
