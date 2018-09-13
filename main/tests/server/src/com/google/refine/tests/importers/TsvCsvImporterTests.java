@@ -38,6 +38,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.StringReader;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -521,7 +522,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
         
         try {
-            prepareOptions(sep, -1, 0, 0, 0, false, false,"\"","col1,col2,col3");
+            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[col1,col2,col3]");
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
@@ -600,7 +601,8 @@ public class TsvCsvImporterTests extends ImporterTest {
     protected void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
         int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"","");
+        
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]");      
     }
     
     protected void prepareOptions(
@@ -616,7 +618,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
             whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
             whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-            whenGetStringOption("columnNames", options, columnNames);
+            whenGetArrayOption("columnNames", options, new JSONArray(columnNames));
         }
 
     private void verifyOptions() {
@@ -629,7 +631,7 @@ public class TsvCsvImporterTests extends ImporterTest {
             verify(options, times(1)).getBoolean("guessCellValueTypes");
             verify(options, times(1)).getBoolean("processQuotes");
             verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-            verify(options, times(1)).getBoolean("columnNames");
+            verify(options, times(1)).getJSONArray("columnNames");
         } catch (JSONException e) {
             Assert.fail("JSON exception",e);
         }
