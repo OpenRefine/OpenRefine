@@ -156,7 +156,7 @@
         "use-quote": "Use character",
         "quote-delimits-cells": "to enclose cells containing column separators",
         "click-xml": "Click on the first XML element corresponding to the first record to load.",
-        "column-names-label": "Column names",
+        "column-names-label": "Column names (comma separated)",
 		"column-names-optional":"comma separated"
     },
     "core-dialogs": {
