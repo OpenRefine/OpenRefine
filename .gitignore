@@ -27,3 +27,10 @@ test-out/
 /bin
 open-refine.log
 .vscode
+
+main/target/
+main/webapp/WEB-INF/lib/
+server/target/
+extensions/*/target/
+extensions/*/module/MOD-INF/classes/
+extensions/*/module/MOD-INF/lib/
