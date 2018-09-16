@@ -248,7 +248,7 @@
         "language": "言語",
         "linear-plot": "線形プロット",
         "excel-xml": "Excel in XML(.xlsx)",
-        "custom-tab-exp": "SQLエクスポート",
+        "custom-tab-exp": "表のカスタムエクスポート",
         "custom-separator": "カスタム区切り",
         "template-suffix": "ファイルの最後部",
         "history": "履歴",
@@ -287,7 +287,9 @@
         "error": "エラー",
         "filtered-from": "対象<b>",
         "big-dot": "大きいドット",
-        "metaphone": "metaphone3"
+        "metaphone": "metaphone3",
+        "sql-exporter": "SQLエクスポート",
+        "select-columns-dialog": "カラムを選択"
     },
     "core-facets": {
         "regular-dot": "標準的なドット",
