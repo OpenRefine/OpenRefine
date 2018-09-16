@@ -44,7 +44,7 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
     @Test
     public void testValidSchema()
             throws ServletException, IOException {
-        String schemaJson = jsonFromFile("schema/inception.json").toString();
+        String schemaJson = jsonFromFile("data/schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
         command.doPost(request, response);

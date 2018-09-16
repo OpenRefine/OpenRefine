@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--+
+    |
+    |  OpenRefine GData Extension Build File
+    |
+    +-->
+    
+<project name="grefine-gdata-extension" default="build" basedir=".">
+
+    <tstamp/>
+    <property name="name" value="gdata-extension"/>
+    <property name="version" value="0.1"/>
+    <property name="revision" value="${DSTAMP}${TSTAMP}"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="ext.dir" value="${dist.dir}/${name}"/>
+    <property name="fullname" value="${name}-${version}-${revision}" />
+    
+    <property name="refine.dir" value="${basedir}/../../main" />
+    <!-- We assume that we're a parallel project in an Eclipse workspace.
+         If you're using the SVN layout instead, you want something like:
+    <property name="refine.dir" value="${basedir}/../grefine-all/main" />
+    <property name="server.lib.dir" value="${basedir}/../grefine-all/server/lib" />
+    -->
+    <property name="server.lib.dir" value="${basedir}/../grefine-server/lib" />
+
+    <property name="refine.webinf.dir" value="${refine.dir}/webapp/WEB-INF" />
+    <property name="refine.modinf.dir" value="${refine.dir}/webapp/modules/core/MOD-INF" />
+    <property name="refine.classes.dir" value="${refine.webinf.dir}/classes" />
+    <property name="refine.lib.dir" value="${refine.webinf.dir}/lib" />
+    
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="module.dir" value="${basedir}/module" />
+    <property name="modinf.dir" value="${module.dir}/MOD-INF" />
+    <property name="lib.dir" value="${modinf.dir}/lib" />
+    <property name="classes.dir" value="${modinf.dir}/classes" />
+
+    <path id="class.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="${refine.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="${server.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+        <pathelement path="${refine.classes.dir}"/>
+    </path>
+            
+    <target name="build_java">
+        <mkdir dir="${classes.dir}" />
+        <javac  source="${java_version}" target="${java_version}" encoding="utf-8" destdir="${classes.dir}" debug="true" includeAntRuntime="no">
+            <src path="${src.dir}"/>
+            <classpath refid="class.path" />
+        </javac>
+    </target>
+
+    <target name="build" depends="build_java"/>
+
+    <target name="dist" depends="build">
+        <mkdir dir="${ext.dir}"/>
+     
+         <copy todir="${ext.dir}/module">
+             <fileset dir="module">
+                 <include name="**/*"/>
+                 <exclude name="**/lib-src/*"/>
+                 <exclude name="**/src/*"/>
+             </fileset>
+         </copy>
+
+         <copy todir="${ext.dir}/licenses">
+             <fileset dir="${basedir}/licenses">
+                 <include name="**"/>
+             </fileset>
+         </copy>
+         <copy file="${basedir}/LICENSE.txt" tofile="${ext.dir}/LICENSE.txt"/>
+         <copy file="${basedir}/README.txt" tofile="${ext.dir}/README.txt"/>
+         
+         <zip destfile="${dist.dir}/openrefine-${fullname}.zip">
+            <zipfileset dir="${ext.dir}/..">
+                <include name="**/**"/>
+            </zipfileset>
+         </zip>
+        
+        <delete dir="${ext.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${classes.dir}" />
+    </target>
+
+    <target name="distclean">
+        <delete dir="${dist.dir}" />
+    </target>
+</project>

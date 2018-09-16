@@ -3,8 +3,8 @@ rem @echo off
 rem
 rem Configuration variables
 rem
-rem MAVEN_HOME
-rem   Home of Maven installation; copy is in the source as tools\apache-ant-*
+rem ANT_HOME
+rem   Home of Ant installation; copy is in the source as tools\apache-ant-*
 rem
 rem JAVA_HOME
 rem   Home of Java installation.
@@ -47,7 +47,6 @@ echo.
 echo   build ..................... Build OpenRefine
 echo   run ....................... Run OpenRefine
 echo.
-echo   test ...................... Run all the tests
 echo   server_test ............... Run the server tests
 echo   extensions_test ........... Run the extensions tests
 echo.
@@ -178,19 +177,19 @@ set REFINE_CLASSES_DIR=server\classes
 :gotClassesDir
 
 if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
-set REFINE_LIB_DIR=server\target\lib
+set REFINE_LIB_DIR=server\lib
 :gotLibDir
 
 rem ----- Respond to the action ----------------------------------------------------------
 
 set ACTION=%1
 
-if ""%ACTION%"" == ""build"" goto doMvn
-if ""%ACTION%"" == ""server_test"" goto doMvn
-if ""%ACTION%"" == ""extensions_test"" goto doMvn
-if ""%ACTION%"" == ""test"" goto doMvn
-if ""%ACTION%"" == ""clean"" goto doMvn
-if ""%ACTION%"" == ""distclean"" goto doMvn
+if ""%ACTION%"" == ""build"" goto doAnt
+if ""%ACTION%"" == ""server_test_debug"" goto doAntDebug
+if ""%ACTION%"" == ""server_test"" goto doAnt
+if ""%ACTION%"" == ""extensions_test"" goto doAnt
+if ""%ACTION%"" == ""clean"" goto doAnt
+if ""%ACTION%"" == ""distclean"" goto doAnt
 if ""%ACTION%"" == ""run"" goto doRun
 
 :doRun
@@ -216,30 +215,24 @@ set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
 "%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=%REFINE_LIB_DIR%/native/windows com.google.refine.Refine
 goto end
 
-:doMvn
-if not "%MAVEN_HOME%" == "" goto gotMvnHome
-echo You must have Apache Maven installed and the MAVEN_HOME environment variable to point to it.
+:doAnt
+if not "%ANT_HOME%" == "" goto gotAntHome
+echo You must have Apache Ant installed and the ANT_HOME environment variable to point to it
 echo.
 echo You can download it from
 echo.
-echo   https://maven.apache.org/
-echo
-echo The environment variable MAVEN_HOME should not include the final "bin" directory, such as:
-echo
-echo   C:\Program Files (x86)\Apache\Maven
+echo   http://ant.apache.org/
 echo.
 echo If you don't know how to set environment variables, follow the instructions at
 echo.
 echo   http://bit.ly/1c2gkR
 echo.
-:gotMvnHome
-set MVN_ACTION=""%ACTION%""
-if ""%ACTION%"" == ""build"" set MVN_ACTION=compile test-compile dependency:build-classpath
-if ""%ACTION%"" == ""test"" set MVN_ACTION=test dependency:build-classpath
-if ""%ACTION%"" == ""server_test"" set MVN_ACTION=test -f main
-if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=test -f extensions
-call "%MAVEN_HOME%\bin\mvn.cmd" process-resources
-call "%MAVEN_HOME%\bin\mvn.cmd" %MVN_ACTION%
+:gotAntHome
+"%ANT_HOME%\bin\ant.bat" -f build.xml %ACTION%
+goto end
+
+:doAntDebug
+"%ANT_HOME%\bin\ant.bat" -f -v -diagnostics build.xml %ACTION%
 goto end
 
 :end
