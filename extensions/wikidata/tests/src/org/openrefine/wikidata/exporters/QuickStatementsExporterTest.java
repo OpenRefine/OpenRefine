@@ -70,7 +70,7 @@ public class QuickStatementsExporterTest extends RefineTest {
             throws JSONException, IOException {
         Project project = this.createCSVProject(TestingData.inceptionWithNewCsv);
         TestingData.reconcileInceptionCells(project);
-        JSONObject serialized = TestingData.jsonFromFile("schema/inception.json");
+        JSONObject serialized = TestingData.jsonFromFile("data/schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         project.overlayModels.put("wikibaseSchema", schema);
         Engine engine = new Engine(project);

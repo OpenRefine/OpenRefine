@@ -53,13 +53,13 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     @Override
     public JSONObject getJson()
             throws Exception {
-        return TestingData.jsonFromFile("operations/save-schema.json");
+        return TestingData.jsonFromFile("data/operations/save-schema.json");
     }
 
     @Test
     public void testLoadChange()
             throws Exception {
-        JSONObject schemaJson = TestingData.jsonFromFile("schema/inception.json");
+        JSONObject schemaJson = TestingData.jsonFromFile("data/schema/inception.json");
         String changeString = "newSchema=" + schemaJson.toString() + "\n" + "oldSchema=\n" + "/ec/";
         WikibaseSchema schema = WikibaseSchema.reconstruct(schemaJson);
 

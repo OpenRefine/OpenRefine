@@ -53,7 +53,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Override
     public JSONObject getJson()
             throws Exception {
-        return TestingData.jsonFromFile("operations/perform-edits.json");
+        return TestingData.jsonFromFile("data/operations/perform-edits.json");
     }
     
     @Test(expectedExceptions=IllegalArgumentException.class)
