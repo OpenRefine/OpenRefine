@@ -218,6 +218,23 @@
                     <goal>install-file</goal>
                 </goals>
             </execution>
+            <execution>
+                <id>install-secondstring</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib/secondstring-20100303.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>com.wcohen</groupId>
+                    <artifactId>secondstring</artifactId>
+                    <version>20100303</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+
         </executions>
       </plugin>
       <plugin>
@@ -416,6 +433,11 @@
       <groupId>com.metaweb</groupId>
       <artifactId>lessen</artifactId>
       <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.wcohen</groupId>
+      <artifactId>secondstring</artifactId>
+      <version>20100303</version>
     </dependency>
 
     <!-- test dependencies -->
