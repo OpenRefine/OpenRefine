@@ -41,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -66,7 +67,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         return new TextTransformOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("columnName"),
             obj.getString("expression"),
             stringToOnError(obj.getString("onError")),
@@ -95,7 +96,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     }
     
     public TextTransformOperation(
-            JSONObject engineConfig, 
+            EngineConfig engineConfig, 
             String columnName, 
             String expression, 
             OnError onError,
@@ -116,7 +117,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("expression"); writer.value(_expression);
         writer.key("onError"); writer.value(onErrorToString(_onError));

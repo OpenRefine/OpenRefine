@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
@@ -62,13 +63,13 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         return new ReconDiscardJudgmentsOperation(
-            engineConfig, 
+            EngineConfig.reconstruct(engineConfig), 
             obj.getString("columnName"),
             obj.has("clearData") && obj.getBoolean("clearData")
         );
     }
     
-    public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName, boolean clearData) {
+    public ReconDiscardJudgmentsOperation(EngineConfig engineConfig, String columnName, boolean clearData) {
         super(engineConfig, columnName, false);
         _clearData = clearData;
     }
@@ -80,7 +81,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("clearData"); writer.value(_clearData);
         writer.endObject();

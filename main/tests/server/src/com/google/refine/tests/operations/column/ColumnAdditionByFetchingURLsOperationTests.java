@@ -46,6 +46,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
@@ -63,7 +64,7 @@ import com.google.refine.tests.util.TestUtils;
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
-    static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}}";
+    static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
 
     @Override
     @BeforeTest
@@ -75,7 +76,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     // dependencies
     private Project project;
     private Properties options;
-    private JSONObject engine_config;
+    private EngineConfig engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_URLS));
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {

@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
@@ -75,7 +76,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         }
         
         return new ReconMatchSpecificTopicOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("columnName"),
             new ReconCandidate(
                 match.getString("id"),
@@ -89,7 +90,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     }
     
     public ReconMatchSpecificTopicOperation(
-        JSONObject engineConfig, 
+        EngineConfig engineConfig, 
         String columnName, 
         ReconCandidate match,
         String identifierSpace,
@@ -108,7 +109,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("match");
             writer.object();

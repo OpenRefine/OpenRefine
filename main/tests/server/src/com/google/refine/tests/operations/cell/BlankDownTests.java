@@ -11,6 +11,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
@@ -56,7 +57,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRecords() throws Exception {
         AbstractOperation op = new BlankDownOperation(
-                new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}"),
+                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -70,7 +71,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRows() throws Exception {
         AbstractOperation op = new BlankDownOperation(
-                new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}"),
+                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}")),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

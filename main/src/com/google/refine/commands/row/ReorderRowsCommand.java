@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -49,7 +50,7 @@ public class ReorderRowsCommand extends EngineDependentCommand {
     
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         String mode = request.getParameter("mode");
         JSONObject sorting = null;

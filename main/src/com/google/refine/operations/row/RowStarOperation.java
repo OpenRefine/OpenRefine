@@ -42,6 +42,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -62,12 +63,12 @@ public class RowStarOperation extends EngineDependentOperation {
         boolean starred = obj.getBoolean("starred");
         
         return new RowStarOperation(
-            engineConfig, 
+            EngineConfig.reconstruct(engineConfig), 
             starred
         );
     }
     
-    public RowStarOperation(JSONObject engineConfig, boolean starred) {
+    public RowStarOperation(EngineConfig engineConfig, boolean starred) {
         super(engineConfig);
         _starred = starred;
     }
@@ -79,7 +80,7 @@ public class RowStarOperation extends EngineDependentOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("starred"); writer.value(_starred);
         writer.endObject();
     }

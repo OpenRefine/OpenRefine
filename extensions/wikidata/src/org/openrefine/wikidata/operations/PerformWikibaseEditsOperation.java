@@ -49,6 +49,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -65,7 +66,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     private String summary;
 
-    public PerformWikibaseEditsOperation(JSONObject engineConfig, String summary) {
+    public PerformWikibaseEditsOperation(EngineConfig engineConfig, String summary) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -79,7 +80,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         if (obj.has("summary")) {
             summary = obj.getString("summary");
         }
-        return new PerformWikibaseEditsOperation(engineConfig, summary);
+        return new PerformWikibaseEditsOperation(
+                EngineConfig.reconstruct(engineConfig), summary);
     }
 
     @Override
@@ -93,7 +95,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         writer.key("summary");
         writer.value(summary);
         writer.key("engineConfig");
-        writer.value(getEngineConfig());
+        getEngineConfig().write(writer, options);
         writer.endObject();
     }
 

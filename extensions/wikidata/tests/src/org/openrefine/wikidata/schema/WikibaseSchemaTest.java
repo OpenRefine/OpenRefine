@@ -55,6 +55,7 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.util.ParsingUtilities;
@@ -149,12 +150,21 @@ public class WikibaseSchemaTest extends RefineTest {
         JSONObject serialized = TestingData.jsonFromFile("data/schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
-        JSONObject engineConfig = new JSONObject("{\n" + "      \"mode\": \"row-based\",\n" + "      \"facets\": [\n"
-                + "        {\n" + "          \"mode\": \"text\",\n" + "          \"invert\": false,\n"
-                + "          \"caseSensitive\": false,\n" + "          \"query\": \"www\",\n"
-                + "          \"name\": \"reference\",\n" + "          \"type\": \"text\",\n"
-                + "          \"columnName\": \"reference\"\n" + "        }\n" + "      ]\n" + "    }");
-        engine.initializeFromJSON(engineConfig);
+        EngineConfig engineConfig = EngineConfig.reconstruct(new JSONObject("{\n"
+                + "      \"mode\": \"row-based\",\n" 
+                + "      \"facets\": [\n"
+                + "        {\n"
+                + "          \"mode\": \"text\",\n"
+                + "          \"invert\": false,\n"
+                + "          \"caseSensitive\": false,\n"
+                + "          \"query\": \"www\",\n"
+                + "          \"name\": \"reference\",\n"
+                + "          \"type\": \"text\",\n"
+                + "          \"columnName\": \"reference\"\n"
+                + "        }\n"
+                + "      ]\n"
+                + "    }"));
+        engine.initializeFromConfig(engineConfig);
         List<ItemUpdate> updates = schema.evaluate(project, engine);
         List<ItemUpdate> expected = new ArrayList<>();
         ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();

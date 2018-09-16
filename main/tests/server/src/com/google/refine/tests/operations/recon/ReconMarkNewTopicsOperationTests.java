@@ -21,7 +21,7 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
     public void serializeReconMarkNewTopicsOperation() throws Exception {
         String json = "{"
                 + "\"op\":\"core/recon-mark-new-topics\","
-                + "\"engineConfig\":{\"mode\":\"row-based\"},"
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\","
                 + "\"shareNewTopics\":true,"
                 + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""

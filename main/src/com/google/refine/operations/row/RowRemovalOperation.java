@@ -42,6 +42,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
@@ -57,11 +58,11 @@ public class RowRemovalOperation extends EngineDependentOperation {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         return new RowRemovalOperation(
-            engineConfig
+            EngineConfig.reconstruct(engineConfig)
         );
     }
     
-    public RowRemovalOperation(JSONObject engineConfig) {
+    public RowRemovalOperation(EngineConfig engineConfig) {
         super(engineConfig);
     }
 
@@ -72,7 +73,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.endObject();
     }
 

@@ -52,6 +52,8 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 
@@ -151,11 +153,11 @@ public class CommandTests extends RefineTest {
 
     @Test
     public void getEngineConfigRegressionTest() {
-        when(request.getParameter("engine")).thenReturn("{\"hello\":\"world\"}");
-        JSONObject o = null;
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\"}");
+        EngineConfig o = null;
         try {
             o = SUT.wrapGetEngineConfig(request);
-            Assert.assertEquals("world", o.getString("hello"));
+            Assert.assertEquals(Mode.RowBased, o.getMode());
         } catch (JSONException e) {
             Assert.fail();
         } catch (Exception e) {

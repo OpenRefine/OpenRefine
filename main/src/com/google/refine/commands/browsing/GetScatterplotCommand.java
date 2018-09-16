@@ -53,6 +53,7 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.facets.ScatterplotDrawingRowVisitor;
 import com.google.refine.browsing.facets.ScatterplotFacet;
+import com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import com.google.refine.browsing.util.NumericBinIndex;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.Evaluable;
@@ -114,7 +115,7 @@ public class GetScatterplotCommand extends Command {
         int dim_x = (o.has(ScatterplotFacet.DIM_X)) ? ScatterplotFacet.getAxisDim(o.getString(ScatterplotFacet.DIM_X)) : ScatterplotFacet.LIN;
         int dim_y = (o.has(ScatterplotFacet.DIM_Y)) ? ScatterplotFacet.getAxisDim(o.getString(ScatterplotFacet.DIM_Y)) : ScatterplotFacet.LIN;
 
-        int rotation = (o.has(ScatterplotFacet.ROTATION)) ? ScatterplotFacet.getRotation(o.getString(ScatterplotFacet.ROTATION)) : ScatterplotFacet.NO_ROTATION;
+        int rotation = (o.has(ScatterplotFacet.ROTATION)) ? ScatterplotFacetConfig.getRotation(o.getString(ScatterplotFacet.ROTATION)) : ScatterplotFacet.NO_ROTATION;
         
         String color_str = (o.has(ScatterplotFacet.COLOR)) ? o.getString(ScatterplotFacet.COLOR) : "000000";
         Color color = new Color(Integer.parseInt(color_str,16));

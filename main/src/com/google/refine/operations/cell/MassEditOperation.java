@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -101,7 +102,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 obj.getJSONObject("engineConfig") : null;
         
         return new MassEditOperation(
-            engineConfig,
+            EngineConfig.reconstruct(engineConfig),
             obj.getString("columnName"),
             obj.getString("expression"),
             reconstructEdits(obj.getJSONArray("edits"))
@@ -145,7 +146,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         return edits;
     }
     
-    public MassEditOperation(JSONObject engineConfig, String columnName, String expression, List<Edit> edits) {
+    public MassEditOperation(EngineConfig engineConfig, String columnName, String expression, List<Edit> edits) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
@@ -158,7 +159,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         writer.object();
         writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
         writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
+        writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("columnName"); writer.value(_columnName);
         writer.key("expression"); writer.value(_expression);
         writer.key("edits");

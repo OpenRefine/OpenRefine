@@ -62,17 +62,68 @@ public class RangeFacet implements Facet {
     /*
      * Configuration, from the client side
      */
-    protected String     _name;       // name of facet
-    protected String     _expression; // expression to compute numeric value(s) per row
-    protected String     _columnName; // column to base expression on, if any
-    
-    protected double    _from; // the numeric selection
-    protected double    _to;
-    
-    protected boolean   _selectNumeric; // whether the numeric selection applies, default true
-    protected boolean   _selectNonNumeric;
-    protected boolean   _selectBlank;
-    protected boolean   _selectError;
+    public static class RangeFacetConfig implements FacetConfig {
+        protected String     _name;       // name of facet
+        protected String     _expression; // expression to compute numeric value(s) per row
+        protected String     _columnName; // column to base expression on, if any
+        
+        protected double    _from; // the numeric selection
+        protected double    _to;
+        
+        protected boolean   _selectNumeric; // whether the numeric selection applies, default true
+        protected boolean   _selectNonNumeric;
+        protected boolean   _selectBlank;
+        protected boolean   _selectError;
+        
+        protected boolean    _selected; // false if we're certain that all rows will match
+                        // and there isn't any filtering to do
+        
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("type"); writer.value("range");
+            writer.key("name"); writer.value(_name);
+            writer.key("expression"); writer.value(_expression);
+            writer.key("columnName"); writer.value(_columnName);
+            writer.key(FROM); writer.value(_from);
+            writer.key(TO); writer.value(_to);
+            writer.key("selectNumeric"); writer.value(_selectNumeric);
+            writer.key("selectNonNumeric"); writer.value(_selectNonNumeric);
+            writer.key("selectError"); writer.value(_selectError);
+            writer.key("selectBlank"); writer.value(_selectBlank);
+            writer.endObject();
+            
+        }
+        
+        @Override
+        public void initializeFromJSON(JSONObject o) {
+            _name = o.getString("name");
+            _expression = o.getString("expression");
+            _columnName = o.getString("columnName");
+            if (o.has(FROM) || o.has(TO)) {
+                _from = o.has(FROM) ? o.getDouble(FROM) : 0;
+                _to = o.has(TO) ? o.getDouble(TO) : 0;
+                _selected = true;
+            }
+            _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
+            _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
+            _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
+            _selectError = JSONUtilities.getBoolean(o, "selectError", true);
+            
+            if (!_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError) {
+                _selected = true;
+            }
+        }
+        
+        @Override
+        public RangeFacet apply(Project project) {
+            RangeFacet facet = new RangeFacet();
+            facet.initializeFromConfig(this, project);
+            return facet;
+        }
+    }
+    RangeFacetConfig _config = new RangeFacetConfig();
     
     /*
      * Derived configuration data
@@ -80,8 +131,6 @@ public class RangeFacet implements Facet {
     protected int        _cellIndex;
     protected Evaluable  _eval;
     protected String     _errorMessage;
-    protected boolean    _selected; // false if we're certain that all rows will match
-                                    // and there isn't any filtering to do
     
     /*
      * Computed data, to return to the client side
@@ -115,9 +164,9 @@ public class RangeFacet implements Facet {
             throws JSONException {
         
         writer.object();
-        writer.key("name"); writer.value(_name);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("columnName"); writer.value(_columnName);
+        writer.key("name"); writer.value(_config._name);
+        writer.key("expression"); writer.value(_config._expression);
+        writer.key("columnName"); writer.value(_config._columnName);
         
         if (_errorMessage != null) {
             writer.key("error"); writer.value(_errorMessage);
@@ -139,8 +188,8 @@ public class RangeFacet implements Facet {
                 }
                 writer.endArray();
                 
-                writer.key(FROM); writer.value(_from);
-                writer.key(TO); writer.value(_to);
+                writer.key(FROM); writer.value(_config._from);
+                writer.key(TO); writer.value(_config._to);
             } else {
                 writer.key("error"); writer.value("No numeric value present.");
             }
@@ -157,55 +206,37 @@ public class RangeFacet implements Facet {
         }
         writer.endObject();
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        _name = o.getString("name");
-        _expression = o.getString("expression");
-        _columnName = o.getString("columnName");
+    
+    public void initializeFromConfig(RangeFacetConfig config, Project project) {
+        _config = config;
         
-        if (_columnName.length() > 0) {
-            Column column = project.columnModel.getColumnByName(_columnName);
+        if (_config._columnName.length() > 0) {
+            Column column = project.columnModel.getColumnByName(_config._columnName);
             if (column != null) {
                 _cellIndex = column.getCellIndex();
             } else {
-                _errorMessage = "No column named " + _columnName;
+                _errorMessage = "No column named " + _config._columnName;
             }
         } else {
             _cellIndex = -1;
         }
         
         try {
-            _eval = MetaParser.parse(_expression);
+            _eval = MetaParser.parse(_config._expression);
         } catch (ParsingException e) {
             _errorMessage = e.getMessage();
-        }
-        
-        if (o.has(FROM) || o.has(TO)) {
-            _from = o.has(FROM) ? o.getDouble(FROM) : _min;
-            _to = o.has(TO) ? o.getDouble(TO) : _max;
-            _selected = true;
-        }
-        
-        _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
-        _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
-        _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
-        _selectError = JSONUtilities.getBoolean(o, "selectError", true);
-        
-        if (!_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError) {
-            _selected = true;
         }
     }
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (_eval != null && _errorMessage == null && _selected) {
+        if (_eval != null && _errorMessage == null && _config._selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                    getRowEvaluable(project), _config._selectNumeric, _config._selectNonNumeric, _config._selectBlank, _config._selectError) {
 
                 @Override
                 protected boolean checkValue(double d) {
-                    return d >= _from && d < _to;
+                    return d >= _config._from && d < _config._to;
                 };
             };
         } else {
@@ -225,7 +256,7 @@ public class RangeFacet implements Facet {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
             
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-            String key = "numeric-bin:row-based:" + _expression;
+            String key = "numeric-bin:row-based:" + _config._expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
                 index = new NumericBinRowIndex(project, rowEvaluable);
@@ -248,7 +279,7 @@ public class RangeFacet implements Facet {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
             
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-            String key = "numeric-bin:record-based:" + _expression;
+            String key = "numeric-bin:record-based:" + _config._expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
                 index = new NumericBinRecordIndex(project, rowEvaluable);
@@ -267,7 +298,7 @@ public class RangeFacet implements Facet {
     }
     
     protected RowEvaluable getRowEvaluable(Project project) {
-        return new ExpressionBasedRowEvaluable(_columnName, _cellIndex, _eval);
+        return new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _eval);
     }
     
     protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {
@@ -281,12 +312,12 @@ public class RangeFacet implements Facet {
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
         
-        if (_selected) {
-            _from = Math.max(_from, _min);
-            _to = Math.min(_to, _max);
+        if (_config._selected) {
+            _config._from = Math.max(_config._from, _min);
+            _config._to = Math.min(_config._to, _max);
         } else {
-            _from = _min;
-            _to = _max;
+            _config._from = _min;
+            _config._to = _max;
         }
     }
     

@@ -35,9 +35,9 @@ package com.google.refine.commands.column;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
 import org.json.JSONArray;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -47,7 +47,7 @@ import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
-        HttpServletRequest request, JSONObject engineConfig) throws Exception {
+        HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String baseColumnName = request.getParameter("baseColumnName");
         String urlExpression = request.getParameter("urlExpression");

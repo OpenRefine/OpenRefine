@@ -50,6 +50,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -81,7 +82,7 @@ public class ExtendDataOperationTests extends RefineTest {
     // dependencies
     Project project;
     Properties options;
-    JSONObject engine_config;
+    EngineConfig engine_config;
     Engine engine;
 
     @BeforeMethod
@@ -91,8 +92,8 @@ public class ExtendDataOperationTests extends RefineTest {
         
         options = mock(Properties.class);
         engine = new Engine(project);
-        engine_config = new JSONObject(ENGINE_JSON_URLS);
-        engine.initializeFromJSON(engine_config);
+        engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_URLS));
+        engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
 
                Row row = new Row(2);

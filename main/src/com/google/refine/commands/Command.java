@@ -54,6 +54,7 @@ import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
@@ -115,7 +116,7 @@ public abstract class Command {
      * @return
      * @throws JSONException
      */
-    static protected JSONObject getEngineConfig(HttpServletRequest request)
+    static protected EngineConfig getEngineConfig(HttpServletRequest request)
     throws JSONException {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
@@ -123,7 +124,8 @@ public abstract class Command {
         
         String json = request.getParameter("engine");
         try{
-            return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
+            return (json == null) ? null :
+                   EngineConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(json));
         } catch (JSONException e){
             logger.debug( json + " could not be parsed to JSON");
             return null;
@@ -149,9 +151,9 @@ public abstract class Command {
         }
 
         Engine engine = new Engine(project);
-        JSONObject o = getEngineConfig(request);
-        if (o != null) {
-            engine.initializeFromJSON(o);
+        EngineConfig c = getEngineConfig(request);
+        if (c != null) {
+            engine.initializeFromConfig(c);
         }
         return engine;
     }

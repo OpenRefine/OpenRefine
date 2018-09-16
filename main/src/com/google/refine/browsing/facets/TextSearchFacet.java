@@ -53,21 +53,59 @@ import com.google.refine.model.Project;
 import com.google.refine.util.PatternSyntaxExceptionParser;
 
 public class TextSearchFacet implements Facet {
+    
     /*
      *  Configuration
      */
-    protected String     _name;
-    protected String     _columnName;
-    protected String     _query;
-    protected String     _mode;
-    protected boolean    _caseSensitive;
-    protected boolean    _invert;
+    public static class TextSearchFacetConfig implements FacetConfig {  
+        protected String     _name;
+        protected String     _columnName;
+        protected String     _query = null;
+        protected String     _mode;
+        protected boolean    _caseSensitive;
+        protected boolean    _invert;
+        
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("name"); writer.value(_name);
+            writer.key("columnName"); writer.value(_columnName);
+            writer.key("query"); writer.value(_query);
+            writer.key("mode"); writer.value(_mode);
+            writer.key("caseSensitive"); writer.value(_caseSensitive);
+            writer.key("invert"); writer.value(_invert);
+            writer.key("type"); writer.value("text");
+            writer.endObject();  
+        }
+        
+        @Override
+        public TextSearchFacet apply(Project project) {
+            TextSearchFacet facet = new TextSearchFacet();
+            facet.initializeFromConfig(this, project);
+            return facet;
+        }
+        
+        @Override
+        public void initializeFromJSON(JSONObject o) {
+            _name = o.getString("name");
+            _columnName = o.getString("columnName");
+            _mode = o.getString("mode");
+            _caseSensitive = o.getBoolean("caseSensitive");
+            if (!o.isNull("query")) {
+                _query = o.getString("query"); 
+            }
+            _invert = o.has("invert") && o.getBoolean("invert");
+        }
+    }
+    TextSearchFacetConfig _config = new TextSearchFacetConfig();
     
     /*
      *  Derived configuration
      */
     protected int        _cellIndex;
     protected Pattern    _pattern;
+    protected String     _query; // normalized version of the query from the config
     
     public TextSearchFacet() {
     }
@@ -77,68 +115,61 @@ public class TextSearchFacet implements Facet {
             throws JSONException {
         
         writer.object();
-        writer.key("name"); writer.value(_name);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("query"); writer.value(_query);
-        writer.key("mode"); writer.value(_mode);
-        writer.key("caseSensitive"); writer.value(_caseSensitive);
-        writer.key("invert"); writer.value(_invert);
+        writer.key("name"); writer.value(_config._name);
+        writer.key("columnName"); writer.value(_config._columnName);
+        writer.key("query"); writer.value(_config._query);
+        writer.key("mode"); writer.value(_config._mode);
+        writer.key("caseSensitive"); writer.value(_config._caseSensitive);
+        writer.key("invert"); writer.value(_config._invert);
         writer.endObject();
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        _name = o.getString("name");
-        _columnName = o.getString("columnName");
+    
+    public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
+        _config = config;
         
-        Column column = project.columnModel.getColumnByName(_columnName);
+        Column column = project.columnModel.getColumnByName(_config._columnName);
         _cellIndex = column != null ? column.getCellIndex() : -1;
         
-        if (!o.isNull("query")) {
-            _query = o.getString("query"); 
-        }
-        
-        _mode = o.getString("mode");
-        _caseSensitive = o.getBoolean("caseSensitive");
+        _query = _config._query;
         if (_query != null) {
-            if ("regex".equals(_mode)) {
+            if ("regex".equals(_config._mode)) {
                 try {
                     _pattern = Pattern.compile(
                             _query, 
-                            _caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                            _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
                     throw new JSONException(err.getUserMessage());
                 }
-            } else if (!_caseSensitive) {
+            } else if (!_config._caseSensitive) {
                 _query = _query.toLowerCase();
             }
         }
-        _invert = o.has("invert") && o.getBoolean("invert");
+
     }
 
     @Override
     public RowFilter getRowFilter(Project project) {
         if (_query == null || _query.length() == 0 || _cellIndex < 0) {
             return null;
-        } else if ("regex".equals(_mode) && _pattern == null) {
+        } else if ("regex".equals(_config._mode) && _pattern == null) {
             return null;
         }
         
         Evaluable eval = new VariableExpr("value");
         
-        if ("regex".equals(_mode)) {
-            return new ExpressionStringComparisonRowFilter(eval, _invert, _columnName, _cellIndex) {
+        if ("regex".equals(_config._mode)) {
+            return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
                 @Override
                 protected boolean checkValue(String s) {
                     return _pattern.matcher(s).find();
                 };
             };
         } else {
-            return new ExpressionStringComparisonRowFilter(eval, _invert, _columnName, _cellIndex) {
+            return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
                 @Override
                 protected boolean checkValue(String s) {
-                    return (_caseSensitive ? s : s.toLowerCase()).contains(_query);
+                    return (_config._caseSensitive ? s : s.toLowerCase()).contains(_query);
                 };
             };
         }        

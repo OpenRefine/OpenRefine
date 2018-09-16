@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -26,7 +27,7 @@ import com.google.refine.tests.util.TestUtils;
 
 public class ReconJudgeSimilarCellsTests extends RefineTest {
     
-    static final JSONObject ENGINE_CONFIG = new JSONObject("{\"mode\":\"row-based\"}}");
+    static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\"}}"));
     
     @Override
     @BeforeTest
@@ -45,7 +46,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 null, true);
         TestUtils.isSerializedTo(op, "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
-                + "\"engineConfig\":{\"mode\":\"row-based\"},"
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"A\","
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
