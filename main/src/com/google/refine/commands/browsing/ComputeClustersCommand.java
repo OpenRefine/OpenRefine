@@ -45,8 +45,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.clustering.Clusterer;
-import com.google.refine.clustering.binning.BinningClusterer;
-import com.google.refine.clustering.knn.kNNClusterer;
+import com.google.refine.clustering.ClustererConfig;
+import com.google.refine.clustering.binning.BinningClusterer.BinningClustererConfig;
+import com.google.refine.clustering.knn.kNNClusterer.kNNClustererConfig;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
@@ -64,16 +65,17 @@ public class ComputeClustersCommand extends Command {
             Engine engine = getEngine(request, project);
             JSONObject clusterer_conf = getJsonParameter(request,"clusterer");
 
-            Clusterer clusterer = null;
             String type = clusterer_conf.has("type") ? clusterer_conf.getString("type") : "binning";
             
+            ClustererConfig clustererConfig = null;
             if ("knn".equals(type)) {
-                clusterer = new kNNClusterer();
+                clustererConfig = new kNNClustererConfig();
             } else  {
-                clusterer = new BinningClusterer();
+                clustererConfig = new BinningClustererConfig();
             }
                 
-            clusterer.initializeFromJSON(project, clusterer_conf);
+            clustererConfig.initializeFromJSON(clusterer_conf);
+            Clusterer clusterer = clustererConfig.apply(project);
             
             clusterer.computeClusters(engine);
             

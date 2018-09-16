@@ -50,17 +50,90 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.clustering.Clusterer;
+import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class BinningClusterer extends Clusterer {
+    
+    public static class BinningClustererConfig extends ClustererConfig {
+        
+        private String _keyerName;
+        private Keyer _keyer;
+        private BinningParameters _parameters;
+        
+        @Override
+        public void initializeFromJSON(JSONObject o) {
+            super.initializeFromJSON(o);
+            _keyerName = o.getString("function");
+            _keyer = _keyers.get(_keyerName.toLowerCase());
+            if(o.has("params")) {
+                _parameters = BinningParameters.reconstruct(o.getJSONObject("params"));
+            } else {
+                _parameters = null;
+            }
+        }
+        
+        public Keyer getKeyer() {
+            return _keyer;
+        }
+        
+        public BinningParameters getParameters() {
+            return _parameters;
+        }
+        
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("function"); writer.value(_keyerName);
+            writer.key("type"); writer.value("binning");
+            writer.key("column"); writer.value(getColumnName());
+            if(_parameters != null) {
+                writer.key("params");
+                _parameters.write(writer, options);
+            }
+            writer.endObject();
+        }
 
-    private Keyer _keyer;
+        @Override
+        public BinningClusterer apply(Project project) {
+            BinningClusterer clusterer = new BinningClusterer();
+            clusterer.initializeFromConfig(project, this);
+            return clusterer;
+        }
+        
+    }
+    
+    public static class BinningParameters implements Jsonizable {
+        public int ngramSize;
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            if(ngramSize > 0) {
+                writer.key("ngram-size");
+                writer.value(ngramSize);
+            }
+            writer.endObject();
+        }
+        
+        public static BinningParameters reconstruct(JSONObject o) {
+            BinningParameters parameters = new BinningParameters();
+            parameters.ngramSize = o.has("ngram-size") ? o.getInt("ngram-size") : 0;
+            return parameters;
+        }
+    }
+
+    protected Keyer _keyer;
+    protected BinningParameters _parameters;
     
     static final protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
 
@@ -82,21 +155,17 @@ public class BinningClusterer extends Clusterer {
 
         Keyer _keyer;
         Object[] _params;
-        JSONObject _config;
+        BinningParameters _parameters;
         
         Map<String,Map<String,Integer>> _map = new HashMap<String,Map<String,Integer>>();
         
-        public BinningRowVisitor(Keyer k, JSONObject o) {
+        public BinningRowVisitor(Keyer k, BinningParameters parameters) {
             _keyer = k;
-            _config = o;
+            _parameters = parameters;
             if (k instanceof NGramFingerprintKeyer) {
-                try {
-                    int size = _config.getJSONObject("params").getInt("ngram-size");
-                    logger.debug("Using ngram size: {}", size);
+                if(_parameters != null) {
                     _params = new Object[1];
-                    _params[0] = size;
-                } catch (JSONException e) {
-                    //Refine.warn("No params specified, using default");
+                    _params[0] = _parameters.ngramSize;
                 }
             }
         }
@@ -169,15 +238,15 @@ public class BinningClusterer extends Clusterer {
         }
     }
     
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
-        super.initializeFromJSON(project, o);
-        _keyer = _keyers.get(o.getString("function").toLowerCase());
+    public void initializeFromConfig(Project project, BinningClustererConfig config) {
+        super.initializeFromConfig(project, config);
+        _keyer = config.getKeyer();
+        _parameters = config.getParameters();
     }
 
     @Override
     public void computeClusters(Engine engine) {
-        BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_config);
+        BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_parameters);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
      
