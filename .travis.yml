@@ -28,7 +28,8 @@ script:
   - ./refine test
 
 after_success:
-  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/report/jacoco.xml
+  - mvn prepare-package -DskipTests=true
+  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/report/jacoco-merged.exec
 
 cache:
   directories:

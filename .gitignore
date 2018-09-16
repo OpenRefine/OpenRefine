@@ -34,3 +34,5 @@ server/target/
 extensions/*/target/
 extensions/*/module/MOD-INF/classes/
 extensions/*/module/MOD-INF/lib/
+extensions/target
+target/
