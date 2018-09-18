@@ -393,7 +393,7 @@
         "against-type": "この型だけを照合:",
         "recon-col": "照合対象カラム:",
         "cell-type": "以下の型(Type)に対して照合する",
-        "wd-recon-lang": "jp",
+        "wd-recon-lang": "ja",
         "service-api": "照合サービスAPI",
         "max-candidates": "照合候補の最大数",
         "no-type": "型を問わずに照合する",
