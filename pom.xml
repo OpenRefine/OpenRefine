@@ -21,6 +21,7 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
+    <surefireArgs></surefireArgs>
   </properties>
 
   <scm>
