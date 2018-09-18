@@ -248,7 +248,7 @@
         "language": "Sprache",
         "linear-plot": "Lineare Darstellung",
         "excel-xml": "Excel in XML (.xlsx)",
-        "custom-tab-exp": "SQL-Exporteur",
+        "custom-tab-exp": "Benutzerdefinierter tabellarischer Exporteur",
         "custom-separator": "Benutzerdefiniertes Trennzeichen",
         "template-suffix": "Suffix",
         "history": "Verlauf",
@@ -286,7 +286,9 @@
         "error": "Fehler",
         "filtered-from": "gefiltert aus <b>",
         "big-dot": "Große Punktgröße",
-        "metaphone": "metaphone3"
+        "metaphone": "metaphone3",
+        "sql-exporter": "SQL-Exporteur",
+        "select-columns-dialog": "Spalten auswählen"
     },
     "core-buttons": {
         "unselect-all": "Auswahl aufheben",
