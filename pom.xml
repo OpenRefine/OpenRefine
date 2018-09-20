@@ -15,6 +15,7 @@
         <module>main</module>
         <module>server</module>
         <module>extensions</module>
+        <module>packaging</module>
   </modules>
 
   <properties>
@@ -149,7 +150,6 @@
                 </configuration>
 
       </plugin>
-
     </plugins>
     <pluginManagement>
       <plugins>
