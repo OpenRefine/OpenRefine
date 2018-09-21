@@ -20,6 +20,11 @@
       <excludes>
 	<exclude>**/*.java</exclude>
 	<exclude>**/butterfly.properties</exclude>
+        <exclude>**/lib-local/**</exclude>
+        <exclude>*/lib-local-src/**</exclude>
+	<exclude>**/pom.xml</exclude>
+	<exclude>**/.settings/**</exclude>
+	<exclude>**/.project</exclude>
       </excludes>
     </fileSet>
     <fileSet>
@@ -45,6 +50,8 @@
 	<exclude>**/pom.xml</exclude>
 	<exclude>**/.settings/**</exclude>
 	<exclude>**/.project</exclude>
+        <exclude>**/lib-local/**</exclude>
+        <exclude>*/lib-local-src/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>

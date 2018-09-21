@@ -126,7 +126,7 @@
                 <id>install-marc4j</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/marc4j-2.4.jar</file>
+                    <file>${basedir}/lib-local/marc4j-2.4.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>marc4j</groupId>
                     <artifactId>marc4j</artifactId>
@@ -142,7 +142,7 @@
                 <id>install-tableschema</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/tableschema-java-1.0-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib-local/tableschema-java-1.0-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>io.frictionlessdata</groupId>
                     <artifactId>tableschema-java</artifactId>
@@ -158,7 +158,7 @@
                 <id>install-datapackage</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/datapackage-java-1.0-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib-local/datapackage-java-1.0-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>io.frictionlessdata</groupId>
                     <artifactId>datapackage-java</artifactId>
@@ -174,7 +174,7 @@
                 <id>install-opencsv</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/opencsv-2.4-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib-local/opencsv-2.4-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>net.sf.opencsv</groupId>
                     <artifactId>opencsv</artifactId>
@@ -190,7 +190,7 @@
                 <id>install-butterfly</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/butterfly-1.0.1.jar</file>
+                    <file>${basedir}/lib-local/butterfly-1.0.1.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>edu.mit.simile</groupId>
                     <artifactId>butterfly</artifactId>
@@ -206,7 +206,7 @@
                 <id>install-vicino</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/vicino-1.1.jar</file>
+                    <file>${basedir}/lib-local/vicino-1.1.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>edu.mit.simile</groupId>
                     <artifactId>vicino</artifactId>
@@ -222,7 +222,7 @@
                 <id>install-secondstring</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/secondstring-20100303.jar</file>
+                    <file>${basedir}/lib-local/secondstring-20100303.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>com.wcohen</groupId>
                     <artifactId>secondstring</artifactId>
@@ -238,7 +238,7 @@
                 <id>install-arithcode</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/arithcode-1.1.jar</file>
+                    <file>${basedir}/lib-local/arithcode-1.1.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>com.colloquial</groupId>
                     <artifactId>arithcode</artifactId>

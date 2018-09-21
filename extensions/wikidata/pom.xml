@@ -104,7 +104,7 @@
                 <id>install-wdtk-datamodel</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar</file>
+                    <file>${basedir}/lib-local/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>org.wikidata.wdtk</groupId>
                     <artifactId>wdtk-datamodel</artifactId>
@@ -120,7 +120,7 @@
                 <id>install-wdtk-wikibaseapi</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar</file>
+                    <file>${basedir}/lib-local/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>org.wikidata.wdtk</groupId>
                     <artifactId>wdtk-wikibaseapi</artifactId>
