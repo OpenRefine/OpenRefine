@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>server</artifactId>
   <packaging>jar</packaging>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.1-SNAPSHOT</version>
 
   <name>OpenRefine - server</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
 
   <properties>
