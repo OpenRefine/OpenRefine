@@ -17,10 +17,50 @@
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
+    <fullversion>0.0.0.0</fullversion>
   </properties>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>l4j-clui</id>
+            <phase>package</phase>
+            <goals><goal>launch4j</goal></goals>
+            <configuration>
+               <headerType>console</headerType>
+               <outfile>target/openrefine.exe</outfile>
+               <jar>${rootdir}/server/target/openrefine-${project.version}-server.jar</jar>
+               <classPath>
+                 <mainClass>com.google.refine.Refine</mainClass>
+                </classPath>
+                <jre>
+                  <minVersion>1.8.0</minVersion>
+                  <jdkPreference>preferJre</jdkPreference>
+                  <initialHeapSize>256</initialHeapSize>
+                  <maxHeapSize>1024</maxHeapSize>
+                  <opts>
+                     <opt>-Djava.library.path=server/target/lib/native/windows</opt>
+                  </opts>
+                </jre>
+                <versionInfo>
+                  <fileVersion>${fullversion}</fileVersion>
+                  <txtFileVersion>${project.version}</txtFileVersion>
+                  <fileDescription>openrefine</fileDescription>
+                  <copyright>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</copyright>
+                  <productVersion>${fullversion}</productVersion>
+                  <txtProductVersion>${project.version}</txtProductVersion>
+                  <productName>OpenRefine</productName>
+                  <internalName>openrefine</internalName>
+                  <originalFilename>openrefine.exe</originalFilename>
+                </versionInfo>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-assembly-plugin</artifactId>
@@ -35,6 +75,7 @@
 	    <configuration>
 	      <descriptors>
 		<descriptor>linux.xml</descriptor>
+		<descriptor>windows.xml</descriptor>
 	      </descriptors>
 	    </configuration>
 	  </execution>

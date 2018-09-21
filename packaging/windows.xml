@@ -1,8 +1,8 @@
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
-  <id>linux-${project.version}</id>
+  <id>win-${project.version}</id>
   <formats>
-    <format>tar.gz</format>
+    <format>zip</format>
   </formats>
   <baseDirectory>${project.build.finalName}-${project.version}</baseDirectory>
   <fileSets>
@@ -11,6 +11,13 @@
       <outputDirectory>server/target/lib</outputDirectory>
       <includes>
 	<include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${rootdir}/server/lib/native</directory>
+      <outputDirectory>server/target/lib/native</outputDirectory>
+      <includes>
+	<include>**/*.dll</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -51,8 +58,13 @@
   <!-- TODO replace $VERSION by ${project.version} in WEB-INF/web.xml -->
   <files>
     <file>
-      <source>${rootdir}/refine</source>
-      <fileMode>755</fileMode>
+      <source>target/openrefine.exe</source>
+    </file>
+    <file>
+      <source>${rootdir}/conf/openrefine.l4j.ini</source>
+    </file>
+    <file>
+      <source>${rootdir}/refine.bat</source>
     </file>
     <file>
       <source>${rootdir}/refine.ini</source>
