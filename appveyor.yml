@@ -35,6 +35,7 @@ before_test:
     SET PGUSER=postgres
     createdb test_db
     psql -U postgres test_db < extensions\database\tests\conf\travis-pgsql.sql
+    mkdir packaging/target
 
     copy extensions\database\tests\conf\appveyor_tests.xml extensions\database\tests\conf\tests.xml
 - cmd: |-
