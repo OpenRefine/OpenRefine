@@ -151,6 +151,12 @@
       <artifactId>google-api-services-sheets</artifactId>
       <version>v4-rev502-1.23.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.1.3</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.testng</groupId>
