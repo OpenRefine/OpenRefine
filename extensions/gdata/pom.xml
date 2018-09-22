@@ -128,33 +128,28 @@
     </dependency>
     <dependency>
       <groupId>com.google.http-client</groupId>
-      <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.24.1</version>
+      <artifactId>google-http-client-jackson</artifactId>
+      <version>1.23.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.oauth-client</groupId>
       <artifactId>google-oauth-client-jetty</artifactId>
-      <version>1.24.1</version>
+      <version>1.23.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-fusiontables</artifactId>
-      <version>v2-rev27-1.24.1</version>
+      <version>v2-rev21-1.23.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev126-1.24.1</version>
+      <version>v3-rev101-1.23.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev536-1.24.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.api.client</groupId>
-      <artifactId>google-api-client</artifactId>
-      <version>1.4.1-beta</version>
+      <version>v4-rev502-1.23.0</version>
     </dependency>
 
     <dependency>
