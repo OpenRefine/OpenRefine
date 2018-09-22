@@ -25,6 +25,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
+        <version>1.7.23</version>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -33,9 +34,13 @@
             <configuration>
                <headerType>console</headerType>
                <outfile>target/openrefine.exe</outfile>
-               <jar>${rootdir}/server/target/openrefine-${project.version}-server.jar</jar>
+               <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+               <dontWrapJar>true</dontWrapJar>
+               <saveConfig>true</saveConfig>
                <classPath>
                  <mainClass>com.google.refine.Refine</mainClass>
+                 <jarLocation>server/target/lib/</jarLocation>
+                 <postCp>server/target/lib/*.jar</postCp>
                 </classPath>
                 <jre>
                   <minVersion>1.8.0</minVersion>
