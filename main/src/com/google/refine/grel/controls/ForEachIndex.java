@@ -150,15 +150,17 @@ public class ForEachIndex implements Control {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+            return "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array."
-        );
-        writer.key("params"); writer.value("expression a, variable i, variable v, expression e");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "expression a, variable i, variable v, expression e";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

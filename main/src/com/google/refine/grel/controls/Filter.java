@@ -148,15 +148,17 @@ public class Filter implements Control {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+            return "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array."
-        );
-        writer.key("params"); writer.value("expression a, variable v, expression test");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "expression a, variable v, expression test";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

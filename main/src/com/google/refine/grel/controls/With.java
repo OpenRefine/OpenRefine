@@ -35,9 +35,6 @@ package com.google.refine.grel.controls;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.Evaluable;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -82,15 +79,17 @@ public class With implements Control {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+            return "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result"
-        );
-        writer.key("params"); writer.value("expression o, variable v, expression e");
-        writer.key("returns"); writer.value("Depends on actual arguments");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "expression o, variable v, expression e";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "Depends on actual arguments";
     }
 }

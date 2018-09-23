@@ -65,16 +65,18 @@ public class If implements Control {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+            return "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
+            "Otherwise, evaluates expression eFalse and returns that result instead.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. " +
-            "Otherwise, evaluates expression eFalse and returns that result instead."
-        );
-        writer.key("params"); writer.value("expression o, expression eTrue, expression eFalse");
-        writer.key("returns"); writer.value("Depends on actual arguments");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "expression o, expression eTrue, expression eFalse";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "Depends on actual arguments";
     }
 }

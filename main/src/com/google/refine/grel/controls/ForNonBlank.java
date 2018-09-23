@@ -85,16 +85,18 @@ public class ForNonBlank implements Control {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+            return "Evaluates expression o. If it is non-blank, binds its value to variable name v, evaluates expression eNonBlank and returns the result. " +
+            "Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Evaluates expression o. If it is non-blank, binds its value to variable name v, evaluates expression eNonBlank and returns the result. " +
-            "Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead."
-        );
-        writer.key("params"); writer.value("expression o, variable v, expression eNonBlank, expression eBlank");
-        writer.key("returns"); writer.value("Depends on actual arguments");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "expression o, variable v, expression eNonBlank, expression eBlank";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "Depends on actual arguments";
     }
 }

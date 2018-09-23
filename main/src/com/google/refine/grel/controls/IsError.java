@@ -37,7 +37,7 @@ import com.google.refine.expr.ExpressionUtils;
 
 public class IsError extends IsTest {
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Returns whether o is an error";
     }
 
