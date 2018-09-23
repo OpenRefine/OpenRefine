@@ -1,0 +1,45 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-looser layout-full">
+        <table>
+          <tr>
+            <td>
+              <div class="grid-layout layout-tighter">
+                <table>
+                  <tr>
+                    <td >
+                      <h3 bind="or_views_text_to_find"></h3>
+                      <p bind="or_views_finding_options"></p>
+                      <input type="checkbox" bind="find_case_insensitiveInput" id="$find-case" />
+                      <label for="$find-case" bind="or_views_find_case_insensitive"></label>
+                      <input type="checkbox" bind="find_regexInput" id="$find-regex" />
+                      <label for="$find-regex" bind="or_views_find_regExp"></label>
+                      <p bind="or_views_finding_info1"></p>
+                      <p bind="or_views_finding_info2"></p>
+                      <textarea style="width: 100%;" bind="text_to_findTextarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h3 bind="or_views_replacement"></h3>
+                      <p bind="or_views_replacement_options"></p>
+                      <input type="checkbox" bind="replace_dont_escapeInput" id="$replace-escape" />
+                      <label for="$replace-escape" bind="or_views_replace_dont_escape"></label>
+                      <p bind="or_views_replacement_info"></p>
+                      <textarea style="width: 100%;" bind="replacementTextarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+        </table>
+      </div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="okButton"></button>
+      <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>
