@@ -39,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -71,6 +73,11 @@ public class ColumnRemovalOperation extends AbstractOperation {
         writer.key("description"); writer.value("Remove column " + _columnName);
         writer.key("columnName"); writer.value(_columnName);
         writer.endObject();
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
     }
 
 

@@ -44,6 +44,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -68,8 +72,8 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     final protected String     _mode;
     
     final protected String     _separator;
-    final protected boolean    _regex;
-    final protected int        _maxColumns;
+    final protected Boolean    _regex;
+    final protected Integer    _maxColumns;
     
     final protected int[]      _fieldLengths;
 
@@ -136,8 +140,8 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         
         _mode = "lengths";
         _separator = null;
-        _regex = false;
-        _maxColumns = -1;
+        _regex = null;
+        _maxColumns = null;
         
         _fieldLengths = fieldLengths;
     }
@@ -166,6 +170,50 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             writer.endArray();
         }
         writer.endObject();
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("guessCellType")
+    public boolean getGuessCellType() {
+        return _guessCellType;
+    }
+    
+    @JsonProperty("removeOriginalColumn")
+    public boolean getRemoveOriginalColumn() {
+        return _removeOriginalColumn;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _mode;
+    }
+    
+    @JsonProperty("separator")
+    @JsonInclude(Include.NON_NULL)
+    public String getSeparator() {
+        return _separator;
+    }
+    
+    @JsonProperty("regex")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getRegex() {
+        return _regex;
+    }
+    
+    @JsonProperty("maxColumns")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getMaxColumns() {
+        return _maxColumns;
+    }
+    
+    @JsonProperty("fieldLengths")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getFieldLengths() {
+        return _fieldLengths;
     }
 
     @Override

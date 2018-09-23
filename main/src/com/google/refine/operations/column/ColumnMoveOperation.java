@@ -39,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -76,7 +78,16 @@ public class ColumnMoveOperation extends AbstractOperation {
         writer.key("index"); writer.value(_index);
         writer.endObject();
     }
-
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("index")
+    public int getIndex() {
+        return _index;
+    }
 
     @Override
     protected String getBriefDescription(Project project) {

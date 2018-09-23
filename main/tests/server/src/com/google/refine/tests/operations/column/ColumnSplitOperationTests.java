@@ -20,7 +20,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnSplitOperation() throws JSONException, Exception {
+    public void serializeColumnSplitOperationBySeparator() throws JSONException, Exception {
         String json = "{\n" + 
                 "    \"op\": \"core/column-split\",\n" + 
                 "    \"description\": \"Split column ea by separator\",\n" + 
@@ -35,6 +35,25 @@ public class ColumnSplitOperationTests extends RefineTest {
                 "    \"separator\": \"e\",\n" + 
                 "    \"regex\": false,\n" + 
                 "    \"maxColumns\": 0\n" + 
+                "  }";
+        Project project = mock(Project.class);
+        TestUtils.isSerializedTo(ColumnSplitOperation.reconstruct(project, new JSONObject(json)), json);
+    }
+    
+    @Test
+    public void serializeColumnSplitOperationByLengths() throws JSONException, Exception {
+        String json = "{\n" + 
+                "    \"op\": \"core/column-split\",\n" + 
+                "    \"description\": \"Split column ea by field lengths\",\n" + 
+                "    \"engineConfig\": {\n" + 
+                "      \"mode\": \"row-based\",\n" + 
+                "      \"facets\": []\n" + 
+                "    },\n" + 
+                "    \"columnName\": \"ea\",\n" + 
+                "    \"guessCellType\": true,\n" + 
+                "    \"removeOriginalColumn\": true,\n" + 
+                "    \"mode\": \"lengths\",\n" + 
+                "    \"fieldLengths\": [1,1]\n" + 
                 "  }";
         Project project = mock(Project.class);
         TestUtils.isSerializedTo(ColumnSplitOperation.reconstruct(project, new JSONObject(json)), json);

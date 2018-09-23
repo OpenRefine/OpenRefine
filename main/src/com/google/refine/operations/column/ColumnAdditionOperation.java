@@ -42,6 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -118,7 +120,32 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
         writer.endObject();
     }
+    
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+        return _newColumnName;
+    }
+    
+    @JsonProperty("columnInsertIndex")
+    public int getColumnInsertIndex() {
+        return _columnInsertIndex;
+    }
+    
+    @JsonProperty("baseColumnName")
+    public String getBaseColumnName() {
+        return _baseColumnName;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _expression;
+    }
 
+    @JsonProperty("onError")
+    public OnError getOnError() {
+        return _onError;
+    }
+    
     @Override
     protected String getBriefDescription(Project project) {
         return "Create column " + _newColumnName + 

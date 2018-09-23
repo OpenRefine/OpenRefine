@@ -33,9 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.column;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
@@ -43,6 +46,7 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
+import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
     @Override
@@ -56,7 +60,8 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
         int delay = Integer.parseInt(request.getParameter("delay"));
         String onError = request.getParameter("onError");
         boolean cacheResponses = Boolean.parseBoolean(request.getParameter("cacheResponses"));
-        JSONArray httpHeadersJson = new JSONArray(request.getParameter("httpHeaders"));
+        ObjectMapper mapper = new ObjectMapper();
+        List<HttpHeader> headers = Arrays.asList(mapper.readValue(request.getParameter("httpHeaders"), HttpHeader[].class));
 
         return new ColumnAdditionByFetchingURLsOperation(
             engineConfig, 
@@ -67,7 +72,7 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
             columnInsertIndex,
             delay,
             cacheResponses,
-            httpHeadersJson
+            headers
         );
     }
 

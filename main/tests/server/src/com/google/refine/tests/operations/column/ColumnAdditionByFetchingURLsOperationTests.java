@@ -35,9 +35,10 @@ package com.google.refine.tests.operations.column;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
+import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
@@ -233,11 +235,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         String userAgentValue =  "OpenRefine";
         String authorizationValue = "Basic";
         String acceptValue = "*/*";
-        String jsonString = "[{\"name\": \"authorization\",\"value\": \""+authorizationValue+
-                             "\"},{\"name\": \"user-agent\",\"value\": \""+userAgentValue+
-                             "\"},{\"name\": \"accept\",\"value\": \""+acceptValue+"\"}]";
-
-        JSONArray httpHeadersJson = new JSONArray(jsonString);
+        List<HttpHeader> headers = new ArrayList<>();
+        headers.add(new HttpHeader("authorization", authorizationValue));
+        headers.add(new HttpHeader("user-agent", userAgentValue));
+        headers.add(new HttpHeader("accept", acceptValue));
 
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
             "fruits",
@@ -247,7 +248,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             1,
             50,
             true,
-            httpHeadersJson);
+            headers);
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
         process.startPerforming(pm);

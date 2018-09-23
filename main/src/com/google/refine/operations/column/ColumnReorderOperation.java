@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -76,6 +78,11 @@ public class ColumnReorderOperation extends AbstractOperation {
         }
         writer.endArray();
         writer.endObject();
+    }
+    
+    @JsonProperty("columnNames")
+    public List<String> getColumnNames() {
+        return _columnNames;
     }
 
     @Override
