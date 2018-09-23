@@ -43,6 +43,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.util.ConjunctiveFilteredRecords;
@@ -56,8 +58,11 @@ import com.google.refine.model.Row;
  */
 public class Engine implements Jsonizable {
     static public enum Mode {
+        @JsonProperty("row-based")
         RowBased,
+        @JsonProperty("record-based")
         RecordBased
+       
     }
 
     public final static String INCLUDE_DEPENDENT = "includeDependent";

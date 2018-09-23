@@ -35,8 +35,11 @@ package com.google.refine.model;
 
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
 
@@ -60,5 +63,15 @@ abstract public class AbstractOperation implements Jsonizable {
     
     protected String getBriefDescription(Project project) {
         throw new UnsupportedOperationException();
+    }
+    
+    @JsonProperty("op")
+    public String getOperationId() {
+        return OperationRegistry.s_opClassToName.get(this.getClass());
+    }
+    
+    @JsonProperty("description")
+    public String getJsonDescription() {
+        return getBriefDescription(null);
     }
 }

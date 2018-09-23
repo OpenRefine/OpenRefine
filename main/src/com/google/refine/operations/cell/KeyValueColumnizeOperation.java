@@ -43,6 +43,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -91,6 +93,21 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         writer.key("valueColumnName"); writer.value(_valueColumnName);
         writer.key("noteColumnName"); writer.value(_noteColumnName);
         writer.endObject();
+    }
+    
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return _keyColumnName;
+    }
+    
+    @JsonProperty("valueColumnName")
+    public String getValueColumnName() {
+        return _valueColumnName;
+    }
+    
+    @JsonProperty("noteColumnName")
+    public String getNoteColumnName() {
+        return _noteColumnName;
     }
 
     @Override

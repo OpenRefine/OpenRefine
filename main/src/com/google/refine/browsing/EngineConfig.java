@@ -10,6 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.facets.FacetConfig;
@@ -30,10 +32,12 @@ public class EngineConfig implements Jsonizable {
         _mode = mode;
     }
     
+    @JsonProperty("mode")
     public Mode getMode() {
         return _mode;
     }
     
+    @JsonProperty("facets")
     public List<FacetConfig> getFacetConfigs() {
         return _facets;
     }

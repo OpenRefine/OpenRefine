@@ -72,7 +72,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeMultiValuedCellSplitOperation() throws JSONException, Exception {
+    public void serializeMultiValuedCellSplitOperationWithSeparator() throws JSONException, Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
                 + "\"description\":\"Split multi-valued cells in column Value\","
                 + "\"columnName\":\"Value\","
@@ -80,6 +80,17 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 + "\"mode\":\"separator\","
                 + "\"separator\":\":\","
                 + "\"regex\":false}";
+        TestUtils.isSerializedTo(MultiValuedCellSplitOperation.reconstruct(project, new JSONObject(json)), json);
+    }
+    
+    @Test
+    public void serializeMultiValuedCellSplitOperationWithLengths() throws JSONException, Exception {
+        String json = "{\"op\":\"core/multivalued-cell-split\","
+                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"columnName\":\"Value\","
+                + "\"keyColumnName\":\"Key\","
+                + "\"mode\":\"lengths\","
+                + "\"fieldLengths\":[1,1]}";
         TestUtils.isSerializedTo(MultiValuedCellSplitOperation.reconstruct(project, new JSONObject(json)), json);
     }
 

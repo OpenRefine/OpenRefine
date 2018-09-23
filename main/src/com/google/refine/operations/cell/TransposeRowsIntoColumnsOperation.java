@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -79,6 +81,16 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
         writer.key("columnName"); writer.value(_columnName);
         writer.key("rowCount"); writer.value(_rowCount);
         writer.endObject();
+    }
+    
+    @JsonProperty("rowCount")
+    public int getRowCount() {
+        return _rowCount;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
     }
 
     @Override

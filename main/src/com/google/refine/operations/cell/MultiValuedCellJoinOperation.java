@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -85,6 +87,21 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         writer.key("keyColumnName"); writer.value(_keyColumnName);
         writer.key("separator"); writer.value(_separator);
         writer.endObject();
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return _keyColumnName;
+    }
+    
+    @JsonProperty("separator")
+    public String getSeparator() {
+        return _separator;
     }
     
     @Override

@@ -45,6 +45,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
@@ -67,9 +69,13 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     final protected List<Edit>     _edits;
     
     static public class Edit implements Jsonizable {
+        @JsonProperty("from")
         final public List<String>     from;
+        @JsonProperty("fromBlank")
         final public boolean          fromBlank;
+        @JsonProperty("fromError")
         final public boolean          fromError;
+        @JsonProperty("to")
         final public Serializable     to;
         
         public Edit(List<String> from, boolean fromBlank, boolean fromError, Serializable to) {
@@ -169,6 +175,16 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             }
             writer.endArray();
         writer.endObject();
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _expression;
+    }
+    
+    @JsonProperty("edits")
+    public List<Edit> getEdits() {
+        return _edits;
     }
 
     @Override

@@ -43,6 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -58,7 +62,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _keyColumnName;
     final protected String  _mode;
     final protected String  _separator;
-    final protected boolean _regex;
+    final protected Boolean _regex;
     
     final protected int[]      _fieldLengths;
 
@@ -72,7 +76,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                 obj.getString("separator"),
                 obj.getBoolean("regex")
             );
-        } else {
+        } else { // mode == "lengths"
             return new MultiValuedCellSplitOperation(
                 obj.getString("columnName"),
                 obj.getString("keyColumnName"),
@@ -106,9 +110,42 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
         _mode = "lengths";
         _separator = null;
-        _regex = false;
+        _regex = null;
 
         _fieldLengths = fieldLengths;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return _keyColumnName;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _mode;
+    }
+    
+    @JsonProperty("separator")
+    @JsonInclude(Include.NON_NULL)
+    public String getSeparator() {
+        return _separator;
+    }
+    
+    @JsonProperty("regex")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getRegex() {
+        return _regex;
+    }
+    
+    @JsonProperty("fieldLengths")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getFieldLengths() {
+        return _fieldLengths;
     }
 
     @Override
