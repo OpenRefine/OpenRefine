@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,6 +53,14 @@ public class TestUtils {
      */
     public static void isSerializedTo(Jsonizable o, String targetJson, Properties options) {
         equalAsJson(targetJson, JSONUtilities.serialize(o, options));
+        
+        // also check Jackson serialization
+        try {
+			equalAsJson(targetJson, mapper.writeValueAsString(o));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			fail("jackson serialization failed");
+		}
     }
     
     /**
