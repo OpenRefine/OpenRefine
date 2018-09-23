@@ -40,7 +40,6 @@ import java.util.Properties;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.google.refine.grel.Function;
 
@@ -79,13 +78,17 @@ public class Jsonize implements Function {
 
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Quotes a value as a JSON literal value";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Quotes a value as a JSON literal value");
-        writer.key("params"); writer.value("value");
-        writer.key("returns"); writer.value("JSON literal value");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "value";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "JSON literal value";
     }
 }

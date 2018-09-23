@@ -38,8 +38,6 @@ import java.net.URLEncoder;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -85,13 +83,17 @@ public class Escape implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Escapes a string depending on the given escaping mode.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Escapes a string depending on the given escaping mode.");
-        writer.key("params"); writer.value("string s, string mode ['html','xml','csv','url','javascript']");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string mode ['html','xml','csv','url','javascript']";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

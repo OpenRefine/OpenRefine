@@ -37,8 +37,6 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -76,13 +74,17 @@ public class Split implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.");
-        writer.key("params"); writer.value("string s, string or regex sep, optional boolean preserveAllTokens");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string or regex sep, optional boolean preserveAllTokens";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

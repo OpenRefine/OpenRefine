@@ -36,9 +36,6 @@ package com.google.refine.expr.functions.strings;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -99,13 +96,17 @@ public class Reinterpret implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns s reinterpreted thru the given encoder.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns s reinterpreted thru the given encoder.");
-        writer.key("params"); writer.value("string s, string encoder");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string encoder";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

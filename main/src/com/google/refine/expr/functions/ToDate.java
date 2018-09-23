@@ -46,12 +46,10 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.expr.util.CalendarParser;
+import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
@@ -188,13 +186,17 @@ public class ToDate implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-    throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html");
-        writer.key("params"); writer.value("o, boolean month_first / format1, format2, ... (all optional)");
-        writer.key("returns"); writer.value("date");
-        writer.endObject();
+    public String getDescription() {
+        return "Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html";
+    }
+    
+    @Override
+    public String getParams() {
+        return "o, boolean month_first / format1, format2, ... (all optional)";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "date";
     }
 }

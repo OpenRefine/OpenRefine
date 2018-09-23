@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -54,13 +51,17 @@ public class Quotient implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Returns the integer portion of a division");
-        writer.key("params"); writer.value("number numerator, number denominator");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    public String getDescription() {
+        return "Returns the integer portion of a division";
+    }
+    
+    @Override
+    public String getParams() {
+        return "number numerator, number denominator";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

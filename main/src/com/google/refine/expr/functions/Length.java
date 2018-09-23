@@ -37,8 +37,6 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsList;
@@ -72,13 +70,17 @@ public class Length implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the length of o";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the length of o");
-        writer.key("params"); writer.value("array or string o");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array or string o";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

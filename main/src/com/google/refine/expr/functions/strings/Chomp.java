@@ -36,8 +36,6 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.grel.Function;
 
@@ -56,13 +54,17 @@ public class Chomp implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Removes separator from the end of str if it's there, otherwise leave it alone.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Removes separator from the end of str if it's there, otherwise leave it alone.");
-        writer.key("params"); writer.value("string str, string separator");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string str, string separator";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

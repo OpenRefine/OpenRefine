@@ -37,9 +37,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.grel.Function;
 
 public class Partition implements Function {
@@ -101,14 +98,18 @@ public class Partition implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return 
+            "Returns an array of strings [a,frag,b] where a is the string part before the first occurrence of frag in s and b is what's left. If omitFragment is true, frag is not returned.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Returns an array of strings [a,frag,b] where a is the string part before the first occurrence of frag in s and b is what's left. If omitFragment is true, frag is not returned.");
-        writer.key("params"); writer.value("string s, string or regex frag, optional boolean omitFragment");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string or regex frag, optional boolean omitFragment";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

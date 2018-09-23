@@ -36,14 +36,11 @@ package com.google.refine.expr.functions.strings;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import au.com.bytecode.opencsv.CSVParser;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+
+import au.com.bytecode.opencsv.CSVParser;
 
 public class SmartSplit implements Function {
 
@@ -104,13 +101,17 @@ public class SmartSplit implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \"sep\" is not given.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \"sep\" is not given.");
-        writer.key("params"); writer.value("string s, optional string sep");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, optional string sep";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

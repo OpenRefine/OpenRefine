@@ -38,7 +38,6 @@ import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsList;
@@ -130,16 +129,20 @@ public class Slice implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-    
-        writer.object();
-        writer.key("description"); writer.value(
+    public String getDescription() {
+        return 
             "If o is an array, returns o[from, to]. " +
             "if o is a string, returns o.substring(from, to)"
-        );
-        writer.key("params"); writer.value("o, number from, optional number to");
-        writer.key("returns"); writer.value("Depends on actual arguments");
-        writer.endObject();
+        ;
+    }
+    
+    @Override
+    public String getParams() {
+        return "o, number from, optional number to";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "Depends on actual arguments";
     }
 }

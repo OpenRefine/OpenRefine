@@ -35,8 +35,6 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -62,14 +60,18 @@ public class XmlText implements Function {
 
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Selects the text from within an element (including all child elements)");
-        writer.key("params"); writer.value("Element e");
-        writer.key("returns"); writer.value("String text");
-        writer.endObject();
+    public String getDescription() {
+        return "Selects the text from within an element (including all child elements)";
+    }
+    
+    @Override
+    public String getParams() {
+        return "Element e";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "String text";
     }
 }
 

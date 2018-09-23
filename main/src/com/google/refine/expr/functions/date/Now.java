@@ -53,12 +53,12 @@ public class Now implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the current time";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the current time");
-        writer.key("returns"); writer.value("date");
-        writer.endObject();
+    @Override
+    public String getReturns() {
+        return "date";
     }
 }

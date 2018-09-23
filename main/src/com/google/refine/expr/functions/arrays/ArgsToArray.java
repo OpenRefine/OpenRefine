@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.arrays;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.grel.Function;
 
 public class ArgsToArray implements Function {
@@ -48,13 +45,17 @@ public class ArgsToArray implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns all arguments passed to it as an array";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns all arguments passed to it as an array");
-        writer.key("params"); writer.value("a1, a2, ...");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "a1, a2, ...";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

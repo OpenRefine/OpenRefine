@@ -35,8 +35,6 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -64,14 +62,18 @@ public class XmlAttr implements Function {
 
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Selects a value from an attribute on an xml or html Element.");
-        writer.key("params"); writer.value("Element e, String s");
-        writer.key("returns"); writer.value("String attribute Value");
-        writer.endObject();
+    public String getDescription() {
+        return "Selects a value from an attribute on an XML or HTML Element";
+    }
+    
+    @Override
+    public String getParams() {
+        return "Element e, String s";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "String attribute Value";
     }
 }
 

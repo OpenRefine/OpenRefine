@@ -40,7 +40,6 @@ import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -86,13 +85,17 @@ public class Uniques implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns array a with duplicates removed";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns array a with duplicates removed");
-        writer.key("params"); writer.value("array a");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array a";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

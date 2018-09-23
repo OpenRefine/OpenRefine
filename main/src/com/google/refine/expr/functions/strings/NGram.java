@@ -36,8 +36,6 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -79,13 +77,17 @@ public class NGram implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns an array of the word ngrams of s";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns an array of the word ngrams of s");
-        writer.key("params"); writer.value("string s, number n");
-        writer.key("returns"); writer.value("array of strings");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, number n";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array of strings";
     }
 }

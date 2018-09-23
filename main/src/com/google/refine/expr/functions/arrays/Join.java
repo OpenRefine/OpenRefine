@@ -38,7 +38,6 @@ import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -101,13 +100,17 @@ public class Join implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the string obtained by joining the array a with the separator sep";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the string obtained by joining the array a with the separator sep");
-        writer.key("params"); writer.value("array a, string sep");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array a, string sep";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

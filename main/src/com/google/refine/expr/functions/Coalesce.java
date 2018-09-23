@@ -35,9 +35,6 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -60,13 +57,19 @@ public class Coalesce implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-    
-        writer.object();
-        writer.key("description"); writer.value("Returns the first non-null from a series of values");
-        writer.key("params"); writer.value("two or more objects");
-        writer.key("returns"); writer.value("object or null");
-        writer.endObject();
+    public String getDescription() {
+        return "Returns the first non-null from a series of values";
     }
+    
+    @Override
+    public String getParams() {
+        return "two or more objects";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "object or null";
+    }
+  
+    			
 }

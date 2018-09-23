@@ -37,7 +37,6 @@ import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.HasFields;
 import com.google.refine.grel.Function;
@@ -67,13 +66,17 @@ public class HasField implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns whether o has field name";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns whether o has field name");
-        writer.key("params"); writer.value("o, string name");
-        writer.key("returns"); writer.value("boolean");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "o, string name";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

@@ -37,8 +37,6 @@ import java.time.OffsetDateTime;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
@@ -104,12 +102,18 @@ public class Diff implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        writer.key("description"); writer.value("For strings, returns the portion where they differ. For dates, it returns the difference in given time units");
-        writer.key("params"); writer.value("o1, o2, time unit (optional)");
-        writer.key("returns"); writer.value("string for strings, number for dates");
-        writer.endObject();
+    public String getDescription() {
+    	return "For strings, returns the portion where they differ. For dates, it returns the difference in given time units";
+    }
+    
+    @Override
+    public String getParams() {
+        return "o1, o2, time unit (optional)";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string for strings, number for dates";
     }
     
     private long getNano(OffsetDateTime odt) {
