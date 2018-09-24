@@ -110,7 +110,7 @@
         "subject": "題名",
         "warning-proj-name": "プロジェクト名を指定してください。",
         "warning-rename": "プロジェクトのリネームに失敗しました:",
-        "edit-tags-desc": "タグを編集（空白とコンマで分割）:",
+        "edit-tags-desc": "タグを編集（空白とカンマで分割）:",
         "del-title": "プロジェクトを削除",
         "edit-tags": "プロジェクトタグを編集",
         "edit-meta-data": "文書情報",
@@ -156,7 +156,9 @@
         "lines-beg": "行分（先頭から）",
         "preserve-empty": "空文字を保存",
         "rows-data": "行分",
-        "load-at-most": "最大読み込み行数"
+        "load-at-most": "最大読み込み行数",
+        "column-names-label": "カラム名（カンマ切り）",
+        "column-names-optional": "カンマ切り"
     },
     "core-dialogs": {
         "help": "ヘルプ",
