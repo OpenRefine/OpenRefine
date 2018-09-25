@@ -44,7 +44,7 @@ import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowReorderOperation;
-import com.google.refine.sorting.BaseSorter.SortingConfig;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.ParsingUtilities;
 
 public class ReorderRowsCommand extends EngineDependentCommand {
@@ -60,7 +60,7 @@ public class ReorderRowsCommand extends EngineDependentCommand {
             String json = request.getParameter("sorting");
 
             JSONObject sortingJson = (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
-            sorting = (sortingJson == null) ? null : SortingConfig.reconstruct(project, sortingJson);
+            sorting = (sortingJson == null) ? null : SortingConfig.reconstruct(sortingJson);
         } catch (JSONException e) {
             // ignore
         }

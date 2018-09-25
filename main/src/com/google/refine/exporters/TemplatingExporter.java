@@ -50,9 +50,9 @@ import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Project;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
-import com.google.refine.sorting.BaseSorter.SortingConfig;
 import com.google.refine.templating.Parser;
 import com.google.refine.templating.Template;
 import com.google.refine.util.ParsingUtilities;
@@ -116,7 +116,7 @@ public class TemplatingExporter implements WriterExporter {
             
             if (sortingJson != null) {
                 try {
-                    SortingConfig sorting = SortingConfig.reconstruct(project, sortingJson);
+                    SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
                     SortingRowVisitor srv = new SortingRowVisitor(visitor);
                     srv.initializeFromConfig(project, sorting);
                     
@@ -135,7 +135,7 @@ public class TemplatingExporter implements WriterExporter {
             
             if (sortingJson != null) {
                 try {
-                    SortingConfig sorting = SortingConfig.reconstruct(project, sortingJson);
+                    SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
                     SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
                     srv.initializeFromConfig(project, sorting);
                     

@@ -57,7 +57,7 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
-import com.google.refine.sorting.BaseSorter.SortingConfig;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 import com.google.refine.util.ParsingUtilities;
@@ -127,7 +127,7 @@ public class GetRowsCommand extends Command {
                 JSONObject sortingJson = (json == null) ? null : 
                     ParsingUtilities.evaluateJsonStringToObject(json);
                 if (sortingJson != null) {
-                    sortingConfig = SortingConfig.reconstruct(project, sortingJson);
+                    sortingConfig = SortingConfig.reconstruct(sortingJson);
                 }
             } catch (JSONException e) {
             }

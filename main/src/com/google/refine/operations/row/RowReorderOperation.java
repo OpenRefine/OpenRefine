@@ -54,8 +54,7 @@ import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowReorderChange;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.sorting.BaseSorter;
-import com.google.refine.sorting.BaseSorter.SortingConfig;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 
@@ -64,14 +63,14 @@ public class RowReorderOperation extends AbstractOperation {
         String mode = obj.getString("mode");
         JSONObject sorting = obj.has("sorting") && !obj.isNull("sorting") ?
                 obj.getJSONObject("sorting") : null;
-        BaseSorter.SortingConfig config = BaseSorter.SortingConfig.reconstruct(project, sorting);
+        SortingConfig config = SortingConfig.reconstruct(sorting);
         return new RowReorderOperation(Engine.stringToMode(mode), config);
     }
     
     final protected Mode _mode;
-    final protected BaseSorter.SortingConfig _sorting;
+    final protected SortingConfig _sorting;
 
-    public RowReorderOperation(Mode mode, BaseSorter.SortingConfig sorting) {
+    public RowReorderOperation(Mode mode, SortingConfig sorting) {
         _mode = mode;
         _sorting = sorting;
     }
