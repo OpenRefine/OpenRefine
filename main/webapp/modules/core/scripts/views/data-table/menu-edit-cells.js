@@ -222,11 +222,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.dialogHeader.text($.i18n._('core-views')["replace"]);
     elmts.or_views_text_to_find.text($.i18n._('core-views')["text-to-find"]);
     elmts.or_views_replacement.text($.i18n._('core-views')["replacement-text"]);
-    elmts.or_views_finding_options.text($.i18n._('core-views')["finding-options"]);
     elmts.or_views_finding_info1.text($.i18n._('core-views')["finding-info1"]);
     elmts.or_views_finding_info2.text($.i18n._('core-views')["finding-info2"]);
     elmts.or_views_replacement_info.text($.i18n._('core-views')["replacement-info"]);
-    elmts.or_views_replacement_options.text($.i18n._('core-views')["replacement-options"]);
     elmts.or_views_find_regExp.text($.i18n._('core-views')["reg-exp"]);
     elmts.or_views_find_case_insensitive.text($.i18n._('core-views')["case-insensitive"]);
     elmts.or_views_replace_dont_escape.text($.i18n._('core-views')["replace-dont-escape"]);
@@ -406,12 +404,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/to-empty",
           label: $.i18n._('core-views')["blank-out-empty"],
           click: function() { doTextTransform("\"\"", "keep-original", false, ""); }
-        },
-        {},
-        {
-          id: "core/replace",
-          label: $.i18n._('core-views')["replace"],
-          click: doReplace
         }
       ]
     },
@@ -442,6 +434,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/cluster",
       label: $.i18n._('core-views')["cluster-edit"]+"...",
       click: function() { new ClusteringDialog(column.name, "value"); }
+    },
+    {
+      id: "core/replace",
+      label: $.i18n._('core-views')["replace"],
+      click: doReplace
     }
   ]);
 
@@ -574,7 +571,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         };
 
         Refine.postCoreProcess(
-          "transpose-rows-into-columns", 
+          "transpose-rows-into-columns",
           config,
           null,
           { modelsChanged: true }
