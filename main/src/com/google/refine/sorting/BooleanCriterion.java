@@ -33,6 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 
@@ -61,5 +66,10 @@ public class BooleanCriterion extends Criterion {
                 return ((Boolean) key1).compareTo((Boolean) key2);
             }
         };
+    }
+
+    @Override
+    public String getValueType() {
+        return "boolean";
     }
 }

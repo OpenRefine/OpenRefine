@@ -33,18 +33,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.util.Properties;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
-abstract public class Criterion {
+abstract public class Criterion implements Jsonizable {
     public String columnName;
-    protected int cellIndex;
+    protected int cellIndex = -2;
 
     // These take on positive and negative values to indicate where blanks and errors
     // go relative to non-blank values. They are also relative to each another.
@@ -54,13 +60,10 @@ abstract public class Criterion {
 
     public boolean reverse;
 
-    public void initializeFromJSON(Project project, JSONObject obj) 
+    public void initializeFromJSON(JSONObject obj) 
             throws JSONException {
         if (obj.has("column") && !obj.isNull("column")) {
             columnName = obj.getString("column");
-
-            Column column = project.columnModel.getColumnByName(columnName);
-            cellIndex = column != null ? column.getCellIndex() : -1;
         }
 
         if (obj.has("blankPosition") && !obj.isNull("blankPosition")) {
@@ -74,7 +77,75 @@ abstract public class Criterion {
             reverse = obj.getBoolean("reverse");
         }
     }
+    
+    public static Criterion reconstruct(JSONObject obj) throws JSONException {
+        String valueType = "string";
+        if (obj.has("valueType") && !obj.isNull("valueType")) {
+            valueType = obj.getString("valueType");
+        }
 
+        Criterion c = null;
+        if ("boolean".equals(valueType)) {
+            c = new BooleanCriterion();
+        } else if ("date".equals(valueType)) {
+            c = new DateCriterion();
+        } else if ("number".equals(valueType)) {
+            c = new NumberCriterion();
+        } else {
+            c = new StringCriterion(obj.getBoolean("caseSensitive"));
+        }
+
+        c.initializeFromJSON(obj);
+        return c;
+    }
+    
+
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        writer.object();
+        writer.key("valueType"); writer.value(getValueType());
+        writer.key("reverse"); writer.value(getReverse());
+        writer.key("column"); writer.value(getColumnName());
+        writer.key("blankPosition"); writer.value(getBlankPosition());
+        writer.key("errorPosition"); writer.value(getErrorPosition());
+        writer.endObject();
+    }
+    
+    @JsonProperty("valueType")
+    public abstract String getValueType();
+    
+    @JsonProperty("reverse")
+    public boolean getReverse() {
+        return reverse;
+    }
+    
+    @JsonProperty("column")
+    public String getColumnName() {
+        return columnName;
+    }
+    
+    @JsonProperty("blankPosition")
+    public int getBlankPosition() {
+        return blankPosition;
+    }
+    
+    @JsonProperty("errorPosition")
+    public int getErrorPosition() {
+        return errorPosition;
+    }
+
+    // Returns a cached cell index
+    // We delay this fetching because the column might not exist
+    // at deserialization (for instance if the column is created by an operation
+    // that has not been applied yet).
+    protected int getCellIndex(Project project) {
+        if (cellIndex == -2) {
+            Column column = project.columnModel.getColumnByName(columnName);
+            cellIndex = column != null ? column.getCellIndex() : -1;
+        }
+        return cellIndex;
+    }
 
     // TODO: We'd like things to be more strongly typed a la the following, but
     // it's too involved to change right now
@@ -119,10 +190,10 @@ abstract public class Criterion {
         }
 
         public Object makeKey(Project project, Row row, int rowIndex) {
-            if (cellIndex < 0) {
+            if (getCellIndex(project) < 0) {
                 return null;
             } else {
-                Object value = row.getCellValue(cellIndex);
+                Object value = row.getCellValue(getCellIndex(project));
                 return makeKey(value);
             }
         }

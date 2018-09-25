@@ -57,6 +57,7 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
+import com.google.refine.sorting.BaseSorter.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 import com.google.refine.util.ParsingUtilities;
@@ -120,11 +121,14 @@ public class GetRowsCommand extends Command {
             
             RowWritingVisitor rwv = new RowWritingVisitor(start, limit, jsonWriter, options);
             
-            JSONObject sortingJson = null;
+            SortingConfig sortingConfig = null;
             try{
                 String json = request.getParameter("sorting");
-                sortingJson = (json == null) ? null : 
+                JSONObject sortingJson = (json == null) ? null : 
                     ParsingUtilities.evaluateJsonStringToObject(json);
+                if (sortingJson != null) {
+                    sortingConfig = SortingConfig.reconstruct(project, sortingJson);
+                }
             } catch (JSONException e) {
             }
 
@@ -132,10 +136,10 @@ public class GetRowsCommand extends Command {
                 FilteredRows filteredRows = engine.getAllFilteredRows();
                 RowVisitor visitor = rwv;
                 
-                if (sortingJson != null) {
+                if (sortingConfig != null) {
                     SortingRowVisitor srv = new SortingRowVisitor(visitor);
                     
-                    srv.initializeFromJSON(project, sortingJson);
+                    srv.initializeFromConfig(project, sortingConfig);
                     if (srv.hasCriteria()) {
                         visitor = srv;
                     }
@@ -151,10 +155,10 @@ public class GetRowsCommand extends Command {
                 FilteredRecords filteredRecords = engine.getFilteredRecords();
                 RecordVisitor visitor = rwv;
                 
-                if (sortingJson != null) {
+                if (sortingConfig != null) {
                     SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
                     
-                    srv.initializeFromJSON(project, sortingJson);
+                    srv.initializeFromConfig(project, sortingConfig);
                     if (srv.hasCriteria()) {
                         visitor = srv;
                     }

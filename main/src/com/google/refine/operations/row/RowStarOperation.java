@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -83,6 +85,11 @@ public class RowStarOperation extends EngineDependentOperation {
         writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.key("starred"); writer.value(_starred);
         writer.endObject();
+    }
+    
+    @JsonProperty("starred")
+    public boolean getStarred() {
+        return _starred;
     }
 
     @Override

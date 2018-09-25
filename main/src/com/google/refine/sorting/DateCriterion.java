@@ -35,6 +35,10 @@ package com.google.refine.sorting;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -62,5 +66,10 @@ public class DateCriterion extends Criterion {
                 return ((Instant) key1).compareTo((Instant) key2);
             }
         };
+    }
+
+    @Override
+    public String getValueType() {
+        return "date";
     }
 }

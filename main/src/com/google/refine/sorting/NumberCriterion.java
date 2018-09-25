@@ -77,4 +77,9 @@ public class NumberCriterion extends Criterion {
             }
         };
     }
+
+    @Override
+    public String getValueType() {
+        return "number";
+    }
 }

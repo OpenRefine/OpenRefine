@@ -20,6 +20,7 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.process.Process;
+import com.google.refine.sorting.BaseSorter.SortingConfig;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
@@ -49,10 +50,12 @@ public class RowReorderOperationTests extends RefineTest {
     
     @Test
     public void testSortEmptyString() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(project, new JSONObject(sortingJson));
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
-                Mode.RowBased,
-                new JSONObject("{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}"));
+                Mode.RowBased, sortingConfig
+                );
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
         
