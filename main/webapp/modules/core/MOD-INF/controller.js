@@ -585,7 +585,7 @@ function process(path, request, response) {
             var urlConnection = url.openConnection();
 
             input = new Packages.java.io.BufferedReader(
-                new Packages.java.io.InputStreamReader(urlConnection.getInputStream()));
+                new Packages.java.io.InputStreamReader(urlConnection.getInputStream(), "UTF8"));
 
             output.write("/* ===== "); 
             output.write(qualifiedPath.fullPath); 
