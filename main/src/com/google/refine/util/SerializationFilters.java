@@ -1,11 +1,14 @@
 package com.google.refine.util;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
@@ -52,4 +55,22 @@ public class SerializationFilters {
            }
         }
      };
+     
+    public static class DoubleSerializer extends StdSerializer<Double> {
+        private static final long serialVersionUID = 132345L;
+
+        public DoubleSerializer() {
+            super(Double.class);
+        }
+
+        @Override
+        public void serialize(Double arg0, JsonGenerator gen, SerializerProvider s)
+                throws IOException {
+            if (new Double(arg0.intValue()).equals(arg0)) {
+                gen.writeNumber(arg0.intValue());
+            } else {
+                gen.writeNumber(arg0);
+            }
+        }
+    }
 }

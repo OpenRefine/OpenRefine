@@ -37,13 +37,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.HasFields;
@@ -55,7 +56,7 @@ public class ReconCandidate implements HasFields, Jsonizable {
     final public String     name;
     @JsonProperty("types")
     final public String[]   types;
-    @JsonIgnore
+    @JsonProperty("score")
     final public double     score;
     
     public ReconCandidate(String topicID, String topicName, String[] typeIDs, double score) {
@@ -63,15 +64,6 @@ public class ReconCandidate implements HasFields, Jsonizable {
         this.name = topicName;
         this.types = typeIDs;
         this.score = score;
-    }
-    
-    // Serialize doubles that are ints without trailing ".0" for consistency with previous serialization.
-    @JsonProperty("score")
-    public Object getJsonScore() {
-        if ((double)(int)score == score) {
-            return (int)score;
-        }
-        return score;
     }
     
     @Override
