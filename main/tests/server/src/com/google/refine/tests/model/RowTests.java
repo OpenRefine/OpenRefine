@@ -107,7 +107,7 @@ public class RowTests extends RefineTest {
         Row row = new Row(5);
         row.setCell(0, new Cell("I'm not empty", null));
         row.save(writer, options);
-        TestUtils.equalAsJson(writer.getBuffer().toString(),
+        TestUtils.assertEqualAsJson(writer.getBuffer().toString(),
                 "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}");
     }
 
@@ -120,7 +120,7 @@ public class RowTests extends RefineTest {
         when(options.containsKey("recordIndex")).thenReturn(true);
         when(options.get("recordIndex")).thenReturn(1);
         row.save(writer, options);
-        TestUtils.equalAsJson(
+        TestUtils.assertEqualAsJson(
                 writer.getBuffer().toString(),
                 "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}],\"i\":0,\"j\":1}");
     }

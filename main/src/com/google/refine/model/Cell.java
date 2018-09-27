@@ -44,6 +44,10 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -57,7 +61,9 @@ import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
 
 public class Cell implements HasFields, Jsonizable {
+    @JsonIgnore
     final public Serializable   value;
+    @JsonIgnore
     final public Recon          recon;
     
     public Cell(Serializable value, Recon recon) {
@@ -88,30 +94,10 @@ public class Cell implements HasFields, Jsonizable {
             writer.value(((EvalError) value).message);
         } else {
             writer.key("v");
-            if (value != null) {
-                Instant instant = null;
-                if (value instanceof OffsetDateTime) {
-                    instant = ((OffsetDateTime)value).toInstant();
-                } else if (value instanceof LocalDateTime) {
-                    instant = ((LocalDateTime)value).toInstant(ZoneOffset.of("Z"));
-                }
-                
-                if (instant != null) {
-                    writer.value(ParsingUtilities.instantToString(instant));
-                    writer.key("t"); writer.value("date");
-                } else if (value instanceof Double 
-                        && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
-                    // write as a string
-                    writer.value(((Double)value).toString());
-                } else if (value instanceof Float
-                        && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
-                    // TODO: Skip?  Write as string?
-                    writer.value(((Float)value).toString());
-                } else {
-                    writer.value(value);
-                }
-            } else {
-                writer.value(null);
+            writer.value(getValueAsString());
+            String jsonType = getTypeString();
+            if(jsonType != null) {
+                writer.key("t"); writer.value(jsonType);
             }
         }
         
@@ -123,6 +109,70 @@ public class Cell implements HasFields, Jsonizable {
             pool.pool(recon);
         }
         writer.endObject();
+    }
+    
+    @JsonProperty("e")
+    @JsonInclude(Include.NON_NULL)
+    public String getErrorMessage() {
+        if (ExpressionUtils.isError(value)) {
+            return ((EvalError) value).message;
+        }
+        return null;
+    }
+    
+    @JsonProperty("t")
+    @JsonInclude(Include.NON_NULL)
+    public String getTypeString() {
+        if (value instanceof OffsetDateTime || value instanceof LocalDateTime) {
+            return "date";
+        }
+        return null;
+    }
+    
+    @JsonProperty("v")
+    @JsonInclude(Include.NON_NULL)
+    public String getValueAsString() {
+        if (value != null && !ExpressionUtils.isError(value)) {
+            Instant instant = null;
+            if (value instanceof OffsetDateTime) {
+                instant = ((OffsetDateTime)value).toInstant();
+            } else if (value instanceof LocalDateTime) {
+                instant = ((LocalDateTime)value).toInstant(ZoneOffset.of("Z"));
+            }
+            
+            if (instant != null) {
+                return ParsingUtilities.instantToString(instant);
+            } else if (value instanceof Double 
+                    && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
+                // write as a string
+                 return ((Double)value).toString();
+            } else if (value instanceof Float
+                    && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
+                // TODO: Skip?  Write as string?
+                return ((Float)value).toString();
+            } else {
+                return value.toString();
+            }
+        } else {
+           return null;
+        }
+    }
+    
+    /**
+     * TODO
+     * - use JsonIdentityInfo on recon
+     * - implement custom resolver to tie it to a pool
+     * - figure it all out
+     * @return
+     */
+    @JsonProperty("r")
+    @JsonInclude(Include.NON_NULL)
+    public String getReconIdString() {
+        if (recon != null) {
+            return Long.toString(recon.id);
+        }
+        // TODO pool the recon??
+        return null;
     }
     
     public void save(Writer writer, Properties options) {

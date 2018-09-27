@@ -1,7 +1,5 @@
 package com.google.refine.tests.model;
 
-import java.util.Properties;
-
 import org.testng.annotations.Test;
 
 import com.google.refine.model.ColumnGroup;
@@ -34,9 +32,7 @@ public class ColumnGroupTests {
                 + "   \"keyColumnIndex\":1"
                 + "}]"
                 + "}";
-        Properties options = new Properties();
-        options.setProperty("mode", "save");
-        TestUtils.isSerializedTo(cg, json, options);
-        TestUtils.isSerializedTo(cg, fullJson);
+        TestUtils.isSerializedTo(cg, json, true);
+        TestUtils.isSerializedTo(cg, fullJson, false);
     }
 }

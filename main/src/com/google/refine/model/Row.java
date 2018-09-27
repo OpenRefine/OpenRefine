@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -48,6 +51,7 @@ import org.json.JSONWriter;
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.Pool;
 
 /**
@@ -106,6 +110,7 @@ public class Row implements HasFields, Jsonizable {
         return "cells".equals(name) || "record".equals(name);
     }
     
+    @JsonIgnore
     public boolean isEmpty() {
         for (Cell cell : cells) {
             if (cell != null && cell.value != null && !isValueBlank(cell.value)) {
@@ -203,6 +208,26 @@ public class Row implements HasFields, Jsonizable {
         
         writer.endObject();
     }
+    
+    @JsonProperty(FLAGGED)
+    public boolean isFlagged() {
+        return flagged;
+    }
+    
+    @JsonProperty(STARRED)
+    public boolean isStarred() {
+        return starred;
+    }
+    
+    @JsonProperty("cells")
+    public List<Cell> getCells() {
+        return cells;
+    }
+    
+    /*
+    @JsonView(JsonViews.SaveMode.class)
+    public 
+    */
     
     public void save(Writer writer, Properties options) {
         JSONWriter jsonWriter = new JSONWriter(writer);

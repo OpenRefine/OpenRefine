@@ -47,6 +47,8 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -130,4 +132,11 @@ abstract public class ReconConfig implements Jsonizable {
            LOGGER.error("Save failed",e);
         }
     }
+    
+    /**
+     * Returns the identifier for the reconciliation mode, as serialized in JSON.
+     * This is the same identifier that was used to register the registration mode.
+     */
+    @JsonProperty("mode")
+    abstract public String getMode();
 }

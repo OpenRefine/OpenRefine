@@ -48,10 +48,17 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 
 public class ColumnModel implements Jsonizable {
+    @JsonProperty("columns")
     final public List<Column>      columns = new LinkedList<Column>();
+    @JsonProperty("columnGroups")
     final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
     
     private int _maxCellIndex = -1;
@@ -70,6 +77,7 @@ public class ColumnModel implements Jsonizable {
         this._maxCellIndex = Math.max(this._maxCellIndex, maxCellIndex);
     }
 
+    @JsonIgnore
     synchronized public int getMaxCellIndex() {
         return _maxCellIndex;
     }
@@ -86,6 +94,7 @@ public class ColumnModel implements Jsonizable {
         this._keyColumnIndex = keyColumnIndex;
     }
 
+    @JsonIgnore
     synchronized public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
@@ -166,6 +175,7 @@ public class ColumnModel implements Jsonizable {
         return _cellIndexToColumn.get(cellIndex);
     }
     
+    @JsonIgnore
     synchronized public List<String> getColumnNames() {
         return _columnNames;
     }
@@ -196,6 +206,24 @@ public class ColumnModel implements Jsonizable {
         writer.endArray();
         
         writer.endObject();
+    }
+    
+    @JsonProperty("keyCellIndex")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getJsonKeyCellIndex() {
+        if(columns.size() > 0) {
+            return getKeyColumnIndex();
+        }
+        return null;
+    }
+    
+    @JsonProperty("keyColumnName")
+    @JsonInclude(Include.NON_NULL)
+    public String getKeyColumnName() {
+        if(columns.size() > 0) {
+            return columns.get(_keyColumnIndex).getName();
+        }
+        return null;
     }
     
     synchronized public void save(Writer writer, Properties options) throws IOException {

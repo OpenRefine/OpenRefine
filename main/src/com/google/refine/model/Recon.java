@@ -34,21 +34,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.HasFields;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.Pool;
  
+@JsonFilter("reconCandidateFilter")
 public class Recon implements HasFields, Jsonizable {
     
     /**
@@ -61,11 +71,15 @@ public class Recon implements HasFields, Jsonizable {
     private static final String WIKIDATA_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
 
     static public enum Judgment {
+        @JsonProperty("none")
         None,
+        @JsonProperty("matched")
         Matched,
+        @JsonProperty("new")
         New
     }
     
+    @Deprecated
     static public String judgmentToString(Judgment judgment) {
         if (judgment == Judgment.Matched) {
             return "matched";
@@ -76,6 +90,7 @@ public class Recon implements HasFields, Jsonizable {
         }
     }
     
+    @Deprecated
     static public Judgment stringToJudgment(String s) {
         if ("matched".equals(s)) {
             return Judgment.Matched;
@@ -186,6 +201,7 @@ public class Recon implements HasFields, Jsonizable {
         candidates.add(candidate);
     }
     
+    @JsonIgnore
     public ReconCandidate getBestCandidate() {
         if (candidates != null && candidates.size() > 0) {
             return candidates.get(0);
@@ -257,6 +273,7 @@ public class Recon implements HasFields, Jsonizable {
         return "match".equals(name) || "best".equals(name);
     }
     
+    @Deprecated
     protected String judgmentToString() {
         return judgmentToString(judgment);
     }
@@ -272,6 +289,81 @@ public class Recon implements HasFields, Jsonizable {
         public boolean fieldAlsoHasFields(String name) {
             return false;
         }
+    }
+    
+    @JsonProperty("id")
+    public long getId() {
+        return id;
+    }
+    
+    @JsonProperty("judgmentHistoryEntry")
+    @JsonView(JsonViews.SaveMode.class)
+    public long getJudgmentHistoryEntry() {
+        return judgmentHistoryEntry;
+    }
+    
+    @JsonProperty("service")
+    public String getServiceURI() {
+        return service;
+    }
+    
+    @JsonProperty("identifierSpace")
+    public String getIdentifierSpace() {
+        return identifierSpace;
+    }
+    
+    @JsonProperty("schemaSpace")
+    public String getSchemaSpace() {
+        return schemaSpace;
+    }
+    
+    @JsonProperty("j")
+    public Judgment getJudgment() {
+        return judgment;
+    }
+    
+    @JsonProperty("m")
+    @JsonInclude(Include.NON_NULL)
+    public ReconCandidate getMatch() {
+        return match;
+    }
+    
+    @JsonProperty("c")
+    //@JsonView(JsonViews.SaveMode.class)
+    public List<ReconCandidate> getCandidates() {
+        if (candidates != null) {
+            return candidates;
+        }
+        return Collections.emptyList();
+    }
+   
+    
+    @JsonProperty("f")
+    @JsonView(JsonViews.SaveMode.class)
+    public Object[] getfeatures() {
+        return features;
+    }
+    
+    @JsonProperty("judgmentAction")
+    @JsonView(JsonViews.SaveMode.class)
+    public String getJudgmentAction() {
+        return judgmentAction;
+    }
+    
+    @JsonProperty("judgmentBatchSize")
+    @JsonView(JsonViews.SaveMode.class)
+    public int getJudgmentBatchSize() {
+        return judgmentBatchSize;
+    }
+    
+    @JsonProperty("matchRank")
+    @JsonView(JsonViews.SaveMode.class)
+    @JsonInclude(Include.NON_NULL)
+    public Integer getMatchRank() {
+        if (match != null) {
+            return matchRank;
+        }
+        return null;
     }
 
     @Override

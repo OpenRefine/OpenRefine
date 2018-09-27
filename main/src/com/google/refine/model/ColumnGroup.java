@@ -42,7 +42,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import com.google.refine.Jsonizable;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 public class ColumnGroup implements Jsonizable {
@@ -78,6 +84,28 @@ public class ColumnGroup implements Jsonizable {
             writer.endArray();
         }
         writer.endObject();
+    }
+    
+    @JsonProperty("startColumnIndex")
+    public int getStartColumnIndex() {
+        return startColumnIndex;
+    }
+    
+    @JsonProperty("columnSpan")
+    public int getColumnSpan() {
+        return columnSpan;
+    }
+    
+    @JsonProperty("keyColumnIndex")
+    public int getKeyColumnIndex() {
+        return keyColumnIndex;
+    }
+    
+    @JsonProperty("subgroups")
+    @JsonView(JsonViews.NonSaveMode.class)
+    @JsonInclude(Include.NON_EMPTY)
+    public List<ColumnGroup> getSubGroups() {
+        return subgroups;
     }
     
     public boolean contains(ColumnGroup g) {

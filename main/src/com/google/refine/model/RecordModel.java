@@ -45,6 +45,9 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 
@@ -85,6 +88,7 @@ public class RecordModel implements Jsonizable {
                 _rowDependencies.get(rowIndex) : null;
     }
 
+    @JsonIgnore
     public int getRecordCount() {
         return _records.size();
     }
@@ -111,10 +115,14 @@ public class RecordModel implements Jsonizable {
 
         writer.object();
         writer.key("hasRecords");
-        writer.value(
-            _records != null && _rowDependencies != null &&
-            _records.size() < _rowDependencies.size());
+        writer.value(hasRecords());
         writer.endObject();
+    }
+    
+    @JsonProperty("hasRecords")
+    public boolean hasRecords() {
+        return _records != null && _rowDependencies != null &&
+                _records.size() < _rowDependencies.size();
     }
 
     static protected class KeyedGroup {

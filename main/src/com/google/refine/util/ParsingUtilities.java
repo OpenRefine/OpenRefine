@@ -59,7 +59,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
 public class ParsingUtilities {
+     
+    public static final ObjectMapper mapper = new ObjectMapper();
+    public static final FilterProvider defaultFilters = new SimpleFilterProvider()
+            .addFilter("reconCandidateFilter", SerializationFilters.reconCandidateFilter);
+    public static final FilterProvider saveFilters = new SimpleFilterProvider()
+            .addFilter("reconCandidateFilter", SerializationFilters.noFilter);
+    
+    public static final ObjectWriter saveWriter = mapper.writerWithView(JsonViews.SaveMode.class).with(saveFilters);
+    public static final ObjectWriter defaultWriter = mapper.writerWithView(JsonViews.NonSaveMode.class).with(defaultFilters);
+    
     public static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
                 
     static public Properties parseUrlParameters(HttpServletRequest request) {

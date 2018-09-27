@@ -44,6 +44,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.InterProjectModel;
 import com.google.refine.Jsonizable;
 import com.google.refine.model.recon.ReconConfig;
@@ -76,10 +80,12 @@ public class Column implements Jsonizable {
         _originalName = _name = originalName;
     }
     
+    @JsonProperty("cellIndex")
     public int getCellIndex() {
         return _cellIndex;
     }
 
+    @JsonProperty("originalName")
     public String getOriginalHeaderLabel() {
         return _originalName;
     }
@@ -88,6 +94,7 @@ public class Column implements Jsonizable {
         this._name = name;
     }
 
+    @JsonProperty("name")
     public String getName() {
         return _name;
     }
@@ -96,6 +103,8 @@ public class Column implements Jsonizable {
         this._reconConfig = config;
     }
 
+    @JsonProperty("reconConfig")
+    @JsonInclude(Include.NON_NULL)
     public ReconConfig getReconConfig() {
         return _reconConfig;
     }
@@ -104,6 +113,8 @@ public class Column implements Jsonizable {
         this._reconStats = stats;
     }
 
+    @JsonProperty("reconStats")
+    @JsonInclude(Include.NON_NULL)
     public ReconStats getReconStats() {
         return _reconStats;
     }
@@ -131,6 +142,7 @@ public class Column implements Jsonizable {
         }
         writer.endObject();
     }
+   
     
     /**
      * Clear all cached precomputed values.
@@ -160,7 +172,7 @@ public class Column implements Jsonizable {
         _precomputes.put(key, value);
     }
     
-    
+    @JsonProperty("type")
     public String getType() {
         return type;
     }
@@ -171,6 +183,7 @@ public class Column implements Jsonizable {
     }
 
     
+    @JsonProperty("format")
     public String getFormat() {
         return format;
     }
@@ -181,6 +194,7 @@ public class Column implements Jsonizable {
     }
 
     
+    @JsonProperty("title")
     public String getTitle() {
         return title;
     }
@@ -191,6 +205,7 @@ public class Column implements Jsonizable {
     }
 
     
+    @JsonProperty("description")
     public String getDescription() {
         return description;
     }
@@ -200,6 +215,10 @@ public class Column implements Jsonizable {
         this.description = description;
     }
 
+    @JsonProperty("constraints")
+    public String getConstraintsString() {
+        return (new JSONObject(constraints)).toString();
+    }
     
     public Map<String, Object> getConstraints() {
         return constraints;

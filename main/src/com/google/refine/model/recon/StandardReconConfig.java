@@ -53,12 +53,17 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
@@ -66,15 +71,29 @@ import com.google.refine.util.ParsingUtilities;
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
     
-    static public class ColumnDetail {
+    static public class ColumnDetail implements Jsonizable {
+        @JsonProperty("column")
         final public String columnName;
+        @JsonProperty("propertyName")
         final public String propertyName;
+        @JsonProperty("propertyID")
         final public String propertyID;
         
         public ColumnDetail(String columnName, String propertyName, String propertyID) {
             this.columnName = columnName;
             this.propertyName = propertyName;
             this.propertyID = propertyID;
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("column"); writer.value(columnName);
+            writer.key("propertyName"); writer.value(propertyName);
+            writer.key("propertyID"); writer.value(propertyID);
+            writer.endObject();
+            
         }
     }
     
@@ -133,14 +152,22 @@ public class StandardReconConfig extends ReconConfig {
         }
     }
     
+    @JsonProperty("service")
     final public String     service;
+    @JsonProperty("identifierSpace")
     final public String     identifierSpace;
+    @JsonProperty("schemaSpace")
     final public String     schemaSpace;
     
+    @JsonIgnore
     final public String     typeID;
+    @JsonIgnore
     final public String     typeName;
+    @JsonProperty("autoMatch")
     final public boolean    autoMatch;
+    @JsonProperty("columnDetails")
     final public List<ColumnDetail> columnDetails;
+    @JsonProperty("limit")
     final private int limit;
 
     public StandardReconConfig(
@@ -210,18 +237,21 @@ public class StandardReconConfig extends ReconConfig {
         writer.key("columnDetails");
             writer.array();
             for (ColumnDetail c : columnDetails) {
-                writer.object();
-                writer.key("column"); writer.value(c.columnName);
-                writer.key("propertyName"); writer.value(c.propertyName);
-                writer.key("propertyID"); writer.value(c.propertyID);
-                writer.endObject();
+                c.write(writer, options);
             }
             writer.endArray();
           writer.key("limit"); writer.value(limit);
         writer.endObject();
     }
+    
+    @JsonProperty("type")
+    public ReconType getReconType() {
+        ReconType t = new ReconType(typeID, typeName);
+        return t;
+    }
 
     @Override
+    @JsonIgnore
     public int getBatchSize() {
         return 10;
     }
@@ -540,5 +570,11 @@ public class StandardReconConfig extends ReconConfig {
             }
         }
         return set;
+    }
+
+
+    @Override
+    public String getMode() {
+        return "standard-service";
     }
 }
