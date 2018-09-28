@@ -40,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -58,11 +60,17 @@ public class TextSearchFacet implements Facet {
      *  Configuration
      */
     public static class TextSearchFacetConfig implements FacetConfig {  
+        @JsonProperty("name")
         protected String     _name;
+        @JsonProperty("columnName")
         protected String     _columnName;
+        @JsonProperty("query")
         protected String     _query = null;
+        @JsonProperty("mode")
         protected String     _mode;
+        @JsonProperty("caseSensitive")
         protected boolean    _caseSensitive;
+        @JsonProperty("invert")
         protected boolean    _invert;
         
         @Override
@@ -76,7 +84,7 @@ public class TextSearchFacet implements Facet {
             writer.key("caseSensitive"); writer.value(_caseSensitive);
             writer.key("invert"); writer.value(_invert);
             writer.key("type"); writer.value("text");
-            writer.endObject();  
+            writer.endObject();
         }
         
         @Override
@@ -97,6 +105,11 @@ public class TextSearchFacet implements Facet {
             }
             _invert = o.has("invert") && o.getBoolean("invert");
         }
+
+        @Override
+        public String getJsonType() {
+            return "text";
+        }
     }
     TextSearchFacetConfig _config = new TextSearchFacetConfig();
     
@@ -109,7 +122,37 @@ public class TextSearchFacet implements Facet {
     
     public TextSearchFacet() {
     }
-
+    
+    @JsonProperty("name")
+    public String getName() {
+        return _config._name;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config._columnName;
+    }
+    
+    @JsonProperty("query")
+    public String getQuery() {
+        return _config._query;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _config._mode;
+    }
+    
+    @JsonProperty("caseSensitive")
+    public boolean isCaseSensitive() {
+        return _config._caseSensitive;
+    }
+    
+    @JsonProperty("invert")
+    public boolean isInverted() {
+        return _config._invert;
+    }
+    
     @Override
     public void write(JSONWriter writer, Properties options)
             throws JSONException {

@@ -36,11 +36,19 @@ package com.google.refine.browsing.facets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.DecoratedValue;
@@ -60,24 +68,51 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
 public class ListFacet implements Facet {
+    public static final String ERR_TOO_MANY_CHOICES = "Too many choices";
+    
+    /**
+     * Wrapper to respect the serialization format
+     */
+    public static class DecoratedValueWrapper {
+        @JsonProperty("v")
+        public final DecoratedValue value;
+        @JsonCreator
+        public DecoratedValueWrapper(
+                @JsonProperty("v") DecoratedValue value) {
+            this.value = value;
+        }
+    }
+    
     /*
      * Configuration
      */
     public static class ListFacetConfig implements FacetConfig {
+        @JsonProperty("name")
         public String     name;
+        @JsonProperty("expression")
         public String     expression;
+        @JsonProperty("columnName")
         public String     columnName;
+        @JsonProperty("invert")
         public boolean    invert;
         
         // If true, then facet won't show the blank and error choices
+        @JsonProperty("omitBlank")
         public boolean omitBlank;
+        @JsonProperty("omitError")
         public boolean omitError;
         
+        @JsonIgnore
         public List<DecoratedValue> selection = new LinkedList<>();
+        @JsonProperty("selectNumber")
         public boolean selectNumber;
+        @JsonProperty("selectDateTime")
         public boolean selectDateTime;
+        @JsonProperty("selectBoolean")
         public boolean selectBoolean;
+        @JsonProperty("selectBlank")
         public boolean selectBlank;
+        @JsonProperty("selectError")
         public boolean selectError;
 
         @Override
@@ -105,6 +140,13 @@ public class ListFacet implements Facet {
             writer.key("omitError"); writer.value(omitError);
             writer.key("selectError"); writer.value(selectError);
             writer.endObject();
+        }
+        
+        @JsonProperty("selection")
+        public List<DecoratedValueWrapper> getWrappedSelection() {
+            return selection.stream()
+                    .map(e -> new DecoratedValueWrapper(e))
+                    .collect(Collectors.toList());
         }
         
         @Override
@@ -143,6 +185,27 @@ public class ListFacet implements Facet {
             facet.initializeFromConfig(this, project);
             return facet;
         }
+
+        @Override
+        public String getJsonType() {
+            return "list";
+        }
+    }
+    
+    /**
+     * Wrapper class for choice counts and selection status for blank and error
+     */
+    public static class OtherChoice {
+        @JsonProperty("s")
+        boolean selected;
+        @JsonProperty("c")
+        int count;
+        public OtherChoice(
+                @JsonProperty("s") boolean selected,
+                @JsonProperty("c") int count) {
+            this.selected = selected;
+            this.count = count;
+        }
     }
     
     ListFacetConfig _config = new ListFacetConfig();
@@ -166,6 +229,69 @@ public class ListFacet implements Facet {
     
     public ListFacet() {
     }
+    
+    @JsonProperty("name")
+    public String getName() {
+        return _config.name;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config.columnName;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _config.expression;
+    }
+    
+    @JsonProperty("invert")
+    public boolean getInvert() {
+        return _config.invert;
+    }
+    
+    @JsonProperty("error")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        if (_errorMessage == null && _choices.size() > getLimit()) {
+            return ERR_TOO_MANY_CHOICES;
+        }
+        return _errorMessage;
+    }
+    
+    @JsonProperty("choiceCount")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getChoiceCount() {
+        if (_errorMessage == null && _choices.size() > getLimit()) 
+            return _choices.size();
+        return null;
+    }
+    
+    @JsonProperty("choices")
+    @JsonInclude(Include.NON_NULL)
+    public List<NominalFacetChoice> getChoices() {
+        if (getError() == null)
+            return _choices;
+        return null;
+    }
+    
+    @JsonProperty("blankChoice")
+    @JsonInclude(Include.NON_NULL)
+    public OtherChoice getBlankChoice() {
+        if (getError() == null && !_config.omitBlank && (_config.selectBlank || _blankCount > 0)) {
+            return new OtherChoice(_config.selectBlank, _blankCount);
+        }
+        return null;
+    }
+    
+    @JsonProperty("errorChoice")
+    @JsonInclude(Include.NON_NULL)
+    public OtherChoice getErrorChoice() {
+        if (getError() == null && !_config.omitError && (_config.selectError || _errorCount > 0)) {
+            return new OtherChoice(_config.selectError, _errorCount);
+        }
+        return null;
+    }
 
     @Override
     public void write(JSONWriter writer, Properties options)
@@ -180,7 +306,7 @@ public class ListFacet implements Facet {
         if (_errorMessage != null) {
             writer.key("error"); writer.value(_errorMessage);
         } else if (_choices.size() > getLimit()) {
-            writer.key("error"); writer.value("Too many choices");
+            writer.key("error"); writer.value(ERR_TOO_MANY_CHOICES);
             writer.key("choiceCount"); writer.value(_choices.size());
         } else {
             writer.key("choices"); writer.array();

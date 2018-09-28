@@ -51,6 +51,11 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -80,32 +85,60 @@ public class ScatterplotFacet implements Facet {
      * Configuration, from the client side
      */
     public static class ScatterplotFacetConfig implements FacetConfig {
+        @JsonProperty("name")
         protected String name; // name of facet
     
+        @JsonProperty(X_EXPRESSION)
         protected String expression_x; // expression to compute the x numeric value(s) per row
+        @JsonProperty(Y_EXPRESSION)
         protected String expression_y; // expression to compute the y numeric value(s) per row
+        @JsonProperty(X_COLUMN_NAME)
         protected String columnName_x; // column to base the x expression on, if any
+        @JsonProperty(Y_COLUMN_NAME)
         protected String columnName_y; // column to base the y expression on, if any
         
+        @JsonProperty(SIZE)
         protected int size;
+        @JsonIgnore
         protected int dim_x;
+        @JsonIgnore
         protected int dim_y;
+        @JsonIgnore
         protected String rotation_str;
+        @JsonIgnore
         protected int rotation;
     
+        @JsonIgnore
         protected double l;
+        @JsonProperty(DOT)
         protected double dot;
     
+        @JsonIgnore
         protected String color_str;
+        @JsonIgnore
         protected Color color;
         
+        @JsonProperty(FROM_X)
         protected double from_x; // the numeric selection for the x axis, from 0 to 1
+        @JsonProperty(TO_X)
         protected double to_x;
+        @JsonProperty(FROM_Y)
         protected double from_y; // the numeric selection for the y axis, from 0 to 1
+        @JsonProperty(TO_Y)
         protected double to_y;
         
         protected boolean selected; // false if we're certain that all rows will match
         // and there isn't any filtering to do
+        
+        @JsonProperty(DIM_X)
+        public String getDimX() {
+            return dim_x == LIN ? "lin" : "log";
+        }
+        
+        @JsonProperty(DIM_Y)
+        public String getDimY() {
+            return dim_y == LIN ? "lin" : "log";
+        }
         
         @Override
         public void write(JSONWriter writer, Properties options)
@@ -193,6 +226,11 @@ public class ScatterplotFacet implements Facet {
                 return NO_ROTATION;
             }
         }
+
+        @Override
+        public String getJsonType() {
+            return "scatterplot";
+        }
     }
     ScatterplotFacetConfig config;
 
@@ -253,6 +291,118 @@ public class ScatterplotFacet implements Facet {
         } catch (IOException e) {
             EMPTY_IMAGE = "";
         }
+    }
+    
+    @JsonProperty(NAME)
+    public String getName() {
+        return config.name;
+    }
+    
+    @JsonProperty(X_COLUMN_NAME)
+    public String getXColumnName() {
+        return config.columnName_x;
+    }
+    
+    @JsonProperty(X_EXPRESSION)
+    public String getXExpression() {
+        return config.expression_x;
+    }
+    
+    @JsonProperty(Y_COLUMN_NAME)
+    public String getYColumnName() {
+        return config.columnName_y;
+    }
+    
+    @JsonProperty(Y_EXPRESSION)
+    public String getYExpression() {
+        return config.expression_y;
+    }
+    
+    @JsonProperty(SIZE)
+    public int getSize() {
+        return config.size;
+    }
+    
+    @JsonProperty(DIM_X)
+    public int getDimX() {
+        return config.dim_x;
+    }
+    
+    @JsonProperty(DIM_Y)
+    public int getDimY() {
+        return config.dim_y;
+    }
+    
+    @JsonProperty(DOT)
+    public double getDot() {
+        return config.dot;
+    }
+    
+    @JsonProperty(ROTATION)
+    public double getRotation() {
+        return config.rotation;
+    }
+    
+    @JsonProperty(COLOR)
+    public String getColorString() {
+        return config.color_str;
+    }
+    
+    @JsonProperty(IMAGE)
+    @JsonInclude(Include.NON_NULL)
+    public String getImage() {
+        if(IMAGE_URI) {
+            return image;
+        }
+        return null;
+    }
+    
+    @JsonProperty(ERROR_X)
+    @JsonInclude(Include.NON_NULL)
+    public String getErrorX() {
+        return errorMessage_x;
+    }
+    
+    @JsonProperty(FROM_X)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFromX() {
+        if (errorMessage_x == null && !Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
+            return config.from_x;
+        }
+        return null;
+    }
+    
+    @JsonProperty(TO_X)
+    @JsonInclude(Include.NON_NULL)
+    public Double getToX() {
+        if (errorMessage_x == null && !Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
+            return config.to_x;
+        }
+        return null;
+    }
+    
+    @JsonProperty(ERROR_Y)
+    @JsonInclude(Include.NON_NULL)
+    public String getErrorY() {
+        return errorMessage_y;
+    }
+    
+    @JsonProperty(FROM_Y)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFromY() {
+        if (errorMessage_y == null && !Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
+            return config.from_y;
+        }
+        return null;
+    }
+    
+    @JsonProperty(TO_Y)
+    @JsonInclude(Include.NON_NULL)
+    public Double getToY() {
+        if (errorMessage_y == null && !Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
+            return config.to_y;
+        }
+        return null;
     }
     
     @Override

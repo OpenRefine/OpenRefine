@@ -39,6 +39,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.util.StringUtils;
 
@@ -50,7 +52,9 @@ import com.google.refine.util.StringUtils;
  * Facet choices that are presented to the user as text are stored as decorated values.
  */
 public class DecoratedValue implements Jsonizable {
+    @JsonProperty("v")
     final public Object value;
+    @JsonProperty("l")
     final public String label;
     
     public DecoratedValue(Object value, String label) {

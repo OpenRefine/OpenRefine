@@ -2,6 +2,8 @@ package com.google.refine.browsing.facets;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.model.Project;
 
@@ -28,4 +30,10 @@ public interface FacetConfig extends Jsonizable {
      * @return a computed facet on the given project.
      */
     public Facet apply(Project project);
+    
+    /**
+     * The facet type as stored in json.
+     */
+    @JsonProperty("type")
+    public String getJsonType();
 }

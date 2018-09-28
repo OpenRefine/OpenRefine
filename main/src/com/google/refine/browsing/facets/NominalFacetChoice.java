@@ -38,6 +38,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.DecoratedValue;
 
@@ -46,8 +48,11 @@ import com.google.refine.browsing.DecoratedValue;
  * and a flag of whether it has been selected.
  */
 public class NominalFacetChoice implements Jsonizable {
+    @JsonProperty("v")
     final public DecoratedValue    decoratedValue;
+    @JsonProperty("c")
     public int                    count;
+    @JsonProperty("s")
     public boolean                selected;
     
     public NominalFacetChoice(DecoratedValue decoratedValue) {

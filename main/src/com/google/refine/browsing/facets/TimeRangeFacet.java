@@ -39,6 +39,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -63,18 +68,28 @@ public class TimeRangeFacet implements Facet {
      * Configuration, from the client side
      */
     public static class TimeRangeFacetConfig implements FacetConfig {
+        @JsonProperty("name")
         protected String     _name;       // name of facet
+        @JsonProperty("expression")
         protected String     _expression; // expression to compute numeric value(s) per row
+        @JsonProperty("columnName")
         protected String     _columnName; // column to base expression on, if any
         
+        @JsonProperty(FROM)
         protected double      _from; // the numeric selection
+        @JsonProperty(TO)
         protected double      _to;
         
+        @JsonProperty("selectTime")
         protected boolean   _selectTime; // whether the time selection applies, default true
+        @JsonProperty("selectNonTime")
         protected boolean   _selectNonTime;
+        @JsonProperty("selectBlank")
         protected boolean   _selectBlank;
+        @JsonProperty("selectError")
         protected boolean   _selectError;
         
+        @JsonIgnore
         protected boolean    _selected; // false if we're certain that all rows will match
                         // and there isn't any filtering to do
         
@@ -123,6 +138,11 @@ public class TimeRangeFacet implements Facet {
             facet.initializeFromConfig(this, project);
             return facet;
         }
+
+        @Override
+        public String getJsonType() {
+            return "timerange";
+        }
     }
     protected TimeRangeFacetConfig _config;
     
@@ -142,20 +162,109 @@ public class TimeRangeFacet implements Facet {
     /*
      * Computed data
      */
+    @JsonProperty("baseTimeCount")
     protected int       _baseTimeCount;
+    @JsonProperty("baseNonTimeCount")
     protected int       _baseNonTimeCount;
+    @JsonProperty("baseBlankCount")
     protected int       _baseBlankCount;
+    @JsonProperty("baseErrorCount")
     protected int       _baseErrorCount;
-      
+     
+    @JsonProperty("timeCount")
     protected int       _timeCount;
+    @JsonProperty("nonTimeCount")
     protected int       _nonTimeCount;
+    @JsonProperty("blankCount")
     protected int       _blankCount;
+    @JsonProperty("errorCount")
     protected int       _errorCount;
 
     protected static final String MIN = "min";
     protected static final String MAX = "max";
     protected static final String TO = "to";
     protected static final String FROM = "from";
+    
+    @JsonProperty("name")
+    public String getName() {
+        return _config._name;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _config._expression;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config._columnName;
+    }
+    
+    @JsonProperty("error")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        return _errorMessage;
+    }
+    
+    @JsonProperty(MIN)
+    @JsonInclude(Include.NON_NULL)
+    public Double getMin() {
+        if(getError() == null) {
+            return _min;
+        }
+        return null;
+    }
+    
+    @JsonProperty(MAX)
+    @JsonInclude(Include.NON_NULL)
+    public Double getMax() {
+        if(getError() == null) {
+            return _max;
+        }
+        return null;
+    }
+    
+    @JsonProperty("step")
+    @JsonInclude(Include.NON_NULL)
+    public Double getStep() {
+        return _step;
+    }
+    
+    @JsonProperty("bins")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getBins() {
+        if (getError() == null) {
+            return _bins;
+        }
+        return null;
+    }
+    
+    @JsonProperty("baseBins")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getBaseBins() {
+        if (getError() == null) {
+            return _baseBins;
+        }
+        return null;
+    }
+    
+    @JsonProperty(FROM)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFrom() {
+        if (getError() == null) {
+            return _config._from;
+        }
+        return null;
+    }
+    
+    @JsonProperty(TO)
+    @JsonInclude(Include.NON_NULL)
+    public Double getTo() {
+        if (getError() == null) {
+            return _config._to;
+        }
+        return null;
+    }
     
     @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
@@ -169,9 +278,9 @@ public class TimeRangeFacet implements Facet {
             writer.key("error"); writer.value(_errorMessage);
         } else {
             if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
-                writer.key(MIN); writer.value(_min);
-                writer.key(MAX); writer.value(_max);
-                writer.key("step"); writer.value(_step);
+                writer.key(MIN); writer.value((long)_min);
+                writer.key(MAX); writer.value((long)_max);
+                writer.key("step"); writer.value((long)_step);
                                 
                 writer.key("bins"); writer.array();
                 for (int b : _bins) {
@@ -185,8 +294,8 @@ public class TimeRangeFacet implements Facet {
                 }
                 writer.endArray();
                 
-                writer.key(FROM); writer.value(_config._from);
-                writer.key(TO); writer.value(_config._to);
+                writer.key(FROM); writer.value((long)_config._from);
+                writer.key(TO); writer.value((long)_config._to);
             }
             
             writer.key("baseTimeCount"); writer.value(_baseTimeCount);

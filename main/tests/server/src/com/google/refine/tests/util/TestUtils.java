@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 
