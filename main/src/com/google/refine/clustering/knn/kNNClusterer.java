@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,10 +52,15 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
+import com.google.refine.clustering.ClusteredEntry;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
@@ -76,6 +82,7 @@ import edu.mit.simile.vicino.distances.PPMDistance;
 public class kNNClusterer extends Clusterer {
     
     public static class kNNClustererConfig extends ClustererConfig {
+        @JsonProperty("function")
         private String _distanceStr;
         private Distance _distance;
         private kNNClustererConfigParameters _parameters;
@@ -105,10 +112,12 @@ public class kNNClusterer extends Clusterer {
             }
         }
         
+        @JsonIgnore
         public Distance getDistance() {
             return _distance;
         }
         
+        @JsonProperty("params")
         public kNNClustererConfigParameters getParameters() {
             return _parameters;
         }
@@ -119,13 +128,20 @@ public class kNNClusterer extends Clusterer {
             clusterer.initializeFromConfig(project, this);
             return clusterer;
         }
+
+        @Override
+        public String getType() {
+            return "knn";
+        }
         
     }
     
     public static class kNNClustererConfigParameters implements Jsonizable {
         public static final double defaultRadius = 1.0d;
         public static final int defaultBlockingNgramSize = 6;
+        @JsonProperty("radius")
         public double radius = defaultRadius;
+        @JsonProperty("blocking-ngram-size")
         public int blockingNgramSize = defaultBlockingNgramSize;
         
         @Override
@@ -300,6 +316,21 @@ public class kNNClusterer extends Clusterer {
             }
         }
         writer.endArray();
+    }
+    
+    protected List<ClusteredEntry> getClusteredEntries(Set<Serializable> s) {
+        return s.stream()
+                .map(e -> new ClusteredEntry(e, _counts.get(e)))
+                .sorted(ClusteredEntry.comparator)
+                .collect(Collectors.toList());
+    }
+    
+    @JsonValue
+    public List<List<ClusteredEntry>> getJsonRepresentation() {
+        return _clusters.stream()
+                        .filter(m -> m.size() > 1)
+                        .map(m -> getClusteredEntries(m))
+                .collect(Collectors.toList());
     }
     
     private void count(Serializable s) {

@@ -2,6 +2,8 @@ package com.google.refine.clustering;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.model.Project;
 
@@ -22,6 +24,7 @@ public abstract class ClustererConfig implements Jsonizable {
         columnName = o.getString("column");
     }
     
+    @JsonProperty("column")
     public String getColumnName() {
         return columnName;
     }
@@ -32,4 +35,10 @@ public abstract class ClustererConfig implements Jsonizable {
      * @return
      */
     public abstract Clusterer apply(Project project);
+    
+    /**
+     * Type string used in Json serialization
+     */
+    @JsonProperty("type")
+    public abstract String getType();
 }

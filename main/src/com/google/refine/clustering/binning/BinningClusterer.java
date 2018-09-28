@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,10 +51,17 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
+import com.google.refine.clustering.ClusteredEntry;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
@@ -63,7 +71,8 @@ import com.google.refine.model.Row;
 public class BinningClusterer extends Clusterer {
     
     public static class BinningClustererConfig extends ClustererConfig {
-        
+       
+        @JsonProperty("function")
         private String _keyerName;
         private Keyer _keyer;
         private BinningParameters _parameters;
@@ -80,10 +89,13 @@ public class BinningClusterer extends Clusterer {
             }
         }
         
+        @JsonIgnore
         public Keyer getKeyer() {
             return _keyer;
         }
         
+        @JsonProperty("params")
+        @JsonInclude(Include.NON_NULL)
         public BinningParameters getParameters() {
             return _parameters;
         }
@@ -108,10 +120,17 @@ public class BinningClusterer extends Clusterer {
             clusterer.initializeFromConfig(project, this);
             return clusterer;
         }
+
+        @Override
+        public String getType() {
+            return "binning";
+        }
         
     }
     
     public static class BinningParameters implements Jsonizable {
+        @JsonProperty("ngram-size")
+        @JsonInclude(Include.NON_DEFAULT)
         public int ngramSize;
 
         @Override
@@ -275,5 +294,23 @@ public class BinningClusterer extends Clusterer {
             }
         }
         writer.endArray();
+    }
+    
+    protected static Map<String,Object> entryToMap(Entry<String,Integer> entry) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("v", entry.getKey());
+        map.put("c", entry.getValue());
+        return map;
+    }
+    
+    @JsonValue
+    public List<List<ClusteredEntry>> getJsonRepresentation() {
+        EntriesComparator c = new EntriesComparator();
+        return _clusters.stream()
+                .map(m -> m.entrySet().stream()
+                        .sorted(c)
+                        .map(e -> new ClusteredEntry(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 }
