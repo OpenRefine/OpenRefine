@@ -46,6 +46,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -117,6 +119,26 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
             writer.endArray();
         writer.key("applyToJudgedCells"); writer.value(_applyToJudgedCells);
         writer.endObject();
+    }
+    
+    @JsonProperty("fromColumnName")
+    public String getFromColumnName() {
+        return _fromColumnName;
+    }
+    
+    @JsonProperty("toColumnNames")
+    public String[] getToColumnNames() {
+        return _toColumnNames;
+    }
+    
+    @JsonProperty("judgments")
+    public String[] getJudgments() {
+        return _judgments;
+    }
+    
+    @JsonProperty("applyToJudgedCells")
+    public boolean getApplyToJudgedCells() {
+        return _applyToJudgedCells;
     }
 
     @Override

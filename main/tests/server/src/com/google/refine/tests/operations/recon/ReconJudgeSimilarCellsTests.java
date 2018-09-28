@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
@@ -37,20 +38,15 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeReconJudgeSimilarCellsOperation() {
-        AbstractOperation op = new ReconJudgeSimilarCellsOperation(
-                ENGINE_CONFIG,
-                "A",
-                "foo",
-                Recon.Judgment.New,
-                null, true);
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/recon-judge-similar-cells\","
+    public void serializeReconJudgeSimilarCellsOperation() throws JSONException {
+        String json = "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"A\","
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
-                + "\"shareNewTopics\":true}");
+                + "\"shareNewTopics\":true}";
+        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(new JSONObject(json)), json);
     }
     
     @Test

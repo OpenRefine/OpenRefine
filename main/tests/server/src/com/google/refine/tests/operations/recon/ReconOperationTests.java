@@ -8,6 +8,8 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Project;
+import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.tests.RefineTest;
@@ -18,6 +20,7 @@ public class ReconOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
+        ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
     }
     
     @Test

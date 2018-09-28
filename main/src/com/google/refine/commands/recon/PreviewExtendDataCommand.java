@@ -46,19 +46,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
-import com.google.refine.model.recon.ReconciledDataExtensionJob;
-import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
-import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
-import com.google.refine.model.Column;
 import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.ReconciledDataExtensionJob;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
@@ -79,7 +79,7 @@ public class PreviewExtendDataCommand extends Command {
             }
             
             String jsonString = request.getParameter("extension");
-            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
+            DataExtensionConfig config = DataExtensionConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(jsonString));
             
             JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
             int length = rowIndices.length();
@@ -120,7 +120,7 @@ public class PreviewExtendDataCommand extends Command {
             }
             
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
-            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(json, endpoint);
+            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint);
             Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
             
             response.setCharacterEncoding("UTF-8");

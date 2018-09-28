@@ -39,7 +39,6 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.operations.recon.ReconMatchSpecificTopicOperation;
 
 public class ReconMatchSpecificTopicCommand extends EngineDependentCommand {
@@ -49,11 +48,10 @@ public class ReconMatchSpecificTopicCommand extends EngineDependentCommand {
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String columnName = request.getParameter("columnName");
-        ReconCandidate match = new ReconCandidate(
+        ReconMatchSpecificTopicOperation.ReconItem match = new ReconMatchSpecificTopicOperation.ReconItem(
             request.getParameter("topicID"),
             request.getParameter("topicName"),
-            request.getParameter("types").split(","),
-            100
+            request.getParameter("types").split(",")
         );
         
         return new ReconMatchSpecificTopicOperation(

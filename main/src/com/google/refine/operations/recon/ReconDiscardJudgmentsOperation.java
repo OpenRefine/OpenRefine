@@ -42,6 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -85,6 +87,16 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
         writer.key("columnName"); writer.value(_columnName);
         writer.key("clearData"); writer.value(_clearData);
         writer.endObject();
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("clearData")
+    public boolean getClearData() {
+        return _clearData;
     }
 
     @Override

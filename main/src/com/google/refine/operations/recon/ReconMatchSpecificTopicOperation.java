@@ -43,6 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -60,8 +64,35 @@ import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OperationRegistry;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
-    final protected ReconCandidate match;
+    
+    public static class ReconItem {
+        @JsonProperty("id")
+        public final String id; 
+        @JsonProperty("name")
+        public final String name;
+        @JsonProperty("types")
+        public final String[] types;
+        @JsonCreator
+        public ReconItem(
+                @JsonProperty("id") String id,
+                @JsonProperty("name") String name,
+                @JsonProperty("types") String[] types) {
+            this.id = id;
+            this.name = name;
+            this.types = types;
+        }
+        
+        @JsonIgnore
+        public ReconCandidate getCandidate() {
+            return new ReconCandidate(id, name, types, 100);
+        }
+    }
+    
+    @JsonProperty("match")
+    final protected ReconItem match;
+    @JsonProperty("identifierSpace")
     final protected String identifierSpace;
+    @JsonProperty("schemaSpace")
     final protected String schemaSpace;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
@@ -78,11 +109,10 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         return new ReconMatchSpecificTopicOperation(
             EngineConfig.reconstruct(engineConfig),
             obj.getString("columnName"),
-            new ReconCandidate(
+            new ReconItem(
                 match.getString("id"),
                 match.getString("name"),
-                typeIDs,
-                100
+                typeIDs
             ),
             obj.getString("identifierSpace"),
             obj.getString("schemaSpace")
@@ -92,7 +122,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     public ReconMatchSpecificTopicOperation(
         EngineConfig engineConfig, 
         String columnName, 
-        ReconCandidate match,
+        ReconItem match,
         String identifierSpace,
         String schemaSpace
     ) {
@@ -146,6 +176,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        ReconCandidate candidate = match.getCandidate();
         
         return new RowVisitor() {
             int cellIndex;
@@ -188,7 +219,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
                                 identifierSpace,
                                 schemaSpace);
                             
-                        newRecon.match = match;
+                        newRecon.match = candidate;
                         newRecon.matchRank = -1;
                         newRecon.judgment = Judgment.Matched;
                         newRecon.judgmentAction = "mass";

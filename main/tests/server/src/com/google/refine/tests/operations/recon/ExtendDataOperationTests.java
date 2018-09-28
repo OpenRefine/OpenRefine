@@ -36,9 +36,12 @@ package com.google.refine.tests.operations.recon;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,11 +60,13 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
-import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
+import com.google.refine.model.recon.ReconciledDataExtensionJob;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ExtendDataOperation;
+import com.google.refine.process.Process;
+import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
@@ -72,6 +77,26 @@ public class ExtendDataOperationTests extends RefineTest {
     static final String RECON_SERVICE = "https://tools.wmflabs.org/openrefine-wikidata/en/api";
     static final String RECON_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
     static final String RECON_SCHEMA_SPACE = "http://www.wikidata.org/prop/direct/";
+    
+    private String dataExtensionConfigJson = "{"
+            + "    \"properties\":["
+            + "        {\"name\":\"inception\",\"id\":\"P571\"},"
+            + "        {\"name\":\"headquarters location\",\"id\":\"P159\"},"
+            + "        {\"name\":\"coordinate location\",\"id\":\"P625\"}"
+            + "     ]"
+            + "}";
+    
+    static public class ReconciledDataExtensionJobStub extends ReconciledDataExtensionJob {
+        public ReconciledDataExtensionJobStub(DataExtensionConfig obj, String endpoint) throws JSONException {
+            super(obj, endpoint);
+        }
+
+        public String formulateQueryStub(Set<String> ids, DataExtensionConfig node) throws JSONException {
+            StringWriter writer = new StringWriter();
+            super.formulateQuery(ids, node, writer);
+            return writer.toString();
+        }
+    }
 
     @Override
     @BeforeTest
@@ -132,6 +157,21 @@ public class ExtendDataOperationTests extends RefineTest {
                 + "}}";
         TestUtils.isSerializedTo(ExtendDataOperation.reconstruct(project, new JSONObject(json)), json);
     }
+    
+    @Test
+    public void serializeDataExtensionConfig() {
+        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(new JSONObject(dataExtensionConfigJson)), dataExtensionConfigJson);
+    }
+    
+    @Test
+    public void testFormulateQuery() {
+        DataExtensionConfig config = DataExtensionConfig.reconstruct(new JSONObject(dataExtensionConfigJson));
+        Set<String> ids = Collections.singleton("Q2");
+        String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
+        ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint");
+        TestUtils.assertEqualAsJson(json, stub.formulateQueryStub(ids, config));
+    }
+   
 
     @AfterMethod
     public void TearDown() {
@@ -157,7 +197,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @Test
     public void testFetchStrings() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(new JSONObject("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}"));
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -194,7 +234,8 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @Test
     public void testFetchCounts() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+                new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}"));
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -228,7 +269,8 @@ public class ExtendDataOperationTests extends RefineTest {
      */
     @Test
     public void testFetchCurrent() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+                new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}"));
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -268,7 +310,8 @@ public class ExtendDataOperationTests extends RefineTest {
      */
     @Test
     public void testFetchRecord() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+                new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}"));
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",

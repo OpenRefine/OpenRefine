@@ -43,6 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
@@ -67,7 +71,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     final protected ReconCandidate   _match;
     final protected boolean          _shareNewTopics;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+    static public AbstractOperation reconstruct(JSONObject obj) throws JSONException {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         ReconCandidate match = null;
@@ -135,6 +139,32 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         writer.key("shareNewTopics"); writer.value(_shareNewTopics);
         
         writer.endObject();
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("similarValue")
+    public String getSimilarValue() {
+        return _similarValue;
+    }
+    
+    @JsonProperty("judgment")
+    public Judgment getJudgment() {
+        return _judgment;
+    }
+    
+    @JsonProperty("match")
+    @JsonInclude(Include.NON_NULL)
+    public ReconCandidate getMatch() {
+        return _match;
+    }
+    
+    @JsonProperty("shareNewTopics")
+    public boolean getShareNewTopics() {
+        return _shareNewTopics;
     }
     
     @Override

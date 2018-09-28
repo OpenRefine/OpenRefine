@@ -45,6 +45,8 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -119,6 +121,16 @@ public class ReconOperation extends EngineDependentOperation {
         writer.key("config"); _reconConfig.write(writer, options);
         writer.key("engineConfig"); getEngineConfig().write(writer, options);
         writer.endObject();
+    }
+    
+    @JsonProperty("config")
+    public ReconConfig getReconConfig() {
+        return _reconConfig;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
     }
 
     static protected class ReconEntry {

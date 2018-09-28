@@ -45,6 +45,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -62,21 +64,31 @@ import com.google.refine.model.changes.DataExtensionChange;
 import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 
 public class ExtendDataOperation extends EngineDependentOperation {
-    final protected String     _baseColumnName;
-    final protected String     _endpoint;
-    final protected String     _identifierSpace;
-    final protected String     _schemaSpace;
-    final protected JSONObject _extension;
-    final protected int        _columnInsertIndex;
+    @JsonProperty("baseColumnName")
+    final protected String              _baseColumnName;
+    @JsonProperty("endpoint")
+    final protected String              _endpoint;
+    @JsonProperty("identifierSpace")
+    final protected String              _identifierSpace;
+    @JsonProperty("schemaSpace")
+    final protected String              _schemaSpace;
+    @JsonProperty("extension")
+    final protected DataExtensionConfig _extension;
+    @JsonProperty("columnInsertIndex")
+    final protected int                 _columnInsertIndex;
+
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
+        
+        DataExtensionConfig dataExtensionConfig = DataExtensionConfig.reconstruct(obj.getJSONObject("extension"));
         
         return new ExtendDataOperation(
             EngineConfig.reconstruct(engineConfig),
@@ -84,19 +96,19 @@ public class ExtendDataOperation extends EngineDependentOperation {
             obj.getString("endpoint"),
             obj.getString("identifierSpace"),
             obj.getString("schemaSpace"),
-            obj.getJSONObject("extension"),
+            dataExtensionConfig,
             obj.getInt("columnInsertIndex")
         );
     }
     
     public ExtendDataOperation(
-        EngineConfig   engineConfig,
-        String         baseColumnName,
-        String         endpoint,
-        String         identifierSpace,
-        String         schemaSpace,
-        JSONObject     extension,
-        int            columnInsertIndex 
+        EngineConfig        engineConfig,
+        String              baseColumnName,
+        String              endpoint,
+        String              identifierSpace,
+        String              schemaSpace,
+        DataExtensionConfig extension,
+        int                 columnInsertIndex 
     ) {
         super(engineConfig);
         
@@ -121,7 +133,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         writer.key("endpoint"); writer.value(_endpoint);
         writer.key("identifierSpace"); writer.value(_identifierSpace);
         writer.key("schemaSpace"); writer.value(_schemaSpace);
-        writer.key("extension"); writer.value(_extension);
+        writer.key("extension"); _extension.write(writer, options);
         writer.endObject();
     }
 
