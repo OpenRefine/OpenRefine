@@ -37,17 +37,33 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryProcess;
 
 public class ProcessManager implements Jsonizable {
+    @JsonProperty("processes")
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
+    @JsonIgnore
     protected List<Exception> _latestExceptions = null;
+    
+    public static class ExceptionMessage {
+        @JsonProperty("message")
+        public final String message;
+        public ExceptionMessage(Exception e) {
+            message = e.getLocalizedMessage();
+        }
+    }
     
     public ProcessManager() {
         
@@ -77,6 +93,17 @@ public class ProcessManager implements Jsonizable {
         }
         
         writer.endObject();
+    }
+    
+    @JsonProperty("exceptions")
+    @JsonInclude(Include.NON_NULL)
+    public List<ExceptionMessage> getJsonExceptions() {
+        if (_latestExceptions != null) {
+            return _latestExceptions.stream()
+                    .map(e -> new ExceptionMessage(e))
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 
     public HistoryEntry queueProcess(Process process) throws Exception {

@@ -38,6 +38,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 
@@ -58,6 +60,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
     }
 
     @Override
+    @JsonProperty("immediate")
     public boolean isImmediate() {
         return true;
     }
@@ -89,12 +92,21 @@ abstract public class QuickHistoryEntryProcess extends Process {
         
         writer.object();
         writer.key("id"); writer.value(hashCode());
-        writer.key("description"); writer.value(_historyEntry != null ? _historyEntry.description : _briefDescription);
+        writer.key("description"); writer.value(getDescription());
         writer.key("immediate"); writer.value(true);
-        writer.key("status"); writer.value(_done ? "done" : "pending");
+        writer.key("status"); writer.value(getStatus());
         writer.endObject();
     }
-
+    
+    @JsonProperty("status")
+    public String getStatus() {
+        return _done ? "done" : "pending";
+    }
+    
+    @JsonProperty("description")
+    public String getDescription() {
+        return _historyEntry != null ? _historyEntry.description : _briefDescription;
+    }
 
     @Override
     public boolean isDone() {
