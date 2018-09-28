@@ -44,11 +44,16 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 /**
@@ -57,18 +62,26 @@ import com.google.refine.util.ParsingUtilities;
  */
 public class HistoryEntry implements Jsonizable {
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
+    @JsonProperty("id")
     final public long   id;
+    @JsonIgnore
     final public long   projectID;
+    @JsonProperty("description")
     final public String description;
+    @JsonProperty("time")
     final public OffsetDateTime   time;
 
     // the manager (deals with IO systems or databases etc.)
+    @JsonIgnore
     final public HistoryEntryManager _manager;
 
     // the abstract operation, if any, that results in the change
+    @JsonProperty("operation")
+    @JsonView(JsonViews.SaveMode.class)
     final public AbstractOperation operation;
 
     // the actual change, loaded on demand
+    @JsonIgnore
     private transient Change _change;
 
     private final static String OPERATION = "operation";
@@ -77,6 +90,7 @@ public class HistoryEntry implements Jsonizable {
         this._change = _change;
     }
 
+    @JsonIgnore
     public Change getChange() {
         return _change;
     }

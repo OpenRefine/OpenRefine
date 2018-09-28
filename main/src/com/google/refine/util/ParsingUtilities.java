@@ -72,6 +72,7 @@ public class ParsingUtilities {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Double.class, new SerializationFilters.DoubleSerializer());
         module.addSerializer(double.class, new SerializationFilters.DoubleSerializer());
+        module.addSerializer(OffsetDateTime.class, new SerializationFilters.DateSerializer());
         mapper.registerModule(module);
     }
     

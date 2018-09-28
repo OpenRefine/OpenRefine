@@ -49,6 +49,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
@@ -113,7 +115,9 @@ public class History implements Jsonizable {
     }
 
     protected long               _projectID;
+    @JsonProperty("past")
     protected List<HistoryEntry> _pastEntries;   // done changes, can be undone
+    @JsonProperty("future")
     protected List<HistoryEntry> _futureEntries; // undone changes, can be redone
 
     public History(Project project) {

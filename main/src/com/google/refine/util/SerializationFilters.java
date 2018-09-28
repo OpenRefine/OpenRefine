@@ -1,6 +1,7 @@
 package com.google.refine.util;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -13,6 +14,10 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 
+/**
+ * Series of classes which configure JSON serialization at application level.
+ * @author Antonin Delpeuch
+ */
 public class SerializationFilters {
     static class BaseFilter extends SimpleBeanPropertyFilter {
         @Override
@@ -37,6 +42,11 @@ public class SerializationFilters {
     }
     
     public static PropertyFilter noFilter = new BaseFilter();
+    
+    /**
+     * Filter out reconciliation candidates when rendering a matched recon
+     * in view mode. (In save mode, render them all the time.)
+     */
     public static PropertyFilter reconCandidateFilter = new BaseFilter() {
         @Override
         public void serializeAsField(Object obj, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
@@ -55,7 +65,10 @@ public class SerializationFilters {
            }
         }
      };
-     
+    
+    /**
+     * Serialize double values as integers if they happen to round to an integer.
+     */
     public static class DoubleSerializer extends StdSerializer<Double> {
         private static final long serialVersionUID = 132345L;
 
@@ -72,5 +85,22 @@ public class SerializationFilters {
                 gen.writeNumber(arg0);
             }
         }
+    }
+    
+    /**
+     * Serialize dates by ISO format.
+     */
+    public static class DateSerializer extends StdSerializer<OffsetDateTime> {
+        private static final long serialVersionUID = 93872874L;
+
+        public DateSerializer() {
+            super(OffsetDateTime.class);
+        }
+
+        @Override
+        public void serialize(OffsetDateTime arg0, JsonGenerator gen, SerializerProvider s)
+                throws IOException {
+            gen.writeString(ParsingUtilities.dateToString(arg0));
+        }       
     }
 }

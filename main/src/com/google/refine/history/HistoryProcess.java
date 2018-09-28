@@ -38,6 +38,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
@@ -65,6 +68,12 @@ public class HistoryProcess extends Process {
             HistoryEntry entry = _project.history.getEntry(_lastDoneID);
             _description = "Undo/redo until after " + entry.description;
         }
+    }
+    
+    @Override
+    @JsonIgnore
+    public long getId() {
+        return super.getId();
     }
     
     @Override
@@ -97,8 +106,18 @@ public class HistoryProcess extends Process {
         writer.object();
         writer.key("description"); writer.value(_description);
         writer.key("immediate"); writer.value(true);
-        writer.key("status"); writer.value(_done ? "done" : "pending");
+        writer.key("status"); writer.value(getStatus());
         writer.endObject();
+    }
+    
+    @JsonProperty("status")
+    public String getStatus() {
+        return _done ? "done" : "pending";
+    }
+    
+    @JsonProperty("description")
+    public String getDescription() {
+        return _description;
     }
 
     @Override

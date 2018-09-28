@@ -2,8 +2,6 @@ package com.google.refine.tests.history;
 
 import static org.mockito.Mockito.mock;
 
-import java.util.Properties;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -58,9 +56,7 @@ public class HistoryEntryTests extends RefineTest {
                 + "\"time\":\"2018-08-07T09:06:37Z\"}";
         
         HistoryEntry historyEntry = HistoryEntry.load(project, json);
-        TestUtils.isSerializedTo(historyEntry, jsonSimple);
-        Properties options = new Properties();
-        options.setProperty("mode", "save");
-        TestUtils.isSerializedTo(historyEntry, json, options);
+        TestUtils.isSerializedTo(historyEntry, jsonSimple, false);
+        TestUtils.isSerializedTo(historyEntry, json, true);
     }
 }
