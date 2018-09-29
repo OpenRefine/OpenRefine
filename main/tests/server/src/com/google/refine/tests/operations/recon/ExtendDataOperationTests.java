@@ -86,6 +86,34 @@ public class ExtendDataOperationTests extends RefineTest {
             + "     ]"
             + "}";
     
+    private String operationJson = "{\"op\":\"core/extend-reconciled-data\","
+            + "\"description\":\"Extend data at index 3 based on column organization_name\","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
+            + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
+            + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
+            + "]},"
+            + "\"columnInsertIndex\":3,"
+            + "\"baseColumnName\":\"organization_name\","
+            + "\"endpoint\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+            + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+            + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+            + "\"extension\":{"
+            + "    \"properties\":["
+            + "        {\"name\":\"inception\",\"id\":\"P571\"},"
+            + "        {\"name\":\"headquarters location\",\"id\":\"P159\"},"
+            + "        {\"name\":\"coordinate location\",\"id\":\"P625\"}"
+            + "     ]"
+            + "}}";
+    
+    private String processJson = ""
+            + "    {\n" + 
+            "       \"description\" : \"Extend data at index 3 based on column organization_name\",\n" + 
+            "       \"id\" : %d,\n" + 
+            "       \"immediate\" : false,\n" + 
+            "       \"progress\" : 0,\n" + 
+            "       \"status\" : \"pending\"\n" + 
+            "     }";
+    
     static public class ReconciledDataExtensionJobStub extends ReconciledDataExtensionJob {
         public ReconciledDataExtensionJobStub(DataExtensionConfig obj, String endpoint) throws JSONException {
             super(obj, endpoint);
@@ -137,25 +165,14 @@ public class ExtendDataOperationTests extends RefineTest {
     
     @Test
     public void serializeExtendDataOperation() throws JSONException, Exception {
-        String json = "{\"op\":\"core/extend-reconciled-data\","
-                + "\"description\":\"Extend data at index 3 based on column organization_name\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
-                + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
-                + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
-                + "]},"
-                + "\"columnInsertIndex\":3,"
-                + "\"baseColumnName\":\"organization_name\","
-                + "\"endpoint\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "\"extension\":{"
-                + "    \"properties\":["
-                + "        {\"name\":\"inception\",\"id\":\"P571\"},"
-                + "        {\"name\":\"headquarters location\",\"id\":\"P159\"},"
-                + "        {\"name\":\"coordinate location\",\"id\":\"P625\"}"
-                + "     ]"
-                + "}}";
-        TestUtils.isSerializedTo(ExtendDataOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ExtendDataOperation.reconstruct(project, new JSONObject(operationJson)), operationJson);
+    }
+    
+    @Test
+    public void serializeExtendDataProcess() throws JSONException, Exception {
+        Process p = ExtendDataOperation.reconstruct(project, new JSONObject(operationJson))
+                .createProcess(project, new Properties());
+        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
     }
     
     @Test

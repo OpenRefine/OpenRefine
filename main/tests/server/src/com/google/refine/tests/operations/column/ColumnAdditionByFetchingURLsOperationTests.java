@@ -49,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -67,6 +68,31 @@ import com.google.refine.tests.util.TestUtils;
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
+    
+    private String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
+            + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"newColumnName\":\"employments\","
+            + "\"columnInsertIndex\":2,"
+            + "\"baseColumnName\":\"orcid\","
+            + "\"urlExpression\":\"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
+            + "\"onError\":\"set-to-blank\","
+            + "\"delay\":500,"
+            + "\"cacheResponses\":true,"
+            + "\"httpHeadersJson\":["
+            + "    {\"name\":\"authorization\",\"value\":\"\"},"
+            + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
+            + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
+            + "]}";
+    
+    private String processJson = ""
+            +"{\n" + 
+            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n" + 
+            "    \"id\" : %d,\n" + 
+            "    \"immediate\" : false,\n" + 
+            "    \"progress\" : 0,\n" + 
+            "    \"status\" : \"pending\"\n" + 
+            " }";
 
     @Override
     @BeforeTest
@@ -99,22 +125,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws JSONException, Exception {
-        String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
-                + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"newColumnName\":\"employments\","
-                + "\"columnInsertIndex\":2,"
-                + "\"baseColumnName\":\"orcid\","
-                + "\"urlExpression\":\"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
-                + "\"onError\":\"set-to-blank\","
-                + "\"delay\":500,"
-                + "\"cacheResponses\":true,"
-                + "\"httpHeadersJson\":["
-                + "    {\"name\":\"authorization\",\"value\":\"\"},"
-                + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
-                + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
-                + "]}";
         TestUtils.isSerializedTo(ColumnAdditionByFetchingURLsOperation.reconstruct(project, new JSONObject(json)), json);
+    }
+    
+    @Test
+    public void serializeUrlFetchingProcess() throws Exception {
+        AbstractOperation op = ColumnAdditionByFetchingURLsOperation.reconstruct(project, new JSONObject(json));
+        Process process = op.createProcess(project, new Properties());
+        TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
     }
     
     /**

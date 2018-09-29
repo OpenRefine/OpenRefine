@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -69,6 +71,7 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconOperation extends EngineDependentOperation {
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
@@ -76,7 +79,7 @@ public class ReconOperation extends EngineDependentOperation {
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
+    static public ReconOperation reconstruct(Project project, JSONObject obj) throws Exception {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         return new ReconOperation(
@@ -159,6 +162,32 @@ public class ReconOperation extends EngineDependentOperation {
         protected List<ReconEntry>   _entries;
         protected int                _cellIndex;
         
+        protected final String _addJudgmentFacetJson =
+                "{\n" + 
+                "  \"action\" : \"createFacet\",\n" + 
+                "  \"facetConfig\" : {\n" + 
+                "  \"columnName\" : \"researcher\",\n" + 
+                "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n" + 
+                "    \"name\" : \"researcher: judgment\"\n" + 
+                "    },\n" + 
+                "    \"facetOptions\" : {\n" + 
+                "      \"scroll\" : false\n" + 
+                "    },\n" + 
+                "    \"facetType\" : \"list\"\n" + 
+                " }";
+        protected final String _addScoreFacetJson = 
+                "{\n" + 
+                "  \"action\" : \"createFacet\",\n" + 
+                "  \"facetConfig\" : {\n" + 
+                "    \"columnName\" : \"researcher\",\n" + 
+                "    \"expression\" : \"cell.recon.best.score\",\n" + 
+                "    \"mode\" : \"range\",\n" + 
+                "    \"name\" : \"researcher: best candidate's score\"\n" + 
+                "         },\n" + 
+                "         \"facetType\" : \"range\"\n" + 
+                "}";
+        protected JsonNode _addJudgmentFacet, _addScoreFacet;
+        
         public ReconProcess(
             Project project, 
             EngineConfig engineConfig, 
@@ -168,6 +197,12 @@ public class ReconOperation extends EngineDependentOperation {
             _project = project;
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
+            try {               
+                _addJudgmentFacet = ParsingUtilities.mapper.readValue(_addJudgmentFacetJson, JsonNode.class);
+                _addScoreFacet = ParsingUtilities.mapper.readValue(_addScoreFacetJson, JsonNode.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         
         @Override
@@ -212,6 +247,16 @@ public class ReconOperation extends EngineDependentOperation {
                     }
                 writer.endArray();
             writer.endObject();
+        }
+        
+        @JsonProperty("onDone")
+        public List<JsonNode> onDoneActions() {
+            List<JsonNode> onDone = new ArrayList<>();
+            onDone.add(_addJudgmentFacet);
+            if (_reconConfig instanceof StandardReconConfig) {
+                onDone.add(_addScoreFacet);
+            }
+            return onDone;
         }
         
         @Override

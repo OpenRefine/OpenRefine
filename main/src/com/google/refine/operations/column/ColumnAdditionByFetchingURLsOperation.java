@@ -316,20 +316,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         });
             }
         }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-
-            writer.object();
-            writer.key("id"); writer.value(hashCode());
-            writer.key("description"); writer.value(_description);
-            writer.key("immediate"); writer.value(false);
-            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-            writer.key("progress"); writer.value(_progress);
-            writer.endObject();
-        }
-
+        
         @Override
         protected Runnable getRunnable() {
             return this;
