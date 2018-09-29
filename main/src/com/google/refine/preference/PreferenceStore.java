@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.preference;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,9 +41,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
@@ -54,21 +63,40 @@ public class PreferenceStore implements Jsonizable {
     public static final String USER_NAME = "username";
     
     private boolean dirty = false;
-    protected Map<String, Object> _prefs = new HashMap<String, Object>();
+    protected Map<String, Object> _prefs = new HashMap<>();
+    
+    // Temporary wrapper while serialization has not been migrated yet.
+    @JsonProperty("entries")
+    protected Map<String, Object> _prefsJackson = new HashMap<>();
     
     public void put(String key, Object value) {
         if (value == null) {
             _prefs.remove(key);
+            _prefsJackson.remove(key);
         } else {
             _prefs.put(key, value);
+            _prefsJackson.put(key, wrapJSONArray(value));
         }
         dirty = true;
     }
     
+    private Object wrapJSONArray(Object value) {
+        ObjectMapper mapper = new ObjectMapper();
+        if(value != null && value instanceof JSONArray) {
+            try {
+                return mapper.readValue(value.toString(), JsonNode.class);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return value;
+    }
+
     public Object get(String key) {
         return _prefs.get(key);
     }
     
+    @JsonIgnore
     public Set<String> getKeys() {
         return _prefs.keySet();
     }
@@ -98,8 +126,22 @@ public class PreferenceStore implements Jsonizable {
     /**
      * @return true if the preference store has unsaved changes
      */
+    @JsonIgnore
     public boolean isDirty() {
         return dirty;
+    }
+    
+    /**
+     * Mark the object as clean every time it is serialized.
+     * This behaviour is not very clean - it is inherited from
+     * the previous deserialization code.
+     * @return
+     */
+    @JsonProperty("makeClean")
+    @JsonInclude(Include.NON_NULL)
+    public Integer markAsClean() {
+        dirty = false;
+        return null;
     }
     
     @SuppressWarnings("unchecked")
@@ -111,8 +153,9 @@ public class PreferenceStore implements Jsonizable {
             while (i.hasNext()) {
                 String key = i.next();
                 if (!entries.isNull(key)) {
-                    Object o = entries.get(key);
-                    _prefs.put(key, loadObject(o));
+                    Object o = entries.get(key), loaded = loadObject(o);
+                    _prefs.put(key, loaded);
+                    _prefsJackson.put(key, wrapJSONArray(loaded));
                 }
             }
             dirty = false; // internal puts don't count

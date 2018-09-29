@@ -44,10 +44,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 
 public class TopList implements Jsonizable, Iterable<String> {
     
+    @JsonProperty("top")
     final protected int          _top;
     final protected List<String> _list = new ArrayList<String>();
 
@@ -56,6 +60,7 @@ public class TopList implements Jsonizable, Iterable<String> {
     }
     
     @SuppressWarnings("unchecked")
+    @JsonProperty("list")
     public List<String> getList() {
         return UnmodifiableList.decorate(_list);
     }
@@ -72,11 +77,16 @@ public class TopList implements Jsonizable, Iterable<String> {
     {
         _list.remove(element);
     }
+    
+    @JsonProperty("class")
+    public String getClassName() {
+        return this.getClass().getName();
+    }
 
     @Override
     public void write(JSONWriter writer, Properties options) throws JSONException {
         writer.object();
-        writer.key("class"); writer.value(this.getClass().getName());
+        writer.key("class"); writer.value(getClassName());
         
         writer.key("top"); writer.value(_top);
         writer.key("list");
@@ -107,7 +117,8 @@ public class TopList implements Jsonizable, Iterable<String> {
         }
     }
     
-    @Override  
+    @Override
+    @JsonIgnore
     public Iterator<String> iterator() {  
         return _list.iterator();  
     } 

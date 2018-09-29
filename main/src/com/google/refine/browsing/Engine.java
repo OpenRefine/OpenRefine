@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import com.google.refine.Jsonizable;
 import com.google.refine.browsing.facets.Facet;
@@ -72,6 +73,7 @@ public class Engine implements Jsonizable {
 
     protected Project _project;
     protected List<Facet> _facets = new LinkedList<Facet>();
+    @JsonValue
     protected EngineConfig _config = new EngineConfig(Collections.emptyList(), Mode.RowBased);
 
     static public String modeToString(Mode mode) {
