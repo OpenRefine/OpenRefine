@@ -54,6 +54,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.IMetadata;
@@ -342,6 +345,7 @@ public abstract class ProjectManager {
     /**
      * Gets the InterProjectModel from memory
      */
+    @JsonIgnore
     public InterProjectModel getInterProjectModel() {
         return _interProjectModel;
     }
@@ -472,7 +476,7 @@ public abstract class ProjectManager {
      * Gets all the project Metadata currently held in memory.
      * @return
      */
-    
+    @JsonIgnore
     public Map<Long, ProjectMetadata> getAllProjectMetadata() {
         for(Project project : _projects.values()) {
             mergeEmptyUserMetadata(project.getMetadata());
@@ -486,6 +490,7 @@ public abstract class ProjectManager {
      *
      * @return
      */
+    @JsonIgnore
     public Map<String, Integer> getAllProjectTags() {
       return _projectsTags;
     }
@@ -517,6 +522,7 @@ public abstract class ProjectManager {
      * Gets the preference store
      * @return
      */
+    @JsonProperty("preferences")
     public PreferenceStore getPreferenceStore() {
         return _preferenceStore;
     }
@@ -525,6 +531,7 @@ public abstract class ProjectManager {
      * Gets all expressions from the preference store
      * @return
      */
+    @JsonIgnore
     public List<String> getExpressions() {
         return ((TopList) _preferenceStore.get("scripting.expressions")).getList();
     }
@@ -533,6 +540,7 @@ public abstract class ProjectManager {
      * The history entry manager deals with changes
      * @return manager for handling history
      */
+    @JsonIgnore
     public abstract HistoryEntryManager getHistoryEntryManager();
 
 
