@@ -43,28 +43,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
-import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
 public class GetPreferenceCommand extends Command {
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected static class PreferenceValue implements Jsonizable {
+        @JsonProperty("value")
+        protected Object pref;
         
-        Project project = request.getParameter("project") != null ? getProject(request) : null;
-        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
-                
-        String prefName = request.getParameter("name");
-        Object pref = ps.get(prefName);
-        
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            
+        protected PreferenceValue(Object o) {
+            pref = o;
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
             writer.object();
             writer.key("value");
             if (pref == null || pref instanceof String || pref instanceof Number || pref instanceof Boolean) {
@@ -77,9 +74,19 @@ public class GetPreferenceCommand extends Command {
             }
             
             writer.endObject();
-        } catch (JSONException e) {
-            respondException(response, e);
         }
+    }
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
+                
+        String prefName = request.getParameter("name");
+        Object pref = ps.get(prefName);
+        
+        respondJSON(response, new PreferenceValue(pref));
     }
 
 }
