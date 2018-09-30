@@ -39,6 +39,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 
 /**
@@ -50,6 +52,7 @@ import com.google.refine.Jsonizable;
 public class EvalError implements Serializable, Jsonizable {
     private static final long serialVersionUID = -102681220092874080L;
     
+    @JsonProperty("message")
     final public String message;
     
     public EvalError(String message) {
@@ -74,6 +77,11 @@ public class EvalError implements Serializable, Jsonizable {
         writer.key("type"); writer.value("error");
         writer.key("message"); writer.value(message);
         writer.endObject();
+    }
+    
+    @JsonProperty("type")
+    public String getType() {
+        return "error";
     }
 
 }

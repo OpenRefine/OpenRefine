@@ -40,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Recon.Judgment;
@@ -53,8 +55,11 @@ public class ReconStats implements Jsonizable {
         );
     }
     
+    @JsonProperty("nonBlanks")
     final public int    nonBlanks;
+    @JsonProperty("newTopics")
     final public int    newTopics;
+    @JsonProperty("matchedTopics")
     final public int    matchedTopics;
     
     public ReconStats(int nonBlanks, int newTopics, int matchedTopics) {

@@ -59,6 +59,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -74,6 +77,8 @@ public class ParsingUtilities {
         module.addSerializer(double.class, new SerializationFilters.DoubleSerializer());
         module.addSerializer(OffsetDateTime.class, new SerializationFilters.DateSerializer());
         mapper.registerModule(module);
+        mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     
     public static final FilterProvider defaultFilters = new SimpleFilterProvider()

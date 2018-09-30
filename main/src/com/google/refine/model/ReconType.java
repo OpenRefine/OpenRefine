@@ -39,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.Jsonizable;
 
 /**
@@ -47,7 +49,9 @@ import com.google.refine.Jsonizable;
  * store the (expected) types of new columns.
  */
 public class ReconType implements Jsonizable {
+    @JsonProperty("id")
     public String id;
+    @JsonProperty("name")
     public String name;
 
     public ReconType(String id, String name) {
