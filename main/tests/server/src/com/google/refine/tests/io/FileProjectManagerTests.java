@@ -1,16 +1,24 @@
 package com.google.refine.tests.io;
 
-import java.io.File;
-
-import org.testng.annotations.Test;
 import static org.mockito.Mockito.mock;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.metadata.ProjectMetadata;
-import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
-public class FileProjectManagerTests extends RefineTest {
+public class FileProjectManagerTests  {
+    protected File workspaceDir;
+    
+    @BeforeMethod
+    public void createDirectory() throws IOException {
+        workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
+    }
     
     protected class FileProjectManagerStub extends FileProjectManager {
 
