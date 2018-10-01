@@ -37,19 +37,71 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
+    
+    public static class ExpressionState implements Jsonizable {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("global")
+        protected boolean global = false;
+        @JsonProperty("starred")
+        protected boolean starred;
+        
+        protected ExpressionState(String code, boolean starred) {
+            this.code = code;
+            this.starred = starred;
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("code"); writer.value(code);
+            writer.key("global"); writer.value(false);
+            writer.key("starred"); writer.value(starred);
+            writer.endObject();
+        }
+    }
+    
+    public static class ExpressionsList implements Jsonizable {
+        @JsonProperty("expressions")
+        List<ExpressionState> expressions;
+        
+        protected ExpressionsList(List<ExpressionState> states) {
+            this.expressions = states;
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("expressions");
+                writer.array();
+                for (ExpressionState e : expressions) {
+                    e.write(writer, options);
+                }
+                writer.endArray();
+            writer.endObject();
+        }
+    }
 
     static protected List<String> toExpressionList(Object o) {
         return o == null ? new ArrayList<String>() : ((TopList) o).getList();
@@ -60,40 +112,14 @@ public class GetExpressionHistoryCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            List<String> localExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
-            localExpressions = localExpressions.size() > 20 ? localExpressions.subList(0, 20) : localExpressions;
             
-            List<String> globalExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
+            List<String> expressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
             Set<String> starredExpressions = new HashSet<String>(((TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions")).getList());
-            
-            Set<String> done = new HashSet<String>();
-            
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
-            writer.key("expressions");
-                writer.array();
-                for (String s : localExpressions) {
-                    writer.object();
-                    writer.key("code"); writer.value(s);
-                    writer.key("global"); writer.value(false);
-                    writer.key("starred"); writer.value(starredExpressions.contains(s));
-                    writer.endObject();
-                    done.add(s);
-                }
-                for (String s : globalExpressions) {
-                    if (!done.contains(s)) {
-                        writer.object();
-                        writer.key("code"); writer.value(s);
-                        writer.key("global"); writer.value(true);
-                        writer.key("starred"); writer.value(starredExpressions.contains(s));
-                        writer.endObject();
-                    }
-                }
-                writer.endArray();
-            writer.endObject();
+            ExpressionsList expressionsList = new ExpressionsList(expressions.stream()
+                    .map(s -> new ExpressionState(s, starredExpressions.contains(s)))
+                    .collect(Collectors.toList()));
+      
+            respondJSON(response, expressionsList);
         } catch (Exception e) {
             respondException(response, e);
         }

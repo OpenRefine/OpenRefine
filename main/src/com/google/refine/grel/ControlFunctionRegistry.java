@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -168,6 +169,9 @@ public class ControlFunctionRegistry {
     static public Set<Entry<String, Function>> getFunctionMapping() {
         return s_nameToFunction.entrySet();
     }
+    static public Map<String,Function> getFunctionMap() {
+        return Collections.unmodifiableMap(s_nameToFunction);
+    }
 
     static public Control getControl(String name) {
         return s_nameToControl.get(name);
@@ -177,6 +181,9 @@ public class ControlFunctionRegistry {
     }
     static public Set<Entry<String, Control>> getControlMapping() {
         return s_nameToControl.entrySet();
+    }
+    static public Map<String,Control> getControlMap() {
+        return Collections.unmodifiableMap(s_nameToControl);
     }
 
     static public void registerFunction(String name, Function f) {

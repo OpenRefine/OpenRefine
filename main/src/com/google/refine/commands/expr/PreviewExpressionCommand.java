@@ -36,6 +36,7 @@ package com.google.refine.commands.expr;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -48,6 +49,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -64,6 +71,85 @@ import com.google.refine.util.ParsingUtilities;
 
 public class PreviewExpressionCommand extends Command {
     
+    protected static interface ExpressionValue extends Jsonizable { }
+    protected static class ErrorMessage implements ExpressionValue {
+        @JsonProperty("message")
+        protected String message;
+        public ErrorMessage(String m) {
+            message = m;
+        }
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("message"); writer.value(message);
+            writer.endObject();
+        }
+        
+    }
+    protected static class SuccessfulEvaluation implements ExpressionValue {
+        @JsonValue
+        protected String value;
+        protected SuccessfulEvaluation(String value) {
+            this.value = value;
+        }
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.value(value);
+        }
+        
+    }
+    
+    protected static class PreviewResult implements Jsonizable {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("message")
+        @JsonInclude(Include.NON_NULL)
+        protected String message;
+        @JsonProperty("type")
+        @JsonInclude(Include.NON_NULL)
+        protected String type;
+        @JsonProperty("results")
+        List<ExpressionValue> results; 
+        
+        public PreviewResult(String code, String message, String type) {
+            this.code = code;
+            this.message = message;
+            this.type = type;
+            this.results = null;
+        }
+
+        public PreviewResult(List<ExpressionValue> evaluated) {
+            this.code = "ok";
+            this.message = null;
+            this.type = null;
+            this.results = evaluated;
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+            writer.object();
+            writer.key("code"); writer.value(code);
+            if(message != null) {
+                writer.key("message"); writer.value(message);
+            }
+            if(type != null) {
+                writer.key("type"); writer.value(type);
+            }
+            if(results != null) {
+                writer.key("results");
+                writer.array();
+                for(ExpressionValue v : results) {
+                    v.write(writer, options);
+                }
+                writer.endArray();
+            }
+            writer.endObject();
+        }
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -77,7 +163,7 @@ public class PreviewExpressionCommand extends Command {
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");
             if (rowIndicesString == null) {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
+                respondJSON(response, new PreviewResult("error", "No row indices specified", null));
                 return;
             }
             
@@ -91,21 +177,13 @@ public class PreviewExpressionCommand extends Command {
                 }
             }
             
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
             JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
             int length = rowIndices.length();
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
             
             try {
                 Evaluable eval = MetaParser.parse(expression);
                 
-                writer.key("code"); writer.value("ok");
-                writer.key("results"); writer.array();
-                
+                List<ExpressionValue> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings(project);
                 for (int i = 0; i < length; i++) {
                     Object result = null;
@@ -140,31 +218,23 @@ public class PreviewExpressionCommand extends Command {
                     }
                     
                     if (result == null) {
-                        writer.value(null);
+                        evaluated.add(null);
                     } else if (ExpressionUtils.isError(result)) {
-                        writer.object();
-                        writer.key("message"); writer.value(((EvalError) result).message);
-                        writer.endObject();
+                        evaluated.add(new ErrorMessage(((EvalError) result).message));
                     } else {
                         StringBuffer sb = new StringBuffer();
                         
                         writeValue(sb, result, false);
                         
-                        writer.value(sb.toString());
+                        evaluated.add(new SuccessfulEvaluation(sb.toString()));
                     }
                 }
-                writer.endArray();
+                respondJSON(response, new PreviewResult(evaluated));
             } catch (ParsingException e) {
-                writer.key("code"); writer.value("error");
-                writer.key("type"); writer.value("parser");
-                writer.key("message"); writer.value(e.getMessage());
+                respondJSON(response, new PreviewResult("error", e.getMessage(), "parser"));
             } catch (Exception e) {
-                writer.key("code"); writer.value("error");
-                writer.key("type"); writer.value("other");
-                writer.key("message"); writer.value(e.getMessage());
+                respondJSON(response, new PreviewResult("error", e.getMessage(), "other"));
             }
-            
-            writer.endObject();
         } catch (Exception e) {
             respondException(response, e);
         }

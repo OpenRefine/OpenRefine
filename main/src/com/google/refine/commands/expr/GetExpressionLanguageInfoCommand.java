@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.expr;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -41,8 +42,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.commands.Command;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -50,23 +55,27 @@ import com.google.refine.grel.Function;
 
 public class GetExpressionLanguageInfoCommand extends Command {
     
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public static class LanguageInfo implements Jsonizable {
         
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            Properties options = new Properties();
-            
+        @JsonProperty("functions")
+        Map<String, Function> functions;
+        @JsonProperty("controls")
+        Map<String, Control> controls;
+        
+        public LanguageInfo() {
+            functions = ControlFunctionRegistry.getFunctionMap();
+            controls = ControlFunctionRegistry.getControlMap();
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
             writer.object();
             
             writer.key("functions");
             writer.object();
             {
-                for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+                for (Entry<String, Function> entry : functions.entrySet()) {
                     writer.key(entry.getKey());
                     entry.getValue().write(writer, options);
                 }
@@ -76,7 +85,7 @@ public class GetExpressionLanguageInfoCommand extends Command {
             writer.key("controls");
             writer.object();
             {
-                for (Entry<String, Control> entry : ControlFunctionRegistry.getControlMapping()) {
+                for (Entry<String, Control> entry : controls.entrySet()) {
                     writer.key(entry.getKey());
                     entry.getValue().write(writer, options);
                 }
@@ -84,6 +93,16 @@ public class GetExpressionLanguageInfoCommand extends Command {
             writer.endObject();
             
             writer.endObject();
+        }
+        
+    }
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            respondJSON(response, new LanguageInfo());
         } catch (Exception e) {
             respondException(response, e);
         }

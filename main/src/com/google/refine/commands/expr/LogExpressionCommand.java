@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
 
 public class LogExpressionCommand extends Command {
@@ -51,7 +50,6 @@ public class LogExpressionCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            Project project = getProject(request);
             String expression = request.getParameter("expression");
             
             ((TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"))
