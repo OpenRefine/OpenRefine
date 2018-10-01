@@ -47,7 +47,6 @@ import org.json.JSONWriter;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
 import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
@@ -61,8 +60,6 @@ public class GetExpressionHistoryCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            Project project = getProject(request);
-            
             List<String> localExpressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
             localExpressions = localExpressions.size() > 20 ? localExpressions.subList(0, 20) : localExpressions;
             
