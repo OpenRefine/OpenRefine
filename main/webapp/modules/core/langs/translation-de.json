@@ -155,7 +155,9 @@
         "lines-beg": "Zeile(n) am Dateianfang",
         "preserve-empty": "Leere Zeichenfolgen bewahren",
         "rows-data": "Datenzeile(n)",
-        "load-at-most": "Maximale Last"
+        "load-at-most": "Maximale Last",
+        "column-names-label": "Spaltennamen (durch Kommata getrennt)",
+        "column-names-optional": "Kommagetrennt"
     },
     "core-dialogs": {
         "help": "Hilfe",
