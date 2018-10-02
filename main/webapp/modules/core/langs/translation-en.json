@@ -674,7 +674,11 @@
         "rows": "rows",
         "records": "records",
         "show": "Show",
-        "hide": "Hide"
+        "hide": "Hide",
+        "use-values-as-identifiers": "Use values as identifiers",
+        "use-values-as-identifiers2": "Mark cells as reconciled with their values as identifiers",
+        "choose-reconciliation-service": "Choose a reconciliation service",
+        "choose-reconciliation-service-alert": "Please choose a reconciliation service first."
     },
     "core-buttons": {
         "cancel": "Cancel",
