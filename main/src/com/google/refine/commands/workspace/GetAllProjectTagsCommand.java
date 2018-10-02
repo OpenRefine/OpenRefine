@@ -26,7 +26,11 @@
 package com.google.refine.commands.workspace;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,33 +39,48 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 
 public class GetAllProjectTagsCommand extends Command {
+    
+  public static class AllProjectsTags implements Jsonizable {
+      
+    @JsonProperty("tags")
+    protected Set<String> tags;
+    
+    protected AllProjectsTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    @Override
+    public void write(JSONWriter writer, Properties options)
+            throws JSONException {
+        writer.object();
+        writer.key("tags");
+        writer.array();
+        if (tags != null) {
+          for (String tag : tags) {
+            writer.value(tag);
+          }
+        }
+        writer.endArray();
+        writer.endObject();
+    }
+      
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
     try {
-      response.setCharacterEncoding("UTF-8");
-      response.setHeader("Content-Type", "application/json");
-
-      JSONWriter writer = new JSONWriter(response.getWriter());
-      // Properties options = new Properties();
-
-      writer.object();
-      writer.key("tags");
-      writer.array();
-      Map<String, Integer> tags = ProjectManager.singleton.getAllProjectTags();
-      if (tags != null) {
-        for (Map.Entry<String, Integer> entry : tags.entrySet()) {
-          writer.value(entry.getKey());
-        }
-      }
-      writer.endArray();
-      writer.endObject();
+      Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
+      Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
+      respondJSON(response, new AllProjectsTags(tags));
     } catch (JSONException e) {
       respondException(response, e);
     }

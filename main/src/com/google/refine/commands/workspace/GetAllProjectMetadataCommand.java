@@ -46,28 +46,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+
+import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.metadata.ProjectMetadata;
 
 public class GetAllProjectMetadataCommand extends Command {
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public static class AllProjectMetadata implements Jsonizable {
+        @JsonProperty("projects")
+        protected Map<Long, ProjectMetadata> projects;
+        @JsonProperty("customMetadataColumns")
+        @JsonInclude(Include.NON_NULL)
+        @JsonRawValue
+        protected String customMetadataColumns;
         
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            Properties options = new Properties();
-            
-            writer.object();
+        protected AllProjectMetadata(Map<Long, ProjectMetadata> map, String json) {
+            projects = map;
+            customMetadataColumns = json;
+        }
+
+        @Override
+        public void write(JSONWriter writer, Properties options)
+                throws JSONException {
+
+           writer.object();
             
             writer.key("projects");
                 writer.object();
-                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-                for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
+                for (Entry<Long,ProjectMetadata> e : projects.entrySet()) {
                     ProjectMetadata pm = e.getValue();
                     if (pm != null) {
                         writer.key(e.getKey().toString());
@@ -75,15 +86,22 @@ public class GetAllProjectMetadataCommand extends Command {
                     }
                 }
                 writer.endObject();
-            
-            String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
-            if (userMeta != null) {
-                writer.key("customMetadataColumns");
-                JSONArray customMetadataColumns = new JSONArray(userMeta);
-                writer.value(customMetadataColumns);
-            }
                 
+                if (customMetadataColumns != null) {
+                    writer.key("customMetadataColumns");
+                    writer.value(new JSONArray(customMetadataColumns));
+                }
             writer.endObject();
+        }
+    }
+    
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
+            respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
         } catch (JSONException e) {
             respondException(response, e);
         }
