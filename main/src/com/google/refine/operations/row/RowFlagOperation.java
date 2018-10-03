@@ -35,11 +35,8 @@ package com.google.refine.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -55,7 +52,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowFlagChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class RowFlagOperation extends EngineDependentOperation {
     final protected boolean _flagged;
@@ -73,18 +69,6 @@ public class RowFlagOperation extends EngineDependentOperation {
     public RowFlagOperation(EngineConfig engineConfig, boolean flagged) {
         super(engineConfig);
         _flagged = flagged;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("flagged"); writer.value(_flagged);
-        writer.endObject();
     }
     
     @JsonProperty("flagged")

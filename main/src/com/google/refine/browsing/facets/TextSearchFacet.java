@@ -33,12 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -72,20 +70,6 @@ public class TextSearchFacet implements Facet {
         protected boolean    _caseSensitive;
         @JsonProperty("invert")
         protected boolean    _invert;
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("name"); writer.value(_name);
-            writer.key("columnName"); writer.value(_columnName);
-            writer.key("query"); writer.value(_query);
-            writer.key("mode"); writer.value(_mode);
-            writer.key("caseSensitive"); writer.value(_caseSensitive);
-            writer.key("invert"); writer.value(_invert);
-            writer.key("type"); writer.value("text");
-            writer.endObject();
-        }
         
         @Override
         public TextSearchFacet apply(Project project) {
@@ -152,21 +136,7 @@ public class TextSearchFacet implements Facet {
     public boolean isInverted() {
         return _config._invert;
     }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_config._name);
-        writer.key("columnName"); writer.value(_config._columnName);
-        writer.key("query"); writer.value(_config._query);
-        writer.key("mode"); writer.value(_config._mode);
-        writer.key("caseSensitive"); writer.value(_config._caseSensitive);
-        writer.key("invert"); writer.value(_config._invert);
-        writer.endObject();
-    }
-    
+
     public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
         _config = config;
         

@@ -35,11 +35,8 @@ package com.google.refine.operations.row;
 
  import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -51,7 +48,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class RowRemovalOperation extends EngineDependentOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
@@ -64,17 +60,6 @@ public class RowRemovalOperation extends EngineDependentOperation {
     
     public RowRemovalOperation(EngineConfig engineConfig) {
         super(engineConfig);
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.endObject();
     }
 
     @Override

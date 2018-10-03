@@ -35,11 +35,8 @@ package com.google.refine.operations.row;
 
  import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -53,7 +50,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowReorderChange;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
@@ -73,18 +69,6 @@ public class RowReorderOperation extends AbstractOperation {
     public RowReorderOperation(Mode mode, SortingConfig sorting) {
         _mode = mode;
         _sorting = sorting;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("mode"); writer.value(Engine.modeToString(_mode));
-        writer.key("sorting"); _sorting.write(writer, options);
-        writer.endObject();
     }
     
     @JsonProperty("mode")

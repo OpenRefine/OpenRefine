@@ -37,22 +37,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 
-public class ImportingJob implements Jsonizable {
+public class ImportingJob  {
     final public long id;
     final public File dir; // Temporary directory where the data about this job is stored
     
@@ -204,16 +200,5 @@ public class ImportingJob implements Jsonizable {
         File dir2 = new File(dir, "raw-data");
         dir2.mkdirs();
         return dir2;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        synchronized(lock) {
-            writer.object();
-            writer.key("config"); writer.value(config);
-            writer.endObject();
-        }
     }
 }

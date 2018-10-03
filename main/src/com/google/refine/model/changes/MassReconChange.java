@@ -50,6 +50,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class MassReconChange implements Change {
@@ -110,12 +111,7 @@ public class MassReconChange implements Change {
             Pool pool = (Pool) options.get("pool");
             pool.poolReconCandidates(recon);
 
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            try {
-                recon.write(jsonWriter, options);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ParsingUtilities.saveWriter.writeValue(writer, recon);
             writer.write("\n");
         }
     }

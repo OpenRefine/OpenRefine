@@ -35,14 +35,10 @@ package com.google.refine.grel;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.Evaluable;
 
 /**
@@ -50,7 +46,7 @@ import com.google.refine.expr.Evaluable;
  * decide which part of the code to execute and can affect the environment bindings.
  * Functions, on the other hand, can't do either.
  */
-public interface Control extends Jsonizable {
+public interface Control  {
     public Object call(Properties bindings, Evaluable[] args);
     
     public String checkArguments(Evaluable[] args);
@@ -66,17 +62,4 @@ public interface Control extends Jsonizable {
     
     @JsonProperty("returns")
     public String getReturns();
-    
-    @Override
-    default public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-    
-        writer.object();
-        writer.key("description"); writer.value(getDescription());
-        if (!getParams().isEmpty()) {
-            writer.key("params"); writer.value(getParams());
-        }
-        writer.key("returns"); writer.value(getReturns());
-        writer.endObject();
-    }
 }

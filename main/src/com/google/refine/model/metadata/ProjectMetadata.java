@@ -64,10 +64,19 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 public class ProjectMetadata  extends AbstractMetadata {
@@ -75,36 +84,77 @@ public class ProjectMetadata  extends AbstractMetadata {
     final public static String TEMP_FILE_NAME = "metadata.temp.json";
     final public static String OLD_FILE_NAME = "metadata.old.json";
     
+    @JsonProperty("created")
     private final LocalDateTime     _created;
+    @JsonProperty("name")
     private String         _name = "";
+    @JsonProperty("password")
+    @JsonView(JsonViews.SaveMode.class)
     private String         _password = "";
 
+    @JsonProperty("encoding")
+    @JsonView(JsonViews.SaveMode.class)
     private String _encoding = "";
+    @JsonProperty("encodingConfidence")
+    @JsonView(JsonViews.SaveMode.class)
     private int _encodingConfidence;
+    @JsonProperty("rowCount")
     private int _rowCount;
     // user metadata
-    private JSONArray _userMetadata = new JSONArray();; 
+    private JSONArray _userMetadata = new JSONArray();
     
     // _tags maps to keywords of the data package metadata
+    @JsonProperty("tags")
     private String[] _tags = new String[0];
+    @JsonProperty("creator")
     private String _creator = "";
+    @JsonProperty("contributors")
     private String _contributors = "";
+    @JsonProperty("subject")
     private String _subject = "";    // Several refine projects may be linked
+    @JsonProperty("description")
     private String _description = "";                // free form of comment
     
     // import options is an array for 1-n data sources
     private JSONArray _importOptionMetadata = new JSONArray();
     
-    
+    @JsonUnwrapped
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
+    @JsonProperty("preferences")
+    @JsonView(JsonViews.SaveMode.class)
     private PreferenceStore             _preferenceStore = new PreferenceStore();
     
     // below 5 fields are from data package metadata:
+    @JsonProperty("title")
     private String title = "";
+    @JsonProperty("homepage")
     private String homepage;
+    @JsonProperty("image")
     private String image = "";
+    @JsonProperty("license")
     private String license = "";
+    @JsonProperty("version")
     private String version = "";
+    
+    @JsonProperty("userMetadata")
+    @JsonRawValue
+    @JsonInclude(Include.NON_NULL)
+    public String getJsonUserMetadata() {
+        if (_userMetadata.length() > 0) {
+            return _userMetadata.toString();
+        }
+        return null;
+    }
+    
+    @JsonProperty("importOptionMetadata")
+    @JsonRawValue
+    @JsonInclude(Include.NON_NULL)
+    public String getJsonImportOptionMetadata() {
+        if (_importOptionMetadata.length() > 0) {
+            return _importOptionMetadata.toString();
+        }
+        return null;
+    }
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
@@ -130,86 +180,12 @@ public class ProjectMetadata  extends AbstractMetadata {
         updateModified();
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("name");
-        writer.value(_name);
-        writer.key("tags");
-        writer.array();
-        for (String tag : _tags) {
-            writer.value(tag);
-        }
-        writer.endArray();
-        writer.key("created"); writer.value(ParsingUtilities.localDateToString(_created));
-        writer.key("modified"); writer.value(ParsingUtilities.localDateToString(_modified));
-        writer.key("creator"); writer.value(_creator);
-        writer.key("contributors"); writer.value(_contributors);
-        writer.key("subject"); writer.value(_subject);
-        writer.key("description"); writer.value(_description);
-        writer.key("rowCount"); writer.value(_rowCount);
-        writer.key("title"); writer.value(title);
-        writer.key("homepage"); writer.value(homepage);
-        writer.key("image"); writer.value(image);
-        writer.key("license"); writer.value(license);
-        writer.key("version"); writer.value(version);
-
-        writer.key("customMetadata");
-        writer.object();
-        
-        for (String key : _customMetadata.keySet()) {
-            Serializable value = _customMetadata.get(key);
-            writer.key(key);
-            writer.value(value);
-        }
-        writer.endObject();
-
-        // write JSONArray directly
-        if (_importOptionMetadata.length() > 0) {
-            writer.key("importOptionMetadata");
-            writer.value(_importOptionMetadata);
-        }
-
-        // write user metadata in {name, value, display} form:
-        if (_userMetadata.length() > 0) {
-            writer.key(PreferenceStore.USER_METADATA_KEY);
-            writer.value(_userMetadata);
-        }
-
-        if (isSaveMode(options)) {
-            writer.key("password");
-            writer.value(_password);
-
-            writer.key("encoding");
-            writer.value(_encoding);
-            writer.key("encodingConfidence");
-            writer.value(_encodingConfidence);
-
-            writer.key("preferences");
-            _preferenceStore.write(writer, options);
-        }
-
-        writer.endObject();
-
-        if (isSaveMode(options)) {
-            written = LocalDateTime.now();
-        }
-    }
-
-    public void writeWithoutOption(JSONWriter writer)
-            throws JSONException {
-        write(writer, new Properties());
-    }
-
-    private boolean isSaveMode(Properties options) {
-        return "save".equals(options.getProperty("mode"));
-    }
-
-    public void write(JSONWriter jsonWriter)
-            throws JSONException {
-        write(jsonWriter, false);
+    @JsonProperty("saveModeWritten")
+    @JsonView(JsonViews.SaveMode.class)
+    @JsonInclude(Include.NON_NULL)
+    public String setSaveModeWritten() {
+        written = LocalDateTime.now();
+        return null;
     }
 
      public void loadFromJSON(JSONObject obj) {
@@ -556,25 +532,6 @@ public class ProjectMetadata  extends AbstractMetadata {
     }
 
     @Override
-    public void writeToFile(File metadataFile) {
-        Writer writer = null;
-        try {
-            writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
-
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            write(jsonWriter, false);
-        } catch (FileNotFoundException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-    }
-
-    @Override
     public void loadFromStream(InputStream inputStream) {
         try (InputStreamReader reader = new InputStreamReader(inputStream)) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -584,15 +541,6 @@ public class ProjectMetadata  extends AbstractMetadata {
         } catch (IOException e) {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
-    }
-
-    @Override
-    public JSONObject getJSON() {
-        StringWriter writer = new StringWriter();
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        writeWithoutOption(jsonWriter);
-        
-        return new JSONObject(jsonWriter.toString());
     }
 
     @Override

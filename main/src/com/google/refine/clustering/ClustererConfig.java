@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.model.Project;
 
 /**
@@ -12,7 +11,7 @@ import com.google.refine.model.Project;
  * @author Antonin Delpeuch
  *
  */
-public abstract class ClustererConfig implements Jsonizable {
+public abstract class ClustererConfig  {
     
     protected String columnName;
     

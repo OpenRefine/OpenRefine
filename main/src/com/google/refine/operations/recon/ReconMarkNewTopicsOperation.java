@@ -36,11 +36,8 @@ package com.google.refine.operations.recon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -58,7 +55,6 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
     final protected boolean    _shareNewTopics;
@@ -76,19 +72,6 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
     public ReconMarkNewTopicsOperation(EngineConfig engineConfig, String columnName, boolean shareNewTopics) {
         super(engineConfig, columnName, false);
         _shareNewTopics = shareNewTopics;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("shareNewTopics"); writer.value(_shareNewTopics);
-        writer.endObject();
     }
     
     @JsonProperty("columnName")

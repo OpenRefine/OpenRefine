@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Properties;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,8 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.google.refine.Jsonizable;
-import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 
@@ -54,6 +51,9 @@ public class TestUtils {
         try {
             JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
             JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
+            if (!jsonA.equals(jsonB)) {
+                jsonDiff(expected, actual);
+            }
             assertEquals(jsonA, jsonB);
         } catch(Exception e) {
             fail("\""+expected+"\" and \""+actual+"\" are not equal as JSON strings.");
@@ -74,24 +74,12 @@ public class TestUtils {
      * Checks that a serializable object is serialized to the target JSON string.
      * @throws IOException 
      */
-    public static void isSerializedTo(Jsonizable o, String targetJson, Properties options) {
-        String orgJson = JSONUtilities.serialize(o, options);
-        if(!equalAsJson(targetJson, orgJson)) {
-            System.out.println("org.json, "+o.getClass().getName());
-            try {
-                jsonDiff(targetJson, orgJson);
-            } catch (JsonParseException | JsonMappingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        assertEqualAsJson(targetJson, orgJson);
-        
+    public static void isSerializedTo(Object o, String targetJson, boolean saveMode) {
+
         // also check Jackson serialization
         try {
-            String saveMode = options.getProperty("mode");
             ObjectWriter writer = null;
-            if("save".equals(saveMode)) {
+            if(saveMode) {
                 writer = ParsingUtilities.saveWriter;
             } else {
                 writer = ParsingUtilities.defaultWriter;
@@ -111,22 +99,8 @@ public class TestUtils {
     /**
      * Checks that a serializable object is serialized to the target JSON string.
      */
-    public static void isSerializedTo(Jsonizable o, String targetJson) {
-        isSerializedTo(o, targetJson, new Properties());
-    }
-    
-    /**
-     * Checks that a serializable object is serialized to the target JSON string.
-     * This specifies the "save mode" for objects that are stored differently depending on
-     * whether they are written to disk or sent over the network.
-     */
-    public static void isSerializedTo(Jsonizable o, String targetJson, boolean saveMode) {
-        Properties options = new Properties();
-        if(saveMode) {
-            options.setProperty("mode", "save");
-            options.put("mode", "save");
-        }
-        isSerializedTo(o, targetJson, options);
+    public static void isSerializedTo(Object o, String targetJson) {
+        isSerializedTo(o, targetJson, false);
     }
     
     public static void jsonDiff(String a, String b) throws JsonParseException, JsonMappingException {

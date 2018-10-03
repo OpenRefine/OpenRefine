@@ -33,25 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
-public class ColumnGroup implements Jsonizable {
+public class ColumnGroup  {
     final public int    startColumnIndex;
     final public int    columnSpan;
     final public int    keyColumnIndex; // could be -1 if there is no key cell 
@@ -64,26 +61,6 @@ public class ColumnGroup implements Jsonizable {
         this.columnSpan = columnSpan;
         this.keyColumnIndex = keyColumnIndex;
         internalInitialize();
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        
-        writer.key("startColumnIndex"); writer.value(startColumnIndex);
-        writer.key("columnSpan"); writer.value(columnSpan);
-        writer.key("keyColumnIndex"); writer.value(keyColumnIndex);
-        
-        if (!"save".equals(options.get("mode")) && (subgroups != null) && (subgroups.size() > 0)) {
-            writer.key("subgroups"); writer.array();
-            for (ColumnGroup g : subgroups) {
-                g.write(writer, options);
-            }
-            writer.endArray();
-        }
-        writer.endObject();
     }
     
     @JsonProperty("startColumnIndex")
@@ -114,10 +91,9 @@ public class ColumnGroup implements Jsonizable {
     }
     
     public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

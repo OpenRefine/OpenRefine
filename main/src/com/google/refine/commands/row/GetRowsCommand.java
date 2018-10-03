@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -45,14 +44,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
@@ -62,6 +59,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
@@ -73,12 +71,12 @@ import com.google.refine.util.Pool;
 
 public class GetRowsCommand extends Command {
     
-    protected static class WrappedRow implements Jsonizable {
+    protected static class WrappedRow  {
         @JsonUnwrapped
         protected final Row row;
-        @JsonProperty("rowIndex")
+        @JsonProperty("i")
         protected final int rowIndex;
-        @JsonProperty("recordIndex")
+        @JsonProperty("j")
         @JsonInclude(Include.NON_NULL)
         protected final Integer recordIndex;
         
@@ -87,23 +85,9 @@ public class GetRowsCommand extends Command {
             this.rowIndex = rowIndex;
             this.recordIndex = recordIndex;
         }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            options.put("rowIndex", rowIndex);
-            if(recordIndex != null) {
-                options.put("recordIndex", recordIndex);
-            }
-            row.write(writer, options);  
-            if(recordIndex != null) {
-                options.remove("recordIndex");
-            }
-        }
-        
     }
     
-    protected static class JsonResult implements Jsonizable {
+    protected static class JsonResult  {
         @JsonProperty("mode")
         protected final Mode mode;
         @JsonProperty("rows")
@@ -128,24 +112,6 @@ public class GetRowsCommand extends Command {
             this.start = start;
             this.limit = limit;
             this.pool = pool;
-        }
-
-        @Override
-        public void write(JSONWriter jsonWriter, Properties options)
-                throws JSONException {
-            jsonWriter.object();
-            jsonWriter.key("mode"); jsonWriter.value(mode == Mode.RowBased ? "row-based" : "record-based");
-            jsonWriter.key("rows"); jsonWriter.array();
-            for(WrappedRow row : rows) {
-                row.write(jsonWriter, options);
-            }
-            jsonWriter.endArray();
-            jsonWriter.key("filtered"); jsonWriter.value(filtered);
-            jsonWriter.key("total"); jsonWriter.value(totalCount);
-            jsonWriter.key("start"); jsonWriter.value(start);
-            jsonWriter.key("limit"); jsonWriter.value(limit);
-            jsonWriter.key("pool"); pool.write(jsonWriter, options);
-            jsonWriter.endObject();
         }
     }
     
@@ -186,10 +152,10 @@ public class GetRowsCommand extends Command {
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
             
             Pool pool = new Pool();
-            Properties options = new Properties();
+            /* Properties options = new Properties();
             options.put("project", project);
             options.put("reconCandidateOmitTypes", true);
-            options.put("pool", pool);
+            options.put("pool", pool); */
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
@@ -199,8 +165,6 @@ public class GetRowsCommand extends Command {
                 writer.write(callback);
                 writer.write("(");
             }
-            
-            JSONWriter jsonWriter = new JSONWriter(writer);
             
             RowWritingVisitor rwv = new RowWritingVisitor(start, limit);
             
@@ -243,12 +207,21 @@ public class GetRowsCommand extends Command {
                 filteredRecords.accept(project, visitor);
             }
             
+            // Pool all the recons occuring in the rows seen
+            for(WrappedRow wr : rwv.results) {
+                for(Cell c : wr.row.cells) {
+                    if(c != null && c.recon != null) {
+                        pool.pool(c.recon);
+                    }
+                }
+            }
             
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
                             start, limit, pool);
-            result.write(jsonWriter, options);
+            
+            ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {
                 writer.write(")");
             }

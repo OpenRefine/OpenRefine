@@ -45,17 +45,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 
-public class ColumnModel implements Jsonizable {
+public class ColumnModel  {
     @JsonProperty("columns")
     final public List<Column>      columns = new LinkedList<Column>();
     @JsonProperty("columnGroups")
@@ -178,34 +174,6 @@ public class ColumnModel implements Jsonizable {
     @JsonIgnore
     synchronized public List<String> getColumnNames() {
         return _columnNames;
-    }
-
-    @Override
-    synchronized public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        
-        writer.key("columns");
-        writer.array();
-        for (Column column : columns) {
-            column.write(writer, options);
-        }
-        writer.endArray();
-        
-        if (columns.size() > 0) {
-            writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
-            writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
-        }
-        
-        writer.key("columnGroups");
-        writer.array();
-        for (ColumnGroup g : _rootColumnGroups) {
-            g.write(writer, options);
-        }
-        writer.endArray();
-        
-        writer.endObject();
     }
     
     @JsonProperty("keyCellIndex")

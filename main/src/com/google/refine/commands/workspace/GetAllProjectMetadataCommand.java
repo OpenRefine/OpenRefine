@@ -35,29 +35,24 @@ package com.google.refine.commands.workspace;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.metadata.ProjectMetadata;
 
 public class GetAllProjectMetadataCommand extends Command {
-    public static class AllProjectMetadata implements Jsonizable {
+    public static class AllProjectMetadata  {
         @JsonProperty("projects")
         protected Map<Long, ProjectMetadata> projects;
         @JsonProperty("customMetadataColumns")
@@ -68,30 +63,6 @@ public class GetAllProjectMetadataCommand extends Command {
         protected AllProjectMetadata(Map<Long, ProjectMetadata> map, String json) {
             projects = map;
             customMetadataColumns = json;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-
-           writer.object();
-            
-            writer.key("projects");
-                writer.object();
-                for (Entry<Long,ProjectMetadata> e : projects.entrySet()) {
-                    ProjectMetadata pm = e.getValue();
-                    if (pm != null) {
-                        writer.key(e.getKey().toString());
-                        pm.write(writer, options);
-                    }
-                }
-                writer.endObject();
-                
-                if (customMetadataColumns != null) {
-                    writer.key("customMetadataColumns");
-                    writer.value(new JSONArray(customMetadataColumns));
-                }
-            writer.endObject();
         }
     }
     

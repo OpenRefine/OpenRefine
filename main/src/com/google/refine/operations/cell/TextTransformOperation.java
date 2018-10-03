@@ -37,9 +37,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
@@ -55,7 +53,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
     final protected String  _expression;
@@ -108,22 +105,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         _onError = onError;
         _repeat = repeat;
         _repeatCount = repeatCount;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("onError"); writer.value(onErrorToString(_onError));
-        writer.key("repeat"); writer.value(_repeat);
-        writer.key("repeatCount"); writer.value(_repeatCount);
-        writer.endObject();
     }
 
     @Override

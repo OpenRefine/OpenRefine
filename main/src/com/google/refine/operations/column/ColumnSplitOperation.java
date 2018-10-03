@@ -36,13 +36,10 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -62,7 +59,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.ColumnSplitChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.JSONUtilities;
 
 public class ColumnSplitOperation extends EngineDependentOperation {
@@ -144,32 +140,6 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         _maxColumns = null;
         
         _fieldLengths = fieldLengths;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("guessCellType"); writer.value(_guessCellType);
-        writer.key("removeOriginalColumn"); writer.value(_removeOriginalColumn);
-        writer.key("mode"); writer.value(_mode);
-        if ("separator".equals(_mode)) {
-            writer.key("separator"); writer.value(_separator);
-            writer.key("regex"); writer.value(_regex);
-            writer.key("maxColumns"); writer.value(_maxColumns);
-        } else {
-            writer.key("fieldLengths"); writer.array();
-            for (int l : _fieldLengths) {
-                writer.value(l);
-            }
-            writer.endArray();
-        }
-        writer.endObject();
     }
     
     @JsonProperty("columnName")

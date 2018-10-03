@@ -35,28 +35,23 @@ package com.google.refine.commands.history;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.commands.Command;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 
 public class GetOperationsCommand extends Command {
-    protected static class SimpleHistoryEntry implements Jsonizable {
+    protected static class SimpleHistoryEntry  {
         protected HistoryEntry entry;
 
         public SimpleHistoryEntry(HistoryEntry e) {
@@ -73,22 +68,9 @@ public class GetOperationsCommand extends Command {
         public AbstractOperation getOperation() {
             return entry.operation;
         }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("description"); writer.value(entry.description);
-            if (entry.operation != null) {
-                writer.key("operation");
-                entry.operation.write(writer, options);
-            }
-            writer.endObject();
-        }
-        
     }
     
-    protected static class HistoryEntries implements Jsonizable {
+    protected static class HistoryEntries  {
         @JsonProperty("entries")
         List<SimpleHistoryEntry> entries;
         
@@ -96,19 +78,6 @@ public class GetOperationsCommand extends Command {
             this.entries = entries.stream()
                     .map(e -> new SimpleHistoryEntry(e))
                     .collect(Collectors.toList());
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("entries"); writer.array();
-            
-            for (SimpleHistoryEntry entry : entries) {
-                entry.write(writer, options);
-            }
-            writer.endArray();
-            writer.endObject();
         }
     }
     

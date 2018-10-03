@@ -63,6 +63,7 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 
+    @JsonProperty("itemDocuments")
     protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
 
     protected String baseIri = "http://www.wikidata.org/entity/";
@@ -197,19 +198,6 @@ public class WikibaseSchema implements OverlayModel {
         } catch (IOException e) {
             throw new JSONException(e.toString());
         }
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("itemDocuments");
-        writer.array();
-        for (WbItemDocumentExpr changeExpr : itemDocumentExprs) {
-            changeExpr.write(writer, options);
-        }
-        writer.endArray();
-        writer.endObject();
     }
 
     static public WikibaseSchema load(Project project, JSONObject obj)

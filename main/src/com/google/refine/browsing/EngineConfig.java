@@ -3,16 +3,12 @@ package com.google.refine.browsing;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.facets.FacetConfig;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
@@ -22,7 +18,7 @@ import com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
 import com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 
 
-public class EngineConfig implements Jsonizable {
+public class EngineConfig  {
     
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
@@ -88,19 +84,4 @@ public class EngineConfig implements Jsonizable {
         
         return new EngineConfig(facets, mode);
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("facets");
-        writer.array();
-        for (FacetConfig facet : _facets) {
-            facet.write(writer, options);
-        }
-        writer.endArray();
-        writer.key(Engine.MODE); writer.value(_mode == Mode.RowBased ? Engine.MODE_ROW_BASED : Engine.MODE_RECORD_BASED);
-        writer.endObject();
-    }
-
 }

@@ -47,35 +47,35 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.functions.ToDate;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 public class ReconciledDataExtensionJob {
 
     
-    static public class DataExtensionProperty implements Jsonizable {
+    static public class DataExtensionProperty  {
         @JsonProperty("id")
         public final String id;
         @JsonProperty("name")
+        @JsonView(JsonViews.NonSaveMode.class)
         public final String name;
         @JsonProperty("settings")
         @JsonInclude(Include.NON_NULL)
@@ -92,31 +92,10 @@ public class ReconciledDataExtensionJob {
             this.id = id;
             this.name = name;
             this.settings = settings;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("id"); writer.value(id);
-            if(!"query".equals(options.getProperty("mode"))) {
-                writer.key("name"); writer.value(name);
-            }
-            if (settings != null) {
-                writer.key("settings");
-                writer.object();
-                for(Map.Entry<String, Object> entry : settings.entrySet()) {
-                    writer.key(entry.getKey());
-                    writer.value(entry.getValue());
-                }
-                writer.endObject();
-            }
-            writer.endObject();
-        }
-        
+        }    
     }
     
-    static public class DataExtensionConfig implements Jsonizable {
+    static public class DataExtensionConfig  {
         
         @JsonProperty("properties")
         public final List<DataExtensionProperty> properties;
@@ -135,22 +114,7 @@ public class ReconciledDataExtensionJob {
             } catch(IOException e) {
                 throw new JSONException(e.toString());
             }
-        }
-
-        @Override
-        public void write(JSONWriter jsonWriter, Properties options)
-                throws JSONException {
-            jsonWriter.object();
-            jsonWriter.key("properties");
-            jsonWriter.array();
-        
-            for (DataExtensionProperty property : properties) {
-                property.write(jsonWriter, options);
-            }
-            jsonWriter.endArray();
-            jsonWriter.endObject();
-        }
-        
+        }     
     }
     
     static public class DataExtensionQuery extends DataExtensionConfig {
@@ -166,34 +130,7 @@ public class ReconciledDataExtensionJob {
                 List<DataExtensionProperty> properties) {
             super(properties);
             this.ids = ids;
-        }
-        
-        @Override
-        public void write(JSONWriter jsonWriter, Properties options)
-                throws JSONException {
-            jsonWriter.object();
-            
-            if(ids != null) {
-                jsonWriter.key("ids");
-                    jsonWriter.array();
-                    for (String id : ids) {
-                        if (id != null) {
-                            jsonWriter.value(id);
-                        }
-                    }
-                    jsonWriter.endArray();
-            }
-            
-            jsonWriter.key("properties");
-                jsonWriter.array();
-            
-                for (DataExtensionProperty property : properties) {
-                    property.write(jsonWriter, options);
-                }
-                jsonWriter.endArray();
-            jsonWriter.endObject();
-        }
-        
+        }   
     }
     
     static public class DataExtension {
@@ -382,12 +319,9 @@ public class ReconciledDataExtensionJob {
     }
 
     
-    static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws JSONException {
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        Properties options = new Properties();
+    static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws IOException {
         DataExtensionQuery query = new DataExtensionQuery(ids.stream().collect(Collectors.toList()), node.properties);
-        options.setProperty("mode", "query");
-        query.write(jsonWriter, options);
+        ParsingUtilities.saveWriter.writeValue(writer, query);
     }
     
     static protected void gatherColumnInfo(JSONArray meta, List<ColumnInfo> columns) throws JSONException {

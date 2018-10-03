@@ -35,11 +35,8 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -48,7 +45,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.JSONUtilities;
 
 public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
@@ -129,28 +125,6 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription());
-        writer.key("startColumnName"); writer.value(_startColumnName);
-        writer.key("columnCount"); writer.value(_columnCount);
-        writer.key("ignoreBlankCells"); writer.value(_ignoreBlankCells);
-        writer.key("fillDown"); writer.value(_fillDown);
-        if (_combinedColumnName != null) {
-            writer.key("combinedColumnName"); writer.value(_combinedColumnName);
-            writer.key("prependColumnName"); writer.value(_prependColumnName);
-            writer.key("separator"); writer.value(_separator);
-        } else {
-            writer.key("keyColumnName"); writer.value(_keyColumnName);
-            writer.key("valueColumnName"); writer.value(_valueColumnName);
-        }
-        writer.endObject();
     }
 
     @Override

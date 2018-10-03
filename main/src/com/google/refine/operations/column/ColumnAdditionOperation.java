@@ -38,9 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -63,7 +61,6 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.TextTransformOperation;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
@@ -103,22 +100,6 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("newColumnName"); writer.value(_newColumnName);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
-        writer.endObject();
     }
     
     @JsonProperty("newColumnName")

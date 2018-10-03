@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.Properties;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -95,24 +91,6 @@ public class RangeFacet implements Facet {
         @JsonIgnore
         protected boolean    _selected; // false if we're certain that all rows will match
                         // and there isn't any filtering to do
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("type"); writer.value("range");
-            writer.key("name"); writer.value(_name);
-            writer.key("expression"); writer.value(_expression);
-            writer.key("columnName"); writer.value(_columnName);
-            writer.key(FROM); writer.value(_from);
-            writer.key(TO); writer.value(_to);
-            writer.key("selectNumeric"); writer.value(_selectNumeric);
-            writer.key("selectNonNumeric"); writer.value(_selectNonNumeric);
-            writer.key("selectError"); writer.value(_selectError);
-            writer.key("selectBlank"); writer.value(_selectBlank);
-            writer.endObject();
-            
-        }
         
         @Override
         public void initializeFromJSON(JSONObject o) {
@@ -282,56 +260,8 @@ public class RangeFacet implements Facet {
             return _config._to;
         }
         return null;
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_config._name);
-        writer.key("expression"); writer.value(_config._expression);
-        writer.key("columnName"); writer.value(_config._columnName);
-        
-        if (_errorMessage != null) {
-            writer.key("error"); writer.value(_errorMessage);
-        } else {
-            if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
-                writer.key(MIN); writer.value(_min);
-                writer.key(MAX); writer.value(_max);
-                writer.key("step"); writer.value(_step);
-                
-                writer.key("bins"); writer.array();
-                for (int b : _bins) {
-                    writer.value(b);
-                }
-                writer.endArray();
-                
-                writer.key("baseBins"); writer.array();
-                for (int b : _baseBins) {
-                    writer.value(b);
-                }
-                writer.endArray();
-                
-                writer.key(FROM); writer.value(_config._from);
-                writer.key(TO); writer.value(_config._to);
-            } else {
-                writer.key("error"); writer.value(ERR_NO_NUMERIC_VALUE_PRESENT);
-            }
-            
-            writer.key("baseNumericCount"); writer.value(_baseNumericCount);
-            writer.key("baseNonNumericCount"); writer.value(_baseNonNumericCount);
-            writer.key("baseBlankCount"); writer.value(_baseBlankCount);
-            writer.key("baseErrorCount"); writer.value(_baseErrorCount);
-            
-            writer.key("numericCount"); writer.value(_numericCount);
-            writer.key("nonNumericCount"); writer.value(_nonNumericCount);
-            writer.key("blankCount"); writer.value(_blankCount);
-            writer.key("errorCount"); writer.value(_errorCount);
-        }
-        writer.endObject();
-    }
-    
+    }    
+
     public void initializeFromConfig(RangeFacetConfig config, Project project) {
         _config = config;
         

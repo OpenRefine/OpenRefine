@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,19 +44,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
     
-    public static class ExpressionState implements Jsonizable {
+    public static class ExpressionState  {
         @JsonProperty("code")
         protected String code;
         @JsonProperty("global")
@@ -69,37 +64,14 @@ public class GetExpressionHistoryCommand extends Command {
             this.code = code;
             this.starred = starred;
         }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("code"); writer.value(code);
-            writer.key("global"); writer.value(false);
-            writer.key("starred"); writer.value(starred);
-            writer.endObject();
-        }
     }
     
-    public static class ExpressionsList implements Jsonizable {
+    public static class ExpressionsList  {
         @JsonProperty("expressions")
         List<ExpressionState> expressions;
         
         protected ExpressionsList(List<ExpressionState> states) {
             this.expressions = states;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("expressions");
-                writer.array();
-                for (ExpressionState e : expressions) {
-                    e.write(writer, options);
-                }
-                writer.endArray();
-            writer.endObject();
         }
     }
 

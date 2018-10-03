@@ -39,10 +39,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.refine.grel.Parser;
+
 import clojure.lang.IFn;
 import clojure.lang.RT;
-
-import com.google.refine.grel.Parser;
 
 abstract public class MetaParser {
 

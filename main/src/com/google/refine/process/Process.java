@@ -36,10 +36,9 @@ package com.google.refine.process;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.history.HistoryEntry;
 
-public abstract class Process implements Jsonizable {
+public abstract class Process  {
     @JsonProperty("immediate")
     abstract public boolean isImmediate();
     

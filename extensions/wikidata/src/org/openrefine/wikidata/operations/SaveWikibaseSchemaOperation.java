@@ -33,6 +33,8 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -44,6 +46,7 @@ import com.google.refine.util.Pool;
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     final public String operationDescription = "Save Wikibase schema";
+    @JsonProperty("schema")
     final protected WikibaseSchema _schema;
 
     public SaveWikibaseSchemaOperation(WikibaseSchema schema) {
@@ -56,22 +59,9 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         return new SaveWikibaseSchemaOperation(WikibaseSchema.reconstruct(obj.getJSONObject("schema")));
     }
 
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("op");
-        writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description");
-        writer.value(operationDescription);
-        writer.key("schema");
-        _schema.write(writer, options);
-        writer.endObject();
-
-    }
-
     @Override
     protected String getBriefDescription(Project project) {
-        return "Save Wikibase schema skelton";
+        return operationDescription;
     }
 
     @Override
@@ -149,12 +139,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         static protected void writeWikibaseSchema(WikibaseSchema s, Writer writer)
                 throws IOException {
             if (s != null) {
-                JSONWriter jsonWriter = new JSONWriter(writer);
-                try {
-                    s.write(jsonWriter, new Properties());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                ParsingUtilities.defaultWriter.writeValue(writer, s);
             }
         }
     }

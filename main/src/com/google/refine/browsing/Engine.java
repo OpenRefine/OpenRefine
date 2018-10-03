@@ -36,17 +36,14 @@ package com.google.refine.browsing;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.util.ConjunctiveFilteredRecords;
 import com.google.refine.browsing.util.ConjunctiveFilteredRows;
@@ -57,7 +54,7 @@ import com.google.refine.model.Row;
 /**
  * Faceted browsing engine.
  */
-public class Engine implements Jsonizable {
+public class Engine  {
     static public enum Mode {
         @JsonProperty("row-based")
         RowBased,
@@ -204,20 +201,5 @@ public class Engine implements Jsonizable {
         } else {
             throw new InternalError("Unknown mode.");
         }
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-    throws JSONException {
-
-        writer.object();
-        writer.key("facets");
-        writer.array();
-        for (Facet facet : _facets) {
-            facet.write(writer, options);
-        }
-        writer.endArray();
-        writer.key(MODE); writer.value(_config.getMode().equals(Mode.RowBased) ? MODE_ROW_BASED : MODE_RECORD_BASED);
-        writer.endObject();
     }
 }

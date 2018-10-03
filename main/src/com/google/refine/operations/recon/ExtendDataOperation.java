@@ -43,7 +43,6 @@ import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -66,7 +65,6 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 
@@ -118,23 +116,6 @@ public class ExtendDataOperation extends EngineDependentOperation {
         _schemaSpace = schemaSpace;
         _extension = extension;
         _columnInsertIndex = columnInsertIndex;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("endpoint"); writer.value(_endpoint);
-        writer.key("identifierSpace"); writer.value(_identifierSpace);
-        writer.key("schemaSpace"); writer.value(_schemaSpace);
-        writer.key("extension"); _extension.write(writer, options);
-        writer.endObject();
     }
 
     @Override

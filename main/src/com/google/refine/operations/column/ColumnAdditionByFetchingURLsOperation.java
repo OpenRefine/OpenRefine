@@ -48,7 +48,6 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -56,7 +55,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -76,7 +74,6 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
@@ -84,7 +81,7 @@ import com.google.refine.util.ParsingUtilities;
 
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
-    public static final class HttpHeader implements Jsonizable {
+    public static final class HttpHeader  {
         @JsonProperty("name")
         final public String name;
         @JsonProperty("value")
@@ -93,15 +90,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         public HttpHeader(String name, String value) {
             this.name = name;
             this.value = value;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("name"); writer.value(name);
-            writer.key("value"); writer.value(value);
-            writer.endObject();
         }
     }
     
@@ -165,32 +153,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _delay = delay;
         _cacheResponses = cacheResponses;
         _httpHeadersJson = httpHeadersJson;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("newColumnName"); writer.value(_newColumnName);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("urlExpression"); writer.value(_urlExpression);
-        writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
-        writer.key("delay"); writer.value(_delay);
-        writer.key("cacheResponses"); writer.value(_cacheResponses);
-        if (_httpHeadersJson != null) {
-            writer.key("httpHeadersJson");
-            writer.array();
-            for(HttpHeader header : _httpHeadersJson) {
-                header.write(writer, options);
-            }
-            writer.endArray();
-        }
-        writer.endObject();
     }
     
     @JsonProperty("newColumnName")

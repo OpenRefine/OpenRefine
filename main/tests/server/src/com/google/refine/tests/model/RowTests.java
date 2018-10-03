@@ -111,7 +111,8 @@ public class RowTests extends RefineTest {
                 "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}");
     }
 
-    @Test
+    // This way of serializing a row with indices is now deprecated, see GetRowsCommand.
+    @Test(expectedExceptions=IllegalArgumentException.class)
     public void saveRowWithRecordIndex() {
         Row row = new Row(5);
         row.setCell(0, new Cell("I'm not empty", null));
@@ -120,9 +121,6 @@ public class RowTests extends RefineTest {
         when(options.containsKey("recordIndex")).thenReturn(true);
         when(options.get("recordIndex")).thenReturn(1);
         row.save(writer, options);
-        TestUtils.assertEqualAsJson(
-                writer.getBuffer().toString(),
-                "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}],\"i\":0,\"j\":1}");
     }
     
     @Test
@@ -150,8 +148,7 @@ public class RowTests extends RefineTest {
                 + "    {\"v\":\"\"}"
                 + "]}";
         Row row = Row.load(json, pool);
-        when(options.get("pool")).thenReturn(pool);
-        TestUtils.isSerializedTo(row, json, options);
+        TestUtils.isSerializedTo(row, json);
     }
 
     @Test

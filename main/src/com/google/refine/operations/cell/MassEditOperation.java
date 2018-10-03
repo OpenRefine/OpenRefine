@@ -41,13 +41,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
@@ -60,7 +57,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.StringUtils;
 
@@ -68,7 +64,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     final protected String         _expression;
     final protected List<Edit>     _edits;
     
-    static public class Edit implements Jsonizable {
+    static public class Edit  {
         @JsonProperty("from")
         final public List<String>     from;
         @JsonProperty("fromBlank")
@@ -83,23 +79,6 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             this.fromBlank = fromBlank;
             this.fromError = fromError;
             this.to = to;
-        }
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-            
-            writer.object();
-            writer.key("fromBlank"); writer.value(fromBlank);
-            writer.key("fromError"); writer.value(fromError);
-            writer.key("from");
-                writer.array();
-                for (String s : from) {
-                    writer.value(s);
-                }
-                writer.endArray();
-            writer.key("to"); writer.value(to);
-            writer.endObject();
         }
     }
     
@@ -156,25 +135,6 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("edits");
-            writer.array();
-            for (Edit edit : _edits) {
-                edit.write(writer, options);
-            }
-            writer.endArray();
-        writer.endObject();
     }
     
     @JsonProperty("expression")

@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.time.Instant;
@@ -40,9 +41,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -52,7 +50,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
@@ -60,7 +57,7 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
 
-public class Cell implements HasFields, Jsonizable {
+public class Cell implements HasFields {
     @JsonIgnore
     final public Serializable   value;
     @JsonIgnore
@@ -84,31 +81,6 @@ public class Cell implements HasFields, Jsonizable {
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return "recon".equals(name);
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        if (ExpressionUtils.isError(value)) {
-            writer.key("e");
-            writer.value(((EvalError) value).message);
-        } else {
-            writer.key("v");
-            writer.value(getValueAsString());
-            String jsonType = getTypeString();
-            if(jsonType != null) {
-                writer.key("t"); writer.value(jsonType);
-            }
-        }
-        
-        if (recon != null) {
-            writer.key("r");
-            writer.value(Long.toString(recon.id));
-            
-            Pool pool = (Pool) options.get("pool");
-            pool.pool(recon);
-        }
-        writer.endObject();
     }
     
     @JsonProperty("e")
@@ -171,15 +143,17 @@ public class Cell implements HasFields, Jsonizable {
         if (recon != null) {
             return Long.toString(recon.id);
         }
-        // TODO pool the recon??
         return null;
     }
     
     public void save(Writer writer, Properties options) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, options);
-        } catch (JSONException e) {
+            Pool pool = (Pool)options.get("pool");
+            if(pool != null && recon != null) {
+                pool.pool(recon);
+            }
+            ParsingUtilities.saveWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

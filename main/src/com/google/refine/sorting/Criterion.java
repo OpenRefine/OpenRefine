@@ -33,22 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.util.Properties;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
-abstract public class Criterion implements Jsonizable {
+abstract public class Criterion  {
     public String columnName;
     protected int cellIndex = -2;
 
@@ -97,19 +93,6 @@ abstract public class Criterion implements Jsonizable {
 
         c.initializeFromJSON(obj);
         return c;
-    }
-    
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("valueType"); writer.value(getValueType());
-        writer.key("reverse"); writer.value(getReverse());
-        writer.key("column"); writer.value(getColumnName());
-        writer.key("blankPosition"); writer.value(getBlankPosition());
-        writer.key("errorPosition"); writer.value(getErrorPosition());
-        writer.endObject();
     }
     
     @JsonProperty("valueType")

@@ -33,23 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.InterProjectModel;
-import com.google.refine.Jsonizable;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
@@ -59,7 +56,7 @@ import io.frictionlessdata.tableschema.TypeInferrer;
 import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
 import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
 
-public class Column implements Jsonizable {
+public class Column  {
     final private int       _cellIndex;
     final private String    _originalName;
     private String          _name;
@@ -118,31 +115,6 @@ public class Column implements Jsonizable {
     public ReconStats getReconStats() {
         return _reconStats;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("cellIndex"); writer.value(_cellIndex);
-        writer.key("originalName"); writer.value(_originalName);
-        writer.key("name"); writer.value(_name);
-        writer.key("type"); writer.value(type);
-        writer.key("format"); writer.value(format);
-        writer.key("title"); writer.value(title);
-        writer.key("description"); writer.value(description);
-        writer.key("constraints"); writer.value(new JSONObject(constraints).toString());
-        if (_reconConfig != null) {
-            writer.key("reconConfig");
-            _reconConfig.write(writer, options);
-        }
-        if (_reconStats != null) {
-            writer.key("reconStats");
-            _reconStats.write(writer, options);
-        }
-        writer.endObject();
-    }
-   
     
     /**
      * Clear all cached precomputed values.
@@ -230,10 +202,9 @@ public class Column implements Jsonizable {
     }
 
     public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -27,9 +27,7 @@ package com.google.refine.commands.workspace;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -37,17 +35,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 
 public class GetAllProjectTagsCommand extends Command {
     
-  public static class AllProjectsTags implements Jsonizable {
+  public static class AllProjectsTags  {
       
     @JsonProperty("tags")
     protected Set<String> tags;
@@ -55,22 +51,6 @@ public class GetAllProjectTagsCommand extends Command {
     protected AllProjectsTags(Set<String> tags) {
         this.tags = tags;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("tags");
-        writer.array();
-        if (tags != null) {
-          for (String tag : tags) {
-            writer.value(tag);
-          }
-        }
-        writer.endArray();
-        writer.endObject();
-    }
-      
   }
 
   @Override

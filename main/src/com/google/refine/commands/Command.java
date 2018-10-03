@@ -50,7 +50,8 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
@@ -237,6 +238,16 @@ public abstract class Command {
         }
         return null;
     }
+    
+    protected static class HistoryEntryResponse {
+        @JsonProperty("code")
+        protected String getCode() { return "ok"; }
+        @JsonProperty("historyEntry")
+        protected HistoryEntry historyEntry;
+        protected HistoryEntryResponse(HistoryEntry entry) {
+            historyEntry = entry;
+        }
+    }
 
     static protected void performProcessAndRespond(
         HttpServletRequest request,
@@ -244,23 +255,18 @@ public abstract class Command {
         Project project,
         Process process
     ) throws Exception {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
+
 
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
-            Properties options = new Properties();
-
-            writer.object();
-            writer.key("code"); writer.value("ok");
-            writer.key("historyEntry"); historyEntry.write(writer, options);
-            writer.endObject();
+            ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
             w.flush();
             w.close();
         } else {
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             respond(response, "{ \"code\" : \"pending\" }");
         }
     }
@@ -293,14 +299,14 @@ public abstract class Command {
         w.close();
     }
 
-    static protected void respondJSON(HttpServletResponse response, Jsonizable o)
+    static protected void respondJSON(HttpServletResponse response, Object o)
         throws IOException, JSONException {
 
         respondJSON(response, o, new Properties());
     }
 
     static protected void respondJSON(
-            HttpServletResponse response, Jsonizable o, Properties options)
+            HttpServletResponse response, Object o, Properties options)
             throws IOException, JSONException {
 
         response.setCharacterEncoding("UTF-8");
@@ -308,9 +314,8 @@ public abstract class Command {
         response.setHeader("Cache-Control", "no-cache");
 
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
+        ParsingUtilities.defaultWriter.writeValue(w, o);
 
-        o.write(writer, options);
         w.flush();
         w.close();
     }

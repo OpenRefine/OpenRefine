@@ -42,7 +42,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +55,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -71,7 +69,7 @@ import com.google.refine.util.ParsingUtilities;
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
     
-    static public class ColumnDetail implements Jsonizable {
+    static public class ColumnDetail  {
         @JsonProperty("column")
         final public String columnName;
         @JsonProperty("propertyName")
@@ -83,17 +81,6 @@ public class StandardReconConfig extends ReconConfig {
             this.columnName = columnName;
             this.propertyName = propertyName;
             this.propertyID = propertyID;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("column"); writer.value(columnName);
-            writer.key("propertyName"); writer.value(propertyName);
-            writer.key("propertyID"); writer.value(propertyID);
-            writer.endObject();
-            
         }
     }
     
@@ -213,35 +200,6 @@ public class StandardReconConfig extends ReconConfig {
         this.autoMatch = autoMatch;
         this.columnDetails = columnDetails;
         this.limit = limit;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("mode"); writer.value("standard-service");
-        writer.key("service"); writer.value(service);
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        writer.key("type");
-            if (typeID == null) {
-                writer.value(null);
-            } else {
-                writer.object();
-                writer.key("id"); writer.value(typeID);
-                writer.key("name"); writer.value(typeName);
-                writer.endObject();
-            }
-        writer.key("autoMatch"); writer.value(autoMatch);
-        writer.key("columnDetails");
-            writer.array();
-            for (ColumnDetail c : columnDetails) {
-                c.write(writer, options);
-            }
-            writer.endArray();
-          writer.key("limit"); writer.value(limit);
-        writer.endObject();
     }
     
     @JsonProperty("type")

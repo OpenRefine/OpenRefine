@@ -46,13 +46,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONException;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.IMetadata;
 import com.google.refine.model.metadata.ProjectMetadata;
+import com.google.refine.util.ParsingUtilities;
 
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
@@ -78,8 +78,7 @@ public class ProjectMetadataUtilities {
     protected static void saveToFile(IMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            projectMeta.write(jsonWriter, false);
+            ParsingUtilities.defaultWriter.writeValue(writer, projectMeta);
         } finally {
             writer.close();
         }

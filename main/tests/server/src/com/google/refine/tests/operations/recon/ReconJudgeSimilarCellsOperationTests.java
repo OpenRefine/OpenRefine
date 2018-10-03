@@ -2,7 +2,9 @@ package com.google.refine.tests.operations.recon;
 import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+import static org.mockito.Mockito.mock;
 
+import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
 import com.google.refine.tests.RefineTest;
@@ -24,6 +26,6 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 + "\"judgment\":\"matched\","
                 + "\"match\":{\"id\":\"Q7884717\",\"name\":\"Unicef Indonesia\",\"score\":71.42857142857143,\"types\":[\"Q43229\"]},"
                 + "\"shareNewTopics\":false}";
-        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(mock(Project.class), new JSONObject(json)), json);
     }
 }

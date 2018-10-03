@@ -38,25 +38,22 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
 
-public class PreferenceStore implements Jsonizable {
+public class PreferenceStore  {
     public static final String USER_METADATA_KEY = "userMetadata";
     
     // use to populate "creator" filed in metadata. https://github.com/OpenRefine/OpenRefine/issues/1393
@@ -99,28 +96,6 @@ public class PreferenceStore implements Jsonizable {
     @JsonIgnore
     public Set<String> getKeys() {
         return _prefs.keySet();
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        
-        writer.key("entries");
-            writer.object();
-            for (String k : _prefs.keySet()) {
-                writer.key(k);
-                
-                Object o = _prefs.get(k);
-                if (o instanceof Jsonizable) {
-                    ((Jsonizable) o).write(writer, options);
-                } else {
-                    writer.value(o);
-                }
-            }
-            writer.endObject();
-        
-        writer.endObject();
-        dirty = false;
     }
     
     /**

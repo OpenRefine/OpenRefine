@@ -35,19 +35,13 @@ package com.google.refine.commands.expr;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.commands.Command;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -55,7 +49,7 @@ import com.google.refine.grel.Function;
 
 public class GetExpressionLanguageInfoCommand extends Command {
     
-    public static class LanguageInfo implements Jsonizable {
+    public static class LanguageInfo  {
         
         @JsonProperty("functions")
         Map<String, Function> functions;
@@ -66,35 +60,6 @@ public class GetExpressionLanguageInfoCommand extends Command {
             functions = ControlFunctionRegistry.getFunctionMap();
             controls = ControlFunctionRegistry.getControlMap();
         }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            
-            writer.key("functions");
-            writer.object();
-            {
-                for (Entry<String, Function> entry : functions.entrySet()) {
-                    writer.key(entry.getKey());
-                    entry.getValue().write(writer, options);
-                }
-            }
-            writer.endObject();
-            
-            writer.key("controls");
-            writer.object();
-            {
-                for (Entry<String, Control> entry : controls.entrySet()) {
-                    writer.key(entry.getKey());
-                    entry.getValue().write(writer, options);
-                }
-            }
-            writer.endObject();
-            
-            writer.endObject();
-        }
-        
     }
     
     @Override

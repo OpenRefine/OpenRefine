@@ -35,13 +35,14 @@ package com.google.refine.commands.cell;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
 import com.google.refine.history.Change;
@@ -55,6 +56,32 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class EditOneCellCommand extends Command {
+    
+    protected static class EditResult {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("historyEntry")
+        @JsonInclude(Include.NON_NULL)
+        protected HistoryEntry historyEntry;
+        @JsonProperty("cell")
+        @JsonInclude(Include.NON_NULL)
+        protected Cell cell;
+        @JsonProperty("pool")
+        @JsonInclude(Include.NON_NULL)
+        protected Pool pool;
+        
+        protected EditResult(
+                String code,
+                HistoryEntry historyEntry,
+                Cell cell,
+                Pool pool) {
+            this.code = code;
+            this.historyEntry = historyEntry;
+            this.cell = cell;
+            this.pool = pool;
+        }
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -96,18 +123,11 @@ public class EditOneCellCommand extends Command {
                  * If the operation has been done, return the new cell's data
                  * so the client side can update the cell's rendering right away.
                  */
-                JSONWriter writer = new JSONWriter(response.getWriter());
-
                 Pool pool = new Pool();
-                Properties options = new Properties();
-                options.put("pool", pool);
-
-                writer.object();
-                writer.key("code"); writer.value("ok");
-                writer.key("historyEntry"); historyEntry.write(writer, options);
-                writer.key("cell"); process.newCell.write(writer, options);
-                writer.key("pool"); pool.write(writer, options);
-                writer.endObject();
+                if(process.newCell != null && process.newCell.recon != null) {
+                    pool.pool(process.newCell.recon);
+                }
+                respondJSON(response, new EditResult("ok", historyEntry, process.newCell, pool));
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");
             }

@@ -36,11 +36,8 @@ public class CellTests {
         when(pool.getRecon("1533649346002675326")).thenReturn(recon);
         String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":\"1533649346002675326\"}";
         
-        Properties options = mock(Properties.class);
-        when(options.get("pool")).thenReturn(pool);
         Cell c = Cell.loadStreaming(json, pool);
-        TestUtils.isSerializedTo(c, json, options);
-        verify(pool, times(1)).pool(recon);
+        TestUtils.isSerializedTo(c, json);
     }
     
     @Test

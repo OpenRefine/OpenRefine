@@ -37,11 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -53,7 +50,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.JSONUtilities;
 
 public class KeyValueColumnizeOperation extends AbstractOperation {
@@ -77,22 +73,6 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
         _noteColumnName = noteColumnName;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(
-            "Columnize by key column " +
-            _keyColumnName + " and value column " + _valueColumnName +
-            (_noteColumnName != null ? (" with note column " + _noteColumnName) : ""));
-        writer.key("keyColumnName"); writer.value(_keyColumnName);
-        writer.key("valueColumnName"); writer.value(_valueColumnName);
-        writer.key("noteColumnName"); writer.value(_noteColumnName);
-        writer.endObject();
     }
     
     @JsonProperty("keyColumnName")

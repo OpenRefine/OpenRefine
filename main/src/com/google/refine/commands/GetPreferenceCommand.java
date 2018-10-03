@@ -34,46 +34,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
-import com.google.refine.preference.TopList;
 
 public class GetPreferenceCommand extends Command {
-    protected static class PreferenceValue implements Jsonizable {
+    protected static class PreferenceValue  {
         @JsonProperty("value")
         protected Object pref;
         
         protected PreferenceValue(Object o) {
             pref = o;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("value");
-            if (pref == null || pref instanceof String || pref instanceof Number || pref instanceof Boolean) {
-                writer.value(pref);
-            } else if (pref instanceof TopList) {
-                TopList tl = (TopList) pref;
-                tl.write(writer, new Properties());
-            } else {
-                writer.value(pref.toString());
-            }
-            
-            writer.endObject();
         }
     }
     

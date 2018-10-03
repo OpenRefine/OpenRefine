@@ -40,14 +40,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,36 +135,6 @@ public class ScatterplotFacet implements Facet {
         @JsonProperty(DIM_Y)
         public String getDimY() {
             return dim_y == LIN ? "lin" : "log";
-        }
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            
-            writer.key("type"); writer.value("scatterplot");
-            writer.key(NAME); writer.value(name);
-            writer.key(X_COLUMN_NAME); writer.value(columnName_x);
-            writer.key(X_EXPRESSION); writer.value(expression_x);
-            writer.key(Y_COLUMN_NAME); writer.value(columnName_y);
-            writer.key(Y_EXPRESSION); writer.value(expression_y);
-            writer.key(SIZE); writer.value(size);
-            writer.key(DOT); writer.value(dot);
-            if(!rotation_str.isEmpty()) {
-                writer.key(ROTATION); writer.value(rotation_str);
-            }
-            writer.key(DIM_X); writer.value(dim_x == LIN ? "lin" : "log");
-            writer.key(DIM_Y); writer.value(dim_y == LIN ? "lin" : "log");
-            if(!"000000".equals(color_str)) {
-                writer.key(COLOR); writer.value(color_str);
-            }
-            writer.key(FROM_X); writer.value(from_x);
-            writer.key(TO_X); writer.value(to_x);
-            writer.key(FROM_Y); writer.value(from_y);
-            writer.key(TO_Y); writer.value(to_y);
-            
-            writer.endObject();
-            
         }
         
         @Override
@@ -403,48 +370,6 @@ public class ScatterplotFacet implements Facet {
             return config.to_y;
         }
         return null;
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        
-        writer.object();
-        
-        writer.key(NAME); writer.value(config.name);
-        writer.key(X_COLUMN_NAME); writer.value(config.columnName_x);
-        writer.key(X_EXPRESSION); writer.value(config.expression_x);
-        writer.key(Y_COLUMN_NAME); writer.value(config.columnName_y);
-        writer.key(Y_EXPRESSION); writer.value(config.expression_y);
-        writer.key(SIZE); writer.value(config.size);
-        writer.key(DOT); writer.value(config.dot);
-        writer.key(ROTATION); writer.value(config.rotation);
-        writer.key(DIM_X); writer.value(config.dim_x);
-        writer.key(DIM_Y); writer.value(config.dim_y);
-        writer.key(COLOR); writer.value(config.color_str);
-
-        if (IMAGE_URI) {
-            writer.key(IMAGE); writer.value(image);
-        }
-        
-        if (errorMessage_x != null) {
-            writer.key(ERROR_X); writer.value(errorMessage_x);
-        } else {
-            if (!Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
-                writer.key(FROM_X); writer.value(config.from_x);
-                writer.key(TO_X); writer.value(config.to_x);
-            }
-        }
-            
-        if (errorMessage_y != null) {
-            writer.key(ERROR_Y); writer.value(errorMessage_y);
-        } else {
-            if (!Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
-                writer.key(FROM_Y); writer.value(config.from_y);
-                writer.key(TO_Y); writer.value(config.to_y);
-            }
-        }
-        
-        writer.endObject();
     }
      
     public void initializeFromConfig(ScatterplotFacetConfig configuration, Project project) {

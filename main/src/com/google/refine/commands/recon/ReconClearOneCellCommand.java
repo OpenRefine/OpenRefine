@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
@@ -57,6 +59,23 @@ import com.google.refine.process.QuickHistoryEntryProcess;
 import com.google.refine.util.Pool;
 
 public class ReconClearOneCellCommand extends Command {
+    protected static class CellResponse {
+        @JsonProperty("code")
+        protected String code = "ok";
+        @JsonProperty("historyEntry")
+        protected HistoryEntry entry;
+        @JsonProperty("cell")
+        Cell cell;
+        @JsonProperty("pool")
+        Pool pool;
+        
+        protected CellResponse(HistoryEntry historyEntry, Cell newCell, Pool newPool) {
+           entry = historyEntry;
+           cell = newCell;
+           pool = newPool;
+        }
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -80,18 +99,13 @@ public class ReconClearOneCellCommand extends Command {
                  * If the process is done, write back the cell's data so that the
                  * client side can update its UI right away.
                  */
-                JSONWriter writer = new JSONWriter(response.getWriter());
-
                 Pool pool = new Pool();
-                Properties options = new Properties();
-                options.put("pool", pool);
+                
+                if(process.newCell != null && process.newCell.recon != null) {
+                    pool.pool(process.newCell.recon);
+                }
 
-                writer.object();
-                writer.key("code"); writer.value("ok");
-                writer.key("historyEntry"); historyEntry.write(writer, options);
-                writer.key("cell"); process.newCell.write(writer, options);
-                writer.key("pool"); pool.write(writer, options);
-                writer.endObject();
+                respondJSON(response, new CellResponse(historyEntry, process.newCell, pool));
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");
             }

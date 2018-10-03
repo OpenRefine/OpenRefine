@@ -40,9 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,6 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -68,7 +65,6 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
@@ -111,19 +107,6 @@ public class ReconOperation extends EngineDependentOperation {
     @Override
     protected String getBriefDescription(Project project) {
         return _reconConfig.getBriefDescription(project, _columnName);
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("config"); _reconConfig.write(writer, options);
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.endObject();
     }
     
     @JsonProperty("config")
@@ -203,50 +186,6 @@ public class ReconOperation extends EngineDependentOperation {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            
-            writer.object();
-            writer.key("id"); writer.value(hashCode());
-            writer.key("description"); writer.value(_description);
-            writer.key("immediate"); writer.value(false);
-            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-            writer.key("progress"); writer.value(_progress);
-            writer.key("onDone");
-                writer.array();
-                    writer.object();
-                        writer.key("action"); writer.value("createFacet");
-                        writer.key("facetType"); writer.value("list");
-                        writer.key("facetConfig");
-                            writer.object();
-                                writer.key("name"); writer.value(_columnName + ": judgment");
-                                writer.key("columnName"); writer.value(_columnName);
-                                writer.key("expression"); writer.value("forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))");
-                            writer.endObject();
-                        writer.key("facetOptions");
-                            writer.object();
-                                writer.key("scroll"); writer.value(false);
-                            writer.endObject();
-                    writer.endObject();
-
-                    if (_reconConfig instanceof StandardReconConfig) {
-                        writer.object();
-                            writer.key("action"); writer.value("createFacet");
-                            writer.key("facetType"); writer.value("range");
-                            writer.key("facetConfig");
-                                writer.object();
-                                    writer.key("name"); writer.value(_columnName + ": best candidate's score");
-                                    writer.key("columnName"); writer.value(_columnName);
-                                    writer.key("expression"); writer.value("cell.recon.best.score");
-                                    writer.key("mode"); writer.value("range");
-                                writer.endObject();
-                        writer.endObject();
-                    }
-                writer.endArray();
-            writer.endObject();
         }
         
         @JsonProperty("onDone")

@@ -33,32 +33,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
-import com.google.refine.util.JsonViews;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 /**
  * Class representing a single Row which contains a list of {@link Cell}s.  There may
  * be multiple rows in a {@link Record}.
  */
-public class Row implements HasFields, Jsonizable {
+public class Row implements HasFields {
     public boolean             flagged;
     public boolean             starred;
     final public List<Cell>    cells;
@@ -165,50 +161,6 @@ public class Row implements HasFields, Jsonizable {
         return new CellTuple(project, this);
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key(FLAGGED); writer.value(flagged);
-        writer.key(STARRED); writer.value(starred);
-        
-        writer.key("cells"); writer.array();
-        for (Cell cell : cells) {
-            if (cell != null) {
-                cell.write(writer, options);
-            } else {
-                writer.value(null);
-            }
-        }
-        writer.endArray();
-        
-        if (!"save".equals(options.getProperty("mode"))) {
-            if (options.containsKey("rowIndex")) {
-                int rowIndex = (Integer) options.get("rowIndex");
-                writer.key("i"); writer.value(rowIndex);
-
-                if (options.containsKey("recordIndex")) {
-                    int recordIndex = (Integer) options.get("recordIndex");
-
-                    writer.key("j"); writer.value(recordIndex);
-                }
-            }
-            
-            if (options.containsKey("extra")) {
-                Properties extra = (Properties) options.get("extra");
-                if (extra != null) {
-                    for (Entry<Object,Object> e : extra.entrySet()) {
-                        writer.key((String) e.getKey());
-                        writer.value(e.getValue());
-                    }
-                }
-            }
-        }
-        
-        writer.endObject();
-    }
-    
     @JsonProperty(FLAGGED)
     public boolean isFlagged() {
         return flagged;
@@ -230,10 +182,21 @@ public class Row implements HasFields, Jsonizable {
     */
     
     public void save(Writer writer, Properties options) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
+        if (options.containsKey("rowIndex")) {
+            // See GetRowsCommand to serialize a row with indices
+            throw new IllegalArgumentException("Serializing with row indices is not supported anymore.");
+        }
         try {
-            write(jsonWriter, options);
-        } catch (JSONException e) {
+            ParsingUtilities.saveWriter.writeValue(writer, this);
+            Pool pool = (Pool)options.get("pool");
+            if(pool != null) {
+                for(Cell c : cells) {
+                    if (c != null && c.recon != null) {
+                        pool.pool(c.recon);
+                    }
+                }
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -52,8 +52,8 @@ import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
-import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.importing.ImportingManager.Format;
+import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 

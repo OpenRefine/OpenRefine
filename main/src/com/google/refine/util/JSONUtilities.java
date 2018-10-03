@@ -33,25 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
-import java.io.StringWriter;
-import java.io.Writer;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import com.google.refine.Jsonizable;
 
 public class JSONUtilities {
     static public JSONObject getObject(JSONObject obj, String key) {
@@ -375,17 +371,5 @@ public class JSONUtilities {
         for (int i = 0; i < srcArray.length(); i++) {
             destArray.put(srcArray.get(i));
         }
-    }
-    
-    static public String serialize(Jsonizable obj, Properties options) {
-        Writer w = new StringWriter();
-        JSONWriter jsonWriter = new JSONWriter(w);
-        obj.write(jsonWriter, options);
-        return w.toString();
-    }
-    
-    static public String serialize(Jsonizable obj) {
-        Properties options = new Properties();
-        return serialize(obj, options);
     }
 }

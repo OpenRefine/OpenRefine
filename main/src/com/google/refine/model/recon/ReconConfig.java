@@ -33,31 +33,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
-abstract public class ReconConfig implements Jsonizable {
+abstract public class ReconConfig  {
     final static protected Logger LOGGER = LoggerFactory.getLogger("recon-config");
 
     static final public Map<String, List<Class<? extends ReconConfig>>> s_opNameToClass =
@@ -125,11 +123,10 @@ abstract public class ReconConfig implements Jsonizable {
     abstract public Recon createNewRecon(long historyEntryID);
     
     public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
-           LOGGER.error("Save failed",e);
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     

@@ -37,19 +37,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.HasFields;
 
-public class ReconCandidate implements HasFields, Jsonizable {
+public class ReconCandidate implements HasFields {
     @JsonProperty("id")
     final public String     id;
     @JsonProperty("name")
@@ -83,26 +78,6 @@ public class ReconCandidate implements HasFields, Jsonizable {
     @Override
     public boolean fieldAlsoHasFields(String name) {
         return false;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("id"); writer.value(id);
-        writer.key("name"); writer.value(name);
-        writer.key("score"); writer.value(score);
-        
-        /* if (!options.containsKey("reconCandidateOmitTypes")) */ {
-            writer.key("types"); writer.array();
-            for (String typeID : types) {
-                writer.value(typeID);
-            }
-            writer.endArray();
-        }
-        
-        writer.endObject();
     }
     
     static public ReconCandidate loadStreaming(String s) throws Exception {

@@ -33,22 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import java.util.Properties;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 
 /**
  * This represents a type from the reconciliation
  * service. It is used when extending data to
  * store the (expected) types of new columns.
  */
-public class ReconType implements Jsonizable {
+public class ReconType  {
     @JsonProperty("id")
     public String id;
     @JsonProperty("name")
@@ -57,16 +52,6 @@ public class ReconType implements Jsonizable {
     public ReconType(String id, String name) {
 	this.id = id;
 	this.name = name;
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-    
-        writer.object();
-        writer.key("id"); writer.value(id);
-        writer.key("name"); writer.value(name);
-        writer.endObject();
     }
     
     static public ReconType load(JSONObject obj) throws Exception {

@@ -38,20 +38,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 
-public class RecordModel implements Jsonizable {
+public class RecordModel  {
     final static Logger logger = LoggerFactory.getLogger("RecordModel");
 
     final static public class CellDependency {
@@ -107,16 +103,6 @@ public class RecordModel implements Jsonizable {
             return getRecord(rd.recordIndex);
         }
         return null;
-    }
-
-    @Override
-    synchronized public void write(JSONWriter writer, Properties options)
-    throws JSONException {
-
-        writer.object();
-        writer.key("hasRecords");
-        writer.value(hasRecords());
-        writer.endObject();
     }
     
     @JsonProperty("hasRecords")

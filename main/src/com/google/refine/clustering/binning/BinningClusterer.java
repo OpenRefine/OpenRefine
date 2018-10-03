@@ -57,7 +57,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
@@ -99,20 +98,6 @@ public class BinningClusterer extends Clusterer {
         public BinningParameters getParameters() {
             return _parameters;
         }
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("function"); writer.value(_keyerName);
-            writer.key("type"); writer.value("binning");
-            writer.key("column"); writer.value(getColumnName());
-            if(_parameters != null) {
-                writer.key("params");
-                _parameters.write(writer, options);
-            }
-            writer.endObject();
-        }
 
         @Override
         public BinningClusterer apply(Project project) {
@@ -128,21 +113,10 @@ public class BinningClusterer extends Clusterer {
         
     }
     
-    public static class BinningParameters implements Jsonizable {
+    public static class BinningParameters  {
         @JsonProperty("ngram-size")
         @JsonInclude(Include.NON_DEFAULT)
         public int ngramSize;
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            if(ngramSize > 0) {
-                writer.key("ngram-size");
-                writer.value(ngramSize);
-            }
-            writer.endObject();
-        }
         
         public static BinningParameters reconstruct(JSONObject o) {
             BinningParameters parameters = new BinningParameters();
@@ -272,28 +246,6 @@ public class BinningClusterer extends Clusterer {
         Map<String,Map<String,Integer>> map = visitor.getMap();
         _clusters = new ArrayList<Map<String,Integer>>(map.values());
         Collections.sort(_clusters, new SizeComparator());
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        EntriesComparator c = new EntriesComparator();
-        
-        writer.array();        
-        for (Map<String,Integer> m : _clusters) {
-            if (m.size() > 1) {
-                writer.array();        
-                List<Entry<String,Integer>> entries = new ArrayList<Entry<String,Integer>>(m.entrySet());
-                Collections.sort(entries,c);
-                for (Entry<String,Integer> e : entries) {
-                    writer.object();
-                    writer.key("v"); writer.value(e.getKey());
-                    writer.key("c"); writer.value(e.getValue());
-                    writer.endObject();
-                }
-                writer.endArray();
-            }
-        }
-        writer.endArray();
     }
     
     protected static Map<String,Object> entryToMap(Entry<String,Integer> entry) {

@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Antonin Delpeuch
  *
  */
-public class QAWarning extends JacksonJsonizable implements Comparable<QAWarning> {
+public class QAWarning implements Comparable<QAWarning> {
 
     public enum Severity {
         INFO, // We just report something to the user but it is probably fine

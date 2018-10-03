@@ -35,11 +35,8 @@ package com.google.refine.operations.row;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -49,7 +46,6 @@ import com.google.refine.model.RecordModel.CellDependency;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.operations.OperationRegistry;
 
 public class DenormalizeOperation extends AbstractOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
@@ -58,17 +54,6 @@ public class DenormalizeOperation extends AbstractOperation {
     
     public DenormalizeOperation() {
     }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value("Denormalize");
-        writer.endObject();
-    }
-
 
     @Override
     protected String getBriefDescription(Project project) {

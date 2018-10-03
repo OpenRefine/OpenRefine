@@ -33,11 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.process;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.HistoryEntry;
@@ -84,18 +79,6 @@ abstract public class QuickHistoryEntryProcess extends Process {
     @Override
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException("Not a long-running process");
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("id"); writer.value(hashCode());
-        writer.key("description"); writer.value(getDescription());
-        writer.key("immediate"); writer.value(true);
-        writer.key("status"); writer.value(getStatus());
-        writer.endObject();
     }
     
     @JsonProperty("status")

@@ -37,7 +37,6 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.Process;
@@ -47,7 +46,7 @@ import com.google.refine.process.QuickHistoryEntryProcess;
  *  An abstract operation can be applied to different but similar
  *  projects.
  */
-abstract public class AbstractOperation implements Jsonizable {
+abstract public class AbstractOperation  {
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
             @Override

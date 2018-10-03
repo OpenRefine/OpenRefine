@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
-import java.util.Properties;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -46,7 +42,6 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRenameChange;
-import com.google.refine.operations.OperationRegistry;
 
 public class ColumnRenameOperation extends AbstractOperation {
     final protected String _oldColumnName;
@@ -65,18 +60,6 @@ public class ColumnRenameOperation extends AbstractOperation {
     ) {
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value("Rename column " + _oldColumnName + " to " + _newColumnName);
-        writer.key("oldColumnName"); writer.value(_oldColumnName);
-        writer.key("newColumnName"); writer.value(_newColumnName);
-        writer.endObject();
     }
     
     @JsonProperty("oldColumnName")

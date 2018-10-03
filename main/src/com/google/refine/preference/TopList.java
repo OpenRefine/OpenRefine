@@ -36,20 +36,17 @@ package com.google.refine.preference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.collections.list.UnmodifiableList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 
-public class TopList implements Jsonizable, Iterable<String> {
+public class TopList implements Iterable<String> {
     
     @JsonProperty("top")
     final protected int          _top;
@@ -81,21 +78,6 @@ public class TopList implements Jsonizable, Iterable<String> {
     @JsonProperty("class")
     public String getClassName() {
         return this.getClass().getName();
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        writer.key("class"); writer.value(getClassName());
-        
-        writer.key("top"); writer.value(_top);
-        writer.key("list");
-        writer.array();
-        for (String element : _list) {
-            writer.value(element);
-        }
-        writer.endArray();
-        writer.endObject();
     }
     
     static public TopList load(JSONObject obj) throws JSONException {

@@ -35,20 +35,38 @@ package com.google.refine.commands.importing;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
+import com.google.refine.util.ParsingUtilities;
 
 public class GetImportingJobStatusCommand extends Command {
+    protected static class JobStatusResponse {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("message")
+        @JsonInclude(Include.NON_NULL)
+        protected String message;
+        @JsonProperty("job")
+        @JsonInclude(Include.NON_NULL)
+        protected ImportingJob job;
+        
+        protected JobStatusResponse(String code, String message, ImportingJob job) {
+            this.code = code;
+            this.message = message;
+            this.job = job;
+        }
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -57,22 +75,10 @@ public class GetImportingJobStatusCommand extends Command {
         ImportingJob job = ImportingManager.getJob(jobID);
         
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
-        try {
-            writer.object();
-            if (job == null) {
-                writer.key("code"); writer.value("error");
-                writer.key("message"); writer.value("No such import job");
-            } else {
-                writer.key("code"); writer.value("ok");
-                writer.key("job"); job.write(writer, new Properties());
-            }
-            writer.endObject();
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        } finally {
-            w.flush();
-            w.close();
+        if (job == null) {
+            ParsingUtilities.defaultWriter.writeValue(w, new JobStatusResponse("error", "No such import job", null));
+        } else {
+            ParsingUtilities.defaultWriter.writeValue(w, new JobStatusResponse("ok", null, job));
         }
     }
 }

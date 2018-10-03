@@ -36,16 +36,14 @@ package com.google.refine.operations.recon;
  import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
@@ -63,7 +61,6 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOperation {
     final protected String           _similarValue;
@@ -71,7 +68,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     final protected ReconCandidate   _match;
     final protected boolean          _shareNewTopics;
 
-    static public AbstractOperation reconstruct(JSONObject obj) throws JSONException {
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws JSONException {
         JSONObject engineConfig = obj.getJSONObject("engineConfig");
         
         ReconCandidate match = null;
@@ -120,25 +117,6 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
         this._judgment = judgment;
         this._match = match;
         this._shareNewTopics = shareNewTopics;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("similarValue"); writer.value(_similarValue);
-        writer.key("judgment"); writer.value(Recon.judgmentToString(_judgment));
-        if (_match != null) {
-            writer.key("match"); _match.write(writer, options);
-        }
-        writer.key("shareNewTopics"); writer.value(_shareNewTopics);
-        
-        writer.endObject();
     }
     
     @JsonProperty("columnName")

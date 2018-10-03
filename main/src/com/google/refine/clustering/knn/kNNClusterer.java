@@ -34,21 +34,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.clustering.knn;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +51,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
@@ -86,21 +80,7 @@ public class kNNClusterer extends Clusterer {
         private String _distanceStr;
         private Distance _distance;
         private kNNClustererConfigParameters _parameters;
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("function"); writer.value(_distanceStr);
-            writer.key("type"); writer.value("knn");
-            writer.key("column"); writer.value(getColumnName());
-            if(_parameters != null) {
-                writer.key("params");
-                _parameters.write(writer, options);
-            }
-            writer.endObject();
-        }
-        
+
         public void initializeFromJSON(JSONObject o) {
             super.initializeFromJSON(o);
             _distanceStr = o.getString("function");
@@ -136,23 +116,13 @@ public class kNNClusterer extends Clusterer {
         
     }
     
-    public static class kNNClustererConfigParameters implements Jsonizable {
+    public static class kNNClustererConfigParameters  {
         public static final double defaultRadius = 1.0d;
         public static final int defaultBlockingNgramSize = 6;
         @JsonProperty("radius")
         public double radius = defaultRadius;
         @JsonProperty("blocking-ngram-size")
         public int blockingNgramSize = defaultBlockingNgramSize;
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("radius"); writer.value(radius);
-            writer.key("blocking-ngram-size");
-            writer.value(blockingNgramSize);
-            writer.endObject();
-        }
         
         public static kNNClustererConfigParameters reconstruct(JSONObject o) {
             kNNClustererConfigParameters params = new kNNClustererConfigParameters();
@@ -292,30 +262,6 @@ public class kNNClusterer extends Clusterer {
         public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.array();        
-        for (Set<Serializable> m : _clusters) {
-            if (m.size() > 1) {
-                Map<Serializable,Integer> internal_counts = new HashMap<Serializable,Integer>();
-                for (Serializable s : m) {
-                    internal_counts.put(s,_counts.get(s));
-                }
-                List<Entry<Serializable,Integer>> values = new ArrayList<Entry<Serializable,Integer>>(internal_counts.entrySet());
-                Collections.sort(values, new ValuesComparator());
-                writer.array();        
-                for (Entry<Serializable,Integer> e : values) {
-                    writer.object();
-                    writer.key("v"); writer.value(e.getKey());
-                    writer.key("c"); writer.value(e.getValue());
-                    writer.endObject();
-                }
-                writer.endArray();
-            }
-        }
-        writer.endArray();
     }
     
     protected List<ClusteredEntry> getClusteredEntries(Set<Serializable> s) {

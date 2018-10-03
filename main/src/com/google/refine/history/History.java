@@ -46,12 +46,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.model.Project;
@@ -64,7 +60,7 @@ import com.google.refine.util.Pool;
  * the history entries are much smaller and can be kept in memory, while the change objects
  * are only loaded into memory on demand.
  */
-public class History implements Jsonizable {
+public class History  {
     static public Change readOneChange(InputStream in, Pool pool) throws Exception {
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
         try {
@@ -261,27 +257,6 @@ public class History implements Jsonizable {
             _pastEntries.add(entry);
             _futureEntries.remove(0);
         }
-    }
-
-    @Override
-    synchronized public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-
-        writer.key("past"); writer.array();
-        for (HistoryEntry entry : _pastEntries) {
-            entry.write(writer, options);
-        }
-        writer.endArray();
-
-        writer.key("future"); writer.array();
-        for (HistoryEntry entry : _futureEntries) {
-            entry.write(writer, options);
-        }
-        writer.endArray();
-
-        writer.endObject();
     }
 
     /*

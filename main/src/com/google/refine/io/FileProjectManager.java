@@ -43,7 +43,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -55,14 +54,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
@@ -71,9 +68,10 @@ import com.google.refine.model.metadata.IMetadata;
 import com.google.refine.model.metadata.MetadataFormat;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.preference.TopList;
+import com.google.refine.util.ParsingUtilities;
 
 
-public class FileProjectManager extends ProjectManager implements Jsonizable {
+public class FileProjectManager extends ProjectManager  {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File                       _workspaceDir;
@@ -251,7 +249,9 @@ public class FileProjectManager extends ProjectManager implements Jsonizable {
             ProjectMetadataUtilities.save(metadata, projectDir);
         } else if (metadata.getFormatName() == MetadataFormat.DATAPACKAGE_METADATA) {
             DataPackageMetadata dp = (DataPackageMetadata)metadata;
-            dp.writeToFile(new File(projectDir, DataPackageMetadata.DEFAULT_FILE_NAME));
+            FileWriter writer = new FileWriter(new File(projectDir, DataPackageMetadata.DEFAULT_FILE_NAME));
+            ParsingUtilities.defaultWriter.writeValue(writer, dp);
+            writer.close();
         }
         
         logger.info("metadata saved in " + metadata.getFormatName());
@@ -326,8 +326,7 @@ public class FileProjectManager extends ProjectManager implements Jsonizable {
         FileWriter writer = new FileWriter(file);
         boolean saveWasNeeded = saveNeeded();
         try {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            write(jsonWriter, new Properties());
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
             saveProjectMetadata();
         } finally {
             writer.close();
@@ -485,25 +484,6 @@ public class FileProjectManager extends ProjectManager implements Jsonizable {
             tos.close();
             gos.close();
         }
-    }
-
-    @Override
-    public void write(JSONWriter jsonWriter, Properties options)
-            throws JSONException {
-        jsonWriter.object();
-        jsonWriter.key("projectIDs");
-        jsonWriter.array();
-        for (Long id : _projectsMetadata.keySet()) {
-            ProjectMetadata metadata = _projectsMetadata.get(id);
-            if (metadata != null) {
-                jsonWriter.value(id);
-            }
-        }
-        jsonWriter.endArray();
-
-        jsonWriter.key("preferences");
-        _preferenceStore.write(jsonWriter, new Properties());
-        jsonWriter.endObject();    
     }
     
     @JsonProperty("projectIDs")

@@ -47,14 +47,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -71,21 +69,13 @@ import com.google.refine.util.ParsingUtilities;
 
 public class PreviewExpressionCommand extends Command {
     
-    protected static interface ExpressionValue extends Jsonizable { }
+    protected static interface ExpressionValue  { }
     protected static class ErrorMessage implements ExpressionValue {
         @JsonProperty("message")
         protected String message;
         public ErrorMessage(String m) {
             message = m;
         }
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("message"); writer.value(message);
-            writer.endObject();
-        }
-        
     }
     protected static class SuccessfulEvaluation implements ExpressionValue {
         @JsonValue
@@ -93,15 +83,9 @@ public class PreviewExpressionCommand extends Command {
         protected SuccessfulEvaluation(String value) {
             this.value = value;
         }
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.value(value);
-        }
-        
     }
     
-    protected static class PreviewResult implements Jsonizable {
+    protected static class PreviewResult  {
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -111,6 +95,7 @@ public class PreviewExpressionCommand extends Command {
         @JsonInclude(Include.NON_NULL)
         protected String type;
         @JsonProperty("results")
+        @JsonInclude(Include.NON_NULL)
         List<ExpressionValue> results; 
         
         public PreviewResult(String code, String message, String type) {
@@ -125,28 +110,6 @@ public class PreviewExpressionCommand extends Command {
             this.message = null;
             this.type = null;
             this.results = evaluated;
-        }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("code"); writer.value(code);
-            if(message != null) {
-                writer.key("message"); writer.value(message);
-            }
-            if(type != null) {
-                writer.key("type"); writer.value(type);
-            }
-            if(results != null) {
-                writer.key("results");
-                writer.array();
-                for(ExpressionValue v : results) {
-                    v.write(writer, options);
-                }
-                writer.endArray();
-            }
-            writer.endObject();
         }
     }
     

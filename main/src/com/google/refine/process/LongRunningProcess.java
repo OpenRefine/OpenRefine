@@ -33,11 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.process;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -65,19 +60,6 @@ abstract public class LongRunningProcess extends Process {
         if (_thread != null && _thread.isAlive()) {
             _thread.interrupt();
         }
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("id"); writer.value(hashCode());
-        writer.key("description"); writer.value(_description);
-        writer.key("immediate"); writer.value(false);
-        writer.key("status"); writer.value(getStatus());
-        writer.key("progress"); writer.value(_progress);
-        writer.endObject();
     }
     
     @JsonProperty("status")

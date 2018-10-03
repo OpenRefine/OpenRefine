@@ -35,11 +35,8 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -51,7 +48,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.operations.OperationRegistry;
 
 public class MultiValuedCellJoinOperation extends AbstractOperation {
     final protected String    _columnName;
@@ -74,19 +70,6 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
         _separator = separator;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("keyColumnName"); writer.value(_keyColumnName);
-        writer.key("separator"); writer.value(_separator);
-        writer.endObject();
     }
     
     @JsonProperty("columnName")

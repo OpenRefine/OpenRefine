@@ -34,13 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.history;
 
 import java.io.Writer;
-import java.time.ZoneId;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +46,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -60,7 +57,7 @@ import com.google.refine.util.ParsingUtilities;
  * This is the metadata of a Change. It's small, so we can load it in order to
  * obtain information about a change without actually loading the change.
  */
-public class HistoryEntry implements Jsonizable {
+public class HistoryEntry  {
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
     @JsonProperty("id")
     final public long   id;
@@ -115,20 +112,6 @@ public class HistoryEntry implements Jsonizable {
             logger.error("Failed to get history entry manager from project manager: " 
                     + ProjectManager.singleton );
         }
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("id"); writer.value(id);
-        writer.key("description"); writer.value(description);
-        writer.key("time"); writer.value(ParsingUtilities.dateToString(time));
-        if ("save".equals(options.getProperty("mode")) && operation != null) {
-            writer.key(OPERATION); operation.write(writer, options);
-        }
-        writer.endObject();
     }
 
     public void save(Writer writer, Properties options){

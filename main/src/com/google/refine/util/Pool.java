@@ -44,13 +44,9 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
@@ -59,7 +55,8 @@ import com.google.refine.model.ReconCandidate;
  * A serializable pool of ReconCandidates indexed by ID.
  *
  */
-public class Pool implements Jsonizable {
+public class Pool  {
+    @JsonProperty("recons")
     final protected Map<String, Recon> recons = new HashMap<String, Recon>();
     
     // This is only for backward compatibility while loading old project files
@@ -104,23 +101,12 @@ public class Pool implements Jsonizable {
     
     public void save(Writer writer) throws IOException {
         writer.write(RefineServlet.VERSION); writer.write('\n');
-
-        Properties options = new Properties();
-        options.setProperty("mode", "save");
-        options.put("pool", this);
         
         Collection<Recon> recons2 = recons.values();
         writer.write("reconCount=" + recons2.size()); writer.write('\n');
         
         for (Recon recon : recons2) {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            try {
-                recon.write(jsonWriter, options);
-                
-                writer.write('\n');
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ParsingUtilities.saveWriter.writeValue(writer, recon);
         }
     }
     
@@ -166,20 +152,5 @@ public class Pool implements Jsonizable {
                 }
             }
         }
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("recons");
-            writer.object();
-            for (Entry<String, Recon> entry : recons.entrySet()) {
-                writer.key(entry.getKey().toString());
-                entry.getValue().write(writer, options);
-            }
-            writer.endObject();
-        writer.endObject();
     }
 }

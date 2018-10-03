@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -43,7 +42,7 @@ import com.google.refine.model.Project;
 /**
  * Interface of facets.
  */
-public interface Facet extends Jsonizable {
+public interface Facet  {
     public RowFilter getRowFilter(Project project);
     
     public RecordFilter getRecordFilter(Project project);

@@ -48,9 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,13 +158,7 @@ public class Project {
             writer.write(modelName);
             writer.write("=");
             
-            try {
-                JSONWriter jsonWriter = new JSONWriter(writer);
-                
-                overlayModels.get(modelName).write(jsonWriter, options);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ParsingUtilities.saveWriter.writeValue(writer, overlayModels.get(modelName));
             writer.write('\n');
         }
         

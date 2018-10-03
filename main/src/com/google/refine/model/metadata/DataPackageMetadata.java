@@ -3,20 +3,19 @@ package com.google.refine.model.metadata;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.everit.json.schema.ValidationException;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.frictionlessdata.datapackage.Package;
 import io.frictionlessdata.datapackage.Resource;
@@ -29,6 +28,12 @@ public class DataPackageMetadata extends AbstractMetadata {
     public static final String DEFAULT_FILE_NAME = "datapackage.json";
 
     private Package _pkg;
+    
+    @JsonValue
+    @JsonRawValue
+    public String getJson() {
+        return _pkg.getJson().toString();
+    }
     
     public DataPackageMetadata() {
         setFormatName(MetadataFormat.DATAPACKAGE_METADATA);
@@ -61,30 +66,6 @@ public class DataPackageMetadata extends AbstractMetadata {
             loadFromJSON(new JSONObject(jsonString));
     }
     
-    /**
-     * Write the package to a json file.
-     */
-    @Override
-    public void writeToFile(File metadataFile) {
-        try {
-            this._pkg.save(metadataFile.getAbsolutePath());
-        } catch (IOException e) {
-            logger.error("IO exception when writing to file " + metadataFile.getAbsolutePath(), 
-                    ExceptionUtils.getStackTrace(e));
-        } catch (DataPackageException e) {
-            logger.error("Data package exception when writing to file " + metadataFile.getAbsolutePath(),
-                    ExceptionUtils.getStackTrace(e));
-        }
-    }
-    
-    @Override
-    public void write(JSONWriter jsonWriter, Properties options)
-            throws JSONException {
-        StringWriter sw = new StringWriter();
-        _pkg.getJson().write(sw);
-        jsonWriter = new JSONWriter(sw);
-    }
-    
     @Override
     public void loadFromStream(InputStream inputStream) {
         try {
@@ -106,11 +87,6 @@ public class DataPackageMetadata extends AbstractMetadata {
         }
         
         return listResources;
-    }
-
-    @Override
-    public JSONObject getJSON() {
-        return _pkg.getJson();
     }
     
     public Package getPackage() {

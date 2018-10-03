@@ -57,7 +57,6 @@ import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.exporters.sql.SqlExporterException;
-
 import com.google.refine.model.Project;
 
 public class ExportRowsCommand extends Command {

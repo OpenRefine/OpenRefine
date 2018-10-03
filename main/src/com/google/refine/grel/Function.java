@@ -35,18 +35,15 @@ package com.google.refine.grel;
 
 import java.util.Properties;
 
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.Jsonizable;
 
 /**
  * Interface for functions. When a function is called, its arguments have already
  * been evaluated down into non-error values.
  */
-public interface Function extends Jsonizable {
+public interface Function  {
     public Object call(Properties bindings, Object[] args);
     
     @JsonProperty("description")
@@ -60,15 +57,4 @@ public interface Function extends Jsonizable {
     
     @JsonProperty("returns")
     public String getReturns();
-    
-    @Override
-    default public void write(JSONWriter writer, Properties options) {
-    	writer.object();
-    	writer.key("description"); writer.value(getDescription());
-    	if (!getParams().isEmpty()) {
-    		writer.key("params"); writer.value(getParams());
-    	}
-    	writer.key("returns"); writer.value(getReturns());
-    	writer.endObject();
-    }
 }

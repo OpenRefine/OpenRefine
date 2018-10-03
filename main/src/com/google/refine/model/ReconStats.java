@@ -33,20 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
-import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.util.ParsingUtilities;
 
-public class ReconStats implements Jsonizable {
+public class ReconStats  {
     static public ReconStats load(JSONObject obj) throws Exception {
         return new ReconStats(
                 obj.getInt("nonBlanks"),
@@ -66,17 +64,6 @@ public class ReconStats implements Jsonizable {
         this.nonBlanks = nonBlanks;
         this.newTopics = newTopics;
         this.matchedTopics = matchedTopics;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("nonBlanks"); writer.value(nonBlanks);
-        writer.key("newTopics"); writer.value(newTopics);
-        writer.key("matchedTopics"); writer.value(matchedTopics);
-        writer.endObject();
     }
     
     static public ReconStats create(Project project, int cellIndex) {
@@ -103,10 +90,9 @@ public class ReconStats implements Jsonizable {
     }
     
     public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

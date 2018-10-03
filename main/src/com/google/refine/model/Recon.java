@@ -40,9 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,13 +50,12 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.Pool;
  
 @JsonFilter("reconCandidateFilter")
-public class Recon implements HasFields, Jsonizable {
+public class Recon implements HasFields {
     
     /**
      * Freebase schema URLs kept for compatibility with legacy reconciliation results
@@ -366,56 +362,6 @@ public class Recon implements HasFields, Jsonizable {
         return null;
     }
 
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        boolean saveMode = "save".equals(options.getProperty("mode"));
-        
-        writer.object();
-        writer.key("id"); writer.value(id);
-        if (saveMode) {
-            writer.key("judgmentHistoryEntry"); writer.value(judgmentHistoryEntry);
-        }
-        
-        writer.key("service"); writer.value(service);
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        
-        writer.key("j"); writer.value(judgmentToString());
-        if (match != null) {
-            writer.key("m");
-            match.write(writer, options);
-        }
-        if (match == null || saveMode) {
-            writer.key("c"); writer.array();
-            if (candidates != null) {
-                for (ReconCandidate c : candidates) {
-                    c.write(writer, options);
-                }
-            }
-            writer.endArray();
-        }
-        
-        if (saveMode) {
-            writer.key("f");
-                writer.array();
-                for (Object o : features) {
-                    writer.value(o);
-                }
-                writer.endArray();
-                
-            writer.key("judgmentAction"); writer.value(judgmentAction);
-            writer.key("judgmentBatchSize"); writer.value(judgmentBatchSize);
-            
-            if (match != null) {
-                writer.key("matchRank"); writer.value(matchRank);
-            }
-        }
-        
-        writer.endObject();
-    }
-    
     static public Recon loadStreaming(String s, Pool pool) throws Exception {
         JsonFactory jsonFactory = new JsonFactory(); 
         JsonParser jp = jsonFactory.createJsonParser(s);

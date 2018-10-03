@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ProcessManagerTests {
     
@@ -25,7 +25,7 @@ public class ProcessManagerTests {
         processManager.queueProcess(process1);
         processManager.queueProcess(process2);
         processManager.onFailedProcess(process1, new IllegalArgumentException("unexpected error"));
-        String processJson = JSONUtilities.serialize(process2);
+        String processJson = ParsingUtilities.defaultWriter.writeValueAsString(process2);
         TestUtils.isSerializedTo(processManager, "{"
                 + "\"processes\":["+processJson+"],\n"
                 + "\"exceptions\":[{\"message\":\"unexpected error\"}]"

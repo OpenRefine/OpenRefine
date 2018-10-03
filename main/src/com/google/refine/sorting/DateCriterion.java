@@ -35,10 +35,6 @@ package com.google.refine.sorting;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;

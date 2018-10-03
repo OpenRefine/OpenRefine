@@ -46,6 +46,7 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.browsing.Engine;
@@ -64,6 +65,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
 
+    @JsonProperty("summary")
     private String summary;
 
     public PerformWikibaseEditsOperation(EngineConfig engineConfig, String summary) {
@@ -82,21 +84,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         }
         return new PerformWikibaseEditsOperation(
                 EngineConfig.reconstruct(engineConfig), summary);
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("op");
-        writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description");
-        writer.value("Perform Wikibase edits");
-        writer.key("summary");
-        writer.value(summary);
-        writer.key("engineConfig");
-        getEngineConfig().write(writer, options);
-        writer.endObject();
     }
 
     @Override

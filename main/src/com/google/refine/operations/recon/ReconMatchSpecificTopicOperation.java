@@ -36,12 +36,9 @@ package com.google.refine.operations.recon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,7 +58,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
     
@@ -130,31 +126,6 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         this.match = match;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("match");
-            writer.object();
-            writer.key("id"); writer.value(match.id);
-            writer.key("name"); writer.value(match.name);
-            writer.key("types");
-                writer.array();
-                for (String typeID : match.types) {
-                    writer.value(typeID);
-                }
-                writer.endArray();
-            writer.endObject();
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        writer.endObject();
     }
     
     @Override

@@ -2,6 +2,7 @@ package com.google.refine.tests.operations.recon;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -46,7 +47,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
                 + "\"shareNewTopics\":true}";
-        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(mock(Project.class), new JSONObject(json)), json);
     }
     
     @Test

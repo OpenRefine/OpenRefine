@@ -2,12 +2,9 @@ package com.google.refine.model.metadata;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.Properties;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 public abstract class AbstractMetadata implements IMetadata {
     private MetadataFormat formatName = MetadataFormat.UNKNOWN;
@@ -31,9 +28,6 @@ public abstract class AbstractMetadata implements IMetadata {
     public abstract void loadFromFile(File metadataFile);
 
     @Override
-    public abstract void writeToFile(File metadataFile);
-
-    @Override
     public boolean isDirty() {
         return written == null || _modified.isAfter(written);
     }
@@ -46,23 +40,6 @@ public abstract class AbstractMetadata implements IMetadata {
     @Override
     public void updateModified() {
         _modified = LocalDateTime.now();
-    }
-    
-    /**
-     * @param jsonWriter
-     *            writer to save metadatea to
-     * @param onlyIfDirty
-     *            true to not write unchanged metadata
-     * @throws JSONException
-     */
-    @Override
-    public void write(JSONWriter jsonWriter, boolean onlyIfDirty) throws JSONException  {
-        if (!onlyIfDirty || isDirty()) {
-            Properties options = new Properties();
-            options.setProperty("mode", "save");
-
-            write(jsonWriter, options);
-        }
     }
     
     protected static boolean propertyExists(Object bean, String property) {

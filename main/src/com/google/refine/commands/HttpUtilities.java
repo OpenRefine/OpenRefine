@@ -17,7 +17,6 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.RefineServlet;
 import com.google.refine.util.ParsingUtilities;
 
@@ -56,23 +55,21 @@ abstract public class HttpUtilities {
         }
     }
 
-    static public void respondJSON(HttpServletResponse response, Jsonizable o)
+    static public void respondJSON(HttpServletResponse response, Object o)
         throws IOException, JSONException {
     
         respondJSON(response, o, new Properties());
     }
 
     static public void respondJSON(
-            HttpServletResponse response, Jsonizable o, Properties options)
+            HttpServletResponse response, Object o, Properties options)
             throws IOException, JSONException {
     
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
     
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
-    
-        o.write(writer, options);
+        ParsingUtilities.defaultWriter.writeValue(w, o);
         w.flush();
         w.close();
     }

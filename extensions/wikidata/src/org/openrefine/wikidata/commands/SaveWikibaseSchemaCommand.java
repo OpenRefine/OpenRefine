@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -34,7 +36,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;

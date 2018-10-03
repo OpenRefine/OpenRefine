@@ -34,26 +34,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.project;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
-import com.google.refine.commands.HttpUtilities;
 import com.google.refine.commands.HttpHeadersSupport;
 import com.google.refine.commands.HttpHeadersSupport.HttpHeaderInfo;
-
+import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.MetaParser.LanguageInfo;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
+import com.google.refine.model.ColumnModel;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
+import com.google.refine.model.RecordModel;
 
 public class GetModelsCommand extends Command {
     @Override
@@ -65,6 +68,32 @@ public class GetModelsCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         internalRespond(request, response);
+    }
+    
+    protected static class ModelsResponse {
+        @JsonProperty("columnModel")
+        protected ColumnModel columnModel;
+        @JsonProperty("recordModel")
+        protected RecordModel recordModel;
+        @JsonProperty("overlayModels")
+        protected Map<String, OverlayModel> overlayModels;
+        @JsonProperty("scripting")
+        protected Map<String, LanguageInfo> scripting;
+        @JsonProperty("httpHeaders")
+        protected Map<String, HttpHeaderInfo> httpHeaders;
+        
+        protected ModelsResponse(
+                ColumnModel columns,
+                RecordModel records,
+                Map<String, OverlayModel> overlays,
+                Map<String, LanguageInfo> languageInfos,
+                Map<String, HttpHeaderInfo> headers) {
+            columnModel = columns;
+            recordModel = records;
+            overlayModels = overlays;
+            scripting = languageInfos;
+            httpHeaders = headers;
+        }
     }
     
     protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
@@ -86,53 +115,26 @@ public class GetModelsCommand extends Command {
         }
         
         try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
             response.setHeader("Cache-Control", "no-cache");
-            
-            Properties options = new Properties();
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            
-            writer.object();
-            writer.key("columnModel"); project.columnModel.write(writer, options);
-            writer.key("recordModel"); project.recordModel.write(writer, options);
-            
-            writer.key("overlayModels"); writer.object();
-            for (String modelName : project.overlayModels.keySet()) {
-                OverlayModel overlayModel = project.overlayModels.get(modelName);
-                if (overlayModel != null) {
-                    writer.key(modelName);
-                    
-                    project.overlayModels.get(modelName).write(writer, options);
-                }
-            }
-            writer.endObject();
-            
-            writer.key("scripting"); writer.object();
+
+            Map<String, LanguageInfo> prefixesMap = new HashMap<>();
             for (String languagePrefix : MetaParser.getLanguagePrefixes()) {
                 LanguageInfo info = MetaParser.getLanguageInfo(languagePrefix);
-                
-                writer.key(languagePrefix);
-                writer.object();
-                    writer.key("name"); writer.value(info.name);
-                    writer.key("defaultExpression"); writer.value(info.defaultExpression);
-                writer.endObject();
+                prefixesMap.put(languagePrefix, info);
             }
-            writer.endObject();
-
-            writer.key("httpHeaders");
-            writer.object();
+            
+            Map<String, HttpHeaderInfo> headersMap = new HashMap<>();
             for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
                 HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
-                writer.key(headerLabel);
-                writer.object();
-                    writer.key("header"); writer.value(info.header);
-                    writer.key("defaultValue"); writer.value(info.defaultValue);
-                writer.endObject();
+                headersMap.put(headerLabel, info);
             }
-            writer.endObject();
-            
-            writer.endObject();
+
+            respondJSON(response, new ModelsResponse(
+                    project.columnModel,
+                    project.recordModel,
+                    project.overlayModels,
+                    prefixesMap,
+                    headersMap));
         } catch (JSONException e) {
             HttpUtilities.respondException(response, e);
         }

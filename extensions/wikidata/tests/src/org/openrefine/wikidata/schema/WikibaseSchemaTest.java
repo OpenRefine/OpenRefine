@@ -26,16 +26,13 @@ package org.openrefine.wikidata.schema;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
@@ -58,7 +55,7 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.tests.util.TestUtils;
 
 public class WikibaseSchemaTest extends RefineTest {
 
@@ -103,14 +100,7 @@ public class WikibaseSchemaTest extends RefineTest {
             throws JSONException, IOException {
         JSONObject serialized = TestingData.jsonFromFile("schema/history_of_medicine.json");
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
-        StringWriter writer = new StringWriter();
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        parsed.write(jsonWriter, new Properties());
-        writer.close();
-        JSONObject newSerialized = ParsingUtilities.evaluateJsonStringToObject(writer.toString());
-        // toString because it looks like JSONObject equality isn't great…
-        assertEquals(TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(),
-                newSerialized.toString());
+        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("data/schema/history_of_medicine_normalized.json").toString());
     }
 
     @Test

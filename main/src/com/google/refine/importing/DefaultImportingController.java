@@ -50,6 +50,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingManager.Format;
@@ -272,6 +274,19 @@ public class DefaultImportingController implements ImportingController {
         }
     }
     
+    protected static class JobResponse {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("job")
+        protected ImportingJob job;
+        
+        protected JobResponse(String code, ImportingJob job) {
+            this.code = code;
+            this.job = job;
+        }
+        
+    }
+    
     /**
      * return the job to the front end.
      * @param request
@@ -284,18 +299,9 @@ public class DefaultImportingController implements ImportingController {
         throws ServletException, IOException {
         
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
-        try {
-            writer.object();
-            writer.key("code"); writer.value("ok");
-            writer.key("job"); job.write(writer, new Properties());
-            writer.endObject();
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        } finally {
-            w.flush();
-            w.close();
-        }
+        ParsingUtilities.defaultWriter.writeValue(w, job);
+        w.flush();
+        w.close();
     }
     
     static public void writeErrors(JSONWriter writer, List<Exception> exceptions) throws JSONException {

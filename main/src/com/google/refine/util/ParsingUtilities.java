@@ -61,6 +61,8 @@ import org.json.JSONTokener;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -69,13 +71,18 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 public class ParsingUtilities {
-     
-    public static final ObjectMapper mapper = new ObjectMapper();
+    public static JsonFactory jsonFactory = new JsonFactory();
+    static {
+        jsonFactory.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+    }
+    public static final ObjectMapper mapper = new ObjectMapper(jsonFactory);
     static {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Double.class, new SerializationFilters.DoubleSerializer());
         module.addSerializer(double.class, new SerializationFilters.DoubleSerializer());
         module.addSerializer(OffsetDateTime.class, new SerializationFilters.DateSerializer());
+
+        
         mapper.registerModule(module);
         mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

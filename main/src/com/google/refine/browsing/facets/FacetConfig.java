@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 import com.google.refine.model.Project;
 
 
@@ -17,7 +16,7 @@ import com.google.refine.model.Project;
  * @author antonin
  *
  */
-public interface FacetConfig extends Jsonizable {
+public interface FacetConfig  {
     /**
      * Reads the facet configuration from a JSON object (will be removed once we migrate to Jackson)
      * @param fo

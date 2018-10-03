@@ -119,7 +119,7 @@ public class ExtendDataOperationTests extends RefineTest {
             super(obj, endpoint);
         }
 
-        public String formulateQueryStub(Set<String> ids, DataExtensionConfig node) throws JSONException {
+        public String formulateQueryStub(Set<String> ids, DataExtensionConfig node) throws IOException {
             StringWriter writer = new StringWriter();
             super.formulateQuery(ids, node, writer);
             return writer.toString();
@@ -181,7 +181,7 @@ public class ExtendDataOperationTests extends RefineTest {
     }
     
     @Test
-    public void testFormulateQuery() {
+    public void testFormulateQuery() throws IOException {
         DataExtensionConfig config = DataExtensionConfig.reconstruct(new JSONObject(dataExtensionConfigJson));
         Set<String> ids = Collections.singleton("Q2");
         String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";

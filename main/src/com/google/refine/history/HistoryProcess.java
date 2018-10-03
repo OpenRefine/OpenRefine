@@ -33,11 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.history;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -97,17 +92,6 @@ public class HistoryProcess extends Process {
     @Override
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException(WARN);
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("description"); writer.value(_description);
-        writer.key("immediate"); writer.value(true);
-        writer.key("status"); writer.value(getStatus());
-        writer.endObject();
     }
     
     @JsonProperty("status")

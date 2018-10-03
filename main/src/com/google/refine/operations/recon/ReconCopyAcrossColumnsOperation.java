@@ -38,13 +38,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -63,7 +60,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.JSONUtilities;
 
 public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
@@ -94,31 +90,6 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
         _toColumnNames = toColumnNames;
         _judgments = judgments;
         _applyToJudgedCells = applyToJudgedCells;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("fromColumnName"); writer.value(_fromColumnName);
-        writer.key("toColumnNames");
-            writer.array();
-            for (String s : _toColumnNames) {
-                writer.value(s);
-            }
-            writer.endArray();
-        writer.key("judgments");
-            writer.array();
-            for (String s : _judgments) {
-                writer.value(s);
-            }
-            writer.endArray();
-        writer.key("applyToJudgedCells"); writer.value(_applyToJudgedCells);
-        writer.endObject();
     }
     
     @JsonProperty("fromColumnName")
