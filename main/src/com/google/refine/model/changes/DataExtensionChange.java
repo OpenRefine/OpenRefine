@@ -43,13 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.model.ReconType;
-import com.google.refine.model.recon.DataExtensionReconConfig;
-import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -59,7 +52,10 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconStats;
+import com.google.refine.model.ReconType;
 import com.google.refine.model.Row;
+import com.google.refine.model.recon.DataExtensionReconConfig;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 

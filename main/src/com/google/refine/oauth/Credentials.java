@@ -37,10 +37,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.refine.util.CookiesUtilities;
+
 import oauth.signpost.OAuth;
 import oauth.signpost.http.HttpParameters;
-
-import com.google.refine.util.CookiesUtilities;
 
 public class Credentials {
 

@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import com.google.common.base.CharMatcher;
+
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 

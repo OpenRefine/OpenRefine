@@ -61,8 +61,8 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 

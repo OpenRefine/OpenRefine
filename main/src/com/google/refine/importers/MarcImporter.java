@@ -41,7 +41,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.json.JSONObject;
-import org.marc4j.MarcException;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;

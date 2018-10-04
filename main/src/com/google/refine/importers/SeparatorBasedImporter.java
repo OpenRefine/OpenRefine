@@ -50,17 +50,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import org.json.JSONObject;
-
-import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+
+import au.com.bytecode.opencsv.CSVParser;
 
 public class SeparatorBasedImporter extends TabularImportingParserBase {
     public SeparatorBasedImporter() {

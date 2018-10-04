@@ -39,7 +39,6 @@ import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;

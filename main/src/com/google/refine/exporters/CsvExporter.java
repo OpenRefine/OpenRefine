@@ -43,12 +43,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class CsvExporter implements WriterExporter{
 

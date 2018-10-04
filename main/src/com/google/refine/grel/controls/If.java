@@ -35,9 +35,6 @@ package com.google.refine.grel.controls;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Control;

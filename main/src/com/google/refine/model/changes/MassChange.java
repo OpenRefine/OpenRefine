@@ -34,13 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model.changes;
 
 import java.io.IOException;
-import com.google.common.collect.Lists;
- 
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import com.google.common.collect.Lists;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.History;

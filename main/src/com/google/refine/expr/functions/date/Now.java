@@ -37,9 +37,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.grel.Function;
 
 public class Now implements Function {

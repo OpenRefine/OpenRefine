@@ -41,9 +41,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
