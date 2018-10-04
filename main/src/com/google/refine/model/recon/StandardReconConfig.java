@@ -53,6 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.expr.ExpressionUtils;
@@ -203,9 +205,12 @@ public class StandardReconConfig extends ReconConfig {
     }
     
     @JsonProperty("type")
+    @JsonInclude(Include.NON_NULL)
     public ReconType getReconType() {
-        ReconType t = new ReconType(typeID, typeName);
-        return t;
+        if (typeID != null) {
+            return new ReconType(typeID, typeName);
+        }
+        return null;
     }
 
     @Override
