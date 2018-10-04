@@ -42,6 +42,9 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
@@ -77,6 +80,11 @@ public class ImportingJob  {
         dir.mkdirs();
     }
     
+    @JsonProperty("config")
+    @JsonRawValue
+    public String getJsonConfig() {
+        return config.toString();
+    }
     
     public JSONObject getOrCreateDefaultConfig() {
         return config;

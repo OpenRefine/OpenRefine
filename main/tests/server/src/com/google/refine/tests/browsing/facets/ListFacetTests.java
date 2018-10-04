@@ -33,7 +33,7 @@ public class ListFacetTests extends RefineTest {
             + "\"expression\":\"value+\\\"bar\\\"\","
             + "\"columnName\":\"Column A\","
             + "\"invert\":false,"
-            + "\"error\":\"No column named Column A\"}\" are not equal as JSON strings.\n" + 
+            + "\"error\":\"No column named Column A\"" + 
             "}";
     
     private static String jsonFacet = "{"

@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -69,8 +70,9 @@ public class Engine  {
     public final static String MODE_RECORD_BASED = "record-based";
 
     protected Project _project;
+    @JsonProperty("facets")
     protected List<Facet> _facets = new LinkedList<Facet>();
-    @JsonValue
+    @JsonIgnore
     protected EngineConfig _config = new EngineConfig(Collections.emptyList(), Mode.RowBased);
 
     static public String modeToString(Mode mode) {
@@ -84,6 +86,7 @@ public class Engine  {
         _project  = project;
     }
 
+    @JsonProperty("engine-mode")
     public Mode getMode() {
         return _config.getMode();
     }

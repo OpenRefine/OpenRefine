@@ -79,7 +79,7 @@ public class PreferenceStore  {
     
     private Object wrapJSONArray(Object value) {
         ObjectMapper mapper = new ObjectMapper();
-        if(value != null && value instanceof JSONArray) {
+        if(value != null && (value instanceof JSONArray || value instanceof JSONObject)) {
             try {
                 return mapper.readValue(value.toString(), JsonNode.class);
             } catch (IOException e) {

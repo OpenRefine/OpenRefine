@@ -149,9 +149,9 @@ public class ReconOperation extends EngineDependentOperation {
                 "{\n" + 
                 "  \"action\" : \"createFacet\",\n" + 
                 "  \"facetConfig\" : {\n" + 
-                "  \"columnName\" : \"researcher\",\n" + 
+                "  \"columnName\" : \"" + _columnName + "\",\n" + 
                 "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n" + 
-                "    \"name\" : \"researcher: judgment\"\n" + 
+                "    \"name\" : \"" + _columnName + ": judgment\"\n" + 
                 "    },\n" + 
                 "    \"facetOptions\" : {\n" + 
                 "      \"scroll\" : false\n" + 
@@ -162,10 +162,10 @@ public class ReconOperation extends EngineDependentOperation {
                 "{\n" + 
                 "  \"action\" : \"createFacet\",\n" + 
                 "  \"facetConfig\" : {\n" + 
-                "    \"columnName\" : \"researcher\",\n" + 
+                "    \"columnName\" : \"" + _columnName + "\",\n" + 
                 "    \"expression\" : \"cell.recon.best.score\",\n" + 
                 "    \"mode\" : \"range\",\n" + 
-                "    \"name\" : \"researcher: best candidate's score\"\n" + 
+                "    \"name\" : \"" + _columnName + ": best candidate's score\"\n" + 
                 "         },\n" + 
                 "         \"facetType\" : \"range\"\n" + 
                 "}";

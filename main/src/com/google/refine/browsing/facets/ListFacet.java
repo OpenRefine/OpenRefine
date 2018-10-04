@@ -231,16 +231,18 @@ public class ListFacet implements Facet {
     @JsonProperty("choiceCount")
     @JsonInclude(Include.NON_NULL)
     public Integer getChoiceCount() {
-        if (_errorMessage == null && _choices.size() > getLimit()) 
+        if (_errorMessage == null && _choices.size() > getLimit()) {
             return _choices.size();
+        }
         return null;
     }
     
     @JsonProperty("choices")
     @JsonInclude(Include.NON_NULL)
     public List<NominalFacetChoice> getChoices() {
-        if (getError() == null)
+        if (getError() == null) {
             return _choices;
+        }
         return null;
     }
     

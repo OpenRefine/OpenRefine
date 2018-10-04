@@ -39,6 +39,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.grel.Parser;
 
 import clojure.lang.IFn;
@@ -47,8 +50,11 @@ import clojure.lang.RT;
 abstract public class MetaParser {
 
     static public class LanguageInfo {
+        @JsonProperty("name")
         final public String                 name;
+        @JsonIgnore
         final public LanguageSpecificParser parser;
+        @JsonProperty("defaultExpression")
         final public String                 defaultExpression;
         
         LanguageInfo(String name, LanguageSpecificParser parser, String defaultExpression) {
