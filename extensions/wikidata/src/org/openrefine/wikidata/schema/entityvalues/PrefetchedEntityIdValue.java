@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * An entity id value that also comes with a label and possibly types.
  * 
@@ -47,6 +49,7 @@ public interface PrefetchedEntityIdValue extends EntityIdValue {
      * 
      * @return the preferred label of the entity
      */
+    @JsonProperty("label")
     public String getLabel();
 
     /**
@@ -56,5 +59,6 @@ public interface PrefetchedEntityIdValue extends EntityIdValue {
      * 
      * Empty lists should be returned for
      */
+    @JsonProperty("types")
     public List<String> getTypes();
 }

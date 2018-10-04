@@ -33,15 +33,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.google.refine.util.ParsingUtilities;
+
 public class JacksonSerializationTest {
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = ParsingUtilities.mapper;
 
     public static void testSerialize(Object pojo, String expectedJson) {
         // Test that the pojo is correctly serialized
         try {
 
-            String actualJson = mapper.writeValueAsString(pojo);
+            String actualJson = ParsingUtilities.defaultWriter.writeValueAsString(pojo);
             assertJsonEquals(expectedJson, actualJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

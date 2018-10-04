@@ -88,7 +88,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Peform edits on Wikidata";
+        return "Peform Wikibase edits";
     }
 
     @Override
