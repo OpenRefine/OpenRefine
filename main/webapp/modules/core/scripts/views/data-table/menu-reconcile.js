@@ -139,11 +139,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var services = ReconciliationManager.getAllServices();
     for (var i = 0; i < services.length; i++) {
         var service = services[i];
-        console.log(service);
         $('<option></option>').attr('value', service.url)
            .text(service.name)
            .appendTo(select);
-    };
+    }
 
     $('<button class="button"></button>').text($.i18n._('core-buttons')["cancel"]).click(function() {
       DialogSystem.dismissUntil(level - 1);
@@ -178,7 +177,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     }).appendTo(footer);
 
     var level = DialogSystem.showDialog(frame);
-  }
+  };
 
 
   var doCopyAcrossColumns = function() {
