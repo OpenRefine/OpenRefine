@@ -46,7 +46,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
-import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Cell;
@@ -63,6 +64,19 @@ import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreviewExtendDataCommand extends Command {
+    
+    protected static class PreviewResponse {
+        public PreviewResponse(List<ColumnInfo> columns2, List<List<Object>> rows2) {
+            columns = columns2;
+            rows = rows2;
+        }
+        @JsonProperty("code")
+        protected String code = "ok";
+        @JsonProperty("columns")
+        protected List<ColumnInfo> columns;
+        @JsonProperty("rows")
+        protected List<List<Object>> rows;
+    }
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -122,77 +136,45 @@ public class PreviewExtendDataCommand extends Command {
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
             ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint);
             Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
-            
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
-            writer.key("code"); writer.value("ok");
-            writer.key("columns");
-                writer.array();
-                for (ColumnInfo info : job.columns) {
-                    writer.object();
-                    writer.key("name");
-		    writer.value(info.name);
-                    writer.key("id");
-		    writer.value(info.id);
-		    writer.endObject();
-                }
-                writer.endArray();
-            
-            writer.key("rows");
-                writer.array();
-                for (int r = 0; r < topicNames.size(); r++) {
-                    String id = topicIds.get(r);
-                    String topicName = topicNames.get(r);
-                    
-                    if (id != null && map.containsKey(id)) {
-                        DataExtension ext = map.get(id);
-                        boolean first = true;
-                        
-                        if (ext.data.length > 0) {
-                            for (Object[] row : ext.data) {
-                                writer.array();
-                                if (first) {
-                                    writer.value(topicName);
-                                    first = false;
-                                } else {
-                                    writer.value(null);
-                                }
-                                
-                                for (Object cell : row) {
-                                    if (cell != null && cell instanceof ReconCandidate) {
-                                        ReconCandidate rc = (ReconCandidate) cell;
-                                        writer.object();
-                                        writer.key("id"); writer.value(rc.id);
-                                        writer.key("name"); writer.value(rc.name);
-                                        writer.endObject();
-                                    } else {
-                                        writer.value(cell);
-                                    }
-                                }
-                                
-                                writer.endArray();
-                            }
-                            continue;
-                        }
-                    }
-                    
-                    writer.array();
-                    if (id != null) {
-                        writer.object();
-                        writer.key("id"); writer.value(id);
-                        writer.key("name"); writer.value(topicName);
-                        writer.endObject();
-                    } else {
-                        writer.value("<not reconciled>");
-                    }
-                    writer.endArray();
-                }
-                writer.endArray();
+            List<List<Object>> rows = new ArrayList<>();
+
+            for (int r = 0; r < topicNames.size(); r++) {
+                String id = topicIds.get(r);
+                String topicName = topicNames.get(r);
                 
-            writer.endObject();
+                if (id != null && map.containsKey(id)) {
+                    DataExtension ext = map.get(id);
+                    boolean first = true;
+                    
+                    if (ext.data.length > 0) {
+                        for (Object[] row : ext.data) {
+                            List<Object> jsonRow = new ArrayList<>();
+                            if (first) {
+                                jsonRow.add(topicName);
+                                first = false;
+                            } else {
+                                jsonRow.add(null);
+                            }
+                            
+                            for (Object cell : row) {
+                                jsonRow.add(cell);
+                            }
+                            rows.add(jsonRow);
+                        }
+                        continue;
+                    }
+                }
+                
+                List<Object> supplement = new ArrayList<>();
+                if (id != null) {
+                    supplement.add(new ReconCandidate(id, topicName, new String[0], 100));
+                } else {
+                    supplement.add("<not reconciled>");
+                }
+                rows.add(supplement);
+            }
+            
+            respondJSON(response, new PreviewResponse(job.columns, rows));
         } catch (Exception e) {
             respondException(response, e);
         }

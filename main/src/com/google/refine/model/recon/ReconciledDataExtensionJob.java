@@ -141,8 +141,11 @@ public class ReconciledDataExtensionJob {
         }
     }
     
+    // Json serialization is used in PreviewExtendDataCommand
     static public class ColumnInfo {
+        @JsonProperty("name")
         final public String name;
+        @JsonProperty("id")
         final public String id;
         final public ReconType expectedType;
         
@@ -320,7 +323,7 @@ public class ReconciledDataExtensionJob {
 
     
     static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws IOException {
-        DataExtensionQuery query = new DataExtensionQuery(ids.stream().collect(Collectors.toList()), node.properties);
+        DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()), node.properties);
         ParsingUtilities.saveWriter.writeValue(writer, query);
     }
     

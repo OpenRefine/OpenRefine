@@ -55,7 +55,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
@@ -66,6 +69,27 @@ import com.google.refine.util.ParsingUtilities;
 
 public class GuessTypesOfColumnCommand extends Command {
     
+    
+    protected static class TypesResponse {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("message")
+        @JsonInclude(Include.NON_NULL)
+        protected String message;
+        @JsonProperty("types")
+        @JsonInclude(Include.NON_NULL)
+        List<TypeGroup> types;
+        
+        protected TypesResponse(
+                String code,
+                String message,
+                List<TypeGroup> types) {
+            this.code = code;
+            this.message = message;
+            this.types = types;
+        }
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,41 +99,32 @@ public class GuessTypesOfColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
             
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
-            
             Column column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
-                writer.key("code"); writer.value("error");
-                writer.key("message"); writer.value("No such column");
+                respondJSON(response, new TypesResponse("error", "No such column", null));
             } else {
-                    List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
-                    
-                    writer.key("code"); writer.value("ok");
-                    writer.key("types"); writer.array();         
-                    
-                    for (TypeGroup tg : typeGroups) {
-                        writer.object();
-                        writer.key("id"); writer.value(tg.id);
-                        writer.key("name"); writer.value(tg.name);
-                        writer.key("score"); writer.value(tg.score);
-                        writer.key("count"); writer.value(tg.count);
-                        writer.endObject();
-                    }
-                    
-                    writer.endArray();
+                List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
+                respondJSON(response, new TypesResponse("ok", null, typeGroups));   
             }
-            
-            writer.endObject();
+
         } catch (Exception e) {
             respondException(response, e);
         }
     }
     
     final static int SAMPLE_SIZE = 10;
+    
+    protected static class IndividualQuery {
+        @JsonProperty("query")
+        protected String query;
+        @JsonProperty("limit")
+        protected int limit;
+        
+        protected IndividualQuery(String query, int limit) {
+            this.query = query;
+            this.limit = limit;
+        }
+    }
     
     /**
      * Run relevance searches for the first n cells in the given column and
@@ -144,25 +159,12 @@ public class GuessTypesOfColumnCommand extends Command {
             }
         }
         
-        StringWriter stringWriter = new StringWriter();
-        try {
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            jsonWriter.object();
-            for (int i = 0; i < samples.size(); i++) {
-                jsonWriter.key("q" + i);
-                jsonWriter.object();
-                
-                jsonWriter.key("query"); jsonWriter.value(samples.get(i));
-                jsonWriter.key("limit"); jsonWriter.value(3);
-                
-                jsonWriter.endObject();
-            }
-            jsonWriter.endObject();
-        } catch (JSONException e) {
-            logger.error("Error constructing query", e);
+        Map<String, IndividualQuery> queryMap = new HashMap<>();
+        for (int i = 0; i < samples.size(); i++) {
+            queryMap.put("q" + i, new IndividualQuery(samples.get(i), 3));
         }
         
-        String queriesString = stringWriter.toString();
+        String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         try {
             URL url = new URL(serviceUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -264,10 +266,14 @@ public class GuessTypesOfColumnCommand extends Command {
     }
     
     static protected class TypeGroup {
-        String id;
-        String name;
-        int count;
-        double score;
+        @JsonProperty("id")
+        protected String id;
+        @JsonProperty("name")
+        protected String name;
+        @JsonProperty("count")
+        protected int count;
+        @JsonProperty("score")
+        protected double score;
         
         TypeGroup(String id, String name, double score) {
             this.id = id;

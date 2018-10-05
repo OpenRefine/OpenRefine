@@ -46,11 +46,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
@@ -290,11 +290,11 @@ public abstract class Command {
         throws IOException, JSONException {
 
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
-        writer.object();
-        writer.key("status"); writer.value(status);
-        writer.key("message"); writer.value(message);
-        writer.endObject();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("status", status);
+        writer.writeStringField("message", message);
+        writer.writeEndObject();
         w.flush();
         w.close();
     }
@@ -343,9 +343,14 @@ public abstract class Command {
         }
 
         try {
-            JSONObject o = new JSONObject();
-            o.put("code", "error");
-            o.put("message", e.getMessage());
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
+            
+            Writer w = response.getWriter();
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+            writer.writeStartObject();
+            writer.writeStringField("code", "error");   
+            writer.writeStringField("message", e.getMessage());
 
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -353,11 +358,10 @@ public abstract class Command {
             pw.flush();
             sw.flush();
 
-            o.put("stack", sw.toString());
-
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            respond(response, o.toString());
+            writer.writeStringField("stack", sw.toString());
+            writer.writeEndObject();
+            w.flush();
+            w.close();
         } catch (JSONException e1) {
             e.printStackTrace(response.getWriter());
         }
