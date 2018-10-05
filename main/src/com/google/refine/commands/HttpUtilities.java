@@ -13,9 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.VelocityContext;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.refine.RefineServlet;
 import com.google.refine.util.ParsingUtilities;
@@ -43,11 +44,11 @@ abstract public class HttpUtilities {
     
         Writer w = response.getWriter();
         try {
-            JSONWriter writer = new JSONWriter(w);
-            writer.object();
-            writer.key("status"); writer.value(status);
-            writer.key("message"); writer.value(message);
-            writer.endObject();
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+            writer.writeStartObject();
+            writer.writeStringField("status", status);
+            writer.writeStringField("message", message);
+            writer.writeEndObject();
             w.flush();
             w.close();
         } catch (JSONException e) {
@@ -84,21 +85,24 @@ abstract public class HttpUtilities {
         }
     
         try {
-            JSONObject o = new JSONObject();
-            o.put("code", "error");
-            o.put("message", e.getMessage());
-    
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
             sw.flush();
-    
-            o.put("stack", sw.toString());
-    
+            
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            respond(response, o.toString());
+
+            Writer w = response.getWriter();
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+            writer.writeStartObject();
+            writer.writeStringField("code", "error");
+            writer.writeStringField("message", e.getMessage());
+            writer.writeStringField("stack", sw.toString());
+            writer.writeEndObject();
+            w.flush();
+            w.close();
         } catch (JSONException e1) {
             e.printStackTrace(response.getWriter());
         }

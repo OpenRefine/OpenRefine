@@ -39,8 +39,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.refine.browsing.util.ExpressionBasedRowEvaluable;
 import com.google.refine.browsing.util.NumericBinIndex;
@@ -51,6 +50,7 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class GetColumnsInfoCommand extends Command {
 
@@ -59,25 +59,20 @@ public class GetColumnsInfoCommand extends Command {
             throws ServletException, IOException {
         
         try {
-            //long start = System.currentTimeMillis();
-
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
 
             Project project = getProject(request);
-            //Engine engine = getEngine(request, project);
             
-            JSONWriter writer = new JSONWriter(response.getWriter());
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(response.getWriter());
 
-            writer.array();
+            writer.writeStartArray();
             for (Column column : project.columnModel.columns) {
-                writer.object();
+                writer.writeStartObject();
                     write(project, column, writer);
-                writer.endObject();
+                writer.writeEndObject();
             }
-            writer.endArray();
-            
-            //Refine.log("Obtained columns info in " + (System.currentTimeMillis() - start) + "ms");
+            writer.writeEndArray();
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);
@@ -101,33 +96,23 @@ public class GetColumnsInfoCommand extends Command {
         return index;
     }
     
-    private void write(Project project, Column column, JSONWriter writer) throws JSONException {
+    private void write(Project project, Column column, JsonGenerator writer) throws IOException {
         NumericBinIndex columnIndex = getBinIndex(project, column);
         if (columnIndex != null) {
-            writer.key("name");
-            writer.value(column.getName());
+            writer.writeStringField("name", column.getName());
             boolean is_numeric = columnIndex.isNumeric();
-            writer.key("is_numeric");
-            writer.value(is_numeric);
-            writer.key("numeric_row_count");
-            writer.value(columnIndex.getNumericRowCount());
-            writer.key("non_numeric_row_count");
-            writer.value(columnIndex.getNonNumericRowCount());
-            writer.key("error_row_count");
-            writer.value(columnIndex.getErrorRowCount());
-            writer.key("blank_row_count");
-            writer.value(columnIndex.getBlankRowCount());
+            writer.writeBooleanField("is_numeric", is_numeric);
+            writer.writeNumberField("numeric_row_count", columnIndex.getNumericRowCount());
+            writer.writeNumberField("non_numeric_row_count", columnIndex.getNonNumericRowCount());
+            writer.writeNumberField("error_row_count", columnIndex.getErrorRowCount());
+            writer.writeNumberField("blank_row_count", columnIndex.getBlankRowCount());
             if (is_numeric) {
-                writer.key("min");
-                writer.value(columnIndex.getMin());
-                writer.key("max");
-                writer.value(columnIndex.getMax());
-                writer.key("step");
-                writer.value(columnIndex.getStep());
+                writer.writeNumberField("min", columnIndex.getMin());
+                writer.writeNumberField("max", columnIndex.getMax());
+                writer.writeNumberField("step", columnIndex.getStep());
             }
         } else {
-            writer.key("error");
-            writer.value("error finding numeric information on the '" + column.getName() + "' column");
+            writer.writeStringField("error", "error finding numeric information on the '" + column.getName() + "' column");
         }
     }
 }

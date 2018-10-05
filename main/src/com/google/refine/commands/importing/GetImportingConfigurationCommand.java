@@ -34,36 +34,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.importing;
 
 import java.io.IOException;
-import java.io.Writer;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
-import com.google.refine.importing.ImportingManager;
+import com.google.refine.importing.ImportingManager.ImportingConfiguration;
 
 public class GetImportingConfigurationCommand extends Command {
+    
+    public static class ConfigurationResponse {
+        @JsonProperty("config")
+        ImportingConfiguration config = new ImportingConfiguration();
+    }
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Writer w = response.getWriter();
-        response.setContentType("application/json");
-        JSONWriter writer = new JSONWriter(w);
-        try {
-            writer.object();
-            writer.key("config"); ImportingManager.writeConfiguration(writer, new Properties());
-            writer.endObject();
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        } finally {
-            w.flush();
-            w.close();
-        }
+        respondJSON(response, new ConfigurationResponse());
     }
 }

@@ -36,21 +36,56 @@ package com.google.refine.commands.lang;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.commands.Command;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class GetLanguagesCommand extends Command {
+    
+    public static class LanguageRecord {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("label")
+        protected String label;
+        public LanguageRecord(String code, String label) {
+            this.code = code;
+            this.label = label;
+        }
+    }
+    
+    public class LanguagesResponse {
+        @JsonProperty("languages")
+        List<LanguageRecord> languages;
+        
+        public LanguagesResponse(ButterflyModule module) throws UnsupportedEncodingException {
+            languages = new ArrayList<>();
+            languages.add(new LanguageRecord("en", "English"));
+            FileFilter fileFilter = new WildcardFileFilter("translation-*.json");
+            for (File file : new File(module.getPath() + File.separator + "langs").listFiles(fileFilter)) {
+                String lang = file.getName().split("-")[1].split("\\.")[0];
+                if (!"en".equals(lang) && !"default".equals(lang)) {
+                    JSONObject json = LoadLanguageCommand.loadLanguage(servlet, "core", lang);
+                    if (json != null && json.has("name")) {
+                        String label = json.getString("name");
+                        languages.add(new LanguageRecord(lang, label));
+                    }
+                }
+            }
+        }
+    }
     
     public GetLanguagesCommand() {
         super();
@@ -73,42 +108,6 @@ public class GetLanguagesCommand extends Command {
         
         ButterflyModule module = this.servlet.getModule(modname);
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            
-            writer.object();
-            writer.key("languages");
-            writer.array();
-            writeLangData(writer, "en", "English"); // we always have English and it's always first
-            
-            FileFilter fileFilter = new WildcardFileFilter("translation-*.json");
-            for (File file : new File(module.getPath() + File.separator + "langs").listFiles(fileFilter)) {
-                String lang = file.getName().split("-")[1].split("\\.")[0];
-                if (!"en".equals(lang) && !"default".equals(lang)) {
-                    JSONObject json = LoadLanguageCommand.loadLanguage(this.servlet, "core", lang);
-                    if (json != null && json.has("name")) {
-                        String label = json.getString("name");
-                        writeLangData(writer, lang, label);
-                    }
-                }
-            }
-
-            writer.endArray();
-            writer.endObject();
-        } catch (JSONException e) {
-            respondException(response, e);
-        }
+        respondJSON(response, new LanguagesResponse(module));
     }
-
-    private void writeLangData(JSONWriter writer, String lang, String label)
-            throws JSONException {
-        writer.object();
-        writer.key("code"); writer.value(lang);
-        writer.key("label"); writer.value(label);
-        writer.endObject();
-    }
-
 }

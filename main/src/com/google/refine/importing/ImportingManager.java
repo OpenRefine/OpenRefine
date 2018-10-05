@@ -55,15 +55,21 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.RefineServlet;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class ImportingManager {
     static public class Format {
+        @JsonProperty("id")
         final public String id;
+        @JsonProperty("label")
         final public String label;
+        @JsonProperty("download")
         final public boolean download;
+        @JsonProperty("uiClass")
         final public String uiClass;
         final public ImportingParser parser;
         
@@ -223,41 +229,13 @@ public class ImportingManager {
         }
     }
     
-    static public void writeConfiguration(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        
-        writer.key("formats");
-        writer.object();
-        for (String format : formatToRecord.keySet()) {
-            Format record = formatToRecord.get(format);
-            
-            writer.key(format);
-            writer.object();
-            writer.key("id"); writer.value(record.id);
-            writer.key("label"); writer.value(record.label);
-            writer.key("download"); writer.value(record.download);
-            writer.key("uiClass"); writer.value(record.uiClass);
-            writer.endObject();
-        }
-        writer.endObject();
-        
-        writer.key("mimeTypeToFormat");
-        writer.object();
-        for (String mimeType : mimeTypeToFormat.keySet()) {
-            writer.key(mimeType);
-            writer.value(mimeTypeToFormat.get(mimeType));
-        }
-        writer.endObject();
-        
-        writer.key("extensionToFormat");
-        writer.object();
-        for (String extension : extensionToFormat.keySet()) {
-            writer.key(extension);
-            writer.value(extensionToFormat.get(extension));
-        }
-        writer.endObject();
-        
-        writer.endObject();
+    static public class ImportingConfiguration {
+        @JsonProperty("formats")
+        public Map<String, Format> getFormats() { return formatToRecord; }
+        @JsonProperty("mimeTypeToFormat")
+        public Map<String, String> getMimeTypeToFormat() { return mimeTypeToFormat; }
+        @JsonProperty("extensionToFormat")
+        public Map<String, String> getExtensionToFormat() { return extensionToFormat; }
     }
     
     static public String getFormatFromFileName(String fileName) {
