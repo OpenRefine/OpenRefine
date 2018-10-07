@@ -46,7 +46,6 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 
 public class JSONUtilities {
@@ -170,22 +169,6 @@ public class JSONUtilities {
             }
         } catch (JSONException e) {
         }
-    }
-    
-    static public void writeStringList(JSONWriter writer, List<String> list) throws JSONException {
-        writer.array();
-        for (String s : list) {
-            writer.value(s);
-        }
-        writer.endArray();
-    }
-    
-    static public void writeStringArray(JSONWriter writer, String[] strings) throws JSONException {
-        writer.array();
-        for (String s : strings) {
-            writer.value(s);
-        }
-        writer.endArray();
     }
     
     static public void putField(JSONObject obj, String key, Object value) throws JSONException {

@@ -40,15 +40,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +58,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
@@ -234,18 +237,69 @@ public class StandardReconConfig extends ReconConfig {
          */
         StandardReconJob job = new StandardReconJob();
         try {
-            StringWriter stringWriter = new StringWriter();
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            jsonWriter.object();
-            jsonWriter.key("query");
-            jsonWriter.value(query);
-            jsonWriter.endObject();
+            String queryJson = ParsingUtilities.defaultWriter.writeValueAsString(
+                    Collections.singletonMap("query", query));
             job.text = query;
-            job.code = stringWriter.toString();
+            job.code = queryJson;
             return job;
-        } catch (JSONException je) {
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return null;
         }
+    }
+    
+    protected static class QueryProperty {
+        @JsonProperty("pid")
+        String pid;
+        @JsonProperty("v")
+        Object v;
+        
+        protected QueryProperty(
+                String pid,
+                Object v) {
+            this.pid = pid;
+            this.v = v;
+        }
+    }
+    
+    protected static class ReconQuery {
+        @JsonProperty("query")
+        protected String query;
+        
+        @JsonProperty("type")
+        @JsonInclude(Include.NON_NULL)
+        protected String typeID;
+        
+        @JsonProperty("type_strict")
+        @JsonInclude(Include.NON_NULL)
+        public String isTypeStrict() {
+            if(typeID != null) {
+                return "should";
+            }
+            return null;
+        }
+        
+        @JsonProperty("properties")
+        @JsonInclude(Include.NON_EMPTY)
+        protected List<QueryProperty> properties;
+        
+        // Only send limit if it's non-default to preserve backward compatibility with
+        // services which might choke on this
+        @JsonProperty("limit")
+        @JsonInclude(Include.NON_DEFAULT)
+        protected int limit;
+        
+        public ReconQuery(
+                String query,
+                String typeID,
+                List<QueryProperty> properties,
+                int limit) {
+            this.query = query;
+            this.typeID = typeID;
+            this.properties = properties;
+            this.limit = limit;
+        }
+        
     }
 
     @Override
@@ -254,74 +308,48 @@ public class StandardReconConfig extends ReconConfig {
         
         StandardReconJob job = new StandardReconJob();
 
-        try {
-            StringWriter stringWriter = new StringWriter();
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            
-            jsonWriter.object();
-                jsonWriter.key("query"); jsonWriter.value(cell.value.toString());
-                if (typeID != null) {
-                    jsonWriter.key("type"); jsonWriter.value(typeID);
-                    jsonWriter.key("type_strict"); jsonWriter.value("should");
-                }
+            List<QueryProperty> properties = new ArrayList<>();
                 
-                if (columnDetails.size() > 0) {
-                    jsonWriter.key("properties");
-                    jsonWriter.array();
+            for (ColumnDetail c : columnDetails) {
+                int detailCellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
+                
+                Cell cell2 = row.getCell(detailCellIndex);
+                if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
+                    int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
                     
-                    for (ColumnDetail c : columnDetails) {
-                        int detailCellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
-                        
-                        Cell cell2 = row.getCell(detailCellIndex);
-                        if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
-                            int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
+                    RowDependency rd = project.recordModel.getRowDependency(rowIndex);
+                    if (rd != null && rd.cellDependencies != null) {
+                        int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex;
+                        if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
+                            Row row2 = project.rows.get(contextRowIndex);
                             
-                            RowDependency rd = project.recordModel.getRowDependency(rowIndex);
-                            if (rd != null && rd.cellDependencies != null) {
-                                int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex;
-                                if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
-                                    Row row2 = project.rows.get(contextRowIndex);
-                                    
-                                    cell2 = row2.getCell(detailCellIndex);
-                                }
-                            }
-                        }
-                        
-                        if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
-                            jsonWriter.object();
-                            
-                            jsonWriter.key("pid"); jsonWriter.value(c.propertyID);
-                            jsonWriter.key("v");
-                            if (cell2.recon != null && cell2.recon.match != null) {
-                                jsonWriter.object();
-                                jsonWriter.key("id"); jsonWriter.value(cell2.recon.match.id);
-                                jsonWriter.key("name"); jsonWriter.value(cell2.recon.match.name);
-                                jsonWriter.endObject();
-                            } else if (cell2.value instanceof OffsetDateTime) {
-                                jsonWriter.value(ParsingUtilities.dateToString((OffsetDateTime) cell2.value));
-                            } else {
-                                jsonWriter.value(cell2.value.toString());
-                            }
-                            
-                            jsonWriter.endObject();
+                            cell2 = row2.getCell(detailCellIndex);
                         }
                     }
-                    
-                    jsonWriter.endArray();
                 }
                 
-            // Only send limit if it's non-default to preserve backward compatibility with
-            // services which might choke on this
-            if (limit != 0) {
-                jsonWriter.key("limit"); jsonWriter.value(limit);
+                if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
+                    Object v = null;
+                    if (cell2.recon != null && cell2.recon.match != null) {
+                        Map<String, String> recon = new HashMap<>();
+                        recon.put("id", cell2.recon.match.id);
+                        recon.put("name", cell2.recon.match.name);
+                        v = recon;
+                    } else {
+                        v = cell2.value;
+                    }
+                    properties.add(new QueryProperty(c.propertyID, v));
+                }
+
             }
-                
-            jsonWriter.endObject();
-            
-            job.text = cell.value.toString();
-            job.code = stringWriter.toString();
-        } catch (JSONException e) {
-            //
+        
+        ReconQuery query = new ReconQuery(cell.value.toString(), typeID, properties, limit);
+        
+        job.text = cell.value.toString();
+        try {
+            job.code = ParsingUtilities.defaultWriter.writeValueAsString(query);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
         return job;
     }

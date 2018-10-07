@@ -48,9 +48,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
@@ -187,22 +187,21 @@ public class DefaultImportingController implements ImportingController {
             ImportingUtilities.previewParse(job, format, optionObj, exceptions);
             
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             try {
-                writer.object();
+                writer.writeStartObject();
                 if (exceptions.size() == 0) {
                     job.project.update(); // update all internal models, indexes, caches, etc.
                     
-                    writer.key("status"); writer.value("ok");
+                    writer.writeStringField("status", "ok");
                 } else {
-                    writer.key("status"); writer.value("error");
-                    writer.key("errors");
-                    writer.array();
+                    writer.writeStringField("status", "error");
+                    writer.writeArrayFieldStart("errors");
                     writeErrors(writer, exceptions);
-                    writer.endArray();
+                    writer.writeEndArray();
                 }
-                writer.endObject();
-            } catch (JSONException e) {
+                writer.writeEndObject();
+            } catch (IOException e) {
                 throw new ServletException(e);
             } finally {
                 w.flush();
@@ -304,17 +303,15 @@ public class DefaultImportingController implements ImportingController {
         w.close();
     }
     
-    static public void writeErrors(JSONWriter writer, List<Exception> exceptions) throws JSONException {
+    static public void writeErrors(JsonGenerator writer, List<Exception> exceptions) throws IOException {
         for (Exception e : exceptions) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             
-            writer.object();
-            writer.key("message");
-            writer.value(e.getLocalizedMessage());
-            writer.key("stack");
-            writer.value(sw.toString());
-            writer.endObject();
+            writer.writeStartObject();
+            writer.writeStringField("message", e.getLocalizedMessage());
+            writer.writeStringField("stack", sw.toString());
+            writer.writeEndObject();
         }
     }
     

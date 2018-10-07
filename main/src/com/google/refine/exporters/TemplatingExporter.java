@@ -34,13 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
@@ -62,6 +62,26 @@ public class TemplatingExporter implements WriterExporter {
     @Override
     public String getContentType() {
         return "application/x-unknown";
+    }
+    
+    protected static class TemplateConfig {
+        @JsonProperty("template")
+        protected String template;
+        @JsonProperty("prefix")
+        protected String prefix;
+        @JsonProperty("suffix")
+        protected String suffix;
+        @JsonProperty("separator")
+        protected String separator;
+        
+        protected TemplateConfig(
+                String template, String prefix,
+                String suffix, String separator) {
+            this.template = template;
+            this.prefix = prefix;
+            this.suffix = suffix;
+            this.separator = separator;
+        }
     }
 
     @Override
@@ -94,20 +114,10 @@ public class TemplatingExporter implements WriterExporter {
         template.setSeparator(separatorString);
         
         if (!"true".equals(options.getProperty("preview"))) {
-            StringWriter stringWriter = new StringWriter();
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            try {
-                jsonWriter.object();
-                jsonWriter.key("template"); jsonWriter.value(templateString);
-                jsonWriter.key("prefix"); jsonWriter.value(prefixString);
-                jsonWriter.key("suffix"); jsonWriter.value(suffixString);
-                jsonWriter.key("separator"); jsonWriter.value(separatorString);
-                jsonWriter.endObject();
-            } catch (JSONException e) {
-                // ignore
-            }
-            
-            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
+            TemplateConfig config = new TemplateConfig(templateString, prefixString,
+                    suffixString, separatorString);
+            project.getMetadata().getPreferenceStore().put("exporters.templating.template",
+                    ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
         
         if (engine.getMode() == Mode.RowBased) {
