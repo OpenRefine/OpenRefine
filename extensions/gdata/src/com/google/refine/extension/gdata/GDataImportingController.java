@@ -14,9 +14,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -86,11 +87,10 @@ public class GDataImportingController implements ImportingController {
         }
         
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
-            writer.object();
-            writer.key("documents");
-            writer.array();
+            writer.writeStartObject();
+            writer.writeArrayFieldStart("documents");
             
             try {
                 listSpreadsheets(GoogleAPIExtension.getDriveService(token), writer);
@@ -98,18 +98,20 @@ public class GDataImportingController implements ImportingController {
             }  catch (Exception e) {
                 logger.error("doListDocuments exception:" + ExceptionUtils.getStackTrace(e));
             }  finally {
-                writer.endArray();
-                writer.endObject();
+                writer.writeEndArray();
+                writer.writeEndObject();
             }
         } catch (JSONException e) {
             throw new ServletException(e);
         } finally {
+            writer.flush();
+            writer.close();
             w.flush();
             w.close();
         }
     }
     
-    private void listSpreadsheets(Drive drive, JSONWriter writer)
+    private void listSpreadsheets(Drive drive, JsonGenerator writer)
             throws IOException, JSONException {
          com.google.api.services.drive.Drive.Files.List files = drive.files().list();
          files.setQ("mimeType = 'application/vnd.google-apps.spreadsheet'");
@@ -117,30 +119,30 @@ public class GDataImportingController implements ImportingController {
          FileList fileList = files.execute();
          
         for (File entry : fileList.getFiles()) {
-            writer.object();
-            writer.key("docId"); writer.value(entry.getId());
-            writer.key("docLink"); writer.value(entry.getWebViewLink());
-            writer.key("docSelfLink"); writer.value(entry.getWebViewLink());
-            writer.key("title"); writer.value(entry.getName());
+            writer.writeStartObject();
+            writer.writeStringField("docId", entry.getId());
+            writer.writeStringField("docLink", entry.getWebViewLink());
+            writer.writeStringField("docSelfLink", entry.getWebViewLink());
+            writer.writeStringField("title", entry.getName());
             
-            writer.key("type"); writer.value("spreadsheet");
+            writer.writeStringField("type", "spreadsheet");
             
             com.google.api.client.util.DateTime updated = entry.getModifiedTime();
             if (updated != null) {
-                writer.key("updated"); writer.value(updated.toString());
+                writer.writeStringField("updated", updated.toString());
             }
             
-            writer.key("authors"); writer.array();
+            writer.writeArrayFieldStart("authors");
             for (User user : entry.getOwners()) {
-                writer.value(user.getDisplayName());
+                writer.writeString(user.getDisplayName());
             }
-            writer.endArray();
+            writer.writeEndArray();
             
-            writer.endObject();
+            writer.writeEndObject();
         }
     }
     
-    private void listFusionTables(Fusiontables service, JSONWriter writer)
+    private void listFusionTables(Fusiontables service, JsonGenerator writer)
         throws IOException, JSONException {
         
         Fusiontables.Table.List listTables = service.table().list();
@@ -155,13 +157,13 @@ public class GDataImportingController implements ImportingController {
             String link = "https://www.google.com/fusiontables/DataSource?docid=" + id;
             
             // Add JSON object to our stream
-            writer.object();
-            writer.key("docId"); writer.value(id);
-            writer.key("docLink"); writer.value(link);
-            writer.key("docSelfLink"); writer.value(link);
-            writer.key("title"); writer.value(name);
-            writer.key("type"); writer.value("table");
-            writer.endObject();
+            writer.writeStartObject();
+            writer.writeStringField("docId", id);
+            writer.writeStringField("docLink", link);
+            writer.writeStringField("docSelfLink", link);
+            writer.writeStringField("title", name);
+            writer.writeStringField("type", "table");
+            writer.writeEndObject();
         }
     }
     
@@ -253,25 +255,26 @@ public class GDataImportingController implements ImportingController {
             );
             
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             try {
-                writer.object();
+                writer.writeStartObject();
                 if (exceptions.size() == 0) {
                     job.project.update(); // update all internal models, indexes, caches, etc.
                     
-                    writer.key("status"); writer.value("ok");
+                    writer.writeStringField("status", "ok");
                 } else {
-                    writer.key("status"); writer.value("error");
+                    writer.writeStringField("status", "error");
                     
-                    writer.key("errors");
-                    writer.array();
+                    writer.writeArrayFieldStart("errors");
                     DefaultImportingController.writeErrors(writer, exceptions);
-                    writer.endArray();
+                    writer.writeEndArray();
                 }
-                writer.endObject();
-            } catch (JSONException e) {
+                writer.writeEndObject();
+            } catch (IOException e) {
                 throw new ServletException(e);
             } finally {
+                writer.flush();
+                writer.close();
                 w.flush();
                 w.close();
             }

@@ -15,10 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.codec.binary.Base64;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
@@ -34,6 +35,7 @@ import com.google.refine.commands.project.ExportRowsCommand;
 import com.google.refine.exporters.CustomizableTabularExporterUtilities;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class UploadCommand extends Command {
     static final Logger logger = LoggerFactory.getLogger("gdata_upload");
@@ -61,31 +63,33 @@ public class UploadCommand extends Command {
             response.setHeader("Content-Type", "application/json");
             
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             try {
-                writer.object();
+                writer.writeStartObject();
                 
                 List<Exception> exceptions = new LinkedList<Exception>();
                 String url = upload(project, engine, params, token, name, exceptions);
                 if (url != null) {
-                    writer.key("status"); writer.value("ok");
-                    writer.key("url"); writer.value(url);
+                    writer.writeStringField("status", "ok");
+                    writer.writeStringField("url", url);
                 } else if (exceptions.size() == 0) {
-                    writer.key("status"); writer.value("error");
-                    writer.key("message"); writer.value("No such format");
+                    writer.writeStringField("status", "error");
+                    writer.writeStringField("message", "No such format");
                 } else {
                     for (Exception e : exceptions) {
                         logger.warn(e.getLocalizedMessage(), e);
                     }
-                    writer.key("status"); writer.value("error");
-                    writer.key("message"); writer.value(exceptions.get(0).getLocalizedMessage());
+                    writer.writeStringField("status", "error");
+                    writer.writeStringField("message", exceptions.get(0).getLocalizedMessage());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                writer.key("status"); writer.value("error");
-                writer.key("message"); writer.value(e.getMessage());
+                writer.writeStringField("status", "error");
+                writer.writeStringField("message", e.getMessage());
             } finally {
-                writer.endObject();
+                writer.writeEndObject();
+                writer.flush();
+                writer.close();
                 w.flush();
                 w.close();
             }
