@@ -24,17 +24,19 @@
 package org.openrefine.wikidata.commands;
 
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.editing.ConnectionManager;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import com.google.refine.commands.Command;
+import com.google.refine.util.ParsingUtilities;
 
 public class LoginCommand extends Command {
 
@@ -53,20 +55,22 @@ public class LoginCommand extends Command {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
 
-        StringWriter sb = new StringWriter(2048);
-        JSONWriter writer = new JSONWriter(sb);
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
         try {
-            writer.object();
-            writer.key("logged_in");
-            writer.value(manager.isLoggedIn());
-            writer.key("username");
-            writer.value(manager.getUsername());
-            writer.endObject();
+            writer.writeStartObject();
+            writer.writeBooleanField("logged_in", manager.isLoggedIn());
+            writer.writeStringField("username", manager.getUsername());
+            writer.writeEndObject();
         } catch (JSONException e) {
             logger.error(e.getMessage());
+        } finally {
+            writer.flush();
+            writer.close();
+            w.flush();
+            w.close();
         }
-        respond(response, sb.toString());
     }
 
     @Override
