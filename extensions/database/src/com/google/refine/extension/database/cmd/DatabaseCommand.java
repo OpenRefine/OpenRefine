@@ -33,7 +33,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +81,7 @@ public abstract class DatabaseCommand extends Command {
      * @param e
      * @throws IOException
      */
-    protected void sendError(int status, HttpServletResponse response, JSONWriter writer, Exception e)
+    protected void sendError(int status, HttpServletResponse response, Exception e)
             throws  IOException {
         
        //logger.info("sendError::{}", writer);
@@ -97,7 +96,7 @@ public abstract class DatabaseCommand extends Command {
      * @param e
      * @throws IOException
      */
-    protected void sendError(int status, HttpServletResponse response, JSONWriter writer, DatabaseServiceException e)
+    protected void sendError(int status, HttpServletResponse response, DatabaseServiceException e)
             throws IOException {
         
         String message = "";

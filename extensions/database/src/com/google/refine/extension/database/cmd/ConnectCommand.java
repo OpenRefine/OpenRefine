@@ -37,15 +37,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 //import com.google.refine.ProjectManager;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.extension.database.model.DatabaseInfo;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ConnectCommand extends DatabaseCommand {
@@ -66,7 +68,7 @@ public class ConnectCommand extends DatabaseCommand {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             ObjectMapper mapperObj = new ObjectMapper();
             
             try {
@@ -74,22 +76,20 @@ public class ConnectCommand extends DatabaseCommand {
                         .connect(databaseConfiguration);
                 String databaseInfoString = mapperObj.writeValueAsString(databaseInfo);
                 response.setStatus(HttpStatus.SC_OK);
-                writer.object();
-                writer.key("code"); 
-                writer.value("ok");
-                writer.key("databaseInfo"); 
-                writer.value(databaseInfoString);
-              
-                writer.endObject();
+                writer.writeStartObject();
+                writer.writeStringField("code", "ok");
+                writer.writeStringField("databaseInfo", databaseInfoString);
+                writer.writeEndObject();
            
             } catch (DatabaseServiceException e) {
                 logger.error("ConnectCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, writer, e);
+                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
             }catch (Exception e) {
                 logger.error("ConnectCommand::Post::Exception::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, writer, e);
+                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
             } finally {  
-               // w.flush();
+                writer.flush();
+                writer.close();
                 w.close();
             }
         } catch (Exception e) {

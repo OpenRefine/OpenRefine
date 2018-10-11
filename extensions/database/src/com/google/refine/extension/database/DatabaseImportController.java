@@ -41,9 +41,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
@@ -207,30 +208,23 @@ public class DatabaseImportController implements ImportingController {
                     optionObj,
                     exceptions
                 );
-//                String exStr = getExceptionString(exceptions);
-//                logger.info("exceptions::" + exStr);
-                
                 Writer w = response.getWriter();
-                JSONWriter writer = new JSONWriter(w);
+                JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
                 try {
-                    writer.object();
+                    writer.writeStartObject();
                     if (exceptions.size() == 0) {
                         job.project.update(); // update all internal models, indexes, caches, etc.
-                        writer.key("status"); 
-                        writer.value("ok");
+                        writer.writeStringField("status", "ok");
                     } else {
-                        writer.key("status"); 
-                        writer.value("error");
-                        writer.key("message");
-                        writer.value(getExceptionString(exceptions));
-//                        writer.array();
-//                        writeErrors(writer, exceptions);
-//                        writer.endArray();
+                        writer.writeStringField("status", "error");
+                        writer.writeStringField("message", getExceptionString(exceptions));
                     }
-                    writer.endObject();
+                    writer.writeEndObject();
                 } catch (JSONException e) {
                     throw new ServletException(e);
                 } finally {
+                    writer.flush();
+                    writer.close();
                     w.flush();
                     w.close();
                 }

@@ -38,12 +38,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class SavedConnectionCommand extends DatabaseCommand {
@@ -120,51 +122,38 @@ public class SavedConnectionCommand extends DatabaseCommand {
     private void writeSavedConnectionResponse(HttpServletResponse response, DatabaseConfiguration savedConnection) throws IOException, JSONException {
         Writer w = response.getWriter();
         try {
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             
-            writer.object();
-            writer.key(DatabaseUtils.SAVED_CONNECTION_KEY);
-            writer.array();
+            writer.writeStartObject();
+            writer.writeArrayFieldStart(DatabaseUtils.SAVED_CONNECTION_KEY);
             
-            writer.object();
-            writer.key("connectionName");
-            writer.value(savedConnection.getConnectionName());
+            writer.writeStartObject();
+            writer.writeStringField("connectionName", savedConnection.getConnectionName());
             
-            writer.key("databaseType");
-            writer.value(savedConnection.getDatabaseType());
+            writer.writeStringField("databaseType", savedConnection.getDatabaseType());
 
-            writer.key("databaseHost");
-            writer.value(savedConnection.getDatabaseHost());
+            writer.writeStringField("databaseHost", savedConnection.getDatabaseHost());
 
-            writer.key("databasePort");
-            writer.value(savedConnection.getDatabasePort());
+            writer.writeNumberField("databasePort", savedConnection.getDatabasePort());
 
-            writer.key("databaseName");
-            writer.value(savedConnection.getDatabaseName());
-
-            writer.key("databasePassword");
+            writer.writeStringField("databaseName", savedConnection.getDatabaseName());
            
-            //
             String dbPasswd = savedConnection.getDatabasePassword();
             if(dbPasswd != null && !dbPasswd.isEmpty()) {
                 dbPasswd = DatabaseUtils.decrypt(savedConnection.getDatabasePassword());
-                //logger.info("Decrypted Password::" + dbPasswd);
             }
-            writer.value(dbPasswd);
-            //
-            
-           // writer.value(savedConnection.getDatabasePassword());
+            writer.writeStringField("databasePassword", dbPasswd);
 
-            writer.key("databaseSchema");
-            writer.value(savedConnection.getDatabaseSchema());
+            writer.writeStringField("databaseSchema", savedConnection.getDatabaseSchema());
             
-            writer.key("databaseUser");
-            writer.value(savedConnection.getDatabaseUser());
+            writer.writeStringField("databaseUser", savedConnection.getDatabaseUser());
 
-            writer.endObject();
-            writer.endArray();
+            writer.writeEndObject();
+            writer.writeEndArray();
             
-            writer.endObject();
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
             
         }finally {
             w.flush();
@@ -183,54 +172,47 @@ public class SavedConnectionCommand extends DatabaseCommand {
         try {
             
             List<DatabaseConfiguration> savedConnections = DatabaseUtils.getSavedConnections();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
-            writer.object();
-            writer.key(DatabaseUtils.SAVED_CONNECTION_KEY);
-            writer.array();
+            writer.writeStartObject();
+            writer.writeArrayFieldStart(DatabaseUtils.SAVED_CONNECTION_KEY);
 
             int size = savedConnections.size();
 
             for (int i = 0; i < size; i++) {
                 
-                writer.object();
+                writer.writeStartObject();
                 DatabaseConfiguration dbConfig = (DatabaseConfiguration) savedConnections.get(i);
 
-                writer.key("connectionName");
-                writer.value(dbConfig.getConnectionName());
+                writer.writeStringField("connectionName", dbConfig.getConnectionName());
 
-                writer.key("databaseType");
-                writer.value(dbConfig.getDatabaseType());
+                writer.writeStringField("databaseType", dbConfig.getDatabaseType());
 
-                writer.key("databaseHost");
-                writer.value(dbConfig.getDatabaseHost());
+                writer.writeStringField("databaseHost", dbConfig.getDatabaseHost());
 
-                writer.key("databasePort");
-                writer.value(dbConfig.getDatabasePort());
+                writer.writeNumberField("databasePort", dbConfig.getDatabasePort());
 
-                writer.key("databaseName");
-                writer.value(dbConfig.getDatabaseName());
+                writer.writeStringField("databaseName", dbConfig.getDatabaseName());
 
-                writer.key("databasePassword");
                 
                 String dbPasswd = dbConfig.getDatabasePassword();
                 if(dbPasswd != null && !dbPasswd.isEmpty()) {
                     dbPasswd = DatabaseUtils.decrypt(dbConfig.getDatabasePassword());
                 }
                // writer.value(dbConfig.getDatabasePassword());
-                writer.value(dbPasswd);
+                writer.writeStringField("databasePassword", dbPasswd);
                 
-                writer.key("databaseSchema");
-                writer.value(dbConfig.getDatabaseSchema());
+                writer.writeStringField("databaseSchema", dbConfig.getDatabaseSchema());
                 
-                writer.key("databaseUser");
-                writer.value(dbConfig.getDatabaseUser());
+                writer.writeStringField("databaseUser", dbConfig.getDatabaseUser());
 
-                writer.endObject();
+                writer.writeEndObject();
 
             }
-            writer.endArray();
-            writer.endObject();
+            writer.writeEndArray();
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
            // logger.info("Saved Connection Get Response sent");
         } finally {
             w.flush();

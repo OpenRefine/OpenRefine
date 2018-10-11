@@ -37,15 +37,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 //import com.google.refine.ProjectManager;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.extension.database.model.DatabaseInfo;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class TestQueryCommand extends DatabaseCommand {
@@ -70,7 +72,7 @@ public class TestQueryCommand extends DatabaseCommand {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             
             try {
                 DatabaseInfo databaseInfo = DatabaseService.get(dbConfig.getDatabaseType())
@@ -83,22 +85,22 @@ public class TestQueryCommand extends DatabaseCommand {
                     logger.debug("TestQueryCommand::Post::Result::{} " ,jsonStr);
                 }
                 
-                writer.object();
-                writer.key("code"); 
-                writer.value("ok");
-                writer.key("QueryResult"); 
-                writer.value(jsonStr);
-                writer.endObject();
+                writer.writeStartObject();
+                writer.writeStringField("code", "ok");
+                writer.writeStringField("QueryResult", jsonStr);
+                writer.writeEndObject();
                
                
             } catch (DatabaseServiceException e) {
                 logger.error("TestQueryCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_BAD_REQUEST, response, writer, e);
+                sendError(HttpStatus.SC_BAD_REQUEST, response, e);
 
             } catch (Exception e) {
                 logger.error("TestQueryCommand::Post::Exception::{}", e);
-                sendError(HttpStatus.SC_BAD_REQUEST,response, writer, e);
+                sendError(HttpStatus.SC_BAD_REQUEST,response, e);
             } finally {
+                writer.flush();
+                writer.close();
                 w.close();
             }
         } catch (Exception e) {
