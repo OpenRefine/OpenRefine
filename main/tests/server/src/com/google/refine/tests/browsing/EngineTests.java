@@ -13,6 +13,6 @@ public class EngineTests {
     public void serializeEngine() {
         Project project = mock(Project.class);
         Engine engine = new Engine(project);
-        TestUtils.isSerializedTo(engine, "{\"mode\":\"row-based\",\"facets\":[]}");
+        TestUtils.isSerializedTo(engine, "{\"engine-mode\":\"row-based\",\"facets\":[]}");
     }
 }

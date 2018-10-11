@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ import com.google.refine.commands.history.CancelProcessesCommand;
 import com.google.refine.model.Project;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 public class CancelProcessesCommandTests extends RefineTest {
 
@@ -80,6 +82,7 @@ public class CancelProcessesCommandTests extends RefineTest {
     ProjectManager projMan = null;
     Project proj = null;
     ProcessManager processMan = null;
+    StringWriter sw = null;
     PrintWriter pw = null;
 
     @BeforeMethod
@@ -88,7 +91,8 @@ public class CancelProcessesCommandTests extends RefineTest {
         ProjectManager.singleton = projMan;
         proj = mock(Project.class);
         processMan = mock(ProcessManager.class);
-        pw = mock(PrintWriter.class);
+        sw = new StringWriter();
+        pw = new PrintWriter(sw);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -102,7 +106,7 @@ public class CancelProcessesCommandTests extends RefineTest {
         projMan = null;
         ProjectManager.singleton = null;
         proj = null;
-        pw = null;
+        sw = null;
         request = null;
         response = null;
     }
@@ -186,7 +190,7 @@ public class CancelProcessesCommandTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+        TestUtils.assertEqualAsJson("{ \"code\" : \"ok\" }", sw.toString());
     }
 
      @Test
@@ -195,6 +199,11 @@ public class CancelProcessesCommandTests extends RefineTest {
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(projMan.getProject(anyLong()))
             .thenReturn(null);
+        try {
+            when(response.getWriter()).thenReturn(pw);
+        } catch (IOException e1) {
+            Assert.fail();
+        }
 
         // run
         try {
@@ -238,7 +247,7 @@ public class CancelProcessesCommandTests extends RefineTest {
             verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
             verify(processMan, times(1)).cancelAll();
-            verify(response, times(3)).setCharacterEncoding("UTF-8");
+            verify(response, times(2)).setCharacterEncoding("UTF-8");
             //omitted other verifications for brevity.
             //assumption is that expecting response.setCharacterEncoding times(3)
             //implies it has Command.respondException has been called as expected
