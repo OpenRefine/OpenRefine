@@ -73,6 +73,8 @@ public class GetColumnsInfoCommand extends Command {
                 writer.writeEndObject();
             }
             writer.writeEndArray();
+            writer.flush();
+            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);

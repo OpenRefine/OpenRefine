@@ -31,9 +31,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.commons.lang.Validate;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -56,7 +54,6 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.Pool;

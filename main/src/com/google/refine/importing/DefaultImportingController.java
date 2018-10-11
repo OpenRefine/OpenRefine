@@ -201,6 +201,8 @@ public class DefaultImportingController implements ImportingController {
                     writer.writeEndArray();
                 }
                 writer.writeEndObject();
+                writer.flush();
+                writer.close();
             } catch (IOException e) {
                 throw new ServletException(e);
             } finally {
@@ -298,7 +300,7 @@ public class DefaultImportingController implements ImportingController {
         throws ServletException, IOException {
         
         Writer w = response.getWriter();
-        ParsingUtilities.defaultWriter.writeValue(w, job);
+        ParsingUtilities.defaultWriter.writeValue(w, new JobResponse("ok",job));
         w.flush();
         w.close();
     }

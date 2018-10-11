@@ -295,6 +295,8 @@ public abstract class Command {
         writer.writeStringField("status", status);
         writer.writeStringField("message", message);
         writer.writeEndObject();
+        writer.flush();
+        writer.close();
         w.flush();
         w.close();
     }
@@ -360,6 +362,8 @@ public abstract class Command {
 
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
+            writer.flush();
+            writer.close();
             w.flush();
             w.close();
         } catch (JSONException e1) {

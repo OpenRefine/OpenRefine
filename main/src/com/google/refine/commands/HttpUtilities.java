@@ -49,6 +49,8 @@ abstract public class HttpUtilities {
             writer.writeStringField("status", status);
             writer.writeStringField("message", message);
             writer.writeEndObject();
+            writer.flush();
+            writer.close();
             w.flush();
             w.close();
         } catch (JSONException e) {
@@ -101,6 +103,8 @@ abstract public class HttpUtilities {
             writer.writeStringField("message", e.getMessage());
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
+            writer.flush();
+            writer.close();
             w.flush();
             w.close();
         } catch (JSONException e1) {

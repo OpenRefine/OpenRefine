@@ -26,11 +26,9 @@ package org.openrefine.wikidata.schema;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;

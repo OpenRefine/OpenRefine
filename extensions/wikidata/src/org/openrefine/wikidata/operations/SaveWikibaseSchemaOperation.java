@@ -28,9 +28,7 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,7 +37,6 @@ import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
