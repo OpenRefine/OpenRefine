@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.Change;
@@ -42,7 +43,8 @@ import com.google.refine.util.Pool;
 
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
-    final public String operationDescription = "Save Wikibase schema";
+    @JsonIgnore
+    final public static String operationDescription = "Save Wikibase schema";
     @JsonProperty("schema")
     final protected WikibaseSchema _schema;
 
