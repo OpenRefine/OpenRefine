@@ -68,6 +68,7 @@ public class Engine  {
     public final static String MODE_ROW_BASED = "row-based";
     public final static String MODE_RECORD_BASED = "record-based";
 
+    @JsonIgnore
     protected Project _project;
     @JsonProperty("facets")
     protected List<Facet> _facets = new LinkedList<Facet>();
@@ -93,6 +94,7 @@ public class Engine  {
         _config = new EngineConfig(_config.getFacetConfigs(), mode);
     }
 
+    @JsonIgnore
     public FilteredRows getAllRows() {
         return new FilteredRows() {
             @Override
@@ -114,6 +116,7 @@ public class Engine  {
         };
     }
 
+    @JsonIgnore
     public FilteredRows getAllFilteredRows() {
         return getFilteredRows(null);
     }
@@ -136,6 +139,7 @@ public class Engine  {
         throw new InternalError("Unknown mode.");
     }
 
+    @JsonIgnore
     public FilteredRecords getAllRecords() {
         return new FilteredRecords() {
             @Override
@@ -154,6 +158,7 @@ public class Engine  {
         };
     }
 
+    @JsonIgnore
     public FilteredRecords getFilteredRecords() {
         return getFilteredRecords(null);
     }

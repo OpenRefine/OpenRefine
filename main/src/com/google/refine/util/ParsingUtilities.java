@@ -84,7 +84,7 @@ public class ParsingUtilities {
 
         
         mapper.registerModule(module);
-        mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+       // mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     

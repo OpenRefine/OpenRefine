@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -84,6 +85,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
+    @JsonIgnore
     public String getBaseIri() {
         return baseIri;
     }
@@ -91,6 +93,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the list of document expressions for this schema
      */
+    @JsonIgnore
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
     }

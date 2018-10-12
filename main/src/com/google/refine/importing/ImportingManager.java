@@ -52,6 +52,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.RefineServlet;
@@ -68,6 +69,7 @@ public class ImportingManager {
         final public boolean download;
         @JsonProperty("uiClass")
         final public String uiClass;
+        @JsonIgnore
         final public ImportingParser parser;
         
         private Format(
