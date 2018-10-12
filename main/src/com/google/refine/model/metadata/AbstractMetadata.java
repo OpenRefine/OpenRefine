@@ -6,10 +6,16 @@ import java.time.LocalDateTime;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public abstract class AbstractMetadata implements IMetadata {
+    @JsonIgnore
     private MetadataFormat formatName = MetadataFormat.UNKNOWN;
     
+    @JsonIgnore
     protected LocalDateTime written = null;
+    @JsonProperty("modified")
     protected LocalDateTime           _modified;
     
     public MetadataFormat getFormatName() {

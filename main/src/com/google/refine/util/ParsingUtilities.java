@@ -59,8 +59,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -80,11 +78,10 @@ public class ParsingUtilities {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Double.class, new SerializationFilters.DoubleSerializer());
         module.addSerializer(double.class, new SerializationFilters.DoubleSerializer());
-        module.addSerializer(OffsetDateTime.class, new SerializationFilters.DateSerializer());
-
+        module.addSerializer(OffsetDateTime.class, new SerializationFilters.OffsetDateSerializer());
+        module.addSerializer(LocalDateTime.class, new SerializationFilters.LocalDateSerializer());
         
         mapper.registerModule(module);
-       // mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     

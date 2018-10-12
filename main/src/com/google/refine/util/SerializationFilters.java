@@ -1,6 +1,7 @@
 package com.google.refine.util;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -90,10 +91,10 @@ public class SerializationFilters {
     /**
      * Serialize dates by ISO format.
      */
-    public static class DateSerializer extends StdSerializer<OffsetDateTime> {
+    public static class OffsetDateSerializer extends StdSerializer<OffsetDateTime> {
         private static final long serialVersionUID = 93872874L;
 
-        public DateSerializer() {
+        public OffsetDateSerializer() {
             super(OffsetDateTime.class);
         }
 
@@ -101,6 +102,23 @@ public class SerializationFilters {
         public void serialize(OffsetDateTime arg0, JsonGenerator gen, SerializerProvider s)
                 throws IOException {
             gen.writeString(ParsingUtilities.dateToString(arg0));
+        }       
+    }
+    
+    /**
+     * Serialize dates by ISO format.
+     */
+    public static class LocalDateSerializer extends StdSerializer<LocalDateTime> {
+        private static final long serialVersionUID = 93872874L;
+
+        public LocalDateSerializer() {
+            super(LocalDateTime.class);
+        }
+
+        @Override
+        public void serialize(LocalDateTime arg0, JsonGenerator gen, SerializerProvider s)
+                throws IOException {
+            gen.writeString(ParsingUtilities.localDateToString(arg0));
         }       
     }
 }
