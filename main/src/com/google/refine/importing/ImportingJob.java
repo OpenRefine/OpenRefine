@@ -42,6 +42,7 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
@@ -86,6 +87,7 @@ public class ImportingJob  {
         return config.toString();
     }
     
+    @JsonIgnore
     public JSONObject getOrCreateDefaultConfig() {
         return config;
     }
@@ -137,6 +139,7 @@ public class ImportingJob  {
     }
 
 
+    @JsonIgnore
     public JSONObject getRetrievalRecord() {
         synchronized(config) {
             return JSONUtilities.getObject(config,"retrievalRecord");
@@ -152,6 +155,7 @@ public class ImportingJob  {
         return fileRecordObject.has("metaDataFormat");
     }
     
+    @JsonIgnore
     public List<JSONObject> getSelectedFileRecords() {
         List<JSONObject> results = new ArrayList<JSONObject>();
         
