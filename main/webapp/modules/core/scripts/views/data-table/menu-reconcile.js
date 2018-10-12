@@ -126,6 +126,60 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     input.focus().data("suggest").textchange();
   };
 
+  var doUseValuesAsIdentifiers = function() {
+    var frame = DialogSystem.createDialog();
+    frame.width("400px");
+
+    var header = $('<div></div>').addClass("dialog-header").text($.i18n._('core-views')["use-values-as-identifiers"]).appendTo(frame);
+    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
+    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+
+    $('<p></p>').text($.i18n._('core-views')["choose-reconciliation-service"]).appendTo(body);
+    var select = $('<select></select>').appendTo(body);
+    var services = ReconciliationManager.getAllServices();
+    for (var i = 0; i < services.length; i++) {
+        var service = services[i];
+        $('<option></option>').attr('value', service.url)
+           .text(service.name)
+           .appendTo(select);
+    }
+
+    $('<button class="button"></button>').text($.i18n._('core-buttons')["cancel"]).click(function() {
+      DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+    $('<button class="button"></button>').html($.i18n._('core-buttons')["ok"]).click(function() {
+        
+        var service = select.val();
+        var identifierSpace = null;
+        var schemaSpace = null;
+        for(var i = 0; i < services.length; i++) {
+           if(services[i].url === service) {
+              identifierSpace = services[i].identifierSpace;
+              schemaSpace = services[i].schemaSpace;
+           }
+        }
+        if (identifierSpace === null) {
+            alert($.i18n._('core-views')["choose-reconciliation-service-alert"]);
+        } else {
+          Refine.postCoreProcess(
+            "recon-use-values-as-identifiers",
+            {
+              columnName: column.name,
+              service: service,
+              identifierSpace: identifierSpace,
+              schemaSpace: schemaSpace
+            },
+            null,
+            { cellsChanged: true, columnStatsChanged: true }
+         );
+       }
+       DialogSystem.dismissUntil(level - 1);
+    }).appendTo(footer);
+
+    var level = DialogSystem.showDialog(frame);
+  };
+
+
   var doCopyAcrossColumns = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/copy-recon-across-columns-dialog.html"));
     var elmts = DOM.bind(frame);
@@ -402,6 +456,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n._('core-views')["copy-recon"],
       tooltip: $.i18n._('core-views')["copy-recon2"],
       click: doCopyAcrossColumns
+    },
+    {
+      id: "core/use-values-as-identifiers",
+      label: $.i18n._('core-views')["use-values-as-identifiers"],
+      tooltip: $.i18n._('core-views')['use-values-as-identifiers2'],
+      click: doUseValuesAsIdentifiers
     }
   ]);
 });
