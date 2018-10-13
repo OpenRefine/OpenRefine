@@ -115,6 +115,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                                 }
                                 JSONUtilities.append(sheetRecords, sheetRecord);
                             }
+                    wb.close();
                 } finally {
                     is.close();
                 }
@@ -150,6 +151,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             wb = POIXMLDocument.hasOOXMLHeader(inputStream) ?
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
+                wb.close();
         } catch (IOException e) {
             exceptions.add(new ImportException(
                 "Attempted to parse as an Excel file but failed. " +

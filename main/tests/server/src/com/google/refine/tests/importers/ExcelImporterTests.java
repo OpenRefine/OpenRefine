@@ -180,6 +180,7 @@ public class ExcelImporterTests extends ImporterTest {
             }
 
         }
+      
 
         File file = null;
         try {
@@ -189,6 +190,7 @@ public class ExcelImporterTests extends ImporterTest {
             wb.write(outputStream);
             outputStream.flush();
             outputStream.close();
+            wb.close();
         } catch (IOException e) {
             return null;
         }
