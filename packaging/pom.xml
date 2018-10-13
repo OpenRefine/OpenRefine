@@ -3,7 +3,6 @@
 
   <groupId>org.openrefine</groupId>
   <artifactId>packaging</artifactId>
-  <packaging>pom</packaging>
   <version>3.1-SNAPSHOT</version>
 
   <name>OpenRefine - packaging</name>
@@ -18,6 +17,9 @@
   <properties>
     <rootdir>${basedir}/..</rootdir>
     <fullversion>0.0.0.0</fullversion>
+    <built.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</built.webapp.dir>
+    <webapp.dir>../main/webapp</webapp.dir>
+    <webapp.target>../main/target</webapp.target>
   </properties>
 
   <build>
@@ -33,6 +35,49 @@
 
               <tasks>
                 <mkdir dir="./target/"/>
+
+                <mkdir dir="${built.webapp.dir}" />
+                    
+                    <copy todir="${built.webapp.dir}">
+                        <fileset dir="${webapp.dir}">
+                            <include name="**/*"/>
+                            <exclude name="WEB-INF/classes/**"/>
+                            <exclude name="WEB-INF/lib-local/**"/>
+                            <exclude name="WEB-INF/lib-local-src/**"/>
+                            <exclude name="WEB-INF/lib/icu4j*.jar"/>
+                        </fileset>
+                    </copy>
+                    <copy todir="${built.webapp.dir}/WEB-INF/lib/">
+                        <fileset dir="${webapp.target}">
+                            <include name="openrefine-main.jar" />
+                        </fileset>
+                    </copy>
+                    
+                    <!-- <copy file="../server/target/openrefine-${project.version}-server.jar" tofile="${built.webapp.dir}/WEB-INF/lib/openrefine-${project.version}.jar"/> -->
+
+                    <copy todir="${built.webapp.dir}/extensions">
+                        <fileset dir="../extensions">
+                            <include name="**/*"/>
+                            <exclude name="**/pom.xml"/>
+                            <exclude name="**/src/**"/>
+                            <exclude name="**/lib-local/**"/>
+                            <exclude name="**/lib-local-src/**"/>
+                            <exclude name="**/target/**" />
+                            <exclude name="**/tests/**" />
+                            <exclude name="**/*.java"/>
+                            <exclude name="**/.settings/**" />
+                            <exclude name="**/.project" />
+                        </fileset>
+                    </copy>
+                    
+                    <replace file="${built.webapp.dir}/WEB-INF/web.xml">
+                        <replacefilter token="$VERSION" value="${version}"/>
+                    </replace>
+
+                    <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
+                        <replacefilter token="../../extensions" value="extensions"/>
+                    </replace>
+
               </tasks>
 
             </configuration>
@@ -52,37 +97,92 @@
             <phase>package</phase>
             <goals><goal>launch4j</goal></goals>
             <configuration>
-               <headerType>console</headerType>
-               <outfile>target/openrefine.exe</outfile>
-               <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
-               <dontWrapJar>true</dontWrapJar>
-               <saveConfig>true</saveConfig>
-               <classPath>
-                 <mainClass>com.google.refine.Refine</mainClass>
-                 <jarLocation>server/target/lib/</jarLocation>
-                 <postCp>server/target/lib/*.jar</postCp>
-                </classPath>
-                <jre>
-                  <minVersion>1.8.0</minVersion>
-                  <jdkPreference>preferJre</jdkPreference>
-                  <initialHeapSize>256</initialHeapSize>
-                  <maxHeapSize>1024</maxHeapSize>
-                  <opts>
-                     <opt>-Djava.library.path=server/target/lib/native/windows</opt>
-                  </opts>
-                </jre>
-                <versionInfo>
-                  <fileVersion>${fullversion}</fileVersion>
-                  <txtFileVersion>${project.version}</txtFileVersion>
-                  <fileDescription>openrefine</fileDescription>
-                  <copyright>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</copyright>
-                  <productVersion>${fullversion}</productVersion>
-                  <txtProductVersion>${project.version}</txtProductVersion>
-                  <productName>OpenRefine</productName>
-                  <internalName>openrefine</internalName>
-                  <originalFilename>openrefine.exe</originalFilename>
-                </versionInfo>
+              <headerType>console</headerType>
+              <outfile>target/openrefine.exe</outfile>
+              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+              <dontWrapJar>true</dontWrapJar>
+              <saveConfig>true</saveConfig>
+              <classPath>
+                <mainClass>com.google.refine.Refine</mainClass>
+                <jarLocation>server/target/lib/</jarLocation>
+                <postCp>server/target/lib/*.jar</postCp>
+              </classPath>
+              <jre>
+                <minVersion>1.8.0</minVersion>
+                <jdkPreference>preferJre</jdkPreference>
+                <initialHeapSize>256</initialHeapSize>
+                <maxHeapSize>1024</maxHeapSize>
+                <opts>
+                  <opt>-Djava.library.path=server/target/lib/native/windows</opt>
+                </opts>
+              </jre>
+              <versionInfo>
+                <fileVersion>${fullversion}</fileVersion>
+                <txtFileVersion>${project.version}</txtFileVersion>
+                <fileDescription>openrefine</fileDescription>
+                <copyright>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</copyright>
+                <productVersion>${fullversion}</productVersion>
+                <txtProductVersion>${project.version}</txtProductVersion>
+                <productName>OpenRefine</productName>
+                <internalName>openrefine</internalName>
+                <originalFilename>openrefine.exe</originalFilename>
+              </versionInfo>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>sh.tak.appbundler</groupId>
+        <artifactId>appbundle-maven-plugin</artifactId>
+        <version>1.2.0</version>
+        <configuration>
+          <mainClass>com.google.refine.Refine</mainClass>
+          <bundleName>OpenRefine</bundleName>
+          <buildDirectory>target/OpenRefine ${version}</buildDirectory>
+          <iconFile>openrefine.icns</iconFile>
+          <generateDiskImageFile>true</generateDiskImageFile>
+          <diskImageFile>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</diskImageFile>
+          <jvmVersion>1.8</jvmVersion>
+          <jrePath>/opt/jre1.8.0_181.jre</jrePath>
+          <jvmOptions>
+            <param>-Xms256M</param>
+            <param>-Xmx1024M</param>
+            <param>-Drefine.version=${project.version}</param>
+            <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
+          </jvmOptions>
+          <additionalResources>
+            <fileSet>
+              <directory>target</directory>
+              <includes>
+                <include>OpenRefine.app/Contents/Resources/webapp/**/**</include>
+              </includes>
+            </fileSet>
+          </additionalResources>
+          <additionalBundledClasspathResources>
+            <fileSet>
+              <directory>${rootdir}/server/target/lib/</directory>
+              <includes>
+                <include>*.jar</include>
+              </includes>
+            </fileSet>
+            <fileSet>
+              <directory>${rootdir}/server/target</directory>
+              <includes>
+                <include>openrefine-3.1-SNAPSHOT-server.jar</include>
+              </includes>
+              <excludes>
+                <exclude>**/lib/**</exclude>
+                <exclude>**/org/**</exclude>
+              </excludes>
+            </fileSet>
+          </additionalBundledClasspathResources>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -106,6 +206,15 @@
 	  </execution>
 	</executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
   <dependencies>
