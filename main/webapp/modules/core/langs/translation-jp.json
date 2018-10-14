@@ -680,7 +680,11 @@
         "prepend-name": "元のカラム名を（区切り文字をつけて）値の前に付加する",
         "unescape-html": "HTMLをアンエスケープ(unescape)",
         "how-split-cells": "複数の値を持つセルの分割方法",
-        "collapse-this": "カラムをたたむ"
+        "collapse-this": "カラムをたたむ",
+        "use-values-as-identifiers": "値を識別子として使用",
+        "use-values-as-identifiers2": "値を識別子として照合済みとしてマーク",
+        "choose-reconciliation-service": "照合サービスを選ぶ",
+        "choose-reconciliation-service-alert": "最初に照合サービスを選択してください。"
     },
     "core-buttons": {
         "unselect-all": "全選択解除",
