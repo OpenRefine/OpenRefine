@@ -72,6 +72,7 @@ public class XlsExporter implements StreamExporter {
             OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
+            wb.close();
         
         TabularSerializer serializer = new TabularSerializer() {
             Sheet s;
