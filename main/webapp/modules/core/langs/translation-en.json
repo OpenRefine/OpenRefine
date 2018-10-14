@@ -679,10 +679,11 @@
         "text-to-find": "Find:",
         "replacement-text": "Replace with:",
         "case-insensitive": "case insensitive",
+        "whole-word": "whole word",
         "finding-info1": "Leave blank to add the remplacement string after each character.",
         "finding-info2": "Check \"regular expression\" to find special characters (new lines, tabulations...) or complex patterns.",
         "replacement-info": "If \"regular expression\" option is checked and finding pattern contains groups delimited with parentheses, $0 will return the complete string matching the pattern, and $1, $2... the 1st, 2d... group.",
-        "replace-dont-escape": "Do not escape backslash (\\) automatically.",
+        "replace-dont-escape": "use \\n for new lines, \\t for tabulation, \\\\n for \\n, \\\\t for \\t.",
         "warning-regex": "Invalid regular expression."
     },
     "core-buttons": {

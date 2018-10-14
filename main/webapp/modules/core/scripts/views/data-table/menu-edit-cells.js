@@ -133,7 +133,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doReplace = function() {
-    function isValidPattern(p) {
+    function isValidRegexPattern(p) {
       // check if a string can be used as a regexp pattern
       // parameters :
       // p : a string without beginning and trailing "/"
@@ -153,7 +153,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         return 0;}
     }
     function escapeInputString(s) {
-      // if the textarea input is used as a plain string
+      // if the input is used as a plain string
       // user input                | result after escaping
       // 4 characters : A\tA       | 5 characters : A\\tA
       // 4 characters : A\nA       | 5 characters : A\\nA
@@ -163,30 +163,30 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // new line                  | 2 characters : \n
       // tab                       | 2 characters : \t
       // parameters :
-      // s : a string from a textarea
-      if (typeof s != 'string') return ""
-      // convert new lines and tabs manually typed in the textarea into \n and \t and suppress other printable characters, escape \ ' and "
-      return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g, '').replace(/'/g, "\\'").replace(/"/g, '\\"')
-      function hex(c) {
-        // non used
-        var v = '0' + c.charCodeAt(0).toString(16);
-        return '\\x' + v.substr(v.length - 2);
+      // s : a string from an HTML input
+      // Note: it is not possible to insert new lines in HTML input but it is safer to search for them, in case the input field is replaced with a textarea
+      if (typeof s != 'string') {
+        return "";
       }
+      // convert new lines and tabs manually typed in the HTML input into \n and \t, delete other non printable characters, escape \ ' and "
+      return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g, '').replace(/'/g, "\\'").replace(/"/g, '\\"')
     }
     function escapeInputRegex(s) {
-      // if the textarea input is used as a regex pattern
-      // suppress new lines and tabs manually typed in the textarea, and other non printable characters
+      // if the HTML input is used as a regex pattern
+      // suppress new lines and tabs manually typed in the HTML input, and other non printable characters
       // no need to escape \ or /
       // parameters :
-      // s : a string from a textarea
+      // s : a string from a HTML input
       return (typeof s == 'string') ? s.replace(/[\x00-\x1F\x80-\x9F]/g, '')  : ""
       }
     function stringToRegex(s) {
       // converts a plain string to regex, in order to use the i flag
       // escaping is needed to force the regex processor to interpret every character litteraly
       // parameters :
-      // s : a string from a textarea, preprocessed with escapeInputString
-      if (typeof s != 'string') return ""
+      // s : a string from a HTML input, preprocessed with escapeInputString
+      if (typeof s != 'string') {
+        return "";
+      }
       // no need to escape \ : already escaped by escapeInputString
       var EscapeCharsRegex = /[-|{}()[\]^$+*?.]/g;
       // FIXME escaping of / directly by adding / or \/ or // in EscapeCharsRegex don't work...
@@ -206,15 +206,28 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     // \\               | \                   | \
     // GREL replace function returns an error if a \ is not followed by an other character
     // it could be unexpected for the user, so the replace menu escape the replacement string, but gives the possibility to choose the default behavior
-    // if dont_escape = 0, a complete escaping is done
-    // if dont_escape = 1, no escaping is done, but a slight cleaning
+    // if dont_escape = 0, every \ are escaped as \\
+    // if dont_escape = 1, \t and \n are not escaped, but  \r, \b, \f are escaped as \\r, \\b, \\f
+    // in both case, new lines and tabs manually typed in the input are converted into \n and \t, and non printable characters are deleted
     // parameters :
     // replace_dont_escape : 0 or 1
-    // s : a string from a textarea
-    if (typeof s != 'string') {return "";}
+    // s : a string from a HTML input
+    if (typeof s != 'string') {
+      return "";
+    }
     var temp = s;
-    if (dont_escape == 0) {temp = temp.replace(/\\/g, '\\\\\\\\');}
-    // convert newlines and tabs manually typed in the textarea into \n and \t and suppress other non printable characters
+    if (dont_escape == 0) {
+      temp = temp.replace(/\\/g, '\\\\');
+    }
+    else {
+      // replace "\n" with newline and "\t" with tab
+      temp = temp.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+      // replace "\" with "\\"
+      temp = temp.replace(/\\/g, '\\\\');
+      // replace "\newline" with "\n" and "\tab" with "\t"
+      temp = temp.replace(/\\\n/g, '\\n').replace(/\\\t/g, '\\t');
+    }
+    // replace newline with "\n" and tab with "\t"
     return temp.replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g,'');
   }
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/replace-dialog.html"));
@@ -227,6 +240,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_replacement_info.text($.i18n._('core-views')["replacement-info"]);
     elmts.or_views_find_regExp.text($.i18n._('core-views')["reg-exp"]);
     elmts.or_views_find_case_insensitive.text($.i18n._('core-views')["case-insensitive"]);
+    elmts.or_views_find_whole_word.text($.i18n._('core-views')["whole-word"]);
     elmts.or_views_replace_dont_escape.text($.i18n._('core-views')["replace-dont-escape"]);
     elmts.okButton.html($.i18n._('core-buttons')["ok"]);
     elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
@@ -234,28 +248,31 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     elmts.cancelButton.click(dismiss);
     elmts.okButton.click(function() {
-      var text_to_find = elmts.text_to_findTextarea[0].value;
-      var replacement_text = elmts.replacementTextarea[0].value;
+      var text_to_find = elmts.text_to_findInput[0].value;
+      var replacement_text = elmts.replacement_textInput[0].value;
       var replace_dont_escape = elmts.replace_dont_escapeInput[0].checked;
       var find_regex = elmts.find_regexInput[0].checked;
       var find_case_insensitive = elmts.find_case_insensitiveInput[0].checked;
+      var find_whole_word = elmts.find_whole_wordInput[0].checked;
       replacement_text = escapeReplacementString(replace_dont_escape, replacement_text)
-      if (find_regex) {
-        text_to_find = escapeInputRegex(text_to_find);
-        if (!isValidPattern (text_to_find)) {return}
+      text_to_find = escapeInputString(text_to_find);
+      if (!find_regex && (find_case_insensitive || find_whole_word)) {
+        text_to_find = stringToRegex(text_to_find);
+      }
+      if (find_regex || find_case_insensitive || find_whole_word ) {
+        if (!isValidRegexPattern (text_to_find)) {
+          return;
+        }
+        if (find_whole_word) {
+          text_to_find = "\\b"+text_to_find+"\\b";
+        }
         text_to_find = "/"+text_to_find+"/";
-        if (find_case_insensitive) {text_to_find = text_to_find + "i"}
+        if (find_case_insensitive) {
+          text_to_find = text_to_find+"i";
+        }
       }
       else {
-        text_to_find = escapeInputString(text_to_find);
-        if (find_case_insensitive) {
-          text_to_find = stringToRegex(text_to_find);
-          if (!isValidPattern (text_to_find)) {return}
-          text_to_find = "/"+text_to_find+"/i";
-        }
-        else {
-          text_to_find = '"'+text_to_find+'"';
-        }
+        text_to_find = '"'+text_to_find+'"';
       }
       expression = 'value.replace('+text_to_find+',"'+replacement_text+'")';
       doTextTransform(expression, "keep-original", false, "");
@@ -435,6 +452,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n._('core-views')["cluster-edit"]+"...",
       click: function() { new ClusteringDialog(column.name, "value"); }
     },
+    {},
     {
       id: "core/replace",
       label: $.i18n._('core-views')["replace"],
