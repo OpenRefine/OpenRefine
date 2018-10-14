@@ -20,6 +20,7 @@
     <built.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</built.webapp.dir>
     <webapp.dir>../main/webapp</webapp.dir>
     <webapp.target>../main/target</webapp.target>
+    <icon.path>../graphics/icon/openrefine.icns</icon.path>
   </properties>
 
   <build>
@@ -139,7 +140,7 @@
           <mainClass>com.google.refine.Refine</mainClass>
           <bundleName>OpenRefine</bundleName>
           <buildDirectory>target/OpenRefine ${version}</buildDirectory>
-          <iconFile>openrefine.icns</iconFile>
+          <iconFile>${icon.path}</iconFile>
           <generateDiskImageFile>true</generateDiskImageFile>
           <diskImageFile>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</diskImageFile>
           <jvmVersion>1.8</jvmVersion>
