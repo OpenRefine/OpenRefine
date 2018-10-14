@@ -21,6 +21,7 @@
     <webapp.dir>../main/webapp</webapp.dir>
     <webapp.target>../main/target</webapp.target>
     <icon.path>../graphics/icon/openrefine.icns</icon.path>
+    <mac.jre.path>/opt/jre1.8.0_181.jre</mac.jre.path>
   </properties>
 
   <build>
@@ -144,7 +145,7 @@
           <generateDiskImageFile>true</generateDiskImageFile>
           <diskImageFile>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</diskImageFile>
           <jvmVersion>1.8</jvmVersion>
-          <jrePath>/opt/jre1.8.0_181.jre</jrePath>
+          <jrePath>${mac.jre.path}</jrePath>
           <jvmOptions>
             <param>-Xms512M</param>
             <param>-Xmx2048M</param>
