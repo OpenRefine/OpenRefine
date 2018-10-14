@@ -76,7 +76,7 @@ public class SmartSplit implements Function {
             if (args.length > 1) {
                 String sep = args[1].toString();
                 parser = new CSVParser(
-                    sep.charAt(0),
+                    sep,
                     CSVParser.DEFAULT_QUOTE_CHARACTER,
                     CSVParser.DEFAULT_ESCAPE_CHARACTER,
                     CSVParser.DEFAULT_STRICT_QUOTES,
