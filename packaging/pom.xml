@@ -110,8 +110,8 @@
               <jre>
                 <minVersion>1.8.0</minVersion>
                 <jdkPreference>preferJre</jdkPreference>
-                <initialHeapSize>256</initialHeapSize>
-                <maxHeapSize>1024</maxHeapSize>
+                <initialHeapSize>512</initialHeapSize>
+                <maxHeapSize>2048</maxHeapSize>
                 <opts>
                   <opt>-Djava.library.path=server/target/lib/native/windows</opt>
                 </opts>
@@ -145,8 +145,8 @@
           <jvmVersion>1.8</jvmVersion>
           <jrePath>/opt/jre1.8.0_181.jre</jrePath>
           <jvmOptions>
-            <param>-Xms256M</param>
-            <param>-Xmx1024M</param>
+            <param>-Xms512M</param>
+            <param>-Xmx2048M</param>
             <param>-Drefine.version=${project.version}</param>
             <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
           </jvmOptions>
@@ -168,7 +168,7 @@
             <fileSet>
               <directory>${rootdir}/server/target</directory>
               <includes>
-                <include>openrefine-3.1-SNAPSHOT-server.jar</include>
+                <include>openrefine-${version}-server.jar</include>
               </includes>
               <excludes>
                 <exclude>**/lib/**</exclude>
