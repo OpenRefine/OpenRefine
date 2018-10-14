@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -36,7 +36,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     Refine.postCoreProcess(
       "text-transform",
       {
-        columnName: column.name,  
+        columnName: column.name,
         onError: onError,
         repeat: repeat,
         repeatCount: repeatCount
@@ -53,7 +53,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n._('core-views')["custom-text-trans"]+" " + column.name);
-    
+
     elmts.or_views_errorOn.text($.i18n._('core-views')["on-error"]);
     elmts.or_views_keepOr.text($.i18n._('core-views')["keep-or"]);
     elmts.or_views_setBlank.text($.i18n._('core-views')["set-blank"]);
@@ -61,7 +61,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_reTrans.text($.i18n._('core-views')["re-trans"]);
     elmts.or_views_timesChang.text($.i18n._('core-views')["times-chang"]);
     elmts.okButton.html($.i18n._('core-buttons')["ok"]);
-    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);    
+    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -96,7 +96,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doFillDown = function() {
     Refine.postCoreProcess(
-      "fill-down", 
+      "fill-down",
       {
         columnName: column.name
       },
@@ -107,7 +107,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doBlankDown = function() {
     Refine.postCoreProcess(
-      "blank-down", 
+      "blank-down",
       {
         columnName: column.name
       },
@@ -120,7 +120,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var separator = window.prompt($.i18n._('core-views')["enter-separator"], ", ");
     if (separator !== null) {
       Refine.postCoreProcess(
-        "join-multi-value-cells", 
+        "join-multi-value-cells",
         {
           columnName: column.name,
           keyColumnName: theProject.columnModel.keyColumnName,
@@ -132,12 +132,160 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     }
   };
 
+  var doReplace = function() {
+    function isValidRegexPattern(p) {
+      // check if a string can be used as a regexp pattern
+      // parameters :
+      // p : a string without beginning and trailing "/"
+
+      // we need a manual check for unescaped /
+      // the GREL replace function cannot contain a pattern with unescaped /
+      // but javascript Regexp accepts it and auto escape it
+      var pos = p.replace(/\\\//g,'').indexOf("/");
+      if (pos != -1) {
+        alert($.i18n._('core-views')["warning-regex"] + " : " + p);
+        return 0;}
+      try {
+        var pattern = new RegExp(p);
+        return 1;
+        } catch (e) {
+          alert($.i18n._('core-views')["warning-regex"] + " : " + p);
+        return 0;}
+    }
+    function escapeInputString(s) {
+      // if the input is used as a plain string
+      // user input                | result after escaping
+      // 4 characters : A\tA       | 5 characters : A\\tA
+      // 4 characters : A\nA       | 5 characters : A\\nA
+      // 1 characters : \          | 2 characters : \\
+      // 1 character : '           | 2 characters : \'
+      // 1 character : "           | 2 characters : \"
+      // new line                  | 2 characters : \n
+      // tab                       | 2 characters : \t
+      // parameters :
+      // s : a string from an HTML input
+      // Note: it is not possible to insert new lines in HTML input but it is safer to search for them, in case the input field is replaced with a textarea
+      if (typeof s != 'string') {
+        return "";
+      }
+      // convert new lines and tabs manually typed in the HTML input into \n and \t, delete other non printable characters, escape \ ' and "
+      return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g, '').replace(/'/g, "\\'").replace(/"/g, '\\"')
+    }
+    function escapeInputRegex(s) {
+      // if the HTML input is used as a regex pattern
+      // suppress new lines and tabs manually typed in the HTML input, and other non printable characters
+      // no need to escape \ or /
+      // parameters :
+      // s : a string from a HTML input
+      return (typeof s == 'string') ? s.replace(/[\x00-\x1F\x80-\x9F]/g, '')  : ""
+      }
+    function stringToRegex(s) {
+      // converts a plain string to regex, in order to use the i flag
+      // escaping is needed to force the regex processor to interpret every character litteraly
+      // parameters :
+      // s : a string from a HTML input, preprocessed with escapeInputString
+      if (typeof s != 'string') {
+        return "";
+      }
+      // no need to escape \ : already escaped by escapeInputString
+      var EscapeCharsRegex = /[-|{}()[\]^$+*?.]/g;
+      // FIXME escaping of / directly by adding / or \/ or // in EscapeCharsRegex don't work...
+      return s.replace(EscapeCharsRegex, '\\$&').replace(/\//g, '\\/');
+    }
+    function escapeReplacementString(dont_escape,s) {
+    // in replacement string, the GREL replace function handle in a specific way the Java special escape sequences
+    // cf https://docs.oracle.com/javase/tutorial/java/data/characters.html
+    // Escape Sequence  | Java documentation  | GREL replace function
+    // \t               | tab                 | tabs
+    // \n               | new line            | new line
+    // \r               |	carriage return     | <blank>
+    // \b	              | backspace           | b
+    // \f               | formfeed            | f
+    // \'	              | '                   | ''
+    // \"	              | "                   | ""
+    // \\               | \                   | \
+    // GREL replace function returns an error if a \ is not followed by an other character
+    // it could be unexpected for the user, so the replace menu escape the replacement string, but gives the possibility to choose the default behavior
+    // if dont_escape = 0, every \ are escaped as \\
+    // if dont_escape = 1, \t and \n are not escaped, but  \r, \b, \f are escaped as \\r, \\b, \\f
+    // in both case, new lines and tabs manually typed in the input are converted into \n and \t, and non printable characters are deleted
+    // parameters :
+    // replace_dont_escape : 0 or 1
+    // s : a string from a HTML input
+    if (typeof s != 'string') {
+      return "";
+    }
+    var temp = s;
+    if (dont_escape == 0) {
+      temp = temp.replace(/\\/g, '\\\\');
+    }
+    else {
+      // replace "\n" with newline and "\t" with tab
+      temp = temp.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+      // replace "\" with "\\"
+      temp = temp.replace(/\\/g, '\\\\');
+      // replace "\newline" with "\n" and "\tab" with "\t"
+      temp = temp.replace(/\\\n/g, '\\n').replace(/\\\t/g, '\\t');
+    }
+    // replace newline with "\n" and tab with "\t"
+    return temp.replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g,'');
+  }
+    var frame = $(DOM.loadHTML("core", "scripts/views/data-table/replace-dialog.html"));
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n._('core-views')["replace"]);
+    elmts.or_views_text_to_find.text($.i18n._('core-views')["text-to-find"]);
+    elmts.or_views_replacement.text($.i18n._('core-views')["replacement-text"]);
+    elmts.or_views_finding_info1.text($.i18n._('core-views')["finding-info1"]);
+    elmts.or_views_finding_info2.text($.i18n._('core-views')["finding-info2"]);
+    elmts.or_views_replacement_info.text($.i18n._('core-views')["replacement-info"]);
+    elmts.or_views_find_regExp.text($.i18n._('core-views')["reg-exp"]);
+    elmts.or_views_find_case_insensitive.text($.i18n._('core-views')["case-insensitive"]);
+    elmts.or_views_find_whole_word.text($.i18n._('core-views')["whole-word"]);
+    elmts.or_views_replace_dont_escape.text($.i18n._('core-views')["replace-dont-escape"]);
+    elmts.okButton.html($.i18n._('core-buttons')["ok"]);
+    elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
+      var text_to_find = elmts.text_to_findInput[0].value;
+      var replacement_text = elmts.replacement_textInput[0].value;
+      var replace_dont_escape = elmts.replace_dont_escapeInput[0].checked;
+      var find_regex = elmts.find_regexInput[0].checked;
+      var find_case_insensitive = elmts.find_case_insensitiveInput[0].checked;
+      var find_whole_word = elmts.find_whole_wordInput[0].checked;
+      replacement_text = escapeReplacementString(replace_dont_escape, replacement_text)
+      text_to_find = escapeInputString(text_to_find);
+      if (!find_regex && (find_case_insensitive || find_whole_word)) {
+        text_to_find = stringToRegex(text_to_find);
+      }
+      if (find_regex || find_case_insensitive || find_whole_word ) {
+        if (!isValidRegexPattern (text_to_find)) {
+          return;
+        }
+        if (find_whole_word) {
+          text_to_find = "\\b"+text_to_find+"\\b";
+        }
+        text_to_find = "/"+text_to_find+"/";
+        if (find_case_insensitive) {
+          text_to_find = text_to_find+"i";
+        }
+      }
+      else {
+        text_to_find = '"'+text_to_find+'"';
+      }
+      expression = 'value.replace('+text_to_find+',"'+replacement_text+'")';
+      doTextTransform(expression, "keep-original", false, "");
+      dismiss();
+    });
+  };
+
   var doSplitMultiValueCells = function() {
 
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-multi-valued-cells-dialog.html"));
     var elmts = DOM.bind(frame);
     elmts.dialogHeader.text($.i18n._('core-views')["split-cells"]);
-    
+
     elmts.or_views_howSplit.text($.i18n._('core-views')["how-split-cells"]);
     elmts.or_views_bySep.text($.i18n._('core-views')["by-sep"]);
     elmts.or_views_separator.text($.i18n._('core-views')["separator"]);
@@ -175,9 +323,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           var a = JSON.parse(s);
 
           var lengths = [];
-          $.each(a, function(i,n) { 
+          $.each(a, function(i,n) {
             if (typeof n == "number") {
-              lengths.push(n); 
+              lengths.push(n);
             }
           });
 
@@ -187,7 +335,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           }
 
           config.fieldLengths = JSON.stringify(lengths);
-          
+
         } catch (e) {
           alert($.i18n._('core-views')["warning-format"]);
           return;
@@ -195,7 +343,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       Refine.postCoreProcess(
-        "split-multi-value-cells", 
+        "split-multi-value-cells",
         config,
         null,
         { rowsChanged: true }
@@ -303,6 +451,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       id: "core/cluster",
       label: $.i18n._('core-views')["cluster-edit"]+"...",
       click: function() { new ClusteringDialog(column.name, "value"); }
+    },
+    {},
+    {
+      id: "core/replace",
+      label: $.i18n._('core-views')["replace"],
+      click: doReplace
     }
   ]);
 
@@ -311,7 +465,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var elmts = DOM.bind(dialog);
     var level = DialogSystem.showDialog(dialog);
-    
+
     elmts.dialogHeader.html($.i18n._('core-views')["transp-cell"]);
     elmts.or_views_fromCol.html($.i18n._('core-views')["from-col"]);
     elmts.or_views_toCol.html($.i18n._('core-views')["to-col"]);
@@ -329,7 +483,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_fillOther.html($.i18n._('core-views')["fill-other"]);
     elmts.okButton.html($.i18n._('core-buttons')["transpose"]);
     elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-    
+
     var dismiss = function() {
       DialogSystem.dismissUntil(level - 1);
     };
@@ -344,7 +498,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         ignoreBlankCells: elmts.ignoreBlankCellsCheckbox[0].checked,
         fillDown: elmts.fillDownCheckbox[0].checked
       };
-      
+
       var mode = dialog.find('input[name="transpose-dialog-column-choices"]:checked')[0].value;
       if (mode == "2") {
         config.keyColumnName = $.trim(elmts.keyColumnNameInput[0].value);
@@ -370,7 +524,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       Refine.postCoreProcess(
-          "transpose-columns-into-rows", 
+          "transpose-columns-into-rows",
           config,
           null,
           { modelsChanged: true },
@@ -405,7 +559,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         var column2 = columns[k];
         $('<option>').attr("value", k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
       }
-      
+
       $('<option>')
         .attr("value", "-1")
         .attr("selected", "true")
@@ -435,7 +589,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         };
 
         Refine.postCoreProcess(
-          "transpose-rows-into-columns", 
+          "transpose-rows-into-columns",
           config,
           null,
           { modelsChanged: true }
@@ -443,20 +597,20 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
     }
   };
-  
+
   var doKeyValueColumnize = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/views/data-table/key-value-columnize.html"));
 
     var elmts = DOM.bind(dialog);
     var level = DialogSystem.showDialog(dialog);
-    
+
     elmts.dialogHeader.html($.i18n._('core-views')["columnize"]);
     elmts.or_views_keyCol.html($.i18n._('core-views')["key-col"]);
     elmts.or_views_valCol.html($.i18n._('core-views')["val-col"]);
     elmts.or_views_noteCol.html($.i18n._('core-views')["note-col"]);
     elmts.okButton.html($.i18n._('core-buttons')["ok"]);
     elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-    
+
     var dismiss = function() {
       DialogSystem.dismissUntil(level - 1);
     };
@@ -476,7 +630,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         alert($.i18n._('core-views')["sel-col-val"]);
         return;
       }
-      
+
       var noteColumnName = elmts.noteColumnSelect[0].value;
       if (noteColumnName != null) {
         if (noteColumnName == config.keyColumnName ||
@@ -488,7 +642,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       Refine.postCoreProcess(
-        "key-value-columnize", 
+        "key-value-columnize",
         config,
         null,
         { modelsChanged: true }
@@ -499,18 +653,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var valueColumnIndex = -1;
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
-      
+
       var keyOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
       if (column2.name == column.name) {
         keyOption.attr("selected", "true");
         valueColumnIndex = i + 1;
       }
-      
+
       var valueOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
       if (i === valueColumnIndex) {
         valueOption.attr("selected", "true");
       }
-      
+
       $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
     }
   };

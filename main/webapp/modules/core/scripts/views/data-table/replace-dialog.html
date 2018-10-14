@@ -1,0 +1,60 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-looser layout-full">
+        <table>
+          <tr>
+            <td>
+              <div class="grid-layout layout-tighter">
+                <table>
+                  <tr>
+                    <td width="20%">
+                      <label for="$text-to-find"><h3 bind="or_views_text_to_find"></h3></label>
+                    </td>
+                    <td>
+                      <input type="text" size="40" bind="text_to_findInput" id="$text-to-find"></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <input type="checkbox" bind="find_case_insensitiveInput" id="$find-case" />
+                      <label for="$find-case" bind="or_views_find_case_insensitive"></label>
+                      <input type="checkbox" bind="find_whole_wordInput" id="$find-whole-word" />
+                      <label for="$find-whole-word" bind="or_views_find_whole_word"></label>
+                      <input type="checkbox" bind="find_regexInput" id="$find-regex" />
+                      <label for="$find-regex" bind="or_views_find_regExp"></label>
+                      <p bind="or_views_finding_info1"></p>
+                      <p bind="or_views_finding_info2"></p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td width="20%">
+                      <label for="$replacement-text"><h3 bind="or_views_replacement"></h3></label>
+                    </td>
+                    <td>
+                      <input type="text" size="40" bind="replacement_textInput" id="$replacement-text"></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <input type="checkbox" bind="replace_dont_escapeInput" id="$replace-escape" />
+                      <label for="$replace-escape" bind="or_views_replace_dont_escape"></label>
+                      <p bind="or_views_replacement_info"></p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+        </table>
+      </div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="okButton"></button>
+      <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>
