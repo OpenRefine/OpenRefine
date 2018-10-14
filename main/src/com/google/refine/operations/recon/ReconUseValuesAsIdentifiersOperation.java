@@ -4,9 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -64,20 +62,6 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
         );
     }
 
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("service"); writer.value(service);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.endObject();
-    }
-    
     @Override
     public String getBriefDescription(Project project) {
         return "Use values as reconciliation identifiers in column " + _columnName;
