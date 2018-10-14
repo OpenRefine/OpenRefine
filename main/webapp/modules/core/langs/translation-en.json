@@ -686,7 +686,7 @@
         "finding-info2": "Check \"regular expression\" to find special characters (new lines, tabulations...) or complex patterns.",
         "replacement-info": "If \"regular expression\" option is checked and finding pattern contains groups delimited with parentheses, $0 will return the complete string matching the pattern, and $1, $2... the 1st, 2d... group.",
         "replace-dont-escape": "use \\n for new lines, \\t for tabulation, \\\\n for \\n, \\\\t for \\t.",
-        "warning-regex": "Invalid regular expression."
+        "warning-regex": "Invalid regular expression.",
         "use-values-as-identifiers": "Use values as identifiers",
         "use-values-as-identifiers2": "Mark cells as reconciled with their values as identifiers",
         "choose-reconciliation-service": "Choose a reconciliation service",
