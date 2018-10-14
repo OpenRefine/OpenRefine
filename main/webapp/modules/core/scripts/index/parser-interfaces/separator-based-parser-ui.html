@@ -1,4 +1,4 @@
-<div class="grid-layout layout-loose layout-full"><table>
+<div class="grid-layout layout-loose  layout-full"><table>
   <tr>
     <td><div class="grid-layout layout-tighter"><table>
       <tr>
@@ -24,7 +24,7 @@
         <td><label for="$column-separator-custom" id="or-import-custom"></label>
           <input bind="columnSeparatorInput" type="text" class="lightweight" size="5" /></td></tr>
       <tr><td colspan="2" id="or-import-escape"></td></tr>
-    </table></div></td>
+      </table></div></td>
     
     <td colspan="2"><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="ignoreCheckbox" id="$ignore" /></td>
@@ -55,9 +55,14 @@
     </table></div></td>
   </tr>
   <tr>
-    <td>&nbsp;</td>
+    <td><div class="grid-layout layout-tightest" style="width:fit-content;"><table>
+      <tr><td width="1%"><input type="checkbox" bind="columnNamesCheckbox" id="$check-column-names" />
+      <label id="or-import-columnNames"></label></td></tr>
+      <tr>
+	  <td><input style="width: 25em;" bind="columnNamesInput" /></td>
+    </tr></table></div></td>
     
-    <td><div class="grid-layout layout-tightest"><table>
+    <td colspan="1"><div class="grid-layout layout-tightest"><table>
       <tr><td width="1%"><input type="checkbox" bind="guessCellValueTypesCheckbox" id="$guess" /></td>
         <td><label for="$guess" id="or-import-parseCell"></label></td></tr>
          </table></div></td>

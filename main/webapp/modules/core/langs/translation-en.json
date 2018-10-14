@@ -155,7 +155,9 @@
         "escape": "Escape special characters with \\",
         "use-quote": "Use character",
         "quote-delimits-cells": "to enclose cells containing column separators",
-        "click-xml": "Click on the first XML element corresponding to the first record to load."
+        "click-xml": "Click on the first XML element corresponding to the first record to load.",
+        "column-names-label": "Column names (comma separated)",
+		"column-names-optional":"comma separated"
     },
     "core-dialogs": {
         "cluster-edit": "Cluster & Edit column",
@@ -685,6 +687,10 @@
         "replacement-info": "If \"regular expression\" option is checked and finding pattern contains groups delimited with parentheses, $0 will return the complete string matching the pattern, and $1, $2... the 1st, 2d... group.",
         "replace-dont-escape": "use \\n for new lines, \\t for tabulation, \\\\n for \\n, \\\\t for \\t.",
         "warning-regex": "Invalid regular expression."
+        "use-values-as-identifiers": "Use values as identifiers",
+        "use-values-as-identifiers2": "Mark cells as reconciled with their values as identifiers",
+        "choose-reconciliation-service": "Choose a reconciliation service",
+        "choose-reconciliation-service-alert": "Please choose a reconciliation service first."
     },
     "core-buttons": {
         "cancel": "Cancel",

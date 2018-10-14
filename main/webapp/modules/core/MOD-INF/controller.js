@@ -127,6 +127,7 @@ function registerCommands() {
   RS.registerCommand(module, "recon-clear-one-cell", new Packages.com.google.refine.commands.recon.ReconClearOneCellCommand());
   RS.registerCommand(module, "recon-clear-similar-cells", new Packages.com.google.refine.commands.recon.ReconClearSimilarCellsCommand());
   RS.registerCommand(module, "recon-copy-across-columns", new Packages.com.google.refine.commands.recon.ReconCopyAcrossColumnsCommand());
+  RS.registerCommand(module, "recon-use-values-as-identifiers", new Packages.com.google.refine.commands.recon.ReconUseValuesAsIdentifiersCommand());
   RS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.recon.PreviewExtendDataCommand());
   RS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.recon.ExtendDataCommand());
 
@@ -190,6 +191,7 @@ function registerOperations() {
   OR.registerOperation(module, "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
   OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
   OR.registerOperation(module, "extend-reconciled-data", Packages.com.google.refine.operations.recon.ExtendDataOperation);
+  OR.registerOperation(module, "recon-use-values-as-identifiers", Packages.com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation);
 }
 
 function registerImporting() {
@@ -585,7 +587,7 @@ function process(path, request, response) {
             var urlConnection = url.openConnection();
 
             input = new Packages.java.io.BufferedReader(
-                new Packages.java.io.InputStreamReader(urlConnection.getInputStream()));
+                new Packages.java.io.InputStreamReader(urlConnection.getInputStream(), "UTF8"));
 
             output.write("/* ===== "); 
             output.write(qualifiedPath.fullPath); 

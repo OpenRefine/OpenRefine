@@ -117,6 +117,13 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  
+  if (this._optionContainerElmts.columnNamesCheckbox[0].checked) {
+      var columnNames = this._optionContainerElmts.columnNamesInput.val();
+      if (columnNames != undefined && columnNames != null && columnNames != '') {
+          options.columnNames = columnNames.split(",");
+      }
+  }
 
   return options;
 };
@@ -136,6 +143,10 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-tabs').html($.i18n._('core-index-parser')["tabs"]);
   $('#or-import-custom').html($.i18n._('core-index-parser')["custom"]);
   $('#or-import-escape').html($.i18n._('core-index-parser')["escape"]);
+  $('#or-import-columnNames').html($.i18n._('core-index-parser')["column-names-label"] + ':');
+  $('#or-import-optional').html($.i18n._('core-index-parser')["column-names-optional"]);
+  
+  self._optionContainerElmts.columnNamesInput.prop('disabled', true);
   
   $('#or-import-ignore').text($.i18n._('core-index-parser')["ignore-first"]);
   $('#or-import-lines').text($.i18n._('core-index-parser')["lines-beg"]);
@@ -159,6 +170,31 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
         self._updatePreview();
       });
     });
+  
+  this._optionContainerElmts.headerLinesCheckbox.on("click", function() {
+      if ($(this).is(':checked')) {
+          var isDisabled = $('textbox').prop('disabled');
+          if (!isDisabled) {
+              self._optionContainerElmts.columnNamesInput.prop('disabled', true);
+              self._optionContainerElmts.columnNamesCheckbox.prop("checked", false);
+              self._optionContainerElmts.columnNamesInput.val('');
+          }
+      } else {
+          self._optionContainerElmts.columnNamesInput.prop('disabled', false);
+          self._optionContainerElmts.columnNamesCheckbox.prop("checked", true);
+      }
+  });
+  
+  this._optionContainerElmts.columnNamesCheckbox.on("click", function() {
+      if ($(this).is(':checked')) {
+          self._optionContainerElmts.headerLinesCheckbox.prop("checked", false);
+          self._optionContainerElmts.columnNamesInput.prop('disabled', false);
+      } else {
+          self._optionContainerElmts.headerLinesCheckbox.prop("checked", true);
+          self._optionContainerElmts.columnNamesInput.val('');
+          self._optionContainerElmts.columnNamesInput.prop('disabled', true);
+      }
+  });
   
   var columnSeparatorValue = (this._config.separator == ",") ? 'comma' :
     ((this._config.separator == "\\t") ? 'tab' : 'custom');
@@ -206,6 +242,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);
+  this._optionContainerElmts.columnNamesInput.bind("keyup",onChange);
 };
 
 Refine.SeparatorBasedParserUI.prototype._scheduleUpdatePreview = function() {

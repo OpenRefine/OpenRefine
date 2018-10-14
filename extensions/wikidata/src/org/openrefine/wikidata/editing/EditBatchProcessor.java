@@ -192,7 +192,8 @@ public class EditBatchProcessor {
         logger.info("Requesting documents");
         currentDocs = null;
         int retries = 3;
-        while (currentDocs == null && retries > 0) {
+        // TODO: remove currentDocs.isEmpty() once https://github.com/Wikidata/Wikidata-Toolkit/issues/402 is solved
+        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
             try {
                 currentDocs = fetcher.getEntityDocuments(qidsToFetch);
             } catch (MediaWikiApiErrorException e) {
