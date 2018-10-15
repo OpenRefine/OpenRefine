@@ -684,7 +684,17 @@
         "use-values-as-identifiers": "値を識別子として使用",
         "use-values-as-identifiers2": "値を識別子として照合済みとしてマーク",
         "choose-reconciliation-service": "照合サービスを選ぶ",
-        "choose-reconciliation-service-alert": "最初に照合サービスを選択してください。"
+        "choose-reconciliation-service-alert": "最初に照合サービスを選択してください。",
+        "replace": "置換",
+        "text-to-find": "検索:",
+        "replacement-text": "この文字列に置換:",
+        "case-insensitive": "大文字・小文字を区別しない",
+        "whole-word": "単語全体",
+        "finding-info1": "各文字に置換文字を追加する場合は空白のまま.",
+        "finding-info2": "改行などの特殊文字や複雑なパターンを検索する場合は正規表現が使えます.",
+        "replacement-info": "正規表現に()を使ったグループがある場合、$0がマッチ全体を、$1,$2...が各グループを返します.",
+        "replace-dont-escape": "改行文字には\\n、タブ文字には\\tを使います。「\\n」や「\\t」を検索するには「\\\\n」や「\\\\t」を使います（エスケープ文字）.",
+        "warning-regex": "正規表現が無効です."
     },
     "core-buttons": {
         "unselect-all": "全選択解除",
