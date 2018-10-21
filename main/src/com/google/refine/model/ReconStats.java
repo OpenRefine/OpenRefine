@@ -36,23 +36,14 @@ package com.google.refine.model;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.util.ParsingUtilities;
 
-public class ReconStats  {
-    static public ReconStats load(JSONObject obj) throws Exception {
-        return new ReconStats(
-                obj.getInt("nonBlanks"),
-                obj.getInt("newTopics"),
-                obj.getInt("matchedTopics")
-        );
-    }
-    
+public class ReconStats  {   
     @JsonProperty("nonBlanks")
     final public int    nonBlanks;
     @JsonProperty("newTopics")
@@ -60,7 +51,14 @@ public class ReconStats  {
     @JsonProperty("matchedTopics")
     final public int    matchedTopics;
     
-    public ReconStats(int nonBlanks, int newTopics, int matchedTopics) {
+    @JsonCreator
+    public ReconStats(
+            @JsonProperty("nonBlanks")
+            int nonBlanks,
+            @JsonProperty("newTopics")
+            int newTopics,
+            @JsonProperty("matchedTopics")
+            int matchedTopics) {
         this.nonBlanks = nonBlanks;
         this.newTopics = newTopics;
         this.matchedTopics = matchedTopics;
