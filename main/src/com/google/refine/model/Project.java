@@ -40,7 +40,6 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,13 +215,10 @@ public class Project {
                     Class<? extends OverlayModel> klass = s_overlayModelClasses.get(modelName);
                     
                     try {
-                        Method loadMethod = klass.getMethod("load", Project.class, JSONObject.class);
-                        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(value);
-                    
-                        OverlayModel overlayModel = (OverlayModel) loadMethod.invoke(null, project, obj);
+                        OverlayModel overlayModel = ParsingUtilities.mapper.readValue(value, klass);
                         
                         project.overlayModels.put(modelName, overlayModel);
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         logger.error("Failed to load overlay model " + modelName);
                     }
                 }
