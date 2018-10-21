@@ -4,7 +4,8 @@
         "manage-wikidata-account": "Gestisci il tuo account su Wikidata",
         "perform-edits-on-wikidata": "Carica le tue modifiche su Wikidata",
         "export-to-qs": "Esporta verso QuickStatements",
-        "quickstatements-export-name": "QuickStatements"
+        "quickstatements-export-name": "QuickStatements",
+        "menu-label": "Wikidata"
     },
     "wikidata-schema": {
         "dialog-explanation": "Lo schema per Wikidata ti permette di trasformare i dati nella tua tabella in modifiche pronte per Wikidata. Puoi trascinare i nomi delle colonne nei box di testo appropriati: in questo modo, per ogni riga verranno generate delle modifiche su Wikidata con i valori presenti.",
