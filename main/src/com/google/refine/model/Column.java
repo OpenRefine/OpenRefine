@@ -39,16 +39,15 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.google.refine.InterProjectModel;
 import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 import io.frictionlessdata.tableschema.Field;
@@ -72,7 +71,12 @@ public class Column  {
     
     transient protected Map<String, Object> _precomputes;
     
-    public Column(int cellIndex, String originalName) {
+    @JsonCreator
+    public Column(
+            @JsonProperty("cellIndex")
+            int cellIndex,
+            @JsonProperty("originalName")
+            String originalName) {
         _cellIndex = cellIndex;
         _originalName = _name = originalName;
     }
@@ -87,6 +91,7 @@ public class Column  {
         return _originalName;
     }
     
+    @JsonProperty("name")
     public void setName(String name) {
         this._name = name;
     }
@@ -96,6 +101,7 @@ public class Column  {
         return _name;
     }
 
+    @JsonProperty("reconConfig")
     public void setReconConfig(ReconConfig config) {
         this._reconConfig = config;
     }
@@ -106,6 +112,7 @@ public class Column  {
         return _reconConfig;
     }
 
+    @JsonProperty("reconStats")
     public void setReconStats(ReconStats stats) {
         this._reconStats = stats;
     }
@@ -149,7 +156,7 @@ public class Column  {
         return type;
     }
 
-    
+    @JsonProperty("type")
     public void setType(String type) {
         this.type = type;
     }
@@ -160,7 +167,7 @@ public class Column  {
         return format;
     }
 
-    
+    @JsonProperty("format")
     public void setFormat(String format) {
         this.format = format;
     }
@@ -171,25 +178,38 @@ public class Column  {
         return title;
     }
 
-    
+    @JsonProperty("title")
     public void setTitle(String title) {
         this.title = title;
     }
-
     
     @JsonProperty("description")
     public String getDescription() {
         return description;
     }
 
-    
+    @JsonProperty("description")
     public void setDescription(String description) {
         this.description = description;
     }
 
     @JsonProperty("constraints")
     public String getConstraintsString() {
-        return (new JSONObject(constraints)).toString();
+        try {
+            return ParsingUtilities.mapper.writeValueAsString(constraints);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+    
+    @JsonProperty("constraints")
+    public void setConstraintsJson(String json) {
+        try {
+            setConstraints(ParsingUtilities.mapper.readValue(json, new TypeReference<Map<String,Object>>() {}));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public Map<String, Object> getConstraints() {
@@ -210,26 +230,7 @@ public class Column  {
     }
     
     static public Column load(String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-        Column column = new Column(obj.getInt("cellIndex"), obj.getString("originalName"));
-        
-        column._name = obj.getString("name");
-        column.type = JSONUtilities.getString(obj, Field.JSON_KEY_TYPE, StringUtils.EMPTY);
-        column.format = JSONUtilities.getString(obj, Field.JSON_KEY_FORMAT, StringUtils.EMPTY);
-        column.title = JSONUtilities.getString(obj, Field.JSON_KEY_TITLE, StringUtils.EMPTY);
-        column.description = JSONUtilities.getString(obj, Field.JSON_KEY_DESCRIPTION, StringUtils.EMPTY);
-        if (obj.has(Field.JSON_KEY_CONSTRAINTS)) {
-            column.constraints = new JSONObject(obj.getString(Field.JSON_KEY_CONSTRAINTS)).toMap();
-        }
-              
-        if (obj.has("reconConfig")) {
-            column._reconConfig = ReconConfig.reconstruct(obj.getJSONObject("reconConfig"));
-        }
-        if (obj.has("reconStats")) {
-            column._reconStats = ReconStats.load(obj.getJSONObject("reconStats"));
-        }
-        
-        return column;
+        return ParsingUtilities.mapper.readValue(s, Column.class);
     }
     
     @Override
