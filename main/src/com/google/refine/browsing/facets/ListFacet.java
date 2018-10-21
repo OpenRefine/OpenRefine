@@ -118,6 +118,13 @@ public class ListFacet implements Facet {
                     .collect(Collectors.toList());
         }
         
+        @JsonProperty("selection")
+        public void setSelection(List<DecoratedValueWrapper> wrapped) {
+            selection = wrapped.stream()
+                    .map(e -> e.value)
+                    .collect(Collectors.toList());
+        }
+        
         @Override
         public void initializeFromJSON(JSONObject o) {
             name = o.getString("name");
