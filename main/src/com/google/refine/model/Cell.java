@@ -42,6 +42,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -49,6 +51,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.InjectableValues;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -159,16 +162,37 @@ public class Cell implements HasFields {
     }
     
     static public Cell loadStreaming(String s, Pool pool) throws Exception {
-        JsonFactory jsonFactory = new JsonFactory(); 
-        JsonParser jp = jsonFactory.createJsonParser(s);
-        
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        return loadStreaming(jp, pool);
+        InjectableValues injectableValues = new InjectableValues.Std()
+                .addValue("pool", pool);
+        return ParsingUtilities.mapper.setInjectableValues(injectableValues)
+                .readValue(s, Cell.class);
     }
     
+    @JsonCreator
+    static public Cell deserialize(
+            @JsonProperty("v")
+            Object value,
+            @JsonProperty("t")
+            String type,
+            @JsonProperty("r")
+            String reconId,
+            @JsonProperty("e")
+            String error,
+            @JacksonInject("pool")
+            Pool pool) {
+        Recon recon = null;
+        if(reconId != null) {
+            recon = pool.getRecon(reconId);
+        }
+        if (type != null && "date".equals(type)) {
+            value = ParsingUtilities.stringToDate((String) value); 
+        }
+        if (error != null) {
+            value = new EvalError(error);
+        }
+        return new Cell((Serializable)value, recon);
+    }
+
     static public Cell loadStreaming(JsonParser jp, Pool pool) throws Exception {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
