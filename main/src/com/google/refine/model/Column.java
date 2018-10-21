@@ -36,6 +36,7 @@ package com.google.refine.model;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class Column  {
     private String format = Field.FIELD_FORMAT_DEFAULT;
     private String title = "";
     private String description = "";
-    private Map<String, Object> constraints = null;
+    private Map<String, Object> constraints = Collections.emptyMap();
     
     transient protected Map<String, Object> _precomputes;
     
