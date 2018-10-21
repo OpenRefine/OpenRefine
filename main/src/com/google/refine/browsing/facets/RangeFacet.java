@@ -35,6 +35,7 @@ package com.google.refine.browsing.facets;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -92,6 +93,38 @@ public class RangeFacet implements Facet {
         protected boolean    _selected; // false if we're certain that all rows will match
                         // and there isn't any filtering to do
         
+        @JsonCreator
+        public RangeFacetConfig(
+                @JsonProperty("name")
+                String name,
+                @JsonProperty("expression")
+                String expression,
+                @JsonProperty("columnName")
+                String columnName,
+                @JsonProperty(FROM)
+                Double from,
+                @JsonProperty(TO)
+                Double to,
+                @JsonProperty("selectNumeric")
+                Boolean selectNumeric,
+                @JsonProperty("selectNonNumeric")
+                Boolean selectNonNumeric,
+                @JsonProperty("selectBlank")
+                Boolean selectBlank,
+                @JsonProperty("selectError")
+                Boolean selectError) {
+            _name = name;
+            _expression = expression;
+            _columnName = columnName;
+            _from = from == null ? 0 : from;
+            _to = to == null ? 0 : to;
+            _selectNumeric = selectNumeric == null ? true : selectNumeric;
+            _selectNonNumeric = selectNonNumeric == null ? true : selectNonNumeric;
+            _selectBlank = selectBlank == null ? true : selectBlank;
+            _selectError = selectError == null ? true : selectError;
+            _selected = !_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError || from != null || to != null;
+        }
+        
         @Override
         public void initializeFromJSON(JSONObject o) {
             _name = o.getString("name");
@@ -124,7 +157,7 @@ public class RangeFacet implements Facet {
             return "range";
         }
     }
-    RangeFacetConfig _config = new RangeFacetConfig();
+    RangeFacetConfig _config = null;
     
     /*
      * Derived configuration data

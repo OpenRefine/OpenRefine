@@ -1,7 +1,11 @@
 package com.google.refine.tests.browsing.facets;
 
-import org.json.JSONObject;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.facets.RangeFacet;
@@ -10,6 +14,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class RangeFacetTests extends RefineTest {
     public static String configJson = "{\n" + 
@@ -46,14 +51,13 @@ public class RangeFacetTests extends RefineTest {
             + "\"errorCount\":0}";
     
     @Test
-    public void serializeRangeFacetConfig() {
-        RangeFacetConfig config = new RangeFacetConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+    public void serializeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+        RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
     
     @Test
-    public void serializeRangeFacet() {
+    public void serializeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("my column\n"
                 + "89.2\n"
                 + "-45.9\n"
@@ -63,8 +67,7 @@ public class RangeFacetTests extends RefineTest {
         project.rows.get(1).cells.set(0, new Cell(-45.9, null));
         project.rows.get(3).cells.set(0, new Cell(0.4, null));
         Engine engine = new Engine(project);
-        RangeFacetConfig config = new RangeFacetConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+        RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         RangeFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
         TestUtils.isSerializedTo(facet, facetJson);
