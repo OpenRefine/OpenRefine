@@ -36,8 +36,6 @@ package com.google.refine.model.recon;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
@@ -48,22 +46,6 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     final public ReconType type;
     
     private final static String WARN = "Not implemented";
-    
-    static public ReconConfig reconstruct(JSONObject obj) throws Exception {
-        JSONObject type = obj.getJSONObject("type");
-        
-        ReconType typ = null;
-        if(obj.has("id")) {
-            typ = new ReconType(obj.getString("id"),
-                        obj.has("name") ? obj.getString("name") : obj.getString("id"));
-        }
-
-        return new DataExtensionReconConfig(
-            obj.getString("service"),
-            obj.has("identifierSpace") ? obj.getString("identifierSpace") : null,
-            obj.has("schemaSpace") ? obj.getString("schemaSpace") : null,
-            typ);
-    }
     
     public DataExtensionReconConfig(
         String service,
