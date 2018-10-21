@@ -2,18 +2,27 @@ package com.google.refine.tests.model.recon;
 
 import java.util.ArrayList;
 
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
 public class StandardReconConfigTests extends RefineTest {
+    
+    @BeforeMethod
+    public void registerOperation() {
+        OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
+        ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
+    }
+    
 
     @Override
     @BeforeTest
@@ -74,7 +83,7 @@ public class StandardReconConfigTests extends RefineTest {
                 "        ],\n" + 
                 "        \"limit\": 0\n" + 
                 " }";
-        ReconConfig config = StandardReconConfig.reconstruct(new JSONObject(json));
+        ReconConfig config = ReconConfig.reconstruct(json);
         TestUtils.isSerializedTo(config, json);
     }
 }

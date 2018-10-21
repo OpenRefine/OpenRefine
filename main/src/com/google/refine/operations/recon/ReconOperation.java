@@ -81,7 +81,7 @@ public class ReconOperation extends EngineDependentOperation {
         return new ReconOperation(
             EngineConfig.reconstruct(engineConfig), 
             obj.getString("columnName"),
-            ReconConfig.reconstruct(obj.getJSONObject("config"))
+            ReconConfig.reconstruct(obj.getJSONObject("config").toString())
         );
     }
     

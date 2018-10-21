@@ -35,17 +35,17 @@ package com.google.refine.model.recon;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -55,6 +55,11 @@ import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
+@JsonTypeInfo(
+    use=JsonTypeInfo.Id.CUSTOM,
+    include=JsonTypeInfo.As.PROPERTY,
+    property="mode")
+@JsonTypeIdResolver(ReconConfigResolver.class)
 abstract public class ReconConfig  {
     final static protected Logger LOGGER = LoggerFactory.getLogger("recon-config");
 
@@ -77,33 +82,27 @@ abstract public class ReconConfig  {
         classes.add(klass);
     }
     
-    static public ReconConfig reconstruct(JSONObject obj) throws Exception {
-        try {
-            String mode = obj.getString("mode");
-            
-            // Backward compatibility
-            if ("extend".equals(mode) || "strict".equals(mode)) {
-                mode = "freebase/" + mode;
-            } else if ("heuristic".equals(mode)) {
-                mode = "core/standard-service"; // legacy
-            } else if (!mode.contains("/")) {
-                mode = "core/" + mode;
-            }
-            
-            // TODO: This can fail silently if the Freebase extension is not installed.
-            List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(mode);
-            if (classes != null && classes.size() > 0) {
-                Class<? extends ReconConfig> klass = classes.get(classes.size() - 1);
-                
-                Method reconstruct = klass.getMethod("reconstruct", JSONObject.class);
-                if (reconstruct != null) {
-                    return (ReconConfig) reconstruct.invoke(null, obj);
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.error("Reconstruct failed",e);
+    static public Class<? extends ReconConfig> getClassFromMode(String mode) {
+        // Backward compatibility
+        if ("extend".equals(mode) || "strict".equals(mode)) {
+            mode = "freebase/" + mode;
+        } else if ("heuristic".equals(mode)) {
+            mode = "core/standard-service"; // legacy
+        } else if (!mode.contains("/")) {
+            mode = "core/" + mode;
+        }
+        
+        // TODO: This can fail silently if the Freebase extension is not installed.
+        List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(mode);
+        System.out.println(classes);
+        if (classes != null && classes.size() > 0) {
+            return classes.get(classes.size() - 1);
         }
         return null;
+    }
+    
+    static public ReconConfig reconstruct(String json) throws Exception {
+        return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
     
     abstract public int getBatchSize();

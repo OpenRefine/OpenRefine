@@ -174,19 +174,19 @@ public class ReconChange extends MassCellChange {
             
             if ("newReconConfig".equals(field)) {
                 if (value.length() > 0) {
-                    newReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                    newReconConfig = ReconConfig.reconstruct(value);
                 }
             } else if ("newReconStats".equals(field)) {
                 if (value.length() > 0) {
-                    newReconStats = ReconStats.load(ParsingUtilities.evaluateJsonStringToObject(value));
+                    newReconStats = ParsingUtilities.mapper.readValue(value, ReconStats.class);
                 }
             } else if ("oldReconConfig".equals(field)) {
                 if (value.length() > 0) {
-                    oldReconConfig = ReconConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                    oldReconConfig = ReconConfig.reconstruct(value);
                 }
             } else if ("oldReconStats".equals(field)) {
                 if (value.length() > 0) {
-                    oldReconStats = ReconStats.load(ParsingUtilities.evaluateJsonStringToObject(value));
+                    oldReconStats = ParsingUtilities.mapper.readValue(value, ReconStats.class);
                 }
             } else if ("commonColumnName".equals(field)) {
                 commonColumnName = value;

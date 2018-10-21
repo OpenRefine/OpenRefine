@@ -34,11 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.model.recon;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,6 +54,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -82,56 +83,22 @@ public class StandardReconConfig extends ReconConfig {
         @JsonProperty("propertyID")
         final public String propertyID;
         
-        public ColumnDetail(String columnName, String propertyName, String propertyID) {
+        @JsonCreator
+        public ColumnDetail(
+                @JsonProperty("column")
+                String columnName,
+                @JsonProperty("propertyName")
+                String propertyName,
+                @JsonProperty("propertyID")
+                String propertyID) {
             this.columnName = columnName;
             this.propertyName = propertyName;
             this.propertyID = propertyID;
         }
     }
     
-    static public ReconConfig reconstruct(JSONObject obj) throws Exception {
-        List<ColumnDetail> columnDetails = null;
-        if (obj.has("columnDetails")) {
-            JSONArray columnDetailsA = obj.getJSONArray("columnDetails");
-            int l = columnDetailsA.length();
-            
-            columnDetails = new ArrayList<ColumnDetail>(l);
-            for (int i = 0; i < l; i++) {
-                JSONObject o = columnDetailsA.getJSONObject(i);
-                
-                if (o.has("property")) { // legacy
-                    JSONObject p = o.getJSONObject("property");
-                    columnDetails.add(new ColumnDetail(
-                        o.getString("column"),
-                        p.has("name") ? p.getString("name") : null,
-                        p.has("id") ? p.getString("id") : null
-                    ));
-                } else {
-                    columnDetails.add(new ColumnDetail(
-                        o.getString("column"),
-                        o.has("propertyName") ? o.getString("propertyName") : null,
-                        o.has("propertyID") ? o.getString("propertyID") : null
-                    ));
-                }
-            }
-        } else {
-            columnDetails = new ArrayList<ColumnDetail>();
-        }
-        
-        JSONObject t = obj.has("type") && !obj.isNull("type") ? obj.getJSONObject("type") : null;
-        
-        int limit = obj.has("limit") && !obj.isNull("limit") ? obj.getInt("limit") : 0;
-        
-        return new StandardReconConfig(
-            obj.getString("service"),
-            obj.has("identifierSpace") ? obj.getString("identifierSpace") : null,
-            obj.has("schemaSpace") ? obj.getString("schemaSpace") : null,
-            t == null ? null : t.getString("id"),
-            t == null ? null : (t.has("name") ? t.getString("name") : null),
-            obj.getBoolean("autoMatch"),
-            columnDetails,
-            limit
-        );
+    static public ReconConfig reconstruct(String json) throws IOException {
+        return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
     
     static protected class StandardReconJob extends ReconJob {
@@ -162,6 +129,25 @@ public class StandardReconConfig extends ReconConfig {
     @JsonProperty("limit")
     final private int limit;
 
+    @JsonCreator
+    public StandardReconConfig(
+            @JsonProperty("service")
+            String service,
+            @JsonProperty("identifierSpace")
+            String identifierSpace,
+            @JsonProperty("schemaSpace")
+            String schemaSpace,
+            @JsonProperty("type")
+            ReconType type,
+            @JsonProperty("autoMatch")
+            boolean autoMatch,
+            @JsonProperty("columnDetails")
+            List<ColumnDetail> columnDetails,
+            @JsonProperty("limit")
+            int limit) {
+        this(service, identifierSpace, schemaSpace, type.id, type.name, autoMatch, columnDetails, limit);
+    }
+            
     public StandardReconConfig(
             String service,
             String identifierSpace,

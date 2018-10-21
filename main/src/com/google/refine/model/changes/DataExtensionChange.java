@@ -393,7 +393,7 @@ public class DataExtensionChange implements Change {
                     if (line == null || line.length() == 0) {
                         columnTypes.add(null);
                     } else {
-                        columnTypes.add(ReconType.load(ParsingUtilities.evaluateJsonStringToObject(line)));
+                        columnTypes.add(ReconType.load(line));
                     }
                 }
             } else if ("dataExtensionCount".equals(field)) {
