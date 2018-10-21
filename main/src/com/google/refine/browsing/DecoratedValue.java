@@ -35,6 +35,7 @@ package com.google.refine.browsing;
 
 import java.time.OffsetDateTime;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.util.StringUtils;
@@ -52,7 +53,12 @@ public class DecoratedValue  {
     @JsonProperty("l")
     final public String label;
     
-    public DecoratedValue(Object value, String label) {
+    @JsonCreator
+    public DecoratedValue(
+            @JsonProperty("v")
+            Object value,
+            @JsonProperty("l")
+            String label) {
       if (value instanceof OffsetDateTime) {
           this.value = StringUtils.toString(value);
       } else {
