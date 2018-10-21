@@ -48,9 +48,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.InjectableValues;
 
 import com.google.refine.expr.EvalError;
@@ -191,60 +188,6 @@ public class Cell implements HasFields {
             value = new EvalError(error);
         }
         return new Cell((Serializable)value, recon);
-    }
-
-    static public Cell loadStreaming(JsonParser jp, Pool pool) throws Exception {
-        JsonToken t = jp.getCurrentToken();
-        if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        Serializable value = null;
-        String type = null;
-        Recon recon = null;
-        
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jp.getCurrentName();
-            jp.nextToken();
-            
-            if ("r".equals(fieldName)) {
-                if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
-                    String reconID = jp.getText();
-                    
-                    recon = pool.getRecon(reconID);
-                } else {
-                    // legacy
-                    recon = Recon.loadStreaming(jp, pool);
-                }
-            } else if ("e".equals(fieldName)) {
-                value = new EvalError(jp.getText());
-            } else if ("v".equals(fieldName)) {
-                JsonToken token = jp.getCurrentToken();
-            
-                if (token == JsonToken.VALUE_STRING) {
-                    value = jp.getText();
-                } else if (token == JsonToken.VALUE_NUMBER_INT) {
-                    value = jp.getLongValue();
-                } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
-                    value = jp.getDoubleValue();
-                } else if (token == JsonToken.VALUE_TRUE) {
-                    value = true;
-                } else if (token == JsonToken.VALUE_FALSE) {
-                    value = false;
-                }
-            } else if ("t".equals(fieldName)) {
-                type = jp.getText();
-            }
-        }
-        
-        if (value != null) {
-            if (type != null && "date".equals(type)) {
-                value = ParsingUtilities.stringToDate((String) value); 
-            }
-            return new Cell(value, recon);
-        } else {
-            return null;
-        }
     }
     
     @Override

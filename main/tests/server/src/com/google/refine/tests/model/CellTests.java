@@ -1,14 +1,10 @@
 package com.google.refine.tests.model;
 
-import org.testng.annotations.Test;
-
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.util.Properties;
+import org.testng.annotations.Test;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;

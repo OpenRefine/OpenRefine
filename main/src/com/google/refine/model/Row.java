@@ -36,14 +36,17 @@ package com.google.refine.model;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.InjectableValues;
 
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
@@ -206,40 +209,25 @@ public class Row implements HasFields {
             loadStreaming(s, pool);
     }
     
+    @JsonCreator
+    static public Row deserialize(
+            @JsonProperty(STARRED)
+            boolean starred,
+            @JsonProperty(FLAGGED)
+            boolean flagged,
+            @JsonProperty("cells")
+            List<Cell> cells) {
+        if (cells == null) {
+            cells = new ArrayList<>();
+        }
+        return new Row(cells, flagged, starred);
+    }
+    
     static public Row loadStreaming(String s, Pool pool) throws Exception {
-        JsonFactory jsonFactory = new JsonFactory(); 
-        JsonParser jp = jsonFactory.createJsonParser(s);
-        
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        List<Cell>  cells = new ArrayList<Cell>();
-        boolean     starred = false;
-        boolean     flagged = false;
-        
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jp.getCurrentName();
-            jp.nextToken();
-            
-            if (STARRED.equals(fieldName)) {
-                starred = jp.getBooleanValue();
-            } else if (FLAGGED.equals(fieldName)) {
-                flagged = jp.getBooleanValue();
-            } else if ("cells".equals(fieldName)) {
-                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
-                    return null;
-                }
-                
-                while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    Cell cell = Cell.loadStreaming(jp, pool);
-                    
-                    cells.add(cell);
-                }
-            }
-        }
-        
-        return (cells.size() > 0) ? new Row(cells, flagged, starred) : new Row(0);
+        InjectableValues injectableValues = new InjectableValues.Std()
+                .addValue("pool", pool);
+        return ParsingUtilities.mapper.setInjectableValues(injectableValues)
+                .readValue(s, Row.class);
     }
     
     @Override
