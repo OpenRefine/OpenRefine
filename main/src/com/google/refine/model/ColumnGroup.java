@@ -38,8 +38,7 @@ import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,7 +55,14 @@ public class ColumnGroup  {
     transient public ColumnGroup        parentGroup;
     transient public List<ColumnGroup>  subgroups;
     
-    public ColumnGroup(int startColumnIndex, int columnSpan, int keyColumnIndex) {
+    @JsonCreator
+    public ColumnGroup(
+            @JsonProperty("startColumnIndex")
+            int startColumnIndex,
+            @JsonProperty("columnSpan")
+            int columnSpan,
+            @JsonProperty("keyColumnIndex")
+            int keyColumnIndex) {
         this.startColumnIndex = startColumnIndex;
         this.columnSpan = columnSpan;
         this.keyColumnIndex = keyColumnIndex;
@@ -98,14 +104,8 @@ public class ColumnGroup  {
         }
     }
     
-    static public ColumnGroup load(String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-        
-        return new ColumnGroup(
-            obj.getInt("startColumnIndex"),
-            obj.getInt("columnSpan"),
-            obj.getInt("keyColumnIndex")
-        );
+    static public ColumnGroup load(String s) throws IOException {
+        return ParsingUtilities.mapper.readValue(s, ColumnGroup.class);
     }
     
     protected void internalInitialize() {
