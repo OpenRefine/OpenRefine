@@ -32,13 +32,13 @@ public class ReconTests {
     
     @Test
     public void serializeReconSaveMode() throws Exception {      
-        Recon r = Recon.loadStreaming(fullJson, null);
+        Recon r = Recon.loadStreaming(fullJson);
         TestUtils.isSerializedTo(r, fullJson, true);
     }
         
     @Test
     public void serializeReconViewMode() throws Exception {
-        Recon r = Recon.loadStreaming(fullJson, null);
+        Recon r = Recon.loadStreaming(fullJson);
         String shortJson = "{\"id\":1533651559492945033,"
                 + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
                 + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
@@ -66,7 +66,7 @@ public class ReconTests {
                 + "   {\"id\":\"Q30284245\",\"name\":\"Baylor College of Medicine Children\\u2019s Foundation\",\"score\":48.57142857142858,\"types\":[\"Q163740\"]}"
                 + "]"
                 + "}";
-        Recon r = Recon.loadStreaming(fullJson, null);
+        Recon r = Recon.loadStreaming(fullJson);
         r.match = null;
         r.judgment = Judgment.None;
         TestUtils.isSerializedTo(r, json);

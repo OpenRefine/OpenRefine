@@ -136,7 +136,7 @@ public class RowTests extends RefineTest {
                 + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
                 + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"judgmentBatchSize\":1,\"matchRank\":0}";
         Pool pool = mock(Pool.class);
-        Recon recon = Recon.loadStreaming(reconJson, pool);
+        Recon recon = Recon.loadStreaming(reconJson);
         when(pool.getRecon("1533649346002675326")).thenReturn(recon);
         
         String json = "{\"flagged\":false,"

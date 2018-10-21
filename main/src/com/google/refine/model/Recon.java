@@ -46,13 +46,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.JsonViews;
-import com.google.refine.util.Pool;
+import com.google.refine.util.ParsingUtilities;
  
 @JsonFilter("reconCandidateFilter")
 public class Recon implements HasFields {
@@ -111,20 +108,32 @@ public class Recon implements HasFields {
         s_featureMap.put("nameWordDistance", Feature_nameWordDistance);
     }
     
+    @JsonIgnore
     final public long            id;
+    @JsonIgnore
     public String                service = "unknown";
+    @JsonIgnore
     public String                identifierSpace = null;
+    @JsonIgnore
     public String                schemaSpace = null;
     
+    @JsonIgnore
     public Object[]              features = new Object[Feature_max];
+    @JsonIgnore
     public List<ReconCandidate>  candidates;
     
+    @JsonIgnore
     public Judgment              judgment = Judgment.None;
+    @JsonIgnore
     public String                judgmentAction = "unknown";
+    @JsonIgnore
     public long                  judgmentHistoryEntry;
+    @JsonIgnore
     public int                   judgmentBatchSize = 0;
     
+    @JsonIgnore
     public ReconCandidate        match = null;
+    @JsonIgnore
     public int                   matchRank = -1;
     
     @Deprecated
@@ -362,110 +371,46 @@ public class Recon implements HasFields {
         return null;
     }
 
-    static public Recon loadStreaming(String s, Pool pool) throws Exception {
-        JsonFactory jsonFactory = new JsonFactory(); 
-        JsonParser jp = jsonFactory.createJsonParser(s);
-        
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            return null;
-        }
-        return loadStreaming(jp, pool);
+    static public Recon loadStreaming(String s) throws Exception {
+        return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
     
-    static public Recon loadStreaming(JsonParser jp, Pool pool) throws Exception {
-        JsonToken t = jp.getCurrentToken();
-        if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        Recon recon = null;
-        long id = -1;
-        long judgmentHistoryEntry = -1;
-        
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jp.getCurrentName();
-            jp.nextToken();
-            
-            if ("id".equals(fieldName)) {
-                id = jp.getLongValue();
-            } else if ("judgmentHistoryEntry".equals(fieldName)) {
-                judgmentHistoryEntry = jp.getLongValue();
-                if (recon != null) {
-                    recon.judgmentHistoryEntry = judgmentHistoryEntry;
-                }
-            } else {
-                if (recon == null) {
-                    recon = new Recon(id, judgmentHistoryEntry);
-                }
-                
-                if ("j".equals(fieldName)) {
-                    recon.judgment = stringToJudgment(jp.getText());
-                } else if ("m".equals(fieldName)) {
-                    if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
-                        // legacy case
-                        String candidateID = jp.getText();
-                        recon.match = pool.getReconCandidate(candidateID);
-                    } else {
-                        recon.match = ReconCandidate.loadStreaming(jp);
-                    }
-                } else if ("f".equals(fieldName)) {
-                    if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
-                        return null;
-                    }
-                    
-                    int feature = 0;
-                    while (jp.nextToken() != JsonToken.END_ARRAY) {
-                        if (feature < recon.features.length) {
-                            JsonToken token = jp.getCurrentToken();
-                            if (token == JsonToken.VALUE_STRING) {
-                                recon.features[feature++] = jp.getText();
-                            } else if (token == JsonToken.VALUE_NUMBER_INT) {
-                                recon.features[feature++] = jp.getLongValue();
-                            } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
-                                recon.features[feature++] = jp.getDoubleValue();
-                            } else if (token == JsonToken.VALUE_FALSE) {
-                                recon.features[feature++] = false;
-                            } else if (token == JsonToken.VALUE_TRUE) {
-                                recon.features[feature++] = true;
-                            }
-                        }
-                    }
-                } else if ("c".equals(fieldName)) {
-                    if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
-                        return null;
-                    }
-                    
-                    while (jp.nextToken() != JsonToken.END_ARRAY) {
-                        if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
-                            // legacy case
-                            String candidateID = jp.getText();
-                            recon.addCandidate(pool.getReconCandidate(candidateID));
-                        } else {
-                            recon.addCandidate(ReconCandidate.loadStreaming(jp));
-                        }
-                    }
-                } else if ("service".equals(fieldName)) {
-                    recon.service = jp.getText();
-                } else if ("identifierSpace".equals(fieldName)) {
-                    recon.identifierSpace = jp.getText();
-                    if ("null".equals(recon.identifierSpace)) {
-                        recon.identifierSpace = FREEBASE_IDENTIFIER_SPACE;
-                    }
-                } else if ("schemaSpace".equals(fieldName)) {
-                    recon.schemaSpace = jp.getText();
-                    if ("null".equals(recon.schemaSpace)) {
-                        recon.schemaSpace = FREEBASE_SCHEMA_SPACE;
-                    }
-                } else if ("judgmentAction".equals(fieldName)) {
-                    recon.judgmentAction = jp.getText();
-                } else if ("judgmentBatchSize".equals(fieldName)) {
-                    recon.judgmentBatchSize = jp.getIntValue();
-                } else if ("matchRank".equals(fieldName)) {
-                    recon.matchRank = jp.getIntValue();
-                }
-            }
-        }
-        
-        return recon;
+    public Recon(
+            @JsonProperty("id")
+            long id,
+            @JsonProperty("judgmentHistoryEntry")
+            long judgmentHistoryEntry,
+            @JsonProperty("j")
+            Judgment judgment,
+            @JsonProperty("m")
+            ReconCandidate match,
+            @JsonProperty("f")
+            Object[] features,
+            @JsonProperty("c")
+            List<ReconCandidate> candidates,
+            @JsonProperty("service")
+            String service,
+            @JsonProperty("identifierSpace")
+            String identifierSpace,
+            @JsonProperty("schemaSpace")
+            String schemaSpace,
+            @JsonProperty("judgmentAction")
+            String judgmentAction,
+            @JsonProperty("judgmentBatchSize")
+            Integer judgmentBatchSize,
+            @JsonProperty("matchRank")
+            Integer matchRank) {
+        this.id = id;
+        this.judgmentHistoryEntry = judgmentHistoryEntry;
+        this.judgment = judgment != null ? judgment : Judgment.None;
+        this.match = match;
+        this.features = features != null ? features : new Object[Feature_max];
+        this.candidates = candidates != null ? candidates : new ArrayList<>();
+        this.service = service != null ? service : "unknown";
+        this.identifierSpace = identifierSpace;
+        this.schemaSpace = schemaSpace;
+        this.judgmentAction = judgmentAction != null ? judgmentAction : "unknown";
+        this.judgmentBatchSize = judgmentBatchSize != null ? judgmentBatchSize : 0;
+        this.matchRank = matchRank != null ? matchRank : -1;
     }
 }

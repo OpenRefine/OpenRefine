@@ -28,7 +28,7 @@ public class CellTests {
     
     @Test
     public void serializeCellWithRecon() throws Exception {
-        recon = Recon.loadStreaming(reconJson, pool);
+        recon = Recon.loadStreaming(reconJson);
         when(pool.getRecon("1533649346002675326")).thenReturn(recon);
         String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":\"1533649346002675326\"}";
         
