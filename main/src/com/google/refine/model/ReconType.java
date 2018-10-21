@@ -33,9 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import org.json.JSONObject;
+import java.io.IOException;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.refine.util.ParsingUtilities;
 
 
 /**
@@ -49,20 +52,17 @@ public class ReconType  {
     @JsonProperty("name")
     public String name;
 
-    public ReconType(String id, String name) {
+    @JsonCreator
+    public ReconType(
+            @JsonProperty("id")
+            String id,
+            @JsonProperty("name")
+            String name) {
 	this.id = id;
 	this.name = name;
     }
     
-    static public ReconType load(JSONObject obj) throws Exception {
-        if (obj == null) {
-            return null;
-        }
-        
-        ReconType type = new ReconType(
-            obj.getString("id"),
-            obj.getString("name")
-        );
-        return type;
+    static public ReconType load(String json) throws IOException {
+        return ParsingUtilities.mapper.readValue(json, ReconType.class);
     }
 }
