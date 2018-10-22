@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.openrefine</groupId>
+  <artifactId>extensions</artifactId>
+  <packaging>pom</packaging>
+  <version>3.1-SNAPSHOT</version>
+
+  <name>OpenRefine - extensions</name>
+  <description>Extensions add importers, exporters and other sorts of features to OpenRefine</description>
+  <url>http://openrefine.org/</url>
+
+  <parent>
+    <groupId>org.openrefine</groupId>
+    <artifactId>openrefine</artifactId>
+    <version>3.1-SNAPSHOT</version>
+  </parent>
+
+  <modules>
+        <module>jython</module>
+        <module>wikidata</module>
+        <module>database</module>
+        <module>gdata</module>
+        <module>pc-axis</module>
+        <!-- Add new extensions here -->
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.2</version>
+        <executions>
+            <execution>
+                <id>prepare-agent</id>
+                <goals>
+                    <goal>prepare-agent</goal>
+                </goals>
+                <phase>process-test-resources</phase>
+                <configuration>
+                    <destFile>${project.parent.build.directory}/report/${project.name}.exec</destFile>
+                    <propertyName>surefireArgs</propertyName>
+                </configuration>
+            </execution>
+            <execution>
+                <phase>test</phase>
+                <goals>
+                    <goal>report</goal>
+                </goals>
+                <configuration>
+                    <dataFile>${project.parent.build.directory}/report/${project.name}.exec</dataFile>
+                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                </configuration>
+            </execution>
+         </executions>
+       </plugin>
+     </plugins>
+   </build>
+</project>
+

@@ -18,15 +18,21 @@ before_install:
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar
   # create test database for mysql, mariadb and postgresql
   - mysql -u root -e 'CREATE DATABASE test_db;'
-  - mysql -u root test_db < extensions/database/test/conf/travis-mysql.sql
+  - mysql -u root test_db < extensions/database/tests/conf/travis-mysql.sql
   - psql -c 'CREATE DATABASE test_db;' -U postgres
-  - psql -U postgres test_db < extensions/database/test/conf/travis-pgsql.sql
-  - cp extensions/database/test/conf/travis_tests.xml extensions/database/test/conf/tests.xml
+  - psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
+  - cp extensions/database/tests/conf/travis_tests.xml extensions/database/tests/conf/tests.xml
+  - cp packaging/travis_pom.xml packaging/pom.xml
+  - mvn process-resources
 
 script:
-  - ./refine server_test
-  - ./refine extensions_test
+  - ./refine test
 
 after_success:
-  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/report/jacoco.xml
+  - mvn prepare-package -DskipTests=true
+  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/report/jacoco-merged.exec
+
+cache:
+  directories:
+  - $HOME/.m2
 

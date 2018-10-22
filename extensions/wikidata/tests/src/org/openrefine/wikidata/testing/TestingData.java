@@ -24,10 +24,12 @@
 package org.openrefine.wikidata.testing;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WbLanguageConstant;
@@ -133,8 +135,8 @@ public class TestingData {
 
     public static JSONObject jsonFromFile(String filename)
             throws IOException, JSONException {
-        byte[] contents = Files.readAllBytes(Paths.get(filename));
-        String decoded = new String(contents, "utf-8");
+        InputStream f = TestingData.class.getClassLoader().getResourceAsStream(filename);
+        String decoded = IOUtils.toString(f);
         return ParsingUtilities.evaluateJsonStringToObject(decoded);
     }
 
