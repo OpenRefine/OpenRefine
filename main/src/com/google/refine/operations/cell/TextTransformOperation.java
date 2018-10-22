@@ -39,6 +39,9 @@ import java.util.Properties;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
@@ -53,24 +56,20 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
+import com.google.refine.util.ParsingUtilities;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
+    @JsonProperty("expression")
     final protected String  _expression;
+    @JsonProperty("onError")
     final protected OnError _onError;
+    @JsonProperty("repeat")
     final protected boolean _repeat;
+    @JsonProperty("repeatCount")
     final protected int     _repeatCount;
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new TextTransformOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("columnName"),
-            obj.getString("expression"),
-            stringToOnError(obj.getString("onError")),
-            obj.getBoolean("repeat"),
-            obj.getInt("repeatCount")
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), TextTransformOperation.class);
     }
     
     static public OnError stringToOnError(String s) {
@@ -92,12 +91,19 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         }
     }
     
+    @JsonCreator
     public TextTransformOperation(
+            @JsonProperty("engineConfig")
             EngineConfig engineConfig, 
+            @JsonProperty("columnName")
             String columnName, 
-            String expression, 
+            @JsonProperty("expression")
+            String expression,
+            @JsonProperty("onError")
             OnError onError,
+            @JsonProperty("repeat")
             boolean repeat,
+            @JsonProperty("repeatCount")
             int repeatCount
         ) {
         super(engineConfig, columnName, true);

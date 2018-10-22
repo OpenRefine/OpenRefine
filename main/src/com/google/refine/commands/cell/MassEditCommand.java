@@ -60,7 +60,7 @@ public class MassEditCommand extends EngineDependentCommand {
             engineConfig,
             columnName,
             expression,
-            ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), MassEditOperation.new TypeReference<List<Edit>>() {})
+            ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {})
         );
     }
 }
