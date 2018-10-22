@@ -78,7 +78,7 @@ public class ApplyOperationsCommand extends Command {
         }
     }
     
-    protected void reconstructOperation(Project project, JSONObject obj) {
+    protected void reconstructOperation(Project project, JSONObject obj) throws IOException {
         AbstractOperation operation = OperationRegistry.reconstruct(project, obj);
         if (operation != null) {
             try {

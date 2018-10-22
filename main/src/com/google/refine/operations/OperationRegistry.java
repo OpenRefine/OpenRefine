@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,8 +42,12 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -67,25 +72,18 @@ public abstract class OperationRegistry {
         classes.add(klass);
     }
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) {
-        try {
-            String op = obj.getString("op");
-            if (!op.contains("/")) {
-                op = "core/" + op; // backward compatible
-            }
-            
-            List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(op);
-            if (classes != null && classes.size() > 0) {
-                Class<? extends AbstractOperation> klass = classes.get(classes.size() - 1);
-                
-                Method reconstruct = klass.getMethod("reconstruct", Project.class, JSONObject.class);
-                if (reconstruct != null) {
-                    return (AbstractOperation) reconstruct.invoke(null, project, obj);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    static public Class<? extends AbstractOperation> resolveOperationId(String op) {
+        if (!op.contains("/")) {
+            op = "core/" + op; // backward compatible
+        }
+        List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(op);
+        if (classes != null && classes.size() > 0) {
+            return classes.get(classes.size() - 1);
         }
         return null;
+    }
+    
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), AbstractOperation.class);
     }
 }
