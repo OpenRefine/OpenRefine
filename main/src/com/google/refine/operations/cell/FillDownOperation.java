@@ -37,6 +37,9 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
@@ -61,8 +64,11 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
         );
     }
     
+    @JsonCreator
     public FillDownOperation(
-            EngineConfig engineConfig, 
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("columnName")
             String columnName
         ) {
         super(engineConfig, columnName, true);
