@@ -47,7 +47,6 @@ import org.json.JSONObject;
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
@@ -79,7 +78,7 @@ public class ApplyOperationsCommand extends Command {
     }
     
     protected void reconstructOperation(Project project, JSONObject obj) throws IOException {
-        AbstractOperation operation = OperationRegistry.reconstruct(project, obj);
+        AbstractOperation operation = ParsingUtilities.mapper.readValue(obj.toString(), AbstractOperation.class);
         if (operation != null) {
             try {
                 Process process = operation.createProcess(project, new Properties());

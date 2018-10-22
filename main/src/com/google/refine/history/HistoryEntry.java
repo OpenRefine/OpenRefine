@@ -49,7 +49,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
@@ -159,7 +158,7 @@ public class HistoryEntry  {
 
         AbstractOperation operation = null;
         if (obj.has(OPERATION) && !obj.isNull(OPERATION)) {
-            operation = OperationRegistry.reconstruct(project, obj.getJSONObject(OPERATION));
+            operation = ParsingUtilities.mapper.readValue(obj.getJSONObject(OPERATION).toString(), AbstractOperation.class);
         }
 
         return new HistoryEntry(

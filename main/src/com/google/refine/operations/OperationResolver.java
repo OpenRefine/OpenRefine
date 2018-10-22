@@ -1,4 +1,4 @@
-package com.google.refine.model;
+package com.google.refine.operations;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import com.google.refine.operations.OperationRegistry;
+import com.google.refine.model.AbstractOperation;
 
 public class OperationResolver extends TypeIdResolverBase {
     

@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.OperationResolver;
 import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
 

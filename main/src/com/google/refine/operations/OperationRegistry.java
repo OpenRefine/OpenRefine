@@ -82,8 +82,4 @@ public abstract class OperationRegistry {
         }
         return null;
     }
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
-        return ParsingUtilities.mapper.readValue(obj.toString(), AbstractOperation.class);
-    }
 }
