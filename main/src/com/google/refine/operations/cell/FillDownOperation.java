@@ -52,16 +52,12 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class FillDownOperation extends EngineDependentMassCellOperation {
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new FillDownOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("columnName")
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), FillDownOperation.class);
     }
     
     @JsonCreator
