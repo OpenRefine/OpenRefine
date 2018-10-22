@@ -338,35 +338,6 @@ appengine_prepare() {
     
     ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
 }
-
-launch4j_prepare() {
-    tools_prepare
-
-    L4J_VERSION="3.8"
-    if [ "$OS" = "macosx" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-macosx-x86-10.8.tgz"
-    elif [ "$OS" = "windows" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-win32.zip"
-    elif [ "$OS" = "linux" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-linux.tgz"
-    fi
-    
-    LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
-    LAUNCH4J_DIR="launch4j"
-    
-    tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
-}
-    
-appbundler_prepare() {
-    tools_prepare
-    
-    cp "$REFINE_TOOLS_DIR/../3rd-party/appbundler-1.0.jar" "$REFINE_TOOLS_DIR"
-    # APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
-    # APPBUNDLER_DIR="."
-    # APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
-
-    # tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
-}
    
 virtualenv_prepare() {
     check_python
@@ -397,58 +368,6 @@ virtualenv_prepare() {
     fi
 }
     
-windmill_prepare() {
-    WINDMILL="`which windmill 2> /dev/null`"
-    if [ -z "$WINDMILL" ] ; then
-        check_python
-        tools_prepare
-        virtualenv_prepare
-
-        if [ "$OS" = "windows" ] ; then
-            check_pywin32
-            WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
-        else 
-            WINDMILL="$PYTHON_HOME/bin/windmill"
-        fi
-        
-        if [ ! -f "$WINDMILL" ] ; then
-            "$PYTHON_INSTALL" windmill
-        fi
-    fi    
-}
-
-findbugs_prepare() {
-    tools_prepare
-    FB_VERSION="2.0.2"
-    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/${FB_VERSION}/findbugs-${FB_VERSION}.tar.gz"
-    FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
-    FINDBUGS_DIR="findbugs-${FB_VERSION}"
-
-    tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
-}
-
-pmd_prepare() {
-    tools_prepare
-    
-    PMD_VERSION="4.2.6"
-    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip"
-    PMD_FILE=`echo $PMD_URL | sed 's|.*/||'`
-    PMD_DIR="pmd-bin-${PMD_VERSION}"
-
-    tool_download $PMD_URL $PMD_FILE $PMD_DIR
-}
-
-jslint_prepare() {
-    tools_prepare
-
-    JSLINT_VERSION="2.0.3"
-    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-${JSLINT_VERSION}-dist.zip"
-    JSLINT_FILE=`echo $JSLINT_URL | sed 's|.*/||'`
-    JSLINT_DIR="jslint4java-${JSLINT_VERSION}"
-
-    tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
-}
-            
 # ----------------------------------------------------------------------------------------------
 
 mvn() {
@@ -460,50 +379,15 @@ mvn() {
 # ----------------------------------------------------------------------------------------------
 
 dist() {
-    windows_dist $1
-    linux_dist $1
-    mac_dist $1
-    
-    echo "All distributions were built and are located at $REFINE_DIST_DIR"
-    echo 
-    echo "Upload them to the distibution site, then prepend the releases array at"
-    echo
-    echo "   https://github.com/OpenRefine/OpenRefine/tree/gh-pages/javascript/releases.js"
-    echo
-    echo "with"
-    echo 
-    echo "    {"
-    echo "        \"description\": \"OpenRefine ${VERSION}\","
-    echo "        \"version\": \"${VERSION}\","
-    # TODO: We need to modify version checking for the future
-    echo "        \"revision\": \"${REVISION}\""
-    echo "    },"
-    echo
-}
-
-windows_dist() {
-    dist_prepare
     get_version $1
-    get_revision
-
-    launch4j_prepare
-    
-    MVN_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
-    # TODO update this for Maven
-    $MVN windows
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    mvn package
 }
-
-linux_dist() {
-    dist_prepare
-    get_version $1
-    get_revision
-    
-    # TODO update this for Maven
-    $MVN linux
-}
-    
+ 
+# Kept just in case someone wants to follow this workflow on a mac,
+# but no longer needed as "mvn package" does it directly on both mac and linux.
 mac_dist() {
-    # TODO update this for Maven, maybe with https://github.com/federkasten/appbundle-maven-plugin ?
     check_macosx
     dist_prepare
     get_version $1
