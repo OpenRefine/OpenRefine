@@ -39,6 +39,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.EngineConfig;
@@ -55,19 +56,19 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String columnName = obj.getString("columnName");
-        
-        return new ReconMatchBestCandidatesOperation(
-            EngineConfig.reconstruct(engineConfig), 
-            columnName
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconMatchBestCandidatesOperation.class);
     }
     
-    public ReconMatchBestCandidatesOperation(EngineConfig engineConfig, String columnName) {
+    @JsonCreator
+    public ReconMatchBestCandidatesOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("columnName")
+            String columnName) {
         super(engineConfig, columnName, false);
     }
     
