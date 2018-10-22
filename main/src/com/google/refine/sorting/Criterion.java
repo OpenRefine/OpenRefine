@@ -33,91 +33,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.NAME,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="valueType")
+@JsonSubTypes({
+    @Type(value = BooleanCriterion.class, name = "boolean"),
+    @Type(value = DateCriterion.class, name = "date"),
+    @Type(value = NumberCriterion.class, name = "number"),
+    @Type(value = StringCriterion.class, name = "string") })
 abstract public class Criterion  {
+    @JsonProperty("column")
     public String columnName;
+    @JsonIgnore
     protected int cellIndex = -2;
 
     // These take on positive and negative values to indicate where blanks and errors
     // go relative to non-blank values. They are also relative to each another.
     // Blanks and errors are not affected by the reverse flag.
+    @JsonProperty("blankPosition")
     public int blankPosition = 1;
+    @JsonProperty("errorPosition")
     public int errorPosition = 2;
 
-    public boolean reverse;
+    @JsonProperty("reverse")
+    public boolean reverse = false;
 
-    public void initializeFromJSON(JSONObject obj) 
-            throws JSONException {
-        if (obj.has("column") && !obj.isNull("column")) {
-            columnName = obj.getString("column");
-        }
-
-        if (obj.has("blankPosition") && !obj.isNull("blankPosition")) {
-            blankPosition = obj.getInt("blankPosition");
-        }
-        if (obj.has("errorPosition") && !obj.isNull("errorPosition")) {
-            errorPosition = obj.getInt("errorPosition");
-        }
-
-        if (obj.has("reverse") && !obj.isNull("reverse")) {
-            reverse = obj.getBoolean("reverse");
-        }
-    }
-    
-    public static Criterion reconstruct(JSONObject obj) throws JSONException {
-        String valueType = "string";
-        if (obj.has("valueType") && !obj.isNull("valueType")) {
-            valueType = obj.getString("valueType");
-        }
-
-        Criterion c = null;
-        if ("boolean".equals(valueType)) {
-            c = new BooleanCriterion();
-        } else if ("date".equals(valueType)) {
-            c = new DateCriterion();
-        } else if ("number".equals(valueType)) {
-            c = new NumberCriterion();
-        } else {
-            c = new StringCriterion(obj.getBoolean("caseSensitive"));
-        }
-
-        c.initializeFromJSON(obj);
-        return c;
-    }
-    
     @JsonProperty("valueType")
     public abstract String getValueType();
     
-    @JsonProperty("reverse")
-    public boolean getReverse() {
-        return reverse;
-    }
-    
-    @JsonProperty("column")
-    public String getColumnName() {
-        return columnName;
-    }
-    
-    @JsonProperty("blankPosition")
-    public int getBlankPosition() {
-        return blankPosition;
-    }
-    
-    @JsonProperty("errorPosition")
-    public int getErrorPosition() {
-        return errorPosition;
-    }
-
     // Returns a cached cell index
     // We delay this fetching because the column might not exist
     // at deserialization (for instance if the column is created by an operation

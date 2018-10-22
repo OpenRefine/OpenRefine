@@ -1,14 +1,16 @@
 package com.google.refine.tests.sorting;
 
-import org.json.JSONObject;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.sorting.Criterion;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class NumberCriterionTest {
     @Test
-    public void serializeNumberCriterion() {
+    public void serializeNumberCriterion() throws IOException {
         String json = 
                 "        {\n" + 
                 "          \"errorPosition\": 2,\n" + 
@@ -17,6 +19,6 @@ public class NumberCriterionTest {
                 "          \"blankPosition\": 1,\n" + 
                 "          \"reverse\": true\n" + 
                 "        }\n";
-        TestUtils.isSerializedTo(Criterion.reconstruct(new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json);
     }
 }

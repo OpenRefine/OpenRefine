@@ -1,5 +1,8 @@
 package com.google.refine.tests.sorting;
 
+import java.io.IOException;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
@@ -8,7 +11,7 @@ import com.google.refine.tests.util.TestUtils;
 
 public class SortingConfigTests {
     @Test
-    public void serializeSortingConfig() {
+    public void serializeSortingConfig() throws JSONException, IOException {
         String json = "{\n" + 
                 "      \"criteria\": [\n" + 
                 "        {\n" + 

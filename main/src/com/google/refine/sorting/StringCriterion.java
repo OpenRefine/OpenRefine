@@ -36,30 +36,27 @@ package com.google.refine.sorting;
 import java.text.CollationKey;
 import java.text.Collator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.expr.ExpressionUtils;
 
 public class StringCriterion extends Criterion {
+    @JsonProperty("caseSensitive")
     public boolean caseSensitive;
+    @JsonIgnore
     Collator collator;
     
     /**
      * 
      */
-    public StringCriterion(boolean caseSensitive) {
+    public StringCriterion() {
         super();
         collator = Collator.getInstance();
         collator.setDecomposition(Collator.FULL_DECOMPOSITION);
         collator.setStrength(Collator.SECONDARY);
-        this.caseSensitive = caseSensitive;
     }
     
-    @JsonProperty("caseSensitive")
-    public boolean isCaseSensitive() {
-        return caseSensitive;
-    }
-
     @Override
     public KeyMaker createKeyMaker() {
         return new KeyMaker() {
