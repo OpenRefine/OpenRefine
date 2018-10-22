@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -75,19 +76,17 @@ public class ReconOperation extends EngineDependentOperation {
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
     
-    static public ReconOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ReconOperation(
-            EngineConfig.reconstruct(engineConfig), 
-            obj.getString("columnName"),
-            ReconConfig.reconstruct(obj.getJSONObject("config").toString())
-        );
+    static public ReconOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconOperation.class);
     }
     
+    @JsonCreator
     public ReconOperation(
+        @JsonProperty("engineConfig")
         EngineConfig engineConfig, 
+        @JsonProperty("columnName")
         String columnName, 
+        @JsonProperty("config")
         ReconConfig reconConfig
     ) {
         super(engineConfig);
