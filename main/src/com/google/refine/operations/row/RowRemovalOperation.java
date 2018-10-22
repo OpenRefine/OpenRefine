@@ -33,10 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
+ import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -48,17 +52,17 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowRemovalOperation extends EngineDependentOperation {
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new RowRemovalOperation(
-            EngineConfig.reconstruct(engineConfig)
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), RowRemovalOperation.class);
     }
     
-    public RowRemovalOperation(EngineConfig engineConfig) {
+    @JsonCreator
+    public RowRemovalOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig) {
         super(engineConfig);
     }
 
