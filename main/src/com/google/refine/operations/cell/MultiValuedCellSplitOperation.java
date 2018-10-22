@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,7 +52,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _columnName;
@@ -63,21 +64,34 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected int[]      _fieldLengths;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        String mode = obj.getString("mode");
-
+        return ParsingUtilities.mapper.readValue(obj.toString(), MultiValuedCellSplitOperation.class);
+    }
+    
+    @JsonCreator
+    public static MultiValuedCellSplitOperation deserialize(
+            @JsonProperty("columnName")
+            String columnName,
+            @JsonProperty("keyColumnName")
+            String keyColumnName,
+            @JsonProperty("mode")
+            String mode,
+            @JsonProperty("separator")
+            String separator,
+            @JsonProperty("regex")
+            boolean regex,
+            @JsonProperty("fieldLengths")
+            int[] fieldLengths) {
         if ("separator".equals(mode)) {
             return new MultiValuedCellSplitOperation(
-                obj.getString("columnName"),
-                obj.getString("keyColumnName"),
-                obj.getString("separator"),
-                obj.getBoolean("regex")
-            );
-        } else { // mode == "lengths"
+                    columnName,
+                    keyColumnName,
+                    separator,
+                    regex);
+        } else {
             return new MultiValuedCellSplitOperation(
-                obj.getString("columnName"),
-                obj.getString("keyColumnName"),
-                JSONUtilities.getIntArray(obj, "fieldLengths")
-            );
+                    columnName,
+                    keyColumnName,
+                    fieldLengths);
         }
     }
     
