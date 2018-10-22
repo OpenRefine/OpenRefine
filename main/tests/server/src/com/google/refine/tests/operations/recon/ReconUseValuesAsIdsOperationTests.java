@@ -18,7 +18,7 @@ import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
 
-public class ReconUseValuesAsIdsOperation extends RefineTest {
+public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     String json = "{"
             + "\"op\":\"core/recon-use-values-as-identifiers\","
             + "\"description\":\"Use values as reconciliation identifiers in column ids\","

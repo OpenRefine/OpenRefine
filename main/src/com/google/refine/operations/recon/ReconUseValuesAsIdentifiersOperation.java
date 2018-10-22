@@ -1,11 +1,12 @@
 package com.google.refine.operations.recon;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,7 +25,7 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCellOperation {
     
@@ -38,11 +39,17 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     @JsonIgnore
     protected StandardReconConfig reconConfig;
 
+    @JsonCreator
     public ReconUseValuesAsIdentifiersOperation(
+            @JsonProperty("engineConfig")
             EngineConfig engineConfig,
+            @JsonProperty("columnName")
             String columnName,
+            @JsonProperty("service")
             String service,
+            @JsonProperty("identifierSpace")
             String identifierSpace,
+            @JsonProperty("schemaSpace")
             String schemaSpace) {
         super(engineConfig, columnName, false);
         this.service = service;
@@ -51,15 +58,8 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
         this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true, Collections.emptyList());
     }
     
-    static public ReconUseValuesAsIdentifiersOperation reconstruct(JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconUseValuesAsIdentifiersOperation(
-            EngineConfig.reconstruct(engineConfig), 
-            obj.getString("columnName"),
-            obj.getString("service"),
-            obj.getString("identifierSpace"),
-            obj.getString("schemaSpace")
-        );
+    static public ReconUseValuesAsIdentifiersOperation reconstruct(JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconUseValuesAsIdentifiersOperation.class);
     }
 
     @Override
