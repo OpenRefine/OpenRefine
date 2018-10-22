@@ -44,6 +44,7 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -67,6 +68,7 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionCon
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 
 public class ExtendDataOperation extends EngineDependentOperation {
     @JsonProperty("baseColumnName")
@@ -84,28 +86,24 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
     
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        DataExtensionConfig dataExtensionConfig = DataExtensionConfig.reconstruct(obj.getJSONObject("extension"));
-        
-        return new ExtendDataOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("baseColumnName"),
-            obj.getString("endpoint"),
-            obj.getString("identifierSpace"),
-            obj.getString("schemaSpace"),
-            dataExtensionConfig,
-            obj.getInt("columnInsertIndex")
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), ExtendDataOperation.class);
     }
     
+    @JsonCreator
     public ExtendDataOperation(
+        @JsonProperty("engineConfig")
         EngineConfig        engineConfig,
+        @JsonProperty("baseColumnName")
         String              baseColumnName,
+        @JsonProperty("endpoint")
         String              endpoint,
+        @JsonProperty("identifierSpace")
         String              identifierSpace,
+        @JsonProperty("schemaSpace")
         String              schemaSpace,
+        @JsonProperty("extension")
         DataExtensionConfig extension,
+        @JsonProperty("columnInsertIndex")
         int                 columnInsertIndex 
     ) {
         super(engineConfig);

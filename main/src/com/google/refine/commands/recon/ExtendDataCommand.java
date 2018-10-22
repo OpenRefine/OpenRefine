@@ -41,7 +41,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.recon.ExtendDataOperation;
-import com.google.refine.util.ParsingUtilities;
 
 public class ExtendDataCommand extends EngineDependentCommand {
     @Override
@@ -55,7 +54,7 @@ public class ExtendDataCommand extends EngineDependentCommand {
         String schemaSpace = request.getParameter("schemaSpace");
         
         String jsonString = request.getParameter("extension");
-        DataExtensionConfig extension = DataExtensionConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(jsonString));
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(jsonString);
         
         return new ExtendDataOperation(
             engineConfig, 

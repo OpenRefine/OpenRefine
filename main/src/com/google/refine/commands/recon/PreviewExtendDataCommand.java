@@ -93,7 +93,7 @@ public class PreviewExtendDataCommand extends Command {
             }
             
             String jsonString = request.getParameter("extension");
-            DataExtensionConfig config = DataExtensionConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(jsonString));
+            DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
             
             JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
             int length = rowIndices.length();

@@ -177,12 +177,12 @@ public class ExtendDataOperationTests extends RefineTest {
     
     @Test
     public void serializeDataExtensionConfig() {
-        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(new JSONObject(dataExtensionConfigJson)), dataExtensionConfigJson);
+        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
     }
     
     @Test
     public void testFormulateQuery() throws IOException {
-        DataExtensionConfig config = DataExtensionConfig.reconstruct(new JSONObject(dataExtensionConfigJson));
+        DataExtensionConfig config = DataExtensionConfig.reconstruct(dataExtensionConfigJson);
         Set<String> ids = Collections.singleton("Q2");
         String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
         ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint");
@@ -214,7 +214,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @Test
     public void testFetchStrings() throws Exception {
-        DataExtensionConfig extension = DataExtensionConfig.reconstruct(new JSONObject("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}"));
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -252,7 +252,7 @@ public class ExtendDataOperationTests extends RefineTest {
     @Test
     public void testFetchCounts() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
-                new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}"));
+                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -287,7 +287,7 @@ public class ExtendDataOperationTests extends RefineTest {
     @Test
     public void testFetchCurrent() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
-                new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}"));
+                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -328,7 +328,7 @@ public class ExtendDataOperationTests extends RefineTest {
     @Test
     public void testFetchRecord() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
-                new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}"));
+                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",

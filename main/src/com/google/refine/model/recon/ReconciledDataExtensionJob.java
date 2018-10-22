@@ -107,10 +107,10 @@ public class ReconciledDataExtensionJob {
             this.properties = properties;
         }
         
-        public static DataExtensionConfig reconstruct(JSONObject obj) throws JSONException {
+        public static DataExtensionConfig reconstruct(String json) throws JSONException {
             ObjectMapper mapper = new ObjectMapper();
             try {
-                return mapper.readValue(obj.toString(), DataExtensionConfig.class);
+                return mapper.readValue(json, DataExtensionConfig.class);
             } catch(IOException e) {
                 throw new JSONException(e.toString());
             }
