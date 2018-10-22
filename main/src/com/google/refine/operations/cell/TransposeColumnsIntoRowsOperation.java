@@ -38,6 +38,12 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -45,42 +51,80 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
+    @JsonProperty("startColumnName")
     final protected String  _startColumnName;
+    @JsonProperty("columnCount")
     final protected int     _columnCount;
+    @JsonProperty("ignoreBlankCells")
     final protected boolean _ignoreBlankCells;
+    @JsonProperty("fillDown")
     final protected boolean _fillDown;
     
+    @JsonProperty("combinedColumnName")
+    @JsonInclude(Include.NON_NULL)
     final protected String  _combinedColumnName;
+    @JsonIgnore
     final protected boolean _prependColumnName;
+    @JsonProperty("separator")
     final protected String  _separator;
     
+    @JsonProperty("keyColumnName")
     final protected String  _keyColumnName;
+    @JsonProperty("valueColumnName")
     final protected String  _valueColumnName;
+    
+    @JsonProperty("prependColumnName")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getPrependColumnName() {
+        return _combinedColumnName == null ? null : _prependColumnName; 
+    }
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        String combinedColumnName = JSONUtilities.getString(obj, "combinedColumnName", null);
+        return ParsingUtilities.mapper.readValue(obj.toString(), TransposeColumnsIntoRowsOperation.class);
+    }
+    
+    @JsonCreator
+    static public TransposeColumnsIntoRowsOperation deserialize(
+            @JsonProperty("combinedColumnName")
+            String combinedColumnName,
+            @JsonProperty("startColumnName")
+            String startColumnName,
+            @JsonProperty("columnCount")
+            int columnCount,
+            @JsonProperty("ignoreBlankCells")
+            Boolean ignoreBlankCells,
+            @JsonProperty("fillDown")
+            Boolean fillDown,
+            @JsonProperty("prependColumnName")
+            boolean prependColumnName,
+            @JsonProperty("separator")
+            String separator,
+            @JsonProperty("keyColumnName")
+            String keyColumnName,
+            @JsonProperty("valueColumnName")
+            String valueColumnName) {
+        ignoreBlankCells = ignoreBlankCells == null ? true : ignoreBlankCells;
+        fillDown = fillDown == null ? false : fillDown;
         if (combinedColumnName != null) {
             return new TransposeColumnsIntoRowsOperation(
-                obj.getString("startColumnName"),
-                obj.getInt("columnCount"),
-                JSONUtilities.getBoolean(obj, "ignoreBlankCells", true),
-                JSONUtilities.getBoolean(obj, "fillDown", false),
-                combinedColumnName,
-                obj.getBoolean("prependColumnName"),
-                obj.getString("separator")
-            );
+                    startColumnName,
+                    columnCount,
+                    ignoreBlankCells,
+                    fillDown,
+                    combinedColumnName,
+                    prependColumnName,
+                    separator);
         } else {
             return new TransposeColumnsIntoRowsOperation(
-                obj.getString("startColumnName"),
-                obj.getInt("columnCount"),
-                JSONUtilities.getBoolean(obj, "ignoreBlankCells", true),
-                JSONUtilities.getBoolean(obj, "fillDown", false),
-                obj.getString("keyColumnName"),
-                obj.getString("valueColumnName")
-            );
+                    startColumnName,
+                    columnCount,
+                    ignoreBlankCells,
+                    fillDown,
+                    keyColumnName,
+                    valueColumnName);
         }
     }
     

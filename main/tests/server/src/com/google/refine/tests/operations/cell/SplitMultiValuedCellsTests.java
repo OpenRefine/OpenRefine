@@ -164,7 +164,5 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
     }
-
-
 }
 
