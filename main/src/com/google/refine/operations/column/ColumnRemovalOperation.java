@@ -33,8 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.io.IOException;
+
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.Change;
@@ -43,17 +46,18 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnRemovalChange;
+import com.google.refine.util.ParsingUtilities;
 
 public class ColumnRemovalOperation extends AbstractOperation {
     final protected String _columnName;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new ColumnRemovalOperation(
-            obj.getString("columnName")
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ColumnRemovalOperation.class);
     }
     
+    @JsonCreator
     public ColumnRemovalOperation(
+        @JsonProperty("columnName")
         String columnName
     ) {
         _columnName = columnName;
