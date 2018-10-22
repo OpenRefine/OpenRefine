@@ -33,31 +33,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnReorderChange;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ColumnReorderOperation extends AbstractOperation {
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        List<String> columnNames = new ArrayList<String>();
-        
-        JSONUtilities.getStringList(obj, "columnNames", columnNames);
-        
-        return new ColumnReorderOperation(columnNames);
+        return ParsingUtilities.mapper.readValue(obj.toString(), ColumnReorderOperation.class);
     }
     
     final protected List<String> _columnNames;
     
-    public ColumnReorderOperation(List<String> columnNames) {
+    @JsonCreator
+    public ColumnReorderOperation(
+            @JsonProperty("columnNames")
+            List<String> columnNames) {
         _columnNames = columnNames;
     }
     
