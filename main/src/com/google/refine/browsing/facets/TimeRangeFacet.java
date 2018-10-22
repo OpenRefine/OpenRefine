@@ -73,9 +73,9 @@ public class TimeRangeFacet implements Facet {
         protected String     _columnName; // column to base expression on, if any
         
         @JsonProperty(FROM)
-        protected double      _from; // the numeric selection
+        protected double      _from = 0; // the numeric selection
         @JsonProperty(TO)
-        protected double      _to;
+        protected double      _to = 0;
         
         @JsonProperty("selectTime")
         protected boolean   _selectTime; // whether the time selection applies, default true
@@ -86,31 +86,12 @@ public class TimeRangeFacet implements Facet {
         @JsonProperty("selectError")
         protected boolean   _selectError;
         
+        // false if we're certain that all rows will match
+        // and there isn't any filtering to do
         @JsonIgnore
-        protected boolean    _selected; // false if we're certain that all rows will match
-                        // and there isn't any filtering to do
-        
-        @Override
-        public void initializeFromJSON(JSONObject o) throws JSONException {        
-            _name = o.getString("name");
-            _expression = o.getString("expression");
-            _columnName = o.getString("columnName");
-            
-            if (o.has(FROM) || o.has(TO)) {
-                _from = o.has(FROM) ? o.getDouble(FROM) : 0;
-                _to = o.has(TO) ? o.getDouble(TO) : 0;
-                _selected = true;
-            }
-            
-            _selectTime = JSONUtilities.getBoolean(o, "selectTime", true);
-            _selectNonTime = JSONUtilities.getBoolean(o, "selectNonTime", true);
-            _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
-            _selectError = JSONUtilities.getBoolean(o, "selectError", true);
-            
-            if (!_selectTime || !_selectNonTime || !_selectBlank || !_selectError) {
-                _selected = true;
-            }
-        }
+        protected boolean isSelected() {
+            return _from != 0 || _to != 0 || !_selectTime || !_selectNonTime || !_selectBlank || !_selectError;
+        }; 
         
         @Override
         public TimeRangeFacet apply(Project project) {
@@ -268,7 +249,7 @@ public class TimeRangeFacet implements Facet {
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (_eval != null && _errorMessage == null && _config._selected) {
+        if (_eval != null && _errorMessage == null && _config.isSelected()) {
             return new ExpressionTimeComparisonRowFilter(
                     getRowEvaluable(project), _config._selectTime, _config._selectNonTime, _config._selectBlank, _config._selectError) {
                 
@@ -338,7 +319,7 @@ public class TimeRangeFacet implements Facet {
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
         
-        if (_config._selected) {
+        if (_config.isSelected()) {
             _config._from = Math.max(_config._from, _min);
             _config._to = Math.min(_config._to, _max);
         } else {
