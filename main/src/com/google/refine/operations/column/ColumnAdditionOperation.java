@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.Properties;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -61,7 +63,7 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.cell.TextTransformOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
@@ -71,25 +73,23 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _newColumnName;
     final protected int        _columnInsertIndex;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ColumnAdditionOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("baseColumnName"),
-            obj.getString("expression"),
-            TextTransformOperation.stringToOnError(obj.getString("onError")),
-            obj.getString("newColumnName"),
-            obj.getInt("columnInsertIndex")
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ColumnAdditionOperation.class);
     }
     
+    @JsonCreator
     public ColumnAdditionOperation(
+        @JsonProperty("engineConfig")
         EngineConfig   engineConfig,
+        @JsonProperty("baseColumnName")
         String         baseColumnName,
+        @JsonProperty("expression")
         String         expression,
+        @JsonProperty("onError")
         OnError        onError,
-        String         newColumnName, 
+        @JsonProperty("newColumnName")
+        String         newColumnName,
+        @JsonProperty("columnInsertIndex")
         int            columnInsertIndex 
     ) {
         super(engineConfig);
