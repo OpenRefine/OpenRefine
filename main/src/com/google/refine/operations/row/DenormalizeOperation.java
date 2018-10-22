@@ -38,6 +38,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -52,6 +54,7 @@ public class DenormalizeOperation extends AbstractOperation {
         return new DenormalizeOperation();
     }
     
+    @JsonCreator
     public DenormalizeOperation() {
     }
 
