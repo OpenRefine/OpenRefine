@@ -33,11 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
+ import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -52,21 +54,21 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowStarChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowStarOperation extends EngineDependentOperation {
     final protected boolean _starred;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        boolean starred = obj.getBoolean("starred");
-        
-        return new RowStarOperation(
-            EngineConfig.reconstruct(engineConfig), 
-            starred
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), RowStarOperation.class);
     }
     
-    public RowStarOperation(EngineConfig engineConfig, boolean starred) {
+    @JsonCreator
+    public RowStarOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("starred")
+            boolean starred) {
         super(engineConfig);
         _starred = starred;
     }
