@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.HistoryEntry;
@@ -47,20 +48,21 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
+import com.google.refine.util.ParsingUtilities;
 
 public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
     final protected String  _columnName;
     final protected int     _rowCount;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new TransposeRowsIntoColumnsOperation(
-            obj.getString("columnName"),
-            obj.getInt("rowCount")
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), TransposeRowsIntoColumnsOperation.class);
     }
     
+    @JsonCreator
     public TransposeRowsIntoColumnsOperation(
+        @JsonProperty("columnName")
         String  columnName,
+        @JsonProperty("rowCount")
         int     rowCount
     ) {
         _columnName = columnName;
