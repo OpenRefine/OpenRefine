@@ -33,10 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.EngineConfig;
@@ -50,22 +52,22 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
     final protected String _similarValue;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconClearSimilarCellsOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("columnName"),
-            obj.getString("similarValue")
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconClearSimilarCellsOperation.class);
     }
     
+    @JsonCreator
     public ReconClearSimilarCellsOperation(
-        EngineConfig engineConfig, 
+        @JsonProperty("engineConfig")
+        EngineConfig engineConfig,
+        @JsonProperty("columnName")
         String     columnName, 
+        @JsonProperty("similarValue")
         String     similarValue
     ) {
         super(engineConfig, columnName, false);
