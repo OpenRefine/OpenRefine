@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -58,6 +57,7 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
     
@@ -92,34 +92,20 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     final protected String schemaSpace;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        JSONObject match = obj.getJSONObject("match");
-        
-        JSONArray types = match.getJSONArray("types");
-        String[] typeIDs = new String[types.length()];
-        for (int i = 0; i < typeIDs.length; i++) {
-            typeIDs[i] = types.getString(i);
-        }
-        
-        return new ReconMatchSpecificTopicOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("columnName"),
-            new ReconItem(
-                match.getString("id"),
-                match.getString("name"),
-                typeIDs
-            ),
-            obj.getString("identifierSpace"),
-            obj.getString("schemaSpace")
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconMatchSpecificTopicOperation.class);
     }
     
+    @JsonCreator
     public ReconMatchSpecificTopicOperation(
+        @JsonProperty("engineConfig")
         EngineConfig engineConfig, 
+        @JsonProperty("columnName")
         String columnName, 
+        @JsonProperty("match")
         ReconItem match,
+        @JsonProperty("identifierSpace")
         String identifierSpace,
+        @JsonProperty("schemaSpace")
         String schemaSpace
     ) {
         super(engineConfig, columnName, false);
