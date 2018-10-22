@@ -36,8 +36,6 @@ package com.google.refine.operations.row;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import com.google.refine.history.HistoryEntry;
@@ -50,10 +48,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
 
 public class DenormalizeOperation extends AbstractOperation {
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new DenormalizeOperation();
-    }
-    
     @JsonCreator
     public DenormalizeOperation() {
     }

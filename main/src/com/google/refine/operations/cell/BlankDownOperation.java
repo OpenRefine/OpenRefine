@@ -35,8 +35,6 @@ package com.google.refine.operations.cell;
 
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -44,20 +42,14 @@ import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.util.ParsingUtilities;
 
 public class BlankDownOperation extends EngineDependentMassCellOperation {
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), BlankDownOperation.class);
-    }
     
     @JsonCreator
     public BlankDownOperation(

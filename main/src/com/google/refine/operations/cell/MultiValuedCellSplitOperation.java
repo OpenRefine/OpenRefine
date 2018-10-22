@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -52,7 +51,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.util.ParsingUtilities;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _columnName;
@@ -63,10 +61,6 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     
     final protected int[]      _fieldLengths;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), MultiValuedCellSplitOperation.class);
-    }
-    
     @JsonCreator
     public static MultiValuedCellSplitOperation deserialize(
             @JsonProperty("columnName")

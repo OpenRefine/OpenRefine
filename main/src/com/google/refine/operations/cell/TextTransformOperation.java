@@ -37,8 +37,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -48,7 +46,6 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.WrappedCell;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -56,7 +53,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.util.ParsingUtilities;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
     @JsonProperty("expression")
@@ -67,10 +63,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     final protected boolean _repeat;
     @JsonProperty("repeatCount")
     final protected int     _repeatCount;
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), TextTransformOperation.class);
-    }
     
     static public OnError stringToOnError(String s) {
         if ("set-to-blank".equalsIgnoreCase(s)) {

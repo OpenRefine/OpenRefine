@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,10 +74,6 @@ public class ReconOperation extends EngineDependentOperation {
     
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
-    
-    static public ReconOperation reconstruct(Project project, JSONObject obj) throws IOException {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ReconOperation.class);
-    }
     
     @JsonCreator
     public ReconOperation(

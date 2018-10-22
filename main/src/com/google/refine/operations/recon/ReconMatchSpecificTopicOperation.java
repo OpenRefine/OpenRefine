@@ -37,8 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,7 +44,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -57,7 +54,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.util.ParsingUtilities;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
     
@@ -91,10 +87,6 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     @JsonProperty("schemaSpace")
     final protected String schemaSpace;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ReconMatchSpecificTopicOperation.class);
-    }
-    
     @JsonCreator
     public ReconMatchSpecificTopicOperation(
         @JsonProperty("engineConfig")

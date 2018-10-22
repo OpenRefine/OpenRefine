@@ -6,7 +6,6 @@ import static org.testng.Assert.assertNull;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -16,6 +15,7 @@ import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ReconUseValuesAsIdsOperationTests extends RefineTest {
@@ -36,7 +36,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     
     @Test
     public void serializeReconUseValuesAsIdentifiersOperation() throws JSONException, Exception {
-        TestUtils.isSerializedTo(ReconUseValuesAsIdentifiersOperation.reconstruct(new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json);
     }
     
     @Test
@@ -45,7 +45,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
                 + "Q343,hello\n"
                 + ",world\n"
                 + "Q31,test");
-        ReconUseValuesAsIdentifiersOperation op = ReconUseValuesAsIdentifiersOperation.reconstruct(new JSONObject(json));
+        ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
         op.createProcess(project, new Properties()).performImmediate();
         
         assertEquals("Q343", project.rows.get(0).cells.get(0).recon.match.id);

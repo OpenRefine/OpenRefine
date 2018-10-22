@@ -69,6 +69,7 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ExtendDataOperationTests extends RefineTest {
@@ -165,12 +166,12 @@ public class ExtendDataOperationTests extends RefineTest {
     
     @Test
     public void serializeExtendDataOperation() throws JSONException, Exception {
-        TestUtils.isSerializedTo(ExtendDataOperation.reconstruct(project, new JSONObject(operationJson)), operationJson);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
     }
     
     @Test
     public void serializeExtendDataProcess() throws JSONException, Exception {
-        Process p = ExtendDataOperation.reconstruct(project, new JSONObject(operationJson))
+        Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
                 .createProcess(project, new Properties());
         TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
     }

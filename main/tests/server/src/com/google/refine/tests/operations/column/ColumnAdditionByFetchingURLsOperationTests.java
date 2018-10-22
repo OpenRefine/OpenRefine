@@ -63,6 +63,7 @@ import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
@@ -125,12 +126,12 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws JSONException, Exception {
-        TestUtils.isSerializedTo(ColumnAdditionByFetchingURLsOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json);
     }
     
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
-        AbstractOperation op = ColumnAdditionByFetchingURLsOperation.reconstruct(project, new JSONObject(json));
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
         Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
     }

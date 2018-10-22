@@ -1,17 +1,14 @@
 package com.google.refine.tests.operations.column;
 
-import static org.mockito.Mockito.mock;
-
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ColumnAdditionOperationTests extends RefineTest {
     
@@ -28,7 +25,6 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "    \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
-        Project project = mock(Project.class);
-        TestUtils.isSerializedTo(ColumnAdditionOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
     }
 }

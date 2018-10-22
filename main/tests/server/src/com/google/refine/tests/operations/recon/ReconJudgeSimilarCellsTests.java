@@ -2,7 +2,6 @@ package com.google.refine.tests.operations.recon;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -26,6 +25,7 @@ import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconJudgeSimilarCellsTests extends RefineTest {
     
@@ -47,7 +47,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
                 + "\"shareNewTopics\":true}";
-        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(mock(Project.class), new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
     }
     
     @Test
@@ -61,7 +61,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"match\":{\"id\":\"Q42\",\"name\":\"Douglas Adams\",\"types\":[\"Q5\"],\"score\":85},"
                 + "\"shareNewTopics\":false"
                 + "}";
-        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(mock(Project.class), new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
     }
     
     @Test

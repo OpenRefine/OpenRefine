@@ -3,7 +3,6 @@ package com.google.refine.tests.operations.row;
 import static org.mockito.Mockito.mock;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -26,6 +25,6 @@ public class DenormalizeOperationTests extends RefineTest {
         String json = "{"
                 + "\"op\":\"core/denormalize\","
                 + "\"description\":\"Denormalize\"}";
-        TestUtils.isSerializedTo(DenormalizeOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(new DenormalizeOperation(), json);
     }
 }

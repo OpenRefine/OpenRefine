@@ -1,17 +1,14 @@
 package com.google.refine.tests.operations.column;
 
-import static org.mockito.Mockito.mock;
-
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnMoveOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ColumnMoveOperationTests extends RefineTest {
     
@@ -26,7 +23,6 @@ public class ColumnMoveOperationTests extends RefineTest {
                 + "\"description\":\"Move column my column to position 3\","
                 + "\"columnName\":\"my column\","
                 + "\"index\":3}";
-        Project project = mock(Project.class);
-        TestUtils.isSerializedTo(ColumnMoveOperation.reconstruct(project , new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json);
     }
 }

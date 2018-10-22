@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -50,7 +48,6 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -104,10 +101,6 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             return new Edit(from == null ? new ArrayList<>() : from,
                     fromBlank, fromError, serializable);
         }
-    }
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), MassEditOperation.class);
     }
     
     public MassEditOperation(EngineConfig engineConfig, String columnName, String expression, List<Edit> edits) {

@@ -23,6 +23,7 @@ import com.google.refine.process.Process;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowReorderOperationTests extends RefineTest {
     
@@ -85,7 +86,7 @@ public class RowReorderOperationTests extends RefineTest {
                 "      ]\n" + 
                 "    }\n" + 
                 "  }";
-        TestUtils.isSerializedTo(RowReorderOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
     }
 
 }

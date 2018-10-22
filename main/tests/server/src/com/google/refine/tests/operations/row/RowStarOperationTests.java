@@ -3,14 +3,15 @@ package com.google.refine.tests.operations.row;
 import static org.mockito.Mockito.mock;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.RowStarOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowStarOperationTests extends RefineTest {
     @BeforeSuite
@@ -26,6 +27,6 @@ public class RowStarOperationTests extends RefineTest {
                 + "\"description\":\"Star rows\","
                 + "\"starred\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-        TestUtils.isSerializedTo(RowStarOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowStarOperation.class), json);
     }
 }

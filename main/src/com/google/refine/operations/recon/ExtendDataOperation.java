@@ -42,7 +42,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,7 +51,6 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -68,7 +66,6 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionCon
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
-import com.google.refine.util.ParsingUtilities;
 
 public class ExtendDataOperation extends EngineDependentOperation {
     @JsonProperty("baseColumnName")
@@ -84,10 +81,6 @@ public class ExtendDataOperation extends EngineDependentOperation {
     @JsonProperty("columnInsertIndex")
     final protected int                 _columnInsertIndex;
 
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ExtendDataOperation.class);
-    }
     
     @JsonCreator
     public ExtendDataOperation(

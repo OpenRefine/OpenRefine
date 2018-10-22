@@ -36,7 +36,6 @@ package com.google.refine.tests.operations.cell;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -51,6 +50,7 @@ import com.google.refine.operations.cell.MultiValuedCellJoinOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class JoinMultiValuedCellsTests extends RefineTest {
@@ -85,7 +85,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"columnName\":\"value column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"separator\":\",\"}";
-        TestUtils.isSerializedTo(MultiValuedCellJoinOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json);
     }
     
 

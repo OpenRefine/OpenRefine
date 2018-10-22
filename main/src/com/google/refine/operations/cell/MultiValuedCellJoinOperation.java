@@ -36,8 +36,6 @@ package com.google.refine.operations.cell;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -49,17 +47,12 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.util.ParsingUtilities;
 
 public class MultiValuedCellJoinOperation extends AbstractOperation {
     final protected String    _columnName;
     final protected String    _keyColumnName;
     final protected String    _separator;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), MultiValuedCellJoinOperation.class);
-    }
-    
     @JsonCreator
     public MultiValuedCellJoinOperation(
         @JsonProperty("columnName")

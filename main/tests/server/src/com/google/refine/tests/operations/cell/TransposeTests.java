@@ -33,19 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.operations.cell;
 
-import static org.mockito.Mockito.mock;
-
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class TransposeTests extends RefineTest {
 
@@ -62,8 +59,7 @@ public class TransposeTests extends RefineTest {
                 + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
-        Project project = mock(Project.class);
-        TestUtils.isSerializedTo(TransposeRowsIntoColumnsOperation.reconstruct(project , new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json);
     }
 
 }

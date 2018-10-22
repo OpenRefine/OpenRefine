@@ -33,10 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,7 +41,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -52,15 +48,10 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.util.ParsingUtilities;
 
 public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
     final protected String _similarValue;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ReconClearSimilarCellsOperation.class);
-    }
-    
     @JsonCreator
     public ReconClearSimilarCellsOperation(
         @JsonProperty("engineConfig")

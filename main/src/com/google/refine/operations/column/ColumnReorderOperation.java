@@ -35,8 +35,6 @@ package com.google.refine.operations.column;
 
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -44,13 +42,8 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.ColumnReorderChange;
-import com.google.refine.util.ParsingUtilities;
 
 public class ColumnReorderOperation extends AbstractOperation {
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ColumnReorderOperation.class);
-    }
-    
     final protected List<String> _columnNames;
     
     @JsonCreator

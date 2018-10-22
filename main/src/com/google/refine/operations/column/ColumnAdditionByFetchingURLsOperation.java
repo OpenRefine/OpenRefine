@@ -46,7 +46,6 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -65,7 +64,6 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -106,10 +104,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected int        _delay;
     final protected boolean    _cacheResponses;
     final protected List<HttpHeader>  _httpHeadersJson;
-
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ColumnAdditionByFetchingURLsOperation.class);
-    }
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(

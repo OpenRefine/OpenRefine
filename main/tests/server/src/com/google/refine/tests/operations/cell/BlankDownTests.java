@@ -24,7 +24,7 @@ import com.google.refine.operations.cell.FillDownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.util.Pool;
+import com.google.refine.util.ParsingUtilities;
 
 public class BlankDownTests extends RefineTest {
     
@@ -56,7 +56,7 @@ public class BlankDownTests extends RefineTest {
                 + "\"description\":\"Blank down cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\"}";
-        AbstractOperation op = BlankDownOperation.reconstruct(project, new JSONObject(json));
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
         TestUtils.isSerializedTo(op, json);
     }
     
@@ -107,7 +107,6 @@ public class BlankDownTests extends RefineTest {
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        //project.saveToOutputStream(System.out, new Pool());
         
         Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
         Assert.assertNull(project.rows.get(1).cells.get(3));

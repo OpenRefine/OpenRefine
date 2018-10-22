@@ -33,11 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.io.IOException;
-import java.util.ArrayList;
+ import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,13 +52,8 @@ import com.google.refine.model.changes.RowReorderChange;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
-import com.google.refine.util.ParsingUtilities;
 
 public class RowReorderOperation extends AbstractOperation {
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
-        return ParsingUtilities.mapper.readValue(obj.toString(), RowReorderOperation.class);
-    }
-    
     final protected Mode _mode;
     final protected SortingConfig _sorting;
 

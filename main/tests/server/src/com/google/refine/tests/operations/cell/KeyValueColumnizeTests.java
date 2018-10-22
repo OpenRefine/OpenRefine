@@ -67,6 +67,7 @@ import com.google.refine.process.Process;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class KeyValueColumnizeTests extends RefineTest {
@@ -119,14 +120,14 @@ public class KeyValueColumnizeTests extends RefineTest {
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":null}";
-        TestUtils.isSerializedTo(KeyValueColumnizeOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json);
 
         String jsonFull = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column with note column note column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":\"note column\"}";
-        TestUtils.isSerializedTo(KeyValueColumnizeOperation.reconstruct(project, new JSONObject(jsonFull)), jsonFull);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull);
     }
 
     /**

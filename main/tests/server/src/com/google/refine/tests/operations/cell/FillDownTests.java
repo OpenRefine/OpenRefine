@@ -20,9 +20,10 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.FillDownOperation;
+import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 
 public class FillDownTests extends RefineTest {
     
@@ -54,7 +55,7 @@ public class FillDownTests extends RefineTest {
                 + "\"description\":\"Fill down cells in column my key\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my key\"}";
-        TestUtils.isSerializedTo(FillDownOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json);
     }
     
     @Test

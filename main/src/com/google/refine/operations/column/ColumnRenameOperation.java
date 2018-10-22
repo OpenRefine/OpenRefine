@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.Change;
@@ -47,13 +45,6 @@ public class ColumnRenameOperation extends AbstractOperation {
     final protected String _oldColumnName;
     final protected String _newColumnName;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new ColumnRenameOperation(
-            obj.getString("oldColumnName"),
-            obj.getString("newColumnName")
-        );
-    }
-    
     public ColumnRenameOperation(
         String oldColumnName,
         String newColumnName

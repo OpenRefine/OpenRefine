@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +41,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -52,7 +50,6 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -62,18 +59,12 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
 
 public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     final protected String   _fromColumnName;
     final protected String[] _toColumnNames;
     final protected String[] _judgments;
     final protected boolean  _applyToJudgedCells;
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
-        return ParsingUtilities.mapper.readValue(obj.toString(), ReconCopyAcrossColumnsOperation.class);
-    }
     
     @JsonCreator
     public ReconCopyAcrossColumnsOperation(

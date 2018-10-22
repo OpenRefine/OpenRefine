@@ -36,8 +36,6 @@ package com.google.refine.operations.cell;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -51,7 +49,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
-import com.google.refine.util.ParsingUtilities;
 
 public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     @JsonProperty("startColumnName")
@@ -82,10 +79,6 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         return _combinedColumnName == null ? null : _prependColumnName; 
     }
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return ParsingUtilities.mapper.readValue(obj.toString(), TransposeColumnsIntoRowsOperation.class);
-    }
-    
     @JsonCreator
     static public TransposeColumnsIntoRowsOperation deserialize(
             @JsonProperty("combinedColumnName")
