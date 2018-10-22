@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -61,6 +63,7 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     final protected String   _fromColumnName;
@@ -68,22 +71,21 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     final protected String[] _judgments;
     final protected boolean  _applyToJudgedCells;
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconCopyAcrossColumnsOperation(
-            EngineConfig.reconstruct(engineConfig), 
-            obj.getString("fromColumnName"),
-            JSONUtilities.getStringArray(obj, "toColumnNames"),
-            JSONUtilities.getStringArray(obj, "judgments"),
-            obj.getBoolean("applyToJudgedCells")
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconCopyAcrossColumnsOperation.class);
     }
     
+    @JsonCreator
     public ReconCopyAcrossColumnsOperation(
+        @JsonProperty("engineConfig")
         EngineConfig engineConfig,
+        @JsonProperty("fromColumnName")
         String fromColumnName,
+        @JsonProperty("toColumnNames")
         String[] toColumnNames,
+        @JsonProperty("judgments")
         String[] judgments,
+        @JsonProperty("applyToJudgedCells")
         boolean applyToJudgedCells) {
         super(engineConfig);
         _fromColumnName = fromColumnName;
