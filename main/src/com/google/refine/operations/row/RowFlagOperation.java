@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -52,21 +53,21 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowFlagChange;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowFlagOperation extends EngineDependentOperation {
     final protected boolean _flagged;
 
     static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        boolean flagged = obj.getBoolean("flagged");
-        
-        return new RowFlagOperation(
-            EngineConfig.reconstruct(engineConfig),
-            flagged
-        );
+        return ParsingUtilities.mapper.readValue(obj.toString(), RowFlagOperation.class);
     }
     
-    public RowFlagOperation(EngineConfig engineConfig, boolean flagged) {
+    @JsonCreator
+    public RowFlagOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("flagged")
+            boolean flagged) {
         super(engineConfig);
         _flagged = flagged;
     }
