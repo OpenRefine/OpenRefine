@@ -33,11 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
+ import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
@@ -53,20 +55,22 @@ import com.google.refine.model.changes.RowReorderChange;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowReorderOperation extends AbstractOperation {
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        String mode = obj.getString("mode");
-        JSONObject sorting = obj.has("sorting") && !obj.isNull("sorting") ?
-                obj.getJSONObject("sorting") : null;
-        SortingConfig config = SortingConfig.reconstruct(sorting);
-        return new RowReorderOperation(Engine.stringToMode(mode), config);
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), RowReorderOperation.class);
     }
     
     final protected Mode _mode;
     final protected SortingConfig _sorting;
 
-    public RowReorderOperation(Mode mode, SortingConfig sorting) {
+    @JsonCreator
+    public RowReorderOperation(
+            @JsonProperty("mode")
+            Mode mode,
+            @JsonProperty("sorting")
+            SortingConfig sorting) {
         _mode = mode;
         _sorting = sorting;
     }
