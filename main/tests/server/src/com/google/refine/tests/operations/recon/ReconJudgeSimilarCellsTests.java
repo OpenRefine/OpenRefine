@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
@@ -39,7 +39,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeReconJudgeSimilarCellsOperation() throws JSONException {
+    public void serializeReconJudgeSimilarCellsOperation() throws  IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
@@ -47,6 +47,20 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
                 + "\"shareNewTopics\":true}";
+        TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(mock(Project.class), new JSONObject(json)), json);
+    }
+    
+    @Test
+    public void serializeReconJudgeSimilarCellsOperationMatch() throws  IOException {
+        String json = "{\"op\":\"core/recon-judge-similar-cells\","
+                + "\"description\":\"Match item Douglas Adams (Q42) for cells containing \\\"foo\\\" in column A\","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"A\","
+                + "\"similarValue\":\"foo\","
+                + "\"judgment\":\"matched\","
+                + "\"match\":{\"id\":\"Q42\",\"name\":\"Douglas Adams\",\"types\":[\"Q5\"],\"score\":85},"
+                + "\"shareNewTopics\":false"
+                + "}";
         TestUtils.isSerializedTo(ReconJudgeSimilarCellsOperation.reconstruct(mock(Project.class), new JSONObject(json)), json);
     }
     

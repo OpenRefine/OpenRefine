@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
- import java.util.HashMap;
+ import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,6 +61,7 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOperation {
     final protected String           _similarValue;
@@ -68,55 +69,30 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     final protected ReconCandidate   _match;
     final protected boolean          _shareNewTopics;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws JSONException {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        ReconCandidate match = null;
-        if (obj.has("match")) {
-            JSONObject matchObj = obj.getJSONObject("match");
-            
-            JSONArray types = matchObj.getJSONArray("types");
-            String[] typeIDs = new String[types.length()];
-            for (int i = 0; i < typeIDs.length; i++) {
-                typeIDs[i] = types.getString(i);
-            }
-            
-            match = new ReconCandidate(
-                matchObj.getString("id"),
-                matchObj.getString("name"),
-                typeIDs,
-                matchObj.getDouble("score")
-            );
-        }
-        
-        Judgment judgment = Judgment.None;
-        if (obj.has("judgment")) {
-            judgment = Recon.stringToJudgment(obj.getString("judgment"));
-        }
-        
-        return new ReconJudgeSimilarCellsOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("columnName"),
-            obj.getString("similarValue"),
-            judgment,
-            match,
-            obj.has("shareNewTopics") ? obj.getBoolean("shareNewTopics") : false
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), ReconJudgeSimilarCellsOperation.class);
     }
-    
+   
+    @JsonCreator
     public ReconJudgeSimilarCellsOperation(
-        EngineConfig         engineConfig, 
-        String             columnName, 
+        @JsonProperty("engineConfig")
+        EngineConfig         engineConfig,
+        @JsonProperty("columnName")
+        String             columnName,
+        @JsonProperty("similarValue")
         String             similarValue,
+        @JsonProperty("judgment")
         Judgment        judgment,
+        @JsonProperty("match")
         ReconCandidate     match,
-        boolean            shareNewTopics
+        @JsonProperty("shareNewTopics")
+        Boolean            shareNewTopics
     ) {
         super(engineConfig, columnName, false);
         this._similarValue = similarValue;
         this._judgment = judgment;
         this._match = match;
-        this._shareNewTopics = shareNewTopics;
+        this._shareNewTopics = shareNewTopics == null ? false : shareNewTopics;
     }
     
     @JsonProperty("columnName")
