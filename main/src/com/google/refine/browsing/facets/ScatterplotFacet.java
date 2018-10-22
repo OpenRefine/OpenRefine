@@ -124,8 +124,11 @@ public class ScatterplotFacet implements Facet {
         @JsonProperty(TO_Y)
         protected double to_y;
         
-        protected boolean selected; // false if we're certain that all rows will match
+        // false if we're certain that all rows will match
         // and there isn't any filtering to do
+        protected boolean isSelected() {
+            return from_x > 0 || to_x < 1 || from_y > 0 || to_y < 1;
+        }
         
         @JsonProperty(DIM_X)
         public String getDimX() {
@@ -154,7 +157,6 @@ public class ScatterplotFacet implements Facet {
             if (o.has(FROM_X) && o.has(TO_X)) {
                 from_x = o.getDouble(FROM_X);
                 to_x = o.getDouble(TO_X);
-                selected = true;
             } else {
                 from_x = 0;
                 to_x = 1;
@@ -164,7 +166,6 @@ public class ScatterplotFacet implements Facet {
             if (o.has(FROM_Y) && o.has(TO_Y)) {
                 from_y = o.getDouble(FROM_Y);
                 to_y = o.getDouble(TO_Y);
-                selected = true;
             } else {
                 from_y = 0;
                 to_y = 1;
@@ -423,7 +424,7 @@ public class ScatterplotFacet implements Facet {
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (config.selected && 
+        if (config.isSelected() && 
             eval_x != null && errorMessage_x == null && 
             eval_y != null && errorMessage_y == null) 
         {
