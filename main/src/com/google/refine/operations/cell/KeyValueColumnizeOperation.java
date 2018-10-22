@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.expr.ExpressionUtils;
@@ -50,24 +52,24 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class KeyValueColumnizeOperation extends AbstractOperation {
     final protected String  _keyColumnName;
     final protected String  _valueColumnName;
     final protected String  _noteColumnName;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new KeyValueColumnizeOperation(
-            obj.getString("keyColumnName"),
-            obj.getString("valueColumnName"),
-            JSONUtilities.getString(obj, "noteColumnName", null)
-        );
+    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj.toString(), KeyValueColumnizeOperation.class);
     }
     
+    @JsonCreator
     public KeyValueColumnizeOperation(
+        @JsonProperty("keyColumnName")
         String keyColumnName,
+        @JsonProperty("valueColumnName")
         String valueColumnName,
+        @JsonProperty("noteColumnName")
         String noteColumnName
     ) {
         _keyColumnName = keyColumnName;
