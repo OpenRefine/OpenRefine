@@ -9,6 +9,8 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import static org.mockito.Mockito.mock;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.MassEditOperation;
@@ -42,7 +44,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditString() throws Exception {
         editsString = "[{\"from\":[\"String\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-        editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+        editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
 
         Assert.assertEquals(editList.get(0).from.size(), 1);
         Assert.assertEquals(editList.get(0).from.get(0), "String");
@@ -55,7 +57,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditMultiString() throws Exception {
         editsString = "[{\"from\":[\"String1\",\"String2\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-        editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+        editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
 
         Assert.assertEquals(editList.get(0).from.size(), 2);
         Assert.assertEquals(editList.get(0).from.get(0), "String1");
@@ -69,7 +71,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditBoolean() throws Exception {
       editsString = "[{\"from\":[true],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "true");
@@ -82,7 +84,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditNumber() throws Exception {
       editsString = "[{\"from\":[1],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "1");
@@ -95,7 +97,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditDate() throws Exception {
       editsString = "[{\"from\":[\"2018-10-04T00:00:00Z\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00:00Z");
       Assert.assertEquals(editList.get(0).to,"newString" );
@@ -107,7 +109,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditEmpty() throws Exception {
       editsString = "[{\"from\":[\"\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString));
+      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "");

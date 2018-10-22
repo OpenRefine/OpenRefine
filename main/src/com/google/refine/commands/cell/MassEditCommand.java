@@ -33,13 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.cell;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.cell.MassEditOperation;
+import com.google.refine.operations.cell.MassEditOperation.Edit;
 import com.google.refine.util.ParsingUtilities;
 
 public class MassEditCommand extends EngineDependentCommand {
@@ -55,7 +60,7 @@ public class MassEditCommand extends EngineDependentCommand {
             engineConfig,
             columnName,
             expression,
-            MassEditOperation.reconstructEdits(ParsingUtilities.evaluateJsonStringToArray(editsString))
+            ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), MassEditOperation.new TypeReference<List<Edit>>() {})
         );
     }
 }
