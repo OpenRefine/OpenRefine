@@ -37,9 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -61,7 +58,6 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class ListFacet implements Facet {
     public static final String ERR_TOO_MANY_CHOICES = "Too many choices";
@@ -123,36 +119,6 @@ public class ListFacet implements Facet {
             selection = wrapped.stream()
                     .map(e -> e.value)
                     .collect(Collectors.toList());
-        }
-        
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            name = o.getString("name");
-            expression = o.getString("expression");
-            columnName = o.getString("columnName");
-            invert = o.has("invert") && o.getBoolean("invert");
-                      
-            JSONArray a = o.getJSONArray("selection");
-            int length = a.length();
-            
-            for (int i = 0; i < length; i++) {
-                JSONObject oc = a.getJSONObject(i);
-                JSONObject ocv = oc.getJSONObject("v");
-                
-                DecoratedValue decoratedValue = new DecoratedValue(
-                    ocv.get("v"), ocv.getString("l"));
-                
-                selection.add(decoratedValue);
-            }
-            
-            omitBlank = JSONUtilities.getBoolean(o, "omitBlank", false);
-            omitError = JSONUtilities.getBoolean(o, "omitError", false);
-            
-            selectNumber = JSONUtilities.getBoolean(o, "selectNumber", false);
-            selectDateTime = JSONUtilities.getBoolean(o, "selectDateTime", false);
-            selectBoolean = JSONUtilities.getBoolean(o, "selectBoolean", false);
-            selectBlank = JSONUtilities.getBoolean(o, "selectBlank", false);
-            selectError = JSONUtilities.getBoolean(o, "selectError", false);
         }
         
         @Override

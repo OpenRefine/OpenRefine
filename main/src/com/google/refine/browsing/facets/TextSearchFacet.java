@@ -36,7 +36,6 @@ package com.google.refine.browsing.facets;
 import java.util.regex.Pattern;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -78,18 +77,6 @@ public class TextSearchFacet implements Facet {
             return facet;
         }
         
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            _name = o.getString("name");
-            _columnName = o.getString("columnName");
-            _mode = o.getString("mode");
-            _caseSensitive = o.getBoolean("caseSensitive");
-            if (!o.isNull("query")) {
-                _query = o.getString("query"); 
-            }
-            _invert = o.has("invert") && o.getBoolean("invert");
-        }
-
         @Override
         public String getJsonType() {
             return "text";

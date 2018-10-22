@@ -1,7 +1,11 @@
 package com.google.refine.tests.browsing.facets;
 
-import org.json.JSONObject;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.facets.ScatterplotFacet;
@@ -10,6 +14,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ScatterplotFacetTests extends RefineTest {
     public static String configJson = "{\n" + 
@@ -48,14 +53,13 @@ public class ScatterplotFacetTests extends RefineTest {
             + "}";
     
     @Test
-    public void serializeScatterplotFacetConfig() {
-        ScatterplotFacetConfig config = new ScatterplotFacetConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+    public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
     
     @Test
-    public void serializeScatterplotFacet() {
+    public void serializeScatterplotFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("my column,e\n"
                 + "89.2,89.2\n" + 
                 "-45.9,-45.9\n" + 
@@ -69,8 +73,7 @@ public class ScatterplotFacetTests extends RefineTest {
         project.rows.get(3).cells.set(0, new Cell(0.4, null));
         project.rows.get(3).cells.set(1, new Cell(0.4, null));
         
-        ScatterplotFacetConfig config = new ScatterplotFacetConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         
         ScatterplotFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());

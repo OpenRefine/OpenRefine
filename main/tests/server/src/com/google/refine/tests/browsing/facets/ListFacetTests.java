@@ -2,7 +2,6 @@ package com.google.refine.tests.browsing.facets;
 
 import java.io.IOException;
 
-import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -65,9 +64,8 @@ public class ListFacetTests extends RefineTest {
     		+ "]}";
 
     @Test
-    public void serializeListFacetConfig() {
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+    public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         TestUtils.isSerializedTo(facetConfig, jsonConfig);
     }
     

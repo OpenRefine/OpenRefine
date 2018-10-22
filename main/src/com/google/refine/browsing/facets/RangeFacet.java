@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -58,7 +56,6 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class RangeFacet implements Facet {
     
@@ -123,26 +120,6 @@ public class RangeFacet implements Facet {
             _selectBlank = selectBlank == null ? true : selectBlank;
             _selectError = selectError == null ? true : selectError;
             _selected = !_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError || from != null || to != null;
-        }
-        
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            _name = o.getString("name");
-            _expression = o.getString("expression");
-            _columnName = o.getString("columnName");
-            if (o.has(FROM) || o.has(TO)) {
-                _from = o.has(FROM) ? o.getDouble(FROM) : 0;
-                _to = o.has(TO) ? o.getDouble(TO) : 0;
-                _selected = true;
-            }
-            _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
-            _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
-            _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
-            _selectError = JSONUtilities.getBoolean(o, "selectError", true);
-            
-            if (!_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError) {
-                _selected = true;
-            }
         }
         
         @Override

@@ -44,7 +44,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,9 +110,11 @@ public class ScatterplotFacet implements Facet {
         protected double dot;
     
         @JsonIgnore
-        protected String color_str;
+        protected String color_str = "000000";
         @JsonIgnore
-        protected Color color;
+        protected Color getColor() {
+            return new Color(Integer.parseInt(color_str,16));
+        }
         
         @JsonProperty(FROM_X)
         protected double from_x; // the numeric selection for the x axis, from 0 to 1
@@ -145,43 +146,6 @@ public class ScatterplotFacet implements Facet {
             ScatterplotFacet facet = new ScatterplotFacet();
             facet.initializeFromConfig(this, project);
             return facet;
-        }
-        
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            name = o.getString(NAME);
-            l = size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
-            dot = (o.has(DOT)) ? o.getInt(DOT) : 0.5d;
-            
-            dim_x = (o.has(DIM_X)) ? getAxisDim(o.getString(DIM_X)) : LIN;
-            if (o.has(FROM_X) && o.has(TO_X)) {
-                from_x = o.getDouble(FROM_X);
-                to_x = o.getDouble(TO_X);
-            } else {
-                from_x = 0;
-                to_x = 1;
-            }
-            
-            dim_y = (o.has(DIM_Y)) ? getAxisDim(o.getString(DIM_Y)) : LIN;
-            if (o.has(FROM_Y) && o.has(TO_Y)) {
-                from_y = o.getDouble(FROM_Y);
-                to_y = o.getDouble(TO_Y);
-            } else {
-                from_y = 0;
-                to_y = 1;
-            }
-            
-            rotation_str = (o.has(ROTATION) ? o.getString(ROTATION) : "");
-            rotation = getRotation(rotation_str);
-            
-            color_str = (o.has(COLOR)) ? o.getString(COLOR) : "000000";
-            color = new Color(Integer.parseInt(color_str,16));
-            
-            columnName_x = o.getString(X_COLUMN_NAME);
-            expression_x = o.getString(X_EXPRESSION);
-            
-            columnName_y = o.getString(Y_COLUMN_NAME);
-            expression_y = o.getString(Y_EXPRESSION);
         }
         
         public static int getRotation(String rotation) {
@@ -469,7 +433,7 @@ public class ScatterplotFacet implements Facet {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
                     ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
                       columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                      config.size, config.dim_x, config.dim_y, config.rotation, config.dot, config.color
+                      config.size, config.dim_x, config.dim_y, config.rotation, config.dot, config.getColor()
                     );
                     filteredRows.accept(project, drawer);
                  
@@ -500,7 +464,7 @@ public class ScatterplotFacet implements Facet {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
                     ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
                       columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                      config.size, config.dim_x, config.dim_y, config.rotation, config.dot, config.color
+                      config.size, config.dim_x, config.dim_y, config.rotation, config.dot, config.getColor()
                     );
                     filteredRecords.accept(project, drawer);
                  

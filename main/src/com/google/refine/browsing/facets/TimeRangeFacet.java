@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -58,7 +55,6 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class TimeRangeFacet implements Facet {
     /*
