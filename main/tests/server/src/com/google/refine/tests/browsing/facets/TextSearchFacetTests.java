@@ -36,12 +36,14 @@ package com.google.refine.tests.browsing.facets;
 import java.io.IOException;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
@@ -50,6 +52,7 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class TextSearchFacetTests extends RefineTest {
@@ -89,10 +92,9 @@ public class TextSearchFacetTests extends RefineTest {
             + "Abc\n");
     }
     
-    private void configureFilter(String filter) {
+    private void configureFilter(String filter) throws JsonParseException, JsonMappingException, IOException {
         //Add the facet to the project and create a row filter
-        textfilterconfig = new TextSearchFacetConfig();
-        textfilterconfig.initializeFromJSON(new JSONObject(filter));
+        textfilterconfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
         textfilter = textfilterconfig.apply(project);
         rowfilter = textfilter.getRowFilter(project);
     }
@@ -194,16 +196,14 @@ public class TextSearchFacetTests extends RefineTest {
     }
     
     @Test
-    public void serializeTextSearchFacetConfig() {
-        TextSearchFacetConfig config = new TextSearchFacetConfig();
-        config.initializeFromJSON(new JSONObject(sensitiveConfigJson));
+    public void serializeTextSearchFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+        TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TestUtils.isSerializedTo(config, sensitiveConfigJson);
     }
     
     @Test
-    public void serializeTextSearchFacet() {
-        TextSearchFacetConfig config = new TextSearchFacetConfig();
-        config.initializeFromJSON(new JSONObject(sensitiveConfigJson));
+    public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
+        TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TextSearchFacet facet = config.apply(project);
         TestUtils.isSerializedTo(facet, sensitiveFacetJson);
     }
