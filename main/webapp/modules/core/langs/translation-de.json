@@ -719,6 +719,20 @@
         "prepend-name": "jeder Zelle den Namen der Originalspalte voranstellen",
         "unescape-html": "HTML-Entitäten unescapen",
         "recon-text-fb": "Text in dieser Spalte mit Elementen auf Freebase abstimmen",
-        "collapse-this": "Diese Spalte zuklappen"
+        "collapse-this": "Diese Spalte zuklappen",
+        "replace": "Ersetzen",
+        "text-to-find": "Suche:",
+        "replacement-text": "Ersetzen durch:",
+        "case-insensitive": "Groß-/Kleinschreibung nicht beachten",
+        "whole-word": "ganzes Wort",
+        "finding-info1": "Lassen Sie das Feld leer, um die Ersetzungszeichenkette nach jedem Zeichen hinzuzufügen.",
+        "finding-info2": "Aktivieren Sie \"regulärer Ausdruck\", um Sonderzeichen (Zeilenumbrüche, Tabulaturen, ...) oder komplexe Muster zu finden.",
+        "replacement-info": "Wenn die Option \"regulärer Ausdruck\" aktiviert ist und das Suchmuster Gruppen enthält, die durch Klammern getrennt sind, gibt $0 die komplette Zeichenkette zurück, die dem Muster entspricht und $1, $2.... die erste, zweite... Gruppe.",
+        "replace-dont-escape": "verwenden Sie \\n für neue Zeilen, \\t für Tabulator, \\\\n für \\n, \\\\t für \\t.",
+        "warning-regex": "Ungültiger regulärer Ausdruck.",
+        "use-values-as-identifiers": "Werte als Bezeichner verwenden",
+        "use-values-as-identifiers2": "Zellen markieren, die mit Ihren Werten als Bezeichner abgeglichen sind",
+        "choose-reconciliation-service": "Wählen Sie einen Abgleichdienst aus",
+        "choose-reconciliation-service-alert": "Bitte wählen Sie zuerst einen Abstimmungsdienst aus."
     }
 }
