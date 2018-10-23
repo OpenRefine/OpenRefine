@@ -125,6 +125,23 @@ public class CsvExporterTests extends RefineTest {
 
         verify(options,times(2)).getProperty("printColumnHeader");
     }
+    
+    @Test
+    public void exportSimpleCsvCustomLineSeparator(){
+        CreateGrid(2, 2);
+        when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0,column1X" +
+                                               "row0cell0,row0cell1X" +
+                                               "row1cell0,row1cell1X");
+
+    }
 
     @Test
     public void exportCsvWithLineBreaks(){
