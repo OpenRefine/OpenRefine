@@ -46,6 +46,25 @@
         "save-button": "Salva lo schema",
         "close-button": "Chiudi",
         "unsaved-changes-alt": "Non hai salvato alcune modifiche al tuo schema Wikidata.",
-        "save-schema-alt": "Salva lo schema. Non verrà ancora effettuata alcuna modifica su Wikidata."
+        "save-schema-alt": "Salva lo schema. Non verrà ancora effettuata alcuna modifica su Wikidata.",
+        "dialog-header": "Confronta con Wikidata",
+        "discard-schema-changes-alt": "Annulla le modifiche che hai apportato allo schema.",
+        "incomplete-schema-could-not-be-saved": "Il tuo schema è incompleto e non può essere ancora salvato.",
+        "unsaved-warning": "Non hai ancora salvato le tue modifiche al tuo schema. Vuoi chiudere lo stesso?"
+    },
+    "wikidata-preview": {
+        "new-id": "nuovo elemento"
+    },
+    "wikidata-account": {
+        "dialog-header": "account su Wikidata",
+        "explain-log-in": "Accedere a <a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a> ti permette di caricare i tuoi edit direttamente tramite OpenRefine.",
+        "username-label": "Nome utente:",
+        "username-placeholder": "Inserisci il tuo nome utente",
+        "password-label": "Password:",
+        "password-placeholder": "Inserisci la tua password",
+        "remember-credentials-label": "Ricorda questi dati (verranno mantenuti in forma criptata nelle preferenze di OpenRefine",
+        "close": "Chiudi",
+        "log-in": "Entra",
+        "logged-in-as": "Sei registrato come:"
     }
 }
