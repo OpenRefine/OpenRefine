@@ -236,6 +236,58 @@ public class RdfTripleImporterTests extends ImporterTest {
     }
     
     @Test
+    public void canParseTtl() throws UnsupportedEncodingException {
+        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
+            "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
+            "<http://www.example.org/people#fred>\n" + 
+                    "p:GivenName     \"Fred\";\n" + 
+                    "p:hasEmail              <mailto:fred@example.com>;\n" + 
+                    "m:attending     <http://meetings.example.com/cal#m1> .\n";
+                        
+        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        
+        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
+        parseOneFile(SUT, input);
+
+        Assert.assertEquals(project.columnModel.columns.size(), 4);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://meetings.example.com/cal#m1");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
+        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
+    }
+    
+    @Test
+    public void canParseNTriples() throws UnsupportedEncodingException {
+        String sampleRdf = "<http://www.example.org/people#fred> <http://www.example.org/meeting_organization#attending> <http://meetings.example.com/cal#m1> . \n" +
+                           "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
+                           "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
+                        
+        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        
+        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
+        parseOneFile(SUT, input);
+
+        Assert.assertEquals(project.columnModel.columns.size(), 4);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/meeting_organization#attending");
+        
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Fred");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
+        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
+    }
+    
+    @Test
     public void canParseJsonld() throws UnsupportedEncodingException {
         String sampleJsonld = "{\n "+
         "  \"@context\": {\n "+

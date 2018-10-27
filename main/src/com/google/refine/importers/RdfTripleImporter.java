@@ -86,6 +86,8 @@ public class RdfTripleImporter extends ImportingParserBase {
                 model.read(input, null, "NT");
                 break;
             case N3:
+                model.read(input, null, "N3");
+                break;
             case TTL:
                 model.read(input, null, "TTL");
                 break;
