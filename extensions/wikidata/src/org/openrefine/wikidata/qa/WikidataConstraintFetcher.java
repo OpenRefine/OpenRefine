@@ -39,6 +39,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -290,7 +291,8 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      */
     protected Stream<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
         Stream<Statement> allConstraints = getConstraintStatements(pid).stream()
-                .filter(s -> ((EntityIdValue) s.getValue()).getId().equals(qid));
+                .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
+                .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
         return allConstraints;
     }
 
