@@ -27,6 +27,8 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
+import com.google.refine.model.Cell;
+
 public class WbStringVariableTest extends WbVariableTest<StringValue> {
 
     @Override
@@ -52,6 +54,23 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
     public void testTrailingWhitespace() {
         evaluatesTo(Datamodel.makeStringValue("dirty \t"), "dirty \t");
     }
+    
+    /**
+     * Test that integers are correctly converted to strings
+     */
+    @Test
+    public void testInteger() {
+    	evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45,null));
+    }
+    
+    /**
+     * Test that floating point numbers with no decimal part are also converted
+     */
+    @Test
+    public void testDoubleInteger() {
+    	evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45.0,null));
+    }
+
 
     @Test
     public void testLeadingWhitespace() {
