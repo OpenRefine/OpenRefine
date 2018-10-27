@@ -220,6 +220,7 @@ function registerImporting() {
   IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
   IM.registerFormat("text/xml/rdf", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
+  IM.registerFormat("text/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
   IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
@@ -240,6 +241,7 @@ function registerImporting() {
 
   IM.registerExtension(".json", "text/json");
   IM.registerExtension(".js", "text/json");
+  IM.registerExtension(".jsonld", "text/ld+json");
 
   IM.registerExtension(".xls", "binary/text/xml/xls/xlsx");
   IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
@@ -264,6 +266,7 @@ function registerImporting() {
   IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
   
   IM.registerMimeType("text/rdf+n3", "text/rdf+n3");
+  IM.registerMimeType("text/rdf+ttl", "text/rdf+ttl");
 
   IM.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
@@ -280,6 +283,7 @@ function registerImporting() {
   IM.registerMimeType("text/json", "text/json");
 
   IM.registerMimeType("application/rdf+xml", "text/xml/rdf");
+  IM.registerMimeType("application/ld+json", "text/ld+json");
 
   IM.registerMimeType("application/marc", "text/marc");
   

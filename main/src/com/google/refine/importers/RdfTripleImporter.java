@@ -62,7 +62,8 @@ public class RdfTripleImporter extends ImportingParserBase {
         RDFXML,
         NT,
         N3,
-        TTL
+        TTL,
+        JSONLD
     }
 
     public RdfTripleImporter() {
@@ -87,6 +88,9 @@ public class RdfTripleImporter extends ImportingParserBase {
             case N3:
             case TTL:
                 model.read(input, null, "TTL");
+                break;
+            case JSONLD:
+                model.read(input, null, "JSON-LD");
                 break;
             case RDFXML:
                 model.read(input, null);            
