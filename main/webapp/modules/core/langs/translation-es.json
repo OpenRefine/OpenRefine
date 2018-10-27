@@ -22,7 +22,8 @@
         "name": "Nombre del proyecto:",
         "edit": "Editar",
         "value": "Valor",
-        "delete": "Borrar"
+        "delete": "Borrar",
+        "change-metadata-value": "Cambiar el valor de la clave de metadatos"
     },
     "core-index-create": {
         "almost-done": "casi listo ...",
