@@ -36,8 +36,10 @@ function init() {
      */
     var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
     var QSExporter = Packages.org.openrefine.wikidata.exporters.QuickStatementsExporter;
+    var SchemaExporter = Packages.org.openrefine.wikidata.exporters.SchemaExporter;
     
     ExporterRegistry.registerExporter("quickstatements", new QSExporter());
+    ExporterRegistry.registerExporter("wikibase-schema", new SchemaExporter());
 
     /*
      * Commands

@@ -5,6 +5,7 @@
                 "manage-wikidata-account": "Manage Wikidata account",
                 "perform-edits-on-wikidata": "Upload edits to Wikidata",
                 "export-to-qs": "Export to QuickStatements",
+                "export-schema": "Export schema",
                 "quickstatements-export-name": "QuickStatements"
         },
         "wikidata-schema": {
