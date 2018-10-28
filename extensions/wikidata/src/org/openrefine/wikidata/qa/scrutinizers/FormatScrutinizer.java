@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * A scrutinizer that detects incorrect formats in text values (mostly
@@ -73,7 +73,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
     }
 
     @Override
-    public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+    public void scrutinize(ValueSnak snak, EntityIdValue entityId, boolean added) {
         if (StringValue.class.isInstance(snak.getValue())) {
             String value = ((StringValue) snak.getValue()).getString();
             PropertyIdValue pid = snak.getPropertyId();
