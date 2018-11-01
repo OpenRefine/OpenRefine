@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -39,7 +40,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
@@ -101,9 +101,7 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     public Set<ReconItemIdValue> extractPointers(Snak snak) {
         Set<ReconItemIdValue> result = new HashSet<>();
         result.addAll(extractPointers(snak.getPropertyId()));
-        if (snak instanceof ValueSnak) {
-        	result.addAll(extractPointers(((ValueSnak)snak).getValue()));
-        }
+        result.addAll(extractPointers(snak.getValue()));
         return result;
     }
 
@@ -122,6 +120,11 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
             return Collections.emptySet();
         }
         return pointers;
+    }
+
+    @Override
+    public Set<ReconItemIdValue> visit(DatatypeIdValue value) {
+        return null;
     }
 
     @Override

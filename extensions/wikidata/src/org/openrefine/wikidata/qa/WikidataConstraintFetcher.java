@@ -42,7 +42,6 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * This class provides an abstraction over the way constraint definitions are
@@ -330,11 +329,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
         for (SnakGroup group : groups) {
             if (group.getProperty().getId().equals(pid)) {
                 for (Snak snak : group.getSnaks())
-                	if (snak instanceof ValueSnak) {
-                		results.add(((ValueSnak)snak).getValue());
-                	} else {
-                		results.add(null);
-                	}
+                    results.add(snak.getValue());
             }
         }
         return results;

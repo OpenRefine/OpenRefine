@@ -33,10 +33,8 @@ import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * A scrutinizer that checks for missing inverse statements in edit batches.
@@ -83,11 +81,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
             return; // TODO support for deleted statements
         }
 
-        Snak mainSnak = statement.getClaim().getMainSnak();
-        if(! (mainSnak instanceof ValueSnak)) {
-        	return;
-        }
-        Value mainSnakValue = ((ValueSnak)mainSnak).getValue();
+        Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
         if (ItemIdValue.class.isInstance(mainSnakValue)) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             PropertyIdValue inversePid = getInverseConstraint(pid);
