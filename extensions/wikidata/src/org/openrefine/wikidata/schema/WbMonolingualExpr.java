@@ -53,7 +53,7 @@ public class WbMonolingualExpr implements WbExpression<MonolingualTextValue> {
         String text = getValueExpr().evaluate(ctxt).getString();
         try {
             String lang = getLanguageExpr().evaluate(ctxt);
-            return Datamodel.makeMonolingualTextValue(text, lang);
+            return Datamodel.makeMonolingualTextValue(text.trim(), lang);
 
         } catch (SkipSchemaExpressionException e) {
             QAWarning warning = new QAWarning("monolingual-text-without-language", null, QAWarning.Severity.WARNING, 1);
