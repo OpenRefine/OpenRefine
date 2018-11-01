@@ -38,11 +38,14 @@ import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 import com.google.refine.browsing.Engine;
@@ -180,9 +183,16 @@ public class QuickStatementsExporter implements WriterExporter {
         if (reference) {
             pid = pid.replace('P', 'S');
         }
-        Value val = s.getValue();
-        ValueVisitor<String> vv = new QSValuePrinter();
-        String valStr = val.accept(vv);
+        String valStr = "";
+        if (s instanceof ValueSnak) {
+	        Value val = ((ValueSnak)s).getValue();
+	        ValueVisitor<String> vv = new QSValuePrinter();
+	        valStr = val.accept(vv);
+        } else if (s instanceof NoValueSnak) {
+        	valStr = "novalue";
+        } else if (s instanceof SomeValueSnak) {
+        	valStr = "somevalue";
+        }
         if (valStr != null) {
             writer.write("\t" + pid + "\t" + valStr);
         }

@@ -24,6 +24,8 @@
 
 package org.openrefine.wikidata.commands;
 
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
@@ -36,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarning;
@@ -45,10 +46,7 @@ import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
-import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;

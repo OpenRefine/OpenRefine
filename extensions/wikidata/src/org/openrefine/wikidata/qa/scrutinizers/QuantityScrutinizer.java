@@ -1,15 +1,13 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * Scrutinizer checking for units and bounds in quantities.
@@ -25,7 +23,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
     public static final String noUnitProvidedType = "no-unit-provided";
 
     @Override
-    public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+    public void scrutinize(ValueSnak snak, EntityIdValue entityId, boolean added) {
         if (QuantityValue.class.isInstance(snak.getValue()) && added) {
             PropertyIdValue pid = snak.getPropertyId();
             QuantityValue value = (QuantityValue)snak.getValue();
@@ -45,22 +43,19 @@ public class QuantityScrutinizer extends SnakScrutinizer {
                 addIssue(issue);
             }
             Set<ItemIdValue> allowedUnits = _fetcher.allowedUnits(pid);
-            String currentUnit = null;
-            if (value.getUnit() != null && !value.getUnit().equals("")) {
-                currentUnit = value.getUnit();
+            ItemIdValue currentUnit = null;
+            if (value.getUnit() != null) {
+                currentUnit = value.getUnitItemId();
             }
             if(allowedUnits != null &&
-                    !allowedUnits.stream().map(u -> u != null ? u.getIri() : null)
-                    .collect(Collectors.toSet()).contains(currentUnit)) {
+                    !allowedUnits.contains(currentUnit)) {
                 String issueType = currentUnit == null ? noUnitProvidedType : invalidUnitType;
                 QAWarning issue = new QAWarning(issueType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_value", value.getNumericValue().toString());
                 issue.setProperty("example_item_entity", entityId);
                 if (currentUnit != null) {
-                    issue.setProperty("unit_entity",
-                            // this is a hack but it will not be needed anymore in the upcoming version of Wikidata-Toolkit
-                            Datamodel.makeWikidataItemIdValue(currentUnit.substring(currentUnit.indexOf("Q"))));
+                    issue.setProperty("unit_entity", currentUnit);
                 }
                 addIssue(issue);
             }
