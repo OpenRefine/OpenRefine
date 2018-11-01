@@ -1,3 +1,54 @@
 {
-   
+    "database-import": {
+        "title": "Serveurs de base de données",
+        "preparing": "Préparation du résultat...",
+        "checking": "Validation de la requête...",
+        "creating": "Création du projet..."
+    },
+    "database-source": {
+        "alert-host": "Vous devez spécifier un hôte de base de données",
+        "alert-port": "Vous devez spécifier un port de base de données",
+        "alert-user": "Vous devez spécifier un utilisateur de base de données",
+        "alert-password": "Vous devez spécifier un mot de passe de base de données",
+        "alert-connection-name": "Vous devez spécifier un nom de connexion",
+        "alert-initial-database": "Vous devez spécifier une base de données initiale",
+        "alert-query": "Vous devez spécifier une requête valide",
+        "alert-invalid-query-keyword": "La requête ne peut pas contenir un mot clé dédié à la manipulation de données :",
+        "alert-invalid-query-select": "La requête doit débuter par le mot-clé SELECT",
+        "form-validation-failure": "Le nouveau formulaire de connexion est invalide!",
+        "alert-connection-edit": "La connexion a été éditée avec succès",
+        "connectionNameLabel": "Nom :",
+        "databaseTypeLabel": "Type :",
+        "databaseHostLabel": "Hôte :",
+        "databasePortLabel": "Port :",
+        "databaseUserLabel": "Utilisateur :",
+        "databasePasswordLabel": "Mot de passe :",
+        "databaseNameLabel": "Base de données :",
+        "databaseSchemaLabel": "Schéma :",
+        "databaseTestButton": "Test",
+        "databaseSaveButton": "Enregistrer",
+        "databaseConnectButton": "Connexion",
+        "newConnectionButtonDiv": "Nouvelle connexion",
+        "savedConnectionSpan": "Connexions enregistrées"
+    },
+    "database-parsing": {
+        "start-over": "&laquo; Recommencer",
+        "conf-pars": "Configurer les options de parsing",
+        "proj-name": "Nom du projet",
+        "create-proj": "Créer un projet &raquo;",
+        "updating-preview": "Mise à jour de l'aperçu...",
+        "worksheet": "Feuilles de calcul",
+        "option": "Options",
+        "preview-button": "Mise à jour de l'aperçu",
+        "ignore-first": "Ignorer la/les",
+        "ignore": "première(s) lignes au début du fichier",
+        "parse-next": "Parser la/les",
+        "parse": "ligne(s) suivante(s) comme des entêtes de colonnes",
+        "discard-next": "Omettre la/les",
+        "discard": "première(s) ligne(s) de données",
+        "limit-next": "Charger au plus",
+        "limit": "ligne(s) de données",
+        "store-row": "Stocker les lignes vides",
+        "store-cell": "Enregistrer les cellules vides comme des valeurs nulles"
+    }
 }
