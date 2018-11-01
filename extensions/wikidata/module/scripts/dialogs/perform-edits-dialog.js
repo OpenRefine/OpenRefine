@@ -30,10 +30,17 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
      dismiss();
   });
 
+  var hiddenIframe = $('#hiddenIframe').contents();
+
   if (max_severity === 'CRITICAL') {
       elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
     elmts.performEditsButton.click(function() {
+        hiddenIframe.find('body').append(
+                elmts.performEditsForm.clone());
+        var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
+        formCopy.submit();
+
         if(elmts.editSummary.val().length == 0) {
             elmts.editSummary.focus();
         } else {
@@ -51,6 +58,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
                 }
             });
         }
+        event.preventDefault();
     });
   }
 };

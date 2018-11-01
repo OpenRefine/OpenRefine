@@ -26,8 +26,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * A scrutinizer that inspects the values of snaks and terms
@@ -55,7 +55,7 @@ public abstract class ValueScrutinizer extends SnakScrutinizer {
     public abstract void scrutinize(Value value);
 
     @Override
-    public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+    public void scrutinize(ValueSnak snak, EntityIdValue entityId, boolean added) {
         scrutinize(snak.getValue());
     }
 
