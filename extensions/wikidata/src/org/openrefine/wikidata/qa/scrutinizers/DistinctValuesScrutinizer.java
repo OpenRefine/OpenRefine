@@ -29,10 +29,8 @@ import java.util.Map;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * A scrutinizer that checks for properties using the same value on different
@@ -55,11 +53,7 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
         if (_fetcher.hasDistinctValues(pid)) {
-        	Snak mainSnak = statement.getClaim().getMainSnak();
-        	if(!(mainSnak instanceof ValueSnak)) {
-        		return;
-        	}
-            Value mainSnakValue = ((ValueSnak)mainSnak).getValue();
+            Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
             Map<Value, EntityIdValue> seen = _seenValues.get(pid);
             if (seen == null) {
                 seen = new HashMap<Value, EntityIdValue>();

@@ -26,12 +26,9 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import java.util.Iterator;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 /**
  * A scrutinizer that inspects snaks individually, no matter whether they appear
@@ -52,46 +49,8 @@ public abstract class SnakScrutinizer extends StatementScrutinizer {
      * @param added:
      *            whether this snak is going to be added or deleted
      */
-    public abstract void scrutinize(ValueSnak snak, EntityIdValue entityId, boolean added);
+    public abstract void scrutinize(Snak snak, EntityIdValue entityId, boolean added);
 
-    /**
-     * Scrutinizes a novalue snak
-     * 
-     * @param snak:
-     *            the snak to inspect
-     * @param entityId:
-     *            the item on which it is going to (dis)appear
-     * @param added:
-     *            whether this snak is going to be added or deleted
-     */
-    public void scrutinize(NoValueSnak snak, EntityIdValue entityId, boolean added) {
-    	
-    }
-    
-    /**
-     * Scrutinizes a somevalue snak
-     * 
-     * @param snak:
-     *            the snak to inspect
-     * @param entityId:
-     *            the item on which it is going to (dis)appear
-     * @param added:
-     *            whether this snak is going to be added or deleted
-     */
-    public void scrutinize(SomeValueSnak snak, EntityIdValue entityId, boolean added) {
-    	
-    }
-    
-    public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
-    	if(snak instanceof ValueSnak) {
-    		scrutinize((ValueSnak)snak, entityId, added);
-    	} else if(snak instanceof NoValueSnak) {
-    		scrutinize((NoValueSnak)snak, entityId, added);
-    	} else if(snak instanceof SomeValueSnak) {
-    		scrutinize((SomeValueSnak)snak, entityId, added);
-    	}
-    }
-    
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
         // Main snak
