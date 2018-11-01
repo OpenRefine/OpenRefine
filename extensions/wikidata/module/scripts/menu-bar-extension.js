@@ -99,6 +99,11 @@ $(function(){
                         click: function() { SchemaAlignmentDialog.launch(false); }
                     },
                     {
+                        id: "wikidata/import-schema",
+                        label: $.i18n._('wikidata-extension')["import-wikidata-schema"],
+                        click: function() { ImportSchemaDialog.launch(); }
+                    },
+                    {
                         id:"wikidata/manage-account",
                         label: $.i18n._('wikidata-extension')["manage-wikidata-account"],
                         click: function() { ManageAccountDialog.checkAndLaunch(); }

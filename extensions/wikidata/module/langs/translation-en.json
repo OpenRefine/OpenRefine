@@ -2,6 +2,7 @@
         "wikidata-extension": {
                 "menu-label": "Wikidata",
                 "edit-wikidata-schema": "Edit Wikidata schema",
+                "import-wikidata-schema": "Import Wikidata schema",
                 "manage-wikidata-account": "Manage Wikidata account",
                 "perform-edits-on-wikidata": "Upload edits to Wikidata",
                 "export-to-qs": "Export to QuickStatements",
@@ -79,6 +80,13 @@
                 "perform-edits": "Upload edits",
                 "cancel": "Cancel",
                 "analyzing-edits": "Analyzing your edits..."
+        },
+        "import-wikibase-schema": {
+                "dialog-header": "Import Wikidata schema",
+                "file-label": "From JSON file: ",
+                "schema-label": "Or from JSON text:",
+                "invalid-schema": "Invalid Wikibase schema.",
+                "import": "Import"
         },
         "warnings-messages": {
                 "new-item-created": {
