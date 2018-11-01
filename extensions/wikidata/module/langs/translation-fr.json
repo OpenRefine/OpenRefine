@@ -167,14 +167,6 @@
             "title": "Pas de langue fournie pour des textes monolingues.",
             "body": "Des libellés, descriptions, alias ou textes monolingues ont été ignorés car aucune langue n'a été fournie. Exemple: <span class=\"wb-issue-preformat\">{example_text}</span>."
         },
-        "leading-whitespace": {
-            "title": "Espaces au début de chaînes de caractères.",
-            "body": "Des chaînes telles que <span class=\"wb-issue-preformat\">{example_string}</span> ont des espaces au début."
-        },
-        "trailing-whitespace": {
-            "title": "Espaces à la fin de chaînes de caractères.",
-            "body": "Des chaînes telles que <span class=\"wb-issue-preformat\">{example_string}</span> ont des espaces à la fin."
-        },
         "duplicate-whitespace": {
             "title": "Espaces dédoublées dans des chaînes de caractères.",
             "body": "Des chaînes telles que <span class=\"wb-issue-preformat\">{example_string}</span> contiennent des espaces dédoublées."

@@ -58,7 +58,7 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
     public StringValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         if (!cell.value.toString().isEmpty()) {
-            return Datamodel.makeStringValue(cell.value.toString());
+            return Datamodel.makeStringValue(cell.value.toString().trim());
         }
         throw new SkipSchemaExpressionException();
     }

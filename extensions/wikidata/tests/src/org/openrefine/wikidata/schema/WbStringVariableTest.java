@@ -45,17 +45,16 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
     }
 
     /**
-     * It is not up to the evaluator to clean up the strings it gets. This is
-     * flagged later on by scrutinizers.
+     *  The evaluator cleans up leading and trailing whitespace, but not duplicate spaces
      */
     @Test
     public void testTrailingWhitespace() {
-        evaluatesTo(Datamodel.makeStringValue("dirty \t"), "dirty \t");
+        evaluatesTo(Datamodel.makeStringValue("dirty"), "dirty \t");
     }
 
     @Test
     public void testLeadingWhitespace() {
-        evaluatesTo(Datamodel.makeStringValue(" dirty"), " dirty");
+        evaluatesTo(Datamodel.makeStringValue("dirty"), " dirty");
     }
 
     @Test
