@@ -643,6 +643,8 @@ SchemaAlignmentDialog._addQualifier = function(container, json) {
   SchemaAlignmentDialog._initPropertyField(inputContainer, statementContainer, property);
   if (value && property) {
     SchemaAlignmentDialog._addStatement(statementContainer, property.datatype, {value:value});
+  } else {
+    inputContainer.find('input').focus();
   }
 }
 
