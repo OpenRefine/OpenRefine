@@ -49,7 +49,8 @@
         "save-schema-alt": "Sauvegarder le schéma dans OpenRefine. Cela n'enverra pas de données sur Wikidata.",
         "discard-schema-changes-alt": "Abandonner les modifications sur le schéma.",
         "incomplete-schema-could-not-be-saved": "Votre schéma est incomplet, il ne peut donc pas encore être enregistré.",
-        "unsaved-warning": "Les changements sur le schéma Wikidata n'ont pas été sauvegardés. Souhaitez-vous tout de même fermer ?"
+        "unsaved-warning": "Les changements sur le schéma Wikidata n'ont pas été sauvegardés. Souhaitez-vous tout de même fermer ?",
+        "empty-statements": "aucune déclaration ajoutée"
     },
     "wikidata-preview": {
         "new-id": "nouvel élément"
