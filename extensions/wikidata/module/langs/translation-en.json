@@ -2,7 +2,7 @@
         "wikidata-extension": {
                 "menu-label": "Wikidata",
                 "edit-wikidata-schema": "Edit Wikidata schema",
-                "import-wikidata-schema": "Import Wikidata schema",
+                "import-wikidata-schema": "Import schema",
                 "manage-wikidata-account": "Manage Wikidata account",
                 "perform-edits-on-wikidata": "Upload edits to Wikidata",
                 "export-to-qs": "Export to QuickStatements",

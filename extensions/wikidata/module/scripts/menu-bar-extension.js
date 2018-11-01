@@ -99,14 +99,20 @@ $(function(){
                         click: function() { SchemaAlignmentDialog.launch(false); }
                     },
                     {
+                        id:"wikidata/manage-account",
+                        label: $.i18n._('wikidata-extension')["manage-wikidata-account"],
+                        click: function() { ManageAccountDialog.checkAndLaunch(); }
+                    },
+                    {},
+                    {
                         id: "wikidata/import-schema",
                         label: $.i18n._('wikidata-extension')["import-wikidata-schema"],
                         click: function() { ImportSchemaDialog.launch(); }
                     },
-                    {
-                        id:"wikidata/manage-account",
-                        label: $.i18n._('wikidata-extension')["manage-wikidata-account"],
-                        click: function() { ManageAccountDialog.checkAndLaunch(); }
+                    {               
+                        id:"wikidata/export-schema",
+                        label: $.i18n._('wikidata-extension')["export-schema"],
+                        click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
                     },
                     {},
                     {
@@ -118,11 +124,6 @@ $(function(){
                         id:"wikidata/export-qs",
                         label: $.i18n._('wikidata-extension')["export-to-qs"],
                         click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements"); }
-                    },
-                    {               
-                        id:"wikidata/export-schema",
-                        label: $.i18n._('wikidata-extension')["export-schema"],
-                        click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
                     },
 
                 ]

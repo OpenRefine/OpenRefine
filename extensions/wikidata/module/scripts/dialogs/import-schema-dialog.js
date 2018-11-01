@@ -22,6 +22,17 @@ ImportSchemaDialog.launch = function() {
      dismiss();
   });
 
+  elmts.fileInput.on("change", function(evt) {
+     var file = evt.target.files[0];
+     var freader = new FileReader();
+     freader.onload = function(evt) {
+        elmts.schemaTextarea.val(evt.target.result);
+        elmts.schemaTextarea.hide();
+        elmts.schemaLabel.hide();
+     }
+     freader.readAsText(file);
+  });
+
   elmts.importButton.click(function() {
     var schema = null;
     try {
