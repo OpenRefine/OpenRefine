@@ -133,6 +133,12 @@
       <artifactId>wdtk-datamodel</artifactId>
       <version>0.9.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.18</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- testing dependencies -->
 
