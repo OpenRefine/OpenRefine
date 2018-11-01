@@ -572,7 +572,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
     right = $('<div></div>').addClass('wbs-right').appendTo(statement);
     var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
-    referencesToggle.click(function(e) {
+    referencesToggleContainer.click(function(e) {
         triangle.toggleClass('pointing-down');
         triangle.toggleClass('pointing-right');
         referenceContainer.toggle(100);
