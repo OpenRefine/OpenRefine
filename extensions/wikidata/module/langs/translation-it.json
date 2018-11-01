@@ -65,6 +65,15 @@
         "remember-credentials-label": "Ricorda questi dati (verranno mantenuti in forma criptata nelle preferenze di OpenRefine",
         "close": "Chiudi",
         "log-in": "Entra",
-        "logged-in-as": "Sei registrato come:"
+        "logged-in-as": "Sei registrato come:",
+        "log-out": "Scollegati",
+        "connecting-to-wikidata": "Connessione a Wikidata in corso..."
+    },
+    "perform-wikidata-edits": {
+        "dialog-header": "Carica le tue modifiche su Wikidata",
+        "review-your-edits": "Stai per caricare {nb_edits} modifiche su Wikidata. Per favore, controllale per bene. Ricorda che grossi caricamenti di dati devono <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">essere validati</a> prima del caricamento.",
+        "logged-in-as": "Sei registrato come",
+        "edit-summary-label": "Oggetto delle modifiche:",
+        "edit-summary-placeholder": "qualche parola per descrivere le tue modifiche"
     }
 }
