@@ -198,6 +198,10 @@ SchemaAlignmentDialog.switchTab = function(targetTab) {
   // Resize the inside of the schema panel
   var headerHeight = this._schemaElmts.schemaHeader.outerHeight();
   this._schemaElmts.canvas.height(panelHeight - headerHeight - 10);
+
+  if (targetTab === "#view-panel") {
+     ui.dataTableView.render();
+  }
 }
 
 SchemaAlignmentDialog.isSetUp = function() {
