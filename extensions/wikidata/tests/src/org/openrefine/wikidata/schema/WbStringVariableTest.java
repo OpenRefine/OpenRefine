@@ -54,7 +54,7 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
 
     @Test
     public void testLeadingWhitespace() {
-        evaluatesTo(Datamodel.makeStringValue("dirty"), " dirty");
+        evaluatesTo(Datamodel.makeStringValue("dirty"), " dirty");
     }
 
     @Test
