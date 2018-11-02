@@ -93,7 +93,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditDate() throws Exception {
       editsString = "[{\"from\":[\"2018-10-04T00:00:00Z\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
+      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.get(0), "2018-10-04T00:00:00Z");
       Assert.assertEquals(editList.get(0).to,"newString" );
@@ -105,7 +105,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditEmpty() throws Exception {
       editsString = "[{\"from\":[\"\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
+      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "");

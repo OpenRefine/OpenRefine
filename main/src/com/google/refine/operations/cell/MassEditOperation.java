@@ -77,7 +77,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             boolean fromError,
             Serializable to) {
             this.from = from;
-            this.fromBlank = fromBlank;
+            this.fromBlank = fromBlank || (from.size() == 1 && from.get(0).length() == 0);
             this.fromError = fromError;
             this.to = to;
         }
@@ -103,7 +103,16 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         }
     }
     
-    public MassEditOperation(EngineConfig engineConfig, String columnName, String expression, List<Edit> edits) {
+    @JsonCreator
+    public MassEditOperation(
+    		@JsonProperty("engineConfig")
+    		EngineConfig engineConfig,
+    		@JsonProperty("columnName")
+    		String columnName,
+    		@JsonProperty("expression")
+    		String expression,
+    		@JsonProperty("edits")
+    		List<Edit> edits) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
