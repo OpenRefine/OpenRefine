@@ -41,6 +41,8 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
@@ -58,7 +60,7 @@ public class HtmlTableExporter implements WriterExporter {
         
         TabularSerializer serializer = new TabularSerializer() {
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
                 try {
                     writer.write("<html>\n");
                     writer.write("<head>\n");

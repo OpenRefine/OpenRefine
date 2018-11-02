@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.fusiontables.Fusiontables;
 
+import com.google.refine.exporters.CustomizableTabularExporterConfiguration;
 import com.google.refine.exporters.TabularSerializer;
 
 final class FusionTableSerializer implements TabularSerializer {
@@ -31,7 +32,7 @@ final class FusionTableSerializer implements TabularSerializer {
     }
     
     @Override
-    public void startFile(JSONObject options) {
+    public void startFile(JsonNode options) {
     }
 
     @Override

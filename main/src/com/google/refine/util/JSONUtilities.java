@@ -47,8 +47,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+
+import com.google.common.collect.Lists;
+
 
 public class JSONUtilities {
+	
     static public JSONObject getObject(JSONObject obj, String key) {
         try {
             return obj.getJSONObject(key);
@@ -65,6 +71,14 @@ public class JSONUtilities {
         }
     }
     
+    static public String getString(JsonNode obj, String key, String def) {
+    	if (obj.get(key) != null) {
+    		return obj.get(key).textValue();
+    	} else {
+    		return def;
+    	}
+    }
+    
     static public int getInt(JSONObject obj, String key, int def) {
         try {
             return obj.getInt(key);
@@ -73,10 +87,26 @@ public class JSONUtilities {
         }
     }
     
+    static public int getInt(JsonNode obj, String key, int def) {
+    	if (obj.get(key) != null) {
+    		return obj.get(key).asInt(def);
+    	} else {
+    		return def;
+    	}
+    }
+    
     static public boolean getBoolean(JSONObject obj, String key, boolean def) {
         try {
             return obj.getBoolean(key);
         } catch (JSONException e) {
+            return def;
+        }
+    }
+    
+    static public boolean getBoolean(JsonNode obj, String key, boolean def) {
+        if (obj.get(key) != null) {
+            return obj.get(key).asBoolean(def);
+        } else {
             return def;
         }
     }
@@ -121,6 +151,14 @@ public class JSONUtilities {
         try {
             return obj.getJSONArray(key);
         } catch (JSONException e) {
+            return null;
+        }
+    }
+    
+    static public List<JsonNode> getArray(JsonNode obj, String key) {
+        if (obj.has(key) && obj.get(key).getNodeType().equals(JsonNodeType.ARRAY)) {
+            return Lists.newArrayList(obj.get(key).elements());
+        } else {
             return null;
         }
     }

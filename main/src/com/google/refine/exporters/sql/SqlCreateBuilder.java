@@ -29,13 +29,13 @@
 
 package com.google.refine.exporters.sql;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.util.JSONUtilities;
 
 public class SqlCreateBuilder {
@@ -44,13 +44,13 @@ public class SqlCreateBuilder {
 
     private String table;
     private List<String> columns;
-    private JSONObject options;
+    private JsonNode options;
 
 
-    public SqlCreateBuilder(String table, List<String> columns, JSONObject options) {
+    public SqlCreateBuilder(String table, List<String> columns, JsonNode sqlOptions) {
         this.table = table;
         this.columns = columns;
-        this.options = options;
+        this.options = sqlOptions;
       
     }
 
@@ -60,15 +60,15 @@ public class SqlCreateBuilder {
         }
         StringBuffer createSB = new StringBuffer();
 
-        JSONArray columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
+        List<JsonNode> columnOptionArray = options == null ? Collections.emptyList() : JSONUtilities.getArray(options, "columns");
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
         
         
       
-        int count = columnOptionArray.length();
+        int count = columnOptionArray.size();
 
         for (int i = 0; i < count; i++) {
-            JSONObject columnOptions = JSONUtilities.getObjectElement(columnOptionArray, i);
+            JsonNode columnOptions = columnOptionArray.get(i);
             if (columnOptions != null) {
                 String name = JSONUtilities.getString(columnOptions, "name", null);
                 String type = JSONUtilities.getString(columnOptions, "type", SqlData.SQL_TYPE_VARCHAR);

@@ -39,11 +39,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
@@ -73,7 +74,7 @@ public class OdsExporter implements StreamExporter {
             //int rowCount = 0;
             
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
                 table.setTableName(ProjectManager.singleton.getProjectMetadata(project.id).getName());
             }

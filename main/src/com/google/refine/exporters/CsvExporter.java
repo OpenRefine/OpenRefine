@@ -38,12 +38,11 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
@@ -82,13 +81,13 @@ public class CsvExporter implements WriterExporter{
         if (optionsString != null) {
             try {
                 options = ParsingUtilities.mapper.readValue(optionsString, Configuration.class);
-                if (options.separator == null) {
-                    options.separator = Character.toString(separator);
-                }
             } catch (IOException e) {
                 // Ignore and keep options null.
                 e.printStackTrace();
             }
+        }
+        if (options.separator == null) {
+            options.separator = Character.toString(separator);
         }
         
         final String separator = options.separator;
@@ -105,7 +104,7 @@ public class CsvExporter implements WriterExporter{
         
         TabularSerializer serializer = new TabularSerializer() {
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
             }
 
             @Override

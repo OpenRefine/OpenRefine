@@ -36,11 +36,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.util.JSONUtilities;
 
 public class SqlInsertBuilder {
@@ -53,7 +52,7 @@ public class SqlInsertBuilder {
 
     private List<ArrayList<SqlData>> sqlDataList;
 
-    private JSONObject options;
+    private JsonNode options;
 
     
     /**
@@ -61,15 +60,15 @@ public class SqlInsertBuilder {
      * @param table
      * @param columns
      * @param rows
-     * @param options
+     * @param sqlOptions
      * @param sqlErrors 
      */
-    public SqlInsertBuilder(String table, List<String> columns, List<ArrayList<SqlData>> rows, JSONObject options
+    public SqlInsertBuilder(String table, List<String> columns, List<ArrayList<SqlData>> rows, JsonNode sqlOptions
             ) {
         this.table = table;
         this.columns = columns;
         this.sqlDataList = rows;
-        this.options = options;
+        this.options = sqlOptions;
         //logger.info("Column Size:{}", columns.size());
     
     }
@@ -83,12 +82,11 @@ public class SqlInsertBuilder {
             logger.debug("Insert SQL with columns: {}", columns);
         }
         
-        JSONArray colOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
-        Map<String, JSONObject> colOptionsMap = new HashMap<String, JSONObject>();
+        List<JsonNode> colOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
+        Map<String, JsonNode> colOptionsMap = new HashMap<>();
         if(colOptionArray != null) {
-            colOptionArray.forEach(c -> {
-                JSONObject json = (JSONObject)c;  
-                colOptionsMap.put("" + json.get("name"), json);
+            colOptionArray.forEach(json -> { 
+                colOptionsMap.put(JSONUtilities.getString(json, "name", null), json);
             });
         }
       
@@ -103,8 +101,8 @@ public class SqlInsertBuilder {
             //int fieldCount = 0;
             for(SqlData val : sqlRow) {
              
-                JSONObject jsonOb = colOptionsMap.get(val.getColumnName());
-                String type = (String)jsonOb.get("type");
+                JsonNode jsonOb = colOptionsMap.get(val.getColumnName());
+                String type = JSONUtilities.getString(jsonOb, "type", null);
                 
                 String defaultValue = JSONUtilities.getString(jsonOb, "defaultValue", null);
               

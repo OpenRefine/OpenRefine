@@ -39,6 +39,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.CustomizableTabularExporterUtilities;
@@ -59,7 +61,7 @@ public class SqlExporter implements WriterExporter {
  
     private List<String> columnNames = new ArrayList<String>();
     private List<ArrayList<SqlData>> sqlDataList = new ArrayList<ArrayList<SqlData>>();
-    private JSONObject sqlOptions;
+    private JsonNode sqlOptions;
  
 
     @Override
@@ -77,7 +79,7 @@ public class SqlExporter implements WriterExporter {
         TabularSerializer serializer = new TabularSerializer() {
 
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
                 sqlOptions = options;
                 //logger.info("setting options::{}", sqlOptions);
             }
@@ -97,10 +99,10 @@ public class SqlExporter implements WriterExporter {
                     }
                     String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
 
-                    Object tableNameManual = sqlOptions.get(JSON_TABLE_NAME);
+                    String tableNameManual = JSONUtilities.getString(sqlOptions, JSON_TABLE_NAME, null);
 
-                    if (tableNameManual != null && !tableNameManual.toString().isEmpty()) {
-                        tableName = tableNameManual.toString();
+                    if (tableNameManual != null) {
+                        tableName = tableNameManual;
                     }
 
                     SqlCreateBuilder createBuilder = new SqlCreateBuilder(tableName, columnNames, sqlOptions);

@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -47,9 +48,12 @@ import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -65,6 +69,8 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 abstract public class CustomizableTabularExporterUtilities {
+	final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	
     static public void exportRows(
         final Project project,
         final Engine engine,
@@ -72,15 +78,15 @@ abstract public class CustomizableTabularExporterUtilities {
         final TabularSerializer serializer) {
         
         String optionsString = (params != null) ? params.getProperty("options") : null;
-        JSONObject optionsTemp = null;
+        JsonNode optionsTemp = null;
         if (optionsString != null) {
             try {
-                optionsTemp = ParsingUtilities.evaluateJsonStringToObject(optionsString);
-            } catch (JSONException e) {
+                optionsTemp = ParsingUtilities.mapper.readTree(optionsString);
+            } catch (IOException e) {
                 // Ignore and keep options null.
             }
         }
-        final JSONObject options = optionsTemp;
+        final JsonNode options = optionsTemp;
         
         final boolean outputColumnHeaders = options == null ? true :
             JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
@@ -93,7 +99,7 @@ abstract public class CustomizableTabularExporterUtilities {
         final Map<String, CellFormatter> columnNameToFormatter =
             new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
         
-        JSONArray columnOptionArray = options == null ? null :
+        List<JsonNode> columnOptionArray = options == null ? null :
             JSONUtilities.getArray(options, "columns");
         if (columnOptionArray == null) {
             List<Column> columns = project.columnModel.columns;
@@ -105,16 +111,20 @@ abstract public class CustomizableTabularExporterUtilities {
                 columnNameToFormatter.put(name, new CellFormatter());
             }
         } else {
-            int count = columnOptionArray.length();
+            int count = columnOptionArray.size();
             
             columnNames = new ArrayList<String>(count);
             for (int i = 0; i < count; i++) {
-                JSONObject columnOptions = JSONUtilities.getObjectElement(columnOptionArray, i);
+                JsonNode columnOptions = columnOptionArray.get(i);
                 if (columnOptions != null) {
                     String name = JSONUtilities.getString(columnOptions, "name", null);
                     if (name != null) {
                         columnNames.add(name);
-                        columnNameToFormatter.put(name, new CellFormatter(columnOptions));
+                        try {
+							columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						}
                     }
                 }
             }
@@ -186,7 +196,7 @@ abstract public class CustomizableTabularExporterUtilities {
         int rows;
         
         @Override
-        public void startFile(JSONObject options) {
+        public void startFile(JsonNode options) {
         }
 
         @Override
@@ -201,30 +211,62 @@ abstract public class CustomizableTabularExporterUtilities {
     }
     
     private enum ReconOutputMode {
+        @JsonProperty("entity-name")
         ENTITY_NAME,
+        @JsonProperty("entity-id")
         ENTITY_ID,
+        @JsonProperty("cell-content")
         CELL_CONTENT
     }
     private enum DateFormatMode {
+        @JsonProperty("iso-8601")
         ISO_8601,
+        @JsonProperty("locale-short")
         SHORT_LOCALE,
+        @JsonProperty("locale-medium")
         MEDIUM_LOCALE,
+        @JsonProperty("locale-long")
         LONG_LOCALE,
+        @JsonProperty("locale-full")
         FULL_LOCALE,
+        @JsonProperty("custom")
         CUSTOM
     }
     
-    final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    static private class ReconSettings {
+        @JsonProperty("output")
+        ReconOutputMode outputMode = ReconOutputMode.ENTITY_NAME;
+        @JsonProperty("blankUnmatchedCells")
+        boolean blankUnmatchedCells = false;
+        @JsonProperty("linkToEntityPages")
+        boolean linkToEntityPages = true;
+    }
     
-    static private class CellFormatter {
-        ReconOutputMode recon_outputMode = ReconOutputMode.ENTITY_NAME;
-        boolean recon_blankUnmatchedCells = false;
-        boolean recon_linkToEntityPages = true;
+    static private class DateSettings {
+        @JsonProperty("format")
+        DateFormatMode formatMode = DateFormatMode.ISO_8601;
+        @JsonProperty("custom")
+        String custom = null;
+        @JsonProperty("useLocalTimeZone")
+        boolean useLocalTimeZone = false;
+        @JsonProperty("omitTime")
+        boolean omitTime = false;
+    }
+    
+    static public class ColumnOptions extends CellFormatter {
+        @JsonProperty("name")
+        String columnName;
+    }
+    
+    static public class CellFormatter {
+        @JsonProperty("reconSettings")
+        ReconSettings recon = new ReconSettings();
+        @JsonProperty("dateSettings")
+        DateSettings date = new DateSettings();
         
-        DateFormatMode date_formatMode = DateFormatMode.ISO_8601;
-        String date_custom = null;
-        boolean date_useLocalTimeZone = false;
-        boolean date_omitTime = false;
+        //SQLExporter parameter to convert null cell value to empty string
+        @JsonProperty("nullValueToEmptyStr")
+        boolean includeNullFieldValue = false;
         
         DateFormat dateFormatter;
         String[] urlSchemes = {"http","https", "ftp"};
@@ -232,88 +274,65 @@ abstract public class CustomizableTabularExporterUtilities {
         
         Map<String, String> identifierSpaceToUrl = null;
         
-        //SQLExporter parameter to convert null cell value to empty string
-        boolean includeNullFieldValue = false;
-        
-        CellFormatter() {
-            dateFormatter = new SimpleDateFormat(fullIso8601);
+        @JsonCreator
+        CellFormatter(
+                @JsonProperty("reconSettings")
+                ReconSettings reconSettings,
+                @JsonProperty("dateSettings")
+                DateSettings dateSettings,
+                @JsonProperty("nullValueToEmptyStr")
+                boolean includeNullFieldValue) {
+            if(reconSettings != null) {
+                recon = reconSettings;
+            }
+            if(dateSettings != null) {
+                date = dateSettings;
+            }
+            setup();
         }
         
-        CellFormatter(JSONObject options) {
-            JSONObject reconSettings = JSONUtilities.getObject(options, "reconSettings");
-            includeNullFieldValue = JSONUtilities.getBoolean(options, "nullValueToEmptyStr", false);
-            if (reconSettings != null) {
-                String reconOutputString = JSONUtilities.getString(reconSettings, "output", null);
-                if ("entity-name".equals(reconOutputString)) {
-                    recon_outputMode = ReconOutputMode.ENTITY_NAME;
-                } else if ("entity-id".equals(reconOutputString)) {
-                    recon_outputMode = ReconOutputMode.ENTITY_ID;
-                } else if ("cell-content".equals(reconOutputString)) {
-                    recon_outputMode = ReconOutputMode.CELL_CONTENT;
-                }
-                
-                recon_blankUnmatchedCells = JSONUtilities.getBoolean(reconSettings, "blankUnmatchedCells", recon_blankUnmatchedCells);
-                recon_linkToEntityPages = JSONUtilities.getBoolean(reconSettings, "linkToEntityPages", recon_linkToEntityPages);
-            }
-            JSONObject dateSettings = JSONUtilities.getObject(options, "dateSettings");
-            if (dateSettings != null) {
-                String dateFormatString = JSONUtilities.getString(dateSettings, "format", null);
-                if ("iso-8601".equals(dateFormatString)) {
-                    date_formatMode = DateFormatMode.ISO_8601;
-                } else if ("locale-short".equals(dateFormatString)) {
-                    date_formatMode = DateFormatMode.SHORT_LOCALE;
-                } else if ("locale-medium".equals(dateFormatString)) {
-                    date_formatMode = DateFormatMode.MEDIUM_LOCALE;
-                } else if ("locale-long".equals(dateFormatString)) {
-                    date_formatMode = DateFormatMode.LONG_LOCALE;
-                } else if ("locale-full".equals(dateFormatString)) {
-                    date_formatMode = DateFormatMode.FULL_LOCALE;
-                } else if ("custom".equals(dateFormatString)) {
-                    date_formatMode = DateFormatMode.CUSTOM;
-                }
-                
-                date_custom = JSONUtilities.getString(dateSettings, "custom", null);
-                date_useLocalTimeZone = JSONUtilities.getBoolean(dateSettings, "useLocalTimeZone", date_useLocalTimeZone);
-                date_omitTime = JSONUtilities.getBoolean(dateSettings, "omitTime", date_omitTime);
-                
-                if (date_formatMode == DateFormatMode.CUSTOM &&
-                    (date_custom == null || date_custom.isEmpty())) {
-                    date_formatMode = DateFormatMode.ISO_8601;
-                }
+        CellFormatter() {
+            setup();
+        }
+        
+        private void setup() {
+            if (date.formatMode == DateFormatMode.CUSTOM &&
+                (date.custom == null || date.custom.isEmpty())) {
+                date.formatMode = DateFormatMode.ISO_8601;
             }
             
-            switch (date_formatMode) {
+            switch (date.formatMode) {
             case SHORT_LOCALE:
-                dateFormatter = date_omitTime ?
+                dateFormatter = date.omitTime ?
                     SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT) :
                     SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.SHORT);
                 break;
             case MEDIUM_LOCALE:
-                dateFormatter = date_omitTime ?
+                dateFormatter = date.omitTime ?
                     SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM) :
                     SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.MEDIUM);
                 break;
             case LONG_LOCALE:
-                dateFormatter = date_omitTime ?
+                dateFormatter = date.omitTime ?
                     SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG) :
                     SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.LONG, SimpleDateFormat.LONG);
                 break;
             case FULL_LOCALE:
-                dateFormatter = date_omitTime ?
+                dateFormatter = date.omitTime ?
                     SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL) :
                     SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.FULL);
                 break;
             case CUSTOM:
-                dateFormatter = new SimpleDateFormat(date_custom);
+                dateFormatter = new SimpleDateFormat(date.custom);
                 break;
                 
             default:
-                dateFormatter = date_omitTime ?
+                dateFormatter = date.omitTime ?
                     new SimpleDateFormat("yyyy-MM-dd") :
                     new SimpleDateFormat(fullIso8601);
             }
             
-            if (!date_useLocalTimeZone) {
+            if (!date.useLocalTimeZone) {
                 dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             }
         }
@@ -326,13 +345,13 @@ abstract public class CustomizableTabularExporterUtilities {
                 if (cell.recon != null) {
                     Recon recon = cell.recon;
                     if (recon.judgment == Recon.Judgment.Matched) {
-                        if (recon_outputMode == ReconOutputMode.ENTITY_NAME) {
+                        if (this.recon.outputMode == ReconOutputMode.ENTITY_NAME) {
                             text = recon.match.name;
-                        } else if (recon_outputMode == ReconOutputMode.ENTITY_ID) {
+                        } else if (this.recon.outputMode == ReconOutputMode.ENTITY_ID) {
                             text = recon.match.id;
                         } // else: output cell content
                         
-                        if (recon_linkToEntityPages) {
+                        if (this.recon.linkToEntityPages) {
                             buildIdentifierSpaceToUrlMap();
                             
                             String service = recon.service;
@@ -341,7 +360,7 @@ abstract public class CustomizableTabularExporterUtilities {
                                 link = StringUtils.replace(viewUrl, "{{id}}", recon.match.id);
                             }
                         }
-                    } else if (recon_blankUnmatchedCells) {
+                    } else if (this.recon.blankUnmatchedCells) {
                         return null;
                     }
                 }

@@ -54,6 +54,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.sql.SqlCreateBuilder;
@@ -68,6 +71,8 @@ import com.google.refine.model.Row;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class SqlExporterTests extends RefineTest {
@@ -180,14 +185,10 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-       // logger.info("result = \n" + result);
+
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
-        boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        //logger.info("checkResult1 =" + checkResult);
-        checkResult = result.contains("INSERT INTO " + tableName);
-       // logger.info("checkResult2 =" + checkResult);
-        Assert.assertEquals(checkResult,  true);
+        Assert.assertTrue(result.contains("INSERT INTO " + tableName));
    
     }
     
@@ -195,7 +196,7 @@ public class SqlExporterTests extends RefineTest {
     public void testExportSqlNoSchema(){
         createGrid(2, 2);
         String tableName = "sql_table_test";
-        JSONObject optionsJson = createOptionsFromProject(tableName, null,null);
+        ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null,null);
         optionsJson.put("includeStructure", false);
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
        // logger.info("Options = " + optionsJson.toString());
@@ -222,7 +223,7 @@ public class SqlExporterTests extends RefineTest {
     public void testExportSqlNoContent(){
         createGrid(2, 2);
         String tableName = "sql_table_test";
-        JSONObject optionsJson = createOptionsFromProject(tableName, null, null);
+        ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeContent", false);
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
         //logger.info("Options = " + optionsJson.toString());
@@ -249,7 +250,7 @@ public class SqlExporterTests extends RefineTest {
     public void testExportSqlIncludeSchemaWithDropStmt(){
         createGrid(2, 2);
         String tableName = "sql_table_test";
-        JSONObject optionsJson = createOptionsFromProject(tableName, null, null);
+        ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         
@@ -289,7 +290,7 @@ public class SqlExporterTests extends RefineTest {
         String tableName = "sql_table_test";
         String type = "CHAR";
         String size = "2";
-        JSONObject optionsJson = createOptionsFromProject(tableName, type, size);
+        JsonNode optionsJson = createOptionsFromProject(tableName, type, size);
        // logger.info("Options:: = " + optionsJson.toString());
         List<String> columns = project.columnModel.columns.stream().map(col -> col.getName()).collect(Collectors.toList());
        
@@ -307,7 +308,7 @@ public class SqlExporterTests extends RefineTest {
         int inNull = 8;
         createGridWithNullFields(3, 3, inNull);
         String tableName = "sql_table_test";
-        JSONObject optionsJson = createOptionsFromProject(tableName, null, null);
+        ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
@@ -338,7 +339,7 @@ public class SqlExporterTests extends RefineTest {
         int noOfRows = 3;
         createGrid(noOfRows, noOfCols);
         String tableName = "sql_table_test";
-        JSONObject optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);
@@ -497,18 +498,16 @@ public class SqlExporterTests extends RefineTest {
        return json;
     }
   
-   protected JSONObject createOptionsFromProject(String tableName, String type, String size) {
-       
-       JSONObject json = new JSONObject();
-       JSONArray columns = new JSONArray();
-       json.put("columns", columns);
+   protected JsonNode createOptionsFromProject(String tableName, String type, String size) {
+       ObjectNode json = ParsingUtilities.mapper.createObjectNode();
        json.put("tableName", tableName);
+       ArrayNode columns = json.putArray("columns");
        
        List<Column> cols = project.columnModel.columns;
      
        cols.forEach(c -> {
            //logger.info("Column Name = " + c.getName());
-           JSONObject columnModel = new JSONObject();
+           ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
            columnModel.put("name", c.getName());
            if(type != null) {
                columnModel.put("type", type);
@@ -529,26 +528,25 @@ public class SqlExporterTests extends RefineTest {
                columnModel.put("size", size);
            }
            
-           columns.put(columnModel);
+           columns.add(columnModel);
       
        });
        
-      return json;
+       return json;
    }
    
-    protected JSONObject createOptionsFromProject(String tableName, String type, String size, String defaultValue,
+    protected ObjectNode createOptionsFromProject(String tableName, String type, String size, String defaultValue,
             boolean allowNull) {
        
-       JSONObject json = new JSONObject();
-       JSONArray columns = new JSONArray();
-       json.put("columns", columns);
+       ObjectNode json = ParsingUtilities.mapper.createObjectNode();
+       ArrayNode columns = json.putArray("columns");
        json.put("tableName", tableName);
        
        List<Column> cols = project.columnModel.columns;
      
        cols.forEach(c -> {
            //logger.info("Column Name = " + c.getName());
-           JSONObject columnModel = new JSONObject();
+           ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
            columnModel.put("name", c.getName());
            if(type != null) {
                columnModel.put("type", type);
@@ -572,7 +570,7 @@ public class SqlExporterTests extends RefineTest {
            columnModel.put("defaultValue", defaultValue);
            columnModel.put("allowNull", allowNull);
            
-           columns.put(columnModel);
+           columns.add(columnModel);
       
        });
        
