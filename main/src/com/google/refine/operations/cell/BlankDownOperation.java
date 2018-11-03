@@ -103,6 +103,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
         
         return new RowVisitor() {
             int                 cellIndex;
+            int 			    keyCellIndex;
             List<CellChange>    cellChanges;
             Cell                previousCell;
             Mode                engineMode;
@@ -116,7 +117,8 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
 
             @Override
             public void start(Project project) {
-                // nothing to do
+            	keyCellIndex = project.columnModel.columns.get(
+                		project.columnModel.getKeyColumnIndex()).getCellIndex();
             }
 
             @Override
@@ -126,7 +128,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
             
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
-                if (engineMode.equals(Mode.RecordBased) && ExpressionUtils.isNonBlankData(row.getCellValue(0))) {
+                if (engineMode.equals(Mode.RecordBased) && ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))) {
                     previousCell = null;
                 }
                 Object value = row.getCellValue(cellIndex);
