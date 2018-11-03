@@ -1,5 +1,7 @@
 package com.google.refine.tests.operations.cell;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
@@ -13,12 +15,16 @@ import org.testng.annotations.Test;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.BlankDownOperation;
+import com.google.refine.operations.cell.FillDownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.Pool;
 
 public class BlankDownTests extends RefineTest {
     
@@ -80,5 +86,32 @@ public class BlankDownTests extends RefineTest {
         Assert.assertNull(project.rows.get(1).cells.get(2));
         Assert.assertNull(project.rows.get(2).cells.get(2));
         Assert.assertNull(project.rows.get(3).cells.get(2));
+    }
+    
+    @Test
+    public void testKeyColumnIndex() throws Exception {
+    	// Shift all column indices
+    	for(Row r : project.rows) {
+    		r.cells.add(0, null);
+    	}
+    	List<Column> newColumns = new ArrayList<>();
+    	for(Column c : project.columnModel.columns) {
+    		newColumns.add(new Column(c.getCellIndex()+1, c.getName()));
+    	}
+    	project.columnModel.columns.clear();
+    	project.columnModel.columns.addAll(newColumns);
+    	project.columnModel.update();
+    	
+    	AbstractOperation op = new BlankDownOperation(
+                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                "second");
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
+        //project.saveToOutputStream(System.out, new Pool());
+        
+        Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
+        Assert.assertNull(project.rows.get(1).cells.get(3));
+        Assert.assertEquals("c", project.rows.get(2).cells.get(3).value);
+        Assert.assertNull(project.rows.get(3).cells.get(3));
     }
 }
