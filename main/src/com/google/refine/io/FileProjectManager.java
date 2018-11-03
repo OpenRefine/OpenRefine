@@ -67,6 +67,7 @@ import com.google.refine.model.metadata.DataPackageMetadata;
 import com.google.refine.model.metadata.IMetadata;
 import com.google.refine.model.metadata.MetadataFormat;
 import com.google.refine.model.metadata.ProjectMetadata;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
 
@@ -386,7 +387,7 @@ public class FileProjectManager extends ProjectManager  {
                 
                 // load global preferences firstly
                 if (obj.has("preferences") && !obj.isNull("preferences")) {
-                    _preferenceStore.load(obj.getJSONObject("preferences"));
+                    _preferenceStore = ParsingUtilities.mapper.readValue(obj.getJSONObject("preferences").toString(), PreferenceStore.class);
                 }
 
                 JSONArray a = obj.getJSONArray("projectIDs");
@@ -413,8 +414,8 @@ public class FileProjectManager extends ProjectManager  {
                 }
 
                 if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
-                    ((TopList) _preferenceStore.get("scripting.expressions"))
-                    .load(obj.getJSONArray("expressions"));
+                	TopList newExpressions = ParsingUtilities.mapper.readValue(obj.getJSONArray("expressions").toString(), TopList.class);
+                    this._preferenceStore.put("scripting.expressions", newExpressions);
                 }
 
                 found = true;

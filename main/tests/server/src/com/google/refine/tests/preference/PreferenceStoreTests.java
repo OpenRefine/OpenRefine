@@ -3,12 +3,15 @@ package com.google.refine.tests.preference;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import org.json.JSONObject;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.preference.PreferenceStore;
-import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class PreferenceStoreTests {
     public static String json = "{"
@@ -21,7 +24,7 @@ public class PreferenceStoreTests {
             + "}}";
     
     @Test
-    public void serializePreferenceStore() {
+    public void serializePreferenceStore() throws JsonParseException, JsonMappingException, IOException {
  
         String jsonAfter = "{"
                 + "\"entries\":{"
@@ -32,8 +35,7 @@ public class PreferenceStoreTests {
                 + "   \"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]},"
                 + "   \"mypreference\":\"myvalue\""
                 + "}}";
-        PreferenceStore prefStore = new PreferenceStore();
-        prefStore.load(new JSONObject(json));
+        PreferenceStore prefStore = ParsingUtilities.mapper.readValue(json, PreferenceStore.class);
         assertFalse(prefStore.isDirty());
         prefStore.put("mypreference", "myvalue");
         assertTrue(prefStore.isDirty());

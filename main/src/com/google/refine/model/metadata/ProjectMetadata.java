@@ -205,16 +205,17 @@ public class ProjectMetadata  extends AbstractMetadata {
 
         if (obj.has("preferences") && !obj.isNull("preferences")) {
             try {
-                this._preferenceStore.load(obj.getJSONObject("preferences"));
-            } catch (JSONException e) {
+                this._preferenceStore = ParsingUtilities.mapper.readValue(obj.getJSONObject("preferences").toString(), PreferenceStore.class);
+            } catch (IOException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
 
         if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
             try {
-                ((TopList) this._preferenceStore.get("scripting.expressions")).load(obj.getJSONArray("expressions"));
-            } catch (JSONException e) {
+            	TopList newExpressions = ParsingUtilities.mapper.readValue(obj.getJSONArray("expressions").toString(), TopList.class);
+                this._preferenceStore.put("scripting.expressions", newExpressions);
+            } catch (IOException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }
         }

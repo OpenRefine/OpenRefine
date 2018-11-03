@@ -42,9 +42,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
+import com.google.refine.util.ParsingUtilities;
 
 public class SetPreferenceCommand extends Command {
     @Override
@@ -58,12 +60,12 @@ public class SetPreferenceCommand extends Command {
         String valueString = request.getParameter("value");
         
         try {
-            Object o = valueString == null ? null : new JSONTokener(valueString).nextValue();
+            JsonNode o = valueString == null ? null : ParsingUtilities.mapper.readTree(valueString);
             
             ps.put(prefName, PreferenceStore.loadObject(o));
             
             respond(response, "{ \"code\" : \"ok\" }");
-        } catch (JSONException e) {
+        } catch (IOException e) {
             respondException(response, e);
         }
     }

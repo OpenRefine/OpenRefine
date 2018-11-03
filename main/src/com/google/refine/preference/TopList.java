@@ -38,22 +38,30 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.list.UnmodifiableList;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-public class TopList implements Iterable<String> {
+public class TopList implements Iterable<String>, PreferenceValue {
     
     @JsonProperty("top")
-    final protected int          _top;
-    final protected List<String> _list = new ArrayList<String>();
+    protected int          _top = 10;
+    protected List<String> _list = new ArrayList<String>();
 
     public TopList(int top) {
         _top = top;
+    }
+    
+    @JsonCreator
+    public TopList(
+    		@JsonProperty("top")
+    		int top,
+    		@JsonProperty("list")
+    		List<String> list) {
+    	_top = top;
+    	_list = list;
     }
     
     @SuppressWarnings("unchecked")
@@ -73,30 +81,6 @@ public class TopList implements Iterable<String> {
     public void remove(String element)
     {
         _list.remove(element);
-    }
-    
-    @JsonProperty("class")
-    public String getClassName() {
-        return this.getClass().getName();
-    }
-    
-    static public TopList load(JSONObject obj) throws JSONException {
-        int top = obj.has("top") && !obj.isNull("top") ? obj.getInt("top") : 10;
-        TopList tl = new TopList(top);
-        
-        if (obj.has("list") && !obj.isNull("list")) {
-            JSONArray a = obj.getJSONArray("list");
-            
-            tl.load(a);
-        }
-        return tl;
-    }
-    
-    public void load(JSONArray a) throws JSONException {
-        int length = a.length();
-        for (int i = 0; i < length && _list.size() < _top; i++) {
-            _list.add(a.getString(i));
-        }
     }
     
     @Override

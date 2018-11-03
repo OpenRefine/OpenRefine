@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.preference;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -50,8 +49,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.google.refine.RefineServlet;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.util.ParsingUtilities;
 
 public class PreferenceStore  {
     public static final String USER_METADATA_KEY = "userMetadata";
@@ -63,7 +63,6 @@ public class PreferenceStore  {
     protected Map<String, Object> _prefs = new HashMap<>();
     
     // Temporary wrapper while serialization has not been migrated yet.
-    @JsonProperty("entries")
     protected Map<String, Object> _prefsJackson = new HashMap<>();
     
     public void put(String key, Object value) {
@@ -119,39 +118,43 @@ public class PreferenceStore  {
         return null;
     }
     
-    @SuppressWarnings("unchecked")
-    public void load(JSONObject obj) throws JSONException {
-        if (obj.has("entries") && !obj.isNull("entries")) {
-            JSONObject entries = obj.getJSONObject("entries");
-            
-            Iterator<String> i = entries.keys();
-            while (i.hasNext()) {
-                String key = i.next();
-                if (!entries.isNull(key)) {
-                    Object o = entries.get(key), loaded = loadObject(o);
-                    _prefs.put(key, loaded);
-                    _prefsJackson.put(key, wrapJSONArray(loaded));
-                }
+    @JsonProperty("entries")
+    public void setEntries(JsonNode entries) throws JSONException {
+        Iterator<String> i = entries.fieldNames();
+        while (i.hasNext()) {
+            String key = i.next();
+            System.out.println(key);
+            if (entries.get(key) != null) {
+                JsonNode o = entries.get(key);
+                Object loaded = loadObject(o);
+                _prefs.put(key, loaded);
+                _prefsJackson.put(key, wrapJSONArray(loaded));
             }
-            dirty = false; // internal puts don't count
         }
+        dirty = false; // internal puts don't count
     }
     
-    static public Object loadObject(Object o) {
-        if (o instanceof JSONObject) {
-            try {
-                JSONObject obj2 = (JSONObject) o;
-                String className = obj2.getString("class");
-                Class<?> klass = RefineServlet.getClass(className);
-                Method method = klass.getMethod("load", JSONObject.class);
-                
-                return method.invoke(null, obj2);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return o;
+    @JsonProperty("entries")
+    public Map<String, Object> getEntries() {
+    	return _prefsJackson;
+    }
+    
+    static public Object loadObject(JsonNode o) {
+    	System.out.println("loading");
+    	System.out.println(o.toString());
+        try {
+	        if (o instanceof ObjectNode) {
+                ObjectNode obj2 = (ObjectNode) o;
+                return ParsingUtilities.mapper.treeToValue(obj2, PreferenceValue.class);
+	        } else if (o instanceof ArrayNode) {
+	        	return o;
+	        } else {
+	        	// basic datatypes (int, double, boolean, string)
+	            return ParsingUtilities.mapper.treeToValue(o, Object.class);
+	        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
