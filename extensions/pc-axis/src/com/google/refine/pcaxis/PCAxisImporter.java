@@ -37,15 +37,16 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.TabularImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class PCAxisImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(PCAxisImporter.class);
@@ -55,9 +56,9 @@ public class PCAxisImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = new JSONObject();
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         JSONUtilities.safePut(options, "skipDataLines", 0);
         JSONUtilities.safePut(options, "limit", -1);
@@ -72,7 +73,7 @@ public class PCAxisImporter extends TabularImportingParserBase {
         String fileSource,
         Reader reader,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         LineNumberReader lnReader = new LineNumberReader(reader);
