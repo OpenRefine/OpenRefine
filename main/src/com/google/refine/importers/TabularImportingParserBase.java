@@ -39,8 +39,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
@@ -56,9 +55,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(ImportingJob job,
-            List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
@@ -85,7 +84,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         TableDataReader reader,
         String fileSource,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
@@ -203,7 +202,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
     }
 
     public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            Reader dataReader, int limit, JSONObject options, List<Exception> exceptions) {
+            Reader dataReader, int limit, ObjectNode options, List<Exception> exceptions) {
         super.parseOneFile(project, metadata, job, fileSource, dataReader, limit, options, exceptions);
     }
 }

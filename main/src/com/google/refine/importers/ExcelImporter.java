@@ -54,12 +54,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
@@ -69,6 +69,7 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
@@ -78,15 +79,15 @@ public class ExcelImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
-        JSONArray sheetRecords = new JSONArray();
+        ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
             for (int index = 0;index < fileRecords.size();index++) {
-                JSONObject fileRecord = fileRecords.get(index);
+                ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
 
@@ -104,7 +105,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                                 Sheet sheet = wb.getSheetAt(i);
                                 int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
 
-                                JSONObject sheetRecord = new JSONObject();
+                                ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
                                 JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
                                 JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                                 JSONUtilities.safePut(sheetRecord, "rows", rows);
@@ -138,7 +139,7 @@ public class ExcelImporter extends TabularImportingParserBase {
         String fileSource,
         InputStream inputStream,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         Workbook wb = null;
@@ -182,14 +183,14 @@ public class ExcelImporter extends TabularImportingParserBase {
                 return;
         }
         
-        JSONArray sheets = JSONUtilities.getArray(options, "sheets");
+        ArrayNode sheets = (ArrayNode) options.get("sheets");
         
-        for(int i=0;i<sheets.length();i++)  {
+        for(int i=0;i<sheets.size();i++)  {
             String[] fileNameAndSheetIndex = new String[2];
             try {
-                JSONObject sheetObj = sheets.getJSONObject(i);
+                ObjectNode sheetObj = (ObjectNode) sheets.get(i);
                 // value is fileName#sheetIndex
-                fileNameAndSheetIndex = sheetObj.getString("fileNameAndSheetIndex").split("#");
+                fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }

@@ -39,7 +39,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.RefineServlet;
 
 abstract public class HttpHeadersSupport {

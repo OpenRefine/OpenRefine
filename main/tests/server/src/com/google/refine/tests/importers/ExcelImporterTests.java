@@ -53,9 +53,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -63,8 +61,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.importers.ExcelImporter;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
     
@@ -101,11 +100,10 @@ public class ExcelImporterTests extends ImporterTest {
     
     //---------------------read tests------------------------
     @Test
-    public void readXls() throws FileNotFoundException, JSONException{
+    public void readXls() throws FileNotFoundException, IOException{
 
-        JSONArray sheets = new JSONArray();
-        JSONUtilities.append(sheets, 
-                new JSONObject("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
         
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -134,11 +132,11 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
         try {
-            verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
+            verify(options, times(1)).get("ignoreLines");
+            verify(options, times(1)).get("headerLines");
+            verify(options, times(1)).get("skipDataLines");
+            verify(options, times(1)).get("limit");
+            verify(options, times(1)).get("storeBlankCellsAsNulls");
         } catch (JSONException e) {
             Assert.fail("JSON exception",e);
         }

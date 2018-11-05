@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 

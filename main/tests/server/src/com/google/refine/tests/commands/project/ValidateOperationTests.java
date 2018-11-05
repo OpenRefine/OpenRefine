@@ -28,10 +28,10 @@ import org.testng.Assert;
 import com.google.refine.ProjectManager;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.model.Column;
-import com.google.refine.model.metadata.validator.ValidateOperation;
 import com.google.refine.model.metadata.DataPackageMetadata;
 import com.google.refine.model.metadata.MetadataFactory;
 import com.google.refine.model.metadata.MetadataFormat;
+import com.google.refine.model.metadata.validator.ValidateOperation;
 import com.google.refine.tests.importers.TsvCsvImporterTests;
 import com.google.refine.util.ParsingUtilities;
 

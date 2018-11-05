@@ -39,17 +39,16 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 
@@ -63,6 +62,14 @@ public class JSONUtilities {
         }
     }
     
+    static public ObjectNode getObject(ObjectNode obj, String key) {
+    	JsonNode node = obj.get(key);
+    	if(node != null && node instanceof ObjectNode) {
+    		return (ObjectNode)node;
+    	}
+    	return null;
+    }
+    
     static public String getString(JSONObject obj, String key, String def) {
         try {
             return obj.getString(key);
@@ -72,7 +79,7 @@ public class JSONUtilities {
     }
     
     static public String getString(JsonNode obj, String key, String def) {
-    	if (obj.get(key) != null) {
+    	if (obj.has(key)) {
     		return obj.get(key).textValue();
     	} else {
     		return def;
@@ -88,7 +95,7 @@ public class JSONUtilities {
     }
     
     static public int getInt(JsonNode obj, String key, int def) {
-    	if (obj.get(key) != null) {
+    	if (obj.has(key)) {
     		return obj.get(key).asInt(def);
     	} else {
     		return def;
@@ -104,7 +111,7 @@ public class JSONUtilities {
     }
     
     static public boolean getBoolean(JsonNode obj, String key, boolean def) {
-        if (obj.get(key) != null) {
+        if (obj.has(key)) {
             return obj.get(key).asBoolean(def);
         } else {
             return def;
@@ -155,6 +162,14 @@ public class JSONUtilities {
         }
     }
     
+    static public ArrayNode getArray(ObjectNode obj, String key) {
+    	JsonNode v = obj.get(key);
+        if( obj.has(key) && obj.get(key) instanceof ArrayNode) {
+        	return (ArrayNode) obj.get(key);
+        } 
+        return null;
+    }
+    
     static public List<JsonNode> getArray(JsonNode obj, String key) {
         if (obj.has(key) && obj.get(key).getNodeType().equals(JsonNodeType.ARRAY)) {
             return Lists.newArrayList(obj.get(key).elements());
@@ -182,6 +197,20 @@ public class JSONUtilities {
         }
     }
     
+    static public int[] getIntArray(ObjectNode obj, String key) {
+    	ArrayNode a = getArray(obj, key);
+    	if (a == null) {
+    		return new int[0];
+    	}
+    	int[] r = new int[a.size()];
+    	int i = 0;
+    	for(JsonNode n : a) {
+    		r[i] = n.asInt();
+    		i++;
+    	}
+        return r;
+    }
+    
     static public String[] getStringArray(JSONObject obj, String key) {
         try {
             JSONArray a = obj.getJSONArray(key);
@@ -195,6 +224,20 @@ public class JSONUtilities {
         } catch (JSONException e) {
             return new String[0];
         }
+    }
+    
+    static public String[] getStringArray(ObjectNode obj, String key) {
+        ArrayNode a = getArray(obj, key);
+        if (a == null) {
+        	return new String[0];
+        }
+        String[] r = new String[a.size()];
+        
+        for (int i = 0; i < r.length; i++) {
+            r[i] = a.get(i).asText();
+        }
+        
+        return r;
     }
     
     static public void getStringList(JSONObject obj, String key, List<String> list) {
@@ -235,6 +278,14 @@ public class JSONUtilities {
         }
     }
     
+    static public ObjectNode getObjectElement(ArrayNode a, int i) {
+    	JsonNode n = a.get(i);
+    	if (n != null && n instanceof ObjectNode) {
+    		return (ObjectNode) n;
+    	}
+    	return null;
+    }
+    
     static public int getIntElement(JSONArray a, int i, int def) {
         try {
             return a.getInt(i);
@@ -243,11 +294,26 @@ public class JSONUtilities {
         }
     }
     
-    static public void append(JSONArray a, JSONObject element) {
+    static public int getIntElement(ArrayNode a, int i, int def) {
+        if (a.get(i) != null) {
+            return a.get(i).asInt(def);
+        }
+        return def;
+    }
+    
+    static public void append(JSONArray sheetRecords, JSONObject sheetRecord) {
         try {
-            a.put(a.length(), element);
+            sheetRecords.put(sheetRecords.length(), sheetRecord);
         } catch (JSONException e) {
         }
+    }
+    
+    static public void append(ArrayNode sheetRecords, ObjectNode sheetRecord) {
+        sheetRecords.add(sheetRecord);
+    }
+    
+    static public void append(ArrayNode array, int v) {
+        array.add(v);
     }
     
     static public void append(JSONArray a, Object element) {
@@ -292,9 +358,13 @@ public class JSONUtilities {
         }
     }
     
-    static public void safePut(JSONObject obj, String key, int value) {
+    static public void append(ArrayNode a, String element) {
+        a.add(element);
+    }
+    
+    static public void safePut(ObjectNode options, String key, JsonNode rootElement) {
         try {
-            obj.put(key, value);
+            options.put(key, rootElement);
         } catch (JSONException e) {
             // Ignore: the JSONObject is just too happy about throwing exceptions.
         }
@@ -309,12 +379,25 @@ public class JSONUtilities {
         }
     }
     
+    static public void safeInc(ObjectNode obj, String key) {
+        int currentValue = getInt(obj, key, 0);
+        safePut(obj, key, currentValue + 1);
+    }
+    
+    static public void safePut(ObjectNode obj, String key, long value) {
+    	obj.put(key, value);
+    }
+    
     static public void safePut(JSONObject obj, String key, long value) {
         try {
             obj.put(key, value);
         } catch (JSONException e) {
             // Ignore: the JSONObject is just too happy about throwing exceptions.
         }
+    }
+    
+    static public void safePut(ObjectNode obj, String key, double value) {
+    	obj.put(key, value);
     }
     
     static public void safePut(JSONObject obj, String key, double value) {
@@ -325,6 +408,10 @@ public class JSONUtilities {
         }
     }
     
+    static public void safePut(ObjectNode obj, String key, boolean value) {
+    	obj.put(key, value);
+    }
+    
     static public void safePut(JSONObject obj, String key, boolean value) {
         try {
             obj.put(key, value);
@@ -333,23 +420,11 @@ public class JSONUtilities {
         }
     }
     
+    static public void safePut(ObjectNode obj, String key, String value) {
+    	obj.put(key, value);
+    }
+    
     static public void safePut(JSONObject obj, String key, String value) {
-        try {
-            obj.put(key, value);
-        } catch (JSONException e) {
-            // Ignore: the JSONObject is just too happy about throwing exceptions.
-        }
-    }
-    
-    static public void safePut(JSONObject obj, String key, Collection<?> value) {
-        try {
-            obj.put(key, value);
-        } catch (JSONException e) {
-            // Ignore: the JSONObject is just too happy about throwing exceptions.
-        }
-    }
-    
-    static public void safePut(JSONObject obj, String key, Map<?, ?> value) {
         try {
             obj.put(key, value);
         } catch (JSONException e) {
@@ -393,4 +468,13 @@ public class JSONUtilities {
             destArray.put(srcArray.get(i));
         }
     }
+    
+    // temporary method used during migratino
+    static public ObjectNode jsonObjectToObjectNode(JSONObject obj) {
+    	return ParsingUtilities.evaluateJsonStringToObjectNode(obj.toString());
+    }
+
+	public static JSONObject objectNodeToJsonNode(ObjectNode fieldJsonObj) {
+		return new JSONObject(fieldJsonObj.toString());
+	}
 }

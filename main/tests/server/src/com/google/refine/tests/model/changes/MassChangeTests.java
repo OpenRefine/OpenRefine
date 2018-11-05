@@ -12,12 +12,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.history.Change;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.model.changes.MassChange;
-import com.google.refine.history.Change;
 import com.google.refine.tests.RefineTest;
 
 public class MassChangeTests extends RefineTest {

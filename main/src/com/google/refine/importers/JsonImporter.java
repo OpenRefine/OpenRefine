@@ -39,8 +39,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +47,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.core.JsonToken;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.TreeReader;
@@ -59,6 +63,7 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class JsonImporter extends TreeImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(JsonImporter.class);
@@ -76,18 +81,18 @@ public class JsonImporter extends TreeImportingParserBase {
     final static private int PREVIEW_PARSING_LIMIT = 1000;
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         if (fileRecords.size() > 0) {
             try {
-                JSONObject firstFileRecord = fileRecords.get(0);
+                ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 JsonFactory factory = new JsonFactory();
                 JsonParser parser = factory.createJsonParser(file);
 
                 PreviewParsingState state = new PreviewParsingState();
-                Object rootValue = parseForPreview(parser, state);
+                JsonNode rootValue = parseForPreview(parser, state);
                 if (rootValue != null) {
                     JSONUtilities.safePut(options, "dom", rootValue);
                 }
@@ -99,7 +104,7 @@ public class JsonImporter extends TreeImportingParserBase {
         return options;
     }
     
-    final static private Object parseForPreview(JsonParser parser, PreviewParsingState state, JsonToken token)
+    final static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state, JsonToken token)
             throws JsonParseException, IOException {
         if (token != null) {
             switch (token) {
@@ -108,15 +113,15 @@ public class JsonImporter extends TreeImportingParserBase {
             case START_OBJECT:
                 return parseObjectForPreview(parser, state);
             case VALUE_STRING:
-                return parser.getText();
+                return new TextNode(parser.getText());
             case VALUE_NUMBER_INT:
-                return Long.valueOf(parser.getLongValue());
+                return new LongNode(parser.getLongValue());
             case VALUE_NUMBER_FLOAT:
-                return Double.valueOf(parser.getDoubleValue());
+                return new DoubleNode(parser.getDoubleValue());
             case VALUE_TRUE:
-                return Boolean.TRUE;
+                return BooleanNode.getTrue();
             case VALUE_FALSE:
-                return Boolean.FALSE;
+                return BooleanNode.getFalse();
             case VALUE_NULL:
                 return null;
             case END_ARRAY:
@@ -131,7 +136,7 @@ public class JsonImporter extends TreeImportingParserBase {
         return null;
     }
     
-    final static private Object parseForPreview(JsonParser parser, PreviewParsingState state) {
+    final static private JsonNode parseForPreview(JsonParser parser, PreviewParsingState state) {
         try {
             JsonToken token = parser.nextToken();
             state.tokenCount++;
@@ -141,8 +146,8 @@ public class JsonImporter extends TreeImportingParserBase {
         }
     }
     
-    final static private JSONObject parseObjectForPreview(JsonParser parser, PreviewParsingState state) {
-        JSONObject result = new JSONObject();
+    final static private ObjectNode parseObjectForPreview(JsonParser parser, PreviewParsingState state) {
+        ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         loop:while (state.tokenCount < PREVIEW_PARSING_LIMIT) {
             try {
                 JsonToken token = parser.nextToken();
@@ -154,7 +159,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 switch (token) {
                 case FIELD_NAME:
                     String fieldName = parser.getText();
-                    Object fieldValue = parseForPreview(parser, state);
+                    JsonNode fieldValue = parseForPreview(parser, state);
                     JSONUtilities.safePut(result, fieldName, fieldValue);
                     break;
                 case END_OBJECT:
@@ -169,8 +174,8 @@ public class JsonImporter extends TreeImportingParserBase {
         return result;
     }
     
-    final static private JSONArray parseArrayForPreview(JsonParser parser, PreviewParsingState state) {
-        JSONArray result = new JSONArray();
+    final static private ArrayNode parseArrayForPreview(JsonParser parser, PreviewParsingState state) {
+        ArrayNode result = ParsingUtilities.mapper.createArrayNode();
         loop:while (state.tokenCount < PREVIEW_PARSING_LIMIT) {
             try {
                 JsonToken token = parser.nextToken();
@@ -183,8 +188,8 @@ public class JsonImporter extends TreeImportingParserBase {
                 case END_ARRAY:
                     break loop;
                 default:
-                    Object element = parseForPreview(parser, state, token);
-                    JSONUtilities.append(result, element);
+                    JsonNode element = parseForPreview(parser, state, token);
+                    result.add(element);
                 }
             } catch (IOException e) {
                 break;
@@ -196,7 +201,7 @@ public class JsonImporter extends TreeImportingParserBase {
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
             ImportingJob job, String fileSource, InputStream is,
-            ImportColumnGroup rootColumnGroup, int limit, JSONObject options, List<Exception> exceptions) {
+            ImportColumnGroup rootColumnGroup, int limit, ObjectNode options, List<Exception> exceptions) {
         
         parseOneFile(project, metadata, job, fileSource,
             new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);

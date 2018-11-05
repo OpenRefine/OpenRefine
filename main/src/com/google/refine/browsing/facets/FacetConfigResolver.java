@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
 import com.google.refine.model.recon.ReconConfig;
 
 public class FacetConfigResolver extends TypeIdResolverBase {

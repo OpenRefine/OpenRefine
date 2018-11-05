@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.model.Project;

@@ -4,8 +4,8 @@ import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.tests.util.TestUtils;
 
 public class EngineConfigTests {

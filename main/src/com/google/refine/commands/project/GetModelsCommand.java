@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpHeadersSupport;
 import com.google.refine.commands.HttpHeadersSupport.HttpHeaderInfo;

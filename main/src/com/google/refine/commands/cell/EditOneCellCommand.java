@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.commands.Command;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;

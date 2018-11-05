@@ -1,11 +1,11 @@
 package com.google.refine.tests.commands.expr;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

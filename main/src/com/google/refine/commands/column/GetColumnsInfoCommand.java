@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-
 import com.google.refine.browsing.util.ExpressionBasedRowEvaluable;
 import com.google.refine.browsing.util.NumericBinIndex;
 import com.google.refine.browsing.util.NumericBinRowIndex;

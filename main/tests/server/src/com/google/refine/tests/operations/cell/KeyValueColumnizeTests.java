@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -51,6 +50,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
@@ -75,7 +75,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     private RefineServlet servlet;
     private Project project;
     private ProjectMetadata pm;
-    private JSONObject options;
+    private ObjectNode options;
     private ImportingJob job;
     private SeparatorBasedImporter importer;
 
@@ -95,7 +95,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         pm = new ProjectMetadata();
         pm.setName("KeyValueColumnize test");
         ProjectManager.singleton.registerProject(project, pm);
-        options = mock(JSONObject.class);
+        options = mock(ObjectNode.class);
         OperationRegistry.registerOperation(getCoreModule(), "key-value-columnize", KeyValueColumnizeOperation.class);
 
 	ImportingManager.initialize(servlet);

@@ -30,24 +30,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.browsing.util;
 
-import com.google.refine.expr.MetaParser;
-import org.testng.annotations.AfterMethod;
-import org.testng.Assert;
-
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
-
 import org.json.JSONException;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.util.ExpressionNominalValueGrouper;
 import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.MetaParser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;

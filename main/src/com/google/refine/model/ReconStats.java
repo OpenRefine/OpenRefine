@@ -38,7 +38,6 @@ import java.io.Writer;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.util.ParsingUtilities;

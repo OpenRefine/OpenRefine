@@ -3,7 +3,6 @@ package com.google.refine.clustering;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.model.Project;
 
 /**

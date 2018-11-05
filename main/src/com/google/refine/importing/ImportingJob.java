@@ -39,24 +39,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ImportingJob  {
     final public long id;
     final public File dir; // Temporary directory where the data about this job is stored
     
-    private JSONObject config;
+    private ObjectNode config;
     
     public Project project;
     public ProjectMetadata metadata;
@@ -71,7 +71,7 @@ public class ImportingJob  {
         this.id = id;
         this.dir = dir;
 
-        JSONObject cfg = new JSONObject();
+        ObjectNode cfg = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(cfg, "state", "new");
         JSONUtilities.safePut(cfg, "hasData", false);
         this.config = cfg;
@@ -88,7 +88,7 @@ public class ImportingJob  {
     }
     
     @JsonIgnore
-    public JSONObject getOrCreateDefaultConfig() {
+    public ObjectNode getOrCreateDefaultConfig() {
         return config;
     }
     
@@ -114,9 +114,9 @@ public class ImportingJob  {
 
     public void setProgress(int percent, String message) {
         synchronized (config) {
-            JSONObject progress = JSONUtilities.getObject(config, "progress");
+            ObjectNode progress = JSONUtilities.getObject(config, "progress");
             if (progress == null) {
-                progress = new JSONObject();
+                progress = ParsingUtilities.mapper.createObjectNode();
                 JSONUtilities.safePut(config, "progress", progress);
             }
             JSONUtilities.safePut(progress, "message", message);
@@ -126,13 +126,13 @@ public class ImportingJob  {
         }
     }
 
-    public void setFileSelection(JSONArray fileSelectionArray) {
+    public void setFileSelection(ArrayNode fileSelectionArray) {
         synchronized (config) {
             JSONUtilities.safePut(config, "fileSelection", fileSelectionArray);
         }
     }
     
-    public void setRankedFormats(JSONArray rankedFormats) {
+    public void setRankedFormats(ArrayNode rankedFormats) {
         synchronized (config) {
             JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
         }
@@ -140,7 +140,7 @@ public class ImportingJob  {
 
 
     @JsonIgnore
-    public JSONObject getRetrievalRecord() {
+    public ObjectNode getRetrievalRecord() {
         synchronized(config) {
             return JSONUtilities.getObject(config,"retrievalRecord");
         }
@@ -149,25 +149,25 @@ public class ImportingJob  {
     /**
      * TO check if the file record is a metadata file entry
      * @param fileRecordObject
-     * @return JSONObject
+     * @return ObjectNode
      */
-    public boolean isMetadataFileRecord(JSONObject fileRecordObject) {
+    public boolean isMetadataFileRecord(ObjectNode fileRecordObject) {
         return fileRecordObject.has("metaDataFormat");
     }
     
     @JsonIgnore
-    public List<JSONObject> getSelectedFileRecords() {
-        List<JSONObject> results = new ArrayList<JSONObject>();
+    public List<ObjectNode> getSelectedFileRecords() {
+        List<ObjectNode> results = new ArrayList<ObjectNode>();
         
-        JSONObject retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
+        ObjectNode retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
         if (retrievalRecord != null) {
-            JSONArray fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
+            ArrayNode fileRecordArray = JSONUtilities.getArray(retrievalRecord, "files");
             if (fileRecordArray != null) {
-                JSONArray fileSelectionArray = JSONUtilities.getArray(config,"fileSelection");
+                ArrayNode fileSelectionArray = JSONUtilities.getArray(config,"fileSelection");
                 if (fileSelectionArray != null) {
-                    for (int i = 0; i < fileSelectionArray.length(); i++) {
+                    for (int i = 0; i < fileSelectionArray.size(); i++) {
                         int index = JSONUtilities.getIntElement(fileSelectionArray, i, -1);
-                        if (index >= 0 && index < fileRecordArray.length()) {
+                        if (index >= 0 && index < fileRecordArray.size()) {
                             results.add(JSONUtilities.getObjectElement(fileRecordArray, index));
                         }
                     }

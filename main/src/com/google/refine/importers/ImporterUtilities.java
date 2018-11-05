@@ -43,8 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Column;
@@ -197,9 +196,9 @@ public class ImporterUtilities {
     }
     
     static public MultiFileReadingProgress createMultiFileReadingProgress(
-            final ImportingJob job, List<JSONObject> fileRecords) {
+            final ImportingJob job, List<ObjectNode> fileRecords) {
         long totalSize = 0;
-        for (JSONObject fileRecord : fileRecords) {
+        for (ObjectNode fileRecord : fileRecords) {
             File file = ImportingUtilities.getFile(job, fileRecord);
             totalSize += file.length();
         }

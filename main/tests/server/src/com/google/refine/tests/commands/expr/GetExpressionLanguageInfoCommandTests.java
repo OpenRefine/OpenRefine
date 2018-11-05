@@ -8,7 +8,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import com.google.refine.commands.expr.GetExpressionLanguageInfoCommand;
 import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.ParsingUtilities;

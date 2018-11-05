@@ -11,14 +11,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporter extends TabularImportingParserBase {
     public FixedWidthImporter() {
@@ -26,12 +26,12 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
-        JSONArray columnWidths = new JSONArray();
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         if (fileRecords.size() > 0) {
-            JSONObject firstFileRecord = fileRecords.get(0);
+            ObjectNode firstFileRecord = fileRecords.get(0);
             String encoding = ImportingUtilities.getEncoding(firstFileRecord);
             String location = JSONUtilities.getString(firstFileRecord, "location", null);
             if (location != null) {
@@ -59,7 +59,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
         String fileSource,
         Reader reader,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");

@@ -63,7 +63,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonView;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
@@ -362,8 +362,8 @@ public class ProjectMetadata  extends AbstractMetadata {
         updateModified();
     }
     
-    public void appendImportOptionMetadata(JSONObject obj) {
-        _importOptionMetadata.put(obj);
+    public void appendImportOptionMetadata(ObjectNode options) {
+        _importOptionMetadata.put(options);
         updateModified();
     }
     

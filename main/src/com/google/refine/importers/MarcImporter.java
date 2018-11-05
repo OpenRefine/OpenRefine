@@ -40,12 +40,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.json.JSONObject;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.util.JSONUtilities;
@@ -57,9 +57,9 @@ public class MarcImporter extends XmlImporter {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(ImportingJob job, java.util.List<JSONObject> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job, java.util.List<ObjectNode> fileRecords, String format) {
         if (fileRecords.size() > 0) {
-            JSONObject firstFileRecord = fileRecords.get(0);
+            ObjectNode firstFileRecord = fileRecords.get(0);
             File file = ImportingUtilities.getFile(job, firstFileRecord);
             File tempFile = new File(file.getAbsolutePath()+".xml");
 
@@ -97,7 +97,7 @@ public class MarcImporter extends XmlImporter {
                 logger.error("Failed to create temporary XML file from MARC file", e);
             }
         }
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         return options;
     };
     

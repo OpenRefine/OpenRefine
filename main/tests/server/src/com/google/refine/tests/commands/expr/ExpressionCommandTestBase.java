@@ -16,7 +16,6 @@ import org.testng.annotations.BeforeMethod;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
 import com.google.refine.commands.Command;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.tests.util.TestUtils;

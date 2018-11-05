@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 

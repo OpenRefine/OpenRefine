@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-
 import com.google.refine.RefineServlet;
 import com.google.refine.util.ParsingUtilities;
 

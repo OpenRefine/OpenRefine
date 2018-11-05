@@ -46,11 +46,11 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.TreeReader;
@@ -60,6 +60,7 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class XmlImporter extends TreeImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
@@ -75,12 +76,12 @@ public class XmlImporter extends TreeImportingParserBase {
     final static private int PREVIEW_PARSING_LIMIT = 1000;
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         try {
             if (fileRecords.size() > 0) {
-                JSONObject firstFileRecord = fileRecords.get(0);
+                ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 InputStream is = new FileInputStream(file);
                 
@@ -92,7 +93,7 @@ public class XmlImporter extends TreeImportingParserBase {
                         int tokenType = parser.next();
                         state.tokenCount++;
                         if (tokenType == XMLStreamConstants.START_ELEMENT) {
-                            JSONObject rootElement = descendElement(parser, state);
+                            ObjectNode rootElement = descendElement(parser, state);
                             if (rootElement != null) {
                                 JSONUtilities.safePut(options, "dom", rootElement);
                                 break;
@@ -114,8 +115,8 @@ public class XmlImporter extends TreeImportingParserBase {
         return options;
     }
     
-    final static private JSONObject descendElement(XMLStreamReader parser, PreviewParsingState state) {
-        JSONObject result = new JSONObject();
+    final static private ObjectNode descendElement(XMLStreamReader parser, PreviewParsingState state) {
+        ObjectNode result = ParsingUtilities.mapper.createObjectNode();
         {
             String name = parser.getLocalName();
             JSONUtilities.safePut(result, "n", name);
@@ -132,12 +133,11 @@ public class XmlImporter extends TreeImportingParserBase {
         
         int namespaceCount = parser.getNamespaceCount();
         if (namespaceCount > 0) {
-            JSONArray namespaces = new JSONArray();
-            JSONUtilities.safePut(result, "ns", namespaces);
+            ArrayNode namespaces = result.putArray("ns");
             
             for (int i = 0; i < namespaceCount; i++) {
-                JSONObject namespace = new JSONObject();
-                JSONUtilities.append(namespaces, namespace);
+                ObjectNode namespace = ParsingUtilities.mapper.createObjectNode();
+                namespaces.add(namespace);
                 JSONUtilities.safePut(namespace, "p", parser.getNamespacePrefix(i));
                 JSONUtilities.safePut(namespace, "uri", parser.getNamespaceURI(i));
             }
@@ -145,12 +145,11 @@ public class XmlImporter extends TreeImportingParserBase {
         
         int attributeCount = parser.getAttributeCount();
         if (attributeCount > 0) {
-            JSONArray attributes = new JSONArray();
-            JSONUtilities.safePut(result, "a", attributes);
+            ArrayNode attributes = result.putArray("a");
             
             for (int i = 0; i < attributeCount; i++) {
-                JSONObject attribute = new JSONObject();
-                JSONUtilities.append(attributes, attribute);
+                ObjectNode attribute = ParsingUtilities.mapper.createObjectNode();
+                attributes.add(attribute);
                 JSONUtilities.safePut(attribute, "n", parser.getAttributeLocalName(i));
                 JSONUtilities.safePut(attribute, "v", parser.getAttributeValue(i));
                 String prefix = parser.getAttributePrefix(i);
@@ -160,7 +159,7 @@ public class XmlImporter extends TreeImportingParserBase {
             }
         }
         
-        JSONArray children = new JSONArray();
+        ArrayNode children = ParsingUtilities.mapper.createArrayNode();
         try {
             while (parser.hasNext() && state.tokenCount < PREVIEW_PARSING_LIMIT) {
                 int tokenType = parser.next();
@@ -168,16 +167,16 @@ public class XmlImporter extends TreeImportingParserBase {
                 if (tokenType == XMLStreamConstants.END_ELEMENT) {
                     break;
                 } else if (tokenType == XMLStreamConstants.START_ELEMENT) {
-                    JSONObject childElement = descendElement(parser, state);
+                    ObjectNode childElement = descendElement(parser, state);
                     if (childElement != null) {
-                        JSONUtilities.append(children, childElement);
+                        children.add(childElement);
                     }
                 } else if (tokenType == XMLStreamConstants.CHARACTERS ||
                            tokenType == XMLStreamConstants.CDATA ||
                            tokenType == XMLStreamConstants.SPACE) {
-                    JSONObject childElement = new JSONObject();
+                    ObjectNode childElement = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(childElement, "t", parser.getText());
-                    JSONUtilities.append(children, childElement);
+                    children.add(childElement);
                 } else {
                     // ignore everything else
                 }
@@ -186,8 +185,8 @@ public class XmlImporter extends TreeImportingParserBase {
             logger.error("Error generating parser UI initialization data for XML file", e);
         }
         
-        if (children.length() > 0) {
-            JSONUtilities.safePut(result, "c", children);
+        if (children.size() > 0) {
+        	result.put("c", children);
         }
         return result;
     }
@@ -195,7 +194,7 @@ public class XmlImporter extends TreeImportingParserBase {
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
             ImportingJob job, String fileSource, InputStream inputStream,
-            ImportColumnGroup rootColumnGroup, int limit, JSONObject options,
+            ImportColumnGroup rootColumnGroup, int limit, ObjectNode options,
             List<Exception> exceptions) {
         
         try {

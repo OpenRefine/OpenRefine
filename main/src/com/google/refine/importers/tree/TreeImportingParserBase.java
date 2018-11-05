@@ -40,8 +40,8 @@ import java.io.Reader;
 import java.util.List;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
 import com.google.refine.importers.ImportingParserBase;
@@ -62,9 +62,9 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(ImportingJob job,
-            List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         
         JSONUtilities.safePut(options, "trimStrings", false);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
@@ -75,13 +75,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     
     @Override
     public void parse(Project project, ProjectMetadata metadata,
-            ImportingJob job, List<JSONObject> fileRecords, String format,
-            int limit, JSONObject options, List<Exception> exceptions) {
+            ImportingJob job, List<ObjectNode> fileRecords, String format,
+            int limit, ObjectNode options, List<Exception> exceptions) {
         
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         
-        for (JSONObject fileRecord : fileRecords) {
+        for (ObjectNode fileRecord : fileRecords) {
             try {
                 parseOneFile(project, metadata, job, fileRecord, rootColumnGroup, limit, options, exceptions, progress);
             } catch (IOException e) {
@@ -102,10 +102,10 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,
-        JSONObject fileRecord,
+        ObjectNode fileRecord,
         ImportColumnGroup rootColumnGroup,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions,
         final MultiFileReadingProgress progress
     ) throws IOException {
@@ -151,7 +151,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         Reader reader,
         ImportColumnGroup rootColumnGroup,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         throw new NotImplementedException("project ID:" + project.id);
@@ -171,7 +171,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         InputStream inputStream,
         ImportColumnGroup rootColumnGroup,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         // throw new NotImplementedException();
@@ -190,7 +190,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         TreeReader treeParser,
         ImportColumnGroup rootColumnGroup,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         String[] recordPath = JSONUtilities.getStringArray(options, "recordPath");

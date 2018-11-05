@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.browsing.facets;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.browsing.DecoratedValue;
 
 /**

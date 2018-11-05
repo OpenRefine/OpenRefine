@@ -39,8 +39,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -48,11 +46,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.XmlImporter;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class XmlImporterTests extends ImporterTest {
@@ -223,11 +224,11 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
     
-    public static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser) {
-        JSONObject options = parser.createParserUIInitializationData(
-                job, new LinkedList<JSONObject>(), "text/json");
+    public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
+        ObjectNode options = parser.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
         
-        JSONArray path = new JSONArray();
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
         JSONUtilities.append(path, "book");
         
@@ -235,11 +236,11 @@ public class XmlImporterTests extends ImporterTest {
         return options;
     }
     
-    public static JSONObject getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
-        JSONObject options = parser.createParserUIInitializationData(
-                job, new LinkedList<JSONObject>(), "text/json");
+    public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
+        ObjectNode options = parser.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
         
-        JSONArray path = new JSONArray();
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");
         JSONUtilities.append(path, "nest2");
         JSONUtilities.append(path, "library");
@@ -336,7 +337,7 @@ public class XmlImporterTests extends ImporterTest {
         RunTest(testString, getOptions(job, SUT));
     }
     
-    private void RunTest(String testString, JSONObject options) {
+    private void RunTest(String testString, ObjectNode objectNode) {
         try {
             inputStream = new ByteArrayInputStream(testString.getBytes( "UTF-8" ));
         } catch (UnsupportedEncodingException e1) {
@@ -344,7 +345,7 @@ public class XmlImporterTests extends ImporterTest {
         }
 
         try {
-            parseOneFile(SUT, inputStream, options);
+            parseOneFile(SUT, inputStream, objectNode);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -352,7 +353,7 @@ public class XmlImporterTests extends ImporterTest {
     }
     
     @Override
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         parseOneInputStream(parser, inputStream, options);
     }
 }

@@ -39,10 +39,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;

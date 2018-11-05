@@ -4,12 +4,12 @@ package com.google.refine.tests.importing;
 import java.io.InputStream;
 import java.util.LinkedList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.XmlImporter;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
@@ -18,6 +18,7 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.importers.ImporterTest;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
@@ -30,7 +31,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
     @Test
     public void createProjectMetadataTest()
             throws Exception {
-        JSONObject optionObj = new JSONObject(
+        ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                 "{\"projectName\":\"acme\",\"projectTags\":[],\"created\":\"2017-12-18T13:28:40.659\",\"modified\":\"2017-12-20T09:28:06.654\",\"creator\":\"\",\"contributors\":\"\",\"subject\":\"\",\"description\":\"\",\"rowCount\":50,\"customMetadata\":{}}");
         ProjectMetadata pm = ImportingUtilities.createProjectMetadata(optionObj);
         Assert.assertEquals(pm.getName(), "acme");
@@ -60,14 +61,13 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertTrue(project.columnModel.getColumnByName("result - person - sexe").getType().equals("boolean"));
     }
     
-    private JSONObject getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
-        JSONObject options = parser.createParserUIInitializationData(
-                job, new LinkedList<JSONObject>(), "text/json");
+    private ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
+        ObjectNode options = parser.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
         
-        JSONArray path = new JSONArray();
-        JSONUtilities.append(path, "results");
-        JSONUtilities.append(path, "result");
-//        JSONUtilities.append(path, "object");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        path.add("results");
+        path.add("result");
         
         JSONUtilities.safePut(options, "recordPath", path);
         return options;

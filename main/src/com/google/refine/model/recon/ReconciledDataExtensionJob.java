@@ -60,7 +60,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.refine.expr.functions.ToDate;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;

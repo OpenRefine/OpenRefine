@@ -1,13 +1,8 @@
 package com.google.refine.tests.importers;
 
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import java.io.StringReader;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -15,8 +10,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.importers.FixedWidthImporter;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporterTests extends ImporterTest {
     @Override
@@ -50,16 +47,16 @@ public class FixedWidthImporterTests extends ImporterTest {
     public void readFixedWidth(){
         StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
         
-        JSONArray columnWidths = new JSONArray();
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
         JSONUtilities.append(columnWidths, 5);
         whenGetArrayOption("columnWidths", options, columnWidths);
 
-        JSONArray columnNames = new JSONArray();
-        JSONUtilities.append(columnNames, "Col 1");
-        JSONUtilities.append(columnNames, "Col 2");
-        JSONUtilities.append(columnNames, "Col 3");
+        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
+        columnNames.add("Col 1");
+        columnNames.add("Col 2"); 
+        columnNames.add("Col 3");
         whenGetArrayOption("columnNames", options, columnNames);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -83,17 +80,5 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(2).getCellValue(0), "TooSho");
         Assert.assertEquals((String)project.rows.get(2).getCellValue(1), "rt");
         Assert.assertNull(project.rows.get(2).getCellValue(2));
-        
-        verifyGetArrayOption("columnNames", options);
-        try {
-            verify(options, times(1)).getJSONArray("columnWidths");
-            verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
-        }
     }
 }

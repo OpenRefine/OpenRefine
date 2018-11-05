@@ -50,8 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
@@ -66,9 +66,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(ImportingJob job,
-            List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         
         String separator = guessSeparator(job, fileRecords);
         JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
@@ -88,7 +88,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         String fileSource,
         Reader reader,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         String sep = JSONUtilities.getString(options, "separator", "\\t");
@@ -119,6 +119,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             }
           }
         }
+        
         final List<Object> columnNames = retrievedColumnNames;
         
         Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
@@ -144,14 +145,14 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                 if (columnNames != null && !usedColumnNames) {
                     usedColumnNames = true;
                     return columnNames;
-                  } else {
-                String line = lnReader.readLine();
-                if (line == null) {
-                    return null;
                 } else {
-                    return getCells(line, parser, lnReader);
+	                String line = lnReader.readLine();
+	                if (line == null) {
+	                    return null;
+	                } else {
+	                    return getCells(line, parser, lnReader);
+	                }
                 }
-                  }
             }
         };
         
@@ -172,9 +173,9 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         return cells;
     }
     
-    static public String guessSeparator(ImportingJob job, List<JSONObject> fileRecords) {
+    static public String guessSeparator(ImportingJob job, List<ObjectNode> fileRecords) {
         for (int i = 0; i < 5 && i < fileRecords.size(); i++) {
-            JSONObject fileRecord = fileRecords.get(i);
+            ObjectNode fileRecord = fileRecords.get(i);
             String encoding = ImportingUtilities.getEncoding(fileRecord);
             String location = JSONUtilities.getString(fileRecord, "location", null);
             

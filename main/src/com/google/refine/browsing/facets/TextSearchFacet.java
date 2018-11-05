@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 import org.json.JSONException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;

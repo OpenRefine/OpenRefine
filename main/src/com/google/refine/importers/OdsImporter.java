@@ -45,9 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
@@ -55,6 +53,8 @@ import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
@@ -64,6 +64,7 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class OdsImporter extends TabularImportingParserBase { 
@@ -75,16 +76,16 @@ public class OdsImporter extends TabularImportingParserBase {
 
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
-        JSONArray sheetRecords = new JSONArray();
+        ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
             for (int index = 0;index < fileRecords.size();index++) {
-                JSONObject fileRecord = fileRecords.get(index);
+                ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
@@ -95,7 +96,7 @@ public class OdsImporter extends TabularImportingParserBase {
                     OdfTable sheet = tables.get(i);
                     int rows = sheet.getRowCount();
     
-                    JSONObject sheetRecord = new JSONObject();
+                    ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                     JSONUtilities.safePut(sheetRecord, "rows", rows);
@@ -129,7 +130,7 @@ public class OdsImporter extends TabularImportingParserBase {
             String fileSource,
             InputStream inputStream,
             int limit,
-            JSONObject options,
+            ObjectNode options,
             List<Exception> exceptions
     ) {
         OdfDocument odfDoc;
@@ -142,13 +143,13 @@ public class OdsImporter extends TabularImportingParserBase {
 
         List<OdfTable> tables = odfDoc.getTableList();
 
-        JSONArray sheets = JSONUtilities.getArray(options, "sheets");
-        for(int i=0;i<sheets.length();i++)  {
+        ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
+        for(int i=0;i<sheets.size();i++)  {
             String[] fileNameAndSheetIndex = new String[2];
             try {
-                JSONObject sheetObj = sheets.getJSONObject(i);
+                ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
                 // value is fileName#sheetIndex
-                fileNameAndSheetIndex = sheetObj.getString("fileNameAndSheetIndex").split("#");
+                fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
             }

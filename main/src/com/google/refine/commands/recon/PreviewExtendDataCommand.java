@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.commands.Command;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;

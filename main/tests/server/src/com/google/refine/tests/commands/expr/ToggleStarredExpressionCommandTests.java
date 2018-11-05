@@ -1,7 +1,8 @@
 package com.google.refine.tests.commands.expr;
 
-import java.io.IOException;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 

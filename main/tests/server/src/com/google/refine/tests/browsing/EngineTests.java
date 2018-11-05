@@ -1,6 +1,7 @@
 package com.google.refine.tests.browsing;
 
 import static org.mockito.Mockito.mock;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;

@@ -33,13 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.importers;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import java.io.StringReader;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -49,6 +44,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
 
@@ -522,7 +518,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
         
         try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[col1,col2,col3]");
+            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[\"col1\",\"col2\",\"col3\"]");
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
@@ -554,8 +550,6 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(0).value, "NDB_No");
         Assert.assertEquals((String)project.rows.get(0).cells.get(1).value, "Shrt_Desc");
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "Water");
-
-        verifyOptions();
     }
 
     @Test
@@ -577,8 +571,6 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(1).value, "data2");
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "data3");
         Assert.assertEquals((String)project.rows.get(0).cells.get(3).value, "data4");
-
-        verifyOptions();
     }
 
     //--helpers--
@@ -618,23 +610,6 @@ public class TsvCsvImporterTests extends ImporterTest {
             whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
             whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
             whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-            whenGetArrayOption("columnNames", options, new JSONArray(columnNames));
+            whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
         }
-
-    private void verifyOptions() {
-        try {
-            verify(options, times(1)).getString("separator");
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
-            verify(options, times(1)).getBoolean("guessCellValueTypes");
-            verify(options, times(1)).getBoolean("processQuotes");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-            verify(options, times(1)).getJSONArray("columnNames");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
-        }
-
-    }
 }

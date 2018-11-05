@@ -35,7 +35,6 @@ package com.google.refine.history;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;

@@ -48,7 +48,6 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.commands.Command;
 
 import edu.mit.simile.butterfly.ButterflyModule;

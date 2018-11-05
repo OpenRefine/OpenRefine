@@ -35,7 +35,6 @@ package com.google.refine.process;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.history.HistoryEntry;
 
 abstract public class LongRunningProcess extends Process {

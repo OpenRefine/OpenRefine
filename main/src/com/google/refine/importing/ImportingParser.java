@@ -35,8 +35,7 @@ package com.google.refine.importing;
 
 import java.util.List;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 
@@ -49,11 +48,11 @@ public interface ImportingParser {
      * @param job
      * @param fileRecords
      * @param format
-     * @return JSONObject options
+     * @return ObjectNode options
      */
-    public JSONObject createParserUIInitializationData(
+    public ObjectNode createParserUIInitializationData(
         ImportingJob job,
-        List<JSONObject> fileRecords,
+        List<ObjectNode> fileRecords,
         String format
     );
     
@@ -77,10 +76,10 @@ public interface ImportingParser {
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,
-        List<JSONObject> fileRecords,
+        List<ObjectNode> fileRecords,
         String format,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     );
 }

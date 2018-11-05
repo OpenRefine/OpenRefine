@@ -62,9 +62,12 @@ import org.json.JSONTokener;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
@@ -269,4 +272,28 @@ public class ParsingUtilities {
         cal.setTimeInMillis(offsetDateTime.toInstant().toEpochMilli());
         return cal;
     }
+
+	public static ObjectNode evaluateJsonStringToObjectNode(String optionsString) {
+		try {
+			JsonNode tree = mapper.readTree(optionsString);
+			if(tree instanceof ObjectNode) {
+				return (ObjectNode)tree;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ArrayNode evaluateJsonStringToArrayNode(String parameter) {
+		try {
+			JsonNode tree = mapper.readTree(parameter);
+			if(tree instanceof ArrayNode) {
+				return (ArrayNode)tree;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

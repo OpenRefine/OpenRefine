@@ -71,7 +71,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.ProjectManagerStub;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 

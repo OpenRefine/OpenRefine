@@ -83,11 +83,12 @@ import org.apache.http.util.EntityUtils;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
@@ -105,6 +106,7 @@ import com.google.refine.model.metadata.PackageExtension;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 import io.frictionlessdata.datapackage.Package;
 import io.frictionlessdata.tableschema.Field;
@@ -129,13 +131,13 @@ public class ImportingUtilities {
         HttpServletResponse response,
         Properties parameters,
         final ImportingJob job,
-        JSONObject config) throws IOException, ServletException {
+        ObjectNode config) throws IOException, ServletException {
         
-        JSONObject retrievalRecord = new JSONObject();
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(config, "retrievalRecord", retrievalRecord);
         JSONUtilities.safePut(config, "state", "loading-raw-data");
         
-        final JSONObject progress = new JSONObject();
+        final ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(config, "progress", progress);
         try {
             ImportingUtilities.retrieveContentFromPostRequest(
@@ -164,13 +166,13 @@ public class ImportingUtilities {
             return;
         }
         
-        JSONArray fileSelectionIndexes = new JSONArray();
+        ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(config, "fileSelection", fileSelectionIndexes);
         
         String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, fileSelectionIndexes);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
-        JSONArray rankedFormats = new JSONArray();
+        ArrayNode rankedFormats = ParsingUtilities.mapper.createArrayNode();
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
         JSONUtilities.safePut(config, "rankedFormats", rankedFormats);
         
@@ -179,13 +181,13 @@ public class ImportingUtilities {
         config.remove("progress");
     }
     
-    static public void updateJobWithNewFileSelection(ImportingJob job, JSONArray fileSelectionArray) {
+    static public void updateJobWithNewFileSelection(ImportingJob job, ArrayNode fileSelectionArray) {
         job.setFileSelection(fileSelectionArray);
         
         String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
         
-        JSONArray rankedFormats = new JSONArray();
+        ArrayNode rankedFormats = ParsingUtilities.mapper.createArrayNode();
         ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
         job.setRankedFormats(rankedFormats);
     }
@@ -194,10 +196,10 @@ public class ImportingUtilities {
         HttpServletRequest request,
         Properties parameters,
         File rawDataDir,
-        JSONObject retrievalRecord,
+        ObjectNode retrievalRecord,
         final Progress progress
     ) throws Exception {
-        JSONArray fileRecords = new JSONArray();
+        ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
         JSONUtilities.safePut(retrievalRecord, "downloadCount", 0);
         JSONUtilities.safePut(retrievalRecord, "archiveCount", 0);
@@ -264,7 +266,7 @@ public class ImportingUtilities {
                     
                     File file = allocateFile(rawDataDir, "clipboard.txt");
                     
-                    JSONObject fileRecord = new JSONObject();
+                    ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "clipboard");
                     JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
                     JSONUtilities.safePut(fileRecord, "declaredMimeType", (String) null);
@@ -310,7 +312,7 @@ public class ImportingUtilities {
                     
                     File file = allocateFile(rawDataDir, fileName);
                     
-                    JSONObject fileRecord = new JSONObject();
+                    ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "upload");
                     JSONUtilities.safePut(fileRecord, "declaredEncoding", request.getCharacterEncoding());
                     JSONUtilities.safePut(fileRecord, "declaredMimeType", fileItem.getContentType());
@@ -344,19 +346,19 @@ public class ImportingUtilities {
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
     }
 
-    private static void processDataPackage(JSONObject retrievalRecord, JSONArray fileRecords) {
+    private static void processDataPackage(ObjectNode retrievalRecord, ArrayNode fileRecords) {
         int dataPackageJSONFileIndex = getDataPackageJSONFile(fileRecords);
         if (dataPackageJSONFileIndex >= 0) {
-            JSONObject dataPackageJSONFile = (JSONObject) fileRecords.get(dataPackageJSONFileIndex);
+            ObjectNode dataPackageJSONFile = (ObjectNode) fileRecords.get(dataPackageJSONFileIndex);
             JSONUtilities.safePut(dataPackageJSONFile, "metaDataFormat", MetadataFormat.DATAPACKAGE_METADATA.name());
             JSONUtilities.safePut(retrievalRecord, METADATA_FILE_KEY, dataPackageJSONFile);
             fileRecords.remove(dataPackageJSONFileIndex);
         }
     }
 
-    private static int getDataPackageJSONFile(JSONArray fileRecords) {
-        for (int i = 0; i < fileRecords.length(); i++) {
-            JSONObject file = fileRecords.getJSONObject(i);
+    private static int getDataPackageJSONFile(ArrayNode fileRecords) {
+        for (int i = 0; i < fileRecords.size(); i++) {
+            ObjectNode file = JSONUtilities.getObjectElement(fileRecords, i);
             if (file.has("archiveFileName") && 
                     file.has("fileName") &&
                     file.get("fileName").equals(DataPackageMetadata.DEFAULT_FILE_NAME)) {
@@ -366,8 +368,8 @@ public class ImportingUtilities {
         return -1;
     }
 
-    private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
-            JSONArray fileRecords, final SavingUpdate update, String urlString)
+    private static void download(File rawDataDir, ObjectNode retrievalRecord, final Progress progress,
+            ArrayNode fileRecords, final SavingUpdate update, String urlString)
             throws URISyntaxException, IOException, ClientProtocolException, Exception {
          download(rawDataDir, retrievalRecord, progress, fileRecords, update, urlString, null);
     }
@@ -384,11 +386,11 @@ public class ImportingUtilities {
      * @throws ClientProtocolException
      * @throws Exception
      */
-    private static void download(File rawDataDir, JSONObject retrievalRecord, final Progress progress,
-            JSONArray fileRecords, final SavingUpdate update, String urlString, String metaDataFormat)
+    private static void download(File rawDataDir, ObjectNode retrievalRecord, final Progress progress,
+            ArrayNode fileRecords, final SavingUpdate update, String urlString, String metaDataFormat)
             throws URISyntaxException, IOException, ClientProtocolException, Exception {
         URL url = new URL(urlString);
-        JSONObject fileRecord = new JSONObject();
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(fileRecord, "origin", "download");
         JSONUtilities.safePut(fileRecord, "url", urlString);
         
@@ -482,7 +484,7 @@ public class ImportingUtilities {
     }
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
-            final SavingUpdate update, JSONObject fileRecord, JSONArray fileRecords, long length)
+            final SavingUpdate update, ObjectNode fileRecord, ArrayNode fileRecords, long length)
             throws IOException, Exception {
         String localname = url.getPath();
         if (localname.isEmpty() || localname.endsWith("/")) {
@@ -538,17 +540,17 @@ public class ImportingUtilities {
         return file;
     }
     
-    static public Reader getFileReader(ImportingJob job, JSONObject fileRecord, String commonEncoding)
+    static public Reader getFileReader(ImportingJob job, ObjectNode fileRecord, String commonEncoding)
         throws FileNotFoundException {
         
         return getFileReader(getFile(job, JSONUtilities.getString(fileRecord, "location", "")), fileRecord, commonEncoding);
     }
     
-    static public Reader getFileReader(File file, JSONObject fileRecord, String commonEncoding) throws FileNotFoundException {
+    static public Reader getFileReader(File file, ObjectNode fileRecord, String commonEncoding) throws FileNotFoundException {
         return getReaderFromStream(new FileInputStream(file), fileRecord, commonEncoding);
     }
     
-    static public Reader getReaderFromStream(InputStream inputStream, JSONObject fileRecord, String commonEncoding) {
+    static public Reader getReaderFromStream(InputStream inputStream, ObjectNode fileRecord, String commonEncoding) {
         String encoding = getEncoding(fileRecord);
         if (encoding == null) {
             encoding = commonEncoding;
@@ -563,7 +565,7 @@ public class ImportingUtilities {
         return new InputStreamReader(inputStream);
     }
     
-    static public File getFile(ImportingJob job, JSONObject fileRecord) {
+    static public File getFile(ImportingJob job, ObjectNode fileRecord) {
         return getFile(job, JSONUtilities.getString(fileRecord, "location", ""));
     }
     
@@ -571,7 +573,7 @@ public class ImportingUtilities {
         return new File(job.getRawDataDir(), location);
     }
     
-    static public String getFileSource(JSONObject fileRecord) {
+    static public String getFileSource(ObjectNode fileRecord) {
         return JSONUtilities.getString(
             fileRecord,
             "url",
@@ -608,7 +610,7 @@ public class ImportingUtilities {
     }
     
     static public boolean postProcessRetrievedFile(
-            File rawDataDir, File file, JSONObject fileRecord, JSONArray fileRecords, final Progress progress) {
+            File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) {
         
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
@@ -654,7 +656,7 @@ public class ImportingUtilities {
         return false;
     }
     
-    static public void postProcessSingleRetrievedFile(File file, JSONObject fileRecord) {
+    static public void postProcessSingleRetrievedFile(File file, ObjectNode fileRecord) {
         if (!fileRecord.has("format")) {
             JSONUtilities.safePut(fileRecord, "format",
                 ImportingManager.getFormat(
@@ -693,8 +695,8 @@ public class ImportingUtilities {
     static public boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,
-        JSONObject archiveFileRecord,
-        JSONArray fileRecords,
+        ObjectNode archiveFileRecord,
+        ArrayNode fileRecords,
         final Progress progress
     ) {
         if (archiveIS instanceof TarInputStream) {
@@ -708,7 +710,7 @@ public class ImportingUtilities {
                         
                         progress.setProgress("Extracting " + fileName2, -1);
                         
-                        JSONObject fileRecord2 = new JSONObject();
+                        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
                         JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
                         JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
                         JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
@@ -738,7 +740,7 @@ public class ImportingUtilities {
                         
                         progress.setProgress("Extracting " + fileName2, -1);
                         
-                        JSONObject fileRecord2 = new JSONObject();
+                        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
                         JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
                         JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
                         JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
@@ -792,7 +794,7 @@ public class ImportingUtilities {
     static public File uncompressFile(
         File rawDataDir,
         InputStream uncompressedIS,
-        JSONObject fileRecord,
+        ObjectNode fileRecord,
         final Progress progress
     ) throws IOException {
         String fileName = JSONUtilities.getString(fileRecord, "location", "unknown");
@@ -823,10 +825,10 @@ public class ImportingUtilities {
         return NumberFormat.getIntegerInstance().format(bytes);
     }
     
-    static public String getEncoding(JSONObject fileRecord) {
-        String encoding = JSONUtilities.getString(fileRecord, "encoding", null);
+    static public String getEncoding(ObjectNode firstFileRecord) {
+        String encoding = JSONUtilities.getString(firstFileRecord, "encoding", null);
         if (encoding == null || encoding.isEmpty()) {
-            encoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
+            encoding = JSONUtilities.getString(firstFileRecord, "declaredEncoding", null);
         }
         return encoding;
     }
@@ -840,14 +842,14 @@ public class ImportingUtilities {
      * @param fileSelectionIndexes JSON array of selected file indices matching best format
      * @return best (highest frequency) format
      */
-    static public String autoSelectFiles(ImportingJob job, JSONObject retrievalRecord, JSONArray fileSelectionIndexes) {
+    static public String autoSelectFiles(ImportingJob job, ObjectNode retrievalRecord, ArrayNode fileSelectionIndexes) {
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
         
-        JSONArray fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
-        int count = fileRecords.length();
+        ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
+        int count = fileRecords.size();
         for (int i = 0; i < count; i++) {
-            JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
+            ObjectNode fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
             String format = JSONUtilities.getString(fileRecord, "format", null);
             if (format != null) {
                 if (formatToCount.containsKey(format)) {
@@ -875,7 +877,7 @@ public class ImportingUtilities {
         } else {
             // Otherwise, select files matching the best format
             for (int i = 0; i < count; i++) {
-                JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
+                ObjectNode fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
                 String format = JSONUtilities.getString(fileRecord, "format", null);
                 if (format != null && format.equals(bestFormat)) {
                     JSONUtilities.append(fileSelectionIndexes, i);
@@ -884,7 +886,7 @@ public class ImportingUtilities {
             
             // If nothing matches the best format but we have some files,
             // then select them all
-            if (fileSelectionIndexes.length() == 0 && count > 0) {
+            if (fileSelectionIndexes.size() == 0 && count > 0) {
                 for (int i = 0; i < count; i++) {
                     JSONUtilities.append(fileSelectionIndexes, i);
                 }
@@ -893,18 +895,18 @@ public class ImportingUtilities {
         return bestFormat;
     }
     
-    static public String getCommonFormatForSelectedFiles(ImportingJob job, JSONArray fileSelectionIndexes) {
-        JSONObject retrievalRecord = job.getRetrievalRecord();
+    static public String getCommonFormatForSelectedFiles(ImportingJob job, ArrayNode fileSelectionIndexes) {
+        ObjectNode retrievalRecord = job.getRetrievalRecord();
         
         final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
         List<String> formats = new ArrayList<String>();
         
-        JSONArray fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
-        int count = fileSelectionIndexes.length();
+        ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
+        int count = fileSelectionIndexes.size();
         for (int i = 0; i < count; i++) {
             int index = JSONUtilities.getIntElement(fileSelectionIndexes, i, -1);
-            if (index >= 0 && index < fileRecords.length()) {
-                JSONObject fileRecord = JSONUtilities.getObjectElement(fileRecords, index);
+            if (index >= 0 && index < fileRecords.size()) {
+                ObjectNode fileRecord = JSONUtilities.getObjectElement(fileRecords, index);
                 String format = JSONUtilities.getString(fileRecord, "format", null);
                 if (format != null) {
                     if (formatToCount.containsKey(format)) {
@@ -927,18 +929,18 @@ public class ImportingUtilities {
     }
     
     static String guessBetterFormat(ImportingJob job, String bestFormat) {
-        JSONObject retrievalRecord = job.getRetrievalRecord();
+        ObjectNode retrievalRecord = job.getRetrievalRecord();
         return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
     }
     
-    static String guessBetterFormat(ImportingJob job, JSONObject retrievalRecord, String bestFormat) {
-        JSONArray fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
+    static String guessBetterFormat(ImportingJob job, ObjectNode retrievalRecord, String bestFormat) {
+        ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         return fileRecords != null ? guessBetterFormat(job, fileRecords, bestFormat) : bestFormat;
     }
     
-    static String guessBetterFormat(ImportingJob job, JSONArray fileRecords, String bestFormat) {
-        if (bestFormat != null && fileRecords != null && fileRecords.length() > 0) {
-            JSONObject firstFileRecord = JSONUtilities.getObjectElement(fileRecords, 0);
+    static String guessBetterFormat(ImportingJob job, ArrayNode fileRecords, String bestFormat) {
+        if (bestFormat != null && fileRecords != null && fileRecords.size() > 0) {
+            ObjectNode firstFileRecord = JSONUtilities.getObjectElement(fileRecords, 0);
             String encoding = getEncoding(firstFileRecord);
             String location = JSONUtilities.getString(firstFileRecord, "location", null);
             
@@ -969,7 +971,7 @@ public class ImportingUtilities {
         return bestFormat;
     }
     
-    static void rankFormats(ImportingJob job, final String bestFormat, JSONArray rankedFormats) {
+    static void rankFormats(ImportingJob job, final String bestFormat, ArrayNode rankedFormats) {
         final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
         
         boolean download = bestFormat == null ? true :
@@ -1023,12 +1025,12 @@ public class ImportingUtilities {
         }
         
         for (String format : formats) {
-            JSONUtilities.append(rankedFormats, format);
+            rankedFormats.add(format);
         }
     }
 
     
-    static public void previewParse(ImportingJob job, String format, JSONObject optionObj, List<Exception> exceptions) {
+    static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, List<Exception> exceptions) {
         Format record = ImportingManager.formatToRecord.get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
@@ -1054,7 +1056,7 @@ public class ImportingUtilities {
     static public long createProject(
             final ImportingJob job,
             final String format,
-            final JSONObject optionObj,
+            final ObjectNode optionObj,
             final List<Exception> exceptions,
             boolean synchronous) {
         final Format record = ImportingManager.formatToRecord.get(format);
@@ -1084,7 +1086,7 @@ public class ImportingUtilities {
     static private void createProjectSynchronously(
         final ImportingJob job,
         final String format,
-        final JSONObject optionObj,
+        final ObjectNode optionObj,
         final List<Exception> exceptions,
         final Format record,
         final Project project
@@ -1105,15 +1107,15 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
                 
-                boolean hasMetadataFileRecord = ((JSONObject)job.getRetrievalRecord()).has(METADATA_FILE_KEY);
+                boolean hasMetadataFileRecord = ((ObjectNode)job.getRetrievalRecord()).has(METADATA_FILE_KEY);
                 
                 if (hasMetadataFileRecord) {
-                    JSONObject metadataFileRecord = (JSONObject) job.getRetrievalRecord().get(METADATA_FILE_KEY);
+                    ObjectNode metadataFileRecord = (ObjectNode) job.getRetrievalRecord().get(METADATA_FILE_KEY);
                     
-                    String metadataFormat = (String)metadataFileRecord.get("metaDataFormat");
+                    String metadataFormat = JSONUtilities.getString(metadataFileRecord, "metaDataFormat", null);
                     IMetadata metadata = MetadataFactory.buildMetadata(MetadataFormat.valueOf(metadataFormat));
                     
-                    String relativePath = metadataFileRecord.getString("location");
+                    String relativePath = JSONUtilities.getString(metadataFileRecord, "location", null);
                     File metadataFile = new File(job.getRawDataDir(), relativePath);
                     metadata.loadFromFile(metadataFile);
                     
@@ -1159,10 +1161,10 @@ public class ImportingUtilities {
             }
            
             try {
-                JSONObject fieldsJSON = TypeInferrer.getInstance().infer(listCells, 
+                ObjectNode fieldsJSON = JSONUtilities.jsonObjectToObjectNode(TypeInferrer.getInstance().infer(listCells, 
                         project.columnModel.getColumnNames().toArray(new String[0]),
-                        100);
-                populateColumnTypes(project.columnModel, fieldsJSON.getJSONArray(Schema.JSON_KEY_FIELDS));
+                        100));
+                populateColumnTypes(project.columnModel, JSONUtilities.getArray(fieldsJSON, Schema.JSON_KEY_FIELDS));
             } catch (TypeInferringException e) {
                logger.error("infer column type exception.", ExceptionUtils.getStackTrace(e));
             }
@@ -1171,7 +1173,7 @@ public class ImportingUtilities {
     
     private static void populateDataPackageMetadata(Project project, ProjectMetadata pmd, DataPackageMetadata metadata) {
         // project metadata
-        JSONObject pkg = metadata.getPackage().getJson();
+        ObjectNode pkg = JSONUtilities.jsonObjectToObjectNode(metadata.getPackage().getJson());
         
         pmd.setName(getDataPackageProperty(pkg, Package.JSON_KEY_NAME));
         pmd.setDescription(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_DESCRIPTION));
@@ -1182,18 +1184,18 @@ public class ImportingUtilities {
         pmd.setVersion(getDataPackageProperty(pkg, PackageExtension.JSON_KEY_VERSION));
         
         if (pkg.has(PackageExtension.JSON_KEY_KEYWORKS)) {
-            String[] tags = pkg.getJSONArray(PackageExtension.JSON_KEY_KEYWORKS).toList().toArray(new String[0]);
+            String[] tags = JSONUtilities.getStringArray(pkg, PackageExtension.JSON_KEY_KEYWORKS);
             pmd.appendTags(tags);
         }
         
         // column model
-        JSONObject schema = metadata.getPackage().getResources().get(0).getSchema();
+        ObjectNode schema = JSONUtilities.jsonObjectToObjectNode(metadata.getPackage().getResources().get(0).getSchema());
         if (schema != null) {
-            populateColumnTypes(project.columnModel, schema.getJSONArray(Schema.JSON_KEY_FIELDS));
+            populateColumnTypes(project.columnModel, JSONUtilities.getArray(schema, Schema.JSON_KEY_FIELDS));
         }
     }
     
-    private static String getDataPackageProperty(JSONObject pkg, String key) {
+    private static String getDataPackageProperty(ObjectNode pkg, String key) {
         return JSONUtilities.getString(pkg, key, StringUtils.EMPTY);
     }
     /**
@@ -1201,12 +1203,12 @@ public class ImportingUtilities {
      * @param columnModel
      * @param fieldsJSON
      */
-    private static void populateColumnTypes(ColumnModel columnModel, JSONArray fieldsJSON) {
+    private static void populateColumnTypes(ColumnModel columnModel, ArrayNode fieldsJSON) {
         int cellIndex = 0;
-        Iterator<Object> iter = fieldsJSON.iterator();
+        Iterator<JsonNode> iter = fieldsJSON.iterator();
         while(iter.hasNext()){
-            JSONObject fieldJsonObj = (JSONObject)iter.next();
-            Field field = new Field(fieldJsonObj);
+            ObjectNode fieldJsonObj = (ObjectNode)iter.next();
+            Field field = new Field(JSONUtilities.objectNodeToJsonNode(fieldJsonObj));
             
             Column column = columnModel.getColumnByCellIndex(cellIndex);
             column.setType(field.getType());
@@ -1224,7 +1226,7 @@ public class ImportingUtilities {
      * @param optionObj
      * @return
      */
-    static public ProjectMetadata createProjectMetadata(JSONObject optionObj) {
+    static public ProjectMetadata createProjectMetadata(ObjectNode optionObj) {
         ProjectMetadata pm = new ProjectMetadata();
         PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
         

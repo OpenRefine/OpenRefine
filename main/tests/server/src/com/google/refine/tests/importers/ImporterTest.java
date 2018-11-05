@@ -9,9 +9,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importers.tree.ImportColumnGroup;
@@ -23,6 +23,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 abstract public class ImporterTest extends RefineTest {
     //mock dependencies
@@ -31,7 +32,7 @@ abstract public class ImporterTest extends RefineTest {
     protected ImportingJob job;
     protected RefineServlet servlet;
     
-    protected JSONObject options;
+    protected ObjectNode options;
     
     public void setUp(){
         //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
@@ -42,9 +43,9 @@ abstract public class ImporterTest extends RefineTest {
         metadata = new ProjectMetadata();
         ImportingJob spiedJob = ImportingManager.createJob();
         job = Mockito.spy(spiedJob);
-        when(job.getRetrievalRecord()).thenReturn(new JSONObject());
+        when(job.getRetrievalRecord()).thenReturn(ParsingUtilities.mapper.createObjectNode());
         
-        options = Mockito.mock(JSONObject.class);
+        options = Mockito.mock(ObjectNode.class);
     }
     
     public void tearDown(){
@@ -102,12 +103,12 @@ abstract public class ImporterTest extends RefineTest {
         project.columnModel.update();
     }
     
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         parseOneInputStreamAsReader(parser, inputStream, options);
     }
     
     protected void parseOneInputStream(
-            TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
         
@@ -126,7 +127,7 @@ abstract public class ImporterTest extends RefineTest {
     }
 
     protected void parseOneInputStreamAsReader(
-            TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
         

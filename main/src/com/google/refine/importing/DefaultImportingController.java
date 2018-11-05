@@ -45,13 +45,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingManager.Format;
@@ -112,8 +111,8 @@ public class DefaultImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            JSONObject config = job.getOrCreateDefaultConfig();
-            if (!("new".equals(config.getString("state")))) {
+            ObjectNode config = job.getOrCreateDefaultConfig();
+            if (!("new".equals(JSONUtilities.getString(config, "state", null)))) {
                 HttpUtilities.respond(response, "error", "Job already started; cannot load more data");
                 return;
             }
@@ -140,13 +139,13 @@ public class DefaultImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            JSONObject config = job.getOrCreateDefaultConfig();
-            if (!("ready".equals(config.getString("state")))) {
+            ObjectNode config = job.getOrCreateDefaultConfig();
+            if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
             }
             
-            JSONArray fileSelectionArray = ParsingUtilities.evaluateJsonStringToArray(
+            ArrayNode fileSelectionArray = ParsingUtilities.evaluateJsonStringToArrayNode(
                     request.getParameter("fileSelection"));
             
             ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
@@ -172,14 +171,14 @@ public class DefaultImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            JSONObject config = job.getOrCreateDefaultConfig();
-            if (!("ready".equals(config.getString("state")))) {
+            ObjectNode config = job.getOrCreateDefaultConfig();
+            if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
             }
             
             String format = request.getParameter("format");
-            JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
+            ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                     request.getParameter("options"));
             
             List<Exception> exceptions = new LinkedList<Exception>();
@@ -230,9 +229,9 @@ public class DefaultImportingController implements ImportingController {
         String format = request.getParameter("format");
         Format formatRecord = ImportingManager.formatToRecord.get(format);
         if (formatRecord != null && formatRecord.parser != null) {
-            JSONObject options = formatRecord.parser.createParserUIInitializationData(
+            ObjectNode options = formatRecord.parser.createParserUIInitializationData(
                     job, job.getSelectedFileRecords(), format);
-            JSONObject result = new JSONObject();
+            ObjectNode result = ParsingUtilities.mapper.createObjectNode();
             JSONUtilities.safePut(result, "status", "ok");
             JSONUtilities.safePut(result, "options", options);
             
@@ -255,14 +254,14 @@ public class DefaultImportingController implements ImportingController {
         job.updating = true;
         job.touch();
         try {
-            JSONObject config = job.getOrCreateDefaultConfig();
-            if (!("ready".equals(config.getString("state")))) {
+            ObjectNode config = job.getOrCreateDefaultConfig();
+            if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
             }
             
             String format = request.getParameter("format");
-            JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
+            ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                     request.getParameter("options"));
             
             List<Exception> exceptions = new LinkedList<Exception>();
@@ -317,13 +316,13 @@ public class DefaultImportingController implements ImportingController {
         }
     }
     
-    static public JSONArray convertErrorsToJsonArray(List<Exception> exceptions) {
-        JSONArray a = new JSONArray();
+    static public ArrayNode convertErrorsToJsonArray(List<Exception> exceptions) {
+        ArrayNode a = ParsingUtilities.mapper.createArrayNode();
         for (Exception e : exceptions) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             
-            JSONObject o = new JSONObject();
+            ObjectNode o = ParsingUtilities.mapper.createObjectNode();
             JSONUtilities.safePut(o, "message", e.getLocalizedMessage());
             JSONUtilities.safePut(o, "stack", sw.toString());
             JSONUtilities.append(a, o);
