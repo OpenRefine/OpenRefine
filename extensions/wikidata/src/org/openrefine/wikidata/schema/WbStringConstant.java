@@ -39,7 +39,7 @@ public class WbStringConstant implements WbExpression<StringValue> {
         Validate.notNull(value);
         Validate.isTrue(!value.isEmpty()); // for now we don't accept empty strings
         // because in the variable counterpart of this expression, they are skipped
-        this.value = value;
+        this.value = value.trim();
     }
 
     @Override

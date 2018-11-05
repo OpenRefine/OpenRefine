@@ -180,14 +180,6 @@
             "title": "言語指定がありません.",
             "body": "言語指定がないので、ラベル・記述・別名・単一言語テキストが無視されました。例えば: <span class=\"wb-issue-preformat\">{example_text}</span>."
         },
-        "leading-whitespace": {
-            "title": "文頭に空白文字があります.",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文頭に空白文字があります."
-        },
-        "trailing-whitespace": {
-            "title": "文末に空白文字があります.",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文末に空白文字があります."
-        },
         "duplicate-whitespace": {
             "title": "二重の空白文字があります.",
             "body": "<span class=\"wb-issue-preformat\">{example_string}</span>には二重の空白文字があります."
