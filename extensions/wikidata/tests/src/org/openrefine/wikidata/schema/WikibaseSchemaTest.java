@@ -49,8 +49,6 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Project;
@@ -100,7 +98,7 @@ public class WikibaseSchemaTest extends RefineTest {
             throws JSONException, IOException {
         JSONObject serialized = TestingData.jsonFromFile("schema/history_of_medicine.json");
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
-        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("data/schema/history_of_medicine_normalized.json").toString());
+        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString());
     }
 
     @Test
