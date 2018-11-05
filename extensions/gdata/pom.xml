@@ -2,10 +2,8 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.openrefine</groupId>
   <artifactId>gdata</artifactId>
   <packaging>jar</packaging>
-  <version>3.1-SNAPSHOT</version>
 
   <name>OpenRefine - Gdata extension</name>
   <description>Connects with Google services for data import and export</description>

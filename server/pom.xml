@@ -2,10 +2,8 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.openrefine</groupId>
   <artifactId>server</artifactId>
   <packaging>jar</packaging>
-  <version>3.1-SNAPSHOT</version>
 
   <name>OpenRefine - server</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
@@ -125,6 +123,35 @@
                 </configuration>
                 </execution>
             </executions>
+        </plugin>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+        	<groupId>org.eclipse.m2e</groupId>
+        	<artifactId>lifecycle-mapping</artifactId>
+        	<version>1.0.0</version>
+        	<configuration>
+        		<lifecycleMappingMetadata>
+        			<pluginExecutions>
+        				<pluginExecution>
+        					<pluginExecutionFilter>
+        						<groupId>
+        							org.apache.maven.plugins
+        						</groupId>
+        						<artifactId>
+        							maven-install-plugin
+        						</artifactId>
+        						<versionRange>[2.5.2,)</versionRange>
+        						<goals>
+        							<goal>install-file</goal>
+        						</goals>
+        					</pluginExecutionFilter>
+        					<action>
+        						<ignore></ignore>
+        					</action>
+        				</pluginExecution>
+        			</pluginExecutions>
+        		</lifecycleMappingMetadata>
+        	</configuration>
         </plugin>
       </plugins>
     </pluginManagement>
