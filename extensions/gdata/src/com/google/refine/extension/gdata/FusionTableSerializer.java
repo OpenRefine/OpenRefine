@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.fusiontables.Fusiontables;
-
-import com.google.refine.exporters.CustomizableTabularExporterConfiguration;
 import com.google.refine.exporters.TabularSerializer;
 
 final class FusionTableSerializer implements TabularSerializer {

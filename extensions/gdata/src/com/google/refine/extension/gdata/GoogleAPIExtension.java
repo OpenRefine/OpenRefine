@@ -25,7 +25,6 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.fusiontables.FusiontablesScopes;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;

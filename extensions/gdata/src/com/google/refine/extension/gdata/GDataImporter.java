@@ -6,15 +6,14 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
-
 import com.google.refine.importers.TabularImportingParserBase;
 import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
 import com.google.refine.importing.ImportingJob;
@@ -31,7 +30,7 @@ public class GDataImporter {
         ProjectMetadata metadata,
         final ImportingJob job,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions) throws IOException {
     
         String docType = JSONUtilities.getString(options, "docType", null);
@@ -64,7 +63,7 @@ public class GDataImporter {
         ProjectMetadata metadata,
         final ImportingJob job,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions) {
         
         String docUrlString = JSONUtilities.getString(options, "docUrl", null);
@@ -100,7 +99,7 @@ public class GDataImporter {
         URL docURL,
         int worksheetIndex,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions) {
         
         try {

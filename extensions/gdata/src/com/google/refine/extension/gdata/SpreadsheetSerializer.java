@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.AppendCellsRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
@@ -18,8 +17,6 @@ import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.ExtendedValue;
 import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
-
-import com.google.refine.exporters.CustomizableTabularExporterConfiguration;
 import com.google.refine.exporters.TabularSerializer;
 
 final class SpreadsheetSerializer implements TabularSerializer {

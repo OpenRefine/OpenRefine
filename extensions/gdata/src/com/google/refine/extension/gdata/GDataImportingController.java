@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -29,7 +29,6 @@ import com.google.api.services.fusiontables.model.TableList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
@@ -237,7 +236,7 @@ public class GDataImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
+            ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                 request.getParameter("options"));
             
             List<Exception> exceptions = new LinkedList<Exception>();
@@ -301,7 +300,7 @@ public class GDataImportingController implements ImportingController {
         
         job.updating = true;
         try {
-            final JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
+            final ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                 request.getParameter("options"));
             
             final List<Exception> exceptions = new LinkedList<Exception>();
