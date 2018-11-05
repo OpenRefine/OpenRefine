@@ -123,7 +123,6 @@ public class PreferenceStore  {
         Iterator<String> i = entries.fieldNames();
         while (i.hasNext()) {
             String key = i.next();
-            System.out.println(key);
             if (entries.get(key) != null) {
                 JsonNode o = entries.get(key);
                 Object loaded = loadObject(o);
@@ -140,8 +139,6 @@ public class PreferenceStore  {
     }
     
     static public Object loadObject(JsonNode o) {
-    	System.out.println("loading");
-    	System.out.println(o.toString());
         try {
 	        if (o instanceof ObjectNode) {
                 ObjectNode obj2 = (ObjectNode) o;
