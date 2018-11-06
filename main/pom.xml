@@ -2,10 +2,8 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.openrefine</groupId>
   <artifactId>main</artifactId>
   <packaging>jar</packaging>
-  <version>3.1-SNAPSHOT</version>
 
   <name>OpenRefine - main</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>

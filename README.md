@@ -18,7 +18,7 @@ If you have cloned this repository to your computer, you can run OpenRefine with
 * `./refine` on Mac OS and Linux
 * `refine.bat` on Windows
 
-This requires JDK 8 and Apache Ant.
+This requires JDK 8 and Apache Maven.
 
 Documentation and Videos
 -------------------------
