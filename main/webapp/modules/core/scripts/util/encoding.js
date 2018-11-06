@@ -40,7 +40,6 @@ Encoding.selectEncoding = function(input, onDone) {
   var level = DialogSystem.showDialog(frame);
   
   $("#select-encodings-tabs").tabs({ selected: 0 });
-  $("#select-encodings-tabs-all").css("display", "");
   
   elmts.dialogHeader.text($.i18n._('core-util-enc')["select-enc"]);
   elmts.cancelButton.text($.i18n._('core-buttons')["cancel"]);
