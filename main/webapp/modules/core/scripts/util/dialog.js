@@ -47,7 +47,8 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   .appendTo(document.body);
 
   elmt.css("visibility", "hidden").appendTo(container);
-  container.css("top", Math.round((overlay.height() - elmt.height()) / 2) + "px");
+  container.css("top", "10%");
+//  container.css("top", Math.round((overlay.height() - elmt.height()) / 2) + "px");
   elmt.css("visibility", "visible");
 
   container.draggable({ handle: '.dialog-header', cursor: 'move' });
