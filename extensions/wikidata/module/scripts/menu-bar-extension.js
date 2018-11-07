@@ -19,19 +19,37 @@ $.i18n.setDictionary(dictionary);
 ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
         {
-            "id" : "exportQuickStatements",
-            "label": $.i18n._('wikidata-extension')["quickstatements-export-name"],
-            "click": function() { WikibaseSchemaExporterMenuBar.checkSchemaAndExport(); }
+            id:"performWikibaseEdits",
+            label: $.i18n._('wikidata-extension')["perform-edits-on-wikidata"],
+            click: function() { PerformEditsDialog.checkAndLaunch(); }
+        });
+ExporterManager.MenuItems.push(
+        {               
+            id:"exportQuickStatements",
+            label: $.i18n._('wikidata-extension')["export-to-qs"],
+            click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements"); }
+        });
+ExporterManager.MenuItems.push(
+        {               
+            id:"exportWikibaseSchema",
+            label: $.i18n._('wikidata-extension')["export-schema"],
+            click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
         }
 );
 
 WikibaseExporterMenuBar = {};
 
 WikibaseExporterMenuBar.exportTo = function(format) {
+    var targetUrl = null;
+    if (format ==="quickstatements") {
+        targetUrl = "statements.txt";
+    } else {
+        targetUrl = "schema.json";
+    }
     var form = document.createElement("form");
     $(form).css("display", "none")
         .attr("method", "post")
-        .attr("action", "command/core/export-rows/statements.txt")
+        .attr("action", "command/core/export-rows/"+targetUrl)
         .attr("target", "gridworks-export");
     $('<input />')
         .attr("name", "engine")
@@ -54,9 +72,9 @@ WikibaseExporterMenuBar.exportTo = function(format) {
     document.body.removeChild(form);
 };
 
-WikibaseExporterMenuBar.checkSchemaAndExport = function() {
+WikibaseExporterMenuBar.checkSchemaAndExport = function(format) {
   var onSaved = function(callback) {
-     WikibaseExporterMenuBar.exportTo("quickstatements"); 
+     WikibaseExporterMenuBar.exportTo(format); 
   };
   if (!SchemaAlignmentDialog.isSetUp()) {
      SchemaAlignmentDialog.launch(null);
@@ -85,6 +103,18 @@ $(function(){
                         label: $.i18n._('wikidata-extension')["manage-wikidata-account"],
                         click: function() { ManageAccountDialog.checkAndLaunch(); }
                     },
+                    {},
+                    {
+                        id: "wikidata/import-schema",
+                        label: $.i18n._('wikidata-extension')["import-wikidata-schema"],
+                        click: function() { ImportSchemaDialog.launch(); }
+                    },
+                    {               
+                        id:"wikidata/export-schema",
+                        label: $.i18n._('wikidata-extension')["export-schema"],
+                        click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
+                    },
+                    {},
                     {
                         id:"wikidata/perform-edits",
                         label: $.i18n._('wikidata-extension')["perform-edits-on-wikidata"],
@@ -93,7 +123,7 @@ $(function(){
                     {               
                         id:"wikidata/export-qs",
                         label: $.i18n._('wikidata-extension')["export-to-qs"],
-                        click: function() { WikibaseExporterMenuBar.checkSchemaAndExport(); }
+                        click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements"); }
                     },
 
                 ]
