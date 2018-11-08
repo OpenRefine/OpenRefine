@@ -59,10 +59,18 @@ public class ToDate implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         String o1;
+        Boolean month_first = null;
+        Locale locale = Locale.getDefault();
+        Integer arg_pointer = 0; //pointer used to keep track of which argument we are parsing
+        DateFormat formatter;
+        OffsetDateTime date;
+        
+        //Check there is at least one argument
         if (args.length == 0) {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
         } else {
-            Object arg0 = args[0];
+            Object arg0 = args[arg_pointer];
+            //check the first argument is something that can be parsed as a date
             if (arg0 instanceof OffsetDateTime) {
                 return arg0;
             } else if (arg0 instanceof Long) {
@@ -73,79 +81,95 @@ public class ToDate implements Function {
                 // ignore cell values that aren't Date, Calendar, Long or String 
                 return new EvalError("Unable to parse as date");
             }
+            arg_pointer++; //increment arg_pointer to 1
         }
-
-        // "o, boolean month_first (optional)"
-        if (args.length == 1 || (args.length == 2 && args[1] instanceof Boolean)) {
-            boolean month_first = true;
-            if (args.length == 2) {
-                month_first = (Boolean) args[1];
-            }
-            try {
-                return CalendarParser.parseAsOffsetDateTime( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
-            } catch (CalendarParserException e) {
-                OffsetDateTime d = ParsingUtilities.stringToDate(o1);
-                if (d != null) {
-                    return d;
-                } else {
-                    try {
-                        return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant().atOffset(ZoneOffset.of("Z"));
-                    } catch (IllegalArgumentException e2) {
-                    }
-                }
-                return new EvalError("Unable to parse as date");
-            }
-        } else if (args.length>=2) {
-            // "o, format1, format2 (optional), ..."
-            Locale locale = Locale.getDefault();
         
-            for (int i=1;i<args.length;i++) {
-                if (!(args[i] instanceof String)) {
-                    // skip formats that aren't strings
-                    continue;
-                }
-                String format  = StringUtils.trim((String) args[i]);
-                DateFormat formatter;
-                // Attempt to parse first string as a language tag
-                if (i == 1) {
-                    Locale possibleLocale = Locale.forLanguageTag(format); // Java 1.7+ 
-                    boolean valid = false;
-                    for (Locale l : DateFormat.getAvailableLocales()) {
-                        if (l.equals(possibleLocale)) {
-                            locale = possibleLocale;
-                            valid = true;
-                            break;
-                        }
-                    }
-                    if (valid) { // If we got a valid locale
-                        if (args.length == 2) { // No format strings to try, process using default
-                          formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-                          OffsetDateTime date = parse(o1, formatter);
-                          if (date != null) {
-                              return date;
-                          } else {
-                              return new EvalError("Unable to parse as date");
-                          }
-                        }
-                        continue; // Don't try to process locale string as a format string if it was valid
-                    }
-                }
-                try {
-                    formatter = new SimpleDateFormat(format,locale);
-                } catch (IllegalArgumentException e) {
-                    return new EvalError("Unknown date format");
-                }
-                formatter.setLenient(true);
-                OffsetDateTime date = parse(o1, formatter);
-                if (date != null) {
-                    return date;
-                }
-                
-            }
-            return new EvalError("Unable to parse as date");
-        } else {
-            return new EvalError("Unable to parse as date");
+        //
+        if(args.length==arg_pointer) {
+            //if there is just one valid argument, we treat as if month_first set to true
+            month_first = true;
         }
+        
+        //if there are two or more arguments work out what type of arguments they are
+        if (args.length>arg_pointer) {
+            //is the first argument a boolean? If so use it as the month_first option
+            if(args[arg_pointer] instanceof Boolean) {
+                month_first = (Boolean) args[arg_pointer];
+                arg_pointer++; //increment arg_pointer to 2
+            }
+            //if first argument isn't Boolean, do nothing
+        }
+        
+        //month first helper maybe set by now so try a parse
+        if(month_first != null) {
+            try {
+               return CalendarParser.parseAsOffsetDateTime( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
+           } catch (CalendarParserException e) {
+               if(args.length-arg_pointer<1) { //no more arguments to try
+                   OffsetDateTime d = ParsingUtilities.stringToDate(o1);
+                   if (d != null) {
+                       return d;
+                   } else {
+                       try {
+                           return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant().atOffset(ZoneOffset.of("Z"));
+                       } catch (IllegalArgumentException e2) {
+                           return new EvalError("Unable to parse as date"); 
+                       }
+                   }
+               // if arguments >2 do nothing - there are still things we can try
+               }
+           }
+       }
+        
+        //check if we have still have arguments to parse
+        if (args.length-arg_pointer>=1) {
+            if(args[arg_pointer] instanceof String);
+            String localeString  = StringUtils.trim((String) args[arg_pointer]);
+            Locale possibleLocale = Locale.forLanguageTag(localeString); // Java 1.7+ 
+            for (Locale l : DateFormat.getAvailableLocales()) {
+                if (l.equals(possibleLocale.toLanguageTag())) {
+                    locale = possibleLocale;
+                    arg_pointer++;
+                    break;
+                }
+            }
+        }
+        
+        while (arg_pointer < args.length) {
+            if (!(args[arg_pointer] instanceof String)) {
+                // skip formats that aren't strings
+                continue;
+            }
+            String format  = StringUtils.trim((String) args[arg_pointer]);
+            try {
+                formatter = new SimpleDateFormat(format,locale);
+            } catch (IllegalArgumentException e) {
+                return new EvalError("Unknown date format");
+            }
+            date = parse(o1, formatter);
+            if (date != null) {
+                return date;
+            }
+            arg_pointer++;
+        }
+        
+        //no formats, or not managed to convert to date using provided formats, so try default format
+        formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        date = parse(o1, formatter);
+        if (date != null) {
+          return date;
+        }
+        //if we get here without successfully getting a date, try just a basic parse
+        date = ParsingUtilities.stringToDate(o1);
+        if (date != null) {
+            return date;
+        } else { //trying one last way
+             try {
+                 return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant().atOffset(ZoneOffset.of("Z"));
+             } catch (IllegalArgumentException e2) {
+                 return new EvalError("Unable to parse as date");
+             }
+         }
     }
     
     private OffsetDateTime parse(String o1, DateFormat formatter) {
