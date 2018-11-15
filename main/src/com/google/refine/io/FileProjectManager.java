@@ -36,12 +36,12 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -50,10 +50,7 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -377,60 +374,11 @@ public class FileProjectManager extends ProjectManager  {
 
         boolean found = false;
 
-        if (file.exists() || file.canRead()) {
-            FileReader reader = null;
-            try {
-                reader = new FileReader(file);
-                JSONTokener tokener = new JSONTokener(reader);
-                JSONObject obj = (JSONObject) tokener.nextValue();
-                
-                // load global preferences firstly
-                if (obj.has("preferences") && !obj.isNull("preferences")) {
-                    _preferenceStore = ParsingUtilities.mapper.readValue(obj.getJSONObject("preferences").toString(), PreferenceStore.class);
-                }
-
-                JSONArray a = obj.getJSONArray("projectIDs");
-                int count = a.length();
-                for (int i = 0; i < count; i++) {
-                    long id = a.getLong(i);
-
-                    File projectDir = getProjectDir(id);
-                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
-                    
-                    mergeEmptyUserMetadata(metadata);
-
-                    _projectsMetadata.put(id, metadata);
-                    
-                    if (metadata != null && metadata.getTags() != null) {
-                        for (String tag : metadata.getTags()) {
-                          if (_projectsTags.containsKey(tag)) {
-                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                          } else {
-                            _projectsTags.put(tag, 1);
-                          }
-                        }
-                    }
-                }
-
-                if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
-                	TopList newExpressions = ParsingUtilities.mapper.readValue(obj.getJSONArray("expressions").toString(), TopList.class);
-                    this._preferenceStore.put("scripting.expressions", newExpressions);
-                }
-
-                found = true;
-            } catch (JSONException e) {
-                logger.warn("Error reading file", e);
-            } catch (IOException e) {
-                logger.warn("Error reading file", e);
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    logger.warn("Exception closing file",e);
-                }
-            }
+        try {
+        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+            found = true;
+        } catch(IOException e) {
+        	logger.warn(e.toString());
         }
 
         return found;
@@ -489,5 +437,43 @@ public class FileProjectManager extends ProjectManager  {
     @JsonProperty("projectIDs")
     public Set<Long> getProjectIds() {
         return _projectsMetadata.keySet();
+    }
+    
+    @JsonProperty("projectIDs")
+    protected void loadProjects(List<Long> projectIDs) {
+        for (Long id : projectIDs) {
+
+            File projectDir = getProjectDir(id);
+            ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+            
+            mergeEmptyUserMetadata(metadata);
+
+            _projectsMetadata.put(id, metadata);
+            
+            if (metadata != null && metadata.getTags() != null) {
+                for (String tag : metadata.getTags()) {
+                  if (_projectsTags.containsKey(tag)) {
+                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                  } else {
+                    _projectsTags.put(tag, 1);
+                  }
+                }
+            }
+        }
+    }
+    
+    @JsonProperty("preferences")
+    protected void setPreferences(PreferenceStore preferences) {
+    	if(preferences != null) {
+    		_preferenceStore = preferences;
+    	}
+    }
+    
+    // backwards compatibility
+    @JsonProperty("expressions")
+	protected void setExpressions(TopList newExpressions) {
+    	if (newExpressions != null) {
+    		_preferenceStore.put("scripting.expressions", newExpressions);
+    	}
     }
 }
