@@ -184,7 +184,8 @@ set REFINE_LIB_DIR=server\target\lib
 rem ----- Respond to the action ----------------------------------------------------------
 
 set ACTION=%1
-
+setlocal
+%@Try%
 if ""%ACTION%"" == ""build"" goto doMvn
 if ""%ACTION%"" == ""server_test"" goto doMvn
 if ""%ACTION%"" == ""extensions_test"" goto doMvn
@@ -192,6 +193,11 @@ if ""%ACTION%"" == ""test"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
 if ""%ACTION%"" == ""distclean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
+%@EndTry%
+:@Catch
+  echo Unknown Refine command called "%1", type "refine /?" for proper usage.
+  exit /B 1
+:@EndCatch
 
 :doRun
 rem --- Log for troubleshooting ------------------------------------------
