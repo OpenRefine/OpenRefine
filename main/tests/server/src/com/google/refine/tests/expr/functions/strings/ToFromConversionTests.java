@@ -149,7 +149,8 @@ public class ToFromConversionTests extends RefineTest {
       //parse as 'month first' date without 'false' parameter but with format specified
       Assert.assertEquals(invoke("toDate", "01/03/2012","dd/MM/yyyy"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
       Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
-      
+      //Two digit year
+      Assert.assertEquals(invoke("toDate", "02-02-01"),CalendarParser.parseAsOffsetDateTime("2001-02-02"));
       // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
       Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
       
