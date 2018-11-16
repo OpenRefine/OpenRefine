@@ -138,17 +138,36 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertTrue(invoke("toDate", (Object) null) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
-      Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
+      //Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
       Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof OffsetDateTime);
       Assert.assertEquals(invoke("toDate", "2012-03-01"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      //parse as 'month first' date with and without explicit 'true' parameter
+      Assert.assertEquals(invoke("toDate", "01/03/2012"),CalendarParser.parseAsOffsetDateTime("2012-01-03"));
+      Assert.assertEquals(invoke("toDate", "01/03/2012",true),CalendarParser.parseAsOffsetDateTime("2012-01-03"));
+      //parse as 'month first' date with 'false' parameter
+      Assert.assertEquals(invoke("toDate", "01/03/2012",false),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      //parse as 'month first' date without 'false' parameter but with format specified
+      Assert.assertEquals(invoke("toDate", "01/03/2012","dd/MM/yyyy"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
       Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
-      
+      //Two digit year
+      Assert.assertEquals(invoke("toDate", "02-02-01"),CalendarParser.parseAsOffsetDateTime("2001-02-02"));
       // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
       Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
       
+      // Boolean argument combined with Multiple format strings 
+      Assert.assertEquals(invoke("toDate", "01/03/2012",false, "MMM","yyyy-MM-dd","MM/dd/yyyy"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      
       // First string can be a locale identifier instead of a format string
-      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalendarParser.parseAsOffsetDateTime("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parseAsOffsetDateTime("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parseAsOffsetDateTime("2013-06-01"));
+      
+      //if invalid format/locale strings are passed, ignore them
+      Assert.assertEquals(invoke("toDate", "2012-03-01","XXX"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+
+      // If a long, convert to string
+      Assert.assertEquals(invoke("toDate", (long) 2012), CalendarParser.parseAsOffsetDateTime("2012-01-01"));
+
+      // If already a date, leave it alone
+      Assert.assertEquals(invoke("toDate", CalendarParser.parseAsOffsetDateTime("2012-03-01")),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
     }
     
     @Test
