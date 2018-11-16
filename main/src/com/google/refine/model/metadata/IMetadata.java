@@ -11,7 +11,6 @@ import org.json.JSONObject;
  * Interface to import/export metadata 
  */
 public interface IMetadata  {
-    public void loadFromJSON(JSONObject obj);
     
     public void loadFromFile(File metadataFile);
     

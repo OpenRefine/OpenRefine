@@ -48,6 +48,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONArray;
@@ -57,12 +58,15 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
@@ -77,7 +81,7 @@ public class ProjectMetadata  extends AbstractMetadata {
     final public static String OLD_FILE_NAME = "metadata.old.json";
     
     @JsonProperty("created")
-    private final LocalDateTime     _created;
+    private LocalDateTime     _created;
     @JsonProperty("name")
     private String         _name = "";
     @JsonProperty("password")
@@ -93,7 +97,8 @@ public class ProjectMetadata  extends AbstractMetadata {
     @JsonProperty("rowCount")
     private int _rowCount;
     // user metadata
-    private JSONArray _userMetadata = new JSONArray();
+    @JsonIgnore
+    private ArrayNode _userMetadata = ParsingUtilities.mapper.createArrayNode();
     
     // _tags maps to keywords of the data package metadata
     @JsonProperty("tags")
@@ -108,9 +113,10 @@ public class ProjectMetadata  extends AbstractMetadata {
     private String _description = "";                // free form of comment
     
     // import options is an array for 1-n data sources
-    private JSONArray _importOptionMetadata = new JSONArray();
+    @JsonIgnore
+    private ArrayNode _importOptionMetadata = ParsingUtilities.mapper.createArrayNode();
     
-    @JsonUnwrapped
+    @JsonProperty("customMetadata")
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
     @JsonProperty("preferences")
     @JsonView(JsonViews.SaveMode.class)
@@ -128,24 +134,40 @@ public class ProjectMetadata  extends AbstractMetadata {
     @JsonProperty("version")
     private String version = "";
     
-    @JsonProperty("userMetadata")
-    @JsonRawValue
+    @JsonProperty(PreferenceStore.USER_METADATA_KEY)
     @JsonInclude(Include.NON_NULL)
-    public String getJsonUserMetadata() {
-        if (_userMetadata.length() > 0) {
-            return _userMetadata.toString();
+    public ArrayNode getJsonUserMetadata() {
+        if (_userMetadata.size() > 0) {
+            return _userMetadata;
+        }
+        return null;
+    }
+    
+    @JsonProperty(PreferenceStore.USER_METADATA_KEY)
+    protected void setUserMetadataJson(ArrayNode json) {
+    	_userMetadata = json;
+    }
+    
+    @JsonProperty("importOptionMetadata")
+    @JsonInclude(Include.NON_NULL)
+    public ArrayNode getJsonImportOptionMetadata() {
+        if (_importOptionMetadata.size() > 0) {
+            return _importOptionMetadata;
         }
         return null;
     }
     
     @JsonProperty("importOptionMetadata")
-    @JsonRawValue
-    @JsonInclude(Include.NON_NULL)
-    public String getJsonImportOptionMetadata() {
-        if (_importOptionMetadata.length() > 0) {
-            return _importOptionMetadata.toString();
-        }
-        return null;
+    public void setImportOptionMetadataJson(ArrayNode options) {
+    	_importOptionMetadata = options;
+    	// this field should always be present so we can update the last updated time here
+    	this.written = LocalDateTime.now();
+    }
+    
+    // backwards compatibility
+    @JsonProperty("expressions")
+    protected void setExpressions(TopList expressions) {
+    	this._preferenceStore.put("scripting.expressions", expressions);
     }
 
     private final static Logger logger = LoggerFactory.getLogger("project_metadata");
@@ -178,91 +200,6 @@ public class ProjectMetadata  extends AbstractMetadata {
     public String setSaveModeWritten() {
         written = LocalDateTime.now();
         return null;
-    }
-
-     public void loadFromJSON(JSONObject obj) {
-        extractModifiedLocalTime(obj);
-
-        this._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
-        this._password = JSONUtilities.getString(obj, "password", "");
-
-        this._encoding = JSONUtilities.getString(obj, "encoding", "");
-        this._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
-
-        this._creator = JSONUtilities.getString(obj, "creator", "");
-        this._contributors = JSONUtilities.getString(obj, "contributors", "");
-        this._subject = JSONUtilities.getString(obj, "subject", "");
-        this._description = JSONUtilities.getString(obj, "description", "");
-        this._rowCount = JSONUtilities.getInt(obj, "rowCount", 0);
-        
-        this.title = JSONUtilities.getString(obj, "title", "");
-        this.homepage = JSONUtilities.getString(obj, "homepage", "");
-        this.image = JSONUtilities.getString(obj, "image", "");
-        this.license = JSONUtilities.getString(obj, "license", "");
-        this.version = JSONUtilities.getString(obj, "version", "");
-
-        this._tags = JSONUtilities.getStringArray(obj, "tags");
-
-        if (obj.has("preferences") && !obj.isNull("preferences")) {
-            try {
-                this._preferenceStore = ParsingUtilities.mapper.readValue(obj.getJSONObject("preferences").toString(), PreferenceStore.class);
-            } catch (IOException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-
-        if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
-            try {
-            	TopList newExpressions = ParsingUtilities.mapper.readValue(obj.getJSONArray("expressions").toString(), TopList.class);
-                this._preferenceStore.put("scripting.expressions", newExpressions);
-            } catch (IOException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-
-        if (obj.has("customMetadata") && !obj.isNull("customMetadata")) {
-            try {
-                JSONObject obj2 = obj.getJSONObject("customMetadata");
-
-                Iterator<String> keys = obj2.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    Object value = obj2.get(key);
-                    if (value != null && value instanceof Serializable) {
-                        this._customMetadata.put(key, (Serializable) value);
-                    }
-                }
-            } catch (JSONException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-
-        if (obj.has("importOptionMetadata") && !obj.isNull("importOptionMetadata")) {
-            try {
-                JSONArray jsonArray = obj.getJSONArray("importOptionMetadata");
-                this._importOptionMetadata = jsonArray;
-            } catch (JSONException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-
-        if (obj.has(PreferenceStore.USER_METADATA_KEY) && !obj.isNull(PreferenceStore.USER_METADATA_KEY)) {
-            try {
-                JSONArray jsonArray = obj.getJSONArray(PreferenceStore.USER_METADATA_KEY);
-                this._userMetadata = jsonArray;
-            } catch (JSONException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        } 
-        
-        this.written = LocalDateTime.now(); // Mark it as not needing writing until modified
-        
-    }
-
-    private void extractModifiedLocalTime(JSONObject obj) {
-        String modified = JSONUtilities.getString(obj, "modified", LocalDateTime.now().toString());
-        
-        this._modified = ParsingUtilities.stringToLocalDate(modified);
     }
 
     static protected void preparePreferenceStore(PreferenceStore ps) {
@@ -353,17 +290,19 @@ public class ProjectMetadata  extends AbstractMetadata {
         updateModified();
     }
     
-    public JSONArray getImportOptionMetadata() {
+    @JsonIgnore
+    public ArrayNode getImportOptionMetadata() {
         return _importOptionMetadata;
     }
     
-    public void setImportOptionMetadata(JSONArray jsonArray) {
+    @JsonIgnore
+    public void setImportOptionMetadata(ArrayNode jsonArray) {
         _importOptionMetadata = jsonArray;
         updateModified();
     }
     
     public void appendImportOptionMetadata(ObjectNode options) {
-        _importOptionMetadata.put(options);
+        _importOptionMetadata.add(options);
         updateModified();
     }
     
@@ -477,20 +416,20 @@ public class ProjectMetadata  extends AbstractMetadata {
         updateModified();
     }
     
-    public JSONArray getUserMetadata() {
+    public ArrayNode getUserMetadata() {
         return _userMetadata;
     }
     
-    public void setUserMetadata(JSONArray userMetadata) {
+    public void setUserMetadata(ArrayNode userMetadata) {
         this._userMetadata = userMetadata;
     }
     
     private void updateUserMetadata(String metaName, String valueString)  {
-        for (int i = 0; i < _userMetadata.length(); i++) {
+        for (int i = 0; i < _userMetadata.size(); i++) {
             try {
-                JSONObject obj = _userMetadata.getJSONObject(i);
-                if (obj.getString("name").equals(metaName)) {
-                    obj.put("value", valueString);
+                JsonNode obj = _userMetadata.get(i);
+                if (obj.get("name").asText("").equals(metaName)) {
+                    ((ObjectNode) obj).put("value", valueString);
                 }
             } catch (JSONException e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
@@ -530,7 +469,7 @@ public class ProjectMetadata  extends AbstractMetadata {
             JSONTokener tokener = new JSONTokener(reader);
             JSONObject obj = (JSONObject) tokener.nextValue();
 
-            this.loadFromJSON(obj);
+            this.loadFromJSON(IOUtils.toString(inputStream));
         } catch (IOException e) {
             logger.error(ExceptionUtils.getStackTrace(e));
         }

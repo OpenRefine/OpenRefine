@@ -1,6 +1,7 @@
 package com.google.refine.model.metadata;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.util.ParsingUtilities;
 
 public abstract class AbstractMetadata implements IMetadata {
     @JsonIgnore
@@ -26,9 +28,10 @@ public abstract class AbstractMetadata implements IMetadata {
     public void setFormatName(MetadataFormat formatName) {
         this.formatName = formatName;
     }
-
-    @Override
-    public abstract void loadFromJSON(JSONObject obj);
+    
+    public void loadFromJSON(String obj) throws IOException {
+    	ParsingUtilities.mapper.readerForUpdating(this).readValue(obj);
+    }
 
     @Override
     public abstract void loadFromFile(File metadataFile);
