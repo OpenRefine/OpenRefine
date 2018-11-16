@@ -305,6 +305,7 @@ public class ListFacet implements Facet {
                  */
                 NominalFacetChoice choice = new NominalFacetChoice(decoratedValue);
                 choice.count = 0;
+                choice.selected = true;
                 _choices.add(choice);
             }
         }
