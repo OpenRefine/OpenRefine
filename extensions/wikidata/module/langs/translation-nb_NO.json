@@ -1,0 +1,233 @@
+{
+    "wikidata-extension": {
+        "menu-label": "Wikidata",
+        "edit-wikidata-schema": "Rediger Wikidata-skjema",
+        "import-wikidata-schema": "Importer skjema",
+        "manage-wikidata-account": "Behandle Wikidata-konto",
+        "perform-edits-on-wikidata": "Last opp redigeringer til Wikidata",
+        "export-to-qs": "Eksporter til QuickStatements",
+        "export-schema": "Eksporter skjema",
+        "quickstatements-export-name": "QuickStatements"
+    },
+    "wikidata-schema": {
+        "dialog-header": "Innrett til Wikidata",
+        "dialog-explanation": "Wikidata-skjemaet nedenfor spesifiserer hvordan dine tabulære data vil transformeres til Wikidata-redigeringer. Du kan dra og slippe kolonnenavnene nedenfor til de fleste inndataboksene: for hver rad vil redigeringer genereres med verdiene i disse kolonnene.",
+        "preview-explanation": "Denne fanen viser de første (av {nb_edits}) redigeringene som vil gjøres når du laster opp endringene til Wikidat. Du kan bruke fasetter for å ettergå redigeringene til spesifikke elementer.",
+        "schema-tab-header": "Skjema",
+        "warnings-tab-header": "Saker",
+        "edits-preview-tab-header": "Forhåndsvisning",
+        "statements-header": "Påstander",
+        "terms-header": "Termer",
+        "empty-statements": "ingen påstander lagt til",
+        "empty-terms": "ingen etiketter, beskrivelser eller aliaser lagt til",
+        "add-item-button": "legg til element",
+        "add-term": "legg til term",
+        "remove": "fjern",
+        "add-statement": "legg til påstand",
+        "add-value": "legg til verdi",
+        "add-qualifier": "legg til kvalifikator",
+        "add-reference": "legg til referanse",
+        "add-reference-snak": "legg til",
+        "property-placeholder": "egenskap",
+        "nb-references": "&nbsp;referanser",
+        "remove-column": "fjern kolonne",
+        "label": "Etikett",
+        "description": "Beskrivelse",
+        "alias": "Alias",
+        "item-or-reconciled-column": "skriv inn element eller dra avstemt kolonne hit",
+        "amount": "antall",
+        "unit": "enhet",
+        "full-url": "full URL inkludert protokoll",
+        "tabular-data-with-prefix": "filnavn som begynner med «Data:»",
+        "commons-media": "filnavn",
+        "math-expression": "matematisk uttrykk",
+        "geoshape-with-prefix": "filnavn som begynner med «Data:»",
+        "datatype-not-supported-yet": "Denne datatypen støttes dessverre ikke ennå.",
+        "invalid-schema-warning-issues": "Skjemaet ditt er ufullstendig, fiks det for å se problemene.",
+        "invalid-schema-warning-preview": "Skjemaet ditt er ufullstendig, fiks det for å se forhåndsvisningen.",
+        "discard-button": "Forkast endringer",
+        "save-button": "Lagre skjema",
+        "close-button": "Lukk",
+        "unsaved-changes-alt": "Du har gjort ulagrede endringer i Wikidata-skjemaet ditt.",
+        "save-schema-alt": "Lagre skjemaet i OpenRefine. Endringene blir ikke lastet opp til Wikidata ennå.",
+        "discard-schema-changes-alt": "Forkast endringene som er gjort i skjemaet.",
+        "incomplete-schema-could-not-be-saved": "Skjemaet ditt er ufullstendig, så det kan ikke lagres ennå.",
+        "unsaved-warning": "Du har gjort ulagrede endringer i Wikidata-skjemaet ditt. Lukke likevel?"
+    },
+    "wikidata-preview": {
+        "new-id": "nytt element"
+    },
+    "wikidata-account": {
+        "dialog-header": "Wikidata-konto",
+        "explain-log-in": "Hvis du logger inn på <a href=\"https://www.wikidata.org/\" target=\"_blank\">Wikidata</a> kan du laste opp redigeringer direkte fra OpenRefine.",
+        "username-label": "Brukernavn:",
+        "username-placeholder": "Skriv inn brukernavnet ditt",
+        "password-label": "Passord:",
+        "password-placeholder": "Skriv inn passordet ditt",
+        "remember-credentials-label": "Husk meg (lagres ukryptert i OpenRefines innstillinger)",
+        "close": "Lukk",
+        "log-in": "Logg inn",
+        "logged-in-as": "Du er logget inn som:",
+        "log-out": "Logg ut",
+        "connecting-to-wikidata": "Kobler til Wikidata …"
+    },
+    "perform-wikidata-edits": {
+        "dialog-header": "Last opp redigeringer på Wikidata",
+        "review-your-edits": "Du er i ferd med å laste opp {nb_edits} redigeringer på Wikidata. Sjekk dem nøye. Store redigeringspartier bør gå gjennom <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">botgodkjenning</a> først.",
+        "logged-in-as": "Du er logget inn som",
+        "edit-summary-label": "Redigeringsforklaring:",
+        "edit-summary-placeholder": "noen ord som beskriver redigeringene dine",
+        "perform-edits": "Last opp redigeringer",
+        "cancel": "Avbryt",
+        "analyzing-edits": "Analyserer redigeringene dine …"
+    },
+    "import-wikibase-schema": {
+        "dialog-header": "Importer Wikidata-skjema",
+        "file-label": "Fra JSON-fil: ",
+        "schema-label": "Eller fra JSON-tekst:",
+        "invalid-schema": "Ugyldig Wikibase-skjema.",
+        "import": "Importer"
+    },
+    "warnings-messages": {
+        "new-item-created": {
+            "title": "Dette redigeringspartiet vil opprette nye Wikidata-elementer.",
+            "body": "Sjekk at disse elementene ikke finnes ennå og <a href=\"https://www.wikidata.org/wiki/Wikidata:Notability\" target=\"_blank\">passer for inkludering på Wikidata</a>."
+        },
+        "new-item-without-labels-or-aliases": {
+            "title": "Nye elementer opprettet uten etikett eller alias.",
+            "body": "Du bør angi minst én etikett for nye elementer som {example_entity}, så andre kan forstå hva elementet handler om."
+        },
+        "new-item-without-descriptions": {
+            "title": "Nye elementer opprettet uten beskrivelse.",
+            "body": "Å legge til beskrivelser til nye elementer som {example_entity} gjør det enklere å skille elementer fra hverandre om de har samme etikett."
+        },
+        "new-item-with-deleted-statements": {
+            "title": "Sletter påstander i nye elementer.",
+            "body": "Det er trolig noe galt med skjemaet eller prosjektet ditt."
+        },
+        "new-item-without-P31-or-P279": {
+            "title": "Nye elementer opprettet uten type.",
+            "body": "Du bør angi påstanden «forekomst av» (P31) eller «underklasse av» (P279)  for hvert element du oppretter, som {example_entity}."
+        },
+        "add-statements-with-invalid-format": {
+            "title": "{property_entity} påstander med ugyldig format.",
+            "body": "Verdiene for denne egenskapen forventes å matche det regulære uttrykket <span class=\"wb-issue-preformat\">{regex}</span>, noe som ikke er tilfelle for <span class=\"wb-issue-preformat\">{example_value}</span> lagt til på {example_item_entity}."
+        },
+        "remove-statements-with-invalid-format": {
+            "title": "Fjernet påstander med ugyldig format.",
+            "body": "Hvis disse påstandene for tiden finnes på Wikidata  vil dette løse brudd på begrensninger."
+        },
+        "missing-inverse-statements": {
+            "title": "Inverse påstander mangler for {added_property_entity}.",
+            "body": "{added_property_entity}-påstander som den fra {source_entity} til {target_entity} bør legges til inverst med {inverse_property_entity}: i dette tilfellet, {target_entity} {inverse_property_entity} {source_entity}."
+        },
+        "self-referential-statements": {
+            "title": "Selv-refererende påstander.",
+            "body": "Det er ikke forbudt, men selv-refererende påstander er generelt sett mistenkelige. Du har noen slike i {example_entity}."
+        },
+        "unsourced-statements": {
+            "title": "Påstander uten referanser.",
+            "body": "De fleste påstander bør ha referanser. Du kan enkelt legge dem til i skjemaet."
+        },
+        "property-found-in-mainsnak": {
+            "title": "{property_entity} brukt som påstand.",
+            "body": "Du bruker {property_entity} som hovedpåstand, men den er ikke designet for det."
+        },
+        "property-found-in-qualifier": {
+            "title": "{property_entity} brukt som kvalifikator.",
+            "body": "Du bruker {property_entity} som kvalifikator, men den er ikke designet for det."
+        },
+        "property-found-in-reference": {
+            "title": "{property_entity} brukt som referanse.",
+            "body": "Du bruker {property_entity} i en referanse, men den er ikke designet for det."
+        },
+        "missing-mandatory-qualifiers": {
+            "title": "{statement_property_entity} mangler en {missing_property_entity}-kvalifikator.",
+            "body": "Påstander som bruker {statement_property_entity}, som den i {example_item_entity}, mangler en obligatorisk {missing_property_entity}-kvalifikator."
+        },
+        "disallowed-qualifiers": {
+            "title": "Kvalifikatoren {disallowed_property_entity} er ikke kompatibel med {statement_property_entity}.",
+            "body": "Påstander som bruker {statement_property_entity}, som den i {example_item_entity}, bør ikke ha kvalifikatoren {disallowed_property_entity}, da de ikke er kompatible."
+        },
+        "single-valued-property-added-more-than-once": {
+            "title": "{property_entity} lagt til mer enn én gang i samme element.",
+            "body": "Denne egenskapet forventes brukt maks én gang per element, men har blitt lagt til flere ganger i samme element, for eksempel i {example_entity}."
+        },
+        "identical-values-for-distinct-valued-property": {
+            "title": "Identiske verdier for {property_entity}",
+            "body": "Denne egenskapen bør ha distinkte verdier, men samme verdi ble funnet i for eksempel {item1_entity} og {item2_entity}."
+        },
+        "no-edit-generated": {
+            "title": "Ingen redigering ble generert.",
+            "body": "Det kan være noe galt med skjemaet ditt."
+        },
+        "no-issue-detected": {
+            "title": "Ingen problemer ble oppdaget i redigeringene dine.",
+            "body": "Merk at OpenRefine ikke kan oppdage alle slags problemer Wikidata-redigeringer kan ha."
+        },
+        "ignored-qualifiers": {
+            "title": "Noen kvalifikatorer ble ignorert.",
+            "body": "Kvalifikatorverdier kunne ikke tolkes, så de blir ikke lagt til i de samsvarende påstandene."
+        },
+        "ignored-references": {
+            "title": "Noen referanser ble ignorert.",
+            "body": "Ingen av påstandene deres kunne tolkes, så ingen referanser ble lagt til."
+        },
+        "monolingual-text-without-language": {
+            "title": "Intet språk angitt for enspråklig tekst.",
+            "body": "Noen etiketter, beskrivelser, aliaser eller enspråklige tekstverdier har blitt hoppet over fordi språk ikke var angitt. Eksempelverdi: <span class=\"wb-issue-preformat\">{example_text}</span>."
+        },
+        "duplicate-whitespace": {
+            "title": "Dobbelt mellomrom i strenger.",
+            "body": "Strenger som <span class=\"wb-issue-preformat\">{example_string}</span> inneholder dobbelt mellomrom."
+        },
+        "non-printable-characters": {
+            "title": "Utrykkbare tegn i strenger.",
+            "body": "Strenger som <span class=\"wb-issue-preformat\">{example_string}</span> inneholder utrykkbare tegn."
+        },
+        "invalid-identifier-space": {
+            "title": "Ugyldig identifikatorrom for avstemte celler.",
+            "body": "Noen avstemnte celler, som <span class=\"wb-issue-preformat\">{example_cell}</span> ble ignorert fordi de ikke er avstemt mot Wikidata."
+        },
+        "ignored-language": {
+            "title": "Ugyldige språkidentifikatorer.",
+            "body": "Noen språkidentifikatorer er ugyldige, som <span class=\"wb-issue-preformat\">{example_value}</span>. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Languages\" target=\"_blank\">de tillatte verdiene</a>."
+        },
+        "ignored-date": {
+            "title": "Ugyldige datoformater.",
+            "body": "Noen datoer er galt formatert, som <span class=\"wb-issue-preformat\">{example_value}</span>. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">de tillatte formatene</a>."
+        },
+        "ignored-amount": {
+            "title": "Ugyldige tallformater.",
+            "body": "Noen tall er galt formatert, som <span class=\"wb-issue-preformat\">{example_value</span>. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">de tillatte formatene</a>."
+        },
+        "ignored-coordinates": {
+            "title": "Ugyldige geografiske koordinater.",
+            "body": "Noen koordinater er galt formatert, som <span class=\"wb-issue-preformat\">{example_value}</span>. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Globe_coordinates\" target=\"_blank\">de tillatte formatene</a>."
+        },
+        "forbidden-value": {
+            "title": "Ugyldige verdier for {property_entity}",
+            "body": "Elementer som {example_value_entity} lagt til i {example_subject_entity} er ikke tillatte som verdier for {property_entity}."
+        },
+        "bounds-disallowed": {
+            "title": "Kvantitetsgrenser gitt for {property_entity}",
+            "body": "Verdier forventes å ikke ha usikkerhetsgrenser, men <span class=\"wb-issue-preformat\">{example_value}</span> lagt til i {example_item_entity} har det. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manualen</a> for å lære hvordan man fikser formatet."
+        },
+        "values-should-be-integers": {
+            "title": "Verdier som ikke er heltall for {property_entity}",
+            "body": "Verdier forventes å være heltall, men <span class=\"wb-issue-preformat\">{example_value}</span> lagt til i {example_item_entity} har desimaler. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manualen</a> for å finne ut hvordan man fikser formatet."
+        },
+        "invalid-unit": {
+            "title": "{property_entity} med ugyldige enheter",
+            "body": "Enheter som {unit_entity} brukt i {example_item_entity} er ugyldige for {property_entity}."
+        },
+        "no-unit-provided": {
+            "title": "Enhet mangler for {property_entity}",
+            "body": "Verdier som <span class=\"wb-issue-preformat\">{example_value}</span> i {example_item_entity} forventes å ha enheter."
+        },
+        "invalid-entity-type": {
+            "title": "{property_entity} brukt i elementer",
+            "body": "Bruken av {property_entity} i elementer som {example_entity} er ugyldig."
+        }
+    }
+}
