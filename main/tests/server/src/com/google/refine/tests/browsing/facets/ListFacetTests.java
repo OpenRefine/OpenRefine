@@ -42,6 +42,18 @@ public class ListFacetTests extends RefineTest {
             + "     {\"v\":{\"v\":\"foobar\",\"l\":\"foobar\"},\"c\":1,\"s\":true},"
             + "     {\"v\":{\"v\":\"barbar\",\"l\":\"barbar\"},\"c\":1,\"s\":false}"
             + "]}";
+    
+    private static String selectedEmptyChoiceFacet = "{"
+    		+ "\"name\":\"facet A\","
+    		+ "\"expression\":\"value+\\\"bar\\\"\","
+    		+ "\"columnName\":\"Column A\","
+    		+ "\"invert\":false,"
+    		+ "\"choices\":["
+    		+ "    {\"v\":{\"v\":\"ebar\",\"l\":\"ebar\"},\"c\":1,\"s\":false},"
+    		+ "    {\"v\":{\"v\":\"cbar\",\"l\":\"cbar\"},\"c\":1,\"s\":false},"
+    		+ "    {\"v\":{\"v\":\"abar\",\"l\":\"abar\"},\"c\":1,\"s\":false},"
+    		+ "    {\"v\":{\"v\":\"foobar\",\"l\":\"true\"},\"c\":0,\"s\":true}"
+    		+ "]}";
 
     @Test
     public void serializeListFacetConfig() {
@@ -76,5 +88,20 @@ public class ListFacetTests extends RefineTest {
         facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
         Facet facet = facetConfig.apply(project);
         TestUtils.isSerializedTo(facet, jsonFacetError);
+    }
+    
+    @Test
+    public void testSelectedEmptyChoice() {
+    	Project project = createCSVProject("Column A\n" + 
+    			"a\n" + 
+    			"c\n" + 
+    			"e");
+    	Engine engine = new Engine(project);
+    	
+    	ListFacetConfig facetConfig = new ListFacetConfig();
+    	facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+    	Facet facet = facetConfig.apply(project);
+    	facet.computeChoices(project, engine.getAllFilteredRows());
+    	TestUtils.isSerializedTo(facet, selectedEmptyChoiceFacet);
     }
 }
