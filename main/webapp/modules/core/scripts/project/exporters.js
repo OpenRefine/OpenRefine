@@ -42,11 +42,6 @@ ExporterManager.MenuItems = [
     "label": $.i18n('core-project/export-project'),
     "click": function() { ExporterManager.handlers.exportProject(); }
   },
-  {
-      "id" : "core/project-data-package",
-      "label": $.i18n('core-project/project-data-package'),
-      "click": function() { ExporterManager.handlers.projectDataPackage(); }
-  },
   {},
   {
     "id" : "core/export-tsv",
@@ -247,32 +242,3 @@ ExporterManager.handlers.exportProject = function() {
   }
 };
 
-ExporterManager.handlers.projectDataPackage = function() {
-    function save(jsonMetadata) {
-        var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
-        var form = document.createElement("form");
-        $(form)
-        .css("display", "none")
-        .attr("method", "post")
-        .attr("action", "command/core/project-data-package/" + name + ".openrefine.zip")
-        .attr("target", "refine-export");
-        $('<input />')
-        .attr("name", "project")
-        .attr("value", theProject.id)
-        .appendTo(form);
-        $('<input />')
-        .attr("name", "metadata")
-        .attr("value", jsonMetadata)
-        .appendTo(form);
-        
-
-        document.body.appendChild(form);
-
-        window.open("about:blank", "refine-export");
-        form.submit();
-
-        document.body.removeChild(form);
-    }
-    
-    new EditGeneralMetadataDialog(theProject.id, save);
-  };

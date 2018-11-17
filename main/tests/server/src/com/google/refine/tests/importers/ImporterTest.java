@@ -12,6 +12,7 @@ import java.util.List;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importers.tree.ImportColumnGroup;
@@ -20,12 +21,11 @@ import com.google.refine.importers.tree.XmlImportUtilities;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
-abstract public class ImporterTest extends RefineTest {
+abstract class ImporterTest extends RefineTest {
     //mock dependencies
     protected Project project;
     protected ProjectMetadata metadata;

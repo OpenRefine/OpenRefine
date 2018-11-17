@@ -12,23 +12,24 @@ function EditMetadataDialog(metaData, targetRowElem) {
       }
       
       var td0 = tr.insertCell(0);
+      
+      var keyLable = $.i18n._('core-index')[key] || key;
+      $(td0).text(keyLable);
 
       var td1 = tr.insertCell(1);
-      var keyLable = $.i18n('core-index/'+key) || key;
-      $(td1).text(keyLable);
+      $(td1).text((value !== null) ? value : "");
 
       var td2 = tr.insertCell(2);
-      $(td2).text((value !== null) ? value : "");
       
       if(key==="tags"){
-          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td0).click(function() {
+          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
               var oldTags = $(td1).text().replace("[","").replace("]","");
               oldTags = replaceAll(oldTags,"\"","");
-              var newTags = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, $(td2).text());
+              var newTags = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, $(td1).text());
               newTags = newTags.replace("[","").replace("]","");
               newTags = replaceAll(newTags,"\"","");
               if (newTags !== null) {
-                  $(td2).text(newTags);
+                  $(td1).text(newTags);
                   metaData[key] = newTags;
                   $.ajax({
                       type : "POST",
@@ -52,10 +53,10 @@ function EditMetadataDialog(metaData, targetRowElem) {
               key !== "importOptionMetadata" && 
               key !== "id" &&
               key !== "tags")  {
-          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td0).click(function() {
+          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
             var newValue = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, value);
             if (newValue !== null) {
-              $(td2).text(newValue);
+              $(td1).text(newValue);
               metaData[key] = newValue;
               $.post(
                 "command/core/set-metaData",
@@ -98,7 +99,7 @@ EditMetadataDialog.prototype._createDialog = function() {
   var metadataTable = $("<table>")
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th></th><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
+  .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
   .appendTo(body)[0];
 
     var flattenObject = function(ob, key) {

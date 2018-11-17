@@ -158,9 +158,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable =
       }
       self._updateFileSelectionSummary();
     });
-    if (fileRecord.metaDataFormat) {
-        checkbox.removeAttr("checked").attr("disabled", "disabled");
-    } else if (fileRecord.selected) {
+    if (fileRecord.selected) {
       // Initial selection determined on server side.
       checkbox.attr("checked", "checked");
       self._selectedMap[fileRecord.location] = fileRecord;

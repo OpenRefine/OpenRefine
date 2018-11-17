@@ -9,8 +9,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.io.FileProjectManager;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.ProjectMetadata;
 
 public class FileProjectManagerTests  {
     protected File workspaceDir;

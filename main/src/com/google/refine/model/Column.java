@@ -39,6 +39,13 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,11 +57,6 @@ import com.google.refine.InterProjectModel;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
-import io.frictionlessdata.tableschema.Field;
-import io.frictionlessdata.tableschema.TypeInferrer;
-import io.frictionlessdata.tableschema.exceptions.ConstraintsException;
-import io.frictionlessdata.tableschema.exceptions.InvalidCastException;
-
 public class Column  {
     final private int       _cellIndex;
     final private String    _originalName;
@@ -64,7 +66,7 @@ public class Column  {
     
     // from data package metadata Field.java:
     private String type = "";
-    private String format = Field.FIELD_FORMAT_DEFAULT;
+    private String format = "";
     private String title = "";
     private String description = "";
     private Map<String, Object> constraints = Collections.emptyMap();
@@ -236,24 +238,5 @@ public class Column  {
     @Override
     public String toString() {
         return _name;
-    }
-    
-    public <Any> Any castValue(String value)
-            throws InvalidCastException, ConstraintsException {
-        if (this.type.isEmpty()) {
-            throw new InvalidCastException();
-        } else {
-            try {
-                // Using reflection to invoke appropriate type casting method from the
-                // TypeInferrer class
-                String castMethodName = "cast" + (this.type.substring(0, 1).toUpperCase() + this.type.substring(1));
-                Method method = TypeInferrer.class.getMethod(castMethodName, String.class, String.class, Map.class);
-                Object castValue = method.invoke(TypeInferrer.getInstance(), this.format, value, null);
-
-                return (Any) castValue;
-            } catch (Exception e) {
-                throw new InvalidCastException();
-            }
-        }
     }
 }

@@ -11,7 +11,7 @@ import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryProcess;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 

@@ -39,16 +39,16 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
 import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 /**
@@ -154,7 +154,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        throw new NotImplementedException("project ID:" + project.id);
+        throw new NotImplementedException();
     }
     
     /**

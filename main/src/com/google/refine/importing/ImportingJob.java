@@ -46,8 +46,8 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -144,15 +144,6 @@ public class ImportingJob  {
         synchronized(config) {
             return JSONUtilities.getObject(config,"retrievalRecord");
         }
-    }
-    
-    /**
-     * TO check if the file record is a metadata file entry
-     * @param fileRecordObject
-     * @return ObjectNode
-     */
-    public boolean isMetadataFileRecord(ObjectNode fileRecordObject) {
-        return fileRecordObject.has("metaDataFormat");
     }
     
     @JsonIgnore

@@ -44,11 +44,11 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.refine.model.ModelException;
+import com.google.refine.model.Project;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.TextSearchFacet;
 import com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.ParsingUtilities;

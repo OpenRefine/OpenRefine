@@ -37,7 +37,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
+
+import com.google.refine.ProjectMetadata;
 
 public interface ImportingParser {
     /**

@@ -97,6 +97,7 @@ public class JsonImporterTests extends ImporterTest {
     public void canParseSample(){
         RunTest(getSample());
 
+        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -109,6 +110,7 @@ public class JsonImporterTests extends ImporterTest {
     public void canParseSampleWithDuplicateNestedElements(){
         RunTest(getSampleWithDuplicateNestedElements());
 
+        log(project);
         assertProjectCreated(project, 4, 12);
 
         Row row = project.rows.get(0);
@@ -124,6 +126,7 @@ public class JsonImporterTests extends ImporterTest {
 
         RunTest(getSampleWithLineBreak());
 
+        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(3);
@@ -137,6 +140,7 @@ public class JsonImporterTests extends ImporterTest {
     public void testElementsWithVaryingStructure(){
         RunTest(getSampleWithVaryingStructure());
 
+        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals( project.columnModel.getColumnByCellIndex(4).getName(), JsonImporter.ANONYMOUS + " - genre");
@@ -153,6 +157,7 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void testElementWithNestedTree(){
         RunTest(getSampleWithTreeStructure());
+        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.columnGroups.size(),1);
@@ -176,6 +181,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "recordPath", path);
 
         RunTest(mqlOutput, options);
+        log(project);
         assertProjectCreated(project,3,16);
     }
     
@@ -209,6 +215,7 @@ public class JsonImporterTests extends ImporterTest {
             "    }\n" +
             "]\n";
         RunTest(ScraperwikiOutput);
+        log(project);
         assertProjectCreated(project,9,2);
     }
         
@@ -293,6 +300,7 @@ public class JsonImporterTests extends ImporterTest {
     public void testJsonDatatypes(){
         RunTest(getSampleWithDataTypes());
 
+        log(project);
         assertProjectCreated(project, 2, 21,4);
 
         Assert.assertEquals( project.columnModel.getColumnByCellIndex(0).getName(), JsonImporter.ANONYMOUS + " - id");
@@ -363,6 +371,7 @@ public class JsonImporterTests extends ImporterTest {
         String fileName = "grid_small.json";
         RunComplexJSONTest(getComplexJSON(fileName));
 
+        log(project);
         logger.info("************************ columnu number:" + project.columnModel.columns.size() + 
                 ". \tcolumn groups number:" + project.columnModel.columnGroups.size() + 
                 ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount()) ;

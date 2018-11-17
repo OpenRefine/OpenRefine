@@ -39,9 +39,9 @@ import java.io.InputStream;
 import org.apache.tools.tar.TarOutputStream;
 
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.IMetadata;
 
 /**
  * Stub used to make protected methods public for testing
@@ -83,7 +83,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
         // empty
 
     }
@@ -103,4 +103,5 @@ public class ProjectManagerStub extends ProjectManager {
     protected void saveWorkspace() {
         // empty
     }
+
 }

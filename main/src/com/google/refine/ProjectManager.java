@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.tools.tar.TarOutputStream;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,8 +57,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.IMetadata;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 
@@ -77,6 +74,7 @@ public abstract class ProjectManager {
     
     // Don't spend more than this much time saving projects if doing a quick save
     static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
+
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
     protected Map<String, Integer> _projectsTags;// TagName, number of projects having that tag
@@ -103,8 +101,8 @@ public abstract class ProjectManager {
     transient protected Map<Long, Project> _projects;
 
     static public ProjectManager singleton;
-    
-    protected ProjectManager() {
+
+    protected ProjectManager(){
         _projectsMetadata = new HashMap<Long, ProjectMetadata>();
         _preferenceStore = new PreferenceStore();
         _projects = new HashMap<Long, Project>();
@@ -195,7 +193,7 @@ public abstract class ProjectManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }//FIXME what should be the behaviour if metadata is null? i.e. not found
 
             Project project = getProject(id);
             if (project != null && metadata != null && metadata.getModified().isAfter(project.getLastSave())) {
@@ -204,7 +202,8 @@ public abstract class ProjectManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }//FIXME what should be the behaviour if project is null? i.e. not found or loaded.
+            //FIXME what should happen if the metadata is found, but not the project? or vice versa?
         }
 
     }
@@ -215,7 +214,7 @@ public abstract class ProjectManager {
      * @param projectId
      * @throws Exception
      */
-    public abstract void saveMetadata(IMetadata metadata, long projectId) throws Exception;
+    public abstract void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception;
 
     /**
      * Save project to the data store
@@ -268,23 +267,23 @@ public abstract class ProjectManager {
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
 
                 if (project != null) {
-                    LocalDateTime projectLastSaveTime = project.getLastSave();
                     boolean hasUnsavedChanges =
-                        !metadata.getModified().isBefore(projectLastSaveTime);
+                        metadata.getModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() >= project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                     // We use >= instead of just > to avoid the case where a newly created project
                     // has the same modified and last save times, resulting in the project not getting
                     // saved at all.
 
                     if (hasUnsavedChanges) {
-                        long msecsOverdue = ChronoUnit.MILLIS.between(projectLastSaveTime, startTimeOfSave);
-                        
+                        long msecsOverdue = startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
                         records.add(new SaveRecord(project, msecsOverdue));
+
                     } else if (!project.getProcessManager().hasPending()
-                              && ChronoUnit.MILLIS.between(projectLastSaveTime, startTimeOfSave) > PROJECT_FLUSH_DELAY) {
+                              && startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() > PROJECT_FLUSH_DELAY) {
                         
                         /*
-                         * It's been a while since the project was last saved and it hasn't been
-                         * modified. We can safely remove it from the cache to save some memory.
+                         *  It's been a while since the project was last saved and it hasn't been
+                         *  modified. We can safely remove it from the cache to save some memory.
                          */
                         _projects.remove(id).dispose();
                     }
@@ -310,10 +309,13 @@ public abstract class ProjectManager {
                 "Saving all modified projects ..." :
                 "Saving some modified projects ..."
             );
-             
-            for (int i = 0;i < records.size() &&
-                    (allModified || (ChronoUnit.MILLIS.between(startTimeOfSave, LocalDateTime.now()) < QUICK_SAVE_MAX_TIME));
+
+            for (int i = 0;
+                 i < records.size() &&
+                    (allModified || (LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - 
+                            startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < QUICK_SAVE_MAX_TIME));
                  i++) {
+
                 try {
                     saveProject(records.get(i).project);
                 } catch (Exception e) {
@@ -352,14 +354,14 @@ public abstract class ProjectManager {
 
     /**
      * Gets the project metadata from memory
-     * Requires that the metadata has already been loaded from the data store.
+     * Requires that the metadata has already been loaded from the data store
      * @param id
      * @return
      */
     public ProjectMetadata getProjectMetadata(long id) {
         return _projectsMetadata.get(id);
     }
-    
+
     /**
      * Gets the project metadata from memory
      * Requires that the metadata has already been loaded from the data store
@@ -369,7 +371,7 @@ public abstract class ProjectManager {
     public ProjectMetadata getProjectMetadata(String name) {
         for (ProjectMetadata pm : _projectsMetadata.values()) {
             if (pm.getName().equals(name)) {
-                return  pm;
+                return pm;
             }
         }
         return null;
@@ -421,7 +423,7 @@ public abstract class ProjectManager {
             userMetadataPreference = new JSONArray(userMeta);
         } catch (JSONException e1) {
             logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
-            logger.error(ExceptionUtils.getStackTrace(e1));
+            logger.error(ExceptionUtils.getFullStackTrace(e1));
         }
         
         for (int index = 0; index < userMetadataPreference.length(); index++) {
@@ -466,7 +468,7 @@ public abstract class ProjectManager {
                 JSONObject projectMetaJsonObj = jsonObjArray.getJSONObject(index);
                 projectMetaJsonObj.put("display", false);
             } catch (JSONException e) {
-                logger.error(ExceptionUtils.getStackTrace(e));
+                logger.error(ExceptionUtils.getFullStackTrace(e));
             }
         }
     }
@@ -486,7 +488,7 @@ public abstract class ProjectManager {
     
     /**
      * Gets all the project tags currently held in memory
-     *
+     * 
      * @return
      */
     @JsonIgnore
@@ -494,7 +496,6 @@ public abstract class ProjectManager {
       return _projectsTags;
     }
 
-    
     /**
      * Gets the required project from the data store
      * If project does not already exist in memory, it is loaded from the data store
@@ -603,9 +604,8 @@ public abstract class ProjectManager {
     *
     * @param ps
     */
-   public static void preparePreferenceStore(PreferenceStore ps) {
+   static protected void preparePreferenceStore(PreferenceStore ps) {
        ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }
-
 }

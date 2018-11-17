@@ -256,7 +256,7 @@ public class ReconciledDataExtensionJob {
                     String str = val.getString("str");
                     storeCell(rows, rowindex, colindex, str); 
                 } else if (val.has("float")) {
-                    float v = val.getBigDecimal("float").floatValue();
+                    float v = Float.parseFloat(val.getString("float"));
                     storeCell(rows, rowindex, colindex, v);
                 } else if (val.has("int")) {
                     int v = Integer.parseInt(val.getString("int"));

@@ -54,7 +54,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 
-public class ColumnSplitChange extends ColumnChange {
+public class ColumnSplitChange implements Change {
     final protected String              _columnName;
     
     final protected List<String>        _columnNames;
@@ -116,21 +116,6 @@ public class ColumnSplitChange extends ColumnChange {
         _firstNewCellIndex = firstNewCellIndex;
         _oldRows = oldRows;
         _newRows = newRows;
-    }
-
-    
-    public List<String> getColumnNames() {
-        return _columnNames;
-    }
-
-    
-    public boolean isRemoveOriginalColumn() {
-        return _removeOriginalColumn;
-    }
-
-    
-    public int getColumnIndex() {
-        return _columnIndex;
     }
 
     @Override

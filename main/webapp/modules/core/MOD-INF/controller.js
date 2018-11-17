@@ -65,12 +65,10 @@ function registerCommands() {
   RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
   RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
   RS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
-  RS.registerCommand(module, "project-data-package", new Packages.com.google.refine.commands.project.PackageProjectCommand());
 
   RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
   RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
-  RS.registerCommand(module, "get-imetaData", new Packages.com.google.refine.commands.project.GetMetadataCommand());
   RS.registerCommand(module, "get-all-project-tags", new Packages.com.google.refine.commands.workspace.GetAllProjectTagsCommand());
   RS.registerCommand(module, "set-project-tags", new Packages.com.google.refine.commands.project.SetProjectTagsCommand());
 
@@ -294,8 +292,6 @@ function registerImporting() {
 
   IM.registerMimeType("application/marc", "text/marc");
   
-  IM.registerUrlRewriter(new Packages.com.google.refine.model.metadata.DataPackageUrlRewriter());
-
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
    *  look at the actual files' content, and try to guess a better format.
@@ -342,7 +338,6 @@ function init() {
       "externals/jquery.i18n.js",
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
-      "externals/jsoneditor/jsoneditor.js",
       "externals/select2/select2.min.js",
       "externals/jquery.lavalamp.min.js",
       "externals/jquery.i18n.messagestore.js",
@@ -385,8 +380,7 @@ function init() {
       "scripts/index/parser-interfaces/wikitext-parser-ui.js",
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
-      "scripts/index/edit-metadata-dialog.js",
-      "scripts/project/edit-general-metadata-dialog.js"
+      "scripts/index/edit-metadata-dialog.js"
     ]
   );
 
@@ -402,7 +396,6 @@ function init() {
       "styles/pure.css",
       "styles/util/dialog.less",
       "styles/util/encoding.less",
-      "externals/jsoneditor/jsoneditor.css",
       
       "styles/index.less",
       "styles/index/create-project-ui.less",
@@ -418,7 +411,7 @@ function init() {
       "styles/index/fixed-width-parser-ui.less",
       "styles/index/xml-parser-ui.less",
       "styles/index/json-parser-ui.less",
-      "styles/index/wikitext-parser-ui.less"
+      "styles/index/wikitext-parser-ui.less",
     ]
   );
 
@@ -439,7 +432,6 @@ function init() {
       "externals/jquery.i18n.emitter.js",
       "externals/jquery.i18n.language.js",
       "externals/underscore-min.js",
-      "externals/jsoneditor/jsoneditor.js",
 
       "scripts/project.js",
 
@@ -493,7 +485,6 @@ function init() {
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
-      "scripts/project/edit-general-metadata-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
     ]
   );
@@ -505,7 +496,6 @@ function init() {
       "externals/suggest/css/suggest-4_3.min.css",
       "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
-      "externals/jsoneditor/jsoneditor.css",
 
       "styles/jquery-ui-overrides.less",
       "styles/common.less",

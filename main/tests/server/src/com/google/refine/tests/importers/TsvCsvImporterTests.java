@@ -55,10 +55,10 @@ public class TsvCsvImporterTests extends ImporterTest {
     }
 
     //constants
-    private String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
+    String SAMPLE_ROW = "NDB_No,Shrt_Desc,Water";
 
     //System Under Test
-    private SeparatorBasedImporter SUT = null;
+    SeparatorBasedImporter SUT = null;
 
     @Override
     @BeforeMethod
@@ -590,7 +590,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
     }
 
-    protected void prepareOptions(
+    private void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
         int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
         

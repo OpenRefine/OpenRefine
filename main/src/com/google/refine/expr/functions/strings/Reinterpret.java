@@ -37,11 +37,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 
 public class Reinterpret implements Function {
 

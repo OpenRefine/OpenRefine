@@ -54,9 +54,6 @@ public class LogExpressionCommand extends Command {
             
             ((TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"))
                 .add(expression);
-
-            ((TopList) ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"))
-                .add(expression);
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");

@@ -57,12 +57,9 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.DataPackageMetadata;
-import com.google.refine.model.metadata.IMetadata;
-import com.google.refine.model.metadata.MetadataFormat;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
@@ -127,6 +124,7 @@ public class FileProjectManager extends ProjectManager  {
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
+            
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
                 if (_projectsTags == null) {
@@ -161,7 +159,7 @@ public class FileProjectManager extends ProjectManager  {
             untar(destDir, inputStream);
         }
     }
-        
+
     protected void untar(File destDir, InputStream inputStream) throws IOException {
         TarInputStream tin = new TarInputStream(inputStream);
         TarEntry tarEntry = null;
@@ -237,21 +235,9 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     @Override
-    public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
-        
-        if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) {
-            Project project = ProjectManager.singleton.getProject(projectId);
-            ((ProjectMetadata)metadata).setRowCount(project.rows.size());
-            ProjectMetadataUtilities.save(metadata, projectDir);
-        } else if (metadata.getFormatName() == MetadataFormat.DATAPACKAGE_METADATA) {
-            DataPackageMetadata dp = (DataPackageMetadata)metadata;
-            FileWriter writer = new FileWriter(new File(projectDir, DataPackageMetadata.DEFAULT_FILE_NAME));
-            ParsingUtilities.defaultWriter.writeValue(writer, dp);
-            writer.close();
-        }
-        
-        logger.info("metadata saved in " + metadata.getFormatName());
+        ProjectMetadataUtilities.save(metadata, projectDir);
     }
 
     @Override
@@ -331,6 +317,8 @@ public class FileProjectManager extends ProjectManager  {
         return saveWasNeeded;
     }
 
+
+
     @Override
     public void deleteProject(long projectID) {
         synchronized (this) {
@@ -371,6 +359,8 @@ public class FileProjectManager extends ProjectManager  {
     
     protected boolean loadFromFile(File file) {
         logger.info("Loading workspace: {}", file.getAbsolutePath());
+
+        _projectsMetadata.clear();
 
         boolean found = false;
 

@@ -35,6 +35,7 @@ package com.google.refine.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -46,23 +47,26 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.refine.ProjectMetadata;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.IMetadata;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.ParsingUtilities;
+
 
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
-    
-    public static void save(IMetadata projectMeta, File projectDir) throws JSONException, IOException  {
-        File tempFile = new File(projectDir, ProjectMetadata.TEMP_FILE_NAME);
+
+    public static void save(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+        File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
 
-        File file = new File(projectDir, ProjectMetadata.DEFAULT_FILE_NAME);
-        File oldFile = new File(projectDir, ProjectMetadata.OLD_FILE_NAME);
+        File file = new File(projectDir, "metadata.json");
+        File oldFile = new File(projectDir, "metadata.old.json");
 
         if (oldFile.exists()) {
             oldFile.delete();
@@ -75,7 +79,7 @@ public class ProjectMetadataUtilities {
         tempFile.renameTo(file);
     }
     
-    protected static void saveToFile(IMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
+    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
             ParsingUtilities.defaultWriter.writeValue(writer, projectMeta);
@@ -157,8 +161,8 @@ public class ProjectMetadataUtilities {
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {
-        ProjectMetadata projectMetaData =  new ProjectMetadata();
-        projectMetaData.loadFromFile(metadataFile);
-        return projectMetaData;
+        FileReader reader = new FileReader(metadataFile);
+        return ProjectMetadata.loadFromStream(reader);
+
     }
 }

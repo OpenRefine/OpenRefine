@@ -52,12 +52,12 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
@@ -196,7 +196,7 @@ public abstract class Command {
      * @return
      * @throws ServletException
      */
-    protected ProjectMetadata getMetadata(HttpServletRequest request) throws ServletException {
+    protected ProjectMetadata getProjectMetadata(HttpServletRequest request) throws ServletException {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
@@ -320,20 +320,7 @@ public abstract class Command {
         w.flush();
         w.close();
     }
-    
-    static protected void respondJSONObject(
-            HttpServletResponse response, JSONObject o)
-            throws IOException, JSONException {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
-        response.setHeader("Cache-Control", "no-cache");
 
-        Writer w = response.getWriter();
-        w.append(o.toString());
-        w.flush();
-        w.close();
-    }
-    
     static protected void respondException(HttpServletResponse response, Exception e)
         throws IOException, ServletException {
 
