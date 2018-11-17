@@ -1,0 +1,51 @@
+{
+    "database-import": {
+        "title": "Databasetjenere",
+        "preparing": "Forbereder resultat …",
+        "checking": "Validerer spørring …",
+        "creating": "Oppretter prosjekt …"
+    },
+    "database-source": {
+        "alert-host": "Du må angi en databasevert",
+        "alert-port": "Du må angi en databaseport",
+        "alert-user": "Du må angi en databasebruker",
+        "alert-password": "Du må angi et databasepassord",
+        "alert-connection-name": "Du må angi et tilkoblingsnavn",
+        "alert-initial-database": "Du må angi en initiell database",
+        "alert-query": "Du må angi en gyldig spørring",
+        "alert-invalid-query-select": "Spørringen må starte med nøkkelordet SELECT",
+        "alert-connection-edit": "Tilkoblingen ble redigert",
+        "connectionNameLabel": "Navn:",
+        "databaseTypeLabel": "Type:",
+        "databaseHostLabel": "Vert:",
+        "databasePortLabel": "Port:",
+        "databaseUserLabel": "Bruker:",
+        "databasePasswordLabel": "Passord:",
+        "databaseNameLabel": "Database:",
+        "databaseSchemaLabel": "Skjema:",
+        "databaseTestButton": "Test",
+        "databaseSaveButton": "Lagre",
+        "databaseConnectButton": "Koble til",
+        "newConnectionButtonDiv": "Ny tilkobling",
+        "savedConnectionSpan": "Lagrede tilkoblinger"
+    },
+    "database-parsing": {
+        "start-over": "&laquo; Begynn på nytt",
+        "conf-pars": "Konfigurer tolkningsinnstillinger",
+        "proj-name": "Prosjektnavn",
+        "create-proj": "Opprett prosjekt &raquo;",
+        "updating-preview": "Oppdaterer forhåndsvisning …",
+        "option": "Innstillinger",
+        "preview-button": "Oppdater&nbsp;forhåndsvisning",
+        "ignore-first": "Ignorer første",
+        "ignore": "linje(r) i begynnelsen av fila",
+        "parse-next": "Tolk neste",
+        "parse": "linje(r) som kolonneoverskrifter",
+        "discard-next": "Forkast de første",
+        "discard": "raden(e) med data",
+        "limit-next": "Last maksimalt",
+        "limit": "rad(er) med data",
+        "store-row": "Lagre blanke rader",
+        "store-cell": "Lagre blanke celler som null"
+    }
+}
