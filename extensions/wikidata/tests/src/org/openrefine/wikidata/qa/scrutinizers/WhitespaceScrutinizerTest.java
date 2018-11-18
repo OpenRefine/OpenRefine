@@ -34,18 +34,6 @@ public class WhitespaceScrutinizerTest extends ValueScrutinizerTest {
     }
 
     @Test
-    public void testLeadingWhitespace() {
-        scrutinize(Datamodel.makeStringValue(" a"));
-        assertWarningsRaised(WhitespaceScrutinizer.leadingWhitespaceType);
-    }
-
-    @Test
-    public void testTrailingWhitespace() {
-        scrutinize(Datamodel.makeStringValue("a\t"));
-        assertWarningsRaised(WhitespaceScrutinizer.trailingWhitespaceType);
-    }
-
-    @Test
     public void testDuplicateWhitespace() {
         scrutinize(Datamodel.makeStringValue("a\t b"));
         assertWarningsRaised(WhitespaceScrutinizer.duplicateWhitespaceType);
@@ -65,14 +53,13 @@ public class WhitespaceScrutinizerTest extends ValueScrutinizerTest {
 
     @Test
     public void testMultipleIssues() {
-        scrutinize(Datamodel.makeStringValue(" a\t b "));
-        assertWarningsRaised(WhitespaceScrutinizer.duplicateWhitespaceType, WhitespaceScrutinizer.leadingWhitespaceType,
-                WhitespaceScrutinizer.trailingWhitespaceType);
+        scrutinize(Datamodel.makeStringValue("a\t b\u0003"));
+        assertWarningsRaised(WhitespaceScrutinizer.duplicateWhitespaceType, WhitespaceScrutinizer.nonPrintableCharsType);
     }
 
     @Test
     public void testMonolingualTextValue() {
-        scrutinizeLabel(Datamodel.makeMonolingualTextValue(" a", "fr"));
-        assertWarningsRaised(WhitespaceScrutinizer.leadingWhitespaceType);
+        scrutinizeLabel(Datamodel.makeMonolingualTextValue("a  b", "fr"));
+        assertWarningsRaised(WhitespaceScrutinizer.duplicateWhitespaceType);
     }
 }

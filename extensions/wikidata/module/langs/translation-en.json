@@ -2,9 +2,11 @@
         "wikidata-extension": {
                 "menu-label": "Wikidata",
                 "edit-wikidata-schema": "Edit Wikidata schema",
+                "import-wikidata-schema": "Import schema",
                 "manage-wikidata-account": "Manage Wikidata account",
                 "perform-edits-on-wikidata": "Upload edits to Wikidata",
                 "export-to-qs": "Export to QuickStatements",
+                "export-schema": "Export schema",
                 "quickstatements-export-name": "QuickStatements"
         },
         "wikidata-schema": {
@@ -78,6 +80,13 @@
                 "perform-edits": "Upload edits",
                 "cancel": "Cancel",
                 "analyzing-edits": "Analyzing your edits..."
+        },
+        "import-wikibase-schema": {
+                "dialog-header": "Import Wikidata schema",
+                "file-label": "From JSON file: ",
+                "schema-label": "Or from JSON text:",
+                "invalid-schema": "Invalid Wikibase schema.",
+                "import": "Import"
         },
         "warnings-messages": {
                 "new-item-created": {
@@ -168,14 +177,6 @@
                 "monolingual-text-without-language": {
                         "title": "No language provided for monolingual text.",
                         "body": "Some label, description, alias or monolingual text value have been skipped because no language was provided. Example value: <span class=\"wb-issue-preformat\">{example_text}</span>."
-                },
-                "leading-whitespace": {
-                        "title": "Leading whitespace in strings.",
-                        "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> have leading whitespace."
-                },
-                "trailing-whitespace": {
-                        "title": "Trailing whitespace in strings.",
-                        "body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> have trailing whitespace."
                 },
                 "duplicate-whitespace": {
                         "title": "Duplicate whitespace in strings.",

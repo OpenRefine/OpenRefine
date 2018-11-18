@@ -2,10 +2,8 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.openrefine</groupId>
   <artifactId>wikidata</artifactId>
   <packaging>jar</packaging>
-  <version>3.1-SNAPSHOT</version>
 
   <name>OpenRefine - Wikidata extension</name>
   <description>Schema alignment and data upload for Wikidata</description>

@@ -130,7 +130,8 @@ EditRenderer._renderStatement = function(json, container) {
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
 
   if (json.qualifiers) {
-    for (var pid in json.qualifiers) {
+    for (var pid_id in json['qualifiers-order']) {
+      var pid = json['qualifiers-order'][pid_id];
       if (json.qualifiers.hasOwnProperty(pid)) {
         var qualifiers = json.qualifiers[pid];
         for (var i = 0; i != qualifiers.length; i++) {

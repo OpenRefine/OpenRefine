@@ -20,6 +20,11 @@ public class WbStringConstantTest extends WbExpressionTest<StringValue> {
         evaluatesTo(Datamodel.makeStringValue("hello world"), constant);
     }
     
+    @Test
+    public void testTrim() {
+        evaluatesTo(Datamodel.makeStringValue("hello world"), new WbStringConstant(" hello world "));
+    }
+    
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testEmpty() {
         new WbStringConstant("");

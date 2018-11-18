@@ -36,8 +36,10 @@ function init() {
      */
     var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
     var QSExporter = Packages.org.openrefine.wikidata.exporters.QuickStatementsExporter;
+    var SchemaExporter = Packages.org.openrefine.wikidata.exporters.SchemaExporter;
     
     ExporterRegistry.registerExporter("quickstatements", new QSExporter());
+    ExporterRegistry.registerExporter("wikibase-schema", new SchemaExporter());
 
     /*
      * Commands
@@ -62,6 +64,7 @@ function init() {
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",
+        "scripts/dialogs/import-schema-dialog.js",
         "scripts/jquery.uls.data.js",
       ]);
 
@@ -71,6 +74,7 @@ function init() {
       [
         "styles/dialogs/schema-alignment-dialog.css",
         "styles/dialogs/manage-account-dialog.less",
+        "styles/dialogs/import-schema-dialog.less",
         "styles/dialogs/perform-edits.less",
       ]);
    

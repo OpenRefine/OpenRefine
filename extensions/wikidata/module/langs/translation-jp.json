@@ -5,7 +5,9 @@
         "manage-wikidata-account": "Wikidataアカウントの管理",
         "perform-edits-on-wikidata": "Wikidataへアップロード",
         "export-to-qs": "クイック・ステートメントへ出力",
-        "quickstatements-export-name": "クイック・ステートメント"
+        "quickstatements-export-name": "クイック・ステートメント",
+        "import-wikidata-schema": "スキーマのインポート",
+        "export-schema": "スキーマのエクスポート"
     },
     "wikidata-schema": {
         "dialog-header": "Wikidataにアライン",
@@ -180,14 +182,6 @@
             "title": "言語指定がありません.",
             "body": "言語指定がないので、ラベル・記述・別名・単一言語テキストが無視されました。例えば: <span class=\"wb-issue-preformat\">{example_text}</span>."
         },
-        "leading-whitespace": {
-            "title": "文頭に空白文字があります.",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文頭に空白文字があります."
-        },
-        "trailing-whitespace": {
-            "title": "文末に空白文字があります.",
-            "body": "<span class=\"wb-issue-preformat\">{example_string}</span>の文末に空白文字があります."
-        },
         "duplicate-whitespace": {
             "title": "二重の空白文字があります.",
             "body": "<span class=\"wb-issue-preformat\">{example_string}</span>には二重の空白文字があります."
@@ -252,5 +246,12 @@
             "title": "アイテムに使われる{property_entity}",
             "body": "{example_entity}のようなアイテムに{property_entity}を使うことは無効です."
         }
+    },
+    "import-wikibase-schema": {
+        "dialog-header": "Wikidataスキーマのインポート",
+        "file-label": "JSONファイル: ",
+        "schema-label": "あるいは、JSONテキスト:",
+        "invalid-schema": "無効のWikidataスキーマです。",
+        "import": "インポート"
     }
 }

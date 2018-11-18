@@ -43,6 +43,12 @@ public class WbMonolingualExprTest extends WbExpressionTest<MonolingualTextValue
         setRow("en", "hello");
         evaluatesTo(Datamodel.makeMonolingualTextValue("hello", "en"), expr);
     }
+    
+    @Test
+    public void testTrim() {
+        setRow("en", " hello ");
+        evaluatesTo(Datamodel.makeMonolingualTextValue("hello", "en"), expr);
+    }
 
     @Test
     public void testInvalidLanguageCode() {
