@@ -68,7 +68,7 @@ public class SelectHtml implements Function {
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Selects an element from an HTML elementn using selector syntax");
+        writer.key("description"); writer.value("Selects an element from an HTML element using selector syntax");
         writer.key("params"); writer.value("Element e, String s");
         writer.key("returns"); writer.value("HTML Elements");
         writer.endObject();
