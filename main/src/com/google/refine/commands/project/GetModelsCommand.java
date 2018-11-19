@@ -41,8 +41,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpHeadersSupport;
@@ -113,30 +111,26 @@ public class GetModelsCommand extends Command {
             project = getProject(request);
         }
         
-        try {
-            response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
 
-            Map<String, LanguageInfo> prefixesMap = new HashMap<>();
-            for (String languagePrefix : MetaParser.getLanguagePrefixes()) {
-                LanguageInfo info = MetaParser.getLanguageInfo(languagePrefix);
-                prefixesMap.put(languagePrefix, info);
-            }
-            
-            Map<String, HttpHeaderInfo> headersMap = new HashMap<>();
-            for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
-                HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
-                headersMap.put(headerLabel, info);
-            }
-
-            respondJSON(response, new ModelsResponse(
-                    project.columnModel,
-                    project.recordModel,
-                    project.overlayModels,
-                    prefixesMap,
-                    headersMap));
-        } catch (JSONException e) {
-            HttpUtilities.respondException(response, e);
+        Map<String, LanguageInfo> prefixesMap = new HashMap<>();
+        for (String languagePrefix : MetaParser.getLanguagePrefixes()) {
+            LanguageInfo info = MetaParser.getLanguageInfo(languagePrefix);
+            prefixesMap.put(languagePrefix, info);
         }
+        
+        Map<String, HttpHeaderInfo> headersMap = new HashMap<>();
+        for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
+            HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
+            headersMap.put(headerLabel, info);
+        }
+
+        respondJSON(response, new ModelsResponse(
+                project.columnModel,
+                project.recordModel,
+                project.overlayModels,
+                prefixesMap,
+                headersMap));
     }
 
 }

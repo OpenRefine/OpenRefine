@@ -45,8 +45,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -110,21 +108,16 @@ public class DefaultImportingController implements ImportingController {
         }
         
         job.updating = true;
-        try {
-            ObjectNode config = job.getOrCreateDefaultConfig();
-            if (!("new".equals(JSONUtilities.getString(config, "state", null)))) {
-                HttpUtilities.respond(response, "error", "Job already started; cannot load more data");
-                return;
-            }
-            
-            ImportingUtilities.loadDataAndPrepareJob(
-                request, response, parameters, job, config);
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        } finally {
-            job.touch();
-            job.updating = false;
+        ObjectNode config = job.getOrCreateDefaultConfig();
+        if (!("new".equals(JSONUtilities.getString(config, "state", null)))) {
+            HttpUtilities.respond(response, "error", "Job already started; cannot load more data");
+            return;
         }
+        
+        ImportingUtilities.loadDataAndPrepareJob(
+            request, response, parameters, job, config);
+        job.touch();
+        job.updating = false;
     }
     
     private void doUpdateFileSelection(HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -138,25 +131,20 @@ public class DefaultImportingController implements ImportingController {
         }
         
         job.updating = true;
-        try {
-            ObjectNode config = job.getOrCreateDefaultConfig();
-            if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
-                HttpUtilities.respond(response, "error", "Job not ready");
-                return;
-            }
-            
-            ArrayNode fileSelectionArray = ParsingUtilities.evaluateJsonStringToArrayNode(
-                    request.getParameter("fileSelection"));
-            
-            ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
-            
-            replyWithJobData(request, response, job);
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        } finally {
-            job.touch();
-            job.updating = false;
+        ObjectNode config = job.getOrCreateDefaultConfig();
+        if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
+            HttpUtilities.respond(response, "error", "Job not ready");
+            return;
         }
+        
+        ArrayNode fileSelectionArray = ParsingUtilities.evaluateJsonStringToArrayNode(
+                request.getParameter("fileSelection"));
+        
+        ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
+        
+        replyWithJobData(request, response, job);
+        job.touch();
+        job.updating = false;
     }
     
     private void doUpdateFormatAndOptions(HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -170,50 +158,45 @@ public class DefaultImportingController implements ImportingController {
         }
         
         job.updating = true;
+        ObjectNode config = job.getOrCreateDefaultConfig();
+        if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
+            HttpUtilities.respond(response, "error", "Job not ready");
+            return;
+        }
+        
+        String format = request.getParameter("format");
+        ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+                request.getParameter("options"));
+        
+        List<Exception> exceptions = new LinkedList<Exception>();
+        
+        ImportingUtilities.previewParse(job, format, optionObj, exceptions);
+        
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
-            ObjectNode config = job.getOrCreateDefaultConfig();
-            if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
-                HttpUtilities.respond(response, "error", "Job not ready");
-                return;
+            writer.writeStartObject();
+            if (exceptions.size() == 0) {
+                job.project.update(); // update all internal models, indexes, caches, etc.
+                
+                writer.writeStringField("status", "ok");
+            } else {
+                writer.writeStringField("status", "error");
+                writer.writeArrayFieldStart("errors");
+                writeErrors(writer, exceptions);
+                writer.writeEndArray();
             }
-            
-            String format = request.getParameter("format");
-            ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
-                    request.getParameter("options"));
-            
-            List<Exception> exceptions = new LinkedList<Exception>();
-            
-            ImportingUtilities.previewParse(job, format, optionObj, exceptions);
-            
-            Writer w = response.getWriter();
-            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            try {
-                writer.writeStartObject();
-                if (exceptions.size() == 0) {
-                    job.project.update(); // update all internal models, indexes, caches, etc.
-                    
-                    writer.writeStringField("status", "ok");
-                } else {
-                    writer.writeStringField("status", "error");
-                    writer.writeArrayFieldStart("errors");
-                    writeErrors(writer, exceptions);
-                    writer.writeEndArray();
-                }
-                writer.writeEndObject();
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                throw new ServletException(e);
-            } finally {
-                w.flush();
-                w.close();
-            }
-        } catch (JSONException e) {
+            writer.writeEndObject();
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
             throw new ServletException(e);
         } finally {
-            job.touch();
-            job.updating = false;
+            w.flush();
+            w.close();
         }
+        job.touch();
+        job.updating = false;
     }
     
     private void doInitializeParserUI(HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -253,25 +236,21 @@ public class DefaultImportingController implements ImportingController {
         
         job.updating = true;
         job.touch();
-        try {
-            ObjectNode config = job.getOrCreateDefaultConfig();
-            if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
-                HttpUtilities.respond(response, "error", "Job not ready");
-                return;
-            }
-            
-            String format = request.getParameter("format");
-            ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
-                    request.getParameter("options"));
-            
-            List<Exception> exceptions = new LinkedList<Exception>();
-            
-            ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
-            
-            HttpUtilities.respond(response, "ok", "done");
-        } catch (JSONException e) {
-            throw new ServletException(e);
+        ObjectNode config = job.getOrCreateDefaultConfig();
+        if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
+            HttpUtilities.respond(response, "error", "Job not ready");
+            return;
         }
+        
+        String format = request.getParameter("format");
+        ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+                request.getParameter("options"));
+        
+        List<Exception> exceptions = new LinkedList<Exception>();
+        
+        ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
+        
+        HttpUtilities.respond(response, "ok", "done");
     }
     
     protected static class JobResponse {

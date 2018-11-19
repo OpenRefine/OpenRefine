@@ -6,8 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
@@ -37,8 +35,6 @@ public class SetProjectMetadataCommand extends Command {
             ProjectManager.singleton.saveMetadata(meta, project.id);
             
             respond(response, "{ \"code\" : \"ok\" }");
-        } catch (JSONException e) {
-            respondException(response, e);
         } catch (Exception e) {
             respondException(response, e);
         }
