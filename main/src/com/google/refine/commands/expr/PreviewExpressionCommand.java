@@ -44,14 +44,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -139,8 +139,8 @@ public class PreviewExpressionCommand extends Command {
                 }
             }
             
-            JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
-            int length = rowIndices.length();
+            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
+            int length = rowIndices.size();
             
             try {
                 Evaluable eval = MetaParser.parse(expression);
@@ -150,7 +150,7 @@ public class PreviewExpressionCommand extends Command {
                 for (int i = 0; i < length; i++) {
                     Object result = null;
                     
-                    int rowIndex = rowIndices.getInt(i);
+                    int rowIndex = rowIndices.get(i);
                     if (rowIndex >= 0 && rowIndex < project.rows.size()) {
                         Row row = project.rows.get(rowIndex);
                         Cell cell = row.getCell(cellIndex);
@@ -202,7 +202,7 @@ public class PreviewExpressionCommand extends Command {
         }
     }
     
-    static protected void writeValue(StringBuffer sb, Object v, boolean quote) throws JSONException {
+    static protected void writeValue(StringBuffer sb, Object v, boolean quote) {
         if (ExpressionUtils.isError(v)) {
             sb.append("[error: " + ((EvalError) v).message + "]");
         } else {
@@ -213,10 +213,10 @@ public class PreviewExpressionCommand extends Command {
                     sb.append("[object Cell]");
                 } else if (v instanceof WrappedRow) {
                     sb.append("[object Row]");
-                } else if (v instanceof JSONObject) {
-                   sb.append(((JSONObject) v).toString());
-                } else if (v instanceof JSONArray) {
-                    sb.append(((JSONArray) v).toString());
+                } else if (v instanceof ObjectNode) {
+                   sb.append(((ObjectNode) v).toString());
+                } else if (v instanceof ArrayNode) {
+                    sb.append(((ArrayNode) v).toString());
                 } else if (ExpressionUtils.isArray(v)) {
                     Object[] a = (Object[]) v;
                     sb.append("[ ");
@@ -244,7 +244,11 @@ public class PreviewExpressionCommand extends Command {
                             ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
                 } else if (v instanceof String) {
                     if (quote) {
-                        sb.append(JSONObject.quote((String) v));
+                        try {
+							sb.append(ParsingUtilities.mapper.writeValueAsString(((String) v)));
+						} catch (JsonProcessingException e) {
+							// will not happen
+						}
                     } else {
                         sb.append((String) v);
                     }
