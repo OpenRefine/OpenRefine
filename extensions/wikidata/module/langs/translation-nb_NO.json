@@ -69,7 +69,7 @@
         "log-in": "Logg inn",
         "logged-in-as": "Du er innlogget som:",
         "log-out": "Logg ut",
-        "connecting-to-wikidata": "Kobler til Wikidata…"
+        "connecting-to-wikidata": "Kobler til Wikidata …"
     },
     "perform-wikidata-edits": {
         "dialog-header": "Last opp redigeringer på Wikidata",
@@ -79,7 +79,7 @@
         "edit-summary-placeholder": "noen ord som beskriver redigeringene dine",
         "perform-edits": "Last opp redigeringer",
         "cancel": "Avbryt",
-        "analyzing-edits": "Analyserer redigeringene dine…"
+        "analyzing-edits": "Analyserer redigeringene dine …"
     },
     "import-wikibase-schema": {
         "dialog-header": "Importer Wikidata-skjema",
@@ -154,7 +154,7 @@
             "body": "Denne egenskapet forventes brukt maks én gang per element, men har blitt lagt til flere ganger i samme element, for eksempel i {example_entity}."
         },
         "identical-values-for-distinct-valued-property": {
-            "title": "Identiske verdier for {property_entity}.",
+            "title": "Identiske verdier for {property_entity}",
             "body": "Denne egenskapen bør ha distinkte verdier, men samme verdi ble funnet i for eksempel {item1_entity} og {item2_entity}."
         },
         "no-edit-generated": {
@@ -182,8 +182,8 @@
             "body": "Strenger som <span class=\"wb-issue-preformat\">{example_string}</span> inneholder dobbelt mellomrom."
         },
         "non-printable-characters": {
-            "title": "Utrykkbare tegn i strenger.",
-            "body": "Strenger som <span class=\"wb-issue-preformat\">{example_string}</span> inneholder utrykkbare tegn."
+            "title": "Ikke-trykkbare tegn i strenger.",
+            "body": "Strenger som <span class=\"wb-issue-preformat\">{example_string}</span> inneholder ikke-trykkbare tegn."
         },
         "invalid-identifier-space": {
             "title": "Ugyldig identifikatorrom for avstemte celler.",
@@ -211,11 +211,11 @@
         },
         "bounds-disallowed": {
             "title": "Kvantitetsgrenser gitt for {property_entity}",
-            "body": "Verdier forventes å ikke ha usikkerhetsgrenser, men <span class=\"wb-issue-preformat\">{example_value}</span> lagt til i {example_item_entity} har det. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manualen</a> for å lære hvordan man fikser deres format."
+            "body": "Verdier forventes å ikke ha usikkerhetsgrenser, men <span class=\"wb-issue-preformat\">{example_value}</span> lagt til i {example_item_entity} har det. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manualen</a> for å lære hvordan man fikser formatet."
         },
         "values-should-be-integers": {
             "title": "Verdier som ikke er heltall for {property_entity}",
-            "body": "Verdier forventes å være heltall, men <span class=\"wb-issue-preformat\">{example_value}</span> lagt til i {example_item_entity} har desimaler. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manualen</a> for å finne ut hvordan man fikser deres format."
+            "body": "Verdier forventes å være heltall, men <span class=\"wb-issue-preformat\">{example_value}</span> lagt til i {example_item_entity} har desimaler. Se <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Quantities\" target=\"_blank\">manualen</a> for å finne ut hvordan man fikser formatet."
         },
         "invalid-unit": {
             "title": "{property_entity} med ugyldige enheter",
