@@ -25,7 +25,7 @@ import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
-abstract class ImporterTest extends RefineTest {
+public abstract class ImporterTest extends RefineTest {
     //mock dependencies
     protected Project project;
     protected ProjectMetadata metadata;

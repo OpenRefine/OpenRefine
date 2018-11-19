@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.commands.project;
 
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,9 +46,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -56,11 +53,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.project.SetProjectMetadataCommand;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 public class SetProjectMetadataCommandTests extends RefineTest {
 
@@ -86,7 +86,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
     PrintWriter pw = null;
 
     @BeforeMethod
-    public void SetUp() throws JSONException {
+    public void SetUp() throws IOException {
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
         proj = mock(Project.class);
@@ -97,7 +97,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         SUT = new SetProjectMetadataCommand();
         
         ProjectMetadata metadata = new ProjectMetadata();
-        metadata.setUserMetadata(new JSONArray("[ {name: clientID, display: true} ]"));
+        metadata.setUserMetadata((ArrayNode) ParsingUtilities.mapper.readTree("[ {name: \"clientID\", display: true} ]"));
         
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
@@ -162,7 +162,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
      * @throws JSONException 
      */
     @Test
-    public void setUserMetadataFieldTest() throws JSONException {
+    public void setUserMetadataFieldTest() {
         when(request.getParameter("name")).thenReturn("clientID");
         when(request.getParameter("value")).thenReturn("IBM");
         
@@ -189,9 +189,9 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         }
         verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
         
-        JSONObject obj = (JSONObject) proj.getMetadata().getUserMetadata().get(0);
-        Assert.assertEquals(obj.get("name"), "clientID");
-        Assert.assertEquals(obj.get("value"), "IBM");
+        ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
+        Assert.assertEquals(obj.get("name").asText(), "clientID");
+        Assert.assertEquals(obj.get("value").asText(), "IBM");
     }
     
      @Test

@@ -66,7 +66,7 @@ public class Column  {
     
     // from data package metadata Field.java:
     private String type = "";
-    private String format = "";
+    private String format = "default";
     private String title = "";
     private String description = "";
     private Map<String, Object> constraints = Collections.emptyMap();
