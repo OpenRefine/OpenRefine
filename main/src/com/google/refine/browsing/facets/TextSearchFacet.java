@@ -35,8 +35,6 @@ package com.google.refine.browsing.facets;
 
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
@@ -138,7 +136,7 @@ public class TextSearchFacet implements Facet {
                             _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
-                    throw new JSONException(err.getUserMessage());
+                    throw new IllegalArgumentException(err.getUserMessage());
                 }
             } else if (!_config._caseSensitive) {
                 _query = _query.toLowerCase();
