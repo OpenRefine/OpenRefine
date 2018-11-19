@@ -41,6 +41,7 @@ import org.json.JSONException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -75,7 +76,7 @@ public class Join implements Function {
                                 sb.append(separator);
                             }
                             try {
-                                sb.append(a.get(i).toString());
+                                sb.append(JsonValueConverter.convert(a.get(i)).toString());
                             } catch (JSONException e) {
                                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
                                     " cannot retrieve element " + i + " of array");

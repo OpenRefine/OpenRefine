@@ -179,6 +179,12 @@ public class GrelTests extends RefineTest {
         Evaluable eval = MetaParser.parse("grel:" + test);
         Assert.assertNull(eval.evaluate(bindings));
     }
+    
+    @Test
+    public void testJoinJsonArray() throws ParsingException {
+        String test[] = { "\"{\\\"values\\\":[\\\"one\\\",\\\"two\\\",\\\"three\\\"]}\".parseJson().values.join(\",\")", "one,two,three" };
+        parseEval(bindings, test);
+    }
 
     @Test
     public void testGetFieldFromNull() throws ParsingException {
