@@ -125,6 +125,20 @@ public class SerializationFilters {
         }       
     }
     
+    public static class OffsetDateDeserializer extends StdDeserializer<OffsetDateTime> {
+        private static final long serialVersionUID = 93872874L;
+
+        public OffsetDateDeserializer() {
+            super(OffsetDateTime.class);
+        }
+
+		@Override
+		public OffsetDateTime deserialize(JsonParser p, DeserializationContext ctxt)
+				throws IOException, JsonProcessingException {
+			return ParsingUtilities.stringToDate(p.getValueAsString());
+		}       
+    }
+    
     public static class LocalDateDeserializer extends StdDeserializer<LocalDateTime> {
         private static final long serialVersionUID = 93872874L;
 

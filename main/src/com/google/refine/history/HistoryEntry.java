@@ -33,18 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.history;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -55,7 +59,7 @@ import com.google.refine.util.ParsingUtilities;
  * This is the metadata of a Change. It's small, so we can load it in order to
  * obtain information about a change without actually loading the change.
  */
-public class HistoryEntry  {
+public class HistoryEntry {
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
     @JsonProperty("id")
     final public long   id;
@@ -92,6 +96,19 @@ public class HistoryEntry  {
 
     static public long allocateID() {
         return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
+    }
+    
+    @JsonCreator
+    protected HistoryEntry(
+    		@JsonProperty("id")
+    		long id,
+    		@JacksonInject("projectID")
+    		long projectID,
+    		@JsonProperty("description")
+    		String description,
+    		@JsonProperty(OPERATION)
+    		AbstractOperation operation) {
+    	this(id,projectID,description,operation,OffsetDateTime.now(ZoneId.of("Z")));
     }
 
     public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
@@ -152,21 +169,13 @@ public class HistoryEntry  {
         getChange().revert(project);
     }
 
-    static public HistoryEntry load(Project project, String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-
-        AbstractOperation operation = null;
-        if (obj.has(OPERATION) && !obj.isNull(OPERATION)) {
-            operation = ParsingUtilities.mapper.readValue(obj.getJSONObject(OPERATION).toString(), AbstractOperation.class);
-        }
-
-        return new HistoryEntry(
-            obj.getLong("id"),
-            project.id,
-            obj.getString("description"),
-            operation,
-            ParsingUtilities.stringToDate(obj.getString("time"))
-        );
+    static public HistoryEntry load(Project project, String s) throws IOException {
+    	ObjectMapper mapper = ParsingUtilities.mapper.copy();
+    	InjectableValues injection = new InjectableValues.Std()
+				.addValue("projectID", project.id);
+    	mapper.setInjectableValues(injection);
+    	
+    	return mapper.readValue(s, HistoryEntry.class);
     }
 
     public void delete(){

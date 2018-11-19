@@ -84,6 +84,7 @@ public class ParsingUtilities {
         module.addSerializer(double.class, new SerializationFilters.DoubleSerializer());
         module.addSerializer(OffsetDateTime.class, new SerializationFilters.OffsetDateSerializer());
         module.addSerializer(LocalDateTime.class, new SerializationFilters.LocalDateSerializer());
+        module.addDeserializer(OffsetDateTime.class, new SerializationFilters.OffsetDateDeserializer());
         module.addDeserializer(LocalDateTime.class, new SerializationFilters.LocalDateDeserializer());
         
         mapper.registerModule(module);
