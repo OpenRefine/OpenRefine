@@ -50,6 +50,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
+import com.google.refine.expr.util.JsonValueConverter;
 
 
 public class JSONUtilities {
@@ -476,5 +477,16 @@ public class JSONUtilities {
 
 	public static JSONObject objectNodeToJsonNode(ObjectNode fieldJsonObj) {
 		return new JSONObject(fieldJsonObj.toString());
+	}
+
+	public static Object[] toArray(ArrayNode v) {
+		if (v == null) {
+			return null;
+		}
+		Object[] result = new Object[v.size()];
+		for (int i = 0; i != v.size(); i++) {
+			result[i] = JsonValueConverter.convert(v.get(i));
+		}
+		return result;
 	}
 }

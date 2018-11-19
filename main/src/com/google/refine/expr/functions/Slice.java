@@ -36,9 +36,7 @@ package com.google.refine.expr.functions;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.Function;
@@ -53,14 +51,14 @@ public class Slice implements Function {
             Object to = (args.length == 3) ? args[2] : null;
             
             if (v != null && from != null && from instanceof Number && (to == null || to instanceof Number)) {
-                if (v.getClass().isArray() || v instanceof List<?> || v instanceof HasFieldsList || v instanceof JSONArray) {
+                if (v.getClass().isArray() || v instanceof List<?> || v instanceof HasFieldsList || v instanceof ArrayNode) {
                     int length = 0;
                     if (v.getClass().isArray()) { 
                         length = ((Object[]) v).length;
                     } else if (v instanceof HasFieldsList) {
                         length = ((HasFieldsList) v).length();
-                    } else if (v instanceof JSONArray) {
-                        length = ((JSONArray) v).length();
+                    } else if (v instanceof ArrayNode) {
+                        length = ((ArrayNode) v).size();
                     } else {
                         length = ExpressionUtils.toObjectList(v).size();
                     }
@@ -86,16 +84,12 @@ public class Slice implements Function {
                         return a2;
                     } else if (v instanceof HasFieldsList) {
                         return ((HasFieldsList) v).getSubList(start, end);
-                    } else if (v instanceof JSONArray) {
-                        JSONArray a = (JSONArray) v;
+                    } else if (v instanceof ArrayNode) {
+                        ArrayNode a = (ArrayNode) v;
                         Object[] a2 = new Object[end - start];
                         
                         for (int i = 0; i < a2.length; i++) {
-                            try {
-                                a2[i] = a.get(start + i);
-                            } catch (JSONException e) {
-                                // ignore
-                            }
+                            a2[i] = a.get(start + i);
                         }
                         
                         return a2;

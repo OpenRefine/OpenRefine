@@ -41,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
+import com.google.refine.expr.util.JsonValueConverter;
 
 /**
  * An abstract syntax tree node encapsulating a field accessor,
@@ -67,21 +68,7 @@ public class FieldAccessorExpr implements Evaluable {
             return ((HasFields) o).getField(_fieldName, bindings);
         } else if (o instanceof ObjectNode) {
         	JsonNode value = ((ObjectNode) o).get(_fieldName);
-        	if (value.isArray()) {
-        		return Lists.newArrayList(value.elements());
-        	} else if (value.isBigDecimal() || value.isDouble() || value.isFloat()) {
-        		return value.asDouble();
-        	} else if (value.isBigInteger() || value.isInt()) {
-        		return value.asLong();
-        	} else if (value.isBinary() || value.isTextual()) {
-        		return value.asText();
-        	} else if (value.isBoolean()) {
-        		return value.asBoolean();
-        	} else if (value.isNull()) {
-        		return null;
-        	} else {
-        		return null;
-        	}
+        	return JsonValueConverter.convert(value);
         } else {
             return null;
         }

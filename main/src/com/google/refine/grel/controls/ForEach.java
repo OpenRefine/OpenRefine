@@ -38,12 +38,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.Control;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.ast.VariableExpr;
@@ -65,7 +64,7 @@ public class ForEach implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof JSONArray)) {
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
             return new EvalError("First argument to forEach is not an array");
         }
         
@@ -90,27 +89,23 @@ public class ForEach implements Control {
                     
                     results.add(r);
                 }
-            } else if (o instanceof JSONArray) {
-                JSONArray a = (JSONArray) o;
-                int l = a.length();
+            } else if (o instanceof ArrayNode) {
+                ArrayNode a = (ArrayNode) o;
+                int l = a.size();
                 
                 results = new ArrayList<Object>(l);
                 for (int i = 0; i < l; i++) {
-                    try {
-                        Object v = a.get(i);
-                        
-                        if (v != null) {
-                            bindings.put(name, v);
-                        } else {
-                            bindings.remove(name);
-                        }
-                        
-                        Object r = args[2].evaluate(bindings);
-                        
-                        results.add(r);
-                    } catch (JSONException e) {
-                        results.add(new EvalError(e.getMessage()));
+                    Object v = JsonValueConverter.convert(a.get(i));
+                    
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
                     }
+                    
+                    Object r = args[2].evaluate(bindings);
+                    
+                    results.add(r);
                 }
             } else {
                 Collection<Object> collection = ExpressionUtils.toObjectCollection(o);

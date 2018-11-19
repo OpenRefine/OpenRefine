@@ -36,8 +36,7 @@ package com.google.refine.expr.functions;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.json.JSONArray;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -58,8 +57,8 @@ public class Length implements Function {
                     return ((Collection<?>) v).size();
                 } else if (v instanceof HasFieldsList) {
                     return ((HasFieldsList) v).length();
-                } else if (v instanceof JSONArray) {
-                    return ((JSONArray) v).length();
+                } else if (v instanceof ArrayNode) {
+                    return ((ArrayNode) v).size();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();

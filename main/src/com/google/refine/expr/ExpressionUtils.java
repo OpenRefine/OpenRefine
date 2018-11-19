@@ -41,9 +41,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -150,10 +149,10 @@ public class ExpressionUtils {
     }
 
     static public Serializable wrapStorable(Object v) {
-        if (v instanceof JSONArray) {
-            return ((JSONArray) v).toString();
-        } else if (v instanceof JSONObject) {
-            return ((JSONObject) v).toString();
+        if (v instanceof ArrayNode) {
+            return ((ArrayNode) v).toString();
+        } else if (v instanceof ObjectNode) {
+            return ((ObjectNode) v).toString();
         } else {
             return isStorable(v) ?
                 (Serializable) v :

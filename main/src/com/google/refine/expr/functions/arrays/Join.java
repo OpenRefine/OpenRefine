@@ -36,9 +36,9 @@ package com.google.refine.expr.functions.arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -55,7 +55,7 @@ public class Join implements Function {
             if (v != null && s != null && s instanceof String) {
                 String separator = (String) s;
                 
-                if (v.getClass().isArray() || v instanceof List<?> || v instanceof JSONArray) {
+                if (v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode) {
                     StringBuffer sb = new StringBuffer();
                     if (v.getClass().isArray()) {
                         for (Object o : (Object[]) v) {
@@ -66,9 +66,9 @@ public class Join implements Function {
                                 sb.append(o.toString());
                             }
                         }
-                    } else if (v instanceof JSONArray) {
-                        JSONArray a = (JSONArray) v;
-                        int l = a.length();
+                    } else if (v instanceof ArrayNode) {
+                        ArrayNode a = (ArrayNode) v;
+                        int l = a.size();
                         
                         for (int i = 0; i < l; i++) {
                             if (sb.length() > 0) {

@@ -35,9 +35,7 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.HasFields;
 import com.google.refine.grel.Function;
 
@@ -53,12 +51,8 @@ public class HasField implements Function {
                 String name = (String) f;
                 if (v instanceof HasFields) {
                     return ((HasFields) v).getField(name, bindings) != null;
-                } else if (v instanceof JSONObject) {
-                    try {
-                        return ((JSONObject) v).get(name) != null;
-                    } catch (JSONException e) {
-                        // ignore; will return false
-                    }
+                } else if (v instanceof ObjectNode) {
+                    return ((ObjectNode) v).has(name);
                 }
             }
         }

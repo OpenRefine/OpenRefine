@@ -38,9 +38,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -55,13 +53,8 @@ public class Uniques implements Function {
             Object v = args[0];
             
             if (v != null) {
-                if (v instanceof JSONArray) {
-                    try {
-                        v = JSONUtilities.toArray((JSONArray) v);
-                    } catch (JSONException e) {
-                        return new EvalError(ControlFunctionRegistry.getFunctionName(this) +
-                                " fails to process a JSON array: " + e.getMessage());
-                    }
+                if (v instanceof ArrayNode) {
+                    v = JSONUtilities.toArray((ArrayNode) v);
                 }
                 
                 if (v.getClass().isArray() || v instanceof List<?>) {
