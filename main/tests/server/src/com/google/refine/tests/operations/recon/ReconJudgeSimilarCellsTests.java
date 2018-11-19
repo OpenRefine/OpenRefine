@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -29,7 +28,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ReconJudgeSimilarCellsTests extends RefineTest {
     
-    static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\"}}"));
+    static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct("{\"mode\":\"row-based\"}}");
     
     @Override
     @BeforeTest

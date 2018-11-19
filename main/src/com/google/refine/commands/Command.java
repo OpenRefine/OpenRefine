@@ -125,7 +125,7 @@ public abstract class Command {
         String json = request.getParameter("engine");
         try{
             return (json == null) ? null :
-                   EngineConfig.reconstruct(ParsingUtilities.evaluateJsonStringToObject(json));
+                   EngineConfig.reconstruct(json);
         } catch (JSONException e){
             logger.debug( json + " could not be parsed to JSON");
             return null;

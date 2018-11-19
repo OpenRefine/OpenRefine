@@ -81,7 +81,7 @@ public class CacheTests extends RefineTest {
         project = createProjectWithColumns("CacheTests", "Column A");
         
         engine = new Engine(project);
-        engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_DUPLICATES));
+        engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
         

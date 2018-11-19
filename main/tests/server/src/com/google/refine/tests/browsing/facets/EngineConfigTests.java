@@ -1,6 +1,5 @@
 package com.google.refine.tests.browsing.facets;
 
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,13 +35,13 @@ public class EngineConfigTests {
     
     @Test
     public void serializeEngineConfig() {
-        EngineConfig ec = EngineConfig.reconstruct(new JSONObject(engineConfigJson));
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
         TestUtils.isSerializedTo(ec, engineConfigJson);
     }
     
     @Test
     public void serializeEngineConfigRecordMode() {
-        EngineConfig ec = EngineConfig.reconstruct(new JSONObject(engineConfigRecordModeJson));
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson);
     }
     
@@ -55,7 +54,7 @@ public class EngineConfigTests {
     
     @Test
     public void reconstructNoFacetsProvided() {
-        EngineConfig ec = EngineConfig.reconstruct(new JSONObject(noFacetProvided));
+        EngineConfig ec = EngineConfig.reconstruct(noFacetProvided);
         Assert.assertEquals(ec.getMode(), Mode.RowBased);
         Assert.assertTrue(ec.getFacetConfigs().isEmpty());
     }

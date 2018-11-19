@@ -63,7 +63,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRecords() throws Exception {
         AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -77,7 +77,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRows() throws Exception {
         AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

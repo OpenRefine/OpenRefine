@@ -105,7 +105,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     // dependencies
     private Project project;
     private Properties options;
-    private EngineConfig engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_URLS));
+    private EngineConfig engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
 
     @BeforeMethod
     public void SetUp() throws JSONException, IOException, ModelException {

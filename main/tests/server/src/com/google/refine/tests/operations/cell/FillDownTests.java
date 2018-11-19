@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -61,7 +60,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecordKey() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "key");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -77,7 +76,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecords() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -93,7 +92,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRows() throws Exception {       
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

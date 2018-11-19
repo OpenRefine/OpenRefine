@@ -38,9 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.facets.Facet;
@@ -177,12 +174,6 @@ public class Engine  {
         }
         throw new InternalError("This method should not be called when the engine is not in record mode.");
     }
-
-    @Deprecated
-    public void initializeFromJSON(JSONObject o) throws JSONException {
-        EngineConfig config = EngineConfig.reconstruct(o);
-        initializeFromConfig(config);
-    }
     
     public void initializeFromConfig(EngineConfig config) {
         _config = config;
@@ -191,7 +182,7 @@ public class Engine  {
                 .collect(Collectors.toList());
     }
 
-    public void computeFacets() throws JSONException {
+    public void computeFacets() {
         if (_config.getMode().equals(Mode.RowBased)) {
             for (Facet facet : _facets) {
                 FilteredRows filteredRows = getFilteredRows(facet);
