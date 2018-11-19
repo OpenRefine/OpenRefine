@@ -45,9 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.tools.tar.TarOutputStream;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -418,15 +416,10 @@ public abstract class ProjectManager {
         
         initDisplay(jsonObjArray);
         
-        try {
-            String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
-            if (userMeta == null)
-                return;
-            userMetadataPreference = ParsingUtilities.mapper.createArrayNode();
-        } catch (JSONException e1) {
-            logger.warn("wrong definition of userMetadata format. Please use form [{\"name\": \"client name\", \"display\":true}, {\"name\": \"progress\", \"display\":false}]");
-            logger.error(ExceptionUtils.getFullStackTrace(e1));
-        }
+        String userMeta = (String)_preferenceStore.get(PreferenceStore.USER_METADATA_KEY);
+        if (userMeta == null)
+            return;
+        userMetadataPreference = ParsingUtilities.mapper.createArrayNode();
         
         for (int index = 0; index < userMetadataPreference.size(); index++) {
             boolean found = false;

@@ -36,8 +36,6 @@ package com.google.refine.expr.functions.arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
@@ -75,12 +73,7 @@ public class Join implements Function {
                             if (sb.length() > 0) {
                                 sb.append(separator);
                             }
-                            try {
-                                sb.append(JsonValueConverter.convert(a.get(i)).toString());
-                            } catch (JSONException e) {
-                                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
-                                    " cannot retrieve element " + i + " of array");
-                            }
+                            sb.append(JsonValueConverter.convert(a.get(i)).toString());
                         }
                     } else {
                         for (Object o : ExpressionUtils.toObjectList(v)) {

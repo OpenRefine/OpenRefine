@@ -41,8 +41,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -140,7 +138,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             Project project, 
             EngineConfig engineConfig, 
             String description
-        ) throws JSONException {
+        ) {
             super(description);
             _project = project;
             _engineConfig = engineConfig;

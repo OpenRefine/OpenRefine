@@ -45,8 +45,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilder;
@@ -224,7 +222,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             Evaluable eval,
             String description,
             boolean cacheResponses
-        ) throws JSONException {
+        ) {
             super(description);
             _project = project;
             _engine = engine;

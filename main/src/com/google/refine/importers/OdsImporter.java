@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.json.JSONException;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
@@ -146,14 +145,10 @@ public class OdsImporter extends TabularImportingParserBase {
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
         for(int i=0;i<sheets.size();i++)  {
             String[] fileNameAndSheetIndex = new String[2];
-            try {
-                ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
-                // value is fileName#sheetIndex
-                fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
-            } catch (JSONException e) {
-                logger.error(ExceptionUtils.getFullStackTrace(e));
-            }
-            
+            ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
+            // value is fileName#sheetIndex
+            fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
+        
             if (!fileNameAndSheetIndex[0].equals(fileSource))
                 continue;
             

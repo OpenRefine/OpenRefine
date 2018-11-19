@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,12 +149,8 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
-        try {
-            options.put("fileSource", fileSource);
-        } catch (JSONException e) {
-            // ignore
-        }
-     // set the import options to metadata:
+        options.put("fileSource", fileSource);
+        // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
     }
     

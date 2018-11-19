@@ -46,10 +46,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +57,7 @@ import com.google.refine.util.ParsingUtilities;
 public class ProjectMetadataUtilities {
     final static Logger logger = LoggerFactory.getLogger("project_metadata_utilities");
 
-    public static void save(ProjectMetadata projectMeta, File projectDir) throws JSONException, IOException  {
+    public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
 
@@ -79,7 +75,7 @@ public class ProjectMetadataUtilities {
         tempFile.renameTo(file);
     }
     
-    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws JSONException, IOException   {
+    protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException   {
         Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
         try {
             ParsingUtilities.defaultWriter.writeValue(writer, projectMeta);

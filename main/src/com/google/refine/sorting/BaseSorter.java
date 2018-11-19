@@ -35,8 +35,6 @@ package com.google.refine.sorting;
 
 import java.util.List;
 
-import org.json.JSONException;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.Project;
 import com.google.refine.sorting.Criterion.KeyMaker;
@@ -102,7 +100,7 @@ abstract public class BaseSorter {
         }
     }
 
-    public void initializeFromConfig(Project project, SortingConfig config) throws JSONException {
+    public void initializeFromConfig(Project project, SortingConfig config) {
         _criteria = config.getCriteria();
         int count = _criteria.length;
         _keyMakers = new KeyMaker[count];

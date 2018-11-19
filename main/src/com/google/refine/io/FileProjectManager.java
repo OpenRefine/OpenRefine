@@ -50,7 +50,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -296,7 +295,7 @@ public class FileProjectManager extends ProjectManager  {
         return projectSaveNeeded || _preferenceStore.isDirty();
     }
     
-    protected void saveProjectMetadata() throws JSONException, IOException {
+    protected void saveProjectMetadata() throws IOException {
         for(Entry<Long,ProjectMetadata> entry : _projectsMetadata.entrySet()) {
             ProjectMetadata metadata = entry.getValue();
             if (metadata != null && metadata.isDirty()) {
@@ -305,7 +304,7 @@ public class FileProjectManager extends ProjectManager  {
         }
     }
 
-    protected boolean saveToFile(File file) throws IOException, JSONException {
+    protected boolean saveToFile(File file) throws IOException {
         FileWriter writer = new FileWriter(file);
         boolean saveWasNeeded = saveNeeded();
         try {

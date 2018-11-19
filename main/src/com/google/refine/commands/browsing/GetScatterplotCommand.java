@@ -44,7 +44,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +94,7 @@ public class GetScatterplotCommand extends Command {
         }
     }
     
-    public void draw(OutputStream output, Project project, Engine engine, JSONObject o) throws IOException, JSONException {
+    public void draw(OutputStream output, Project project, Engine engine, JSONObject o) throws IOException {
 
         double min_x = 0;
         double min_y = 0;
