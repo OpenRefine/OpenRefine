@@ -34,8 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
@@ -56,12 +54,8 @@ public class GetAllProjectTagsCommand extends Command {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    try {
-      Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
-      Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
-      respondJSON(response, new AllProjectsTags(tags));
-    } catch (JSONException e) {
-      respondException(response, e);
-    }
+     Map<String, Integer> tagMap = ProjectManager.singleton.getAllProjectTags();
+     Set<String> tags = tagMap == null ? Collections.emptySet() : tagMap.keySet();
+     respondJSON(response, new AllProjectsTags(tags));
   }
 }

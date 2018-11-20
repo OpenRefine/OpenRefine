@@ -40,8 +40,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -69,11 +67,7 @@ public class GetAllProjectMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        try {
-            String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
-            respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
-        } catch (JSONException e) {
-            respondException(response, e);
-        }
+        String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
+        respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
     }
 }

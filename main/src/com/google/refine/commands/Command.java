@@ -44,8 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,20 +114,14 @@ public abstract class Command {
      * @return
      * @throws JSONException
      */
-    static protected EngineConfig getEngineConfig(HttpServletRequest request)
-    throws JSONException {
+    static protected EngineConfig getEngineConfig(HttpServletRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
         
         String json = request.getParameter("engine");
-        try{
-            return (json == null) ? null :
+        return (json == null) ? null :
                    EngineConfig.reconstruct(json);
-        } catch (JSONException e){
-            logger.debug( json + " could not be parsed to JSON");
-            return null;
-        }
     }
 
     /**
@@ -222,21 +214,6 @@ public abstract class Command {
         }
         return def;
     }
-
-    static protected JSONObject getJsonParameter(HttpServletRequest request, String name) {
-        if (request == null) {
-            throw new IllegalArgumentException("parameter 'request' should not be null");
-        }
-        String value = request.getParameter(name);
-        if (value != null) {
-            try {
-                return ParsingUtilities.evaluateJsonStringToObject(value);
-            } catch (JSONException e) {
-                logger.warn("error getting json parameter",e);
-            }
-        }
-        return null;
-    }
     
     protected static class HistoryEntryResponse {
         @JsonProperty("code")
@@ -286,7 +263,7 @@ public abstract class Command {
     }
 
     static protected void respond(HttpServletResponse response, String status, String message)
-        throws IOException, JSONException {
+        throws IOException {
 
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
@@ -301,14 +278,14 @@ public abstract class Command {
     }
 
     static protected void respondJSON(HttpServletResponse response, Object o)
-        throws IOException, JSONException {
+        throws IOException {
 
         respondJSON(response, o, new Properties());
     }
 
     static protected void respondJSON(
             HttpServletResponse response, Object o, Properties options)
-            throws IOException, JSONException {
+            throws IOException {
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
@@ -330,30 +307,26 @@ public abstract class Command {
             throw new ServletException("Response object can't be null");
         }
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.flush();
-            sw.flush();
-            
-            Writer w = response.getWriter();
-            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            writer.writeStartObject();
-            writer.writeStringField("code", "error");   
-            writer.writeStringField("message", e.getMessage());
-            writer.writeStringField("stack", sw.toString());
-            writer.writeEndObject();
-            writer.flush();
-            writer.close();
-            w.flush();
-            w.close();
-        } catch (JSONException e1) {
-            e.printStackTrace(response.getWriter());
-        }
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        pw.flush();
+        sw.flush();
+        
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("code", "error");   
+        writer.writeStringField("message", e.getMessage());
+        writer.writeStringField("stack", sw.toString());
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
     }
     
     protected void respondWithErrorPage(
