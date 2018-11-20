@@ -33,22 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.preference;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
@@ -59,30 +53,13 @@ public class PreferenceStore  {
     private boolean dirty = false;
     protected Map<String, Object> _prefs = new HashMap<>();
     
-    // Temporary wrapper while serialization has not been migrated yet.
-    protected Map<String, Object> _prefsJackson = new HashMap<>();
-    
     public void put(String key, Object value) {
         if (value == null) {
             _prefs.remove(key);
-            _prefsJackson.remove(key);
         } else {
             _prefs.put(key, value);
-            _prefsJackson.put(key, wrapJSONArray(value));
         }
         dirty = true;
-    }
-    
-    private Object wrapJSONArray(Object value) {
-        ObjectMapper mapper = new ObjectMapper();
-        if(value != null && (value instanceof JSONArray || value instanceof JSONObject)) {
-            try {
-                return mapper.readValue(value.toString(), JsonNode.class);
-            } catch (IOException e) {
-                return null;
-            }
-        }
-        return value;
     }
 
     public Object get(String key) {
@@ -116,7 +93,7 @@ public class PreferenceStore  {
     }
     
     @JsonProperty("entries")
-    public void setEntries(JsonNode entries) throws JSONException {
+    public void setEntries(JsonNode entries) {
         Iterator<String> i = entries.fieldNames();
         while (i.hasNext()) {
             String key = i.next();
@@ -124,7 +101,6 @@ public class PreferenceStore  {
                 JsonNode o = entries.get(key);
                 Object loaded = loadObject(o);
                 _prefs.put(key, loaded);
-                _prefsJackson.put(key, wrapJSONArray(loaded));
             }
         }
         dirty = false; // internal puts don't count
@@ -132,7 +108,7 @@ public class PreferenceStore  {
     
     @JsonProperty("entries")
     public Map<String, Object> getEntries() {
-    	return _prefsJackson;
+    	return _prefs;
     }
     
     static public Object loadObject(JsonNode o) {
