@@ -35,17 +35,9 @@ package com.google.refine.model;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,30 +40,26 @@ abstract public class HttpUtilities {
         throws IOException {
     
         Writer w = response.getWriter();
-        try {
-            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            writer.writeStartObject();
-            writer.writeStringField("status", status);
-            writer.writeStringField("message", message);
-            writer.writeEndObject();
-            writer.flush();
-            writer.close();
-            w.flush();
-            w.close();
-        } catch (JSONException e) {
-            // This can never occue
-        }
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("status", status);
+        writer.writeStringField("message", message);
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
     }
 
     static public void respondJSON(HttpServletResponse response, Object o)
-        throws IOException, JSONException {
+        throws IOException  {
     
         respondJSON(response, o, new Properties());
     }
 
     static public void respondJSON(
             HttpServletResponse response, Object o, Properties options)
-            throws IOException, JSONException {
+            throws IOException {
     
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
@@ -85,30 +79,26 @@ abstract public class HttpUtilities {
             throw new ServletException("Response object can't be null");
         }
     
-        try {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.flush();
-            sw.flush();
-            
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        pw.flush();
+        sw.flush();
+        
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
 
-            Writer w = response.getWriter();
-            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-            writer.writeStartObject();
-            writer.writeStringField("code", "error");
-            writer.writeStringField("message", e.getMessage());
-            writer.writeStringField("stack", sw.toString());
-            writer.writeEndObject();
-            writer.flush();
-            writer.close();
-            w.flush();
-            w.close();
-        } catch (JSONException e1) {
-            e.printStackTrace(response.getWriter());
-        }
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("code", "error");
+        writer.writeStringField("message", e.getMessage());
+        writer.writeStringField("stack", sw.toString());
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
     }
 
     static public void redirect(HttpServletResponse response, String url) throws IOException {
@@ -125,21 +115,6 @@ abstract public class HttpUtilities {
             logger.warn("Error getting integer parameter", e);
         }
         return def;
-    }
-
-    static public JSONObject getJsonParameter(HttpServletRequest request, String name) {
-        if (request == null) {
-            throw new IllegalArgumentException("parameter 'request' should not be null");
-        }
-        String value = request.getParameter(name);
-        if (value != null) {
-            try {
-                return ParsingUtilities.evaluateJsonStringToObject(value);
-            } catch (JSONException e) {
-                logger.warn("Error getting json parameter", e);
-            }
-        }
-        return null;
     }
 
     static public void respondWithErrorPage(
