@@ -15,14 +15,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.Command;
 import com.google.refine.preference.PreferenceStore;
+import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -60,7 +59,7 @@ public class LoadLanguageCommand extends Command {
         langs = Arrays.copyOf(langs, langs.length+1);
         langs[langs.length-1] = "en";
 
-        JSONObject json = null;
+        ObjectNode json = null;
         boolean loaded = false;
         for (String lang : langs) {
             if (lang == null) continue;
@@ -69,11 +68,11 @@ public class LoadLanguageCommand extends Command {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/json");
                 try {
-                    JSONObject fullJson = new JSONObject();
-                    fullJson.put("dictionary", json);
-                    fullJson.put("lang", lang);
-                    fullJson.write(response.getWriter());
-                } catch (JSONException e) {
+                    ObjectNode node = ParsingUtilities.mapper.createObjectNode();
+                    node.put("dictionary", json);
+                    node.put("lang", new TextNode(lang));
+                	ParsingUtilities.mapper.writeValue(response.getWriter(), node);
+                } catch (IOException e) {
                     logger.error("Error writing language labels to response stream");
                 }
                 response.getWriter().flush();
@@ -87,19 +86,18 @@ public class LoadLanguageCommand extends Command {
         }
     }
     
-    static JSONObject loadLanguage(RefineServlet servlet, String modname, String lang) throws UnsupportedEncodingException {
+    static ObjectNode loadLanguage(RefineServlet servlet, String modname, String lang) throws UnsupportedEncodingException {
         
         ButterflyModule module = servlet.getModule(modname);
-        JSONObject json = null;
         File langFile = new File(module.getPath(), "langs" + File.separator + "translation-" + lang + ".json");
         try {
             Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(langFile), "UTF-8"));
-            json = new JSONObject(new JSONTokener(reader));
+            return ParsingUtilities.mapper.readValue(reader, ObjectNode.class);
         } catch (FileNotFoundException e1) {
             // Could be normal if we've got a list of languages as fallbacks
-        } catch (JSONException e) {
+        } catch (IOException e) {
             logger.error("JSON error reading/writing language file: " + langFile, e);
         }
-        return json;
+        return null;
     }
 }

@@ -45,9 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -76,9 +76,9 @@ public class GetLanguagesCommand extends Command {
             for (File file : new File(module.getPath() + File.separator + "langs").listFiles(fileFilter)) {
                 String lang = file.getName().split("-")[1].split("\\.")[0];
                 if (!"en".equals(lang) && !"default".equals(lang)) {
-                    JSONObject json = LoadLanguageCommand.loadLanguage(servlet, "core", lang);
+                    ObjectNode json = LoadLanguageCommand.loadLanguage(servlet, "core", lang);
                     if (json != null && json.has("name")) {
-                        String label = json.getString("name");
+                        String label = json.get("name").asText(lang);
                         languages.add(new LanguageRecord(lang, label));
                     }
                 }
