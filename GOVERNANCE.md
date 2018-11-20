@@ -40,7 +40,7 @@ Therefore committers:
 - Have direct access to the code base
 - Nominate and vote for new committers
 
-Committers also participate in strategic planning, release planning, and approving changes to the governance model. 
+Committers participate in the Project Management Committee (PMC). They engage in strategic planning, release planning, and approving changes to the governance model. The list of committers is available here: https://github.com/orgs/OpenRefine/people
 
 How to become an OpenRefine Committers?  Be a contributor and be nominated as a committer. OpenRefine selects and elects new committers using the [Apache model](https://community.apache.org/newcommitter.html). You may nominate yourself. Nomination should be sent to the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev)
 
