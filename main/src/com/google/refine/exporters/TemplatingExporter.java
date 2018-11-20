@@ -37,8 +37,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.json.JSONException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
@@ -117,16 +115,12 @@ public class TemplatingExporter implements WriterExporter {
             RowVisitor visitor = template.getRowVisitor(writer, limit);
             
             if (sortingJson != null) {
-                try {
-                    SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
-                    SortingRowVisitor srv = new SortingRowVisitor(visitor);
-                    srv.initializeFromConfig(project, sorting);
-                    
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
+                SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                srv.initializeFromConfig(project, sorting);
+                
+                if (srv.hasCriteria()) {
+                    visitor = srv;
                 }
             }
             
@@ -136,16 +130,12 @@ public class TemplatingExporter implements WriterExporter {
             RecordVisitor visitor = template.getRecordVisitor(writer, limit);
             
             if (sortingJson != null) {
-                try {
-                    SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
-                    SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-                    srv.initializeFromConfig(project, sorting);
-                    
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
+                SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                srv.initializeFromConfig(project, sorting);
+                
+                if (srv.hasCriteria()) {
+                    visitor = srv;
                 }
             }
             
