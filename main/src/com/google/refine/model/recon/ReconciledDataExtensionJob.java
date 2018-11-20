@@ -50,16 +50,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.functions.ToDate;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
@@ -106,13 +104,8 @@ public class ReconciledDataExtensionJob {
             this.properties = properties;
         }
         
-        public static DataExtensionConfig reconstruct(String json) throws JSONException {
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                return mapper.readValue(json, DataExtensionConfig.class);
-            } catch(IOException e) {
-                throw new JSONException(e.toString());
-            }
+        public static DataExtensionConfig reconstruct(String json) throws IOException {
+            return ParsingUtilities.mapper.readValue(json, DataExtensionConfig.class);
         }     
     }
     
@@ -159,7 +152,7 @@ public class ReconciledDataExtensionJob {
     final public String              endpoint;
     final public List<ColumnInfo>    columns = new ArrayList<ColumnInfo>();
     
-    public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint) throws JSONException {
+    public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint) {
         this.extension = obj;
         this.endpoint = endpoint;
     }
@@ -174,22 +167,22 @@ public class ReconciledDataExtensionJob {
         String query = writer.toString();
         InputStream is = performQuery(this.endpoint, query);
         try {
-            String s = ParsingUtilities.inputStreamToString(is);
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+        	ObjectNode o = ParsingUtilities.mapper.readValue(is, ObjectNode.class);
           
             if(columns.size() == 0) {
                 // Extract the column metadata
-                gatherColumnInfo(o.getJSONArray("meta"), columns);    
+            	List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {});  
+            	columns.addAll(newColumns);
             }
           
             Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
-            if (o.has("rows")){
-                JSONObject records = o.getJSONObject("rows");
+            if (o.has("rows") && o.get("rows") instanceof ObjectNode){
+                ObjectNode records = (ObjectNode) o.get("rows");
                 
                 // for each identifier
                 for (String id : ids) {
-                    if (records.has(id)) {
-                        JSONObject record = records.getJSONObject(id);
+                    if (records.has(id) && records.get(id) instanceof ObjectNode) {
+                        ObjectNode record = (ObjectNode) records.get(id);
                         
                         ReconciledDataExtensionJob.DataExtension ext = collectResult(record, reconCandidateMap);
                         
@@ -231,44 +224,47 @@ public class ReconciledDataExtensionJob {
 
     
     protected ReconciledDataExtensionJob.DataExtension collectResult(
-        JSONObject record,
+        ObjectNode record,
         Map<String, ReconCandidate> reconCandidateMap
-    ) throws JSONException {
+    ) {
         List<Object[]> rows = new ArrayList<Object[]>();
 
         // for each property
         int colindex = 0;
         for(ColumnInfo ci : columns) {
             String pid = ci.id;
-            JSONArray values = record.getJSONArray(pid);        
+            ArrayNode values = JSONUtilities.getArray(record, pid);     
             if (values == null) {
                 continue;
             }
 
             // for each value
-            for(int rowindex = 0; rowindex < values.length(); rowindex++) {
-                JSONObject val = values.getJSONObject(rowindex);
+            for(int rowindex = 0; rowindex < values.size(); rowindex++) {
+            	if (!(values.get(rowindex) instanceof ObjectNode)) {
+            		continue;
+            	}
+                ObjectNode val = (ObjectNode) values.get(rowindex);
                 // store a reconciled value
                 if (val.has("id")) {
                     storeCell(rows, rowindex, colindex, val, reconCandidateMap);
                 } else if (val.has("str")) {
                 // store a bare string
-                    String str = val.getString("str");
+                    String str = val.get("str").asText();
                     storeCell(rows, rowindex, colindex, str); 
                 } else if (val.has("float")) {
-                    float v = Float.parseFloat(val.getString("float"));
+                    double v = val.get("float").asDouble();
                     storeCell(rows, rowindex, colindex, v);
                 } else if (val.has("int")) {
-                    int v = Integer.parseInt(val.getString("int"));
+                    int v = val.get("int").asInt();
                     storeCell(rows, rowindex, colindex, v);
                 } else if (val.has("date")) {
                     ToDate td = new ToDate();
                     String[] args = new String[1];
-                    args[0] = val.getString("date");
+                    args[0] = val.get("date").asText();
                     Object v = td.call(null, args);
                     storeCell(rows, rowindex, colindex, v);
                 } else if(val.has("bool")) {
-                    boolean v = val.getString("bool") == "true";
+                    boolean v = val.get("bool").asBoolean();
                     storeCell(rows, rowindex, colindex, v);
                 }
             }
@@ -299,17 +295,17 @@ public class ReconciledDataExtensionJob {
         List<Object[]>  rows, 
         int row,
         int col,
-        JSONObject obj,
+        ObjectNode obj,
         Map<String, ReconCandidate> reconCandidateMap
-    ) throws JSONException {
-        String id = obj.getString("id");
+    ) {
+        String id = obj.get("id").asText();
         ReconCandidate rc;
         if (reconCandidateMap.containsKey(id)) {
             rc = reconCandidateMap.get(id);
         } else {
             rc = new ReconCandidate(
-                    obj.getString("id"),
-                    obj.getString("name"),
+                    obj.get("id").asText(),
+                    obj.get("name").asText(),
                     JSONUtilities.getStringArray(obj, "type"),
                     100
                 );
@@ -325,21 +321,4 @@ public class ReconciledDataExtensionJob {
         DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()), node.properties);
         ParsingUtilities.saveWriter.writeValue(writer, query);
     }
-    
-    static protected void gatherColumnInfo(JSONArray meta, List<ColumnInfo> columns) throws JSONException {
-        for(int i = 0; i < meta.length(); i++) {
-            JSONObject col = meta.getJSONObject(i);
-
-            ReconType expectedType = null;
-            if(col.has("type")) {
-                JSONObject expectedObj = col.getJSONObject("type");
-                expectedType = new ReconType(expectedObj.getString("id"), expectedObj.getString("name"));
-            }
-        
-            columns.add(new ColumnInfo(
-                col.getString("name"),
-                col.getString("id"),
-                expectedType));        
-        }
-   }
 }
