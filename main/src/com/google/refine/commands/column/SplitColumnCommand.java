@@ -35,8 +35,7 @@ package com.google.refine.commands.column;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
@@ -68,12 +67,7 @@ public class SplitColumnCommand extends EngineDependentCommand {
         } else {
             String s = request.getParameter("fieldLengths");
             
-            JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
-            int[] fieldLengths = new int[a.length()];
-            
-            for (int i = 0; i < fieldLengths.length; i++) {
-                fieldLengths[i] = a.getInt(i);
-            }
+            int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
             
             return new ColumnSplitOperation(
                 engineConfig, 
