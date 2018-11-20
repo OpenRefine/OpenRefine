@@ -47,13 +47,13 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -402,13 +402,13 @@ abstract public class CustomizableTabularExporterUtilities {
             identifierSpaceToUrl = new HashMap<String, String>();
             
             PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
-            JSONArray services = (JSONArray) ps.get("reconciliation.standardServices");
+            ArrayNode services = (ArrayNode) ps.get("reconciliation.standardServices");
             if (services != null) {
-                int count = services.length();
+                int count = services.size();
                 
                 for (int i = 0; i < count; i++) {
-                    JSONObject service = JSONUtilities.getObjectElement(services, i);
-                    JSONObject view = JSONUtilities.getObject(service, "view");
+                    ObjectNode service = (ObjectNode) services.get(i);
+                    ObjectNode view = JSONUtilities.getObject(service, "view");
                     if (view != null) {
                         String url = JSONUtilities.getString(service, "url", null);
                         String viewUrl = JSONUtilities.getString(view, "url", null);
