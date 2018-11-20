@@ -40,8 +40,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -74,12 +73,7 @@ public class SplitMultiValueCellsCommand extends Command {
             } else {
                 String s = request.getParameter("fieldLengths");
                 
-                JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
-                int[] fieldLengths = new int[a.length()];
-                
-                for (int i = 0; i < fieldLengths.length; i++) {
-                    fieldLengths[i] = a.getInt(i);
-                }
+                int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
                 
                 AbstractOperation op = new MultiValuedCellSplitOperation(columnName,
                                                                          keyColumnName,
