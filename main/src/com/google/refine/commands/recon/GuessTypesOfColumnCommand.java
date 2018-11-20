@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,23 +52,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+import com.google.refine.model.ReconType;
 import com.google.refine.model.Row;
+import com.google.refine.model.recon.StandardReconConfig.ReconResult;
 import com.google.refine.util.ParsingUtilities;
 
 public class GuessTypesOfColumnCommand extends Command {
-    
-    
+     
     protected static class TypesResponse {
         @JsonProperty("code")
         protected String code;
@@ -135,7 +137,7 @@ public class GuessTypesOfColumnCommand extends Command {
      * @throws JSONException, IOException 
      */
     protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
-            throws JSONException, IOException {
+            throws IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
         
         int cellIndex = column.getCellIndex();
@@ -193,48 +195,35 @@ public class GuessTypesOfColumnCommand extends Command {
                 InputStream is = connection.getInputStream();
                 try {
                     String s = ParsingUtilities.inputStreamToString(is);
-                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
 
-                    for (int i = 0; i < samples.size(); i++) {
-                        String key = "q" + i;
-                        if (!o.has(key)) {
+                    Iterator<JsonNode> iterator = o.iterator();
+                    while (iterator.hasNext()) {
+                        JsonNode o2 = iterator.next();
+                        if (!(o2.has("result") && o2.get("result") instanceof ArrayNode)) {
                             continue;
                         }
 
-                        JSONObject o2 = o.getJSONObject(key);
-                        if (!(o2.has("result"))) {
-                            continue;
-                        }
-
-                        JSONArray results = o2.getJSONArray("result");
-                        int count = results.length();
+                        ArrayNode results = (ArrayNode) o2.get("result");
+                        List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
+                        int count = reconResults.size();
 
                         for (int j = 0; j < count; j++) {
-                            JSONObject result = results.getJSONObject(j);
+                            ReconResult result = reconResults.get(j);
                             double score = 1.0 / (1 + j); // score by each result's rank
 
-                            JSONArray types = result.getJSONArray("type");
-                            int typeCount = types.length();
+                            List<ReconType> types = result.types;
+                            int typeCount = types.size();
 
                             for (int t = 0; t < typeCount; t++) {
-                                Object type = types.get(t);
-                                String typeID;
-                                String typeName;
-
-                                if (type instanceof String) {
-                                    typeID = typeName = (String) type;
-                                } else {
-                                    typeID = ((JSONObject) type).getString("id");
-                                    typeName = ((JSONObject) type).getString("name");
-                                }
-
+                            	ReconType type = types.get(t);
                                 double score2 = score * (typeCount - t) / typeCount;
-                                if (map.containsKey(typeID)) {
-                                    TypeGroup tg = map.get(typeID);
+                                if (map.containsKey(type.id)) {
+                                    TypeGroup tg = map.get(type.id);
                                     tg.score += score2;
                                     tg.count++;
                                 } else {
-                                    map.put(typeID, new TypeGroup(typeID, typeName, score2));
+                                    map.put(type.id, new TypeGroup(type.id, type.name, score2));
                                 }
                             }
                         }

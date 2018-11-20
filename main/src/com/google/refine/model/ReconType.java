@@ -57,8 +57,14 @@ public class ReconType  {
             String id,
             @JsonProperty("name")
             String name) {
-	this.id = id;
-	this.name = name;
+    	this.id = id;
+    	this.name = name;
+    }
+    
+    @JsonCreator
+    public ReconType(String id) {
+    	this.id = id;
+    	this.name = null;
     }
     
     static public ReconType load(String json) throws IOException {

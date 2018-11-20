@@ -286,17 +286,33 @@ public class StandardReconConfig extends ReconConfig {
         }
     }
     
-    protected class ReconResult {
+    public class ReconResult {
     	@JsonProperty("name")
-    	protected String name;
+    	public String name;
     	@JsonProperty("id")
-    	protected String id;
+    	public String id;
     	@JsonProperty("types")
-    	protected String[] types = new String[0];
+		public List<ReconType> types = Collections.emptyList();
     	@JsonProperty("score")
-    	protected double score;
+    	public double score;
     	@JsonProperty("match")
-    	protected boolean match = false;
+    	public boolean match = false;
+    	
+    	@JsonIgnore
+		public ReconCandidate toCandidate() {
+    		String[] bareTypes = new String[types.size()];
+    		for(int i = 0; i != types.size(); i++) {
+    			bareTypes[i] = types.get(i).id;
+    		}
+       		ReconCandidate result = new ReconCandidate(
+		        id,
+		        name,
+		        bareTypes,
+		        score
+		    );
+       
+			return result;
+		}
     }
 
     @Override
@@ -455,25 +471,21 @@ public class StandardReconConfig extends ReconConfig {
 
     protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-        List<ReconResult> results = ParsingUtilities.mapper.readValue(resultsList.toString(), new TypeReference<List<ReconResult>>() {});
+        List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {});
         
         int length = results.size();
         int count = 0;
         for (int i = 0; i < length; i++) {
             ReconResult result = results.get(i);
-            ReconCandidate candidate = new ReconCandidate(
-                result.id,
-                result.name,
-                result.types,
-                result.score
-            );
             
-            if (autoMatch && i == 0 && result.match) {
-                recon.match = candidate;
-                recon.matchRank = 0;
-                recon.judgment = Judgment.Matched;
-                recon.judgmentAction = "auto";
-            }
+            ReconCandidate candidate = result.toCandidate();
+		    
+		    if (autoMatch && i == 0 && result.match) {
+		        recon.match = candidate;
+		        recon.matchRank = 0;
+		        recon.judgment = Judgment.Matched;
+		        recon.judgmentAction = "auto";
+		    }
             
             recon.addCandidate(candidate);
             count++;
