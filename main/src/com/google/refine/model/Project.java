@@ -50,6 +50,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -187,6 +189,10 @@ public class Project {
         
         Project project = new Project(id);
         int maxCellCount = 0;
+        
+        ObjectMapper mapper = ParsingUtilities.mapper.copy();
+        InjectableValues injections = new InjectableValues.Std().addValue("project", project);
+        mapper.setInjectableValues(injections);
         
         String line;
         while ((line = reader.readLine()) != null) {
