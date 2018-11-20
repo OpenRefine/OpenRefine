@@ -35,7 +35,6 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -79,7 +78,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void setUp() throws JSONException, IOException, ModelException {
+    public void setUp() throws IOException, ModelException {
       project = createProjectWithColumns(projectName, columnName);
       bindings = new Properties();
       bindings.put("project", project);

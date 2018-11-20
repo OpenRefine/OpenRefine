@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.operations.cell;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -54,7 +53,7 @@ public class TransposeTests extends RefineTest {
     }
     
     @Test
-    public void testTransposeRowsIntoColumnsOperation() throws JSONException, Exception {
+    public void testTransposeRowsIntoColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/transpose-rows-into-columns\","
                 + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
                 + "\"columnName\":\"start column\","

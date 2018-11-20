@@ -41,8 +41,6 @@ import static org.mockito.Mockito.when;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -131,8 +129,6 @@ public class CommandTests extends RefineTest {
         when(request.getParameter("engine")).thenReturn(null);
         try {
             Assert.assertNull(SUT.wrapGetEngineConfig(request));
-        } catch (JSONException e) {
-            Assert.fail();
         } catch (Exception e) {
             Assert.fail();
         }
@@ -142,11 +138,7 @@ public class CommandTests extends RefineTest {
     public void getEngineConfigReturnsNullWithEmptyOrBadParameterValue() {
         when(request.getParameter("engine")).thenReturn("sdfasdfas");
 
-        try {
-            Assert.assertNull( SUT.wrapGetEngineConfig(request) );
-        } catch (JSONException e) {
-            Assert.fail();
-        }
+        Assert.assertNull( SUT.wrapGetEngineConfig(request) );
 
         verify(request, times(1)).getParameter("engine");
     }
@@ -158,8 +150,6 @@ public class CommandTests extends RefineTest {
         try {
             o = SUT.wrapGetEngineConfig(request);
             Assert.assertEquals(Mode.RowBased, o.getMode());
-        } catch (JSONException e) {
-            Assert.fail();
         } catch (Exception e) {
             Assert.fail();
         }

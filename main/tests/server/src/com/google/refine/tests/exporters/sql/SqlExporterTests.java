@@ -45,8 +45,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -458,27 +456,26 @@ public class SqlExporterTests extends RefineTest {
         }
     }
     
-    protected JSONObject createNumericColOptionsFromProject(String tableName, String type, String size) {
+    protected ObjectNode createNumericColOptionsFromProject(String tableName, String type, String size) {
         
-        JSONObject json = new JSONObject();
-        JSONArray columns = new JSONArray();
-        json.put("columns", columns);
+        ObjectNode json = ParsingUtilities.mapper.createObjectNode();
+        ArrayNode columns = json.putArray("columns");
         json.put("tableName", tableName);
         
         List<Column> cols = project.columnModel.columns;
       
         cols.forEach(c -> {
             //logger.info("Column Name = " + c.getName());
-            JSONObject columnModel = new JSONObject();
+            ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
             columnModel.put("name", c.getName());
             if(type != null) {
                 columnModel.put("type", type);
-            }else {
+            } else {
                 columnModel.put("type", "VARCHAR");
             }
             if(size != null) {
                 columnModel.put("size", size); 
-            }else {
+            } else {
                 columnModel.put("size", "100");
             }
             
@@ -490,7 +487,7 @@ public class SqlExporterTests extends RefineTest {
                 columnModel.put("size", size);
             }
             
-            columns.put(columnModel);
+            columns.add(columnModel);
        
         });
         

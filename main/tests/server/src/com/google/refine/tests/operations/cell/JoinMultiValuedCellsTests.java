@@ -35,7 +35,6 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -79,7 +78,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeMultiValuedCellJoinOperation() throws JSONException, Exception {
+    public void serializeMultiValuedCellJoinOperation() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-join\","
                 + "\"description\":\"Join multi-valued cells in column value column\","
                 + "\"columnName\":\"value column\","

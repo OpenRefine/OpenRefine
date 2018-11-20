@@ -1,6 +1,5 @@
 package com.google.refine.tests.operations.column;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -17,7 +16,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnSplitOperationBySeparator() throws JSONException, Exception {
+    public void serializeColumnSplitOperationBySeparator() throws Exception {
         String json = "{\n" + 
                 "    \"op\": \"core/column-split\",\n" + 
                 "    \"description\": \"Split column ea by separator\",\n" + 
@@ -37,7 +36,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnSplitOperationByLengths() throws JSONException, Exception {
+    public void serializeColumnSplitOperationByLengths() throws Exception {
         String json = "{\n" + 
                 "    \"op\": \"core/column-split\",\n" + 
                 "    \"description\": \"Split column ea by field lengths\",\n" + 

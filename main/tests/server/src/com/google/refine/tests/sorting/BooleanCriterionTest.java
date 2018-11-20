@@ -2,7 +2,6 @@ package com.google.refine.tests.sorting;
 
 import java.io.IOException;
 
-import org.json.JSONException;
 import org.testng.annotations.Test;
 
 import com.google.refine.sorting.Criterion;
@@ -11,7 +10,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class BooleanCriterionTest {
     @Test
-    public void serializeBooleanCriterion() throws JSONException, IOException {
+    public void serializeBooleanCriterion() throws IOException {
         String json = 
                 "        {\n" + 
                 "          \"errorPosition\": 1,\n" + 

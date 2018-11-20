@@ -1,6 +1,5 @@
 package com.google.refine.tests.operations.column;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -19,7 +18,7 @@ public class ColumnRemovalOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnRemovalOperation() throws JSONException, Exception {
+    public void serializeColumnRemovalOperation() throws Exception {
         String json = "{\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove column my column\","
                 + "\"columnName\":\"my column\"}";

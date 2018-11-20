@@ -2,7 +2,6 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.List;
 
-import org.json.JSONException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -26,7 +25,7 @@ public class MassOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeMassEditOperation() throws JSONException, Exception {
+    public void serializeMassEditOperation() throws Exception {
         String json = "{\"op\":\"core/mass-edit\","
                 + "\"description\":\"Mass edit cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
@@ -39,7 +38,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditString() throws Exception {
         editsString = "[{\"from\":[\"String\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-        editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
 
         Assert.assertEquals(editList.get(0).from.size(), 1);
         Assert.assertEquals(editList.get(0).from.get(0), "String");
@@ -52,7 +51,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditMultiString() throws Exception {
         editsString = "[{\"from\":[\"String1\",\"String2\"],\"to\":\"newString\",\"type\":\"text\"}]";
 
-        editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
+        editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
 
         Assert.assertEquals(editList.get(0).from.size(), 2);
         Assert.assertEquals(editList.get(0).from.get(0), "String1");
@@ -66,7 +65,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditBoolean() throws Exception {
       editsString = "[{\"from\":[true],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
+      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "true");
@@ -79,7 +78,7 @@ public class MassOperationTests extends RefineTest {
     public void testReconstructEditNumber() throws Exception {
       editsString = "[{\"from\":[1],\"to\":\"newString\",\"type\":\"text\"}]";
 
-      editList = ParsingUtilities.mapper.readValue(ParsingUtilities.evaluateJsonStringToArray(editsString).toString(), new TypeReference<List<Edit>>() {});
+      editList = ParsingUtilities.mapper.readValue(editsString, new TypeReference<List<Edit>>() {});
 
       Assert.assertEquals(editList.get(0).from.size(), 1);
       Assert.assertEquals(editList.get(0).from.get(0), "1");

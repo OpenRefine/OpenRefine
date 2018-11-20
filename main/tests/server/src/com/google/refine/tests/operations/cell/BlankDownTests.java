@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -51,7 +49,7 @@ public class BlankDownTests extends RefineTest {
     }
     
     @Test
-    public void serializeBlankDownOperation() throws JSONException, Exception {
+    public void serializeBlankDownOperation() throws Exception {
         String json = "{\"op\":\"core/blank-down\","
                 + "\"description\":\"Blank down cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"

@@ -39,14 +39,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.AbstractOperation;
@@ -108,7 +107,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     private EngineConfig engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("UrlFetchingTests", "fruits");       
     }
 
@@ -125,7 +124,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnAdditionByFetchingURLsOperation() throws JSONException, Exception {
+    public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json);
     }
     
@@ -280,21 +279,21 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning());
 
         int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
-        JSONObject headersUsed = null;
+        ObjectNode headersUsed = null;
         
         // sometime, we got response: 
         // Error
         // Over Quota
         // This application is temporarily over its serving quota. Please try again later.
         try { 
-            headersUsed = new JSONObject(project.rows.get(0).getCellValue(newCol).toString());
-        } catch (JSONException ex) {
+            headersUsed = ParsingUtilities.mapper.readValue(project.rows.get(0).getCellValue(newCol).toString(), ObjectNode.class);
+        } catch (IOException ex) {
             return;
         }
         // Inspect the results we got from remote service
-        Assert.assertEquals(headersUsed.getString("User-Agent"), userAgentValue);
-        Assert.assertEquals(headersUsed.getString("Authorization"), authorizationValue);
-        Assert.assertEquals(headersUsed.getString("Accept"), acceptValue);
+        Assert.assertEquals(headersUsed.get("User-Agent").asText(), userAgentValue);
+        Assert.assertEquals(headersUsed.get("Authorization").asText(), authorizationValue);
+        Assert.assertEquals(headersUsed.get("Accept").asText(), acceptValue);
     }
 
 }

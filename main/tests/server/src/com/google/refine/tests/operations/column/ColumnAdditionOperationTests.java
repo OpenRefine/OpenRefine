@@ -1,6 +1,5 @@
 package com.google.refine.tests.operations.column;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -18,7 +17,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnAdditionOperation() throws JSONException, Exception {
+    public void serializeColumnAdditionOperation() throws Exception {
         String json = "{"
                 + "   \"op\":\"core/column-addition\","
                 + "   \"description\":\"Create column organization_json at index 3 based on column employments using expression grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\",\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},\"newColumnName\":\"organization_json\",\"columnInsertIndex\":3,\"baseColumnName\":\"employments\","

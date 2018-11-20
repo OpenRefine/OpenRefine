@@ -36,7 +36,6 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -72,7 +71,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeMultiValuedCellSplitOperationWithSeparator() throws JSONException, Exception {
+    public void serializeMultiValuedCellSplitOperationWithSeparator() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
                 + "\"description\":\"Split multi-valued cells in column Value\","
                 + "\"columnName\":\"Value\","
@@ -84,7 +83,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeMultiValuedCellSplitOperationWithLengths() throws JSONException, Exception {
+    public void serializeMultiValuedCellSplitOperationWithLengths() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
                 + "\"description\":\"Split multi-valued cells in column Value\","
                 + "\"columnName\":\"Value\","

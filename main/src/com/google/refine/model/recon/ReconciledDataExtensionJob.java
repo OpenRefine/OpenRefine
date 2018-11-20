@@ -141,7 +141,14 @@ public class ReconciledDataExtensionJob {
         final public String id;
         final public ReconType expectedType;
         
-        protected ColumnInfo(String name, String id, ReconType expectedType) {
+        @JsonCreator
+        protected ColumnInfo(
+        		@JsonProperty("name")
+        		String name,
+        		@JsonProperty("id")
+        		String id,
+        		@JsonProperty("type")
+        		ReconType expectedType) {
             this.name = name;
             this.id = id;
             this.expectedType = expectedType;

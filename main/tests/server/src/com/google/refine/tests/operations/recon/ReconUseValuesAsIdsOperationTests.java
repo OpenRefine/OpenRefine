@@ -5,7 +5,6 @@ import static org.testng.Assert.assertNull;
 
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -35,12 +34,12 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeReconUseValuesAsIdentifiersOperation() throws JSONException, Exception {
+    public void serializeReconUseValuesAsIdentifiersOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json);
     }
     
     @Test
-    public void testUseValuesAsIds() throws JSONException, Exception {
+    public void testUseValuesAsIds() throws Exception {
         Project project = createCSVProject("ids,v\n"
                 + "Q343,hello\n"
                 + ",world\n"

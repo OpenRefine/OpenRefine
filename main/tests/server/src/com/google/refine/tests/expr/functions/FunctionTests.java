@@ -36,7 +36,6 @@ package com.google.refine.tests.expr.functions;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -59,7 +58,6 @@ public class FunctionTests extends RefineTest {
 
     static Properties bindings;
     Project project;
-    JSONObject engine_config;
     Engine engine;
 
     

@@ -35,7 +35,6 @@ package com.google.refine.tests.browsing.facets;
 
 import java.io.IOException;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -82,7 +81,7 @@ public class TextSearchFacetTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void setUp() throws JSONException, IOException, ModelException {
+    public void setUp() throws IOException, ModelException {
         project = createCSVProject("TextSearchFacet",
              "Value\n"
             + "a\n"

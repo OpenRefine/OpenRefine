@@ -43,8 +43,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -116,7 +114,7 @@ public class ExtendDataOperationTests extends RefineTest {
             "     }";
     
     static public class ReconciledDataExtensionJobStub extends ReconciledDataExtensionJob {
-        public ReconciledDataExtensionJobStub(DataExtensionConfig obj, String endpoint) throws JSONException {
+        public ReconciledDataExtensionJobStub(DataExtensionConfig obj, String endpoint) {
             super(obj, endpoint);
         }
 
@@ -140,7 +138,7 @@ public class ExtendDataOperationTests extends RefineTest {
     Engine engine;
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
         OperationRegistry.registerOperation(getCoreModule(), "extend-reconciled-data", ExtendDataOperation.class);
         project = createProjectWithColumns("DataExtensionTests", "country");
         
@@ -165,19 +163,19 @@ public class ExtendDataOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeExtendDataOperation() throws JSONException, Exception {
+    public void serializeExtendDataOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
     }
     
     @Test
-    public void serializeExtendDataProcess() throws JSONException, Exception {
+    public void serializeExtendDataProcess() throws Exception {
         Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
                 .createProcess(project, new Properties());
         TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
     }
     
     @Test
-    public void serializeDataExtensionConfig() {
+    public void serializeDataExtensionConfig() throws IOException {
         TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
     }
     

@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -73,12 +72,12 @@ public class ReconOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeReconOperation() throws JSONException, Exception {
+    public void serializeReconOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconOperation.class), json);
     }
     
     @Test
-    public void serializeReconProcess() throws JSONException, Exception {
+    public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
         com.google.refine.process.Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));

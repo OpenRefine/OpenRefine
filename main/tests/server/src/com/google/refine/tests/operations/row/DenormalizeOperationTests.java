@@ -1,12 +1,8 @@
 package com.google.refine.tests.operations.row;
 
-import static org.mockito.Mockito.mock;
-
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.DenormalizeOperation;
 import com.google.refine.tests.RefineTest;
@@ -20,8 +16,7 @@ public class DenormalizeOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeDenormalizeOperation() throws JSONException, Exception {
-        Project project = mock(Project.class);
+    public void serializeDenormalizeOperation() throws Exception {
         String json = "{"
                 + "\"op\":\"core/denormalize\","
                 + "\"description\":\"Denormalize\"}";

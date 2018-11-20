@@ -54,10 +54,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -156,29 +152,6 @@ public class ParsingUtilities {
         }
 
         return sb.toString();
-    }
-
-    static public JSONObject evaluateJsonStringToObject(String s) throws JSONException {
-        if( s == null ) {
-            throw new IllegalArgumentException("parameter 's' should not be null");
-        }
-        JSONTokener t = new JSONTokener(s);
-        Object o = t.nextValue();
-        if (o instanceof JSONObject) {
-            return (JSONObject) o;
-        } else {
-            throw new JSONException(s + " couldn't be parsed as JSON object");
-        }
-    }
-
-    static public JSONArray evaluateJsonStringToArray(String s) throws JSONException {
-        JSONTokener t = new JSONTokener(s);
-        Object o = t.nextValue();
-        if (o instanceof JSONArray) {
-            return (JSONArray) o;
-        } else {
-            throw new JSONException(s + " couldn't be parsed as JSON array");
-        }
     }
 
     private static final URLCodec codec = new URLCodec();

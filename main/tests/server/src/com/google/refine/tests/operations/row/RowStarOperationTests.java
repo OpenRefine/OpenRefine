@@ -1,12 +1,8 @@
 package com.google.refine.tests.operations.row;
 
-import static org.mockito.Mockito.mock;
-
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.RowStarOperation;
 import com.google.refine.tests.RefineTest;
@@ -20,8 +16,7 @@ public class RowStarOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeRowStarOperation() throws JSONException, Exception {
-        Project project = mock(Project.class);
+    public void serializeRowStarOperation() throws Exception {
         String json = "{"
                 + "\"op\":\"core/row-star\","
                 + "\"description\":\"Star rows\","

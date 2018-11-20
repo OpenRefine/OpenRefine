@@ -1,14 +1,10 @@
 package com.google.refine.tests.operations.row;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.IOException;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.RowRemovalOperation;
 import com.google.refine.tests.RefineTest;
@@ -22,8 +18,7 @@ public class RowRemovalOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeRowRemovalOperation() throws JSONException, IOException {
-        Project project = mock(Project.class);
+    public void serializeRowRemovalOperation() throws IOException {
         String json = "{"
                 + "\"op\":\"core/row-removal\","
                 + "\"description\":\"Remove rows\","

@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -87,7 +86,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
 	servlet = new RefineServletStub();
         File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir);
@@ -114,7 +113,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
     
     @Test
-    public void serializeKeyValueColumnizeOperation() throws JSONException, Exception {
+    public void serializeKeyValueColumnizeOperation() throws Exception {
         String json = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column\","
                 + "\"keyColumnName\":\"key column\","

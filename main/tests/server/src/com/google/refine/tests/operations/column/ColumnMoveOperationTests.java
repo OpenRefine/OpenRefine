@@ -1,6 +1,5 @@
 package com.google.refine.tests.operations.column;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -18,7 +17,7 @@ public class ColumnMoveOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnMoveOperation() throws JSONException, Exception {
+    public void serializeColumnMoveOperation() throws Exception {
         String json = "{\"op\":\"core/column-move\","
                 + "\"description\":\"Move column my column to position 3\","
                 + "\"columnName\":\"my column\","

@@ -45,9 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -72,7 +69,6 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.util.JSONUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -281,19 +277,10 @@ public class RefineTest {
     
     //----helpers----
     
-    static public void whenGetBooleanOption(String name, JSONObject options, Boolean def){
-        when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getBoolean(options, name, def)).thenReturn(def);
-    }
     
     static public void whenGetBooleanOption(String name, ObjectNode options, Boolean def){
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(def ? BooleanNode.TRUE : BooleanNode.FALSE);
-    }
-    
-    static public void whenGetIntegerOption(String name, JSONObject options, int def){
-        when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getInt(options, name, def)).thenReturn(def);
     }
     
     static public void whenGetIntegerOption(String name, ObjectNode options, int def){
@@ -301,19 +288,9 @@ public class RefineTest {
         when(options.get(name)).thenReturn(new IntNode(def));
     }
     
-    static public void whenGetStringOption(String name, JSONObject options, String def){
-        when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getString(options, name, def)).thenReturn(def);
-    }
-    
     static public void whenGetStringOption(String name, ObjectNode options, String def){
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(new TextNode(def));
-    }
-    
-    static public void whenGetObjectOption(String name, JSONObject options, JSONObject def){
-        when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getObject(options, name)).thenReturn(def);
     }
     
     static public void whenGetObjectOption(String name, ObjectNode options, ObjectNode def){
@@ -321,23 +298,9 @@ public class RefineTest {
         when(options.get(name)).thenReturn(def);
     }
     
-    static public void whenGetArrayOption(String name, JSONObject options, JSONArray def){
-        when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getArray(options, name)).thenReturn(def);
-    }
-    
     static public void whenGetArrayOption(String name, ObjectNode options, ArrayNode def){
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(def);
-    }
-    
-    static public void verifyGetOption(String name, JSONObject options){
-        verify(options, times(1)).has(name);
-        try {
-            verify(options, times(1)).get(name);
-        } catch (JSONException e) {
-            Assert.fail("JSONException",e);
-        }
     }
     
     // Works for both int, String, and JSON arrays

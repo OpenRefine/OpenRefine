@@ -53,7 +53,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -131,15 +130,11 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
-        try {
-            verify(options, times(1)).get("ignoreLines");
-            verify(options, times(1)).get("headerLines");
-            verify(options, times(1)).get("skipDataLines");
-            verify(options, times(1)).get("limit");
-            verify(options, times(1)).get("storeBlankCellsAsNulls");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
-        }
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
     
     private static File createSpreadsheet(boolean xml) {

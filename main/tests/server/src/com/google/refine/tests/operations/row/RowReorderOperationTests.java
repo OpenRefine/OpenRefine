@@ -2,7 +2,6 @@ package com.google.refine.tests.operations.row;
 
 import java.util.Properties;
 
-import org.json.JSONException;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -65,7 +64,7 @@ public class RowReorderOperationTests extends RefineTest {
 
    
     @Test
-    public void serializeRowReorderOperation() throws JSONException, Exception {
+    public void serializeRowReorderOperation() throws Exception {
         String json = "  {\n" + 
                 "    \"op\": \"core/row-reorder\",\n" + 
                 "    \"description\": \"Reorder rows\",\n" + 
