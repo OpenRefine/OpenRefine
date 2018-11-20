@@ -31,27 +31,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.expr.functions.html;
+package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class ParseHtml implements Function {
+public class ParseXml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
+        return call(bindings,args,"xml");
+    }
+    
+    public Object call(Properties bindings, Object[] args, String mode) {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof String) {
-                return new ParseXml().call(bindings,args,"html");
+                if (mode == "html") {
+                    return Jsoup.parse(o1.toString());
+                } else if (mode == "xml") {
+                    return Jsoup.parse(o1.toString(), "",Parser.xmlParser());
+                } else {
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
+                }
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
@@ -63,9 +73,9 @@ public class ParseHtml implements Function {
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Parses a string as HTML");
+        writer.key("description"); writer.value("Parses a string as XML");
         writer.key("params"); writer.value("string s");
-        writer.key("returns"); writer.value("HTML object");
+        writer.key("returns"); writer.value("XML object");
         writer.endObject();
     }
 }

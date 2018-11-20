@@ -40,6 +40,7 @@ import org.json.JSONWriter;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -50,9 +51,7 @@ public class InnerHtml implements Function {
         if (args.length >= 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                return e1.html();
-
+                return new InnerXml().call(bindings, args, "html");
             }else{
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }

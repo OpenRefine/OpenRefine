@@ -61,12 +61,14 @@ import com.google.refine.expr.functions.booleans.Xor;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.expr.functions.date.Now;
-import com.google.refine.expr.functions.html.HtmlAttr;
-import com.google.refine.expr.functions.html.HtmlText;
 import com.google.refine.expr.functions.html.InnerHtml;
-import com.google.refine.expr.functions.html.OwnText;
 import com.google.refine.expr.functions.html.ParseHtml;
-import com.google.refine.expr.functions.html.SelectHtml;
+import com.google.refine.expr.functions.xml.XmlAttr;
+import com.google.refine.expr.functions.xml.XmlText;
+import com.google.refine.expr.functions.xml.InnerXml;
+import com.google.refine.expr.functions.xml.OwnText;
+import com.google.refine.expr.functions.xml.ParseXml;
+import com.google.refine.expr.functions.xml.SelectXml;
 import com.google.refine.expr.functions.math.ACos;
 import com.google.refine.expr.functions.math.ASin;
 import com.google.refine.expr.functions.math.ATan;
@@ -236,11 +238,18 @@ public class ControlFunctionRegistry {
 
         // HTML functions from JSoup
         registerFunction("parseHtml", new ParseHtml());
-        registerFunction("select", new SelectHtml());
-        registerFunction("htmlAttr", new HtmlAttr());
-        registerFunction("htmlText", new HtmlText());
+        registerFunction("select", new SelectXml());
+        registerFunction("htmlAttr", new XmlAttr());
+        registerFunction("htmlText", new XmlText());
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
+        
+        // XML functions from JSoup
+        registerFunction("parseXml", new ParseXml());
+        registerFunction("selectx", new SelectXml());
+        registerFunction("xmlAttr", new XmlAttr());
+        registerFunction("xmlText", new XmlText());
+        registerFunction("innerXml", new InnerXml());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
