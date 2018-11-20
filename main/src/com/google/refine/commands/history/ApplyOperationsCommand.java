@@ -40,10 +40,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -59,12 +57,14 @@ public class ApplyOperationsCommand extends Command {
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
         try {
-            JSONArray a = ParsingUtilities.evaluateJsonStringToArray(jsonString);
-            int count = a.length();
+            ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
+            int count = a.size();
             for (int i = 0; i < count; i++) {
-                JSONObject obj = a.getJSONObject(i);
-                
-                reconstructOperation(project, obj);
+            	if (a.get(i) instanceof ObjectNode) {
+	                ObjectNode obj = (ObjectNode) a.get(i);
+	                
+	                reconstructOperation(project, obj);
+            	}
             }
 
             if (project.processManager.hasPending()) {
@@ -72,13 +72,13 @@ public class ApplyOperationsCommand extends Command {
             } else {
                 respond(response, "{ \"code\" : \"ok\" }");
             }
-        } catch (JSONException e) {
+        } catch (IOException e) {
             respondException(response, e);
         }
     }
     
-    protected void reconstructOperation(Project project, JSONObject obj) throws IOException {
-        AbstractOperation operation = ParsingUtilities.mapper.readValue(obj.toString(), AbstractOperation.class);
+    protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
+        AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
         if (operation != null) {
             try {
                 Process process = operation.createProcess(project, new Properties());
