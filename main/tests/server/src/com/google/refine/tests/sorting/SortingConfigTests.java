@@ -2,8 +2,6 @@ package com.google.refine.tests.sorting;
 
 import java.io.IOException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 import com.google.refine.sorting.SortingConfig;
@@ -11,7 +9,7 @@ import com.google.refine.tests.util.TestUtils;
 
 public class SortingConfigTests {
     @Test
-    public void serializeSortingConfig() throws JSONException, IOException {
+    public void serializeSortingConfig() throws IOException {
         String json = "{\n" + 
                 "      \"criteria\": [\n" + 
                 "        {\n" + 
@@ -23,6 +21,6 @@ public class SortingConfigTests {
                 "        }\n" + 
                 "      ]\n" + 
                 "    }";
-        TestUtils.isSerializedTo(SortingConfig.reconstruct(new JSONObject(json)), json);
+        TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json);
     }
 }

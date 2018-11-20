@@ -33,10 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.row;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.servlet.http.HttpServletRequest;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -45,7 +44,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.sorting.SortingConfig;
-import com.google.refine.util.ParsingUtilities;
 
 public class ReorderRowsCommand extends EngineDependentCommand {
     
@@ -59,9 +57,8 @@ public class ReorderRowsCommand extends EngineDependentCommand {
         try{
             String json = request.getParameter("sorting");
 
-            JSONObject sortingJson = (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
-            sorting = (sortingJson == null) ? null : SortingConfig.reconstruct(sortingJson);
-        } catch (JSONException e) {
+            sorting = (json == null) ? null : SortingConfig.reconstruct(json);
+        } catch (IOException e) {
             // ignore
         }
 

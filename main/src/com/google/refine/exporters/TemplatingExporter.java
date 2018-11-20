@@ -38,7 +38,6 @@ import java.io.Writer;
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -88,13 +87,7 @@ public class TemplatingExporter implements WriterExporter {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
         
-        JSONObject sortingJson = null;
-        try{
-            String json = options.getProperty("sorting");
-            sortingJson = (json == null) ? null : 
-                ParsingUtilities.evaluateJsonStringToObject(json);
-        } catch (JSONException e) {
-        }
+        String sortingJson = options.getProperty("sorting");
         
         String templateString = options.getProperty("template");
         String prefixString = options.getProperty("prefix");

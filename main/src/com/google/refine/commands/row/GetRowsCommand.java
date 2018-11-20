@@ -42,9 +42,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -168,14 +165,12 @@ public class GetRowsCommand extends Command {
             RowWritingVisitor rwv = new RowWritingVisitor(start, limit);
             
             SortingConfig sortingConfig = null;
-            try{
-                String json = request.getParameter("sorting");
-                JSONObject sortingJson = (json == null) ? null : 
-                    ParsingUtilities.evaluateJsonStringToObject(json);
+            try {
+                String sortingJson = request.getParameter("sorting");
                 if (sortingJson != null) {
                     sortingConfig = SortingConfig.reconstruct(sortingJson);
                 }
-            } catch (JSONException e) {
+            } catch (IOException e) {
             }
             
             if (engine.getMode() == Mode.RowBased) {

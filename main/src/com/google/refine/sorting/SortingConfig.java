@@ -2,8 +2,6 @@ package com.google.refine.sorting;
 
 import java.io.IOException;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.util.ParsingUtilities;
@@ -30,7 +28,7 @@ public final class SortingConfig  {
         return _criteria;
     }
     
-    public static SortingConfig reconstruct(JSONObject obj) throws IOException {
-        return ParsingUtilities.mapper.readValue(obj.toString(), SortingConfig.class);
+    public static SortingConfig reconstruct(String obj) throws IOException {
+        return ParsingUtilities.mapper.readValue(obj, SortingConfig.class);
     }
 }

@@ -1,11 +1,8 @@
 package com.google.refine.tests.operations.row;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.Properties;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -52,7 +49,7 @@ public class RowReorderOperationTests extends RefineTest {
     @Test
     public void testSortEmptyString() throws Exception {
         String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
-        SortingConfig sortingConfig = SortingConfig.reconstruct(new JSONObject(sortingJson));
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig
@@ -69,7 +66,6 @@ public class RowReorderOperationTests extends RefineTest {
    
     @Test
     public void serializeRowReorderOperation() throws JSONException, Exception {
-        Project project = mock(Project.class);
         String json = "  {\n" + 
                 "    \"op\": \"core/row-reorder\",\n" + 
                 "    \"description\": \"Reorder rows\",\n" + 
