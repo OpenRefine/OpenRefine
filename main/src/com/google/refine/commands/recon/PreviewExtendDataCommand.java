@@ -45,9 +45,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
@@ -94,18 +93,18 @@ public class PreviewExtendDataCommand extends Command {
             String jsonString = request.getParameter("extension");
             DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
             
-            JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
-            int length = rowIndices.length();
-	    Column column = project.columnModel.getColumnByName(columnName);
+            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
+            int length = rowIndices.size();
+            Column column = project.columnModel.getColumnByName(columnName);
             int cellIndex = column.getCellIndex();
 
-	    // get the endpoint to extract data from
+            // get the endpoint to extract data from
             String endpoint = null;
-	    ReconConfig cfg = column.getReconConfig();
-	    if (cfg != null &&
-		cfg instanceof StandardReconConfig) {
-		StandardReconConfig scfg = (StandardReconConfig)cfg;
-		endpoint = scfg.service;
+		    ReconConfig cfg = column.getReconConfig();
+		    if (cfg != null &&
+			cfg instanceof StandardReconConfig) {
+			StandardReconConfig scfg = (StandardReconConfig)cfg;
+			endpoint = scfg.service;
 	    } else {
                 respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
                 return;
@@ -116,7 +115,7 @@ public class PreviewExtendDataCommand extends Command {
             List<String> topicIds = new ArrayList<String>();
             Set<String> ids = new HashSet<String>();
             for (int i = 0; i < length; i++) {
-                int rowIndex = rowIndices.getInt(i);
+                int rowIndex = rowIndices.get(i);
                 if (rowIndex >= 0 && rowIndex < project.rows.size()) {
                     Row row = project.rows.get(rowIndex);
                     Cell cell = row.getCell(cellIndex);
