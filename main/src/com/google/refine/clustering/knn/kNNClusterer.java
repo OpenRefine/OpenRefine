@@ -43,7 +43,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,30 +74,37 @@ import edu.mit.simile.vicino.distances.PPMDistance;
 public class kNNClusterer extends Clusterer {
     
     public static class kNNClustererConfig extends ClustererConfig {
-        @JsonProperty("function")
+        @JsonIgnore
         private String _distanceStr;
+        @JsonIgnore
         private Distance _distance;
-        private kNNClustererConfigParameters _parameters;
-
-        public void initializeFromJSON(JSONObject o) {
-            super.initializeFromJSON(o);
-            _distanceStr = o.getString("function");
-            _distance = _distances.get(_distanceStr.toLowerCase());
-            if(o.has("params")) {
-                _parameters = kNNClustererConfigParameters.reconstruct(o.getJSONObject("params"));
-            } else {
-                _parameters = null;
-            }
-        }
+        @JsonIgnore
+        private kNNClustererConfigParameters _parameters = null;
         
         @JsonIgnore
         public Distance getDistance() {
             return _distance;
         }
         
+        @JsonProperty("function")
+        public void setDistance(String distanceStr) {
+        	_distanceStr = distanceStr;
+        	_distance = _distances.get(_distanceStr.toLowerCase());
+        }
+        
+        @JsonProperty("function")
+        public String getDistanceStr() {
+        	return _distanceStr;
+        }
+        
         @JsonProperty("params")
         public kNNClustererConfigParameters getParameters() {
             return _parameters;
+        }
+        
+        @JsonProperty("params")
+        public void setParameters(kNNClustererConfigParameters params) {
+        	_parameters = params;
         }
 
         @Override
@@ -122,17 +128,6 @@ public class kNNClusterer extends Clusterer {
         public double radius = defaultRadius;
         @JsonProperty("blocking-ngram-size")
         public int blockingNgramSize = defaultBlockingNgramSize;
-        
-        public static kNNClustererConfigParameters reconstruct(JSONObject o) {
-            kNNClustererConfigParameters params = new kNNClustererConfigParameters();
-            if(o.has("radius")) {
-                params.radius = o.getDouble("radius");
-            }
-            if(o.has("blocking-ngram-size")) {
-                params.blockingNgramSize = o.getInt("blocking-ngram-size");
-            }
-            return params;
-        }
     }
 
     private Distance _distance;

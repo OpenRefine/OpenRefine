@@ -44,7 +44,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,32 +66,38 @@ public class BinningClusterer extends Clusterer {
     
     public static class BinningClustererConfig extends ClustererConfig {
        
-        @JsonProperty("function")
+        @JsonIgnore
         private String _keyerName;
+        @JsonIgnore
         private Keyer _keyer;
-        private BinningParameters _parameters;
-        
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            super.initializeFromJSON(o);
-            _keyerName = o.getString("function");
-            _keyer = _keyers.get(_keyerName.toLowerCase());
-            if(o.has("params")) {
-                _parameters = BinningParameters.reconstruct(o.getJSONObject("params"));
-            } else {
-                _parameters = null;
-            }
-        }
+        @JsonIgnore
+        private BinningParameters _parameters = null;
         
         @JsonIgnore
         public Keyer getKeyer() {
             return _keyer;
         }
         
+        @JsonProperty("function")
+        public void setKeyer(String keyerName) {
+        	_keyerName = keyerName;
+        	_keyer = _keyers.get(_keyerName.toLowerCase());
+        }
+        
+        @JsonProperty("function")
+        public String getKeyerName() {
+        	return _keyerName;
+        }
+        
         @JsonProperty("params")
         @JsonInclude(Include.NON_NULL)
         public BinningParameters getParameters() {
             return _parameters;
+        }
+        
+        @JsonProperty("params")
+        public void setParameters(BinningParameters params) {
+        	_parameters = params;
         }
 
         @Override
@@ -112,13 +117,7 @@ public class BinningClusterer extends Clusterer {
     public static class BinningParameters  {
         @JsonProperty("ngram-size")
         @JsonInclude(Include.NON_DEFAULT)
-        public int ngramSize;
-        
-        public static BinningParameters reconstruct(JSONObject o) {
-            BinningParameters parameters = new BinningParameters();
-            parameters.ngramSize = o.has("ngram-size") ? o.getInt("ngram-size") : 0;
-            return parameters;
-        }
+        public int ngramSize = 0;
     }
 
     protected Keyer _keyer;

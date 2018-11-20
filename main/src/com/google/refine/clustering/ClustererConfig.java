@@ -1,8 +1,11 @@
 package com.google.refine.clustering;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.refine.clustering.binning.BinningClusterer.BinningClustererConfig;
+import com.google.refine.clustering.knn.kNNClusterer.kNNClustererConfig;
 import com.google.refine.model.Project;
 
 /**
@@ -10,21 +13,25 @@ import com.google.refine.model.Project;
  * @author Antonin Delpeuch
  *
  */
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.NAME,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="type")
+@JsonSubTypes({
+    @Type(value = kNNClustererConfig.class, name = "knn"),
+    @Type(value = BinningClustererConfig.class, name = "binning") })
 public abstract class ClustererConfig  {
     
     protected String columnName;
     
-    /**
-     * Reads the configuration from a JSON payload (TODO: delete)
-     * @param o
-     */
-    public void initializeFromJSON(JSONObject o) {
-        columnName = o.getString("column");
-    }
-    
     @JsonProperty("column")
     public String getColumnName() {
         return columnName;
+    }
+    
+    @JsonProperty("column")
+    public void setColumnName(String name) {
+    	columnName = name;
     }
     
     /**

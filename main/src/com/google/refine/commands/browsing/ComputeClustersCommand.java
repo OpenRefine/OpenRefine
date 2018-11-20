@@ -39,17 +39,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
-import com.google.refine.clustering.binning.BinningClusterer.BinningClustererConfig;
-import com.google.refine.clustering.knn.kNNClusterer.kNNClustererConfig;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class ComputeClustersCommand extends Command {
 
@@ -63,24 +61,15 @@ public class ComputeClustersCommand extends Command {
             long start = System.currentTimeMillis();
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            JSONObject clusterer_conf = getJsonParameter(request,"clusterer");
+            String clusterer_conf = request.getParameter("clusterer");
+            ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
 
-            String type = clusterer_conf.has("type") ? clusterer_conf.getString("type") : "binning";
-            
-            ClustererConfig clustererConfig = null;
-            if ("knn".equals(type)) {
-                clustererConfig = new kNNClustererConfig();
-            } else  {
-                clustererConfig = new BinningClustererConfig();
-            }
-                
-            clustererConfig.initializeFromJSON(clusterer_conf);
             Clusterer clusterer = clustererConfig.apply(project);
             
             clusterer.computeClusters(engine);
             
             respondJSON(response, clusterer);
-            logger.info("computed clusters [{},{}] in {}ms", new Object[] { type, clusterer_conf.getString("function"), Long.toString(System.currentTimeMillis() - start) });
+            logger.info("computed clusters [{}] in {}ms", new Object[] { clustererConfig.getType(), Long.toString(System.currentTimeMillis() - start) });
         } catch (Exception e) {
             respondException(response, e);
         }
