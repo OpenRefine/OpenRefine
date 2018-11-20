@@ -48,9 +48,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +57,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -284,7 +284,19 @@ public class StandardReconConfig extends ReconConfig {
             this.properties = properties;
             this.limit = limit;
         }
-        
+    }
+    
+    protected class ReconResult {
+    	@JsonProperty("name")
+    	protected String name;
+    	@JsonProperty("id")
+    	protected String id;
+    	@JsonProperty("types")
+    	protected String[] types = new String[0];
+    	@JsonProperty("score")
+    	protected double score;
+    	@JsonProperty("match")
+    	protected boolean match = false;
     }
 
     @Override
@@ -388,7 +400,7 @@ public class StandardReconConfig extends ReconConfig {
                 InputStream is = connection.getInputStream();
                 try {
                     String s = ParsingUtilities.inputStreamToString(is);
-                    JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
 
                     for (int i = 0; i < jobs.size(); i++) {
                         StandardReconJob job = (StandardReconJob) jobs.get(i);
@@ -396,10 +408,10 @@ public class StandardReconConfig extends ReconConfig {
 
                         String text = job.text;
                         String key = "q" + i;
-                        if (o.has(key)) {
-                            JSONObject o2 = o.getJSONObject(key);
-                            if (o2.has("result")) {
-                                JSONArray results = o2.getJSONArray("result");
+                        if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                            ObjectNode o2 = (ObjectNode) o.get(key);
+                            if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                                ArrayNode results = (ArrayNode) o2.get("result");
 
                                 recon = createReconServiceResults(text, results, historyEntryID);
                             } else {
@@ -418,7 +430,7 @@ public class StandardReconConfig extends ReconConfig {
                     is.close();
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
@@ -441,64 +453,49 @@ public class StandardReconConfig extends ReconConfig {
         return recon;
     }
 
-    protected Recon createReconServiceResults(String text, JSONArray results, long historyEntryID) {
+    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-        try {
-            int length = results.length();
-            int count = 0;
-            for (int i = 0; i < length; i++) {
-                JSONObject result = results.getJSONObject(i);
-                if (!result.has("name")) {
-                    continue;
-                }
-                
-                JSONArray types = result.getJSONArray("type");
-                String[] typeIDs = new String[types.length()];
-                for (int j = 0; j < typeIDs.length; j++) {
-                    Object type = types.get(j);
-                    typeIDs[j] = type instanceof String ? (String) type :
-                        ((JSONObject) type).getString("id");
-                }
-                
-                double score = result.getDouble("score");
-                ReconCandidate candidate = new ReconCandidate(
-                    result.getString("id"),
-                    result.getString("name"),
-                    typeIDs,
-                    score
-                );
-                
-                if (autoMatch && i == 0 && result.has("match") && result.getBoolean("match")) {
-                    recon.match = candidate;
-                    recon.matchRank = 0;
-                    recon.judgment = Judgment.Matched;
-                    recon.judgmentAction = "auto";
-                }
-                
-                recon.addCandidate(candidate);
-                count++;
+        List<ReconResult> results = ParsingUtilities.mapper.readValue(resultsList.toString(), new TypeReference<List<ReconResult>>() {});
+        
+        int length = results.size();
+        int count = 0;
+        for (int i = 0; i < length; i++) {
+            ReconResult result = results.get(i);
+            ReconCandidate candidate = new ReconCandidate(
+                result.id,
+                result.name,
+                result.types,
+                result.score
+            );
+            
+            if (autoMatch && i == 0 && result.match) {
+                recon.match = candidate;
+                recon.matchRank = 0;
+                recon.judgment = Judgment.Matched;
+                recon.judgmentAction = "auto";
             }
             
-            if (count > 0) {
-                ReconCandidate candidate = recon.candidates.get(0);
-                
-                recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
-                recon.setFeature(Recon.Feature_nameLevenshtein, 
-                        StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
-                recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
-                
-                recon.setFeature(Recon.Feature_typeMatch, false);
-                if (this.typeID != null) {
-                    for (String typeID : candidate.types) {
-                        if (this.typeID.equals(typeID)) {
-                            recon.setFeature(Recon.Feature_typeMatch, true);
-                            break;
-                        }
+            recon.addCandidate(candidate);
+            count++;
+        }
+        
+        if (count > 0) {
+            ReconCandidate candidate = recon.candidates.get(0);
+            
+            recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
+            recon.setFeature(Recon.Feature_nameLevenshtein, 
+                    StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
+            recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
+            
+            recon.setFeature(Recon.Feature_typeMatch, false);
+            if (this.typeID != null) {
+                for (String typeID : candidate.types) {
+                    if (this.typeID.equals(typeID)) {
+                        recon.setFeature(Recon.Feature_typeMatch, true);
+                        break;
                     }
                 }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
         return recon;
     }
