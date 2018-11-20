@@ -286,7 +286,7 @@ public class StandardReconConfig extends ReconConfig {
         }
     }
     
-    public class ReconResult {
+    public static class ReconResult {
     	@JsonProperty("name")
     	public String name;
     	@JsonProperty("id")
