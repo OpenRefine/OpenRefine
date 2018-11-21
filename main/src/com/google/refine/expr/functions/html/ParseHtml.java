@@ -37,7 +37,6 @@ import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-import org.jsoup.Jsoup;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.xml.ParseXml;

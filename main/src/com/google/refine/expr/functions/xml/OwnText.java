@@ -47,17 +47,17 @@ public class OwnText implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 Element e1 = (Element)o1;
                 return e1.ownText();
 
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single XML or HTML element as an argument");
     }
 
 

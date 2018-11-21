@@ -48,7 +48,7 @@ public class InnerHtml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(bindings, args, "html");
@@ -56,7 +56,7 @@ public class InnerHtml implements Function {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
 

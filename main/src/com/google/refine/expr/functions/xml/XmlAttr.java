@@ -47,7 +47,7 @@ public class XmlAttr implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 2) {
+        if (args.length == 2) {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o1 instanceof Element) {
@@ -59,7 +59,7 @@ public class XmlAttr implements Function {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
     }
 
 
