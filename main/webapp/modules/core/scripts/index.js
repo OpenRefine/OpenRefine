@@ -53,6 +53,7 @@ $.ajax({
 	}
 });
 $.i18n().load(dictionary, lang);
+$.i18n({ locale: lang });
 // End internationalization
 
 Refine.selectActionArea = function(id) {

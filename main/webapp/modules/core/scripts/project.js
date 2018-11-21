@@ -50,6 +50,7 @@ $.ajax({
 	}
 });
 $.i18n().load(dictionary, lang);
+$.i18n({ locale: lang });
 // End internationalization
 
 var Refine = {
