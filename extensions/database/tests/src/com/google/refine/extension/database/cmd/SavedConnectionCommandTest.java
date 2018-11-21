@@ -11,9 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -24,6 +21,8 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -36,6 +35,7 @@ import com.google.refine.extension.database.stub.RefineDbServletStub;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class SavedConnectionCommandTest extends DBExtensionTests{
     
@@ -59,7 +59,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     private SavedConnectionCommand SUT = null;
 
     @BeforeMethod
-    public void setUp() throws JSONException, IOException {
+    public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
@@ -136,7 +136,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
     }
     
     @Test
-    public void testDoPost() throws IOException, ServletException, JSONException {
+    public void testDoPost() throws IOException, ServletException {
         
         when(request.getParameter("connectionName")).thenReturn("test-db-name");
         when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
@@ -155,18 +155,18 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         
         String result = sw.getBuffer().toString().trim();
  
-        JSONObject json = new JSONObject(result);
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
         
-        JSONArray savedConnections = json.getJSONArray("savedConnections");
+        ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
         
-        int len = savedConnections.length();
+        int len = savedConnections.size();
         
         Assert.assertEquals(len, 1);
     }
 
     @Test
-    public void testDoGet() throws IOException, ServletException, JSONException {
+    public void testDoGet() throws IOException, ServletException {
         String testDbName = "testLocalDb";
         //add saved connection
         saveDatabaseConfiguration(testDbName);
@@ -187,21 +187,20 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
      
         SUT.doGet(request, response);
       
-        JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
+        ObjectNode json = ParsingUtilities.mapper.readValue(sw.getBuffer().toString().trim(), ObjectNode.class);
         
-        JSONArray savedConnections = json.getJSONArray("savedConnections");
+        ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
      
-        Assert.assertEquals(savedConnections.length(), 1);
+        Assert.assertEquals(savedConnections.size(), 1);
         
-        JSONObject sc = (JSONObject)savedConnections.get(0);
-       // System.out.println("sc" + sc);
-        String connName = sc.getString("connectionName");
+        ObjectNode sc = (ObjectNode)savedConnections.get(0);
+        String connName = sc.get("connectionName").asText();
         Assert.assertEquals(connName, testDbName);
     }
 
     @Test
-    public void testDoPut() throws IOException, ServletException, JSONException {
+    public void testDoPut() throws IOException, ServletException {
         String testDbName = "testLocalDb";
         saveDatabaseConfiguration(testDbName);
     
@@ -223,15 +222,15 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
       
         SUT.doPut(request, response);
         
-        JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
-        JSONArray savedConnections = json.getJSONArray("savedConnections");
+        ObjectNode json = ParsingUtilities.mapper.readValue(sw.getBuffer().toString().trim(), ObjectNode.class);
+        ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
        
-        Assert.assertEquals(savedConnections.length(), 1);
+        Assert.assertEquals(savedConnections.size(), 1);
         
-        JSONObject sc = (JSONObject)savedConnections.get(0);
+        ObjectNode sc = (ObjectNode)savedConnections.get(0);
         System.out.println("sc" + sc);
-        String newDbHost = sc.getString("databaseHost");
+        String newDbHost = sc.get("databaseHost").asText();
         Assert.assertEquals(newDbHost, newHost);
     }
 
@@ -249,11 +248,11 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
             when(request.getParameter("connectionName")).thenReturn(testDbName);
             SUT.doDelete(request, response);
             
-            JSONObject json = new JSONObject(sw.getBuffer().toString().trim());
-            JSONArray savedConnections = json.getJSONArray("savedConnections");
+            ObjectNode json = ParsingUtilities.mapper.readValue(sw.getBuffer().toString().trim(), ObjectNode.class);
+            ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
             Assert.assertNotNull(savedConnections);
            
-            Assert.assertEquals(savedConnections.length(), 0);
+            Assert.assertEquals(savedConnections.size(), 0);
        
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -279,7 +278,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
             
            // String result = sw.getBuffer().toString().trim();
           
-            JSONObject json = new JSONObject();
+            ObjectNode json = ParsingUtilities.mapper.createObjectNode();
             
             Assert.assertNotNull(json);
        

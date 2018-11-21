@@ -39,8 +39,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,8 +139,8 @@ public class DatabaseImportController implements ImportingController {
         }
         
 
-        JSONObject result = new JSONObject();
-        JSONObject options = new JSONObject();
+        ObjectNode result = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(result, "status", "ok");
         JSONUtilities.safePut(result, OPTIONS_KEY, options);
 
@@ -220,7 +218,7 @@ public class DatabaseImportController implements ImportingController {
                         writer.writeStringField("message", getExceptionString(exceptions));
                     }
                     writer.writeEndObject();
-                } catch (JSONException e) {
+                } catch (IOException e) {
                     throw new ServletException(e);
                 } finally {
                     writer.flush();
@@ -229,7 +227,7 @@ public class DatabaseImportController implements ImportingController {
                     w.close();
                 }
 
-            } catch (JSONException e) {
+            } catch (IOException e) {
                 throw new ServletException(e);
             } finally {
                 job.touch();
@@ -372,7 +370,7 @@ public class DatabaseImportController implements ImportingController {
                 }.start();
                 
                 HttpUtilities.respond(response, "ok", "done");
-            } catch (JSONException e) {
+            } catch (IOException e) {
                 throw new ServletException(e);
             }
         }

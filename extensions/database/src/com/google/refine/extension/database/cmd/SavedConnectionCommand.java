@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +118,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
      * @throws IOException
      * @throws JSONException
      */
-    private void writeSavedConnectionResponse(HttpServletResponse response, DatabaseConfiguration savedConnection) throws IOException, JSONException {
+    private void writeSavedConnectionResponse(HttpServletResponse response, DatabaseConfiguration savedConnection) throws IOException {
         Writer w = response.getWriter();
         try {
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
@@ -167,7 +166,7 @@ public class SavedConnectionCommand extends DatabaseCommand {
      * @throws IOException
      * @throws JSONException
      */
-    private void writeSavedConnectionResponse(HttpServletResponse response) throws IOException, JSONException {
+    private void writeSavedConnectionResponse(HttpServletResponse response) throws IOException {
         Writer w = response.getWriter();
         try {
             

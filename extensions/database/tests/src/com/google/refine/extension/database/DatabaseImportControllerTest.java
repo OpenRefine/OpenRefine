@@ -12,8 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -24,6 +22,7 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -33,6 +32,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 
 
@@ -60,7 +60,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
     private DatabaseImportController SUT = null;
 
     @BeforeMethod
-    public void setUp() throws JSONException, IOException {
+    public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
@@ -102,10 +102,9 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
             SUT.doGet(request, response);
             
             String result = sw.getBuffer().toString().trim();
-            JSONObject json = new JSONObject(result);
-       
-            String code = json.getString("status");
-            String message = json.getString("message");
+            ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);      
+            String code = json.get("status").asText();
+            String message = json.get("message").asText();
             Assert.assertNotNull(code);
             Assert.assertNotNull(message);
             Assert.assertEquals(code, "error");
@@ -119,7 +118,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
     }
     
     @Test
-    public void testDoPostInvalidSubCommand() throws IOException, ServletException, JSONException {
+    public void testDoPostInvalidSubCommand() throws IOException, ServletException {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         when(request.getQueryString()).thenReturn(
@@ -130,10 +129,10 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
         SUT.doPost(request, response);
    
         String result = sw.getBuffer().toString().trim();
-        JSONObject json = new JSONObject(result);
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
 
-        String code = json.getString("status");
-        String message = json.getString("message");
+        String code = json.get("status").asText();
+        String message = json.get("message").asText();
         Assert.assertNotNull(code);
         Assert.assertNotNull(message);
         Assert.assertEquals(code, "error");
@@ -143,7 +142,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
     
 
     @Test
-    public void testDoPostInitializeParser() throws ServletException, IOException, JSONException {
+    public void testDoPostInitializeParser() throws ServletException, IOException {
         
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -155,15 +154,15 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
         SUT.doPost(request, response);
        
         String result = sw.getBuffer().toString().trim();
-        JSONObject json = new JSONObject(result);
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
    
-        String status = json.getString("status");
+        String status = json.get("status").asText();
         //System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
     
     @Test
-    public void testDoPostParsePreview() throws IOException, ServletException, JSONException {
+    public void testDoPostParsePreview() throws IOException, ServletException {
         
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -188,15 +187,15 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
         SUT.doPost(request, response);
        
         String result = sw.getBuffer().toString().trim();
-        JSONObject json = new JSONObject(result);
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
    
-        String status = json.getString("status");
+        String status = json.get("status").asText();
         //System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
     
     @Test
-    public void testDoPostCreateProject() throws IOException, ServletException, JSONException {
+    public void testDoPostCreateProject() throws IOException, ServletException {
         
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -222,9 +221,9 @@ public class DatabaseImportControllerTest extends DBExtensionTests{
         SUT.doPost(request, response);
        
         String result = sw.getBuffer().toString().trim();
-        JSONObject json = new JSONObject(result);
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
    
-        String status = json.getString("status");
+        String status = json.get("status").asText();
         //System.out.println("json::" + json);
         Assert.assertEquals(status, "ok");
     }
