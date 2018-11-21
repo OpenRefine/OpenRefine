@@ -61,7 +61,7 @@ function SqlExporterDialog(options) {
     this._elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
 //    this._elmts.nextButton.html($.i18n._('core-buttons/next'));
     
-    this._elmts.tableNameLabel.html($.i18n._('core-dialogs')["tableNameLabel"]);
+    this._elmts.tableNameLabel.html($.i18n._('core-dialogs/tableNameLabel'));
     this._elmts.includeStructureLabel.html($.i18n._('core-dialogs/for-include-structure-checkbox'));
     this._elmts.includeDropStatementLabel.html($.i18n._('core-dialogs/for-include-drop-statement-checkbox'));
     this._elmts.includeContentLabel.html($.i18n._('core-dialogs/for-include-content-checkbox'));
@@ -69,9 +69,9 @@ function SqlExporterDialog(options) {
     
     this._elmts.nullCellValueToEmptyStringLabel.html($.i18n._('core-dialogs/for-null-cell-value-to-empty-str-label'));
   
-    this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n._('core-dialogs')["sqlExporterIgnoreFacets"]);
-    this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n._('core-dialogs')["sqlExporterTrimColumns"]);
-    this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n._('core-dialogs')["sqlExporterOutputEmptyRows"]);
+    this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n._('core-dialogs/sqlExporterIgnoreFacets'));
+    this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n._('core-dialogs/sqlExporterTrimColumns'));
+    this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n._('core-dialogs/sqlExporterOutputEmptyRows'));
   
     $("#sql-exporter-tabs-content").css("display", "");
     $("#sql-exporter-tabs-download").css("display", "");

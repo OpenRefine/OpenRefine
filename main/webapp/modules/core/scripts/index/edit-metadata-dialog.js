@@ -93,7 +93,7 @@ EditMetadataDialog.prototype._createDialog = function() {
   
   var body = $("#metadata-body");
     
-  $('<h1>').text($.i18n._('core-index')["metaDatas"]).appendTo(body);
+  $('<h1>').text($.i18n._('core-index/metaDatas')).appendTo(body);
 
   var metadataTable = $("<table>")
   .addClass("list-table")

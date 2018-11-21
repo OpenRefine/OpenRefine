@@ -65,19 +65,19 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   var self = this;
   
   $('#database-title').text($.i18n._('database-import/title')); 
-  $('#connectionNameLabel').html($.i18n._("database-source")["connectionNameLabel"]);
-  $('#databaseTypeLabel').html($.i18n._("database-source")["databaseTypeLabel"]);
-  $('#databaseHostLabel').text($.i18n._("database-source")["databaseHostLabel"]);
-  $('#databasePortLabel').text($.i18n._("database-source")["databasePortLabel"]);
-  $('#databaseUserLabel').text($.i18n._("database-source")["databaseUserLabel"]);
-  $('#databasePasswordLabel').text($.i18n._("database-source")["databasePasswordLabel"]);
-  $('#databaseNameLabel').text($.i18n._("database-source")["databaseNameLabel"]);
-  $('#databaseSchemaLabel').text($.i18n._("database-source")["databaseSchemaLabel"]);
-  $('#databaseTestButton').text($.i18n._("database-source")["databaseTestButton"]);
-  $('#databaseSaveButton').text($.i18n._("database-source")["databaseSaveButton"]);
-  $('#databaseConnectButton').text($.i18n._("database-source")["databaseConnectButton"]);
-  $('#newConnectionButtonDiv').text($.i18n._("database-source")["newConnectionButtonDiv"]);
-  $('#savedConnectionSpan').text($.i18n._("database-source")["savedConnectionSpan"]);
+  $('#connectionNameLabel').html($.i18n._('database-source/connectionNameLabel'));
+  $('#databaseTypeLabel').html($.i18n._('database-source/databaseTypeLabel'));
+  $('#databaseHostLabel').text($.i18n._('database-source/databaseHostLabel'));
+  $('#databasePortLabel').text($.i18n._('database-source/databasePortLabel'));
+  $('#databaseUserLabel').text($.i18n._('database-source/databaseUserLabel'));
+  $('#databasePasswordLabel').text($.i18n._('database-source/databasePasswordLabel'));
+  $('#databaseNameLabel').text($.i18n._('database-source/databaseNameLabel'));
+  $('#databaseSchemaLabel').text($.i18n._('database-source/databaseSchemaLabel'));
+  $('#databaseTestButton').text($.i18n._('database-source/databaseTestButton'));
+  $('#databaseSaveButton').text($.i18n._('database-source/databaseSaveButton'));
+  $('#databaseConnectButton').text($.i18n._('database-source/databaseConnectButton'));
+  $('#newConnectionButtonDiv').text($.i18n._('database-source/newConnectionButtonDiv'));
+  $('#savedConnectionSpan').text($.i18n._('database-source/savedConnectionSpan'));
  
   
   this._elmts.newConnectionButton.click(function(evt) {
