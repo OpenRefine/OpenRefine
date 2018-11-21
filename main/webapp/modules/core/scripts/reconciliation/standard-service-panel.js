@@ -83,14 +83,14 @@ ReconStandardServicePanel.prototype._constructUI = function() {
   this._panel = $(DOM.loadHTML("core", "scripts/reconciliation/standard-service-panel.html")).appendTo(this._container);
   this._elmts = DOM.bind(this._panel);
   
-  this._elmts.or_proc_access.html("&raquo; "+$.i18n._('core-recon')["access"]);
-  this._elmts.rawServiceLink.html($.i18n._('core-recon')["service-api"]);
-  this._elmts.or_proc_cellType.html($.i18n._('core-recon')["cell-type"]+":");
-  this._elmts.or_proc_colDetail.html($.i18n._('core-recon')["col-detail"]+":");
-  this._elmts.or_proc_againstType.html($.i18n._('core-recon')["against-type"]+":");
-  this._elmts.or_proc_noType.html($.i18n._('core-recon')["no-type"]);
-  this._elmts.or_proc_autoMatch.html($.i18n._('core-recon')["auto-match"]);
-  this._elmts.or_proc_max_candidates.html($.i18n._('core-recon')["max-candidates"]);
+  this._elmts.or_proc_access.html("&raquo; "+$.i18n._('core-recon/access'));
+  this._elmts.rawServiceLink.html($.i18n._('core-recon/service-api'));
+  this._elmts.or_proc_cellType.html($.i18n._('core-recon/cell-type')+":");
+  this._elmts.or_proc_colDetail.html($.i18n._('core-recon/col-detail')+":");
+  this._elmts.or_proc_againstType.html($.i18n._('core-recon/against-type')+":");
+  this._elmts.or_proc_noType.html($.i18n._('core-recon/no-type'));
+  this._elmts.or_proc_autoMatch.html($.i18n._('core-recon/auto-match'));
+  this._elmts.or_proc_max_candidates.html($.i18n._('core-recon/max-candidates'));
 
   this._elmts.rawServiceLink.attr("href", this._service.url);
 
@@ -166,7 +166,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
   } else {
     $('<div>')
     .addClass("recon-dialog-standard-service-panel-message")
-    .text($.i18n._('core-recon')["warning-type-sugg"])
+    .text($.i18n._('core-recon/warning-type-sugg'))
     .appendTo(this._elmts.typeContainer);
 
     this._panel
@@ -185,7 +185,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
   var detailTable = $(
       '<table>' +
-      '<tr><th>'+$.i18n._('core-recon')["column"]+'</th><th>'+$.i18n._('core-recon')["include"]+'?</th><th>'+$.i18n._('core-recon')["as-property"]+'</th></tr>' +
+      '<tr><th>'+$.i18n._('core-recon/column')+'</th><th>'+$.i18n._('core-recon/include')+'?</th><th>'+$.i18n._('core-recon/as-property')+'</th></tr>' +
       '</table>'
   ).appendTo(detailTableContainer)[0];
 

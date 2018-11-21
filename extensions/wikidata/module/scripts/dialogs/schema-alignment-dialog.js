@@ -66,12 +66,12 @@ SchemaAlignmentDialog.setUpTabs = function() {
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikidata-schema-panel')
-        .text($.i18n._('wikidata-schema')["schema-tab-header"])
+        .text($.i18n._('wikidata-schema/schema-tab-header'))
         .appendTo(this._toolPanel);
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikidata-issues-panel')
-        .text($.i18n._('wikidata-schema')["warnings-tab-header"]+' ')
+        .text($.i18n._('wikidata-schema/warnings-tab-header')+' ')
         .appendTo(this._toolPanel);
   this.issuesTabCount = $('<span></span>')
         .addClass('schema-alignment-total-warning-count')
@@ -84,7 +84,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikidata-preview-panel')
-        .text($.i18n._('wikidata-schema')["edits-preview-tab-header"])
+        .text($.i18n._('wikidata-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel);
   this.previewSpinner = $('<img />')
         .attr('src', 'images/large-spinner.gif')
@@ -93,7 +93,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
 
   this._unsavedIndicator = $('<span></span>')
         .html('&nbsp;*')
-        .attr('title', $.i18n._('wikidata-schema')["unsaved-changes-alt"])
+        .attr('title', $.i18n._('wikidata-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
  
@@ -108,22 +108,22 @@ SchemaAlignmentDialog.setUpTabs = function() {
    */
   var schemaTab = $(DOM.loadHTML("wikidata", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
-  schemaElmts.dialogExplanation.text($.i18n._('wikidata-schema')["dialog-explanation"]);
-  this._plusButton($.i18n._('wikidata-schema')["add-item-button"], schemaElmts.addItemButton);
+  schemaElmts.dialogExplanation.text($.i18n._('wikidata-schema/dialog-explanation'));
+  this._plusButton($.i18n._('wikidata-schema/add-item-button'), schemaElmts.addItemButton);
   schemaElmts.addItemButton.click(function(e) {
     self._addItem();
     SchemaAlignmentDialog._hasChanged();
     e.preventDefault();
   });
   schemaElmts.saveButton
-        .text($.i18n._('wikidata-schema')["save-button"])
-        .attr('title', $.i18n._('wikidata-schema')["save-schema-alt"])
+        .text($.i18n._('wikidata-schema/save-button'))
+        .attr('title', $.i18n._('wikidata-schema/save-schema-alt'))
         .prop('disabled', true)
         .addClass('disabled')
         .click(function() { SchemaAlignmentDialog._save(); });
   schemaElmts.discardButton
-        .text($.i18n._('wikidata-schema')["discard-button"])
-        .attr('title', $.i18n._('wikidata-schema')["discard-schema-changes-alt"])
+        .text($.i18n._('wikidata-schema/discard-button'))
+        .attr('title', $.i18n._('wikidata-schema/discard-schema-changes-alt'))
         .prop('disabled', true)
         .addClass('disabled')
         .click(function() { SchemaAlignmentDialog._discardChanges(); });
@@ -141,7 +141,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
    */
   var issuesTab = $(DOM.loadHTML("wikidata", "scripts/issues-tab.html")).appendTo(this._issuesPanel);
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
-  issuesElmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema')["invalid-schema-warning-issues"]);
+  issuesElmts.invalidSchemaWarningIssues.text($.i18n._('wikidata-schema/invalid-schema-warning-issues'));
 
   /**
    * Init the preview tab
@@ -149,7 +149,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
   var previewTab = $(DOM.loadHTML("wikidata", "scripts/preview-tab.html")).appendTo(this._previewPanel);
   var previewElmts = this._previewElmts = DOM.bind(previewTab);
   SchemaAlignmentDialog.updateNbEdits(0);
-  previewElmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema')["invalid-schema-warning-preview"]);
+  previewElmts.invalidSchemaWarningPreview.text($.i18n._('wikidata-schema/invalid-schema-warning-preview'));
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
@@ -223,7 +223,7 @@ SchemaAlignmentDialog.launch = function(onDone) {
 
 var beforeUnload = function(e) {
   if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges === true) {
-     return (e = $.i18n._('wikidata-schema')["unsaved-warning"]);
+     return (e = $.i18n._('wikidata-schema/unsaved-warning'));
   }
 };
 
@@ -266,7 +266,7 @@ SchemaAlignmentDialog._save = function(onDone) {
         if (onDone) onDone();
       },
       onError: function(e) {
-        alert($.i18n._('wikidata-schema')["incomplete-schema-could-not-be-saved"]);
+        alert($.i18n._('wikidata-schema/incomplete-schema-could-not-be-saved'));
       },
     }
   );
@@ -310,7 +310,7 @@ SchemaAlignmentDialog._makeDeleteButton = function (noText) {
   );
   if(noText === undefined) {
      button.append(
-     $('<span></span>').text($.i18n._('wikidata-schema')["remove"]));
+     $('<span></span>').text($.i18n._('wikidata-schema/remove')));
   }
   return button;
 }
@@ -347,9 +347,9 @@ SchemaAlignmentDialog._addItem = function(json) {
 
   // Terms
   $('<span></span>').addClass('wbs-namedesc-header')
-       .text($.i18n._('wikidata-schema')["terms-header"]).appendTo(right);
+       .text($.i18n._('wikidata-schema/terms-header')).appendTo(right);
   $('<div></div>').addClass('wbs-namedesc-container')
-        .attr('data-emptyplaceholder', $.i18n._('wikidata-schema')['empty-terms'])
+        .attr('data-emptyplaceholder', $.i18n._('wikidata-schema/empty-terms'))
         .appendTo(right);
   var termToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   var addNamedescButton = $('<a></a>').addClass('wbs-add-namedesc')
@@ -358,16 +358,16 @@ SchemaAlignmentDialog._addItem = function(json) {
      e.preventDefault();
   }).appendTo(termToolbar);
   SchemaAlignmentDialog._plusButton(
-         $.i18n._('wikidata-schema')["add-term"], addNamedescButton);
+         $.i18n._('wikidata-schema/add-term'), addNamedescButton);
 
   // Clear the float
   $('<div></div>').attr('style', 'clear: right').appendTo(right);
 
   // Statements
   $('<div></div>').addClass('wbs-statements-header')
-        .text($.i18n._('wikidata-schema')['statements-header']).appendTo(right);
+        .text($.i18n._('wikidata-schema/statements-header')).appendTo(right);
   $('<div></div>').addClass('wbs-statement-group-container')
-        .attr('data-emptyplaceholder', $.i18n._('wikidata-schema')['empty-statements'])
+        .attr('data-emptyplaceholder', $.i18n._('wikidata-schema/empty-statements'))
         .appendTo(right);
   var statementToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
   var addStatementButton = $('<a></a>').addClass('wbs-add-statement-group')
@@ -377,7 +377,7 @@ SchemaAlignmentDialog._addItem = function(json) {
   }).appendTo(statementToolbar);
 
   SchemaAlignmentDialog._plusButton(
-         $.i18n._('wikidata-schema')["add-statement"], addStatementButton);
+         $.i18n._('wikidata-schema/add-statement'), addStatementButton);
    
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
@@ -425,15 +425,15 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   var type_input = $('<select></select>').appendTo(type_container);
   $('<option></option>')
   .attr('value', 'LABEL')
-  .text($.i18n._('wikidata-schema')["label"])
+  .text($.i18n._('wikidata-schema/label'))
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'DESCRIPTION')
-  .text($.i18n._('wikidata-schema')["description"])
+  .text($.i18n._('wikidata-schema/description'))
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'ALIAS')
-  .text($.i18n._('wikidata-schema')["alias"])
+  .text($.i18n._('wikidata-schema/alias'))
   .appendTo(type_input);
   type_input.val(type);
   type_input.on('change', function(e) {
@@ -488,7 +488,7 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
      SchemaAlignmentDialog._addStatement(statementContainer, datatype, null);
      e.preventDefault();
   }).appendTo(toolbar).hide();
-  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-value"], addValueButton);
+  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema/add-value'), addValueButton);
   var removeButton = SchemaAlignmentDialog._makeDeleteButton()
         .addClass('wbs-remove-statement-group')
         .appendTo(toolbar)
@@ -561,7 +561,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
         SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
         e.preventDefault();
     }).appendTo(toolbar2);
-    SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-qualifier"], addQualifierButton);
+    SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema/add-qualifier'), addQualifierButton);
 
     if (qualifiers) {
        for (var i = 0; i != qualifiers.length; i++) {
@@ -592,7 +592,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
         SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
         e.preventDefault();
     }).appendTo(toolbar3);
-    SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')["add-reference"], addReferenceButton);
+    SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema/add-reference'), addReferenceButton);
     if (references) {
         for (var i = 0; i != references.length; i++) {
           SchemaAlignmentDialog._addReference(referenceContainer, references[i]);
@@ -688,7 +688,7 @@ SchemaAlignmentDialog._addReference = function(container, json) {
       SchemaAlignmentDialog._addQualifier(qualifierContainer, null);
       e.preventDefault();
   }).appendTo(toolbar2);
-  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema')['add-reference-snak'], addSnakButton);
+  SchemaAlignmentDialog._plusButton($.i18n._('wikidata-schema/add-reference-snak'), addSnakButton);
 
   if (snaks) {
      for (var i = 0; i != snaks.length; i++) {
@@ -712,7 +712,7 @@ SchemaAlignmentDialog._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
-  a.html(childrenCount+$.i18n._('wikidata-schema')["nb-references"]);
+  a.html(childrenCount+$.i18n._('wikidata-schema/nb-references'));
 }
 
 /************************
@@ -736,7 +736,7 @@ SchemaAlignmentDialog._getPropertyType = function(pid, callback) {
 
 SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContainer, initialValue) {
   var input = $('<input></input>').appendTo(inputContainer);
-  input.attr("placeholder", $.i18n._('wikidata-schema')["property-placeholder"]);
+  input.attr("placeholder", $.i18n._('wikidata-schema/property-placeholder'));
 
   if (this._reconService !== null) {
     endpoint = this._reconService.suggest.property;
@@ -793,9 +793,9 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
 
   if (this._reconService !== null && (mode === "wikibase-item" || mode === "unit")) {
     if (mode === "wikibase-item") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["item-or-reconciled-column"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/item-or-reconciled-column'));
     } else {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["unit"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/unit'));
     }
     var endpoint = null;
     endpoint = this._reconService.suggest.entity;
@@ -951,20 +951,20 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
     if (mode === "amount") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["amount"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/amount'));
         SchemaAlignmentDialog.setupStringInputValidation(input, /^[\-+]?\d+(\.\d*)?(E[\-+]\d+)?$/);
     } else if (mode === "url") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["full-url"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/full-url'));
         SchemaAlignmentDialog.setupStringInputValidation(input, /^https?:\/\/.+$/);
     } else if (mode === "tabular-data") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["tabular-data-with-prefix"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/tabular-data-with-prefix'));
         SchemaAlignmentDialog.setupStringInputValidation(input, /^Data:.+$/);
     } else if (mode === "commonsMedia") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["commons-media"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/commons-media'));
     } else if (mode === "math") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["math-expression"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/math-expression'));
     } else if (mode === "geo-shape") {
-        input.attr("placeholder", $.i18n._('wikidata-schema')["geoshape-with-prefix"]);
+        input.attr("placeholder", $.i18n._('wikidata-schema/geoshape-with-prefix'));
         SchemaAlignmentDialog.setupStringInputValidation(input, /^Data:.+$/);
     } else {
         SchemaAlignmentDialog.setupStringInputValidation(input, /^.+$/);
@@ -977,7 +977,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         mode !== "commonsMedia" &&
         mode !== "geo-shape" &&
         mode !== "math") {
-       alert($.i18n._('wikidata-schema')["datatype-not-supported-yet"]);
+       alert($.i18n._('wikidata-schema/datatype-not-supported-yet'));
     }
   }
 
@@ -990,7 +990,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     column.text("");
     column.append($('<div></div>').addClass('wbs-restricted-column-name').text(origText));
     var deleteButton = SchemaAlignmentDialog._makeDeleteButton(true).appendTo(column);
-    deleteButton.attr('alt', $.i18n._('wikidata-schema')["remove-column"]);
+    deleteButton.attr('alt', $.i18n._('wikidata-schema/remove-column'));
     deleteButton.click(function (e) {
         columnDiv.remove();
         input.show();
@@ -1118,7 +1118,7 @@ SchemaAlignmentDialog._hasChanged = function() {
 
 SchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
    this._previewElmts.previewExplanation.text(
-      $.i18n._('wikidata-schema')["preview-explanation"].replace('{nb_edits}',nb_edits));
+      $.i18n._('wikidata-schema/preview-explanation').replace('{nb_edits}',nb_edits));
 }
 
 SchemaAlignmentDialog.preview = function() {

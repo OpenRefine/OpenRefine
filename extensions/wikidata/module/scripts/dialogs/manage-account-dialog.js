@@ -19,19 +19,19 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   var elmts = this._elmts = DOM.bind(frame);
   ManageAccountDialog.firstLaunch = false;
 
-  this._elmts.dialogHeader.text($.i18n._('wikidata-account')["dialog-header"]);
-  this._elmts.explainLogIn.html($.i18n._('wikidata-account')["explain-log-in"]);
-  this._elmts.usernameLabel.text($.i18n._('wikidata-account')["username-label"]);
-  this._elmts.usernameInput.attr("placeholder", $.i18n._('wikidata-account')["username-placeholder"]);
-  this._elmts.passwordLabel.text($.i18n._('wikidata-account')["password-label"]);
-  this._elmts.passwordInput.attr("placeholder", $.i18n._('wikidata-account')["password-placeholder"]);
-  this._elmts.rememberCredentialsLabel.text($.i18n._('wikidata-account')["remember-credentials-label"]);
-  this._elmts.dialogHeader.text($.i18n._('wikidata-account')["dialog-header"]);
-  this._elmts.cancelButton1.text($.i18n._('wikidata-account')["close"]);
-  this._elmts.cancelButton2.text($.i18n._('wikidata-account')["close"]);
-  this._elmts.loggedInAs.text($.i18n._('wikidata-account')["logged-in-as"]);
-  this._elmts.logoutButton.text($.i18n._('wikidata-account')["log-out"]);
-  this._elmts.loginButton.text($.i18n._('wikidata-account')["log-in"]);
+  this._elmts.dialogHeader.text($.i18n._('wikidata-account/dialog-header'));
+  this._elmts.explainLogIn.html($.i18n._('wikidata-account/explain-log-in'));
+  this._elmts.usernameLabel.text($.i18n._('wikidata-account/username-label'));
+  this._elmts.usernameInput.attr("placeholder", $.i18n._('wikidata-account/username-placeholder'));
+  this._elmts.passwordLabel.text($.i18n._('wikidata-account/password-label'));
+  this._elmts.passwordInput.attr("placeholder", $.i18n._('wikidata-account/password-placeholder'));
+  this._elmts.rememberCredentialsLabel.text($.i18n._('wikidata-account/remember-credentials-label'));
+  this._elmts.dialogHeader.text($.i18n._('wikidata-account/dialog-header'));
+  this._elmts.cancelButton1.text($.i18n._('wikidata-account/close'));
+  this._elmts.cancelButton2.text($.i18n._('wikidata-account/close'));
+  this._elmts.loggedInAs.text($.i18n._('wikidata-account/logged-in-as'));
+  this._elmts.logoutButton.text($.i18n._('wikidata-account/log-out'));
+  this._elmts.loginButton.text($.i18n._('wikidata-account/log-in'));
 
   this._level = DialogSystem.showDialog(frame);
 
@@ -86,7 +86,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
 ManageAccountDialog.isLoggedIn = function(callback) {
    var discardWaiter = function() { };
    if(ManageAccountDialog.firstLogin) {
-       discardWaiter = DialogSystem.showBusy($.i18n._('wikidata-account')["connecting-to-wikidata"]);
+       discardWaiter = DialogSystem.showBusy($.i18n._('wikidata-account/connecting-to-wikidata'));
    }
    $.get(
       "command/wikidata/login",

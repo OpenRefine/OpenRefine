@@ -11,12 +11,12 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
 
   this._level = DialogSystem.showDialog(frame);
 
-  this._elmts.dialogHeader.text($.i18n._('perform-wikidata-edits')["dialog-header"]);
-  this._elmts.loggedInAs.text($.i18n._('perform-wikidata-edits')["logged-in-as"]);
-  this._elmts.editSummaryLabel.text($.i18n._('perform-wikidata-edits')["edit-summary-label"]);
-  this._elmts.editSummary.attr('placeholder', $.i18n._('perform-wikidata-edits')["edit-summary-placeholder"]);
-  this._elmts.performEditsButton.text($.i18n._('perform-wikidata-edits')["perform-edits"]);
-  this._elmts.cancelButton.text($.i18n._('perform-wikidata-edits')["cancel"]);
+  this._elmts.dialogHeader.text($.i18n._('perform-wikidata-edits/dialog-header'));
+  this._elmts.loggedInAs.text($.i18n._('perform-wikidata-edits/logged-in-as'));
+  this._elmts.editSummaryLabel.text($.i18n._('perform-wikidata-edits/edit-summary-label'));
+  this._elmts.editSummary.attr('placeholder', $.i18n._('perform-wikidata-edits/edit-summary-placeholder'));
+  this._elmts.performEditsButton.text($.i18n._('perform-wikidata-edits/perform-edits'));
+  this._elmts.cancelButton.text($.i18n._('perform-wikidata-edits/cancel'));
 
   var dismiss = function() {
     DialogSystem.dismissUntil(self._level - 1);
@@ -65,7 +65,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
 
 PerformEditsDialog.updateEditCount = function(edit_count) {
   this._elmts.reviewYourEdits.html(
-        $.i18n._('perform-wikidata-edits')["review-your-edits"]
+        $.i18n._('perform-wikidata-edits/review-your-edits')
                 .replace('{nb_edits}', edit_count));
 }
 
@@ -93,7 +93,7 @@ PerformEditsDialog.checkAndLaunch = function () {
   var onSaved = function() {
     ManageAccountDialog.ensureLoggedIn(function(logged_in_username) {
         if (logged_in_username) {
-                var discardWaiter = DialogSystem.showBusy($.i18n._('perform-wikidata-edits')["analyzing-edits"]);
+                var discardWaiter = DialogSystem.showBusy($.i18n._('perform-wikidata-edits/analyzing-edits'));
                 $.post(
                     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
                     { engine: JSON.stringify(ui.browsingEngine.getJSON()) },

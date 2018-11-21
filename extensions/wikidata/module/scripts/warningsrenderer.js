@@ -8,7 +8,7 @@ WarningsRenderer._renderEntity = function(entity) {
   var id = entity.id;
   var is_new = entity.siteIri == "http://localhost/entity/";
   if (is_new) {
-     id = $.i18n._('wikidata-preview')['new-id'];
+     id = $.i18n._('wikidata-preview/new-id');
   }
   var fullLabel = id;
   if (entity.label) {

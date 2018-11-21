@@ -5,11 +5,11 @@ ImportSchemaDialog.launch = function() {
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/import-schema-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
 
-  this._elmts.dialogHeader.text($.i18n._('import-wikibase-schema')["dialog-header"]);
-  this._elmts.fileLabel.html($.i18n._('import-wikibase-schema')["file-label"]);
-  this._elmts.schemaLabel.text($.i18n._('import-wikibase-schema')["schema-label"]);
-  this._elmts.cancelButton.text($.i18n._('core-project')["cancel"]);
-  this._elmts.importButton.text($.i18n._('import-wikibase-schema')["import"]);
+  this._elmts.dialogHeader.text($.i18n._('import-wikibase-schema/dialog-header'));
+  this._elmts.fileLabel.html($.i18n._('import-wikibase-schema/file-label'));
+  this._elmts.schemaLabel.text($.i18n._('import-wikibase-schema/schema-label'));
+  this._elmts.cancelButton.text($.i18n._('core-project/cancel'));
+  this._elmts.importButton.text($.i18n._('import-wikibase-schema/import'));
 
   this._level = DialogSystem.showDialog(frame);
 
@@ -38,7 +38,7 @@ ImportSchemaDialog.launch = function() {
     try {
        schema = JSON.parse(elmts.schemaTextarea.val());
     } catch(e) {
-       elmts.invalidSchema.text($.i18n._('import-wikibase-schema')["invalid-schema"]);
+       elmts.invalidSchema.text($.i18n._('import-wikibase-schema/invalid-schema'));
        return;
     }
     
@@ -55,7 +55,7 @@ ImportSchemaDialog.launch = function() {
             dismiss();
         },
         onError: function(e) {
-            elmts.invalidSchema.text($.i18n._('import-wikibase-schema')["invalid-schema"]);
+            elmts.invalidSchema.text($.i18n._('import-wikibase-schema/invalid-schema'));
         },
         }
     );
