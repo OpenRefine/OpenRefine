@@ -30,7 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.openrefine.wikidata.editing.ConnectionManager;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -58,19 +57,14 @@ public class LoginCommand extends Command {
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
-        try {
-            writer.writeStartObject();
-            writer.writeBooleanField("logged_in", manager.isLoggedIn());
-            writer.writeStringField("username", manager.getUsername());
-            writer.writeEndObject();
-        } catch (JSONException e) {
-            logger.error(e.getMessage());
-        } finally {
-            writer.flush();
-            writer.close();
-            w.flush();
-            w.close();
-        }
+        writer.writeStartObject();
+        writer.writeBooleanField("logged_in", manager.isLoggedIn());
+        writer.writeStringField("username", manager.getUsername());
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
     }
 
     @Override

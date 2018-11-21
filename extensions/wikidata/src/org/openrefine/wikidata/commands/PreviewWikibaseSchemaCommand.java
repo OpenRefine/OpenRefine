@@ -34,7 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
@@ -44,6 +43,9 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
@@ -93,7 +95,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
             if (jsonString != null) {
                 try {
                     schema = WikibaseSchema.reconstruct(jsonString);
-                } catch (JSONException e) {
+                } catch (IOException e) {
                     respondError(response, "Wikibase schema could not be parsed.");
                     return;
                 }

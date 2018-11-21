@@ -32,7 +32,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
@@ -64,7 +63,7 @@ public class SaveWikibaseSchemaCommand extends Command {
 
             performProcessAndRespond(request, response, project, process);
 
-        } catch (JSONException e) {
+        } catch (IOException e) {
             // We do not use respondException here because this is an expected
             // exception which happens every time a user tries to save an incomplete
             // schema - the exception should not be logged.

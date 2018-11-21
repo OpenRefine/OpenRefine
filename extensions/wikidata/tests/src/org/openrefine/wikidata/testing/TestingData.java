@@ -25,13 +25,9 @@ package org.openrefine.wikidata.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WbLanguageConstant;
 import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
@@ -48,7 +44,6 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
-import com.google.refine.util.ParsingUtilities;
 
 public class TestingData {
 
@@ -134,7 +129,7 @@ public class TestingData {
     }
 
     public static String jsonFromFile(String filename)
-            throws IOException, JSONException {
+            throws IOException {
         InputStream f = TestingData.class.getClassLoader().getResourceAsStream(filename);
         String decoded = IOUtils.toString(f);
         return decoded.trim();

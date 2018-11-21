@@ -28,7 +28,6 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

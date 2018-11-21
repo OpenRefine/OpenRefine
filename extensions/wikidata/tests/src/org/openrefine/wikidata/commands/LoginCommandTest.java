@@ -6,15 +6,13 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.json.JSONException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class LoginCommandTest extends CommandTest {
     
     @BeforeMethod
-    public void SetUp()
-            throws JSONException {
+    public void SetUp() {
         command = new LoginCommand();
     }
     

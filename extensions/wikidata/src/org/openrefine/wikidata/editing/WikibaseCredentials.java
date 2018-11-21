@@ -23,9 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
@@ -48,7 +46,12 @@ class WikibaseCredentials  {
         password = null;
     }
 
-    public WikibaseCredentials(String username, String password) {
+    @JsonCreator
+    public WikibaseCredentials(
+    		@JsonProperty("username")
+    		String username,
+    		@JsonProperty("password")
+    		String password) {
         this.username = username;
         this.password = password;
     }
@@ -69,10 +72,4 @@ class WikibaseCredentials  {
     public String getClassName() {
         return getClass().getName();
     }
-
-    public static WikibaseCredentials load(JSONObject obj)
-            throws JSONException {
-        return new WikibaseCredentials(obj.getString("username"), obj.getString("password"));
-    }
-
 }
