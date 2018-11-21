@@ -70,8 +70,8 @@ function PreferenceUI(tr, key, value) {
 
   var td2 = tr.insertCell(2);
 
-  $('<button class="button">').text($.i18n._('core-index/edit')).appendTo(td2).click(function() {
-    var newValue = window.prompt($.i18n._('core-index/change-value')+" " + key, value);
+  $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
+    var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, value);
     if (newValue !== null) {
       if (key === "userMetadata")  {
           newValue = deDupUserMetaData(newValue);
@@ -94,8 +94,8 @@ function PreferenceUI(tr, key, value) {
     }
   });
 
-  $('<button class="button">').text($.i18n._('core-index/delete')).appendTo(td2).click(function() {
-    if (window.confirm($.i18n._('core-index/delete-key')+" " + key + "?")) {
+  $('<button class="button">').text($.i18n('core-index/delete')).appendTo(td2).click(function() {
+    if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
       $.post(
         "command/core/set-preference",
         {
@@ -124,13 +124,13 @@ function PreferenceUI(tr, key, value) {
 function populatePreferences(prefs) {
   var body = $("#body-info").empty();
 
-  $("#or-proj-starting").text($.i18n._('core-project/starting')+"...");
-  $('<h1>').text($.i18n._('core-index/preferences')).appendTo(body);
+  $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
+  $('<h1>').text($.i18n('core-index/preferences')).appendTo(body);
 
   var table = $('<table>')
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th>'+$.i18n._('core-index/key')+'</th><th>'+$.i18n._('core-index/value')+'</th><th></th></tr>')
+  .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
   .appendTo(body)[0];
 
   for (var k in prefs) {
@@ -142,10 +142,10 @@ function populatePreferences(prefs) {
   var tdLast0 = trLast.insertCell(0);
   trLast.insertCell(1);
   trLast.insertCell(2);
-  $('<button class="button">').text($.i18n._('core-index/add-pref')).appendTo(tdLast0).click(function() {
-    var key = window.prompt($.i18n._('core-index/add-pref'));
+  $('<button class="button">').text($.i18n('core-index/add-pref')).appendTo(tdLast0).click(function() {
+    var key = window.prompt($.i18n('core-index/add-pref'));
     if (key) {
-      var value = window.prompt($.i18n._('core-index/pref-key'));
+      var value = window.prompt($.i18n('core-index/pref-key'));
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));

@@ -14,17 +14,17 @@ function EditMetadataDialog(metaData, targetRowElem) {
       var td0 = tr.insertCell(0);
 
       var td1 = tr.insertCell(1);
-      var keyLable = $.i18n._('core-index')[key] || key;
+      var keyLable = $.i18n('core-index')[key] || key;
       $(td1).text(keyLable);
 
       var td2 = tr.insertCell(2);
       $(td2).text((value !== null) ? value : "");
       
       if(key==="tags"){
-          $('<button class="button">').text($.i18n._('core-index/edit')).appendTo(td0).click(function() {
+          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td0).click(function() {
               var oldTags = $(td1).text().replace("[","").replace("]","");
               oldTags = replaceAll(oldTags,"\"","");
-              var newTags = window.prompt($.i18n._('core-index/change-metadata-value')+" " + key, $(td2).text());
+              var newTags = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, $(td2).text());
               newTags = newTags.replace("[","").replace("]","");
               newTags = replaceAll(newTags,"\"","");
               if (newTags !== null) {
@@ -52,8 +52,8 @@ function EditMetadataDialog(metaData, targetRowElem) {
               key !== "importOptionMetadata" && 
               key !== "id" &&
               key !== "tags")  {
-          $('<button class="button">').text($.i18n._('core-index/edit')).appendTo(td0).click(function() {
-            var newValue = window.prompt($.i18n._('core-index/change-metadata-value')+" " + key, value);
+          $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td0).click(function() {
+            var newValue = window.prompt($.i18n('core-index/change-metadata-value')+" " + key, value);
             if (newValue !== null) {
               $(td2).text(newValue);
               metaData[key] = newValue;
@@ -88,17 +88,17 @@ EditMetadataDialog.prototype._createDialog = function() {
   this._elmts = DOM.bind(frame);  
 
   this._level = DialogSystem.showDialog(frame);
-  this._elmts.closeButton.html($.i18n._('core-buttons/close'));
+  this._elmts.closeButton.html($.i18n('core-buttons/close'));
   this._elmts.closeButton.click(function() { self._dismiss();Refine.OpenProjectUI.prototype._addTagFilter()});
   
   var body = $("#metadata-body");
     
-  $('<h1>').text($.i18n._('core-index/metaDatas')).appendTo(body);
+  $('<h1>').text($.i18n('core-index/metaDatas')).appendTo(body);
 
   var metadataTable = $("<table>")
   .addClass("list-table")
   .addClass("preferences")
-  .html('<tr><th></th><th>'+$.i18n._('core-index/key')+'</th><th>'+$.i18n._('core-index/value')+'</th><th></th></tr>')
+  .html('<tr><th></th><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
   .appendTo(body)[0];
 
     var flattenObject = function(ob, key) {

@@ -41,7 +41,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   var self = this;
   this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
-  this._elmts.dialogHeader.html($.i18n._('core-views/add-col-recon-col')+" "+column.name);
+  this._elmts.dialogHeader.html($.i18n('core-views/add-col-recon-col')+" "+column.name);
   this._elmts.resetButton.click(function() {
     self._extension.properties = [];
     self._update();
@@ -49,7 +49,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
 
   this._elmts.okButton.click(function() {
     if (self._extension.properties.length === 0) {
-      alert($.i18n._('core-views/warning-no-property'));
+      alert($.i18n('core-views/warning-no-property'));
     } else {
       DialogSystem.dismissUntil(self._level - 1);
       self._onDone(self._extension,
@@ -83,9 +83,9 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   }
 
   if (this._serviceMetadata === null) {
-     alert($.i18n._('core-views/extend-not-reconciled'));
+     alert($.i18n('core-views/extend-not-reconciled'));
   } else if(extend === null) {
-     alert($.i18n._('core-views/extend-not-supported'));
+     alert($.i18n('core-views/extend-not-supported'));
   } else {
     var dismissBusy = DialogSystem.showBusy();
     ExtendReconciledDataPreviewDialog.getAllProperties(this._proposePropertiesUrl, type, function(properties) {
@@ -196,7 +196,7 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
         },
         "json"
     ).fail(function(data) {
-        alert($.i18n._('core-views/internal-err'));
+        alert($.i18n('core-views/internal-err'));
     });
   }
 };
@@ -255,17 +255,17 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     $('<br>').appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text($.i18n._('core-views/remove-prop'))
+    .text($.i18n('core-views/remove-prop'))
     .addClass("action")
-    .attr("title", $.i18n._('core-views/remove-col'))
+    .attr("title", $.i18n('core-views/remove-col'))
     .click(function() {
       self._removeProperty(column.id);
     }).appendTo(th);
 
     $('<a href="javascript:{}"></a>')
-    .text($.i18n._('core-views/configure-prop'))
+    .text($.i18n('core-views/configure-prop'))
     .addClass("action")
-    .attr("title", $.i18n._('core-views/configure-col'))
+    .attr("title", $.i18n('core-views/configure-col'))
     .click(function() {
       self._constrainProperty(column.id);
     }).appendTo(th);
@@ -380,7 +380,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 
   if (table.children().length === 0)  {
      var tr = $('<tr></tr>').appendTo(table);
-     $('<td></td>').text($.i18n._('core-views/no-settings')).appendTo(tr);
+     $('<td></td>').text($.i18n('core-views/no-settings')).appendTo(tr);
    }
 
   var form = $('<form class="data-extension-property-config" bind="form"></form>').append(table);
@@ -389,8 +389,8 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var bodyElmts = DOM.bind(body);
 
   footer.html(
-    '<button class="button" bind="okButton">'+$.i18n._('core-buttons/ok')+'</button>' +
-    '<button class="button" bind="cancelButton">'+$.i18n._('core-buttons/cancel')+'</button>'
+    '<button class="button" bind="okButton">'+$.i18n('core-buttons/ok')+'</button>' +
+    '<button class="button" bind="cancelButton">'+$.i18n('core-buttons/cancel')+'</button>'
   );
   var footerElmts = DOM.bind(footer);
 
@@ -416,7 +416,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
 
       self._update();
     } catch (e) {
-        alert($.i18n._('core-views/internal-err'));
+        alert($.i18n('core-views/internal-err'));
     }
   });
 

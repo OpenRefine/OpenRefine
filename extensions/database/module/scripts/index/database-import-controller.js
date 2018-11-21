@@ -60,7 +60,7 @@ Refine.DatabaseImportController = function(createProjectUI) {
 Refine.CreateProjectUI.controllers.push(Refine.DatabaseImportController);
 
 Refine.DatabaseImportController.prototype.startImportingDocument = function(queryInfo) {
-    var dismiss = DialogSystem.showBusy($.i18n._('database-import/preparing'));
+    var dismiss = DialogSystem.showBusy($.i18n('database-import/preparing'));
     //alert(queryInfo.query);
     var self = this;
   
@@ -138,19 +138,19 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
         
     this._parsingPanelElmts = DOM.bind(this._parsingPanel);
 
-    this._parsingPanelElmts.startOverButton.html($.i18n._('database-parsing/start-over'));
-    this._parsingPanelElmts.database_conf_pars.html($.i18n._('database-parsing/conf-pars'));
-    this._parsingPanelElmts.database_proj_name.html($.i18n._('database-parsing/proj-name'));
-    this._parsingPanelElmts.createProjectButton.html($.i18n._('database-parsing/create-proj'));
-    this._parsingPanelElmts.database_options.html($.i18n._('database-parsing/option'));
-    this._parsingPanelElmts.previewButton.html($.i18n._('database-parsing/preview-button'));
-    this._parsingPanelElmts.database_updating.html($.i18n._('database-parsing/updating-preview'));
-    this._parsingPanelElmts.database_discard_next.html($.i18n._('database-parsing/discard-next'));
-    this._parsingPanelElmts.database_discard.html($.i18n._('database-parsing/discard'));
-    this._parsingPanelElmts.database_limit_next.html($.i18n._('database-parsing/limit-next'));
-    this._parsingPanelElmts.database_limit.html($.i18n._('database-parsing/limit'));
-    this._parsingPanelElmts.database_store_row.html($.i18n._('database-parsing/store-row'));
-    this._parsingPanelElmts.database_store_cell.html($.i18n._('database-parsing/store-cell'));
+    this._parsingPanelElmts.startOverButton.html($.i18n('database-parsing/start-over'));
+    this._parsingPanelElmts.database_conf_pars.html($.i18n('database-parsing/conf-pars'));
+    this._parsingPanelElmts.database_proj_name.html($.i18n('database-parsing/proj-name'));
+    this._parsingPanelElmts.createProjectButton.html($.i18n('database-parsing/create-proj'));
+    this._parsingPanelElmts.database_options.html($.i18n('database-parsing/option'));
+    this._parsingPanelElmts.previewButton.html($.i18n('database-parsing/preview-button'));
+    this._parsingPanelElmts.database_updating.html($.i18n('database-parsing/updating-preview'));
+    this._parsingPanelElmts.database_discard_next.html($.i18n('database-parsing/discard-next'));
+    this._parsingPanelElmts.database_discard.html($.i18n('database-parsing/discard'));
+    this._parsingPanelElmts.database_limit_next.html($.i18n('database-parsing/limit-next'));
+    this._parsingPanelElmts.database_limit.html($.i18n('database-parsing/limit'));
+    this._parsingPanelElmts.database_store_row.html($.i18n('database-parsing/store-row'));
+    this._parsingPanelElmts.database_store_cell.html($.i18n('database-parsing/store-cell'));
     
     if (this._parsingPanelResizer) {
       $(window).unbind('resize', this._parsingPanelResizer);
@@ -362,7 +362,7 @@ Refine.DatabaseImportController.prototype._createProject = function() {
             },
             1000
           );
-          self._createProjectUI.showImportProgressPanel($.i18n._('database-import/creating'), function() {
+          self._createProjectUI.showImportProgressPanel($.i18n('database-import/creating'), function() {
             // stop the timed polling
             window.clearInterval(timerID);
 

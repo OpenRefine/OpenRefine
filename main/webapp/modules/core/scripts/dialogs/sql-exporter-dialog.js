@@ -48,30 +48,30 @@ function SqlExporterDialog(options) {
     this._dialog = $(DOM.loadHTML("core", "scripts/dialogs/sql-exporter-dialog.html"));
     this._elmts = DOM.bind(this._dialog);
     this._level = DialogSystem.showDialog(this._dialog);
-    this._elmts.dialogHeader.html($.i18n._('core-dialogs/sql-exporter'));
-    this._elmts.or_dialog_content.html($.i18n._('core-dialogs/content'));
-    this._elmts.or_dialog_download.html($.i18n._('core-dialogs/download'));
+    this._elmts.dialogHeader.html($.i18n('core-dialogs/sql-exporter'));
+    this._elmts.or_dialog_content.html($.i18n('core-dialogs/content'));
+    this._elmts.or_dialog_download.html($.i18n('core-dialogs/download'));
 
-    this._elmts.selectAllButton.html($.i18n._('core-buttons/select-all'));
-    this._elmts.deselectAllButton.html($.i18n._('core-buttons/deselect-all'));
+    this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
+    this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
 
-    this._elmts.downloadPreviewButton.html($.i18n._('core-buttons/preview'));
-    this._elmts.downloadButton.html($.i18n._('core-buttons/download'));
+    this._elmts.downloadPreviewButton.html($.i18n('core-buttons/preview'));
+    this._elmts.downloadButton.html($.i18n('core-buttons/download'));
 
-    this._elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
-//    this._elmts.nextButton.html($.i18n._('core-buttons/next'));
+    this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+//    this._elmts.nextButton.html($.i18n('core-buttons/next'));
     
-    this._elmts.tableNameLabel.html($.i18n._('core-dialogs/tableNameLabel'));
-    this._elmts.includeStructureLabel.html($.i18n._('core-dialogs/for-include-structure-checkbox'));
-    this._elmts.includeDropStatementLabel.html($.i18n._('core-dialogs/for-include-drop-statement-checkbox'));
-    this._elmts.includeContentLabel.html($.i18n._('core-dialogs/for-include-content-checkbox'));
-    this._elmts.includeIfExistDropStatementLabel.html($.i18n._('core-dialogs/for-include-if-exist-drop-stmt-checkbox'));
+    this._elmts.tableNameLabel.html($.i18n('core-dialogs/tableNameLabel'));
+    this._elmts.includeStructureLabel.html($.i18n('core-dialogs/for-include-structure-checkbox'));
+    this._elmts.includeDropStatementLabel.html($.i18n('core-dialogs/for-include-drop-statement-checkbox'));
+    this._elmts.includeContentLabel.html($.i18n('core-dialogs/for-include-content-checkbox'));
+    this._elmts.includeIfExistDropStatementLabel.html($.i18n('core-dialogs/for-include-if-exist-drop-stmt-checkbox'));
     
-    this._elmts.nullCellValueToEmptyStringLabel.html($.i18n._('core-dialogs/for-null-cell-value-to-empty-str-label'));
+    this._elmts.nullCellValueToEmptyStringLabel.html($.i18n('core-dialogs/for-null-cell-value-to-empty-str-label'));
   
-    this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n._('core-dialogs/sqlExporterIgnoreFacets'));
-    this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n._('core-dialogs/sqlExporterTrimColumns'));
-    this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n._('core-dialogs/sqlExporterOutputEmptyRows'));
+    this._elmts.sqlExportIgnoreFacetsLabel.html($.i18n('core-dialogs/sqlExporterIgnoreFacets'));
+    this._elmts.sqlExportTrimAllColumnsLabel.html($.i18n('core-dialogs/sqlExporterTrimColumns'));
+    this._elmts.sqlExportOutputEmptyRowsLabel.html($.i18n('core-dialogs/sqlExporterOutputEmptyRows'));
   
     $("#sql-exporter-tabs-content").css("display", "");
     $("#sql-exporter-tabs-download").css("display", "");

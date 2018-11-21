@@ -571,9 +571,9 @@ EditGeneralMetadataDialog.prototype._createDialog = function() {
   
   var editor;
   
-  this._elmts.okButton.html($.i18n._('core-buttons/ok'));
+  this._elmts.okButton.html($.i18n('core-buttons/ok'));
   this._elmts.okButton.click(function() { self._submit(editor); });
-  this._elmts.closeButton.html($.i18n._('core-buttons/close'));
+  this._elmts.closeButton.html($.i18n('core-buttons/close'));
   this._elmts.closeButton.click(function() { self._dismiss(); });
 
   $.get(
