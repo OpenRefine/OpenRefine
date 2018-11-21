@@ -32,8 +32,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.json.JSONObject;
-import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -69,17 +67,17 @@ public abstract class OperationTest extends RefineTest {
     public abstract AbstractOperation reconstruct()
             throws Exception;
 
-    public abstract JSONObject getJson()
+    public abstract String getJson()
             throws Exception;
 
     @Test
     public void testReconstruct()
             throws Exception {
-        JSONObject json = getJson();
+        String json = getJson();
         AbstractOperation op = reconstruct();
         StringWriter writer = new StringWriter();
         ParsingUtilities.defaultWriter.writeValue(writer, op);
-        TestUtils.assertEqualAsJson(json.toString(), writer.toString());
+        TestUtils.assertEqualAsJson(json, writer.toString());
     }
 
     protected LineNumberReader makeReader(String input) {

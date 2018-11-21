@@ -28,7 +28,6 @@ import static org.junit.Assert.assertNull;
 
 import java.io.LineNumberReader;
 
-import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
@@ -36,6 +35,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
+import com.google.refine.util.ParsingUtilities;
 
 public class SaveWikibaseSchemaOperationTest extends OperationTest {
 
@@ -47,11 +47,11 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     @Override
     public AbstractOperation reconstruct()
             throws Exception {
-        return SaveWikibaseSchemaOperation.reconstruct(project, getJson());
+        return ParsingUtilities.mapper.readValue(getJson(), SaveWikibaseSchemaOperation.class);
     }
 
     @Override
-    public JSONObject getJson()
+    public String getJson()
             throws Exception {
         return TestingData.jsonFromFile("operations/save-schema.json");
     }
@@ -59,8 +59,8 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     @Test
     public void testLoadChange()
             throws Exception {
-        JSONObject schemaJson = TestingData.jsonFromFile("schema/inception.json");
-        String changeString = "newSchema=" + schemaJson.toString() + "\n" + "oldSchema=\n" + "/ec/";
+        String schemaJson = TestingData.jsonFromFile("schema/inception.json");
+        String changeString = "newSchema=" + schemaJson + "\n" + "oldSchema=\n" + "/ec/";
         WikibaseSchema schema = WikibaseSchema.reconstruct(schemaJson);
 
         LineNumberReader reader = makeReader(changeString);

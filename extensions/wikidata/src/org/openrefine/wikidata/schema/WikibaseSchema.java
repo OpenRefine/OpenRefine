@@ -49,6 +49,7 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
 /**
  * Main class representing a skeleton of Wikibase edits with OpenRefine columns
@@ -182,26 +183,12 @@ public class WikibaseSchema implements OverlayModel {
             ;
         }
     }
-
-    static public WikibaseSchema reconstruct(JSONObject o)
-            throws JSONException {
-        return reconstruct(o.toString());
-    }    
     
-    static public WikibaseSchema reconstruct(String json) throws JSONException {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(json, WikibaseSchema.class);
-        } catch (JsonParseException e) {
-            throw new JSONException(e.toString());
-        } catch (JsonMappingException e) {
-            throw new JSONException(e.toString());
-        } catch (IOException e) {
-            throw new JSONException(e.toString());
-        }
+    static public WikibaseSchema reconstruct(String json) throws IOException {
+    	return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
     }
 
-    static public WikibaseSchema load(Project project, JSONObject obj)
+    static public WikibaseSchema load(Project project, String obj)
             throws Exception {
         return reconstruct(obj);
     }

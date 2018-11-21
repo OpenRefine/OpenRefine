@@ -27,7 +27,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.LineNumberReader;
 
-import org.json.JSONObject;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,6 +35,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Recon;
+import com.google.refine.util.ParsingUtilities;
 
 public class PerformWikibaseEditsOperationTest extends OperationTest {
 
@@ -47,19 +47,18 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     @Override
     public AbstractOperation reconstruct()
             throws Exception {
-        JSONObject json = getJson();
-        return PerformWikibaseEditsOperation.reconstruct(project, json);
+        return ParsingUtilities.mapper.readValue(getJson(), PerformWikibaseEditsOperation.class);
     }
 
     @Override
-    public JSONObject getJson()
+    public String getJson()
             throws Exception {
         return TestingData.jsonFromFile("operations/perform-edits.json");
     }
     
     @Test(expectedExceptions=IllegalArgumentException.class)
     public void testConstructor() {
-        new PerformWikibaseEditsOperation(EngineConfig.reconstruct(new JSONObject("{}")), "");
+        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "");
     }
 
     @Test

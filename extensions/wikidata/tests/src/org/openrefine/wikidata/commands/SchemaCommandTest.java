@@ -32,6 +32,8 @@ import javax.servlet.ServletException;
 
 import org.testng.annotations.Test;
 
+import com.google.refine.util.ParsingUtilities;
+
 public abstract class SchemaCommandTest extends CommandTest {
 
     @Test
@@ -48,6 +50,6 @@ public abstract class SchemaCommandTest extends CommandTest {
         when(request.getParameter("schema")).thenReturn("{bogus json");
         command.doPost(request, response);
 
-        assertEquals("{\"code\":\"error\",\"message\":\"Wikibase schema could not be parsed.\"}", writer.toString());
+        assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
     }
 }

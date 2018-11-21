@@ -31,7 +31,6 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.commons.lang.Validate;
-import org.json.JSONObject;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -44,6 +43,7 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,7 +51,6 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.process.LongRunningProcess;
@@ -65,22 +64,16 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @JsonProperty("summary")
     private String summary;
 
-    public PerformWikibaseEditsOperation(EngineConfig engineConfig, String summary) {
+    @JsonCreator
+    public PerformWikibaseEditsOperation(
+    		@JsonProperty("engineConfig")
+    		EngineConfig engineConfig,
+    		@JsonProperty("summary")
+    		String summary) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
-    }
-
-    static public AbstractOperation reconstruct(Project project, JSONObject obj)
-            throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String summary = null;
-        if (obj.has("summary")) {
-            summary = obj.getString("summary");
-        }
-        return new PerformWikibaseEditsOperation(
-                EngineConfig.reconstruct(engineConfig), summary);
     }
 
     @Override

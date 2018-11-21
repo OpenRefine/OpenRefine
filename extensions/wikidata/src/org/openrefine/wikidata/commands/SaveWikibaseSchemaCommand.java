@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
@@ -58,8 +57,7 @@ public class SaveWikibaseSchemaCommand extends Command {
                 return;
             }
 
-            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-            WikibaseSchema schema = WikibaseSchema.reconstruct(json);
+            WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
 
             AbstractOperation op = new SaveWikibaseSchemaOperation(schema);
             Process process = op.createProcess(project, new Properties());

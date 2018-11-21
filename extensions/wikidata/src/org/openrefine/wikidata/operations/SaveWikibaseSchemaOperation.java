@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -48,14 +49,12 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
     @JsonProperty("schema")
     final protected WikibaseSchema _schema;
 
-    public SaveWikibaseSchemaOperation(WikibaseSchema schema) {
+    @JsonCreator
+    public SaveWikibaseSchemaOperation(
+    		@JsonProperty("schema")
+    		WikibaseSchema schema) {
         this._schema = schema;
 
-    }
-
-    static public AbstractOperation reconstruct(Project project, JSONObject obj)
-            throws Exception {
-        return new SaveWikibaseSchemaOperation(WikibaseSchema.reconstruct(obj.getJSONObject("schema")));
     }
 
     @Override
@@ -123,9 +122,9 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
                 String value = line.substring(equal + 1);
 
                 if ("oldSchema".equals(field) && value.length() > 0) {
-                    oldSchema = WikibaseSchema.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                    oldSchema = ParsingUtilities.mapper.readValue(value, WikibaseSchema.class);
                 } else if ("newSchema".equals(field) && value.length() > 0) {
-                    newSchema = WikibaseSchema.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                    newSchema = ParsingUtilities.mapper.readValue(value, WikibaseSchema.class);
                 }
             }
 

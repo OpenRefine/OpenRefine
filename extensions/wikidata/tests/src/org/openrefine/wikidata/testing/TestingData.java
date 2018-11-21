@@ -133,11 +133,11 @@ public class TestingData {
         return generateStatement(from, pid, to);
     }
 
-    public static JSONObject jsonFromFile(String filename)
+    public static String jsonFromFile(String filename)
             throws IOException, JSONException {
         InputStream f = TestingData.class.getClassLoader().getResourceAsStream(filename);
         String decoded = IOUtils.toString(f);
-        return ParsingUtilities.evaluateJsonStringToObject(decoded);
+        return decoded.trim();
     }
 
     public static void reconcileInceptionCells(Project project) {

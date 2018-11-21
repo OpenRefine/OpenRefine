@@ -31,35 +31,31 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.Assert;
-import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
     @BeforeMethod
-    public void SetUp()
-            throws JSONException {
+    public void SetUp() {
         command = new PreviewWikibaseSchemaCommand();
     }
 
     @Test
     public void testValidSchema()
-            throws JSONException, IOException, ServletException {
+            throws IOException, ServletException {
         String schemaJson = jsonFromFile("schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
         command.doPost(request, response);
 
-        JSONObject response = ParsingUtilities.evaluateJsonStringToObject(writer.toString());
-        JSONArray edits = response.getJSONArray("edits_preview");
-        assertEquals(3, edits.length());
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode edits = (ArrayNode) response.get("edits_preview");
+        assertEquals(3, edits.size());
     }
 
 }
