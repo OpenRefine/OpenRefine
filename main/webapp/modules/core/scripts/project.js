@@ -121,15 +121,15 @@ function initializeUI(uiState) {
   $("#project-controls").show();
   $("#body").show();
   
-  $("#or-proj-open").text($.i18n._('core-project')["open"]+"...");
-  $("#project-permalink-button").text($.i18n._('core-project')["permalink"]);
-  $("#project-name-button").attr("title",$.i18n._('core-project')["proj-name"]);
-  $("#or-proj-export").text($.i18n._('core-project')["export"]);
-  $("#or-proj-help").text($.i18n._('core-project')["help"]);
-  $("#or-proj-starting").text($.i18n._('core-project')["starting"]+"...");
-  $("#or-proj-facFil").text($.i18n._('core-project')["facet-filter"]);
-  $("#or-proj-undoRedo").text($.i18n._('core-project')["undo-redo"]);
-  $("#or-proj-ext").text($.i18n._('core-project')["extensions"]+":");
+  $("#or-proj-open").text($.i18n._('core-project/open')+"...");
+  $("#project-permalink-button").text($.i18n._('core-project/permalink'));
+  $("#project-name-button").attr("title",$.i18n._('core-project/proj-name'));
+  $("#or-proj-export").text($.i18n._('core-project/export'));
+  $("#or-proj-help").text($.i18n._('core-project/help'));
+  $("#or-proj-starting").text($.i18n._('core-project/starting')+"...");
+  $("#or-proj-facFil").text($.i18n._('core-project/facet-filter'));
+  $("#or-proj-undoRedo").text($.i18n._('core-project/undo-redo'));
+  $("#or-proj-ext").text($.i18n._('core-project/extensions')+":");
 
   $('#project-name-button').click(Refine._renameProject);
   $('#project-permalink-button').mouseenter(function() {
@@ -204,7 +204,7 @@ Refine.reinitializeProjectData = function(f, fError) {
 };
 
 Refine._renameProject = function() {
-  var name = window.prompt($.i18n._('core-index')["new-proj-name"], theProject.metadata.name);
+  var name = window.prompt($.i18n._('core-index/new-proj-name'), theProject.metadata.name);
   if (name === null) {
     return;
   }
@@ -224,7 +224,7 @@ Refine._renameProject = function() {
         theProject.metadata.name = name;
         Refine.setTitle();
       } else {
-        alert($.i18n._('core-index')["error-rename"]+" " + data.message);
+        alert($.i18n._('core-index/error-rename')+" " + data.message);
       }
     }
   });

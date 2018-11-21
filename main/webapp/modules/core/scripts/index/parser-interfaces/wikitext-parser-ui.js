@@ -114,20 +114,20 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
   
-  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
+  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons/update-preview'));
   
-  $('#or-import-wiki-base-url').text($.i18n._('core-index-parser')["wiki-base-url"]);
-  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
-  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
-  $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
-  $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
-  $('#or-import-parseCell').html($.i18n._('core-index-parser')["parse-cell"]);
-  $('#or-import-blankSpanningCells').text($.i18n._('core-index-parser')["blank-spanning-cells"]);
-  $('#or-import-includeRawTemplates').text($.i18n._('core-index-parser')["include-raw-templates"]);
-  $('#or-import-parseReferences').text($.i18n._('core-index-parser')["parse-references"]);
-  $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
-  $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
-  $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
+  $('#or-import-wiki-base-url').text($.i18n._('core-index-parser/wiki-base-url'));
+  $('#or-import-parse').text($.i18n._('core-index-parser/parse-next'));
+  $('#or-import-header').text($.i18n._('core-index-parser/lines-header'));
+  $('#or-import-load').text($.i18n._('core-index-parser/load-at-most'));
+  $('#or-import-rows2').text($.i18n._('core-index-parser/rows-data'));
+  $('#or-import-parseCell').html($.i18n._('core-index-parser/parse-cell'));
+  $('#or-import-blankSpanningCells').text($.i18n._('core-index-parser/blank-spanning-cells'));
+  $('#or-import-includeRawTemplates').text($.i18n._('core-index-parser/include-raw-templates'));
+  $('#or-import-parseReferences').text($.i18n._('core-index-parser/parse-references'));
+  $('#or-import-blank').text($.i18n._('core-index-parser/store-blank'));
+  $('#or-import-null').text($.i18n._('core-index-parser/store-nulls'));
+  $('#or-import-source').html($.i18n._('core-index-parser/store-source'));
 
 /*
   this._optionContainerElmts.encodingInput
@@ -214,7 +214,7 @@ Refine.WikitextParserUI.prototype._updatePreview = function() {
         var container = self._dataContainer.unbind().empty();
         if (projectData.rowModel.rows.length === 0) {
            $('<div>').addClass("wikitext-parser-ui-message")
-                .text($.i18n._('core-index-parser')["invalid-wikitext"]).appendTo(container);
+                .text($.i18n._('core-index-parser/invalid-wikitext')).appendTo(container);
         } else {
            new Refine.PreviewTable(projectData, container);
         }

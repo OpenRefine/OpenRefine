@@ -90,10 +90,10 @@ TextSearchFacet.prototype._initializeUI = function() {
   this._div.empty().show().html(
       '<div class="facet-title" bind="facetTitle">' + 
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+      '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
       '<td>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n._('core-facets')["reset"]+'</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n._('core-facets')["invert"]+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n._('core-facets/reset')+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n._('core-facets/invert')+'</a>' +
             '<span bind="titleSpan"></span>' +
       '</td>' +
       '</tr></table></div>' +
@@ -101,8 +101,8 @@ TextSearchFacet.prototype._initializeUI = function() {
       '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
       '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
       '<tr>' +
-      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox" /></td><td><label for="caseSensitiveCheckbox">'+$.i18n._('core-facets')["case-sensitive"]+'</label></td>' +
-      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox" /></td><td><label for="regexCheckbox">'+$.i18n._('core-facets')["regular-exp"]+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox" /></td><td><label for="caseSensitiveCheckbox">'+$.i18n._('core-facets/case-sensitive')+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox" /></td><td><label for="regexCheckbox">'+$.i18n._('core-facets/regular-exp')+'</label></td>' +
       '</tr>' +
       '</table></div></div>'
   );

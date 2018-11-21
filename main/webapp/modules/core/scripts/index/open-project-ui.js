@@ -57,7 +57,7 @@ Refine.OpenProjectUI = function(elmt) {
     return self._onClickUploadFileButton(evt);
   });
 
-  $('#projects-workspace-open').text($.i18n._('core-index-open')["browse"]);
+  $('#projects-workspace-open').text($.i18n._('core-index-open/browse'));
   $('#projects-workspace-open').click(function() {
     $.ajax({
       type: "POST",
@@ -190,12 +190,12 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       '<table class="tablesorter-blue list-table"><thead><tr>' +
       '<th></th>' +
       '<th></th>' +
-      '<th>'+$.i18n._('core-index-open')["last-mod"]+'</th>' +
-      '<th>'+$.i18n._('core-index-open')["name"]+'</th>' +
-      '<th>'+$.i18n._('core-index-open')["tags"]+'</th>' + 
-      '<th>'+$.i18n._('core-index-open')["subject"]+'</th>' +
-      '<th>'+$.i18n._('core-index-open')["description"]+'</th>' +
-      '<th>'+$.i18n._('core-index-open')["row-count"]+'</th>' + 
+      '<th>'+$.i18n._('core-index-open/last-mod')+'</th>' +
+      '<th>'+$.i18n._('core-index-open/name')+'</th>' +
+      '<th>'+$.i18n._('core-index-open/tags')+'</th>' + 
+      '<th>'+$.i18n._('core-index-open/subject')+'</th>' +
+      '<th>'+$.i18n._('core-index-open/description')+'</th>' +
+      '<th>'+$.i18n._('core-index-open/row-count')+'</th>' + 
       (function() {
           var htmlDisplay = "";
           for (var n in data.customMetadataColumns) {
@@ -215,11 +215,11 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
 
       var deleteLink = $('<a></a>')
       .addClass("delete-project")
-      .attr("title",$.i18n._('core-index-open')["del-title"])
+      .attr("title",$.i18n._('core-index-open/del-title'))
       .attr("href","")
       .html("<img src='images/close.png' />")
       .click(function() {
-        if (window.confirm($.i18n._('core-index-open')["del-body"] + project.name + "\"?")) {
+        if (window.confirm($.i18n._('core-index-open/del-body') + project.name + "\"?")) {
           $.ajax({
             type: "POST",
             url: "command/core/delete-project",
@@ -240,7 +240,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       
       var metadataCell = $(tr.insertCell(tr.cells.length));
       var editMetadataLink = $('<a></a>')
-      .text($.i18n._('core-index-open')["edit-meta-data"])
+      .text($.i18n._('core-index-open/edit-meta-data'))
       .addClass("secondary")
       .attr("href", "javascript:{}")
       .click(function() {
@@ -265,7 +265,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
             $("<span/>")
             .addClass("project-tag")
             .text(tag)
-            .attr("title", $.i18n._('core-index-open')["edit-tags"])
+            .attr("title", $.i18n._('core-index-open/edit-tags'))
             .appendTo(tagsCell);
             $(tr).addClass(tag);
         });
@@ -314,10 +314,10 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
   var projectName = $("#project-name-input")[0].value;
   var dataURL = $.trim($("#project-url-input")[0].value);
   if (! $.trim(projectName).length) {
-    window.alert($.i18n._('core-index-open')["warning-proj-name"]);
+    window.alert($.i18n._('core-index-open/warning-proj-name'));
 
   } else if ($("#project-file-input")[0].files.length === 0 && ! dataURL.length) {
-    window.alert($.i18n._('core-index-open')["warning-data-file"]);
+    window.alert($.i18n._('core-index-open/warning-data-file'));
 
   } else {
     $("#file-upload-form").attr("action",
@@ -359,7 +359,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
                 .text(tag)
-                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .attr("title", $.i18n._('core-index-open/edit-tags'))
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });
@@ -369,7 +369,7 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
                 .text(tag)
-                .attr("title", $.i18n._('core-index-open')["edit-tags"])
+                .attr("title", $.i18n._('core-index-open/edit-tags'))
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });
@@ -426,6 +426,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
 
 Refine.actionAreas.push({
   id: "open-project",
-  label: $.i18n._('core-index-open')["open-proj"],
+  label: $.i18n._('core-index-open/open-proj'),
   uiClass: Refine.OpenProjectUI
 });

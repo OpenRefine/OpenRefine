@@ -20,19 +20,19 @@ ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
         {
             id:"performWikibaseEdits",
-            label: $.i18n._('wikidata-extension')["perform-edits-on-wikidata"],
+            label: $.i18n._('wikidata-extension/perform-edits-on-wikidata'),
             click: function() { PerformEditsDialog.checkAndLaunch(); }
         });
 ExporterManager.MenuItems.push(
         {               
             id:"exportQuickStatements",
-            label: $.i18n._('wikidata-extension')["export-to-qs"],
+            label: $.i18n._('wikidata-extension/export-to-qs'),
             click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements"); }
         });
 ExporterManager.MenuItems.push(
         {               
             id:"exportWikibaseSchema",
-            label: $.i18n._('wikidata-extension')["export-schema"],
+            label: $.i18n._('wikidata-extension/export-schema'),
             click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
         }
 );
@@ -91,38 +91,38 @@ $(function(){
     ExtensionBar.MenuItems.push(
         {
             "id":"reconcile",
-                "label": $.i18n._('wikidata-extension')["menu-label"],
+                "label": $.i18n._('wikidata-extension/menu-label'),
                 "submenu" : [
                     {
                         id: "wikidata/edit-schema",
-                        label: $.i18n._('wikidata-extension')["edit-wikidata-schema"],
+                        label: $.i18n._('wikidata-extension/edit-wikidata-schema'),
                         click: function() { SchemaAlignmentDialog.launch(false); }
                     },
                     {
                         id:"wikidata/manage-account",
-                        label: $.i18n._('wikidata-extension')["manage-wikidata-account"],
+                        label: $.i18n._('wikidata-extension/manage-wikidata-account'),
                         click: function() { ManageAccountDialog.checkAndLaunch(); }
                     },
                     {},
                     {
                         id: "wikidata/import-schema",
-                        label: $.i18n._('wikidata-extension')["import-wikidata-schema"],
+                        label: $.i18n._('wikidata-extension/import-wikidata-schema'),
                         click: function() { ImportSchemaDialog.launch(); }
                     },
                     {               
                         id:"wikidata/export-schema",
-                        label: $.i18n._('wikidata-extension')["export-schema"],
+                        label: $.i18n._('wikidata-extension/export-schema'),
                         click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
                     },
                     {},
                     {
                         id:"wikidata/perform-edits",
-                        label: $.i18n._('wikidata-extension')["perform-edits-on-wikidata"],
+                        label: $.i18n._('wikidata-extension/perform-edits-on-wikidata'),
                         click: function() { PerformEditsDialog.checkAndLaunch(); }
                     },
                     {               
                         id:"wikidata/export-qs",
-                        label: $.i18n._('wikidata-extension')["export-to-qs"],
+                        label: $.i18n._('wikidata-extension/export-to-qs'),
                         click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements"); }
                     },
 

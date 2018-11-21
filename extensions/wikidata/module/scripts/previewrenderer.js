@@ -53,7 +53,7 @@ EditRenderer._renderItem = function(json, container) {
   // Statements
   if (json.addedStatementGroups && json.addedStatementGroups.length) {
     // $('<div></div>').addClass('wbs-statements-header')
-    //        .text($.i18n._('wikidata-schema')['statements-header']).appendTo(right);
+    //        .text($.i18n._('wikidata-schema/statements-header')).appendTo(right);
     var statementsGroupContainer = $('<div></div>').addClass('wbs-statement-group-container')
             .appendTo(right);
     for(var i = 0; i != json.addedStatementGroups.length; i++) {
@@ -202,7 +202,7 @@ EditRenderer._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
-  a.html(childrenCount+$.i18n._('wikidata-schema')["nb-references"]);
+  a.html(childrenCount+$.i18n._('wikidata-schema/nb-references'));
 }
 
 /*******************
@@ -231,7 +231,7 @@ EditRenderer._renderValue = function(json, container) {
             action: 'wbformatvalue',
             generate: 'text/html',
             datavalue: jsonValue,
-            options: '{"lang":"'+$.i18n._('core-recon')["wd-recon-lang"]+'"}',
+            options: '{"lang":"'+$.i18n._('core-recon/wd-recon-lang')+'"}',
             format: 'json'
         };
         if ('property' in json) {
