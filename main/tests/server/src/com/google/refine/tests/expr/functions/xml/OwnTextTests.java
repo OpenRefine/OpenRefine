@@ -1,8 +1,8 @@
-package com.google.refine.tests.expr.functions.html;
+package com.google.refine.tests.expr.functions.xml;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.html.OwnText;
+import com.google.refine.expr.functions.xml.OwnText;
 import com.google.refine.tests.util.TestUtils;
 
 public class OwnTextTests {

@@ -1,5 +1,6 @@
 package com.google.refine.tests.expr.functions.html;
 
+import org.jsoup.Jsoup;
 import org.testng.annotations.Test;
 
 import java.util.Properties;
@@ -26,7 +27,7 @@ public class ParseHtmlTests extends RefineTest  {
                         "    <body>\n" +
                         "        <h1>head1</h1>\n" +
                         "        <div class=\"class1\">\n" +
-                        "            <p>para1</p>\n" +
+                        "            <p>para1 <strong>strong text</strong></p>\n" +
                         "            <p>para2</p>\n" +
                         "        </div>\n" +
                         "    </body>\n" +
@@ -74,6 +75,11 @@ public class ParseHtmlTests extends RefineTest  {
     public void testParseHtml() {
         Assert.assertTrue(invoke("parseHtml") instanceof EvalError);
         Assert.assertTrue(invoke("parseHtml","h") instanceof org.jsoup.nodes.Document);
+        Assert.assertTrue(invoke("select",Jsoup.parse(h),"p") instanceof org.jsoup.select.Elements);
+        Assert.assertTrue(invoke("innerHtml",Jsoup.parse(h).select("p").first()) instanceof String);
+        Assert.assertEquals(invoke("innerHtml",Jsoup.parse(h).select("p").first()),"para1 <strong>strong text</strong>");
+        Assert.assertEquals(invoke("htmlAttr",Jsoup.parse(h).select("div").first(),"class"),"class1");
+        Assert.assertEquals(invoke("ownText",Jsoup.parse(h).select("p").first()),"para1");
     }
 }
 

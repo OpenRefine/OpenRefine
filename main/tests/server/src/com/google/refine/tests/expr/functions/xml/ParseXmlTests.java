@@ -1,5 +1,7 @@
 package com.google.refine.tests.expr.functions.xml;
 
+import org.jsoup.parser.Parser;
+import org.jsoup.Jsoup;
 import org.testng.annotations.Test;
 
 import java.util.Properties;
@@ -80,6 +82,10 @@ public class ParseXmlTests extends RefineTest {
     public void testParseXml() {
         Assert.assertTrue(invoke("parseXml") instanceof EvalError);
         Assert.assertTrue(invoke("parseXml","x") instanceof org.jsoup.nodes.Document);
+        Assert.assertTrue(invoke("select",Jsoup.parse(x,"",Parser.xmlParser()),"foaf|Person") instanceof org.jsoup.select.Elements);
+        Assert.assertEquals(invoke("innerXml",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|Person").first()),"<foaf:name>\n John Doe\n</foaf:name>\n<head>\n head1\n</head>\n<head>\n head2\n</head>\n<BODY>\n body1\n</BODY>\n<foaf:homepage rdf:resource=\"http://www.example.com\" />");
+        Assert.assertEquals(invoke("xmlAttr",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|homepage").first(),"rdf:resource"),"http://www.example.com");
+        Assert.assertEquals(invoke("ownText",Jsoup.parse(x,"",Parser.xmlParser()).select("BODY").first()),"body1");
     }
 }
 
