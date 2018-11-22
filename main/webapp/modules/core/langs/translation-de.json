@@ -399,7 +399,7 @@
     "core-project/learn-more": "Erfahren Sie mehr &raquo;",
     "core-project/other-processes": "andere anstehende Prozesse",
     "core-project/project-data-package": "Projektdatenpaket",
-    "core-project/excel-xml": "Excel 2007+ (.xlsx)",
+    "core-project/excel-xml": ">=Excel 2007 (.xlsx)",
     "core-project/custom-tabular": "Benutzerdefinierter tabellarischer Exporteur....",
     "core-project/filter": "Filter:",
     "core-project/extensions": "Erweiterungen",
