@@ -35,6 +35,7 @@ package com.google.refine;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -52,9 +53,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
+import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -107,7 +111,15 @@ public class RefineServlet extends Butterfly {
             VERSION = ASSIGNED_VERSION;
         }
         if (REVISION.equals("$REVISION")) {
-            REVISION = "TRUNK";
+            ClassLoader classLoader = getClass().getClassLoader();
+            InputStream gitStats = classLoader.getResourceAsStream("git.properties");
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+				ObjectNode parsedGit = mapper.readValue(gitStats, ObjectNode.class);
+				REVISION = parsedGit.get("git.commit.id.abbrev").asText("TRUNK");
+			} catch (IOException e) {
+				REVISION = "TRUNK";
+			}
         }
         
         FULL_VERSION = VERSION + " [" + REVISION + "]";
