@@ -147,8 +147,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "facetCount(value, 'value', '" +
-                  column.name + "') > 1"
+                  "expression": "(facetCount(value, 'value', '" +
+                  column.name + "') > 1).toString()"
                 }
             );
           }
@@ -240,7 +240,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isError(value)"
+                  "expression": "isError(value).toString()"
                 }
             );
           }
@@ -254,7 +254,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isNull(value)"
+                  "expression": "isNull(value).toString()"
                 }
             );
           }
@@ -268,7 +268,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isEmptyString(value)"
+                  "expression": "isEmptyString(value).toString()"
                 }
             );
           }
@@ -282,7 +282,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isBlank(value)"
+                  "expression": "isBlank(value).toString()"
                 }
             );
           }
