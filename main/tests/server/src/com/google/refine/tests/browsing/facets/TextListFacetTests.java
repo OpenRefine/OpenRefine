@@ -51,16 +51,15 @@ import org.testng.annotations.Test;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.browsing.RowFilter;
-import com.google.refine.browsing.facets.ListFacet;
+import com.google.refine.browsing.facets.Facet;
+import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.tests.RefineTest;
 
 
 public class TextListFacetTests extends RefineTest {
     // dependencies
     private Project project;
-    private ListFacet facet;
     private RowFilter rowfilter;
-    private JSONObject listfacetconfig;
     
     // Variables
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -118,7 +117,7 @@ public class TextListFacetTests extends RefineTest {
     public void testTextSelection() throws Exception {
         //Need to work out the correct facet config for these tests to work
         //Also need all rows in all tests so can check that rows aren't being selected when they shouldn't be
-        String facetconfig =      "{"
+        String jsonConfig  =      "{"
                                  +    "\"type\": \"list\","
                                  +    "\"name\": \"Value\","
                                  +    "\"columnName\": \"" + columnName + "\","
@@ -142,9 +141,9 @@ public class TextListFacetTests extends RefineTest {
                                  + "}";
         
         //Add the facet to the project and create a row filter
-        facet = new ListFacet();
-        listfacetconfig = new JSONObject(facetconfig);
-        facet.initializeFromJSON(project,listfacetconfig);
+        ListFacetConfig facetConfig = new ListFacetConfig();
+        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
         //Check each row in the project against the filter
@@ -188,7 +187,7 @@ public class TextListFacetTests extends RefineTest {
     
     @Test
     public void testDateSelection() throws Exception {
-      String facetconfig =      "{"
+      String jsonConfig  =      "{"
                                +    "\"type\": \"list\","
                                +    "\"name\": \"Value\","
                                +    "\"columnName\": \"" + columnName + "\","
@@ -205,9 +204,9 @@ public class TextListFacetTests extends RefineTest {
                                + "}";
         
         //Add the facet to the project and create a row filter
-        facet = new ListFacet();
-        listfacetconfig = new JSONObject(facetconfig);
-        facet.initializeFromJSON(project,listfacetconfig);
+        ListFacetConfig facetConfig = new ListFacetConfig();
+        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
         //Check each row in the project against the filter
@@ -251,7 +250,7 @@ public class TextListFacetTests extends RefineTest {
     
     @Test
     public void testIntegerSelection() throws Exception {
-        String facetconfig =      "{"
+        String jsonConfig  =      "{"
                                  +    "\"type\": \"list\","
                                  +    "\"name\": \"Value\","
                                  +    "\"columnName\": \"" + columnName + "\","
@@ -268,9 +267,9 @@ public class TextListFacetTests extends RefineTest {
                                  + "}";
         
         //Add the facet to the project and create a row filter
-        facet = new ListFacet();
-        listfacetconfig = new JSONObject(facetconfig);
-        facet.initializeFromJSON(project,listfacetconfig);
+        ListFacetConfig facetConfig = new ListFacetConfig();
+        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
         //Check each row in the project against the filter
@@ -314,7 +313,7 @@ public class TextListFacetTests extends RefineTest {
     
     @Test
     public void testBooleanSelection() throws Exception {
-      String facetconfig =      "{"
+      String jsonConfig  =      "{"
                                +    "\"type\": \"list\","
                                +    "\"name\": \"Value\","
                                +    "\"columnName\": \"" + columnName + "\","
@@ -331,9 +330,9 @@ public class TextListFacetTests extends RefineTest {
                                + "}";
         
         //Add the facet to the project and create a row filter
-        facet = new ListFacet();
-        listfacetconfig = new JSONObject(facetconfig);
-        facet.initializeFromJSON(project,listfacetconfig);
+        ListFacetConfig facetConfig = new ListFacetConfig();
+        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
         //Check each row in the project against the filter
@@ -377,7 +376,7 @@ public class TextListFacetTests extends RefineTest {
     
     @Test
     public void testBlankSelection() throws Exception {
-      String facetconfig =      "{"
+      String jsonConfig  =      "{"
                                +    "\"type\": \"list\","
                                +    "\"name\": \"Value\","
                                +    "\"columnName\": \"" + columnName + "\","
@@ -394,9 +393,9 @@ public class TextListFacetTests extends RefineTest {
                                + "}";
         
         //Add the facet to the project and create a row filter
-        facet = new ListFacet();
-        listfacetconfig = new JSONObject(facetconfig);
-        facet.initializeFromJSON(project,listfacetconfig);
+        ListFacetConfig facetConfig = new ListFacetConfig();
+        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
         //Check each row in the project against the filter
