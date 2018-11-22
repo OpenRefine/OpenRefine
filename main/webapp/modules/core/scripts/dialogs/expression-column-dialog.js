@@ -31,13 +31,13 @@ ExpressionColumnDialog.prototype._createDialog = function() {
   this._level = DialogSystem.showDialog(this._dialog);
   
   
-  this._elmts.dialogHeader.html($.i18n._('core-dialogs/select-columns-dialog'));
-  this._elmts.or_dialog_content.html($.i18n._('core-dialogs/content'));
-  this._elmts.or_dialog_selAndOrd.html($.i18n._('core-dialogs/sel-and-ord'));
-  this._elmts.selectAllButton.html($.i18n._('core-buttons/select-all'));
-  this._elmts.deselectAllButton.html($.i18n._('core-buttons/deselect-all'));
-  this._elmts.okButton.html($.i18n._('core-buttons/ok'));
-  this._elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+  this._elmts.dialogHeader.html($.i18n('core-dialogs/select-columns-dialog'));
+  this._elmts.or_dialog_content.html($.i18n('core-dialogs/content'));
+  this._elmts.or_dialog_selAndOrd.html($.i18n('core-dialogs/sel-and-ord'));
+  this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
+  this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
+  this._elmts.okButton.html($.i18n('core-buttons/ok'));
+  this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
   
   /*

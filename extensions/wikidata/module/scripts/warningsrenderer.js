@@ -8,7 +8,7 @@ WarningsRenderer._renderEntity = function(entity) {
   var id = entity.id;
   var is_new = entity.siteIri == "http://localhost/entity/";
   if (is_new) {
-     id = $.i18n._('wikidata-preview/new-id');
+     id = $.i18n('wikidata-preview/new-id');
   }
   var fullLabel = id;
   if (entity.label) {
@@ -46,7 +46,7 @@ WarningsRenderer._replaceIssueProperties = function(template, properties) {
 }     
 
 WarningsRenderer._renderWarning = function(warning) {
-  var localized = $.i18n._('warnings-messages')[warning.type];
+  var localized = $.i18n('warnings-messages')[warning.type];
   var title = warning.type;
   var body = "";
   if (localized) {

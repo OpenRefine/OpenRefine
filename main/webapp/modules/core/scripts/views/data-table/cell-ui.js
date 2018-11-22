@@ -50,7 +50,7 @@ DataTableCellUI.prototype._render = function() {
 
   var editLink = $('<a href="javascript:{}">&nbsp;</a>')
   .addClass("data-table-cell-edit")
-  .attr("title", $.i18n._('core-views/edit-cell'))
+  .attr("title", $.i18n('core-views/edit-cell'))
   .appendTo(divContent)
   .click(function() { self._startEdit(this); });
 
@@ -92,7 +92,7 @@ DataTableCellUI.prototype._render = function() {
       $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContent);
 
       $('<a href="javascript:{}"></a>')
-      .text($.i18n._('core-views/choose-match'))
+      .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContent).click(function(evt) {
         self._doRematch();
@@ -110,7 +110,7 @@ DataTableCellUI.prototype._render = function() {
 
       $('<span> </span>').appendTo(divContent);
       $('<a href="javascript:{}"></a>')
-      .text($.i18n._('core-views/choose-match'))
+      .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContent)
       .click(function(evt) {
@@ -128,14 +128,14 @@ DataTableCellUI.prototype._render = function() {
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match-similar")
-            .attr("title", $.i18n._('core-views/match-all-cells'))
+            .attr("title", $.i18n('core-views/match-all-cells'))
             .appendTo(li).click(function(evt) {
               self._doMatchTopicToSimilarCells(candidate);
             });
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match")
-            .attr("title", $.i18n._('core-views/match-this-cell') )
+            .attr("title", $.i18n('core-views/match-this-cell') )
             .appendTo(li).click(function(evt) {
               self._doMatchTopicToOneCell(candidate);
             });
@@ -182,19 +182,19 @@ DataTableCellUI.prototype._render = function() {
         var liNew = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match-similar")
-        .attr("title", $.i18n._('core-views/create-topic-cells'))
+        .attr("title", $.i18n('core-views/create-topic-cells'))
         .appendTo(liNew).click(function(evt) {
           self._doMatchNewTopicToSimilarCells();
         });
 
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match")
-        .attr("title", $.i18n._('core-views/create-topic-cell'))
+        .attr("title", $.i18n('core-views/create-topic-cell'))
         .appendTo(liNew).click(function(evt) {
           self._doMatchNewTopicToOneCell();
         });
 
-        $('<span>').text($.i18n._('core-views/create-topic')).appendTo(liNew);
+        $('<span>').text($.i18n('core-views/create-topic')).appendTo(liNew);
 
         var suggestOptions;
         var addSuggest = false;
@@ -210,7 +210,7 @@ DataTableCellUI.prototype._render = function() {
             self._searchForMatch(suggestOptions);
             return false;
           })
-          .text($.i18n._('core-views/search-match'))
+          .text($.i18n('core-views/search-match'))
           .appendTo(extraChoices);
         }
       }
@@ -309,14 +309,14 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var frame = $(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-search-for-match.html"));
   var elmts = DOM.bind(frame);
   
-  elmts.dialogHeader.html($.i18n._('core-views/search-match'));
-  elmts.or_views_searchFor.html($.i18n._('core-views/search-for'));
-  elmts.or_views_matchOther.html($.i18n._('core-views/match-other'));
-  elmts.or_views_matchThis.html($.i18n._('core-views/match-this'));
-  elmts.okButton.html($.i18n._('core-buttons/match'));
-  elmts.newButton.html($.i18n._('core-buttons/new-topic'));
-  elmts.clearButton.html($.i18n._('core-buttons/dont-reconcile'));
-  elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+  elmts.dialogHeader.html($.i18n('core-views/search-match'));
+  elmts.or_views_searchFor.html($.i18n('core-views/search-for'));
+  elmts.or_views_matchOther.html($.i18n('core-views/match-other'));
+  elmts.or_views_matchThis.html($.i18n('core-views/match-this'));
+  elmts.okButton.html($.i18n('core-buttons/match'));
+  elmts.newButton.html($.i18n('core-buttons/new-topic'));
+  elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
@@ -470,9 +470,9 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 
   var elmts = DOM.bind(fakeMenu);
   
-  elmts.matchButton.html($.i18n._('core-views/match-cell'));
-  elmts.matchSimilarButton.html($.i18n._('core-views/match-identical'));
-  elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+  elmts.matchButton.html($.i18n('core-views/match-cell'));
+  elmts.matchSimilarButton.html($.i18n('core-views/match-identical'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
   elmts.matchButton.click(function() {
     self._doMatchTopicToOneCell(candidate);
@@ -496,17 +496,17 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   menu.html(DOM.loadHTML("core", "scripts/views/data-table/cell-editor.html"));
   var elmts = DOM.bind(menu);
 
-  elmts.or_views_dataType.html($.i18n._('core-views/data-type'));
-  elmts.or_views_text.html($.i18n._('core-views/text'));
-  elmts.or_views_number.html($.i18n._('core-views/number'));
-  elmts.or_views_boolean.html($.i18n._('core-views/boolean'));
-  elmts.or_views_date.html($.i18n._('core-views/date'));
-  elmts.okButton.html($.i18n._('core-buttons/apply'));
-  elmts.or_views_enter.html($.i18n._('core-buttons/enter'));
-  elmts.okallButton.html($.i18n._('core-buttons/apply-to-all'));
-  elmts.or_views_ctrlEnter.html($.i18n._('core-views/ctrl-enter'));
-  elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
-  elmts.or_views_esc.html($.i18n._('core-buttons/esc'));
+  elmts.or_views_dataType.html($.i18n('core-views/data-type'));
+  elmts.or_views_text.html($.i18n('core-views/text'));
+  elmts.or_views_number.html($.i18n('core-views/number'));
+  elmts.or_views_boolean.html($.i18n('core-views/boolean'));
+  elmts.or_views_date.html($.i18n('core-views/date'));
+  elmts.okButton.html($.i18n('core-buttons/apply'));
+  elmts.or_views_enter.html($.i18n('core-buttons/enter'));
+  elmts.okallButton.html($.i18n('core-buttons/apply-to-all'));
+  elmts.or_views_ctrlEnter.html($.i18n('core-views/ctrl-enter'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  elmts.or_views_esc.html($.i18n('core-buttons/esc'));
   
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
@@ -525,7 +525,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     if (type == "number") {
       value = parseFloat(text);
       if (isNaN(value)) {
-        alert($.i18n._('core-views/not-valid-number'));
+        alert($.i18n('core-views/not-valid-number'));
         return;
       }
     } else if (type == "boolean") {
@@ -536,7 +536,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         value = DateTimeUtil.parseIso8601DateTime(text);
       }
       if (!value) {
-        alert($.i18n._('core-views/not-valid-date'));
+        alert($.i18n('core-views/not-valid-date'));
         return;
       }
       value = value.toString("yyyy-MM-ddTHH:mm:ssZ");

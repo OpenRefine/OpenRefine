@@ -48,10 +48,12 @@ $.ajax({
 //		lang : lang
 	},
 	success : function(data) {
-		dictionary = data;
+		dictionary = data['dictionary'];
+        lang = data['lang'];
 	}
 });
-$.i18n.setDictionary(dictionary);
+$.i18n().load(dictionary, lang);
+$.i18n({ locale: lang });
 // End internationalization
 
 Refine.selectActionArea = function(id) {
@@ -100,7 +102,7 @@ $(function() {
         function(data) {
           OpenRefineVersion = data;
 
-          $("#openrefine-version").text($.i18n._('core-index/version')+" " + OpenRefineVersion.full_version);
+          $("#openrefine-version").text($.i18n('core-index/version')+" " + OpenRefineVersion.full_version);
           
 
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
@@ -118,13 +120,13 @@ $(function() {
                 var container = $('<div id="notification-container">')
                 .appendTo(document.body);
                 var notification = $('<div id="notification">')
-                .text($.i18n._('core-index/new-version')+' ')
+                .text($.i18n('core-index/new-version')+' ')
                 .appendTo(container);
                 $('<a>')
                 .addClass('notification-action')
                 .attr("href", latestVersionUrl)
                 .attr("target", "_blank")
-                .text($.i18n._('core-index/download')+' ' + latestVersionName + ' '+$.i18n._('core-index/now')+'.')
+                .text($.i18n('core-index/download')+' ' + latestVersionName + ' '+$.i18n('core-index/now')+'.')
                 .appendTo(notification);
               }
             });
@@ -201,13 +203,13 @@ $(function() {
   }
   Refine.selectActionArea('create-project');
   
-  $("#slogan").text($.i18n._('core-index/slogan')+".");
-  $("#or-index-pref").text($.i18n._('core-index/preferences'));
-  $("#or-index-help").text($.i18n._('core-index/help'));
-  $("#or-index-about").text($.i18n._('core-index/about'));
-  $("#or-index-noProj").text($.i18n._('core-index/no-proj')+".");
-  $("#or-index-try").text($.i18n._('core-index/try-these'));
-  $("#or-index-sample").text($.i18n._('core-index/sample-data'));
+  $("#slogan").text($.i18n('core-index/slogan')+".");
+  $("#or-index-pref").text($.i18n('core-index/preferences'));
+  $("#or-index-help").text($.i18n('core-index/help'));
+  $("#or-index-about").text($.i18n('core-index/about'));
+  $("#or-index-noProj").text($.i18n('core-index/no-proj')+".");
+  $("#or-index-try").text($.i18n('core-index/try-these'));
+  $("#or-index-sample").text($.i18n('core-index/sample-data'));
 
   showVersion();
 });

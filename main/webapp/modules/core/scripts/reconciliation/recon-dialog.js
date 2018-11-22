@@ -44,13 +44,13 @@ ReconDialog.prototype._createDialog = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/recon-dialog.html"));
 
   this._elmts = DOM.bind(dialog);
-  this._elmts.dialogHeader.text($.i18n._('core-recon/recon-col')+' "' + this._column.name + '"');
+  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col')+' "' + this._column.name + '"');
   
-  this._elmts.servicePanelMessage.html($.i18n._('core-recon/pick-service'));
-  this._elmts.serviceListTitle.html($.i18n._('core-recon/service-title'));
-  this._elmts.addStandardServiceButton.html($.i18n._('core-buttons/add-std-svc')+"...");
-  this._elmts.reconcileButton.html($.i18n._('core-buttons/start-recon'));
-  this._elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+  this._elmts.servicePanelMessage.html($.i18n('core-recon/pick-service'));
+  this._elmts.serviceListTitle.html($.i18n('core-recon/service-title'));
+  this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
+  this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
+  this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
   this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
 
@@ -202,10 +202,10 @@ ReconDialog.prototype._onAddStandardService = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
   var elmts = DOM.bind(dialog);
 
-  elmts.dialogHeader.html($.i18n._('core-recon/add-std-srv'));
-  elmts.or_recon_enterUrl.html($.i18n._('core-recon/enter-url')+":");
-  elmts.addButton.html($.i18n._('core-buttons/add-service'));
-  elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+  elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'));
+  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url')+":");
+  elmts.addButton.html($.i18n('core-buttons/add-service'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
   var level = DialogSystem.showDialog(dialog);
   var dismiss = function() {

@@ -52,16 +52,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
 
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n._('core-views/custom-text-trans')+" " + column.name);
+    elmts.dialogHeader.text($.i18n('core-views/custom-text-trans')+" " + column.name);
 
-    elmts.or_views_errorOn.text($.i18n._('core-views/on-error'));
-    elmts.or_views_keepOr.text($.i18n._('core-views/keep-or'));
-    elmts.or_views_setBlank.text($.i18n._('core-views/set-blank'));
-    elmts.or_views_storeErr.text($.i18n._('core-views/store-err'));
-    elmts.or_views_reTrans.text($.i18n._('core-views/re-trans'));
-    elmts.or_views_timesChang.text($.i18n._('core-views/times-chang'));
-    elmts.okButton.html($.i18n._('core-buttons/ok'));
-    elmts.cancelButton.text($.i18n._('core-buttons/cancel'));
+    elmts.or_views_errorOn.text($.i18n('core-views/on-error'));
+    elmts.or_views_keepOr.text($.i18n('core-views/keep-or'));
+    elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
+    elmts.or_views_storeErr.text($.i18n('core-views/store-err'));
+    elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
+    elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -117,7 +117,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doJoinMultiValueCells = function() {
-    var separator = window.prompt($.i18n._('core-views/enter-separator'), ", ");
+    var separator = window.prompt($.i18n('core-views/enter-separator'), ", ");
     if (separator !== null) {
       Refine.postCoreProcess(
         "join-multi-value-cells",
@@ -143,13 +143,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // but javascript Regexp accepts it and auto escape it
       var pos = p.replace(/\\\//g,'').indexOf("/");
       if (pos != -1) {
-        alert($.i18n._('core-views/warning-regex') + " : " + p);
+        alert($.i18n('core-views/warning-regex') + " : " + p);
         return 0;}
       try {
         var pattern = new RegExp(p);
         return 1;
         } catch (e) {
-          alert($.i18n._('core-views/warning-regex') + " : " + p);
+          alert($.i18n('core-views/warning-regex') + " : " + p);
         return 0;}
     }
     function escapeInputString(s) {
@@ -232,18 +232,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   }
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/replace-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n._('core-views/replace'));
-    elmts.or_views_text_to_find.text($.i18n._('core-views/text-to-find'));
-    elmts.or_views_replacement.text($.i18n._('core-views/replacement-text'));
-    elmts.or_views_finding_info1.text($.i18n._('core-views/finding-info1'));
-    elmts.or_views_finding_info2.text($.i18n._('core-views/finding-info2'));
-    elmts.or_views_replacement_info.text($.i18n._('core-views/replacement-info'));
-    elmts.or_views_find_regExp.text($.i18n._('core-views/reg-exp'));
-    elmts.or_views_find_case_insensitive.text($.i18n._('core-views/case-insensitive'));
-    elmts.or_views_find_whole_word.text($.i18n._('core-views/whole-word'));
-    elmts.or_views_replace_dont_escape.text($.i18n._('core-views/replace-dont-escape'));
-    elmts.okButton.html($.i18n._('core-buttons/ok'));
-    elmts.cancelButton.text($.i18n._('core-buttons/cancel'));
+    elmts.dialogHeader.text($.i18n('core-views/replace'));
+    elmts.or_views_text_to_find.text($.i18n('core-views/text-to-find'));
+    elmts.or_views_replacement.text($.i18n('core-views/replacement-text'));
+    elmts.or_views_finding_info1.text($.i18n('core-views/finding-info1'));
+    elmts.or_views_finding_info2.text($.i18n('core-views/finding-info2'));
+    elmts.or_views_replacement_info.text($.i18n('core-views/replacement-info'));
+    elmts.or_views_find_regExp.text($.i18n('core-views/reg-exp'));
+    elmts.or_views_find_case_insensitive.text($.i18n('core-views/case-insensitive'));
+    elmts.or_views_find_whole_word.text($.i18n('core-views/whole-word'));
+    elmts.or_views_replace_dont_escape.text($.i18n('core-views/replace-dont-escape'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     elmts.cancelButton.click(dismiss);
@@ -284,18 +284,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-multi-valued-cells-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n._('core-views/split-cells'));
+    elmts.dialogHeader.text($.i18n('core-views/split-cells'));
 
-    elmts.or_views_howSplit.text($.i18n._('core-views/how-split-cells'));
-    elmts.or_views_bySep.text($.i18n._('core-views/by-sep'));
-    elmts.or_views_separator.text($.i18n._('core-views/separator'));
-    elmts.or_views_regExp.text($.i18n._('core-views/reg-exp'));
+    elmts.or_views_howSplit.text($.i18n('core-views/how-split-cells'));
+    elmts.or_views_bySep.text($.i18n('core-views/by-sep'));
+    elmts.or_views_separator.text($.i18n('core-views/separator'));
+    elmts.or_views_regExp.text($.i18n('core-views/reg-exp'));
 
-    elmts.or_views_fieldLen.text($.i18n._('core-views/field-len'));
-    elmts.or_views_listInt.text($.i18n._('core-views/list-int'));
+    elmts.or_views_fieldLen.text($.i18n('core-views/field-len'));
+    elmts.or_views_listInt.text($.i18n('core-views/list-int'));
 
-    elmts.okButton.html($.i18n._('core-buttons/ok'));
-    elmts.cancelButton.text($.i18n._('core-buttons/cancel'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -311,7 +311,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       if (mode === "separator") {
         config.separator = elmts.separatorInput[0].value;
         if (!(config.separator)) {
-          alert($.i18n._('core-views/specify-sep'));
+          alert($.i18n('core-views/specify-sep'));
           return;
         }
 
@@ -330,14 +330,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           });
 
           if (lengths.length === 0) {
-            alert($.i18n._('core-views/warning-no-length'));
+            alert($.i18n('core-views/warning-no-length'));
             return;
           }
 
           config.fieldLengths = JSON.stringify(lengths);
 
         } catch (e) {
-          alert($.i18n._('core-views/warning-format'));
+          alert($.i18n('core-views/warning-format'));
           return;
         }
       }
@@ -356,70 +356,70 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-cells" ], [
     {
       id: "core/text-transform",
-      label: $.i18n._('core-views/transform')+"...",
+      label: $.i18n('core-views/transform')+"...",
       click: function() { doTextTransformPrompt(); }
     },
     {
       id: "core/common-transforms",
-      label: $.i18n._('core-views/common-transform'),
+      label: $.i18n('core-views/common-transform'),
       submenu: [
         {
           id: "core/trim-whitespace",
-          label: $.i18n._('core-views/trim-all'),
+          label: $.i18n('core-views/trim-all'),
           click: function() { doTextTransform("value.trim()", "keep-original", false, ""); }
         },
         {
           id: "core/collapse-whitespace",
-          label: $.i18n._('core-views/collapse-white'),
+          label: $.i18n('core-views/collapse-white'),
           click: function() { doTextTransform("value.replace(/\\s+/,' ')", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/unescape-html-entities",
-          label: $.i18n._('core-views/unescape-html'),
+          label: $.i18n('core-views/unescape-html'),
           click: function() { doTextTransform("value.unescape('html')", "keep-original", true, 10); }
         },
         {},
         {
           id: "core/to-titlecase",
-          label: $.i18n._('core-views/titlecase'),
+          label: $.i18n('core-views/titlecase'),
           click: function() { doTextTransform("value.toTitlecase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-uppercase",
-          label: $.i18n._('core-views/uppercase'),
+          label: $.i18n('core-views/uppercase'),
           click: function() { doTextTransform("value.toUppercase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-lowercase",
-          label: $.i18n._('core-views/lowercase'),
+          label: $.i18n('core-views/lowercase'),
           click: function() { doTextTransform("value.toLowercase()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-number",
-          label: $.i18n._('core-views/to-number'),
+          label: $.i18n('core-views/to-number'),
           click: function() { doTextTransform("value.toNumber()", "keep-original", false, ""); }
         },
         {
           id: "core/to-date",
-          label: $.i18n._('core-views/to-date'),
+          label: $.i18n('core-views/to-date'),
           click: function() { doTextTransform("value.toDate()", "keep-original", false, ""); }
         },
         {
           id: "core/to-text",
-          label: $.i18n._('core-views/to-text'),
+          label: $.i18n('core-views/to-text'),
           click: function() { doTextTransform("value.toString()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-blank",
-          label: $.i18n._('core-views/blank-out'),
+          label: $.i18n('core-views/blank-out'),
           click: function() { doTextTransform("null", "keep-original", false, ""); }
         },
         {
           id: "core/to-empty",
-          label: $.i18n._('core-views/blank-out-empty'),
+          label: $.i18n('core-views/blank-out-empty'),
           click: function() { doTextTransform("\"\"", "keep-original", false, ""); }
         }
       ]
@@ -427,35 +427,35 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/fill-down",
-      label: $.i18n._('core-views/fill-down'),
+      label: $.i18n('core-views/fill-down'),
       click: doFillDown
     },
     {
       id: "core/blank-down",
-      label: $.i18n._('core-views/blank-down'),
+      label: $.i18n('core-views/blank-down'),
       click: doBlankDown
     },
     {},
     {
       id: "core/split-multi-valued-cells",
-      label: $.i18n._('core-views/split-cells')+"...",
+      label: $.i18n('core-views/split-cells')+"...",
       click: doSplitMultiValueCells
     },
     {
       id: "core/join-multi-valued-cells",
-      label: $.i18n._('core-views/join-cells')+"...",
+      label: $.i18n('core-views/join-cells')+"...",
       click: doJoinMultiValueCells
     },
     {},
     {
       id: "core/cluster",
-      label: $.i18n._('core-views/cluster-edit')+"...",
+      label: $.i18n('core-views/cluster-edit')+"...",
       click: function() { new ClusteringDialog(column.name, "value"); }
     },
     {},
     {
       id: "core/replace",
-      label: $.i18n._('core-views/replace'),
+      label: $.i18n('core-views/replace'),
       click: doReplace
     }
   ]);
@@ -466,23 +466,23 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var elmts = DOM.bind(dialog);
     var level = DialogSystem.showDialog(dialog);
 
-    elmts.dialogHeader.html($.i18n._('core-views/transp-cell'));
-    elmts.or_views_fromCol.html($.i18n._('core-views/from-col'));
-    elmts.or_views_toCol.html($.i18n._('core-views/to-col'));
-    elmts.or_views_transpose.html($.i18n._('core-views/transp-into'));
-    elmts.or_views_twoCol.html($.i18n._('core-views/two-new-col'));
-    elmts.or_views_keyCol.html($.i18n._('core-views/key-col'));
-    elmts.or_views_containNames.html($.i18n._('core-views/contain-names'));
-    elmts.or_views_valCol.html($.i18n._('core-views/val-col'));
-    elmts.or_views_containOrig.html($.i18n._('core-views/contain-val'));
-    elmts.or_views_oneCol.html($.i18n._('core-views/one-col'));
-    elmts.or_views_prependName.html($.i18n._('core-views/prepend-name'));
-    elmts.or_views_followBy.html($.i18n._('core-views/follow-by'));
-    elmts.or_views_beforeVal.html($.i18n._('core-views/before-val'));
-    elmts.or_views_ignoreBlank.html($.i18n._('core-views/ignore-blank'));
-    elmts.or_views_fillOther.html($.i18n._('core-views/fill-other'));
-    elmts.okButton.html($.i18n._('core-buttons/transpose'));
-    elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+    elmts.dialogHeader.html($.i18n('core-views/transp-cell'));
+    elmts.or_views_fromCol.html($.i18n('core-views/from-col'));
+    elmts.or_views_toCol.html($.i18n('core-views/to-col'));
+    elmts.or_views_transpose.html($.i18n('core-views/transp-into'));
+    elmts.or_views_twoCol.html($.i18n('core-views/two-new-col'));
+    elmts.or_views_keyCol.html($.i18n('core-views/key-col'));
+    elmts.or_views_containNames.html($.i18n('core-views/contain-names'));
+    elmts.or_views_valCol.html($.i18n('core-views/val-col'));
+    elmts.or_views_containOrig.html($.i18n('core-views/contain-val'));
+    elmts.or_views_oneCol.html($.i18n('core-views/one-col'));
+    elmts.or_views_prependName.html($.i18n('core-views/prepend-name'));
+    elmts.or_views_followBy.html($.i18n('core-views/follow-by'));
+    elmts.or_views_beforeVal.html($.i18n('core-views/before-val'));
+    elmts.or_views_ignoreBlank.html($.i18n('core-views/ignore-blank'));
+    elmts.or_views_fillOther.html($.i18n('core-views/fill-other'));
+    elmts.okButton.html($.i18n('core-buttons/transpose'));
+    elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
     var dismiss = function() {
       DialogSystem.dismissUntil(level - 1);
@@ -504,10 +504,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         config.keyColumnName = $.trim(elmts.keyColumnNameInput[0].value);
         config.valueColumnName = $.trim(elmts.valueColumnNameInput[0].value);
         if (config.keyColumnName == "") {
-          alert($.i18n._('core-views/spec-new-name'));
+          alert($.i18n('core-views/spec-new-name'));
           return;
         } else if (config.valueColumnName == "") {
-          alert($.i18n._('core-views/spec-new-val'));
+          alert($.i18n('core-views/spec-new-val'));
           return;
         }
       } else {
@@ -515,10 +515,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         config.prependColumnName = elmts.prependColumnNameCheckbox[0].checked;
         config.separator = elmts.separatorInput[0].value;
         if (config.combinedColumnName == "") {
-          alert($.i18n._('core-views/spec-col-name'));
+          alert($.i18n('core-views/spec-col-name'));
           return;
         } else if (config.prependColumnName && config.separator == "") {
-          alert($.i18n._('core-views/spec-separator'));
+          alert($.i18n('core-views/spec-separator'));
           return;
         }
       }
@@ -572,7 +572,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doTransposeRowsIntoColumns = function() {
-    var rowCount = window.prompt($.i18n._('core-views/how-many-rows'), "2");
+    var rowCount = window.prompt($.i18n('core-views/how-many-rows'), "2");
     if (rowCount !== null) {
       try {
         rowCount = parseInt(rowCount,10);
@@ -581,7 +581,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       }
 
       if (isNaN(rowCount) || rowCount < 2) {
-        alert($.i18n._('core-views/expect-two'));
+        alert($.i18n('core-views/expect-two'));
       } else {
         var config = {
           columnName: column.name,
@@ -604,12 +604,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var elmts = DOM.bind(dialog);
     var level = DialogSystem.showDialog(dialog);
 
-    elmts.dialogHeader.html($.i18n._('core-views/columnize'));
-    elmts.or_views_keyCol.html($.i18n._('core-views/key-col'));
-    elmts.or_views_valCol.html($.i18n._('core-views/val-col'));
-    elmts.or_views_noteCol.html($.i18n._('core-views/note-col'));
-    elmts.okButton.html($.i18n._('core-buttons/ok'));
-    elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+    elmts.dialogHeader.html($.i18n('core-views/columnize'));
+    elmts.or_views_keyCol.html($.i18n('core-views/key-col'));
+    elmts.or_views_valCol.html($.i18n('core-views/val-col'));
+    elmts.or_views_noteCol.html($.i18n('core-views/note-col'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
     var dismiss = function() {
       DialogSystem.dismissUntil(level - 1);
@@ -627,7 +627,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       if (config.keyColumnName == null ||
           config.valueColumnName == null ||
           config.keyColumnName == config.valueColumnName) {
-        alert($.i18n._('core-views/sel-col-val'));
+        alert($.i18n('core-views/sel-col-val'));
         return;
       }
 
@@ -635,7 +635,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       if (noteColumnName != null) {
         if (noteColumnName == config.keyColumnName ||
             noteColumnName == config.valueColumnName) {
-          alert($.i18n._('core-views/cannot-same'));
+          alert($.i18n('core-views/cannot-same'));
           return;
         }
         config.noteColumnName = noteColumnName;
@@ -672,18 +672,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/transpose" ], [
       {
         id: "core/transpose-columns-into-rows",
-        label: $.i18n._('core-views/transp-cell-row')+"...",
+        label: $.i18n('core-views/transp-cell-row')+"...",
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
-        label: $.i18n._('core-views/transp-cell-col')+"...",
+        label: $.i18n('core-views/transp-cell-col')+"...",
         click: doTransposeRowsIntoColumns
       },
       {},
       {
         id: "core/key-value-columnize",
-        label: $.i18n._('core-views/columnize-col')+"...",
+        label: $.i18n('core-views/columnize-col')+"...",
         click: doKeyValueColumnize
       }
     ]
