@@ -273,8 +273,8 @@ public class ExtendDataOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
 
         // Test to be updated as countries change currencies!
-        Assert.assertTrue(Math.round((float)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
-        Assert.assertTrue(Math.round((float)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
+        Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
+        Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)
         Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);

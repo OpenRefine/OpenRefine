@@ -95,15 +95,14 @@ public class ListFacetTests extends RefineTest {
     }
     
     @Test
-    public void testSelectedEmptyChoice() {
+    public void testSelectedEmptyChoice() throws IOException {
     	Project project = createCSVProject("Column A\n" + 
     			"a\n" + 
     			"c\n" + 
     			"e");
     	Engine engine = new Engine(project);
     	
-    	ListFacetConfig facetConfig = new ListFacetConfig();
-    	facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+    	ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
     	Facet facet = facetConfig.apply(project);
     	facet.computeChoices(project, engine.getAllFilteredRows());
     	TestUtils.isSerializedTo(facet, selectedEmptyChoiceFacet);

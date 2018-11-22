@@ -1,7 +1,5 @@
 package org.openrefine.wikidata.exporters;
 
-import static org.openrefine.wikidata.testing.JacksonSerializationTest.assertJsonEquals;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
@@ -11,6 +9,7 @@ import org.testng.annotations.Test;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 public class SchemaExporterTest extends RefineTest {
 	
@@ -24,7 +23,7 @@ public class SchemaExporterTest extends RefineTest {
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
         exporter.export(project, properties, engine, writer);
-        assertJsonEquals("{\"itemDocuments\":[]}", writer.toString());
+        TestUtils.assertEqualAsJson("{\"itemDocuments\":[]}", writer.toString());
     }
 
 }

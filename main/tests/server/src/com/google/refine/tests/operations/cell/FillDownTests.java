@@ -117,7 +117,7 @@ public class FillDownTests extends RefineTest {
     	project.columnModel.update();
     	
     	AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

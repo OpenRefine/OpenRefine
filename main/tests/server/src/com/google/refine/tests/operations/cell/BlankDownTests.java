@@ -101,7 +101,7 @@ public class BlankDownTests extends RefineTest {
     	project.columnModel.update();
     	
     	AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
