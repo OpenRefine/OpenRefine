@@ -236,20 +236,17 @@ public class ControlFunctionRegistry {
         registerFunction("match", new Match());
         registerFunction("find", new Find());
 
-        // HTML functions from JSoup
+        // XML and HTML functions from JSoup
+        registerFunction("parseXml", new ParseXml());
         registerFunction("parseHtml", new ParseHtml());
         registerFunction("select", new SelectXml());
+        registerFunction("xmlAttr", new XmlAttr());
         registerFunction("htmlAttr", new XmlAttr());
+        registerFunction("xmlText", new XmlText());
         registerFunction("htmlText", new XmlText());
+        registerFunction("innerXml", new InnerXml());
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
-        
-        // XML functions from JSoup
-        registerFunction("parseXml", new ParseXml());
-        registerFunction("selectx", new SelectXml());
-        registerFunction("xmlAttr", new XmlAttr());
-        registerFunction("xmlText", new XmlText());
-        registerFunction("innerXml", new InnerXml());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
