@@ -205,7 +205,7 @@ public class ListFacet implements Facet {
             if (_config.selectBoolean || _booleanCount > 0) {
                 writer.key("booleanChoice");
                 writer.object();
-                writer.key("s"); writer.value(_configselectBoolean);
+                writer.key("s"); writer.value(_config.selectBoolean);
                 writer.key("c"); writer.value(_booleanCount);
                 writer.endObject();
             }
@@ -270,7 +270,7 @@ public class ListFacet implements Facet {
         return 
             _eval == null || 
             _errorMessage != null ||
-            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? 
+            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError && !_config.selectNumber && !_config.selectDateTime && !_config.selectBoolean) ? 
                 null :
                 new ExpressionEqualRowFilter(
                     _eval, 
