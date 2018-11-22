@@ -139,7 +139,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // p : a string without beginning and trailing "/"
 
       // we need a manual check for unescaped /
-      // the GREL replace function cannot contain a pattern with unescaped /
+      // the GREL replace() function cannot contain a pattern with unescaped /
       // but javascript Regexp accepts it and auto escape it
       var pos = p.replace(/\\\//g,'').indexOf("/");
       if (pos != -1) {
@@ -160,34 +160,34 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // 1 characters : \          | 2 characters : \\
       // 1 character : '           | 2 characters : \'
       // 1 character : "           | 2 characters : \"
-      // new line                  | 2 characters : \n
-      // tab                       | 2 characters : \t
+      // new line or tab           | nothing
+      // other non printable char  | nothing
       // parameters :
       // s : a string from an HTML input
-      // Note: it is not possible to insert new lines in HTML input but it is safer to search for them, in case the input field is replaced with a textarea
+      // Note: if the input field is replaced with a textarea, it could be imaginable to escape new lines and tabs as \n and \t
       if (typeof s != 'string') {
         return "";
       }
-      // convert new lines and tabs manually typed in the HTML input into \n and \t, delete other non printable characters, escape \ ' and "
-      return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x1F\x80-\x9F]/g, '').replace(/'/g, "\\'").replace(/"/g, '\\"')
+      // delete new lines, tabs and other non printable characters, and escape \ ' and "
+      return s.replace(/[\x00-\x1F\x80-\x9F]/g, '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"')
     }
     function escapeInputRegex(s) {
       // if the HTML input is used as a regex pattern
-      // suppress new lines and tabs manually typed in the HTML input, and other non printable characters
+      // delete new lines, tabs and other non printable characters
       // no need to escape \ or /
       // parameters :
       // s : a string from a HTML input
       return (typeof s == 'string') ? s.replace(/[\x00-\x1F\x80-\x9F]/g, '')  : ""
       }
-    function stringToRegex(s) {
-      // converts a plain string to regex, in order to use the i flag
+    function escapedStringToRegex(s) {
+      // converts a plain string (beforehand escaped with escapeInputString) to regex, in order to use the i flag
       // escaping is needed to force the regex processor to interpret every character litteraly
       // parameters :
       // s : a string from a HTML input, preprocessed with escapeInputString
       if (typeof s != 'string') {
         return "";
       }
-      // no need to escape \ : already escaped by escapeInputString
+      // we MUST NOT escape \ : already escaped by escapeInputString
       var EscapeCharsRegex = /[-|{}()[\]^$+*?.]/g;
       // FIXME escaping of / directly by adding / or \/ or // in EscapeCharsRegex don't work...
       return s.replace(EscapeCharsRegex, '\\$&').replace(/\//g, '\\/');
@@ -255,9 +255,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       var find_case_insensitive = elmts.find_case_insensitiveInput[0].checked;
       var find_whole_word = elmts.find_whole_wordInput[0].checked;
       replacement_text = escapeReplacementString(replace_dont_escape, replacement_text)
-      text_to_find = escapeInputString(text_to_find);
+      if (find_regex) {
+        text_to_find = escapeInputRegex(text_to_find);
+      }
+      else {
+        text_to_find = escapeInputString(text_to_find);
+      }
       if (!find_regex && (find_case_insensitive || find_whole_word)) {
-        text_to_find = stringToRegex(text_to_find);
+        text_to_find = escapedStringToRegex(text_to_find);
       }
       if (find_regex || find_case_insensitive || find_whole_word ) {
         if (!isValidRegexPattern (text_to_find)) {
