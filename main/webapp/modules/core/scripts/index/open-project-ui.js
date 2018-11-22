@@ -261,7 +261,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
       
-    
     var tagsCell = $(tr.insertCell(tr.cells.length));
     var tags = project.tags;
     tags.map(function(tag){

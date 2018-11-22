@@ -230,13 +230,8 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-<<<<<<< HEAD
         String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
             ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
-=======
-        String expectedOutput = ParsingUtilities.localDateToString(localDate) + "," +
-            ParsingUtilities.dateToString(date) + "\n";
->>>>>>> parent of c4b0ff6be... data package metadata  (#1398)
 
         Assert.assertEquals(writer.toString(), expectedOutput);
     }
