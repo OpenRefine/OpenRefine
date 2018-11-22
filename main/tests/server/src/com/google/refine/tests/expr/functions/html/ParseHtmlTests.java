@@ -79,6 +79,7 @@ public class ParseHtmlTests extends RefineTest  {
         Assert.assertTrue(invoke("innerHtml",Jsoup.parse(h).select("p").first()) instanceof String);
         Assert.assertEquals(invoke("innerHtml",Jsoup.parse(h).select("p").first()),"para1 <strong>strong text</strong>");
         Assert.assertEquals(invoke("htmlAttr",Jsoup.parse(h).select("div").first(),"class"),"class1");
+        Assert.assertEquals(invoke("htmlText",Jsoup.parse(h).select("div").first()),"para1 strong text para2");
         Assert.assertEquals(invoke("ownText",Jsoup.parse(h).select("p").first()),"para1");
     }
 }
