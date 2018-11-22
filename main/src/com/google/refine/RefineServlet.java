@@ -112,9 +112,9 @@ public class RefineServlet extends Butterfly {
         }
         if (REVISION.equals("$REVISION")) {
             ClassLoader classLoader = getClass().getClassLoader();
-            InputStream gitStats = classLoader.getResourceAsStream("git.properties");
-            ObjectMapper mapper = new ObjectMapper();
             try {
+                InputStream gitStats = classLoader.getResourceAsStream("git.properties");
+                ObjectMapper mapper = new ObjectMapper();
                 ObjectNode parsedGit = mapper.readValue(gitStats, ObjectNode.class);
                 REVISION = parsedGit.get("git.commit.id.abbrev").asText("TRUNK");
             } catch (IOException e) {
