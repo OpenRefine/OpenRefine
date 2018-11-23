@@ -46,6 +46,11 @@
                             <exclude name="WEB-INF/lib/icu4j*.jar"/>
                         </fileset>
                     </copy>
+                    <copy todir="${built.webapp.dir}">
+                        <fileset dir="${webapp.dir}">
+                            <include name="**/*.properties"/>
+                        </fileset>
+                    </copy>
                     <copy todir="${built.webapp.dir}/WEB-INF/lib/">
                         <fileset dir="${webapp.target}">
                             <include name="openrefine-main.jar" />
