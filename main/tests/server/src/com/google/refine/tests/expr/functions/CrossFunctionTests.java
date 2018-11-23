@@ -1,7 +1,6 @@
 
 package com.google.refine.tests.expr.functions;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -30,8 +29,6 @@ import com.google.refine.tests.RefineTest;
 public class CrossFunctionTests extends RefineTest {
     static Properties bindings;
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    private static int integerValue = 1600;
-    private static Boolean booleanValue = true;
     
     @Override
     @BeforeTest
