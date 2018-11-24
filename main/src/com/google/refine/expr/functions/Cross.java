@@ -67,10 +67,11 @@ public class Cross implements Function {
                         (String) toProjectName, 
                         (String) toColumnName
                         );
-                
-                String srcValue = v instanceof String ? (String)v : (String)((WrappedCell) v).cell.value;
-                        
-                return join.getRows(srcValue);
+                if(v instanceof String) {
+                    return join.getRows(v);
+                } else {
+                    return join.getRows(((WrappedCell) v).cell.value);
+                }
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
