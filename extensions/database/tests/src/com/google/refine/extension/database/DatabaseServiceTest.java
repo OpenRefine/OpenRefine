@@ -119,10 +119,8 @@ public class DatabaseServiceTest extends DBExtensionTests{
     public void testBuildLimitQuery() {
         DatabaseService dbService = DatabaseService.get(testDbConfig.getDatabaseType());
         String limitQuery = dbService.buildLimitQuery(100, 0, "SELECT * FROM " + testTable);
-
         Assert.assertNotNull(limitQuery);
-
-        Assert.assertEquals(limitQuery, "SELECT * FROM " + testTable + " LIMIT " + 100 + " OFFSET " + 0 + ";");
+        Assert.assertEquals(limitQuery, "SELECT * FROM (SELECT * FROM " + testTable + ") data LIMIT " + 100 + " OFFSET " + 0 + ";");
     }
 
     @Test(groups = {"requiresMySQL"})
