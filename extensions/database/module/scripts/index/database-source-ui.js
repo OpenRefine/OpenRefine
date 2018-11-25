@@ -228,19 +228,7 @@ Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
      }else if(allCapsQuery.indexOf('UPDATE') > -1){
          window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " UPDATE");
          return false;
-     }else if(allCapsQuery.indexOf('LIMIT') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " LIMIT");
-         return false;
      }
-     
-//	 if ((allCapsQuery.indexOf('DROP') > -1)  || (allCapsQuery.indexOf('TRUNCATE') > -1) ||
-//			 (allCapsQuery.indexOf('DELETE') > -1) || (allCapsQuery.indexOf('ROLLBACK') > -1) 
-//			 || (allCapsQuery.indexOf('SHUTDOWN') > -1) || (allCapsQuery.indexOf('INSERT') > -1)
-//			 || (allCapsQuery.indexOf('ALTER') > -1) || (allCapsQuery.indexOf('UPDATE') > -1))
-//	 {
-//		 window.alert($.i18n._('database-source/alert-invalid-query-keyword'));
-//		 return false;
-//	 }
      
      if(!allCapsQuery.startsWith('SELECT')) {
          window.alert($.i18n._('database-source/alert-invalid-query-select'));
