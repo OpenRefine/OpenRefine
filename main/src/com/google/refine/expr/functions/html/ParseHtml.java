@@ -37,21 +37,23 @@ import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-import org.jsoup.Jsoup;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.xml.ParseXml;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class ParseHtml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof String) {
-                return Jsoup.parse(o1.toString());
+                return new ParseXml().call(bindings,args,"html");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
 

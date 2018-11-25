@@ -39,59 +39,59 @@ ExporterManager.handlers = {};
 ExporterManager.MenuItems = [
   {
     "id" : "core/export-project",
-    "label": $.i18n._('core-project/export-project'),
+    "label": $.i18n('core-project/export-project'),
     "click": function() { ExporterManager.handlers.exportProject(); }
   },
   {
       "id" : "core/project-data-package",
-      "label": $.i18n._('core-project/project-data-package'),
+      "label": $.i18n('core-project/project-data-package'),
       "click": function() { ExporterManager.handlers.projectDataPackage(); }
   },
   {},
   {
     "id" : "core/export-tsv",
-    "label": $.i18n._('core-project/tab-value'),
+    "label": $.i18n('core-project/tab-value'),
     "click": function() { ExporterManager.handlers.exportRows("tsv", "tsv"); }
   },
   {
     "id" : "core/export-csv",
-    "label": $.i18n._('core-project/comma-sep'),
+    "label": $.i18n('core-project/comma-sep'),
     "click": function() { ExporterManager.handlers.exportRows("csv", "csv"); }
   },
   {
     "id" : "core/export-html-table",
-    "label": $.i18n._('core-project/html-table'),
+    "label": $.i18n('core-project/html-table'),
     "click": function() { ExporterManager.handlers.exportRows("html", "html"); }
   },
   {
     "id" : "core/export-excel",
-    "label": $.i18n._('core-project/excel'),
+    "label": $.i18n('core-project/excel'),
     "click": function() { ExporterManager.handlers.exportRows("xls", "xls"); }
   },
   {
     "id" : "core/export-excel-xml",
-    "label": $.i18n._('core-project/excel-xml'),
+    "label": $.i18n('core-project/excel-xml'),
     "click": function() { ExporterManager.handlers.exportRows("xlsx", "xlsx"); }
   },
   {
     "id" : "core/export-ods",
-    "label": $.i18n._('core-project/odf'),
+    "label": $.i18n('core-project/odf'),
     "click": function() { ExporterManager.handlers.exportRows("ods", "ods"); }
   },
   {},
   {
     "id" : "core/export-custom-tabular",
-    "label": $.i18n._('core-project/custom-tabular'),
+    "label": $.i18n('core-project/custom-tabular'),
     "click": function() { new CustomTabularExporterDialog(); }
   },
   {
       "id" : "core/export-sql",
-      "label": $.i18n._('core-project/sql-export'),
+      "label": $.i18n('core-project/sql-export'),
       "click": function() { new SqlExporterDialog(); }
   },
   {
     "id" : "core/export-templating",
-    "label": $.i18n._('core-project/templating'),
+    "label": $.i18n('core-project/templating'),
     "click": function() { new TemplatingExporterDialog(); }
   }
 ];
@@ -116,7 +116,7 @@ ExporterManager.stripNonFileChars = function(name) {
 
 ExporterManager.handlers.exportTripleloader = function(format) {
   if (!theProject.overlayModels.freebaseProtograph) {
-    alert($.i18n._('triple-loader/warning-align'));
+    alert($.i18n('triple-loader/warning-align'));
   } else {
     ExporterManager.handlers.exportRows(format, "txt");
   }
@@ -170,11 +170,11 @@ ExporterManager.handlers.exportProject = function() {
   var dialog = $(DOM.loadHTML("core", "scripts/dialogs/export-project-dialog.html"));
   var _elmts = DOM.bind(dialog);
   
-  _elmts.dialogHeader.html($.i18n._('core-dialogs/choose-export-destination'));
-  _elmts.toLocalRadio.html($.i18n._('core-dialogs/export-to-local'));
-  _elmts.toGoogleDriveRadio.html($.i18n._('core-dialogs/export-to-google-drive'));
-  _elmts.exportButton.html($.i18n._('core-buttons/export'));
-  _elmts.cancelButton.html($.i18n._('core-buttons/cancel'));
+  _elmts.dialogHeader.html($.i18n('core-dialogs/choose-export-destination'));
+  _elmts.toLocalRadio.html($.i18n('core-dialogs/export-to-local'));
+  _elmts.toGoogleDriveRadio.html($.i18n('core-dialogs/export-to-google-drive'));
+  _elmts.exportButton.html($.i18n('core-buttons/export'));
+  _elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
   _elmts.exportButton.click(function() { 
       if ($("input[name='export-destination']")[0].checked) {
@@ -194,7 +194,7 @@ ExporterManager.handlers.exportProject = function() {
   var doExportToGoogleDrive = function() {
       var name = window.prompt(prompt, theProject.metadata.name);
       if (name) {
-        var dismiss = DialogSystem.showBusy($.i18n._('gdata-exporter/uploading'));
+        var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
         $.post(
           "command/gdata/upload",
           {
@@ -206,9 +206,9 @@ ExporterManager.handlers.exportProject = function() {
             dismiss();
 
             if (o.url) {
-                alert($.i18n._('gdata-exporter/upload-success') + o.url);
+                alert($.i18n('gdata-exporter/upload-success') + o.url);
             } else {
-                alert($.i18n._('gdata-exporter/upload-error') + o.message)
+                alert($.i18n('gdata-exporter/upload-error') + o.message)
             }
             onDone();
           },

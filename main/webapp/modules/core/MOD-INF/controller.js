@@ -345,6 +345,11 @@ function init() {
       "externals/jsoneditor/jsoneditor.js",
       "externals/select2/select2.min.js",
       "externals/jquery.lavalamp.min.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -429,6 +434,10 @@ function init() {
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
       "externals/underscore-min.js",
       "externals/jsoneditor/jsoneditor.js",
 
@@ -541,6 +550,10 @@ function init() {
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
       "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
       "externals/underscore-min.js",
       "scripts/preferences.js",
     ]

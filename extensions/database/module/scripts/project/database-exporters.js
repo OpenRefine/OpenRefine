@@ -37,10 +37,11 @@ $.ajax({
 
     },
     success : function(data) {
-        dictionary = data;
+        dictionary = data['dictionary'];
+        dictionary = data['lang'];
     }
 });
-$.i18n.setDictionary(dictionary);
+$.i18n().load(dictionary, lang);
 // End internationalization
 
 (function() {

@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
- * - Redistributions of source code must retain the above copyright notice, this 
+ * - Redistrihttps://github.com/OpenRefine/OpenRefine/pull/1862/conflict?name=extensions%252Fdatabase%252Fmodule%252Fscripts%252Findex%252Fdatabase-source-ui.js&ancestor_oid=d7b892f4d20ae2529e9bcc269502869eef9f1a31&base_oid=5b0d92bbb98c3603d39148470d319f1153e417ef&head_oid=997b6757adc87d5b9d4a9ef385eb6ec63e383739butions of source code must retain the above copyright notice, this 
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice, 
  *   this list of conditions and the following disclaimer in the documentation 
@@ -64,20 +64,20 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   this._elmts = DOM.bind(this._body);
   var self = this;
   
-  $('#database-title').text($.i18n._('database-import/title')); 
-  $('#connectionNameLabel').html($.i18n._('database-source/connectionNameLabel'));
-  $('#databaseTypeLabel').html($.i18n._('database-source/databaseTypeLabel'));
-  $('#databaseHostLabel').text($.i18n._('database-source/databaseHostLabel'));
-  $('#databasePortLabel').text($.i18n._('database-source/databasePortLabel'));
-  $('#databaseUserLabel').text($.i18n._('database-source/databaseUserLabel'));
-  $('#databasePasswordLabel').text($.i18n._('database-source/databasePasswordLabel'));
-  $('#databaseNameLabel').text($.i18n._('database-source/databaseNameLabel'));
-  $('#databaseSchemaLabel').text($.i18n._('database-source/databaseSchemaLabel'));
-  $('#databaseTestButton').text($.i18n._('database-source/databaseTestButton'));
-  $('#databaseSaveButton').text($.i18n._('database-source/databaseSaveButton'));
-  $('#databaseConnectButton').text($.i18n._('database-source/databaseConnectButton'));
-  $('#newConnectionButtonDiv').text($.i18n._('database-source/newConnectionButtonDiv'));
-  $('#savedConnectionSpan').text($.i18n._('database-source/savedConnectionSpan'));
+  $('#database-title').text($.i18n('database-import/title')); 
+  $('#connectionNameLabel').html($.i18n('database-source/connectionNameLabel'));
+  $('#databaseTypeLabel').html($.i18n('database-source/databaseTypeLabel'));
+  $('#databaseHostLabel').text($.i18n('database-source/databaseHostLabel'));
+  $('#databasePortLabel').text($.i18n('database-source/databasePortLabel'));
+  $('#databaseUserLabel').text($.i18n('database-source/databaseUserLabel'));
+  $('#databasePasswordLabel').text($.i18n('database-source/databasePasswordLabel'));
+  $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
+  $('#databaseSchemaLabel').text($.i18n('database-source/databaseSchemaLabel'));
+  $('#databaseTestButton').text($.i18n('database-source/databaseTestButton'));
+  $('#databaseSaveButton').text($.i18n('database-source/databaseSaveButton'));
+  $('#databaseConnectButton').text($.i18n('database-source/databaseConnectButton'));
+  $('#newConnectionButtonDiv').text($.i18n('database-source/newConnectionButtonDiv'));
+  $('#savedConnectionSpan').text($.i18n('database-source/savedConnectionSpan'));
  
   
   this._elmts.newConnectionButton.click(function(evt) {
@@ -129,7 +129,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
        if(self._validateNewConnectionForm() == true){
                var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
             if (connectionNameInput.length === 0) {
-                window.alert($.i18n._('database-source/alert-connection-name'));   
+                window.alert($.i18n('database-source/alert-connection-name'));   
             } else{
                     self._saveConnection(self._getConnectionInfo());
             }
@@ -152,7 +152,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 //	    if(jdbcQueryInfo.query && jdbcQueryInfo.query.length > 0 ) {
 //      	   self._executeQuery(jdbcQueryInfo);
 //	    }else{
-//	    	  window.alert($.i18n._('database-source/alert-query'));
+//	    	  window.alert($.i18n('database-source/alert-query'));
 //	    }
         
         if(self.validateQuery(jdbcQueryInfo.query)) {
@@ -171,7 +171,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
       if(self._validateNewConnectionForm() == true){
                var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
             if (connectionNameInput.length === 0) {
-                window.alert($.i18n._('database-source/alert-connection-name'));   
+                window.alert($.i18n('database-source/alert-connection-name'));   
             } else{
                     self._editConnection(self._getConnectionInfo());
             }
@@ -198,40 +198,40 @@ Refine.DatabaseSourceUI.prototype.focus = function() {
 Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
      //alert("query::" + query);
      if(!query || query.length <= 0 ) {
-         window.alert($.i18n._('database-source/alert-query'));
+         window.alert($.i18n('database-source/alert-query'));
          return false;
      }
     
      var allCapsQuery = query.toUpperCase();
     
      if(allCapsQuery.indexOf('DROP') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " DROP");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " DROP");
          return false;
      }else if(allCapsQuery.indexOf('TRUNCATE') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " TRUNCATE");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " TRUNCATE");
          return false;
      }else if(allCapsQuery.indexOf('DELETE') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " DELETE");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " DELETE");
          return false;
      }else if(allCapsQuery.indexOf('ROLLBACK') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " ROLLBACK");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " ROLLBACK");
          return false;
      }else if(allCapsQuery.indexOf('SHUTDOWN') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " SHUTDOWN");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " SHUTDOWN");
          return false;
      }else if(allCapsQuery.indexOf('INSERT') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " INSERT");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " INSERT");
          return false;
      }else if(allCapsQuery.indexOf('ALTER') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " ALTER");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " ALTER");
          return false;
      }else if(allCapsQuery.indexOf('UPDATE') > -1){
-         window.alert($.i18n._('database-source/alert-invalid-query-keyword') + " UPDATE");
+         window.alert($.i18n('database-source/alert-invalid-query-keyword') + " UPDATE");
          return false;
      }
-     
+
      if(!allCapsQuery.startsWith('SELECT')) {
-         window.alert($.i18n._('database-source/alert-invalid-query-select'));
+         window.alert($.i18n('database-source/alert-invalid-query-select'));
          return false;
      }
 
@@ -261,7 +261,7 @@ Refine.DatabaseSourceUI.prototype._editConnection = function(connectionInfo) {
                })
               
               $( "#menuListUl" ).append(items.join(''));
-              window.alert($.i18n._('database-source/alert-connection-edit'));   
+              window.alert($.i18n('database-source/alert-connection-edit'));   
           }
         }
     }).fail(function( jqXhr, textStatus, errorThrown ){
@@ -274,7 +274,7 @@ Refine.DatabaseSourceUI.prototype._executeQuery = function(jdbcQueryInfo) {
     var self = this;
     //remove start line
     
-    var dismiss = DialogSystem.showBusy($.i18n._('database-import/checking'));
+    var dismiss = DialogSystem.showBusy($.i18n('database-import/checking'));
     //$("#executeQueryBtn").text('Please wait ...').attr('disabled','disabled');
     
     $.post(
@@ -455,16 +455,16 @@ Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
         var initialSchemaInput = $.trim(self._elmts.initialSchemaInput[0].value);
         
         if (databaseHostInput.length === 0) {
-            window.alert($.i18n._('database-source/alert-server'));
+            window.alert($.i18n('database-source/alert-server'));
             return false;
         }else if(databasePortInput.length === 0){
-                window.alert($.i18n._('database-source/alert-port'));
+                window.alert($.i18n('database-source/alert-port'));
                 return false;
         }else if(databaseUserInput.length === 0){
-                window.alert($.i18n._('database-source/alert-user'));
+                window.alert($.i18n('database-source/alert-user'));
                 return false;
         }else if(initialDatabaseInput.length === 0){
-                window.alert($.i18n._('database-source/alert-initial-database'));
+                window.alert($.i18n('database-source/alert-initial-database'));
                 return false;
         }
         else{
