@@ -1,6 +1,6 @@
 /*
 
-Copyright 2010,2011 Google Inc.
+Copyright 2010, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,33 +31,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.expr.functions.html;
+package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
-import org.jsoup.nodes.Element;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class HtmlText implements Function {
+public class ParseXml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        return call(bindings,args,"xml");
+    }
+    
+    public Object call(Properties bindings, Object[] args, String mode) {
+        if (args.length == 1) {
             Object o1 = args[0];
-            if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                return e1.text();
-
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+            if (o1 != null && o1 instanceof String) {
+                if (mode == "html") {
+                    return Jsoup.parse(o1.toString());
+                } else if (mode == "xml") {
+                    return Jsoup.parse(o1.toString(), "",Parser.xmlParser());
+                } else {
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
+                }
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
 
@@ -66,9 +73,9 @@ public class HtmlText implements Function {
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Selects the text from within an element (including all child elements)");
-        writer.key("params"); writer.value("Element e");
-        writer.key("returns"); writer.value("String text");
+        writer.key("description"); writer.value("Parses a string as XML");
+        writer.key("params"); writer.value("string s");
+        writer.key("returns"); writer.value("XML object");
         writer.endObject();
     }
 }

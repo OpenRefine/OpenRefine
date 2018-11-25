@@ -1,6 +1,6 @@
 /*
 
-Copyright 2011, Google Inc.
+Copyright 2010, Google Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package com.google.refine.expr.functions.html;
+package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
@@ -43,21 +43,23 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-public class OwnText implements Function {
+public class SelectXml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        if (args.length == 2) {
             Object o1 = args[0];
+            Object o2 = args[1];
             if (o1 != null && o1 instanceof Element) {
                 Element e1 = (Element)o1;
-                return e1.ownText();
-
+                if(o2 != null && o2 instanceof String){
+                    return e1.select(o2.toString());
+                }
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml()");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
     }
 
 
@@ -66,9 +68,9 @@ public class OwnText implements Function {
         throws JSONException {
 
         writer.object();
-        writer.key("description"); writer.value("Gets the text owned by this HTML element only; does not get the combined text of all children.");
-        writer.key("params"); writer.value("Element e");
-        writer.key("returns"); writer.value("String ownText");
+        writer.key("description"); writer.value("Selects an element from an XML or HTML element using selector syntax.");
+        writer.key("params"); writer.value("Element e, String s");
+        writer.key("returns"); writer.value("XML/HTML Elements");
         writer.endObject();
     }
 }
