@@ -43,8 +43,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;	
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -131,7 +131,8 @@ abstract public class ReconConfig  {
     /**
      * Returns the identifier for the reconciliation mode, as serialized in JSON.
      * This is the same identifier that was used to register the registration mode.
+     * Jackson already adds the mode during serialization hence the JsonIgnore here.
      */
-    @JsonProperty("mode")
+    @JsonIgnore
     abstract public String getMode();
 }

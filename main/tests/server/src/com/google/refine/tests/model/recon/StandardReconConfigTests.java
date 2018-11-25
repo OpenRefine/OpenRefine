@@ -1,5 +1,7 @@
 package com.google.refine.tests.model.recon;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.ArrayList;
 
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfigTests extends RefineTest {
     
@@ -85,5 +88,9 @@ public class StandardReconConfigTests extends RefineTest {
                 " }";
         ReconConfig config = ReconConfig.reconstruct(json);
         TestUtils.isSerializedTo(config, json);
+        
+        // the "mode" only appears once in the serialization result
+        String fullJson = ParsingUtilities.mapper.writeValueAsString(config);
+        assertEquals(fullJson.indexOf("\"mode\"", fullJson.indexOf("\"mode\"")+1), -1);
     }
 }
