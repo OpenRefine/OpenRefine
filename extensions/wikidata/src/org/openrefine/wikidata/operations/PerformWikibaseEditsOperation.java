@@ -194,7 +194,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Generate batch token
             long token = (new Random()).nextLong();
             String summary = _summary + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 7)));
+                    (Long.toHexString(token).substring(0, 8)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
