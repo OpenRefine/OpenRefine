@@ -1,7 +1,9 @@
 package com.google.refine.tests.model.recon;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.LoggerFactory;
@@ -10,8 +12,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.tests.RefineTest;
@@ -92,5 +100,76 @@ public class StandardReconConfigTests extends RefineTest {
         // the "mode" only appears once in the serialization result
         String fullJson = ParsingUtilities.mapper.writeValueAsString(config);
         assertEquals(fullJson.indexOf("\"mode\"", fullJson.indexOf("\"mode\"")+1), -1);
+    }
+    
+    @Test
+    public void testReconstructNoType() throws IOException {
+    	String json = "{\"mode\":\"standard-service\","
+    			+ "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+    			+ "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+    			+ "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+    			+ "\"type\":null,"
+    			+ "\"autoMatch\":true,"
+    			+ "\"columnDetails\":["
+    			+ "    {\"column\":\"_ - id\","
+    			+ "     \"property\":{\"id\":\"P3153\",\"name\":\"Crossref funder ID\"}}"
+    			+ "],"
+    			+ "\"limit\":0}";
+    	StandardReconConfig config = StandardReconConfig.reconstruct(json);
+    	assertNull(config.typeID);
+    	assertNull(config.typeName);
+    }
+    
+    @Test
+    public void formulateQueryTest() throws IOException {
+    	Project project = createCSVProject("title,director\n"
+    			+ "mulholland drive,david lynch");
+    	
+    	String config = " {\n" + 
+                "        \"mode\": \"standard-service\",\n" + 
+                "        \"service\": \"https://tools.wmflabs.org/openrefine-wikidata/en/api\",\n" + 
+                "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
+                "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" + 
+                "        \"type\": {\n" + 
+                "                \"id\": \"Q1234\",\n" + 
+                "                \"name\": \"movie\"\n" + 
+                "        },\n" + 
+                "        \"autoMatch\": true,\n" + 
+                "        \"columnDetails\": [\n" + 
+                "           {\n" + 
+                "             \"column\": \"director\",\n" + 
+                "             \"propertyName\": \"Director\",\n" + 
+                "             \"propertyID\": \"P123\"\n" +
+                "           }\n" +
+                "        ]}";
+    	StandardReconConfig r = StandardReconConfig.reconstruct(config);
+    	Row row = project.rows.get(0);
+        ReconJob job = r.createJob(project, 0, row, "title", row.getCell(0));
+        TestUtils.assertEqualAsJson("{"
+        		+ "\"query\":\"mulholland drive\","
+        		+ "\"type\":\"Q1234\","
+        		+ "\"properties\":["
+        		+ "     {\"pid\":\"P123\",\"v\":\"david lynch\"}"
+        		+ "],"
+        		+ "\"type_strict\":\"should\"}", job.toString());
+    }
+    
+    /**
+     * The UI format and the backend format differ for serialization
+     * (the UI never deserializes and the backend serialization did not matter).
+	 * TODO: change the frontend so it uses the same format.
+     */
+    @Test
+    public void deserializeColumnDetail() throws JsonParseException, JsonMappingException, IOException {
+    	String uiJson = "{\"column\":\"director\","
+    			+ "\"property\":{"
+    			+ "   \"id\":\"P123\","
+    			+ "   \"name\":\"Director\""
+    			+ "}}";
+    	String backendJson = "{\"column\":\"director\","
+    			+ "\"propertyID\":\"P123\","
+    			+ "\"propertyName\":\"Director\"}";
+    	ColumnDetail cd = ParsingUtilities.mapper.readValue(uiJson, ColumnDetail.class);
+    	TestUtils.isSerializedTo(cd, backendJson);
     }
 }

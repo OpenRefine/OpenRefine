@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
+import static org.testng.Assert.assertNotNull;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,6 +84,12 @@ public class StandardReconConfig extends ReconConfig {
         @JsonProperty("propertyID")
         final public String propertyID;
         
+        /**
+         * Unfortunately the format of ColumnDetail
+         * is inconsistent in the UI and the backend
+         * so we need to support two deserialization formats.
+         * See the tests for that.
+         */
         @JsonCreator
         public ColumnDetail(
                 @JsonProperty("column")
@@ -89,15 +97,26 @@ public class StandardReconConfig extends ReconConfig {
                 @JsonProperty("propertyName")
                 String propertyName,
                 @JsonProperty("propertyID")
-                String propertyID) {
+                String propertyID,
+                @JsonProperty("property")
+                ReconType property) {
             this.columnName = columnName;
-            this.propertyName = propertyName;
-            this.propertyID = propertyID;
+            this.propertyName = property == null ? propertyName : property.name;
+            this.propertyID = property == null ? propertyID : property.id;
         }
+        
+    	@Override
+    	public String toString() {
+    		try {
+				return ParsingUtilities.mapper.writeValueAsString(this);
+			} catch (JsonProcessingException e) {
+				return super.toString();
+			}
+    	}
     }
     
-    static public ReconConfig reconstruct(String json) throws IOException {
-        return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
+    static public StandardReconConfig reconstruct(String json) throws IOException {
+        return ParsingUtilities.mapper.readValue(json, StandardReconConfig.class);
     }
     
     static protected class StandardReconJob extends ReconJob {
@@ -107,6 +126,11 @@ public class StandardReconConfig extends ReconConfig {
         @Override
         public int getKey() {
             return code.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+        	return code;
         }
     }
     
@@ -144,7 +168,10 @@ public class StandardReconConfig extends ReconConfig {
             List<ColumnDetail> columnDetails,
             @JsonProperty("limit")
             int limit) {
-        this(service, identifierSpace, schemaSpace, type.id, type.name, autoMatch, columnDetails, limit);
+        this(service, identifierSpace, schemaSpace,
+        		type != null ? type.id : null,
+        		type != null ? type.name : null,
+        		autoMatch, columnDetails, limit);
     }
             
     public StandardReconConfig(
@@ -245,6 +272,15 @@ public class StandardReconConfig extends ReconConfig {
             this.pid = pid;
             this.v = v;
         }
+        
+    	@Override
+    	public String toString() {
+    		try {
+				return ParsingUtilities.mapper.writeValueAsString(this);
+			} catch (JsonProcessingException e) {
+				return super.toString();
+			}
+    	}
     }
     
     protected static class ReconQuery {
@@ -284,6 +320,15 @@ public class StandardReconConfig extends ReconConfig {
             this.properties = properties;
             this.limit = limit;
         }
+        
+    	@Override
+    	public String toString() {
+    		try {
+				return ParsingUtilities.mapper.writeValueAsString(this);
+			} catch (JsonProcessingException e) {
+				return super.toString();
+			}
+    	}
     }
     
     public static class ReconResult {
@@ -313,6 +358,15 @@ public class StandardReconConfig extends ReconConfig {
        
 			return result;
 		}
+    	
+    	@Override
+    	public String toString() {
+    		try {
+				return ParsingUtilities.mapper.writeValueAsString(this);
+			} catch (JsonProcessingException e) {
+				return super.toString();
+			}
+    	}
     }
 
     @Override
