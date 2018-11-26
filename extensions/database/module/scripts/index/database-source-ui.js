@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
- * - Redistrihttps://github.com/OpenRefine/OpenRefine/pull/1862/conflict?name=extensions%252Fdatabase%252Fmodule%252Fscripts%252Findex%252Fdatabase-source-ui.js&ancestor_oid=d7b892f4d20ae2529e9bcc269502869eef9f1a31&base_oid=5b0d92bbb98c3603d39148470d319f1153e417ef&head_oid=997b6757adc87d5b9d4a9ef385eb6ec63e383739butions of source code must retain the above copyright notice, this 
+ * - Redistributions of source code must retain the above copyright notice, this 
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice, 
  *   this list of conditions and the following disclaimer in the documentation 
