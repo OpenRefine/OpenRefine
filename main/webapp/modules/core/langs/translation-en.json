@@ -30,6 +30,7 @@
     "core-index/subject": "Subject:",
     "core-index/description": "Description:",
     "core-index/rowCount": "Row count:",
+    "core-index/metaDatas": "Project metadata",
     "core-index/customMetadata": "Custom metadata(JSON):",
     "core-index/id": "Project ID:",
     "core-index/importOptionMetadata": "Import option metadata(JSON):",
