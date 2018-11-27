@@ -45,7 +45,7 @@ echo.
 echo "and <action> is one of
 echo.
 echo   build ..................... Build OpenRefine
-echo   run ....................... Run OpenRefine
+echo   run ....................... Run OpenRefine (using only "refine" or "./refine" will also start OpenRefine)
 echo.
 echo   test ...................... Run all the tests
 echo   server_test ............... Run the server tests
@@ -193,6 +193,7 @@ if ""%ACTION%"" == ""test"" goto doMvn
 if ""%ACTION%"" == ""clean"" goto doMvn
 if ""%ACTION%"" == ""distclean"" goto doMvn
 if ""%ACTION%"" == ""run"" goto doRun
+if ""%ACTION%"" == """" goto doRun
 %@EndTry%
 :@Catch
   echo Unknown Refine command called "%1", type "refine /?" for proper usage.
