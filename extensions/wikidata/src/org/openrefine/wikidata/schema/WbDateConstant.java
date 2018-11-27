@@ -55,6 +55,9 @@ public class WbDateConstant implements WbExpression<TimeValue> {
      * precision it induces (an integer according to Wikibase's data model).
      */
     public static Map<SimpleDateFormat, Integer> acceptedFormats = ImmutableMap.<SimpleDateFormat, Integer> builder()
+            .put(new SimpleDateFormat("yyyy'M'"), 6)
+            .put(new SimpleDateFormat("yyyy'C'"), 7)
+            .put(new SimpleDateFormat("yyyy'D'"), 8)
             .put(new SimpleDateFormat("yyyy"), 9)
             .put(new SimpleDateFormat("yyyy-MM"), 10)
             .put(new SimpleDateFormat("yyyy-MM-dd"), 11)

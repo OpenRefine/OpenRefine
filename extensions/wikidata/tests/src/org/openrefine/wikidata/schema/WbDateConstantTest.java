@@ -30,6 +30,9 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
+    private WbDateConstant millenium = new WbDateConstant("1001M");
+    private WbDateConstant century = new WbDateConstant("1701C");
+    private WbDateConstant decade = new WbDateConstant("1990D");
     private WbDateConstant year = new WbDateConstant("2018");
     private WbDateConstant month = new WbDateConstant("2018-02");
     private WbDateConstant day = new WbDateConstant("2018-02-27");
@@ -46,6 +49,13 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
     @Test
     public void testEvaluate() {
+        
+        evaluatesTo(Datamodel.makeTimeValue(1001, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 6, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), millenium);
+        evaluatesTo(Datamodel.makeTimeValue(1701, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 7, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), century);
+        evaluatesTo(Datamodel.makeTimeValue(1990, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), decade);
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), year);
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
