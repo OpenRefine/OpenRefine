@@ -99,9 +99,7 @@ public class MariaDBDatabaseServiceTest extends DBExtensionTests{
          MariaDBDatabaseService pgSqlService = (MariaDBDatabaseService) DatabaseService.get(MariaDBDatabaseService.DB_NAME);
          String limitQuery = pgSqlService.buildLimitQuery(100, 0, "SELECT * FROM " + testTable);
          Assert.assertNotNull(limitQuery);
-
-         Assert.assertEquals(limitQuery, "SELECT * FROM " + testTable + " LIMIT " + 100 + " OFFSET " + 0 + ";");
-
+         Assert.assertEquals(limitQuery, "SELECT * FROM (SELECT * FROM " + testTable + ") data LIMIT " + 100 + " OFFSET " + 0 + ";");
      }
 
      @Test
