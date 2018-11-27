@@ -359,6 +359,32 @@ public class SqlExporterTests extends RefineTest {
         Assert.assertEquals(countNull, noOfCols);
 
     }
+    
+    @Test
+    public void testExportSqlWithSingleQuote(){
+        int noOfCols = 4;
+        int noOfRows = 1;
+        createGridWithSingleQuote(noOfRows, noOfCols);
+        String tableName = "sql_table_test";
+        JSONObject optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("convertNulltoEmptyString", true);
+        
+       when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        String result = writer.toString();
+        logger.info("\nresult:={} ", result);
+
+        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" + 
+        		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+
+    }
   
     //helper methods
     
@@ -394,6 +420,18 @@ public class SqlExporterTests extends RefineTest {
             Row row = new Row(noOfColumns);
             for(int j = 0; j < noOfColumns; j++){
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
+            }
+            project.rows.add(row);
+        }
+    }
+    
+    protected void createGridWithSingleQuote(int noOfRows, int noOfColumns){
+        createColumns(noOfColumns);
+
+        for(int i = 0; i < noOfRows; i++){
+            Row row = new Row(noOfColumns);
+            for(int j = 0; j < noOfColumns; j++){
+                row.cells.add(new Cell("It's row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
