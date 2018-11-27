@@ -121,7 +121,7 @@ public class SqlInsertBuilder {
                         handleNullField(allowNullChkBox, defaultValue, nullValueNull, val.getColumnName(), rowValue, true);
                         
                     }else {
-                        rowValue.append("'" + val.getText() + "'"); 
+                        rowValue.append("'" + val.getText().replace("'","''") + "'"); 
                         
                     }
                  
