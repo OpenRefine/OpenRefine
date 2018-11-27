@@ -46,13 +46,8 @@ WarningsRenderer._replaceIssueProperties = function(template, properties) {
 }     
 
 WarningsRenderer._renderWarning = function(warning) {
-  var localized = $.i18n('warnings-messages')[warning.type];
-  var title = warning.type;
-  var body = "";
-  if (localized) {
-      title = WarningsRenderer._replaceIssueProperties(localized.title, warning.properties);
-      body = WarningsRenderer._replaceIssueProperties(localized.body, warning.properties);
-  }
+  var title = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/'+warning.type+'/title'), warning.properties);
+  var body = WarningsRenderer._replaceIssueProperties($.i18n('warnings-messages/'+warning.type+'/body'), warning.properties);
   var tr = $('<tr></tr>').addClass('wb-warning');
   var severityTd = $('<td></td>')
        .addClass('wb-warning-severity')
