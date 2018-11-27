@@ -35,50 +35,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.wikidata.qa.EditInspector;
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommand extends Command {
     
-    protected static class PreviewResults {
-        @JsonProperty("warnings")
-        List<QAWarning> warnings;
-        @JsonProperty("max_severity")
-        Severity maxSeverity;
-        @JsonProperty("nb_warnings")
-        int nbWarnings;
-        @JsonProperty("edit_count")
-        int editCount;
-        @JsonProperty("edits_preview")
-        List<ItemUpdate> editsPreview;
-        
-        protected PreviewResults(
-                List<QAWarning> warnings,
-                Severity maxSeverity,
-                int nbWarnings,
-                int editCount,
-                List<ItemUpdate> editsPreview) {
-            this.warnings = warnings;
-            this.maxSeverity = maxSeverity;
-            this.nbWarnings = nbWarnings;
-            this.editCount = editCount;
-            this.editsPreview = editsPreview;
-        }
-    }
-
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -126,11 +94,12 @@ public class PreviewWikibaseSchemaCommand extends Command {
                     .limit(10)
                     .collect(Collectors.toList());
 
-            respondJSON(response, new PreviewResults(
+            PreviewResults previewResults = new PreviewResults(
                     warningStore.getWarnings(),
                     warningStore.getMaxSeverity(),
                     warningStore.getNbWarnings(),
-                    nonNullEdits.size(), firstEdits));
+                    nonNullEdits.size(), firstEdits);
+            respondJSON(response, previewResults);
         } catch (Exception e) {
             respondException(response, e);
         }
