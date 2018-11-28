@@ -14,7 +14,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
       var td0 = tr.insertCell(0);
 
       var td1 = tr.insertCell(1);
-      var keyLable = $.i18n('core-index')[key] || key;
+      var keyLable = $.i18n('core-index/'+key) || key;
       $(td1).text(keyLable);
 
       var td2 = tr.insertCell(2);

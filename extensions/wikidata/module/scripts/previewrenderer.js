@@ -82,7 +82,7 @@ EditRenderer._renderTerm = function(termType, json, container) {
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
   var type_container = $('<div></div>').addClass('wbs-namedesc-type').appendTo(namedesc);
   var type_span = $('<span></span>').appendTo(type_container)
-        .text($.i18n('wikidata-schema')[termType]);
+        .text($.i18n('wikidata-schema/'+termType));
 
   var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);

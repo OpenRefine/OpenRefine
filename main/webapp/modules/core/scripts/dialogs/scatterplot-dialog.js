@@ -96,7 +96,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
         };
         $.getJSON("command/core/get-columns-info?" + $.param(params),function(data) {
             if (data === null || typeof data.length == 'undefined') {
-                container.html($.i18n('core-dialogs')["error-getColumnInfo"]);
+                container.html($.i18n('core-dialogs/error-getColumnInfo'));
                 return;
             }
                 

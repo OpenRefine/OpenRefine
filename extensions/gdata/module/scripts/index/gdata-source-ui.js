@@ -43,7 +43,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   
   $('#gdata-title').text($.i18n('gdata-import/title'));
   $('#gdata-import').html($.i18n('gdata-import/import-by-url'));
-  $('#gdata-next').html($.i18n('gdata-import')["next->"]);
+  $('#gdata-next').html($.i18n('gdata-import/next->'));
   $('#gdata-auth-doc').text($.i18n('gdata-import/auth-doc'));
   $('#gdata-please').text($.i18n('gdata-import/please'));
   $('#gdata-signin-btn').text($.i18n('gdata-import/sign-in'));
