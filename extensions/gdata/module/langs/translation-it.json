@@ -17,7 +17,7 @@
     "gdata-parsing/proj-name": "Nome&nbsp;del&nbsp;progetto",
     "gdata-parsing/create-proj": "Crea un progetto &raquo;",
     "gdata-parsing/updating-preview": "Aggiornando la preview ...",
-    "gdata-parsing/worksheet": "Worksheets",
+    "gdata-parsing/worksheet": "Fogli di lavoro",
     "gdata-parsing/option": "Opzioni",
     "gdata-parsing/preview-button": "Aggiorna&nbsp;la&nbsp;Preview",
     "gdata-parsing/ignore-first": "Ignora le prime",
@@ -42,5 +42,6 @@
     "gdata-exporter/new-fusion": "Una nuova tabella Google Fusion",
     "gdata-exporter/enter-fusion": "Inserisci un nome per la nuova tabella Google Fusion",
     "gdata-auth/authorize-label": "OpenRefine - Autorizzazione",
-    "gdata-auth/authorized-label": "Processo di autorizzazione completato. Chiudi questa finestra e torna ad OpenRefine."
+    "gdata-auth/authorized-label": "Processo di autorizzazione completato. Chiudi questa finestra e torna ad OpenRefine.",
+    "gdata-exporter/upload-success": "Il progetto è stato caricato con successo su Google Drive con id "
 }
