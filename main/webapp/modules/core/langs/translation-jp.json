@@ -712,5 +712,6 @@
     "core-buttons/apply-to-all": "同じ内容の全セルに適用",
     "core-buttons/add-url": "URLを追加",
     "core-buttons/unselect": "選択解除",
-    "core-buttons/pick-record": "レコード要素を選択"
+    "core-buttons/pick-record": "レコード要素を選択",
+    "core-index/metaDatas": "プロジェクトのメタデータ"
 }
