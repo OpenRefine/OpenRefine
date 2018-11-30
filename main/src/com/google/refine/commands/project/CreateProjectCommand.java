@@ -106,7 +106,7 @@ public class CreateProjectCommand extends Command {
             }
             
             ObjectNode optionObj = null;
-            String optionsString = parameters.getParameter("options");
+            String optionsString = parameters.getProperty("options");
             if (optionsString != null && !optionsString.isEmpty()) {
                 optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(optionsString);
             } else {

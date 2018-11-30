@@ -364,7 +364,7 @@ public class SqlExporterTests extends RefineTest {
         int noOfRows = 1;
         createGridWithSingleQuote(noOfRows, noOfCols);
         String tableName = "sql_table_test";
-        JSONObject optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
         optionsJson.put("includeStructure", true);
         optionsJson.put("includeDropStatement", true);
         optionsJson.put("convertNulltoEmptyString", true);

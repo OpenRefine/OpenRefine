@@ -35,8 +35,6 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
@@ -71,14 +69,18 @@ public class InnerXml implements Function {
 
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("The innerXml/innerHtml of an XML/HTML element");
-        writer.key("params"); writer.value("Element e");
-        writer.key("returns"); writer.value("String innerXml/innerHtml");
-        writer.endObject();
+    public String getDescription() {
+    	return "The innerXml/innerHtml of an XML/HTML element";
+    }
+    
+    @Override
+    public String getParams() {
+        return "Element e";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "String innerXml/innerHtml";
     }
 }
 

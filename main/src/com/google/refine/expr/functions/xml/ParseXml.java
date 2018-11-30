@@ -35,8 +35,6 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
@@ -69,14 +67,18 @@ public class ParseXml implements Function {
 
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Parses a string as XML");
-        writer.key("params"); writer.value("string s");
-        writer.key("returns"); writer.value("XML object");
-        writer.endObject();
+    public String getDescription() {
+    	return "Parses a string as XML";
+    }
+    
+    @Override
+    public String getParams() {
+        return "string s";
+    }
+    
+    @Override
+    public String getReturns() {
+    	return "XML object";
     }
 }
 

@@ -8,7 +8,7 @@ import com.google.refine.tests.util.TestUtils;
 public class SelectXmlTests {
     @Test
     public void serializeSelectXml() {
-        String json = "{\"description\":\"Selects an element from an XML or HTML element using selector syntax.\",\"params\":\"Element e, String s\",\"returns\":\"XML/HTML Elements\"}";
+        String json = "{\"description\":\"Selects an element from an XML or HTML elementn using selector syntax.\",\"returns\":\"HTML Elements\",\"params\":\"Element e, String s\"}";
         TestUtils.isSerializedTo(new SelectXml(), json);
     }
 }
