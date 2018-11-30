@@ -21,7 +21,7 @@
     "core-index/add-pref": "Einstellung hinzufügen",
     "core-index/rowCount": "Zeilenanzahl:",
     "core-index/key": "Schlüssel",
-    "core-index/new-version": "Neue Version!",
+    "core-index/new-version": "Neue Version",
     "core-index/now": "jetzt",
     "core-index/change-value": "Wert des Präferenzschlüssels ändern",
     "core-index/about": "Über",
@@ -708,5 +708,6 @@
     "core-views/use-values-as-identifiers": "Werte als Bezeichner verwenden",
     "core-views/use-values-as-identifiers2": "Zellen markieren, die mit Ihren Werten als Bezeichner abgeglichen sind",
     "core-views/choose-reconciliation-service": "Wählen Sie einen Abgleichdienst aus",
-    "core-views/choose-reconciliation-service-alert": "Bitte wählen Sie zuerst einen Abstimmungsdienst aus."
+    "core-views/choose-reconciliation-service-alert": "Bitte wählen Sie zuerst einen Abstimmungsdienst aus.",
+    "core-index/metaDatas": "Projekt-Metadaten"
 }
