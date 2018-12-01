@@ -30,6 +30,8 @@ import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * An EntityIdValue that we have obtained from a suggest widget in the schema
  * alignment dialog.
@@ -50,26 +52,31 @@ public abstract class SuggestedEntityIdValue implements PrefetchedEntityIdValue 
     }
 
     @Override
+    @JsonProperty("id")
     public String getId() {
         return _id;
     }
 
     @Override
+    @JsonProperty("siteIri")
     public String getSiteIri() {
         return _siteIRI;
     }
 
     @Override
+    @JsonProperty("label")
     public String getLabel() {
         return _label;
     }
 
     @Override
+    @JsonProperty("types")
     public List<String> getTypes() {
         return new ArrayList<>();
     }
 
     @Override
+    @JsonProperty("iri")
     public String getIri() {
         return getSiteIri() + getId();
     }

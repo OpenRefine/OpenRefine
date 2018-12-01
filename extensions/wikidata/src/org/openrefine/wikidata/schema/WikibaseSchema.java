@@ -26,11 +26,7 @@ package org.openrefine.wikidata.schema;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -38,18 +34,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
 /**
  * Main class representing a skeleton of Wikibase edits with OpenRefine columns
@@ -63,6 +57,7 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 
+    @JsonProperty("itemDocuments")
     protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
 
     protected String baseIri = "http://www.wikidata.org/entity/";
@@ -85,6 +80,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
+    @JsonIgnore
     public String getBaseIri() {
         return baseIri;
     }
@@ -92,6 +88,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the list of document expressions for this schema
      */
+    @JsonIgnore
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
     }
@@ -180,39 +177,12 @@ public class WikibaseSchema implements OverlayModel {
             ;
         }
     }
-
-    static public WikibaseSchema reconstruct(JSONObject o)
-            throws JSONException {
-        return reconstruct(o.toString());
-    }    
     
-    static public WikibaseSchema reconstruct(String json) throws JSONException {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(json, WikibaseSchema.class);
-        } catch (JsonParseException e) {
-            throw new JSONException(e.toString());
-        } catch (JsonMappingException e) {
-            throw new JSONException(e.toString());
-        } catch (IOException e) {
-            throw new JSONException(e.toString());
-        }
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("itemDocuments");
-        writer.array();
-        for (WbItemDocumentExpr changeExpr : itemDocumentExprs) {
-            changeExpr.write(writer, options);
-        }
-        writer.endArray();
-        writer.endObject();
+    static public WikibaseSchema reconstruct(String json) throws IOException {
+    	return ParsingUtilities.mapper.readValue(json, WikibaseSchema.class);
     }
 
-    static public WikibaseSchema load(Project project, JSONObject obj)
+    static public WikibaseSchema load(Project project, String obj)
             throws Exception {
         return reconstruct(obj);
     }

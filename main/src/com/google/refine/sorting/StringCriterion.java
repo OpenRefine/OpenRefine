@@ -36,14 +36,14 @@ package com.google.refine.sorting;
 import java.text.CollationKey;
 import java.text.Collator;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.Project;
 
 public class StringCriterion extends Criterion {
+    @JsonProperty("caseSensitive")
     public boolean caseSensitive;
+    @JsonIgnore
     Collator collator;
     
     /**
@@ -56,16 +56,6 @@ public class StringCriterion extends Criterion {
         collator.setStrength(Collator.SECONDARY);
     }
     
-    @Override
-    public void initializeFromJSON(Project project, JSONObject obj) throws JSONException {
-        super.initializeFromJSON(project, obj);
-
-        if (obj.has("caseSensitive") && !obj.isNull("caseSensitive")) {
-            caseSensitive = obj.getBoolean("caseSensitive");
-            collator.setStrength(Collator.IDENTICAL);
-        }
-    }
-
     @Override
     public KeyMaker createKeyMaker() {
         return new KeyMaker() {
@@ -80,5 +70,10 @@ public class StringCriterion extends Criterion {
                 return ((CollationKey)key1).compareTo((CollationKey)key2);
             }
         };
+    }
+
+    @Override
+    public String getValueType() {
+        return "string";
     }
 }

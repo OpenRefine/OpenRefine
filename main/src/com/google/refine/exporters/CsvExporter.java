@@ -38,17 +38,16 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class CsvExporter implements WriterExporter{
 
@@ -62,26 +61,37 @@ public class CsvExporter implements WriterExporter{
     public CsvExporter(char separator) {
         this.separator = separator;
     }
+    
+    private static class Configuration {
+        @JsonProperty("separator")
+        protected String separator = null;
+        @JsonProperty("lineSeparator")
+        protected String lineSeparator = CSVWriter.DEFAULT_LINE_END;
+        @JsonProperty("quoteAll")
+        protected boolean quoteAll = false;
+    }
 
     @Override
     public void export(Project project, Properties params, Engine engine, final Writer writer)
             throws IOException {
         
         String optionsString = (params == null) ? null : params.getProperty("options");
-        JSONObject options = null;
+        Configuration options = new Configuration();
         if (optionsString != null) {
             try {
-                options = ParsingUtilities.evaluateJsonStringToObject(optionsString);
-            } catch (JSONException e) {
+                options = ParsingUtilities.mapper.readValue(optionsString, Configuration.class);
+            } catch (IOException e) {
                 // Ignore and keep options null.
+                e.printStackTrace();
             }
         }
+        if (options.separator == null) {
+            options.separator = Character.toString(separator);
+        }
         
-        final String separator = options == null ? Character.toString(this.separator) :
-            JSONUtilities.getString(options, "separator", Character.toString(this.separator));
-        final String lineSeparator = options == null ? CSVWriter.DEFAULT_LINE_END :
-            JSONUtilities.getString(options, "lineSeparator", CSVWriter.DEFAULT_LINE_END);
-        final boolean quoteAll = options == null ? false : JSONUtilities.getBoolean(options, "quoteAll", false);
+        final String separator = options.separator;
+        final String lineSeparator = options.lineSeparator;
+        final boolean quoteAll = options.quoteAll;
         
         final boolean printColumnHeader =
             (params != null && params.getProperty("printColumnHeader") != null) ?
@@ -93,7 +103,7 @@ public class CsvExporter implements WriterExporter{
         
         TabularSerializer serializer = new TabularSerializer() {
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
             }
 
             @Override

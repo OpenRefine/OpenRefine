@@ -35,7 +35,9 @@ package com.google.refine.grel;
 
 import java.util.Properties;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.Evaluable;
 
 /**
@@ -43,8 +45,20 @@ import com.google.refine.expr.Evaluable;
  * decide which part of the code to execute and can affect the environment bindings.
  * Functions, on the other hand, can't do either.
  */
-public interface Control extends Jsonizable {
+public interface Control  {
     public Object call(Properties bindings, Evaluable[] args);
     
     public String checkArguments(Evaluable[] args);
+    
+    @JsonProperty("description")
+    public String getDescription();
+    
+    @JsonProperty("params")
+    @JsonInclude(Include.NON_EMPTY)
+    default public String getParams() {
+        return "";
+    }
+    
+    @JsonProperty("returns")
+    public String getReturns();
 }

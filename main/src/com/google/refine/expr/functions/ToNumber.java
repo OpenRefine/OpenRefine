@@ -35,9 +35,6 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -71,14 +68,18 @@ public class ToNumber implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns o converted to a number";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns o converted to a number");
-        writer.key("params"); writer.value("o");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "o";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 
 }

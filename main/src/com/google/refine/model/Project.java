@@ -40,7 +40,6 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,16 +47,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.history.History;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
@@ -77,13 +75,14 @@ public class Project {
     transient private LocalDateTime _lastSave = LocalDateTime.now();
 
     final static Logger logger = LoggerFactory.getLogger("project");
-    
+
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
 
     public Project() {
-        this(generateID());
+        id = generateID();
+        history = new History(this);
     }
 
     protected Project(long id) {
@@ -118,6 +117,10 @@ public class Project {
      */
     public void setLastSave(){
         this._lastSave = LocalDateTime.now();
+    }
+
+    public ProjectMetadata getMetadata() {
+        return ProjectManager.singleton.getProjectMetadata(id);
     }
 
     public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
@@ -160,13 +163,7 @@ public class Project {
             writer.write(modelName);
             writer.write("=");
             
-            try {
-                JSONWriter jsonWriter = new JSONWriter(writer);
-                
-                overlayModels.get(modelName).write(jsonWriter, options);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ParsingUtilities.saveWriter.writeValue(writer, overlayModels.get(modelName));
             writer.write('\n');
         }
         
@@ -192,6 +189,10 @@ public class Project {
         
         Project project = new Project(id);
         int maxCellCount = 0;
+        
+        ObjectMapper mapper = ParsingUtilities.mapper.copy();
+        InjectableValues injections = new InjectableValues.Std().addValue("project", project);
+        mapper.setInjectableValues(injections);
         
         String line;
         while ((line = reader.readLine()) != null) {
@@ -225,13 +226,10 @@ public class Project {
                     Class<? extends OverlayModel> klass = s_overlayModelClasses.get(modelName);
                     
                     try {
-                        Method loadMethod = klass.getMethod("load", Project.class, JSONObject.class);
-                        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(value);
-                    
-                        OverlayModel overlayModel = (OverlayModel) loadMethod.invoke(null, project, obj);
+                        OverlayModel overlayModel = ParsingUtilities.mapper.readValue(value, klass);
                         
                         project.overlayModels.put(modelName, overlayModel);
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         logger.error("Failed to load overlay model " + modelName);
                     }
                 }
@@ -253,14 +251,11 @@ public class Project {
         columnModel.update();
         recordModel.update(this);
     }
-    
+
+
     //wrapper of processManager variable to allow unit testing
     //TODO make the processManager variable private, and force all calls through this method
     public ProcessManager getProcessManager() {
         return this.processManager;
-    }
-    
-    public ProjectMetadata getMetadata() {
-        return ProjectManager.singleton.getProjectMetadata(id);
     }
 }

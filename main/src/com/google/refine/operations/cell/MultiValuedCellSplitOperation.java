@@ -35,14 +35,14 @@ package com.google.refine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -50,34 +50,41 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.util.JSONUtilities;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _columnName;
     final protected String  _keyColumnName;
     final protected String  _mode;
     final protected String  _separator;
-    final protected boolean _regex;
+    final protected Boolean _regex;
     
     final protected int[]      _fieldLengths;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        String mode = obj.getString("mode");
-
+    @JsonCreator
+    public static MultiValuedCellSplitOperation deserialize(
+            @JsonProperty("columnName")
+            String columnName,
+            @JsonProperty("keyColumnName")
+            String keyColumnName,
+            @JsonProperty("mode")
+            String mode,
+            @JsonProperty("separator")
+            String separator,
+            @JsonProperty("regex")
+            boolean regex,
+            @JsonProperty("fieldLengths")
+            int[] fieldLengths) {
         if ("separator".equals(mode)) {
             return new MultiValuedCellSplitOperation(
-                obj.getString("columnName"),
-                obj.getString("keyColumnName"),
-                obj.getString("separator"),
-                obj.getBoolean("regex")
-            );
+                    columnName,
+                    keyColumnName,
+                    separator,
+                    regex);
         } else {
             return new MultiValuedCellSplitOperation(
-                obj.getString("columnName"),
-                obj.getString("keyColumnName"),
-                JSONUtilities.getIntArray(obj, "fieldLengths")
-            );
+                    columnName,
+                    keyColumnName,
+                    fieldLengths);
         }
     }
     
@@ -106,32 +113,42 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
         _mode = "lengths";
         _separator = null;
-        _regex = false;
+        _regex = null;
 
         _fieldLengths = fieldLengths;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("keyColumnName"); writer.value(_keyColumnName);
-        writer.key("mode"); writer.value(_mode);
-        if ("separator".equals(_mode)) {
-            writer.key("separator"); writer.value(_separator);
-            writer.key("regex"); writer.value(_regex);
-        } else {
-            writer.key("fieldLengths"); writer.array();
-            for (int l : _fieldLengths) {
-                writer.value(l);
-            }
-            writer.endArray();
-        }
-        writer.endObject();
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return _keyColumnName;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _mode;
+    }
+    
+    @JsonProperty("separator")
+    @JsonInclude(Include.NON_NULL)
+    public String getSeparator() {
+        return _separator;
+    }
+    
+    @JsonProperty("regex")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getRegex() {
+        return _regex;
+    }
+    
+    @JsonProperty("fieldLengths")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getFieldLengths() {
+        return _fieldLengths;
     }
 
     @Override

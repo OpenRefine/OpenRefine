@@ -39,7 +39,6 @@ package com.google.refine.model.recon;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
@@ -49,20 +48,83 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.model.ReconType;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.recon.StandardReconConfig;
-import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.functions.ToDate;
+import com.google.refine.model.ReconCandidate;
+import com.google.refine.model.ReconType;
+import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.JsonViews;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconciledDataExtensionJob {
+
+    
+    static public class DataExtensionProperty  {
+        @JsonProperty("id")
+        public final String id;
+        @JsonProperty("name")
+        @JsonView(JsonViews.NonSaveMode.class)
+        public final String name;
+        @JsonProperty("settings")
+        @JsonInclude(Include.NON_NULL)
+        public final Map<String, Object> settings;
+        
+        @JsonCreator
+        public DataExtensionProperty(
+                @JsonProperty("id")
+                String id,
+                @JsonProperty("name")
+                String name,
+                @JsonProperty("settings")
+                Map<String, Object> settings) {
+            this.id = id;
+            this.name = name;
+            this.settings = settings;
+        }    
+    }
+    
+    static public class DataExtensionConfig  {
+        
+        @JsonProperty("properties")
+        public final List<DataExtensionProperty> properties;
+        
+        @JsonCreator
+        public DataExtensionConfig(
+                @JsonProperty("properties")
+                List<DataExtensionProperty> properties) {
+            this.properties = properties;
+        }
+        
+        public static DataExtensionConfig reconstruct(String json) throws IOException {
+            return ParsingUtilities.mapper.readValue(json, DataExtensionConfig.class);
+        }     
+    }
+    
+    static public class DataExtensionQuery extends DataExtensionConfig {
+        
+        @JsonProperty("ids")
+        public final List<String> ids;
+
+        @JsonCreator
+        public DataExtensionQuery(
+                @JsonProperty("ids")
+                List<String> ids,
+                @JsonProperty("properties")
+                List<DataExtensionProperty> properties) {
+            super(properties);
+            this.ids = ids;
+        }   
+    }
+    
     static public class DataExtension {
         final public Object[][] data;
         
@@ -71,23 +133,33 @@ public class ReconciledDataExtensionJob {
         }
     }
     
+    // Json serialization is used in PreviewExtendDataCommand
     static public class ColumnInfo {
+        @JsonProperty("name")
         final public String name;
+        @JsonProperty("id")
         final public String id;
         final public ReconType expectedType;
         
-        protected ColumnInfo(String name, String id, ReconType expectedType) {
+        @JsonCreator
+        protected ColumnInfo(
+        		@JsonProperty("name")
+        		String name,
+        		@JsonProperty("id")
+        		String id,
+        		@JsonProperty("type")
+        		ReconType expectedType) {
             this.name = name;
             this.id = id;
             this.expectedType = expectedType;
         }
     }
     
-    final public JSONObject         extension;
-    final public String             endpoint;
-    final public List<ColumnInfo>   columns = new ArrayList<ColumnInfo>();
+    final public DataExtensionConfig extension;
+    final public String              endpoint;
+    final public List<ColumnInfo>    columns = new ArrayList<ColumnInfo>();
     
-    public ReconciledDataExtensionJob(JSONObject obj, String endpoint) throws JSONException {
+    public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint) {
         this.extension = obj;
         this.endpoint = endpoint;
     }
@@ -102,22 +174,22 @@ public class ReconciledDataExtensionJob {
         String query = writer.toString();
         InputStream is = performQuery(this.endpoint, query);
         try {
-            String s = ParsingUtilities.inputStreamToString(is);
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject(s);
+        	ObjectNode o = ParsingUtilities.mapper.readValue(is, ObjectNode.class);
           
             if(columns.size() == 0) {
                 // Extract the column metadata
-                gatherColumnInfo(o.getJSONArray("meta"), columns);    
+            	List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {});  
+            	columns.addAll(newColumns);
             }
           
             Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
-            if (o.has("rows")){
-                JSONObject records = o.getJSONObject("rows");
+            if (o.has("rows") && o.get("rows") instanceof ObjectNode){
+                ObjectNode records = (ObjectNode) o.get("rows");
                 
                 // for each identifier
                 for (String id : ids) {
-                    if (records.has(id)) {
-                        JSONObject record = records.getJSONObject(id);
+                    if (records.has(id) && records.get(id) instanceof ObjectNode) {
+                        ObjectNode record = (ObjectNode) records.get(id);
                         
                         ReconciledDataExtensionJob.DataExtension ext = collectResult(record, reconCandidateMap);
                         
@@ -159,44 +231,47 @@ public class ReconciledDataExtensionJob {
 
     
     protected ReconciledDataExtensionJob.DataExtension collectResult(
-        JSONObject record,
+        ObjectNode record,
         Map<String, ReconCandidate> reconCandidateMap
-    ) throws JSONException {
+    ) {
         List<Object[]> rows = new ArrayList<Object[]>();
 
         // for each property
         int colindex = 0;
         for(ColumnInfo ci : columns) {
             String pid = ci.id;
-            JSONArray values = record.getJSONArray(pid);        
+            ArrayNode values = JSONUtilities.getArray(record, pid);     
             if (values == null) {
                 continue;
             }
 
             // for each value
-            for(int rowindex = 0; rowindex < values.length(); rowindex++) {
-                JSONObject val = values.getJSONObject(rowindex);
+            for(int rowindex = 0; rowindex < values.size(); rowindex++) {
+            	if (!(values.get(rowindex) instanceof ObjectNode)) {
+            		continue;
+            	}
+                ObjectNode val = (ObjectNode) values.get(rowindex);
                 // store a reconciled value
                 if (val.has("id")) {
                     storeCell(rows, rowindex, colindex, val, reconCandidateMap);
                 } else if (val.has("str")) {
                 // store a bare string
-                    String str = val.getString("str");
+                    String str = val.get("str").asText();
                     storeCell(rows, rowindex, colindex, str); 
                 } else if (val.has("float")) {
-                    float v = val.getBigDecimal("float").floatValue();
+                    double v = val.get("float").asDouble();
                     storeCell(rows, rowindex, colindex, v);
                 } else if (val.has("int")) {
-                    int v = Integer.parseInt(val.getString("int"));
+                    int v = val.get("int").asInt();
                     storeCell(rows, rowindex, colindex, v);
                 } else if (val.has("date")) {
                     ToDate td = new ToDate();
                     String[] args = new String[1];
-                    args[0] = val.getString("date");
+                    args[0] = val.get("date").asText();
                     Object v = td.call(null, args);
                     storeCell(rows, rowindex, colindex, v);
                 } else if(val.has("bool")) {
-                    boolean v = val.getString("bool") == "true";
+                    boolean v = val.get("bool").asBoolean();
                     storeCell(rows, rowindex, colindex, v);
                 }
             }
@@ -227,17 +302,17 @@ public class ReconciledDataExtensionJob {
         List<Object[]>  rows, 
         int row,
         int col,
-        JSONObject obj,
+        ObjectNode obj,
         Map<String, ReconCandidate> reconCandidateMap
-    ) throws JSONException {
-        String id = obj.getString("id");
+    ) {
+        String id = obj.get("id").asText();
         ReconCandidate rc;
         if (reconCandidateMap.containsKey(id)) {
             rc = reconCandidateMap.get(id);
         } else {
             rc = new ReconCandidate(
-                    obj.getString("id"),
-                    obj.getString("name"),
+                    obj.get("id").asText(),
+                    obj.get("name").asText(),
                     JSONUtilities.getStringArray(obj, "type"),
                     100
                 );
@@ -249,55 +324,8 @@ public class ReconciledDataExtensionJob {
     }
 
     
-    static protected void formulateQuery(Set<String> ids, JSONObject node, Writer writer) throws JSONException {
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        
-        jsonWriter.object();
-
-        jsonWriter.key("ids");
-            jsonWriter.array();
-            for (String id : ids) {
-                if (id != null) {
-                    jsonWriter.value(id);
-                }
-            }
-            jsonWriter.endArray();
-
-        jsonWriter.key("properties");
-            jsonWriter.array();
-            JSONArray properties = node.getJSONArray("properties");
-            int l = properties.length();
-        
-            for (int i = 0; i < l; i++) {
-                JSONObject property = properties.getJSONObject(i);
-                jsonWriter.object();
-                jsonWriter.key("id");
-                jsonWriter.value(property.getString("id"));
-                if (property.has("settings")) {
-                    JSONObject settings = property.getJSONObject("settings");
-                    jsonWriter.key("settings");
-                    jsonWriter.value(settings);
-                }
-                jsonWriter.endObject();
-            }
-            jsonWriter.endArray();
-        jsonWriter.endObject();
+    static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws IOException {
+        DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()), node.properties);
+        ParsingUtilities.saveWriter.writeValue(writer, query);
     }
-    
-    static protected void gatherColumnInfo(JSONArray meta, List<ColumnInfo> columns) throws JSONException {
-        for(int i = 0; i < meta.length(); i++) {
-            JSONObject col = meta.getJSONObject(i);
-
-            ReconType expectedType = null;
-            if(col.has("type")) {
-                JSONObject expectedObj = col.getJSONObject("type");
-                expectedType = new ReconType(expectedObj.getString("id"), expectedObj.getString("name"));
-            }
-        
-            columns.add(new ColumnInfo(
-                col.getString("name"),
-                col.getString("id"),
-                expectedType));        
-        }
-   }
 }

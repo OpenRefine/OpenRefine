@@ -1,15 +1,12 @@
 package com.google.refine.tests.operations.recon;
-import static org.mockito.Mockito.mock;
-
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconMatchSpecificTopicOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     @BeforeSuite
@@ -37,7 +34,6 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "    \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
                 "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" + 
                 "  }";
-        Project project = mock(Project.class);
-        TestUtils.isSerializedTo(ReconMatchSpecificTopicOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json);
     }
 }

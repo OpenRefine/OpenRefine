@@ -39,8 +39,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
-import com.google.refine.model.metadata.ProjectMetadata;
 
 public class RenameProjectCommand extends Command {
     @Override
@@ -49,7 +49,7 @@ public class RenameProjectCommand extends Command {
         
         try {
             String name = request.getParameter("name");
-            ProjectMetadata pm = getMetadata(request);
+            ProjectMetadata pm = getProjectMetadata(request);
             
             pm.setName(name);
             

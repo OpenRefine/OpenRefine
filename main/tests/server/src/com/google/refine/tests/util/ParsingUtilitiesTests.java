@@ -39,8 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -57,40 +55,6 @@ public class ParsingUtilitiesTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
     
-    //--------------evaluateJsonStringToObject tests-----------------------
-
-    @Test
-    public void evaluateJsonStringToObjectRegressionTest(){
-        try {
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject("{\"foo\":\"bar\"}");
-            Assert.assertNotNull(o);
-            Assert.assertEquals("bar", o.getString("foo"));
-        } catch (JSONException e) {
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void evaluateJsonStringToObjectWithNullParameters(){
-        try {
-            Assert.assertNull(ParsingUtilities.evaluateJsonStringToObject(null));
-            Assert.fail();
-        } catch (IllegalArgumentException e){
-            //expected
-        } catch (JSONException e) {
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void evaluateJsonStringToObjectWithMalformedParameters(){
-        try {
-            ParsingUtilities.evaluateJsonStringToObject("malformed");
-            Assert.fail();
-        } catch (JSONException e) {
-            //expected
-        }
-    }
     @Test
     public void zonedDateTimeTest() {
         String  d = "2017-12-01T14:53:36Z";

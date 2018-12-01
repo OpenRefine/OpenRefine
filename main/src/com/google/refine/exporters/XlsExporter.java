@@ -48,8 +48,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
@@ -79,7 +79,7 @@ public class XlsExporter implements StreamExporter {
             CellStyle dateStyle;
             
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
                 s = wb.createSheet();
                 String sheetName = WorkbookUtil.createSafeSheetName(
                         ProjectManager.singleton.getProjectMetadata(project.id).getName());

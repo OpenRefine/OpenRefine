@@ -2,7 +2,7 @@ package com.google.refine.exporters;
 
 import java.util.List;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 
 /**
@@ -25,7 +25,7 @@ public interface TabularSerializer {
         }
     }
     
-    public void startFile(JSONObject options);
+    public void startFile(JsonNode options);
     
     public void endFile();
     

@@ -1,6 +1,7 @@
 package com.google.refine.tests.browsing;
 
 import static org.mockito.Mockito.mock;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
@@ -13,6 +14,6 @@ public class EngineTests {
     public void serializeEngine() {
         Project project = mock(Project.class);
         Engine engine = new Engine(project);
-        TestUtils.isSerializedTo(engine, "{\"mode\":\"row-based\",\"facets\":[]}");
+        TestUtils.isSerializedTo(engine, "{\"engine-mode\":\"row-based\",\"facets\":[]}");
     }
 }

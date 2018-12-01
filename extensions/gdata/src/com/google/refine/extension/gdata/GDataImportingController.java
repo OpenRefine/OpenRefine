@@ -11,13 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -28,8 +27,8 @@ import com.google.api.services.fusiontables.model.TableList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
-
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.DefaultImportingController;
@@ -37,7 +36,6 @@ import com.google.refine.importing.ImportingController;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -86,11 +84,10 @@ public class GDataImportingController implements ImportingController {
         }
         
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
-            writer.object();
-            writer.key("documents");
-            writer.array();
+            writer.writeStartObject();
+            writer.writeArrayFieldStart("documents");
             
             try {
                 listSpreadsheets(GoogleAPIExtension.getDriveService(token), writer);
@@ -98,50 +95,52 @@ public class GDataImportingController implements ImportingController {
             }  catch (Exception e) {
                 logger.error("doListDocuments exception:" + ExceptionUtils.getStackTrace(e));
             }  finally {
-                writer.endArray();
-                writer.endObject();
+                writer.writeEndArray();
+                writer.writeEndObject();
             }
-        } catch (JSONException e) {
+        } catch (IOException e) {
             throw new ServletException(e);
         } finally {
+            writer.flush();
+            writer.close();
             w.flush();
             w.close();
         }
     }
     
-    private void listSpreadsheets(Drive drive, JSONWriter writer)
-            throws IOException, JSONException {
+    private void listSpreadsheets(Drive drive, JsonGenerator writer)
+            throws IOException {
          com.google.api.services.drive.Drive.Files.List files = drive.files().list();
          files.setQ("mimeType = 'application/vnd.google-apps.spreadsheet'");
          files.setFields("nextPageToken, files(id, name, webViewLink, owners, modifiedTime)");
          FileList fileList = files.execute();
          
         for (File entry : fileList.getFiles()) {
-            writer.object();
-            writer.key("docId"); writer.value(entry.getId());
-            writer.key("docLink"); writer.value(entry.getWebViewLink());
-            writer.key("docSelfLink"); writer.value(entry.getWebViewLink());
-            writer.key("title"); writer.value(entry.getName());
+            writer.writeStartObject();
+            writer.writeStringField("docId", entry.getId());
+            writer.writeStringField("docLink", entry.getWebViewLink());
+            writer.writeStringField("docSelfLink", entry.getWebViewLink());
+            writer.writeStringField("title", entry.getName());
             
-            writer.key("type"); writer.value("spreadsheet");
+            writer.writeStringField("type", "spreadsheet");
             
             com.google.api.client.util.DateTime updated = entry.getModifiedTime();
             if (updated != null) {
-                writer.key("updated"); writer.value(updated.toString());
+                writer.writeStringField("updated", updated.toString());
             }
             
-            writer.key("authors"); writer.array();
+            writer.writeArrayFieldStart("authors");
             for (User user : entry.getOwners()) {
-                writer.value(user.getDisplayName());
+                writer.writeString(user.getDisplayName());
             }
-            writer.endArray();
+            writer.writeEndArray();
             
-            writer.endObject();
+            writer.writeEndObject();
         }
     }
     
-    private void listFusionTables(Fusiontables service, JSONWriter writer)
-        throws IOException, JSONException {
+    private void listFusionTables(Fusiontables service, JsonGenerator writer)
+        throws IOException {
         
         Fusiontables.Table.List listTables = service.table().list();
         TableList tablelist = listTables.execute();
@@ -155,13 +154,13 @@ public class GDataImportingController implements ImportingController {
             String link = "https://www.google.com/fusiontables/DataSource?docid=" + id;
             
             // Add JSON object to our stream
-            writer.object();
-            writer.key("docId"); writer.value(id);
-            writer.key("docLink"); writer.value(link);
-            writer.key("docSelfLink"); writer.value(link);
-            writer.key("title"); writer.value(name);
-            writer.key("type"); writer.value("table");
-            writer.endObject();
+            writer.writeStartObject();
+            writer.writeStringField("docId", id);
+            writer.writeStringField("docLink", link);
+            writer.writeStringField("docSelfLink", link);
+            writer.writeStringField("title", name);
+            writer.writeStringField("type", "table");
+            writer.writeEndObject();
         }
     }
     
@@ -171,8 +170,8 @@ public class GDataImportingController implements ImportingController {
         String token = TokenCookie.getToken(request);
         String type = parameters.getProperty("docType");
         String urlString = parameters.getProperty("docUrl");
-        JSONObject result = new JSONObject();
-        JSONObject options = new JSONObject();
+        ObjectNode result = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         
         JSONUtilities.safePut(result, "status", "ok");
         JSONUtilities.safePut(result, "options", options);
@@ -181,7 +180,7 @@ public class GDataImportingController implements ImportingController {
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
         
         if ("spreadsheet".equals(type)) {
-            JSONArray worksheets = new JSONArray();
+            ArrayNode worksheets = ParsingUtilities.mapper.createArrayNode();
             // extract spreadSheetId from URL
             String spreadSheetId = GoogleAPIExtension.extractSpreadSheetId(urlString);
             
@@ -192,7 +191,7 @@ public class GDataImportingController implements ImportingController {
             List<Sheet> worksheetEntries =
                     getWorksheetEntriesForDoc(token, spreadSheetId);
             for (Sheet sheet : worksheetEntries) {
-                JSONObject worksheetO = new JSONObject();
+                ObjectNode worksheetO = ParsingUtilities.mapper.createObjectNode();
                 JSONUtilities.safePut(worksheetO, "name", sheet.getProperties().getTitle());
                 JSONUtilities.safePut(worksheetO, "rows", sheet.getProperties().getGridProperties().getRowCount());
                 JSONUtilities.safePut(worksheetO, "link", 
@@ -234,54 +233,50 @@ public class GDataImportingController implements ImportingController {
         }
         
         job.updating = true;
+        ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+            request.getParameter("options"));
+        
+        List<Exception> exceptions = new LinkedList<Exception>();
+        
+        job.prepareNewProject();
+        
+        GDataImporter.parse(
+            token,
+            job.project,
+            job.metadata,
+            job,
+            100,
+            optionObj,
+            exceptions
+        );
+        
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
-            JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
-                request.getParameter("options"));
-            
-            List<Exception> exceptions = new LinkedList<Exception>();
-            
-            job.prepareNewProject();
-            
-            GDataImporter.parse(
-                token,
-                job.project,
-                job.metadata,
-                job,
-                100,
-                optionObj,
-                exceptions
-            );
-            
-            Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
-            try {
-                writer.object();
-                if (exceptions.size() == 0) {
-                    job.project.update(); // update all internal models, indexes, caches, etc.
-                    
-                    writer.key("status"); writer.value("ok");
-                } else {
-                    writer.key("status"); writer.value("error");
-                    
-                    writer.key("errors");
-                    writer.array();
-                    DefaultImportingController.writeErrors(writer, exceptions);
-                    writer.endArray();
-                }
-                writer.endObject();
-            } catch (JSONException e) {
-                throw new ServletException(e);
-            } finally {
-                w.flush();
-                w.close();
+            writer.writeStartObject();
+            if (exceptions.size() == 0) {
+                job.project.update(); // update all internal models, indexes, caches, etc.
+                
+                writer.writeStringField("status", "ok");
+            } else {
+                writer.writeStringField("status", "error");
+                
+                writer.writeArrayFieldStart("errors");
+                DefaultImportingController.writeErrors(writer, exceptions);
+                writer.writeEndArray();
             }
-
-        } catch (JSONException e) {
+            writer.writeEndObject();
+        } catch (IOException e) {
             throw new ServletException(e);
         } finally {
-            job.touch();
-            job.updating = false;
+            writer.flush();
+            writer.close();
+            w.flush();
+            w.close();
         }
+
+        job.touch();
+        job.updating = false;
     }
     
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -297,57 +292,53 @@ public class GDataImportingController implements ImportingController {
         }
         
         job.updating = true;
-        try {
-            final JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
-                request.getParameter("options"));
-            
-            final List<Exception> exceptions = new LinkedList<Exception>();
-            
-            job.setState("creating-project");
-            
-            final Project project = new Project();
-            new Thread() {
-                @Override
-                public void run() {
-                    ProjectMetadata pm = new ProjectMetadata();
-                    pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
-                    pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
-                    
-                    try {
-                        GDataImporter.parse(
-                            token,
-                            project,
-                            pm,
-                            job,
-                            -1,
-                            optionObj,
-                            exceptions
-                        );
-                    } catch (IOException e) {
-                        logger.error(ExceptionUtils.getStackTrace(e));
-                    }
-                    
-                    if (!job.canceled) {
-                        if (exceptions.size() > 0) {
-                            job.setError(exceptions);
-                        } else {
-                            project.update(); // update all internal models, indexes, caches, etc.
-                            
-                            ProjectManager.singleton.registerProject(project, pm);
-                            
-                            job.setState("created-project");
-                            job.setProjectID(project.id);
-                        }
-                        
-                        job.touch();
-                        job.updating = false;
-                    }
+        final ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+            request.getParameter("options"));
+        
+        final List<Exception> exceptions = new LinkedList<Exception>();
+        
+        job.setState("creating-project");
+        
+        final Project project = new Project();
+        new Thread() {
+            @Override
+            public void run() {
+                ProjectMetadata pm = new ProjectMetadata();
+                pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
+                pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
+                
+                try {
+                    GDataImporter.parse(
+                        token,
+                        project,
+                        pm,
+                        job,
+                        -1,
+                        optionObj,
+                        exceptions
+                    );
+                } catch (IOException e) {
+                    logger.error(ExceptionUtils.getStackTrace(e));
                 }
-            }.start();
-            
-            HttpUtilities.respond(response, "ok", "done");
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        }
+                
+                if (!job.canceled) {
+                    if (exceptions.size() > 0) {
+                        job.setError(exceptions);
+                    } else {
+                        project.update(); // update all internal models, indexes, caches, etc.
+                        
+                        ProjectManager.singleton.registerProject(project, pm);
+                        
+                        job.setState("created-project");
+                        job.setProjectID(project.id);
+                    }
+                    
+                    job.touch();
+                    job.updating = false;
+                }
+            }
+        }.start();
+        
+        HttpUtilities.respond(response, "ok", "done");
     }
 }

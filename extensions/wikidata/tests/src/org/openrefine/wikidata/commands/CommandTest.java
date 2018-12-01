@@ -33,7 +33,6 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -52,8 +51,7 @@ public abstract class CommandTest extends RefineTest {
     protected Command command = null;
 
     @BeforeMethod(alwaysRun = true)
-    public void setUpProject()
-            throws JSONException {
+    public void setUpProject() {
         project = createCSVProject(TestingData.inceptionWithNewCsv);
         TestingData.reconcileInceptionCells(project);
         request = mock(HttpServletRequest.class);

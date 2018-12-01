@@ -35,9 +35,6 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.InterProjectModel.ProjectJoin;
 import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
@@ -78,13 +75,17 @@ public class Cross implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "join with another project by column";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("join with another project by column");
-        writer.key("params"); writer.value("cell c or string value, string projectName, string columnName");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "cell c or string value, string projectName, string columnName";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

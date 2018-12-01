@@ -37,9 +37,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.grel.Function;
 
 public class Now implements Function {
@@ -53,12 +50,12 @@ public class Now implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the current time";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the current time");
-        writer.key("returns"); writer.value("date");
-        writer.endObject();
+    @Override
+    public String getReturns() {
+        return "date";
     }
 }

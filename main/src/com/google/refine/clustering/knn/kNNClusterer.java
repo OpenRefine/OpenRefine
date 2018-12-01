@@ -34,27 +34,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.clustering.knn;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
+import com.google.refine.clustering.ClusteredEntry;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
@@ -76,41 +74,37 @@ import edu.mit.simile.vicino.distances.PPMDistance;
 public class kNNClusterer extends Clusterer {
     
     public static class kNNClustererConfig extends ClustererConfig {
+        @JsonIgnore
         private String _distanceStr;
+        @JsonIgnore
         private Distance _distance;
-        private kNNClustererConfigParameters _parameters;
+        @JsonIgnore
+        private kNNClustererConfigParameters _parameters = null;
         
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("function"); writer.value(_distanceStr);
-            writer.key("type"); writer.value("knn");
-            writer.key("column"); writer.value(getColumnName());
-            if(_parameters != null) {
-                writer.key("params");
-                _parameters.write(writer, options);
-            }
-            writer.endObject();
-        }
-        
-        public void initializeFromJSON(JSONObject o) {
-            super.initializeFromJSON(o);
-            _distanceStr = o.getString("function");
-            _distance = _distances.get(_distanceStr.toLowerCase());
-            if(o.has("params")) {
-                _parameters = kNNClustererConfigParameters.reconstruct(o.getJSONObject("params"));
-            } else {
-                _parameters = null;
-            }
-        }
-        
+        @JsonIgnore
         public Distance getDistance() {
             return _distance;
         }
         
+        @JsonProperty("function")
+        public void setDistance(String distanceStr) {
+        	_distanceStr = distanceStr;
+        	_distance = _distances.get(_distanceStr.toLowerCase());
+        }
+        
+        @JsonProperty("function")
+        public String getDistanceStr() {
+        	return _distanceStr;
+        }
+        
+        @JsonProperty("params")
         public kNNClustererConfigParameters getParameters() {
             return _parameters;
+        }
+        
+        @JsonProperty("params")
+        public void setParameters(kNNClustererConfigParameters params) {
+        	_parameters = params;
         }
 
         @Override
@@ -119,35 +113,21 @@ public class kNNClusterer extends Clusterer {
             clusterer.initializeFromConfig(project, this);
             return clusterer;
         }
+
+        @Override
+        public String getType() {
+            return "knn";
+        }
         
     }
     
-    public static class kNNClustererConfigParameters implements Jsonizable {
+    public static class kNNClustererConfigParameters  {
         public static final double defaultRadius = 1.0d;
         public static final int defaultBlockingNgramSize = 6;
+        @JsonProperty("radius")
         public double radius = defaultRadius;
+        @JsonProperty("blocking-ngram-size")
         public int blockingNgramSize = defaultBlockingNgramSize;
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("radius"); writer.value(radius);
-            writer.key("blocking-ngram-size");
-            writer.value(blockingNgramSize);
-            writer.endObject();
-        }
-        
-        public static kNNClustererConfigParameters reconstruct(JSONObject o) {
-            kNNClustererConfigParameters params = new kNNClustererConfigParameters();
-            if(o.has("radius")) {
-                params.radius = o.getDouble("radius");
-            }
-            if(o.has("blocking-ngram-size")) {
-                params.blockingNgramSize = o.getInt("blocking-ngram-size");
-            }
-            return params;
-        }
     }
 
     private Distance _distance;
@@ -278,28 +258,19 @@ public class kNNClusterer extends Clusterer {
         }
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.array();        
-        for (Set<Serializable> m : _clusters) {
-            if (m.size() > 1) {
-                Map<Serializable,Integer> internal_counts = new HashMap<Serializable,Integer>();
-                for (Serializable s : m) {
-                    internal_counts.put(s,_counts.get(s));
-                }
-                List<Entry<Serializable,Integer>> values = new ArrayList<Entry<Serializable,Integer>>(internal_counts.entrySet());
-                Collections.sort(values, new ValuesComparator());
-                writer.array();        
-                for (Entry<Serializable,Integer> e : values) {
-                    writer.object();
-                    writer.key("v"); writer.value(e.getKey());
-                    writer.key("c"); writer.value(e.getValue());
-                    writer.endObject();
-                }
-                writer.endArray();
-            }
-        }
-        writer.endArray();
+    protected List<ClusteredEntry> getClusteredEntries(Set<Serializable> s) {
+        return s.stream()
+                .map(e -> new ClusteredEntry(e, _counts.get(e)))
+                .sorted(ClusteredEntry.comparator)
+                .collect(Collectors.toList());
+    }
+    
+    @JsonValue
+    public List<List<ClusteredEntry>> getJsonRepresentation() {
+        return _clusters.stream()
+                        .filter(m -> m.size() > 1)
+                        .map(m -> getClusteredEntries(m))
+                .collect(Collectors.toList());
     }
     
     private void count(Serializable s) {

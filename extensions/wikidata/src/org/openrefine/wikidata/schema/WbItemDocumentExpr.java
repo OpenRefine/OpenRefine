@@ -30,7 +30,6 @@ import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
-import org.openrefine.wikidata.utils.JacksonJsonizable;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
@@ -48,7 +47,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbItemDocumentExpr extends JacksonJsonizable implements WbExpression<ItemUpdate> {
+public class WbItemDocumentExpr implements WbExpression<ItemUpdate> {
 
     private WbExpression<? extends ItemIdValue> subject;
     private List<WbNameDescExpr> nameDescs;

@@ -38,9 +38,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -88,11 +85,17 @@ public class Inc implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        writer.key("description"); writer.value("Returns a date changed by the given amount in the given unit of time");
-        writer.key("params"); writer.value("date d, number value, string unit (default to 'hour')");
-        writer.key("returns"); writer.value("date");
-        writer.endObject();
+    public String getDescription() {
+    	return "Returns a date changed by the given amount in the given unit of time";
+    }
+    
+    @Override
+    public String getParams() {
+        return "date d, number value, string unit (default to 'hour')";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "date";
     }
 }

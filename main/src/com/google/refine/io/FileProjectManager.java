@@ -36,38 +36,35 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Properties;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.DataPackageMetadata;
-import com.google.refine.model.metadata.IMetadata;
-import com.google.refine.model.metadata.MetadataFormat;
-import com.google.refine.model.metadata.ProjectMetadata;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
+import com.google.refine.util.ParsingUtilities;
 
 
-public class FileProjectManager extends ProjectManager {
+public class FileProjectManager extends ProjectManager  {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File                       _workspaceDir;
@@ -95,6 +92,7 @@ public class FileProjectManager extends ProjectManager {
         load();
     }
 
+    @JsonIgnore
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
@@ -107,6 +105,7 @@ public class FileProjectManager extends ProjectManager {
         return dir;
     }
 
+    @JsonIgnore
     public File getProjectDir(long projectID) {
         return getProjectDir(_workspaceDir, projectID);
     }
@@ -124,6 +123,7 @@ public class FileProjectManager extends ProjectManager {
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
+            
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
                 if (_projectsTags == null) {
@@ -158,7 +158,7 @@ public class FileProjectManager extends ProjectManager {
             untar(destDir, inputStream);
         }
     }
-        
+
     protected void untar(File destDir, InputStream inputStream) throws IOException {
         TarInputStream tin = new TarInputStream(inputStream);
         TarEntry tarEntry = null;
@@ -234,19 +234,9 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public void saveMetadata(IMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
-        
-        if (metadata.getFormatName() == MetadataFormat.PROJECT_METADATA) {
-            Project project = ProjectManager.singleton.getProject(projectId);
-            ((ProjectMetadata)metadata).setRowCount(project.rows.size());
-            ProjectMetadataUtilities.save(metadata, projectDir);
-        } else if (metadata.getFormatName() == MetadataFormat.DATAPACKAGE_METADATA) {
-            DataPackageMetadata dp = (DataPackageMetadata)metadata;
-            dp.writeToFile(new File(projectDir, DataPackageMetadata.DEFAULT_FILE_NAME));
-        }
-        
-        logger.info("metadata saved in " + metadata.getFormatName());
+        ProjectMetadataUtilities.save(metadata, projectDir);
     }
 
     @Override
@@ -267,6 +257,7 @@ public class FileProjectManager extends ProjectManager {
     @Override
     protected void saveWorkspace() {
         synchronized (this) {
+            // TODO refactor this so that we check if the save is needed before writing to the file!
             File tempFile = new File(_workspaceDir, "workspace.temp.json");
             try {
                 if (!saveToFile(tempFile)) {
@@ -294,44 +285,38 @@ public class FileProjectManager extends ProjectManager {
             }
 
             tempFile.renameTo(file);
-
             logger.info("Saved workspace");
         }
     }
-
-    protected boolean saveToFile(File file) throws IOException, JSONException {
-        FileWriter writer = new FileWriter(file);
-        boolean saveWasNeeded = false;
-        try {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            jsonWriter.object();
-            jsonWriter.key("projectIDs");
-            jsonWriter.array();
-            for (Long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = _projectsMetadata.get(id);
-                if (metadata != null) {
-                    jsonWriter.value(id);
-                    if (metadata.isDirty()) {
-                        Project project = ProjectManager.singleton.getProject(id);
-                        metadata.setRowCount(project.rows.size());
-                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
-                        saveWasNeeded = true;
-                    }
-                }
+    
+    protected boolean saveNeeded() {
+        boolean projectSaveNeeded = _projectsMetadata.entrySet().stream()
+                .anyMatch(e -> e.getValue() != null && e.getValue().isDirty());
+        return projectSaveNeeded || _preferenceStore.isDirty();
+    }
+    
+    protected void saveProjectMetadata() throws IOException {
+        for(Entry<Long,ProjectMetadata> entry : _projectsMetadata.entrySet()) {
+            ProjectMetadata metadata = entry.getValue();
+            if (metadata != null && metadata.isDirty()) {
+                ProjectMetadataUtilities.save(metadata, getProjectDir(entry.getKey()));
             }
-            jsonWriter.endArray();
-            writer.write('\n');
+        }
+    }
 
-            jsonWriter.key("preferences");
-            saveWasNeeded |= _preferenceStore.isDirty();
-            _preferenceStore.write(jsonWriter, new Properties());
-
-            jsonWriter.endObject();
+    protected boolean saveToFile(File file) throws IOException {
+        FileWriter writer = new FileWriter(file);
+        boolean saveWasNeeded = saveNeeded();
+        try {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+            saveProjectMetadata();
         } finally {
             writer.close();
         }
         return saveWasNeeded;
     }
+
+
 
     @Override
     public void deleteProject(long projectID) {
@@ -370,66 +355,19 @@ public class FileProjectManager extends ProjectManager {
         }
         logger.error("Failed to load workspace from any attempted alternatives.");
     }
-
+    
     protected boolean loadFromFile(File file) {
         logger.info("Loading workspace: {}", file.getAbsolutePath());
 
+        _projectsMetadata.clear();
+
         boolean found = false;
 
-        if (file.exists() || file.canRead()) {
-            FileReader reader = null;
-            try {
-                reader = new FileReader(file);
-                JSONTokener tokener = new JSONTokener(reader);
-                JSONObject obj = (JSONObject) tokener.nextValue();
-                
-                // load global preferences firstly
-                if (obj.has("preferences") && !obj.isNull("preferences")) {
-                    _preferenceStore.load(obj.getJSONObject("preferences"));
-                }
-
-                JSONArray a = obj.getJSONArray("projectIDs");
-                int count = a.length();
-                for (int i = 0; i < count; i++) {
-                    long id = a.getLong(i);
-
-                    File projectDir = getProjectDir(id);
-                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
-                    
-                    mergeEmptyUserMetadata(metadata);
-
-                    _projectsMetadata.put(id, metadata);
-                    
-                    if (metadata != null && metadata.getTags() != null) {
-                        for (String tag : metadata.getTags()) {
-                          if (_projectsTags.containsKey(tag)) {
-                            _projectsTags.put(tag, _projectsTags.get(tag) + 1);
-                          } else {
-                            _projectsTags.put(tag, 1);
-                          }
-                        }
-                    }
-                }
-
-                if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
-                    ((TopList) _preferenceStore.get("scripting.expressions"))
-                    .load(obj.getJSONArray("expressions"));
-                }
-
-                found = true;
-            } catch (JSONException e) {
-                logger.warn("Error reading file", e);
-            } catch (IOException e) {
-                logger.warn("Error reading file", e);
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    logger.warn("Exception closing file",e);
-                }
-            }
+        try {
+        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+            found = true;
+        } catch(IOException e) {
+        	logger.warn(e.toString());
         }
 
         return found;
@@ -483,5 +421,48 @@ public class FileProjectManager extends ProjectManager {
             tos.close();
             gos.close();
         }
+    }
+    
+    @JsonProperty("projectIDs")
+    public Set<Long> getProjectIds() {
+        return _projectsMetadata.keySet();
+    }
+    
+    @JsonProperty("projectIDs")
+    protected void loadProjects(List<Long> projectIDs) {
+        for (Long id : projectIDs) {
+
+            File projectDir = getProjectDir(id);
+            ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+            
+            mergeEmptyUserMetadata(metadata);
+
+            _projectsMetadata.put(id, metadata);
+            
+            if (metadata != null && metadata.getTags() != null) {
+                for (String tag : metadata.getTags()) {
+                  if (_projectsTags.containsKey(tag)) {
+                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                  } else {
+                    _projectsTags.put(tag, 1);
+                  }
+                }
+            }
+        }
+    }
+    
+    @JsonProperty("preferences")
+    protected void setPreferences(PreferenceStore preferences) {
+    	if(preferences != null) {
+    		_preferenceStore = preferences;
+    	}
+    }
+    
+    // backwards compatibility
+    @JsonProperty("expressions")
+	protected void setExpressions(TopList newExpressions) {
+    	if (newExpressions != null) {
+    		_preferenceStore.put("scripting.expressions", newExpressions);
+    	}
     }
 }

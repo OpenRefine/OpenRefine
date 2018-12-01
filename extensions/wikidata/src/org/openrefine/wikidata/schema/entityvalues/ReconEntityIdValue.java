@@ -33,6 +33,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.model.Recon;
 
@@ -72,6 +73,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         return !isMatched();
     }
 
+    @JsonProperty("label")
     public String getLabel() {
         if (isMatched()) {
             return _recon.match.name;
@@ -80,6 +82,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
         }
     }
 
+    @JsonProperty("types")
     public List<String> getTypes() {
         if (isMatched()) {
             return Arrays.asList(_recon.match.types);
@@ -89,6 +92,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     }
 
     @Override
+    @JsonProperty("entityType")
     public abstract String getEntityType();
 
     /**
@@ -96,6 +100,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
      * 
      * @return the reconciliation id of the reconciled cell
      */
+    @JsonProperty("reconInternalId")
     public long getReconInternalId() {
         return getRecon().id;
     }
@@ -114,6 +119,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
      * Returns the id of the reconciled item
      */
     @Override
+    @JsonProperty("id")
     public String getId() {
         if (isMatched()) {
             return _recon.match.id;
@@ -126,6 +132,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     }
 
     @Override
+    @JsonProperty("siteIri")
     public String getSiteIri() {
         if (isMatched()) {
             return _recon.identifierSpace;
@@ -135,6 +142,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     }
 
     @Override
+    @JsonProperty("iri")
     public String getIri() {
         return getSiteIri() + getId();
     }

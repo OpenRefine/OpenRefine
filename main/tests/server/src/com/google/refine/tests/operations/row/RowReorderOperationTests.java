@@ -1,11 +1,7 @@
 package com.google.refine.tests.operations.row;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -20,8 +16,10 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.process.Process;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class RowReorderOperationTests extends RefineTest {
     
@@ -49,10 +47,12 @@ public class RowReorderOperationTests extends RefineTest {
     
     @Test
     public void testSortEmptyString() throws Exception {
+        String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
+        SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
         project.rows.get(1).cells.set(0, new Cell("", null));
         AbstractOperation op = new RowReorderOperation(
-                Mode.RowBased,
-                new JSONObject("{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}"));
+                Mode.RowBased, sortingConfig
+                );
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
         
@@ -64,8 +64,7 @@ public class RowReorderOperationTests extends RefineTest {
 
    
     @Test
-    public void serializeRowReorderOperation() throws JSONException, Exception {
-        Project project = mock(Project.class);
+    public void serializeRowReorderOperation() throws Exception {
         String json = "  {\n" + 
                 "    \"op\": \"core/row-reorder\",\n" + 
                 "    \"description\": \"Reorder rows\",\n" + 
@@ -82,7 +81,7 @@ public class RowReorderOperationTests extends RefineTest {
                 "      ]\n" + 
                 "    }\n" + 
                 "  }";
-        TestUtils.isSerializedTo(RowReorderOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
     }
 
 }

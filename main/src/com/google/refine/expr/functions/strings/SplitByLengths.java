@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -71,13 +68,17 @@ public class SplitByLengths implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the array of strings obtained by splitting s into substrings with the given lengths";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the array of strings obtained by splitting s into substrings with the given lengths");
-        writer.key("params"); writer.value("string s, number n, ...");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, number n, ...";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

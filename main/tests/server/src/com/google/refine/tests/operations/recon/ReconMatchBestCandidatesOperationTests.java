@@ -1,15 +1,12 @@
 package com.google.refine.tests.operations.recon;
-import static org.mockito.Mockito.mock;
-
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconMatchBestCandidatesOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
     @BeforeSuite
@@ -28,7 +25,6 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "]},"
                 + "\"columnName\":\"organization_name\""
                 + "}";
-        Project project = mock(Project.class);
-        TestUtils.isSerializedTo(ReconMatchBestCandidatesOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json);
     }
 }

@@ -36,8 +36,6 @@ package com.google.refine.tests.operations.cell;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -51,6 +49,7 @@ import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class SplitMultiValuedCellsTests extends RefineTest {
@@ -72,7 +71,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeMultiValuedCellSplitOperation() throws JSONException, Exception {
+    public void serializeMultiValuedCellSplitOperationWithSeparator() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-split\","
                 + "\"description\":\"Split multi-valued cells in column Value\","
                 + "\"columnName\":\"Value\","
@@ -80,7 +79,18 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 + "\"mode\":\"separator\","
                 + "\"separator\":\":\","
                 + "\"regex\":false}";
-        TestUtils.isSerializedTo(MultiValuedCellSplitOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
+    }
+    
+    @Test
+    public void serializeMultiValuedCellSplitOperationWithLengths() throws Exception {
+        String json = "{\"op\":\"core/multivalued-cell-split\","
+                + "\"description\":\"Split multi-valued cells in column Value\","
+                + "\"columnName\":\"Value\","
+                + "\"keyColumnName\":\"Key\","
+                + "\"mode\":\"lengths\","
+                + "\"fieldLengths\":[1,1]}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
     }
 
     /**
@@ -153,7 +163,5 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "four");
     }
-
-
 }
 

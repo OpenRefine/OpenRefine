@@ -41,8 +41,6 @@ import static org.mockito.Mockito.when;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -131,8 +129,6 @@ public class CommandTests extends RefineTest {
         when(request.getParameter("engine")).thenReturn(null);
         try {
             Assert.assertNull(SUT.wrapGetEngineConfig(request));
-        } catch (JSONException e) {
-            Assert.fail();
         } catch (Exception e) {
             Assert.fail();
         }
@@ -142,11 +138,7 @@ public class CommandTests extends RefineTest {
     public void getEngineConfigReturnsNullWithEmptyOrBadParameterValue() {
         when(request.getParameter("engine")).thenReturn("sdfasdfas");
 
-        try {
-            Assert.assertNull( SUT.wrapGetEngineConfig(request) );
-        } catch (JSONException e) {
-            Assert.fail();
-        }
+        Assert.assertNull( SUT.wrapGetEngineConfig(request) );
 
         verify(request, times(1)).getParameter("engine");
     }
@@ -158,8 +150,6 @@ public class CommandTests extends RefineTest {
         try {
             o = SUT.wrapGetEngineConfig(request);
             Assert.assertEquals(Mode.RowBased, o.getMode());
-        } catch (JSONException e) {
-            Assert.fail();
         } catch (Exception e) {
             Assert.fail();
         }
@@ -295,60 +285,5 @@ public class CommandTests extends RefineTest {
         verify(request, times(1)).getParameter("positivenumber");
         verify(request, times(1)).getParameter("zeronumber");
         verify(request, times(1)).getParameter("negativenumber");
-    }
-
-    // ---------------------getJsonParameter tests----------------
-    @Test
-    public void getJsonParameterWithNullParameters() {
-        when(request.getParameter(null)).thenReturn(null);
-        when(request.getParameter("")).thenReturn(null);
-
-        try {
-            SUT.wrapGetJsonParameter(null, null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-
-        Assert.assertNull(SUT.wrapGetJsonParameter(request, null));
-
-        try {
-            SUT.wrapGetJsonParameter(null, "test");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-
-        Assert.assertNull(SUT.wrapGetJsonParameter(request, ""));
-
-        verify(request, times(1)).getParameter(null);
-        verify(request, times(1)).getParameter("");
-    }
-
-    @Test
-    public void getJsonParameterRegressionTest() {
-        when(request.getParameter("test")).thenReturn("{\"foo\":\"bar\"}");
-
-        JSONObject o = SUT.wrapGetJsonParameter(request, "test");
-        Assert.assertNotNull(o);
-        try {
-            Assert.assertEquals("bar", o.getString("foo"));
-        } catch (JSONException e) {
-            Assert.fail();
-        }
-
-        verify(request, times(1)).getParameter("test");
-    }
-
-    @Test
-    public void getJsonParameterWithMalformedJson() {
-        when(request.getParameter("test")).thenReturn("brokenJSON");
-
-        try {
-            Assert.assertNull(SUT.wrapGetJsonParameter(request, "test"));
-        } catch (Exception e) {
-            Assert.fail();
-        }
-
-        verify(request, times(1)).getParameter("test");
     }
 }

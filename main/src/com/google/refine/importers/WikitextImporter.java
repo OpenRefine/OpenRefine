@@ -9,65 +9,65 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONObject;
-import com.google.common.io.CharStreams;
-import de.fau.cs.osr.ptk.common.AstVisitor;
-
 import org.sweble.wikitext.parser.ParserConfig;
-import org.sweble.wikitext.parser.utils.SimpleParserConfig;
+import org.sweble.wikitext.parser.WikitextEncodingValidator;
 import org.sweble.wikitext.parser.WikitextParser;
+import org.sweble.wikitext.parser.WikitextPreprocessor;
+import org.sweble.wikitext.parser.encval.ValidatedWikitext;
+import org.sweble.wikitext.parser.nodes.WtBody;
 import org.sweble.wikitext.parser.nodes.WtBold;
+import org.sweble.wikitext.parser.nodes.WtExternalLink;
+import org.sweble.wikitext.parser.nodes.WtImageLink;
+import org.sweble.wikitext.parser.nodes.WtInternalLink;
 import org.sweble.wikitext.parser.nodes.WtItalics;
+import org.sweble.wikitext.parser.nodes.WtLinkTitle;
+import org.sweble.wikitext.parser.nodes.WtLinkTitle.WtNoLinkTitle;
+import org.sweble.wikitext.parser.nodes.WtName;
 import org.sweble.wikitext.parser.nodes.WtNewline;
 import org.sweble.wikitext.parser.nodes.WtNode;
+import org.sweble.wikitext.parser.nodes.WtParsedWikitextPage;
+import org.sweble.wikitext.parser.nodes.WtPreproWikitextPage;
 import org.sweble.wikitext.parser.nodes.WtSection;
+import org.sweble.wikitext.parser.nodes.WtTable;
+import org.sweble.wikitext.parser.nodes.WtTableCaption;
+import org.sweble.wikitext.parser.nodes.WtTableCell;
+import org.sweble.wikitext.parser.nodes.WtTableHeader;
+import org.sweble.wikitext.parser.nodes.WtTableRow;
 import org.sweble.wikitext.parser.nodes.WtTagExtension;
 import org.sweble.wikitext.parser.nodes.WtTagExtensionBody;
 import org.sweble.wikitext.parser.nodes.WtTemplate;
 import org.sweble.wikitext.parser.nodes.WtTemplateArgument;
 import org.sweble.wikitext.parser.nodes.WtTemplateArguments;
 import org.sweble.wikitext.parser.nodes.WtText;
-import org.sweble.wikitext.parser.nodes.WtInternalLink;
-import org.sweble.wikitext.parser.nodes.WtExternalLink;
-import org.sweble.wikitext.parser.nodes.WtImageLink;
-import org.sweble.wikitext.parser.nodes.WtLinkTitle;
-import org.sweble.wikitext.parser.nodes.WtLinkTitle.WtNoLinkTitle;
 import org.sweble.wikitext.parser.nodes.WtUrl;
-import org.sweble.wikitext.parser.nodes.WtTable;
-import org.sweble.wikitext.parser.nodes.WtTableHeader;
-import org.sweble.wikitext.parser.nodes.WtTableRow;
-import org.sweble.wikitext.parser.nodes.WtTableCell;
-import org.sweble.wikitext.parser.nodes.WtTableCaption;
-import org.sweble.wikitext.parser.nodes.WtXmlAttributes;
-import org.sweble.wikitext.parser.nodes.WtXmlAttribute;
-import org.sweble.wikitext.parser.nodes.WtName;
 import org.sweble.wikitext.parser.nodes.WtValue;
-import org.sweble.wikitext.parser.nodes.WtParsedWikitextPage;
-import org.sweble.wikitext.parser.nodes.WtBody;
+import org.sweble.wikitext.parser.nodes.WtXmlAttribute;
+import org.sweble.wikitext.parser.nodes.WtXmlAttributes;
 import org.sweble.wikitext.parser.nodes.WtXmlEmptyTag;
 import org.sweble.wikitext.parser.nodes.WtXmlEndTag;
 import org.sweble.wikitext.parser.nodes.WtXmlStartTag;
-
-import org.sweble.wikitext.parser.WikitextEncodingValidator;
-import org.sweble.wikitext.parser.WikitextPreprocessor;
-import org.sweble.wikitext.parser.encval.ValidatedWikitext;
-import org.sweble.wikitext.parser.nodes.WtPreproWikitextPage;
 import org.sweble.wikitext.parser.parser.PreprocessorToParserTransformer;
 import org.sweble.wikitext.parser.preprocessor.PreprocessedWikitext;
+import org.sweble.wikitext.parser.utils.SimpleParserConfig;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.io.CharStreams;
 import xtc.parser.ParseException;
 
+import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconStats;
-import com.google.refine.model.metadata.ProjectMetadata;
+import com.google.refine.model.recon.ReconJob;
+import com.google.refine.model.recon.StandardReconConfig;
+
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.util.JSONUtilities;
-import com.google.refine.model.recon.StandardReconConfig;
-import com.google.refine.model.recon.ReconJob;
+
+import de.fau.cs.osr.ptk.common.AstVisitor;
 
 
 public class WikitextImporter extends TabularImportingParserBase {
@@ -78,9 +78,9 @@ public class WikitextImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "blankSpanningCells", true);
@@ -669,7 +669,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         String fileSource,
         Reader reader,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         // Set-up a simple wiki configuration

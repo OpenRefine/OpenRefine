@@ -34,12 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.browsing;
 
 import java.time.OffsetDateTime;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.util.StringUtils;
 
 /**
@@ -49,25 +46,23 @@ import com.google.refine.util.StringUtils;
  * 
  * Facet choices that are presented to the user as text are stored as decorated values.
  */
-public class DecoratedValue implements Jsonizable {
+public class DecoratedValue  {
+    @JsonProperty("v")
     final public Object value;
+    @JsonProperty("l")
     final public String label;
     
-    public DecoratedValue(Object value, String label) {
+    @JsonCreator
+    public DecoratedValue(
+            @JsonProperty("v")
+            Object value,
+            @JsonProperty("l")
+            String label) {
       if (value instanceof OffsetDateTime) {
           this.value = StringUtils.toString(value);
       } else {
           this.value = value;
       }
       this.label = label;
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("v"); writer.value(value);
-        writer.key("l"); writer.value(label);
-        writer.endObject();
     }
 }

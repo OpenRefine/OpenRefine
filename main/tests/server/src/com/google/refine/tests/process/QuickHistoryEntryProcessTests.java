@@ -1,13 +1,14 @@
 package com.google.refine.tests.process;
 
 import static org.mockito.Mockito.mock;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
+import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.process.Process;
 
 public class QuickHistoryEntryProcessTests {
     public static class QuickHistoryEntryProcessStub extends QuickHistoryEntryProcess {

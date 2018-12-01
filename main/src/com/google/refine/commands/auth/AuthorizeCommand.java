@@ -42,13 +42,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.OAuthProvider;
-
 import com.google.refine.commands.Command;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
 import com.google.refine.oauth.Provider;
+
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
 
 public class AuthorizeCommand extends Command {
     

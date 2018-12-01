@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -20,9 +18,10 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.FillDownOperation;
+import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 
 public class FillDownTests extends RefineTest {
     
@@ -49,18 +48,18 @@ public class FillDownTests extends RefineTest {
     }
     
     @Test
-    public void serializeFillDownOperation() throws JSONException, Exception {
+    public void serializeFillDownOperation() throws Exception {
         String json = "{\"op\":\"core/fill-down\","
                 + "\"description\":\"Fill down cells in column my key\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my key\"}";
-        TestUtils.isSerializedTo(FillDownOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json);
     }
     
     @Test
     public void testFillDownRecordKey() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "key");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -76,7 +75,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRecords() throws Exception {
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -92,7 +91,7 @@ public class FillDownTests extends RefineTest {
     @Test
     public void testFillDownRows() throws Exception {       
         AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -118,7 +117,7 @@ public class FillDownTests extends RefineTest {
     	project.columnModel.update();
     	
     	AbstractOperation op = new FillDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

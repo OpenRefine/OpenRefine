@@ -57,11 +57,6 @@ public class ColumnReorderChange extends ColumnChange {
         _columnNames = columnNames;
     }
     
-    
-    public List<String> getColumnNames() {
-        return _columnNames;
-    }
-
     @Override
     public void apply(Project project) {
         synchronized (project) {

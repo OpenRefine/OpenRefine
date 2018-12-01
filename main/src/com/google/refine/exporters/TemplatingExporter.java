@@ -34,14 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
@@ -50,6 +46,7 @@ import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Project;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 import com.google.refine.templating.Parser;
@@ -62,19 +59,33 @@ public class TemplatingExporter implements WriterExporter {
     public String getContentType() {
         return "application/x-unknown";
     }
+    
+    protected static class TemplateConfig {
+        @JsonProperty("template")
+        protected String template;
+        @JsonProperty("prefix")
+        protected String prefix;
+        @JsonProperty("suffix")
+        protected String suffix;
+        @JsonProperty("separator")
+        protected String separator;
+        
+        protected TemplateConfig(
+                String template, String prefix,
+                String suffix, String separator) {
+            this.template = template;
+            this.prefix = prefix;
+            this.suffix = suffix;
+            this.separator = separator;
+        }
+    }
 
     @Override
     public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
         
-        JSONObject sortingJson = null;
-        try{
-            String json = options.getProperty("sorting");
-            sortingJson = (json == null) ? null : 
-                ParsingUtilities.evaluateJsonStringToObject(json);
-        } catch (JSONException e) {
-        }
+        String sortingJson = options.getProperty("sorting");
         
         String templateString = options.getProperty("template");
         String prefixString = options.getProperty("prefix");
@@ -93,20 +104,10 @@ public class TemplatingExporter implements WriterExporter {
         template.setSeparator(separatorString);
         
         if (!"true".equals(options.getProperty("preview"))) {
-            StringWriter stringWriter = new StringWriter();
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            try {
-                jsonWriter.object();
-                jsonWriter.key("template"); jsonWriter.value(templateString);
-                jsonWriter.key("prefix"); jsonWriter.value(prefixString);
-                jsonWriter.key("suffix"); jsonWriter.value(suffixString);
-                jsonWriter.key("separator"); jsonWriter.value(separatorString);
-                jsonWriter.endObject();
-            } catch (JSONException e) {
-                // ignore
-            }
-            
-            project.getMetadata().getPreferenceStore().put("exporters.templating.template", stringWriter.toString());
+            TemplateConfig config = new TemplateConfig(templateString, prefixString,
+                    suffixString, separatorString);
+            project.getMetadata().getPreferenceStore().put("exporters.templating.template",
+                    ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
         
         if (engine.getMode() == Mode.RowBased) {
@@ -114,15 +115,12 @@ public class TemplatingExporter implements WriterExporter {
             RowVisitor visitor = template.getRowVisitor(writer, limit);
             
             if (sortingJson != null) {
-                try {
-                    SortingRowVisitor srv = new SortingRowVisitor(visitor);
-                    srv.initializeFromJSON(project, sortingJson);
-                    
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
+                SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                srv.initializeFromConfig(project, sorting);
+                
+                if (srv.hasCriteria()) {
+                    visitor = srv;
                 }
             }
             
@@ -132,15 +130,12 @@ public class TemplatingExporter implements WriterExporter {
             RecordVisitor visitor = template.getRecordVisitor(writer, limit);
             
             if (sortingJson != null) {
-                try {
-                    SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-                    srv.initializeFromJSON(project, sortingJson);
-                    
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
+                SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                srv.initializeFromConfig(project, sorting);
+                
+                if (srv.hasCriteria()) {
+                    visitor = srv;
                 }
             }
             

@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -67,10 +65,10 @@ public class QuickStatementsExporterTest extends RefineTest {
 
     @Test
     public void testSimpleProject()
-            throws JSONException, IOException {
+            throws IOException {
         Project project = this.createCSVProject(TestingData.inceptionWithNewCsv);
         TestingData.reconcileInceptionCells(project);
-        JSONObject serialized = TestingData.jsonFromFile("schema/inception.json");
+        String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         project.overlayModels.put("wikibaseSchema", schema);
         Engine engine = new Engine(project);

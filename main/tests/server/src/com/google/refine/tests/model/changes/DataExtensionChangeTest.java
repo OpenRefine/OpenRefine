@@ -1,18 +1,11 @@
 package com.google.refine.tests.model.changes;
 
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.changes.DataExtensionChange;
-import com.google.refine.model.changes.MassChange;
-
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.Reader;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -20,6 +13,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.history.Change;
+import com.google.refine.model.ModelException;
+import com.google.refine.model.Project;
+import com.google.refine.model.changes.DataExtensionChange;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.util.Pool;
 

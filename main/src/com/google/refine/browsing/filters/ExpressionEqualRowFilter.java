@@ -38,12 +38,11 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -122,17 +121,13 @@ public class ExpressionEqualRowFilter implements RowFilter {
                     }
                 }
                 return false;
-            } else if (value instanceof JSONArray) {
-                JSONArray a = (JSONArray) value;
-                int l = a.length();
+            } else if (value instanceof ArrayNode) {
+                ArrayNode a = (ArrayNode) value;
+                int l = a.size();
                 
                 for (int i = 0; i < l; i++) {
-                    try {
-                        if (testValue(a.get(i))) {
-                            return true;
-                        }
-                    } catch (JSONException e) {
-                        // ignore
+                    if (testValue(JsonValueConverter.convert(a.get(i)))) {
+                        return true;
                     }
                 }
                 return false;
@@ -165,17 +160,13 @@ public class ExpressionEqualRowFilter implements RowFilter {
                     }
                 }
                 return true;
-            } else if (value instanceof JSONArray) {
-                JSONArray a = (JSONArray) value;
-                int l = a.length();
+            } else if (value instanceof ArrayNode) {
+                ArrayNode a = (ArrayNode) value;
+                int l = a.size();
                 
                 for (int i = 0; i < l; i++) {
-                    try {
-                        if (testValue(a.get(i))) {
-                            return false;
-                        }
-                    } catch (JSONException e) {
-                        // ignore
+                    if (testValue(JsonValueConverter.convert(a.get(i)))) {
+                        return false;
                     }
                 }
                 return true;

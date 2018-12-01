@@ -45,15 +45,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -64,7 +60,6 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -73,14 +68,29 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
+    public static final class HttpHeader  {
+        @JsonProperty("name")
+        final public String name;
+        @JsonProperty("value")
+        final public String value;
+        
+        @JsonCreator
+        public HttpHeader(
+                @JsonProperty("name")
+                String name,
+                @JsonProperty("value")
+                String value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+    
     final protected String     _baseColumnName;
     final protected String     _urlExpression;
     final protected OnError    _onError;
@@ -89,34 +99,28 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected int        _columnInsertIndex;
     final protected int        _delay;
     final protected boolean    _cacheResponses;
-    final protected JSONArray  _httpHeadersJson;
+    final protected List<HttpHeader>  _httpHeadersJson;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-
-        return new ColumnAdditionByFetchingURLsOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("baseColumnName"),
-            obj.getString("urlExpression"),
-            TextTransformOperation.stringToOnError(obj.getString("onError")),
-            obj.getString("newColumnName"),
-            obj.getInt("columnInsertIndex"),
-            obj.getInt("delay"),
-            obj.optBoolean("cacheResponses", false), // false for retro-compatibility
-            obj.optJSONArray("httpHeadersJson") // will be null if it doesn't exist for retro-compatibility
-        );
-    }
-
+    @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
+        @JsonProperty("engineConfig")
         EngineConfig   engineConfig,
+        @JsonProperty("baseColumnName")
         String         baseColumnName,
+        @JsonProperty("urlExpression")
         String         urlExpression,
+        @JsonProperty("onError")
         OnError        onError,
+        @JsonProperty("newColumnName")
         String         newColumnName,
+        @JsonProperty("columnInsertIndex")
         int            columnInsertIndex,
+        @JsonProperty("delay")
         int            delay,
+        @JsonProperty("cacheResponses")
         boolean        cacheResponses,
-        JSONArray      httpHeadersJson
+        @JsonProperty("httpHeadersJson")
+        List<HttpHeader>      httpHeadersJson
     ) {
         super(engineConfig);
 
@@ -131,24 +135,45 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _cacheResponses = cacheResponses;
         _httpHeadersJson = httpHeadersJson;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("newColumnName"); writer.value(_newColumnName);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("urlExpression"); writer.value(_urlExpression);
-        writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
-        writer.key("delay"); writer.value(_delay);
-        writer.key("cacheResponses"); writer.value(_cacheResponses);
-        writer.key("httpHeadersJson"); writer.value(_httpHeadersJson);
-        writer.endObject();
+    
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+        return _newColumnName;
+    }
+    
+    @JsonProperty("columnInsertIndex")
+    public int getColumnInsertIndex() {
+        return _columnInsertIndex;
+    }
+    
+    @JsonProperty("baseColumnName")
+    public String getBaseColumnName() {
+        return _baseColumnName;
+    }
+    
+    @JsonProperty("urlExpression")
+    public String getUrlExpression() {
+        return _urlExpression;
+    }
+    
+    @JsonProperty("onError")
+    public OnError getOnError() {
+        return _onError;
+    }
+    
+    @JsonProperty("delay")
+    public int getDelay() {
+        return _delay;
+    }
+    
+    @JsonProperty("httpHeadersJson")
+    public List<HttpHeader> getHttpHeadersJson() {
+        return _httpHeadersJson;
+    }
+    
+    @JsonProperty("cacheResponses")
+    public boolean getCacheResponses() {
+        return _cacheResponses;
     }
 
     @Override
@@ -179,8 +204,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             engine,
             eval,
             getBriefDescription(null),
-            _cacheResponses,
-            _httpHeadersJson
+            _cacheResponses
         );
     }
 
@@ -197,9 +221,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             Engine engine,
             Evaluable eval,
             String description,
-            boolean cacheResponses,
-            JSONArray httpHeadersJson
-        ) throws JSONException {
+            boolean cacheResponses
+        ) {
             super(description);
             _project = project;
             _engine = engine;
@@ -236,20 +259,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         });
             }
         }
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-
-            writer.object();
-            writer.key("id"); writer.value(hashCode());
-            writer.key("description"); writer.value(_description);
-            writer.key("immediate"); writer.value(false);
-            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-            writer.key("progress"); writer.value(_progress);
-            writer.endObject();
-        }
-
+        
         @Override
         protected Runnable getRunnable() {
             return this;
@@ -335,9 +345,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             try {
                 URLConnection urlConnection = url.openConnection();
                 if (_httpHeadersJson != null) {
-                    for (int i = 0; i < _httpHeadersJson.length(); i++) {
-                        String headerLabel = _httpHeadersJson.getJSONObject(i).getString("name");
-                        String headerValue = _httpHeadersJson.getJSONObject(i).getString("value");
+                    for (int i = 0; i < _httpHeadersJson.size(); i++) {
+                        String headerLabel = _httpHeadersJson.get(i).name;
+                        String headerValue = _httpHeadersJson.get(i).value;
                         if (headerValue != null && !headerValue.isEmpty()) {
                             urlConnection.setRequestProperty(headerLabel, headerValue);
                         }

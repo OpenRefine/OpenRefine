@@ -41,19 +41,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
+import com.google.refine.clustering.ClusteredEntry;
 import com.google.refine.clustering.Clusterer;
 import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
@@ -63,43 +65,39 @@ import com.google.refine.model.Row;
 public class BinningClusterer extends Clusterer {
     
     public static class BinningClustererConfig extends ClustererConfig {
-        
+       
+        @JsonIgnore
         private String _keyerName;
+        @JsonIgnore
         private Keyer _keyer;
-        private BinningParameters _parameters;
+        @JsonIgnore
+        private BinningParameters _parameters = null;
         
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            super.initializeFromJSON(o);
-            _keyerName = o.getString("function");
-            _keyer = _keyers.get(_keyerName.toLowerCase());
-            if(o.has("params")) {
-                _parameters = BinningParameters.reconstruct(o.getJSONObject("params"));
-            } else {
-                _parameters = null;
-            }
-        }
-        
+        @JsonIgnore
         public Keyer getKeyer() {
             return _keyer;
         }
         
+        @JsonProperty("function")
+        public void setKeyer(String keyerName) {
+        	_keyerName = keyerName;
+        	_keyer = _keyers.get(_keyerName.toLowerCase());
+        }
+        
+        @JsonProperty("function")
+        public String getKeyerName() {
+        	return _keyerName;
+        }
+        
+        @JsonProperty("params")
+        @JsonInclude(Include.NON_NULL)
         public BinningParameters getParameters() {
             return _parameters;
         }
         
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("function"); writer.value(_keyerName);
-            writer.key("type"); writer.value("binning");
-            writer.key("column"); writer.value(getColumnName());
-            if(_parameters != null) {
-                writer.key("params");
-                _parameters.write(writer, options);
-            }
-            writer.endObject();
+        @JsonProperty("params")
+        public void setParameters(BinningParameters params) {
+        	_parameters = params;
         }
 
         @Override
@@ -108,28 +106,18 @@ public class BinningClusterer extends Clusterer {
             clusterer.initializeFromConfig(project, this);
             return clusterer;
         }
+
+        @Override
+        public String getType() {
+            return "binning";
+        }
         
     }
     
-    public static class BinningParameters implements Jsonizable {
-        public int ngramSize;
-
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            if(ngramSize > 0) {
-                writer.key("ngram-size");
-                writer.value(ngramSize);
-            }
-            writer.endObject();
-        }
-        
-        public static BinningParameters reconstruct(JSONObject o) {
-            BinningParameters parameters = new BinningParameters();
-            parameters.ngramSize = o.has("ngram-size") ? o.getInt("ngram-size") : 0;
-            return parameters;
-        }
+    public static class BinningParameters  {
+        @JsonProperty("ngram-size")
+        @JsonInclude(Include.NON_DEFAULT)
+        public int ngramSize = 0;
     }
 
     protected Keyer _keyer;
@@ -255,25 +243,21 @@ public class BinningClusterer extends Clusterer {
         Collections.sort(_clusters, new SizeComparator());
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    protected static Map<String,Object> entryToMap(Entry<String,Integer> entry) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("v", entry.getKey());
+        map.put("c", entry.getValue());
+        return map;
+    }
+    
+    @JsonValue
+    public List<List<ClusteredEntry>> getJsonRepresentation() {
         EntriesComparator c = new EntriesComparator();
-        
-        writer.array();        
-        for (Map<String,Integer> m : _clusters) {
-            if (m.size() > 1) {
-                writer.array();        
-                List<Entry<String,Integer>> entries = new ArrayList<Entry<String,Integer>>(m.entrySet());
-                Collections.sort(entries,c);
-                for (Entry<String,Integer> e : entries) {
-                    writer.object();
-                    writer.key("v"); writer.value(e.getKey());
-                    writer.key("c"); writer.value(e.getValue());
-                    writer.endObject();
-                }
-                writer.endArray();
-            }
-        }
-        writer.endArray();
+        return _clusters.stream()
+                .map(m -> m.entrySet().stream()
+                        .sorted(c)
+                        .map(e -> new ClusteredEntry(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 }

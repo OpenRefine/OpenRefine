@@ -32,18 +32,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.fusiontables.Fusiontables;
 import com.google.api.services.fusiontables.model.Column;
 import com.google.api.services.fusiontables.model.Sqlresponse;
 import com.google.api.services.fusiontables.model.Table;
 
+import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TabularImportingParserBase;
 import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 
 /**
@@ -60,7 +59,7 @@ public class FusionTableImporter {
         ProjectMetadata metadata,
         final ImportingJob job,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions) {
     
         Fusiontables service = FusionTableHandler.getFusionTablesService(token);
@@ -206,7 +205,7 @@ public class FusionTableImporter {
             ProjectMetadata metadata,
             final ImportingJob job,
             int limit,
-            JSONObject options,
+            ObjectNode options,
             List<Exception> exceptions) {
         
         String docUrlString = JSONUtilities.getString(options, "docUrl", null);

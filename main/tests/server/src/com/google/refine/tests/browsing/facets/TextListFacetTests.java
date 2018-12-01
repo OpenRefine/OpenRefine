@@ -40,8 +40,6 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -54,6 +52,7 @@ import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class TextListFacetTests extends RefineTest {
@@ -79,7 +78,7 @@ public class TextListFacetTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void setUp() throws JSONException, IOException, ModelException {
+    public void setUp() throws IOException, ModelException {
       project = createProjectWithColumns(projectName, columnName);
       for (int i = 0; i < numberOfRows; i++) {
           Row row = new Row(1);
@@ -141,8 +140,7 @@ public class TextListFacetTests extends RefineTest {
                                  + "}";
         
         //Add the facet to the project and create a row filter
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
@@ -204,8 +202,7 @@ public class TextListFacetTests extends RefineTest {
                                + "}";
         
         //Add the facet to the project and create a row filter
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
@@ -267,8 +264,7 @@ public class TextListFacetTests extends RefineTest {
                                  + "}";
         
         //Add the facet to the project and create a row filter
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
@@ -330,8 +326,7 @@ public class TextListFacetTests extends RefineTest {
                                + "}";
         
         //Add the facet to the project and create a row filter
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 
@@ -393,8 +388,7 @@ public class TextListFacetTests extends RefineTest {
                                + "}";
         
         //Add the facet to the project and create a row filter
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         rowfilter = facet.getRowFilter(project);
 

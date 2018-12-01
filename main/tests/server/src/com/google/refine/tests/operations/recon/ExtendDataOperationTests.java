@@ -36,12 +36,13 @@ package com.google.refine.tests.operations.recon;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -57,13 +58,16 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
-import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
+import com.google.refine.model.recon.ReconciledDataExtensionJob;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ExtendDataOperation;
+import com.google.refine.process.Process;
+import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ExtendDataOperationTests extends RefineTest {
@@ -72,6 +76,54 @@ public class ExtendDataOperationTests extends RefineTest {
     static final String RECON_SERVICE = "https://tools.wmflabs.org/openrefine-wikidata/en/api";
     static final String RECON_IDENTIFIER_SPACE = "http://www.wikidata.org/entity/";
     static final String RECON_SCHEMA_SPACE = "http://www.wikidata.org/prop/direct/";
+    
+    private String dataExtensionConfigJson = "{"
+            + "    \"properties\":["
+            + "        {\"name\":\"inception\",\"id\":\"P571\"},"
+            + "        {\"name\":\"headquarters location\",\"id\":\"P159\"},"
+            + "        {\"name\":\"coordinate location\",\"id\":\"P625\"}"
+            + "     ]"
+            + "}";
+    
+    private String operationJson = "{\"op\":\"core/extend-reconciled-data\","
+            + "\"description\":\"Extend data at index 3 based on column organization_name\","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
+            + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
+            + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
+            + "]},"
+            + "\"columnInsertIndex\":3,"
+            + "\"baseColumnName\":\"organization_name\","
+            + "\"endpoint\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+            + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
+            + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
+            + "\"extension\":{"
+            + "    \"properties\":["
+            + "        {\"name\":\"inception\",\"id\":\"P571\"},"
+            + "        {\"name\":\"headquarters location\",\"id\":\"P159\"},"
+            + "        {\"name\":\"coordinate location\",\"id\":\"P625\"}"
+            + "     ]"
+            + "}}";
+    
+    private String processJson = ""
+            + "    {\n" + 
+            "       \"description\" : \"Extend data at index 3 based on column organization_name\",\n" + 
+            "       \"id\" : %d,\n" + 
+            "       \"immediate\" : false,\n" + 
+            "       \"progress\" : 0,\n" + 
+            "       \"status\" : \"pending\"\n" + 
+            "     }";
+    
+    static public class ReconciledDataExtensionJobStub extends ReconciledDataExtensionJob {
+        public ReconciledDataExtensionJobStub(DataExtensionConfig obj, String endpoint) {
+            super(obj, endpoint);
+        }
+
+        public String formulateQueryStub(Set<String> ids, DataExtensionConfig node) throws IOException {
+            StringWriter writer = new StringWriter();
+            super.formulateQuery(ids, node, writer);
+            return writer.toString();
+        }
+    }
 
     @Override
     @BeforeTest
@@ -86,13 +138,13 @@ public class ExtendDataOperationTests extends RefineTest {
     Engine engine;
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
         OperationRegistry.registerOperation(getCoreModule(), "extend-reconciled-data", ExtendDataOperation.class);
         project = createProjectWithColumns("DataExtensionTests", "country");
         
         options = mock(Properties.class);
         engine = new Engine(project);
-        engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_URLS));
+        engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
 
@@ -111,27 +163,31 @@ public class ExtendDataOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeExtendDataOperation() throws JSONException, Exception {
-        String json = "{\"op\":\"core/extend-reconciled-data\","
-                + "\"description\":\"Extend data at index 3 based on column organization_name\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
-                + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
-                + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
-                + "]},"
-                + "\"columnInsertIndex\":3,"
-                + "\"baseColumnName\":\"organization_name\","
-                + "\"endpoint\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "\"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "\"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "\"extension\":{"
-                + "    \"properties\":["
-                + "        {\"name\":\"inception\",\"id\":\"P571\"},"
-                + "        {\"name\":\"headquarters location\",\"id\":\"P159\"},"
-                + "        {\"name\":\"coordinate location\",\"id\":\"P625\"}"
-                + "     ]"
-                + "}}";
-        TestUtils.isSerializedTo(ExtendDataOperation.reconstruct(project, new JSONObject(json)), json);
+    public void serializeExtendDataOperation() throws Exception {
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
     }
+    
+    @Test
+    public void serializeExtendDataProcess() throws Exception {
+        Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
+                .createProcess(project, new Properties());
+        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
+    }
+    
+    @Test
+    public void serializeDataExtensionConfig() throws IOException {
+        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
+    }
+    
+    @Test
+    public void testFormulateQuery() throws IOException {
+        DataExtensionConfig config = DataExtensionConfig.reconstruct(dataExtensionConfigJson);
+        Set<String> ids = Collections.singleton("Q2");
+        String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
+        ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint");
+        TestUtils.assertEqualAsJson(json, stub.formulateQueryStub(ids, config));
+    }
+   
 
     @AfterMethod
     public void TearDown() {
@@ -157,7 +213,7 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @Test
     public void testFetchStrings() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -194,7 +250,8 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @Test
     public void testFetchCounts() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -216,8 +273,8 @@ public class ExtendDataOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
 
         // Test to be updated as countries change currencies!
-        Assert.assertTrue(Math.round((float)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
-        Assert.assertTrue(Math.round((float)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
+        Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
+        Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)
         Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
@@ -228,7 +285,8 @@ public class ExtendDataOperationTests extends RefineTest {
      */
     @Test
     public void testFetchCurrent() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -268,7 +326,8 @@ public class ExtendDataOperationTests extends RefineTest {
      */
     @Test
     public void testFetchRecord() throws Exception {
-        JSONObject extension = new JSONObject("{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",

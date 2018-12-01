@@ -39,13 +39,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.extension.database.model.DatabaseColumn;
@@ -55,7 +55,6 @@ import com.google.refine.importing.ImportingController;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -140,8 +139,8 @@ public class DatabaseImportController implements ImportingController {
         }
         
 
-        JSONObject result = new JSONObject();
-        JSONObject options = new JSONObject();
+        ObjectNode result = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(result, "status", "ok");
         JSONUtilities.safePut(result, OPTIONS_KEY, options);
 
@@ -191,7 +190,7 @@ public class DatabaseImportController implements ImportingController {
             
             job.updating = true;
             try {
-                JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
+                ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                     request.getParameter("options"));
                 
                 List<Exception> exceptions = new LinkedList<Exception>();
@@ -207,35 +206,28 @@ public class DatabaseImportController implements ImportingController {
                     optionObj,
                     exceptions
                 );
-//                String exStr = getExceptionString(exceptions);
-//                logger.info("exceptions::" + exStr);
-                
                 Writer w = response.getWriter();
-                JSONWriter writer = new JSONWriter(w);
+                JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
                 try {
-                    writer.object();
+                    writer.writeStartObject();
                     if (exceptions.size() == 0) {
                         job.project.update(); // update all internal models, indexes, caches, etc.
-                        writer.key("status"); 
-                        writer.value("ok");
+                        writer.writeStringField("status", "ok");
                     } else {
-                        writer.key("status"); 
-                        writer.value("error");
-                        writer.key("message");
-                        writer.value(getExceptionString(exceptions));
-//                        writer.array();
-//                        writeErrors(writer, exceptions);
-//                        writer.endArray();
+                        writer.writeStringField("status", "error");
+                        writer.writeStringField("message", getExceptionString(exceptions));
                     }
-                    writer.endObject();
-                } catch (JSONException e) {
+                    writer.writeEndObject();
+                } catch (IOException e) {
                     throw new ServletException(e);
                 } finally {
+                    writer.flush();
+                    writer.close();
                     w.flush();
                     w.close();
                 }
 
-            } catch (JSONException e) {
+            } catch (IOException e) {
                 throw new ServletException(e);
             } finally {
                 job.touch();
@@ -271,7 +263,7 @@ public class DatabaseImportController implements ImportingController {
             ProjectMetadata metadata,
             final ImportingJob job, 
             int limit, 
-            JSONObject options,
+            ObjectNode options,
             List<Exception> exceptions) throws DatabaseServiceException{
         
        
@@ -329,7 +321,7 @@ public class DatabaseImportController implements ImportingController {
             
             job.updating = true;
             try {
-                final JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
+                final ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
                     request.getParameter("options"));
                 
                 final List<Exception> exceptions = new LinkedList<Exception>();
@@ -378,7 +370,7 @@ public class DatabaseImportController implements ImportingController {
                 }.start();
                 
                 HttpUtilities.respond(response, "ok", "done");
-            } catch (JSONException e) {
+            } catch (IOException e) {
                 throw new ServletException(e);
             }
         }
@@ -400,7 +392,7 @@ public class DatabaseImportController implements ImportingController {
             ProjectMetadata metadata,
             final ImportingJob job, 
             int limit, 
-            JSONObject options,
+            ObjectNode options,
             List<Exception> exceptions) throws DatabaseServiceException{
         
         

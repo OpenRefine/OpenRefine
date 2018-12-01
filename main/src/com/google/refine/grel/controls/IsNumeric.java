@@ -33,11 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.controls;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class IsNumeric extends IsTest {
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Returns whether o can represent a number";
     }
 

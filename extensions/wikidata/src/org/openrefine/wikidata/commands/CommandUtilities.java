@@ -5,7 +5,9 @@ import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONWriter;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import com.google.refine.util.ParsingUtilities;
 
 public class CommandUtilities {
     
@@ -21,11 +23,13 @@ public class CommandUtilities {
     public static void respondError(HttpServletResponse response, String errorMessage)
             throws IOException {
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
-        writer.object();
-        writer.key("code"); writer.value("error");
-        writer.key("message"); writer.value(errorMessage);
-        writer.endObject();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("code", "error");
+        writer.writeStringField("message", errorMessage);
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
         w.flush();
         w.close();
     }

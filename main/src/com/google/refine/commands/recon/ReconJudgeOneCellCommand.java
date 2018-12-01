@@ -34,13 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.recon;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONWriter;
 
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
@@ -103,18 +100,13 @@ public class ReconJudgeOneCellCommand extends Command {
                  * If the process is done, write back the cell's data so that the
                  * client side can update its UI right away.
                  */
-                JSONWriter writer = new JSONWriter(response.getWriter());
 
                 Pool pool = new Pool();
-                Properties options = new Properties();
-                options.put("pool", pool);
+                if (process.newCell != null && process.newCell.recon != null) {
+                    pool.pool(process.newCell.recon);
+                }
 
-                writer.object();
-                writer.key("code"); writer.value("ok");
-                writer.key("historyEntry"); historyEntry.write(writer, options);
-                writer.key("cell"); process.newCell.write(writer, options);
-                writer.key("pool"); pool.write(writer, options);
-                writer.endObject();
+                respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, process.newCell, pool));
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");
             }

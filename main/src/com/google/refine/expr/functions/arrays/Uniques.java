@@ -38,10 +38,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -56,13 +53,8 @@ public class Uniques implements Function {
             Object v = args[0];
             
             if (v != null) {
-                if (v instanceof JSONArray) {
-                    try {
-                        v = JSONUtilities.toArray((JSONArray) v);
-                    } catch (JSONException e) {
-                        return new EvalError(ControlFunctionRegistry.getFunctionName(this) +
-                                " fails to process a JSON array: " + e.getMessage());
-                    }
+                if (v instanceof ArrayNode) {
+                    v = JSONUtilities.toArray((ArrayNode) v);
                 }
                 
                 if (v.getClass().isArray() || v instanceof List<?>) {
@@ -86,13 +78,17 @@ public class Uniques implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns array a with duplicates removed";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns array a with duplicates removed");
-        writer.key("params"); writer.value("array a");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array a";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

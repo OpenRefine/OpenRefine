@@ -1,14 +1,18 @@
 package com.google.refine.tests.clustering;
 
-import org.json.JSONObject;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.browsing.Engine;
 import com.google.refine.clustering.binning.BinningClusterer;
 import com.google.refine.clustering.binning.BinningClusterer.BinningClustererConfig;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class BinningClustererTests extends RefineTest {
     
@@ -30,28 +34,25 @@ public class BinningClustererTests extends RefineTest {
             + "]";
     
     @Test
-    public void testSerializeBinningClustererConfig() {
-        BinningClustererConfig config = new BinningClustererConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+    public void testSerializeBinningClustererConfig() throws JsonParseException, JsonMappingException, IOException {
+        BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
     
     @Test
-    public void testSerializeBinningClustererConfigWithNgrams() {
-        BinningClustererConfig config = new BinningClustererConfig();
-        config.initializeFromJSON(new JSONObject(configNgramJson));
+    public void testSerializeBinningClustererConfigWithNgrams() throws JsonParseException, JsonMappingException, IOException {
+        BinningClustererConfig config = ParsingUtilities.mapper.readValue(configNgramJson, BinningClustererConfig.class);
         TestUtils.isSerializedTo(config, configNgramJson);
     }
 
     @Test
-    public void testSerializeBinningClusterer() {
+    public void testSerializeBinningClusterer() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("column\n"
                 + "a\n"
                 + "à\n"
                 + "c\n"
                 + "ĉ\n");
-        BinningClustererConfig config = new BinningClustererConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+        BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
         TestUtils.isSerializedTo(clusterer, clustererJson);

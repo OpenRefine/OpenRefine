@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.RefineServlet;
 
 abstract public class HttpHeadersSupport {
@@ -44,8 +46,11 @@ abstract public class HttpHeadersSupport {
     static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<String, HttpHeaderInfo>();
 
     static public class HttpHeaderInfo {
+        @JsonIgnore
         final public String                 name;
+        @JsonProperty("header")
         final public String                 header;
+        @JsonProperty("defaultValue")
         final public String                 defaultValue;
         
         HttpHeaderInfo(String header, String defaultValue) {

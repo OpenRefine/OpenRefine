@@ -37,9 +37,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.grel.Function;
 
 public class Contains implements Function {
@@ -64,13 +61,17 @@ public class Contains implements Function {
         return null;
     }
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns whether s contains frag";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns whether s contains frag");
-        writer.key("params"); writer.value("string s, string frag");
-        writer.key("returns"); writer.value("boolean");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string frag";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

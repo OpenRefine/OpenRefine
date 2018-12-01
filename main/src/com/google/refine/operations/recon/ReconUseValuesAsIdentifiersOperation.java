@@ -2,15 +2,10 @@ package com.google.refine.operations.recon;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
@@ -26,7 +21,6 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCellOperation {
     
@@ -40,42 +34,23 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     @JsonIgnore
     protected StandardReconConfig reconConfig;
 
+    @JsonCreator
     public ReconUseValuesAsIdentifiersOperation(
+            @JsonProperty("engineConfig")
             EngineConfig engineConfig,
+            @JsonProperty("columnName")
             String columnName,
+            @JsonProperty("service")
             String service,
+            @JsonProperty("identifierSpace")
             String identifierSpace,
+            @JsonProperty("schemaSpace")
             String schemaSpace) {
         super(engineConfig, columnName, false);
         this.service = service;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
         this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true, Collections.emptyList());
-    }
-    
-    static public ReconUseValuesAsIdentifiersOperation reconstruct(JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconUseValuesAsIdentifiersOperation(
-            EngineConfig.reconstruct(engineConfig), 
-            obj.getString("columnName"),
-            obj.getString("service"),
-            obj.getString("identifierSpace"),
-            obj.getString("schemaSpace")
-        );
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("service"); writer.value(service);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.endObject();
     }
     
     @Override

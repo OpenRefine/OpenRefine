@@ -1,5 +1,8 @@
 package com.google.refine.tests.model;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Column;
@@ -8,8 +11,6 @@ import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.tests.util.TestUtils;
 
 import edu.mit.simile.butterfly.ButterflyModule;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ColumnTests {
     @Test

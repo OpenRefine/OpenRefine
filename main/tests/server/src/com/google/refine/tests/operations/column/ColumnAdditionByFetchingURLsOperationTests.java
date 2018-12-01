@@ -35,19 +35,20 @@ package com.google.refine.tests.operations.column;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -56,15 +57,42 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
+import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
+    
+    private String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
+            + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "\"newColumnName\":\"employments\","
+            + "\"columnInsertIndex\":2,"
+            + "\"baseColumnName\":\"orcid\","
+            + "\"urlExpression\":\"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
+            + "\"onError\":\"set-to-blank\","
+            + "\"delay\":500,"
+            + "\"cacheResponses\":true,"
+            + "\"httpHeadersJson\":["
+            + "    {\"name\":\"authorization\",\"value\":\"\"},"
+            + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
+            + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
+            + "]}";
+    
+    private String processJson = ""
+            +"{\n" + 
+            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n" + 
+            "    \"id\" : %d,\n" + 
+            "    \"immediate\" : false,\n" + 
+            "    \"progress\" : 0,\n" + 
+            "    \"status\" : \"pending\"\n" + 
+            " }";
 
     @Override
     @BeforeTest
@@ -76,10 +104,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     // dependencies
     private Project project;
     private Properties options;
-    private EngineConfig engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_URLS));
+    private EngineConfig engine_config = EngineConfig.reconstruct(ENGINE_JSON_URLS);
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("UrlFetchingTests", "fruits");       
     }
 
@@ -96,23 +124,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnAdditionByFetchingURLsOperation() throws JSONException, Exception {
-        String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
-                + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"newColumnName\":\"employments\","
-                + "\"columnInsertIndex\":2,"
-                + "\"baseColumnName\":\"orcid\","
-                + "\"urlExpression\":\"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
-                + "\"onError\":\"set-to-blank\","
-                + "\"delay\":500,"
-                + "\"cacheResponses\":true,"
-                + "\"httpHeadersJson\":["
-                + "    {\"name\":\"authorization\",\"value\":\"\"},"
-                + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
-                + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
-                + "]}";
-        TestUtils.isSerializedTo(ColumnAdditionByFetchingURLsOperation.reconstruct(project, new JSONObject(json)), json);
+    public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json);
+    }
+    
+    @Test
+    public void serializeUrlFetchingProcess() throws Exception {
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
+        Process process = op.createProcess(project, new Properties());
+        TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
     }
     
     /**
@@ -233,11 +253,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         String userAgentValue =  "OpenRefine";
         String authorizationValue = "Basic";
         String acceptValue = "*/*";
-        String jsonString = "[{\"name\": \"authorization\",\"value\": \""+authorizationValue+
-                             "\"},{\"name\": \"user-agent\",\"value\": \""+userAgentValue+
-                             "\"},{\"name\": \"accept\",\"value\": \""+acceptValue+"\"}]";
-
-        JSONArray httpHeadersJson = new JSONArray(jsonString);
+        List<HttpHeader> headers = new ArrayList<>();
+        headers.add(new HttpHeader("authorization", authorizationValue));
+        headers.add(new HttpHeader("user-agent", userAgentValue));
+        headers.add(new HttpHeader("accept", acceptValue));
 
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
             "fruits",
@@ -247,7 +266,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             1,
             50,
             true,
-            httpHeadersJson);
+            headers);
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
         process.startPerforming(pm);
@@ -260,21 +279,21 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning());
 
         int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
-        JSONObject headersUsed = null;
+        ObjectNode headersUsed = null;
         
         // sometime, we got response: 
         // Error
         // Over Quota
         // This application is temporarily over its serving quota. Please try again later.
         try { 
-            headersUsed = new JSONObject(project.rows.get(0).getCellValue(newCol).toString());
-        } catch (JSONException ex) {
+            headersUsed = ParsingUtilities.mapper.readValue(project.rows.get(0).getCellValue(newCol).toString(), ObjectNode.class);
+        } catch (IOException ex) {
             return;
         }
         // Inspect the results we got from remote service
-        Assert.assertEquals(headersUsed.getString("User-Agent"), userAgentValue);
-        Assert.assertEquals(headersUsed.getString("Authorization"), authorizationValue);
-        Assert.assertEquals(headersUsed.getString("Accept"), acceptValue);
+        Assert.assertEquals(headersUsed.get("User-Agent").asText(), userAgentValue);
+        Assert.assertEquals(headersUsed.get("Authorization").asText(), authorizationValue);
+        Assert.assertEquals(headersUsed.get("Accept").asText(), acceptValue);
     }
 
 }

@@ -41,16 +41,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -62,41 +59,42 @@ import com.google.refine.model.changes.DataExtensionChange;
 import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 
 public class ExtendDataOperation extends EngineDependentOperation {
-    final protected String     _baseColumnName;
-    final protected String     _endpoint;
-    final protected String     _identifierSpace;
-    final protected String     _schemaSpace;
-    final protected JSONObject _extension;
-    final protected int        _columnInsertIndex;
+    @JsonProperty("baseColumnName")
+    final protected String              _baseColumnName;
+    @JsonProperty("endpoint")
+    final protected String              _endpoint;
+    @JsonProperty("identifierSpace")
+    final protected String              _identifierSpace;
+    @JsonProperty("schemaSpace")
+    final protected String              _schemaSpace;
+    @JsonProperty("extension")
+    final protected DataExtensionConfig _extension;
+    @JsonProperty("columnInsertIndex")
+    final protected int                 _columnInsertIndex;
+
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ExtendDataOperation(
-            EngineConfig.reconstruct(engineConfig),
-            obj.getString("baseColumnName"),
-            obj.getString("endpoint"),
-            obj.getString("identifierSpace"),
-            obj.getString("schemaSpace"),
-            obj.getJSONObject("extension"),
-            obj.getInt("columnInsertIndex")
-        );
-    }
-    
+    @JsonCreator
     public ExtendDataOperation(
-        EngineConfig   engineConfig,
-        String         baseColumnName,
-        String         endpoint,
-        String         identifierSpace,
-        String         schemaSpace,
-        JSONObject     extension,
-        int            columnInsertIndex 
+        @JsonProperty("engineConfig")
+        EngineConfig        engineConfig,
+        @JsonProperty("baseColumnName")
+        String              baseColumnName,
+        @JsonProperty("endpoint")
+        String              endpoint,
+        @JsonProperty("identifierSpace")
+        String              identifierSpace,
+        @JsonProperty("schemaSpace")
+        String              schemaSpace,
+        @JsonProperty("extension")
+        DataExtensionConfig extension,
+        @JsonProperty("columnInsertIndex")
+        int                 columnInsertIndex 
     ) {
         super(engineConfig);
         
@@ -106,23 +104,6 @@ public class ExtendDataOperation extends EngineDependentOperation {
         _schemaSpace = schemaSpace;
         _extension = extension;
         _columnInsertIndex = columnInsertIndex;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); getEngineConfig().write(writer, options);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("endpoint"); writer.value(_endpoint);
-        writer.key("identifierSpace"); writer.value(_identifierSpace);
-        writer.key("schemaSpace"); writer.value(_schemaSpace);
-        writer.key("extension"); writer.value(_extension);
-        writer.endObject();
     }
 
     @Override
@@ -157,26 +138,13 @@ public class ExtendDataOperation extends EngineDependentOperation {
             Project project, 
             EngineConfig engineConfig, 
             String description
-        ) throws JSONException {
+        ) {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
             
             _job = new ReconciledDataExtensionJob(_extension, _endpoint);
-        }
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            
-            writer.object();
-            writer.key("id"); writer.value(hashCode());
-            writer.key("description"); writer.value(_description);
-            writer.key("immediate"); writer.value(false);
-            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-            writer.key("progress"); writer.value(_progress);
-            writer.endObject();
         }
         
         @Override

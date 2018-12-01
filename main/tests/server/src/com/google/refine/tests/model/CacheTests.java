@@ -35,8 +35,6 @@ package com.google.refine.tests.model;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -53,7 +51,6 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.row.RowRemovalOperation;
 import com.google.refine.tests.RefineTest;
@@ -78,11 +75,11 @@ public class CacheTests extends RefineTest {
     Properties bindings;
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("CacheTests", "Column A");
         
         engine = new Engine(project);
-        engine_config = EngineConfig.reconstruct(new JSONObject(ENGINE_JSON_DUPLICATES));
+        engine_config = EngineConfig.reconstruct(ENGINE_JSON_DUPLICATES);
         engine.initializeFromConfig(engine_config);
         engine.setMode(Engine.Mode.RowBased);
         

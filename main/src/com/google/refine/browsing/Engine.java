@@ -36,14 +36,10 @@ package com.google.refine.browsing;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.util.ConjunctiveFilteredRecords;
 import com.google.refine.browsing.util.ConjunctiveFilteredRows;
@@ -54,10 +50,13 @@ import com.google.refine.model.Row;
 /**
  * Faceted browsing engine.
  */
-public class Engine implements Jsonizable {
+public class Engine  {
     static public enum Mode {
+        @JsonProperty("row-based")
         RowBased,
+        @JsonProperty("record-based")
         RecordBased
+       
     }
 
     public final static String INCLUDE_DEPENDENT = "includeDependent";
@@ -65,8 +64,11 @@ public class Engine implements Jsonizable {
     public final static String MODE_ROW_BASED = "row-based";
     public final static String MODE_RECORD_BASED = "record-based";
 
+    @JsonIgnore
     protected Project _project;
+    @JsonProperty("facets")
     protected List<Facet> _facets = new LinkedList<Facet>();
+    @JsonIgnore
     protected EngineConfig _config = new EngineConfig(Collections.emptyList(), Mode.RowBased);
 
     static public String modeToString(Mode mode) {
@@ -80,6 +82,7 @@ public class Engine implements Jsonizable {
         _project  = project;
     }
 
+    @JsonProperty("engine-mode")
     public Mode getMode() {
         return _config.getMode();
     }
@@ -87,6 +90,7 @@ public class Engine implements Jsonizable {
         _config = new EngineConfig(_config.getFacetConfigs(), mode);
     }
 
+    @JsonIgnore
     public FilteredRows getAllRows() {
         return new FilteredRows() {
             @Override
@@ -108,6 +112,7 @@ public class Engine implements Jsonizable {
         };
     }
 
+    @JsonIgnore
     public FilteredRows getAllFilteredRows() {
         return getFilteredRows(null);
     }
@@ -130,6 +135,7 @@ public class Engine implements Jsonizable {
         throw new InternalError("Unknown mode.");
     }
 
+    @JsonIgnore
     public FilteredRecords getAllRecords() {
         return new FilteredRecords() {
             @Override
@@ -148,6 +154,7 @@ public class Engine implements Jsonizable {
         };
     }
 
+    @JsonIgnore
     public FilteredRecords getFilteredRecords() {
         return getFilteredRecords(null);
     }
@@ -167,12 +174,6 @@ public class Engine implements Jsonizable {
         }
         throw new InternalError("This method should not be called when the engine is not in record mode.");
     }
-
-    @Deprecated
-    public void initializeFromJSON(JSONObject o) throws JSONException {
-        EngineConfig config = EngineConfig.reconstruct(o);
-        initializeFromConfig(config);
-    }
     
     public void initializeFromConfig(EngineConfig config) {
         _config = config;
@@ -181,7 +182,7 @@ public class Engine implements Jsonizable {
                 .collect(Collectors.toList());
     }
 
-    public void computeFacets() throws JSONException {
+    public void computeFacets() {
         if (_config.getMode().equals(Mode.RowBased)) {
             for (Facet facet : _facets) {
                 FilteredRows filteredRows = getFilteredRows(facet);
@@ -197,20 +198,5 @@ public class Engine implements Jsonizable {
         } else {
             throw new InternalError("Unknown mode.");
         }
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-    throws JSONException {
-
-        writer.object();
-        writer.key("facets");
-        writer.array();
-        for (Facet facet : _facets) {
-            facet.write(writer, options);
-        }
-        writer.endArray();
-        writer.key(MODE); writer.value(_config.getMode().equals(Mode.RowBased) ? MODE_ROW_BASED : MODE_RECORD_BASED);
-        writer.endObject();
     }
 }

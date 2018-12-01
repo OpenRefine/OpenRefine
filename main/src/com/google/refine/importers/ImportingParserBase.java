@@ -39,11 +39,11 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
@@ -51,8 +51,8 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 abstract public class ImportingParserBase implements ImportingParser {
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
@@ -67,9 +67,9 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(ImportingJob job,
-            List<JSONObject> fileRecords, String format) {
-        JSONObject options = new JSONObject();
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         
         return options;
@@ -77,10 +77,10 @@ abstract public class ImportingParserBase implements ImportingParser {
     
     @Override
     public void parse(Project project, ProjectMetadata metadata,
-            final ImportingJob job, List<JSONObject> fileRecords, String format,
-            int limit, JSONObject options, List<Exception> exceptions) {
+            final ImportingJob job, List<ObjectNode> fileRecords, String format,
+            int limit, ObjectNode options, List<Exception> exceptions) {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
-        for (JSONObject fileRecord : fileRecords) {
+        for (ObjectNode fileRecord : fileRecords) {
             if (job.canceled) {
                 break;
             }
@@ -101,9 +101,9 @@ abstract public class ImportingParserBase implements ImportingParser {
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,
-        JSONObject fileRecord,
+        ObjectNode fileRecord,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions,
         final MultiFileReadingProgress progress
     ) throws IOException {
@@ -142,19 +142,15 @@ abstract public class ImportingParserBase implements ImportingParser {
         String fileSource,
         Reader reader,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         pushImportingOptions(metadata, fileSource, options);
     }
 
-    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, JSONObject options) {
-        try {
-            options.put("fileSource", fileSource);
-        } catch (JSONException e) {
-            // ignore
-        }
-     // set the import options to metadata:
+    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
+        options.put("fileSource", fileSource);
+        // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
     }
     
@@ -165,7 +161,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         String fileSource,
         InputStream inputStream,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         pushImportingOptions(metadata, fileSource, options);

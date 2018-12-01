@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.booleans;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -58,13 +55,17 @@ public class And implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("AND two or more booleans to yield a boolean");
-        writer.key("params"); writer.value("boolean a, boolean b");
-        writer.key("returns"); writer.value("boolean");
-        writer.endObject();
+    public String getDescription() {
+    	return "AND two or more booleans to yield a boolean";
+    }
+    
+    @Override
+    public String getParams() {
+        return "boolean a, boolean b";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

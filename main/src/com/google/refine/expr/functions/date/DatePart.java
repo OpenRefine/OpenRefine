@@ -33,18 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.date;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
-import java.util.TimeZone;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -141,11 +138,17 @@ public class DatePart implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        writer.key("description"); writer.value("Returns part of a date");
-        writer.key("params"); writer.value("date d, string part");
-        writer.key("returns"); writer.value("date");
-        writer.endObject();
+    public String getDescription() {
+    	return "Returns part of a date";
+    }
+    
+    @Override
+    public String getParams() {
+        return "date d, string part";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "date";
     }
 }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -24,7 +22,7 @@ import com.google.refine.operations.cell.FillDownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.util.Pool;
+import com.google.refine.util.ParsingUtilities;
 
 public class BlankDownTests extends RefineTest {
     
@@ -51,19 +49,19 @@ public class BlankDownTests extends RefineTest {
     }
     
     @Test
-    public void serializeBlankDownOperation() throws JSONException, Exception {
+    public void serializeBlankDownOperation() throws Exception {
         String json = "{\"op\":\"core/blank-down\","
                 + "\"description\":\"Blank down cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\"}";
-        AbstractOperation op = BlankDownOperation.reconstruct(project, new JSONObject(json));
+        AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
         TestUtils.isSerializedTo(op, json);
     }
     
     @Test
     public void testBlankDownRecords() throws Exception {
         AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -77,7 +75,7 @@ public class BlankDownTests extends RefineTest {
     @Test
     public void testBlankDownRows() throws Exception {
         AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -103,11 +101,10 @@ public class BlankDownTests extends RefineTest {
     	project.columnModel.update();
     	
     	AbstractOperation op = new BlankDownOperation(
-                EngineConfig.reconstruct(new JSONObject("{\"mode\":\"record-based\",\"facets\":[]}")),
+                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
-        //project.saveToOutputStream(System.out, new Pool());
         
         Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
         Assert.assertNull(project.rows.get(1).cells.get(3));

@@ -35,8 +35,12 @@ package com.google.refine.model;
 
 import java.util.Properties;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.OperationResolver;
 import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
 
@@ -44,7 +48,12 @@ import com.google.refine.process.QuickHistoryEntryProcess;
  *  An abstract operation can be applied to different but similar
  *  projects.
  */
-abstract public class AbstractOperation implements Jsonizable {
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.CUSTOM,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="op")
+@JsonTypeIdResolver(OperationResolver.class)
+abstract public class AbstractOperation  {
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
             @Override
@@ -60,5 +69,15 @@ abstract public class AbstractOperation implements Jsonizable {
     
     protected String getBriefDescription(Project project) {
         throw new UnsupportedOperationException();
+    }
+    
+    @JsonProperty("op")
+    public String getOperationId() {
+        return OperationRegistry.s_opClassToName.get(this.getClass());
+    }
+    
+    @JsonProperty("description")
+    public String getJsonDescription() {
+        return getBriefDescription(null);
     }
 }

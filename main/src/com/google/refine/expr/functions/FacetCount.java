@@ -35,9 +35,6 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.util.ExpressionNominalValueGrouper;
 import com.google.refine.expr.EvalError;
@@ -87,13 +84,17 @@ public class FacetCount implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the facet count corresponding to the given choice value";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the facet count corresponding to the given choice value");
-        writer.key("params"); writer.value("choiceValue, string facetExpression, string columnName");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "choiceValue, string facetExpression, string columnName";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

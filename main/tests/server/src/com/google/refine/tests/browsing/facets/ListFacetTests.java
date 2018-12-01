@@ -1,14 +1,18 @@
 package com.google.refine.tests.browsing.facets;
 
-import org.json.JSONObject;
+import java.io.IOException;
+
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.facets.Facet;
 import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ListFacetTests extends RefineTest {
     
@@ -33,7 +37,7 @@ public class ListFacetTests extends RefineTest {
             + "\"expression\":\"value+\\\"bar\\\"\","
             + "\"columnName\":\"Column A\","
             + "\"invert\":false,"
-            + "\"error\":\"No column named Column A\"}\" are not equal as JSON strings.\n" + 
+            + "\"error\":\"No column named Column A\"" + 
             "}";
     
     private static String jsonFacet = "{"
@@ -59,21 +63,19 @@ public class ListFacetTests extends RefineTest {
     		+ "]}";
 
     @Test
-    public void serializeListFacetConfig() {
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+    public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         TestUtils.isSerializedTo(facetConfig, jsonConfig);
     }
     
     @Test
-    public void serializeListFacet() {
+    public void serializeListFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("Column A\n" +
                 "foo\n" +
                 "bar\n");
         Engine engine = new Engine(project);
         
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         
         Facet facet = facetConfig.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
@@ -82,27 +84,25 @@ public class ListFacetTests extends RefineTest {
     }
     
     @Test
-    public void serializeListFacetWithError() {
+    public void serializeListFacetWithError() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("other column\n" +
                 "foo\n" +
                 "bar\n");
        
-        ListFacetConfig facetConfig = new ListFacetConfig();
-        facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
         TestUtils.isSerializedTo(facet, jsonFacetError);
     }
     
     @Test
-    public void testSelectedEmptyChoice() {
+    public void testSelectedEmptyChoice() throws IOException {
     	Project project = createCSVProject("Column A\n" + 
     			"a\n" + 
     			"c\n" + 
     			"e");
     	Engine engine = new Engine(project);
     	
-    	ListFacetConfig facetConfig = new ListFacetConfig();
-    	facetConfig.initializeFromJSON(new JSONObject(jsonConfig));
+    	ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
     	Facet facet = facetConfig.apply(project);
     	facet.computeChoices(project, engine.getAllFilteredRows());
     	TestUtils.isSerializedTo(facet, selectedEmptyChoiceFacet);

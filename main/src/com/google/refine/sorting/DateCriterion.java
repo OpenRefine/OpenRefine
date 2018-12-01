@@ -63,4 +63,9 @@ public class DateCriterion extends Criterion {
             }
         };
     }
+
+    @Override
+    public String getValueType() {
+        return "date";
+    }
 }

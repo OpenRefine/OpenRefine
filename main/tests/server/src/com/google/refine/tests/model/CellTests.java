@@ -1,14 +1,10 @@
 package com.google.refine.tests.model;
 
-import org.testng.annotations.Test;
-
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.util.Properties;
+import org.testng.annotations.Test;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;
@@ -32,15 +28,12 @@ public class CellTests {
     
     @Test
     public void serializeCellWithRecon() throws Exception {
-        recon = Recon.loadStreaming(reconJson, pool);
+        recon = Recon.loadStreaming(reconJson);
         when(pool.getRecon("1533649346002675326")).thenReturn(recon);
         String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":\"1533649346002675326\"}";
         
-        Properties options = mock(Properties.class);
-        when(options.get("pool")).thenReturn(pool);
         Cell c = Cell.loadStreaming(json, pool);
-        TestUtils.isSerializedTo(c, json, options);
-        verify(pool, times(1)).pool(recon);
+        TestUtils.isSerializedTo(c, json);
     }
     
     @Test

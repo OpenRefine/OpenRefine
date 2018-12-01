@@ -36,12 +36,11 @@ package com.google.refine.browsing.filters;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -86,17 +85,13 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
                     }
                 }
                 return invert;
-            } else if (value instanceof JSONArray) {
-                JSONArray a = (JSONArray) value;
-                int l = a.length();
+            } else if (value instanceof ArrayNode) {
+                ArrayNode a = (ArrayNode) value;
+                int l = a.size();
                 
                 for (int i = 0; i < l; i++) {
-                    try {
-                        if (checkValue(a.get(i).toString())) {
-                            return !invert;
-                        }
-                    } catch (JSONException e) {
-                        // ignore
+                    if (checkValue(JsonValueConverter.convert(a.get(i)).toString())) {
+                        return !invert;
                     }
                 }
                 return invert;

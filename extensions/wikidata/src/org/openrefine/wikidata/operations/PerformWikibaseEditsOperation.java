@@ -31,9 +31,6 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.commons.lang.Validate;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -46,16 +43,16 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.Pool;
@@ -64,44 +61,46 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
 
+    @JsonProperty("summary")
     private String summary;
 
-    public PerformWikibaseEditsOperation(EngineConfig engineConfig, String summary) {
+    @JsonCreator
+    public PerformWikibaseEditsOperation(
+    		@JsonProperty("engineConfig")
+    		EngineConfig engineConfig,
+    		@JsonProperty("summary")
+    		String summary) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
     }
-
-    static public AbstractOperation reconstruct(Project project, JSONObject obj)
-            throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String summary = null;
-        if (obj.has("summary")) {
-            summary = obj.getString("summary");
-        }
-        return new PerformWikibaseEditsOperation(
-                EngineConfig.reconstruct(engineConfig), summary);
+    
+    /* The constructor above should be enough for deserialization,
+     * but for some unknown reason it can fail in certain cases
+     * (might be due to caching deserializers across threads?)
+     * 
+     * So we sadly add a default constructor and a setter below.
+     * 
+     * TODO delete the default constructor and setter, make summary final
+     */
+    public PerformWikibaseEditsOperation() {
+    	super(null);
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("op");
-        writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description");
-        writer.value("Perform Wikibase edits");
-        writer.key("summary");
-        writer.value(summary);
-        writer.key("engineConfig");
-        getEngineConfig().write(writer, options);
-        writer.endObject();
+    
+    @JsonProperty("engineConfig")
+    public void setEngineConfig(EngineConfig config) {
+    	this._engineConfig = config;
+    }
+    
+    @JsonProperty("summary")
+    public void setSummary(String summary) {
+    	this.summary = summary;
     }
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Peform edits on Wikidata";
+        return "Perform Wikibase edits";
     }
 
     @Override

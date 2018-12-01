@@ -35,14 +35,12 @@ package com.google.refine.commands.recon;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
-import com.google.refine.operations.recon.ExtendDataOperation;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
+import com.google.refine.operations.recon.ExtendDataOperation;
 
 public class ExtendDataCommand extends EngineDependentCommand {
     @Override
@@ -56,7 +54,7 @@ public class ExtendDataCommand extends EngineDependentCommand {
         String schemaSpace = request.getParameter("schemaSpace");
         
         String jsonString = request.getParameter("extension");
-        JSONObject extension = ParsingUtilities.evaluateJsonStringToObject(jsonString);
+        DataExtensionConfig extension = DataExtensionConfig.reconstruct(jsonString);
         
         return new ExtendDataOperation(
             engineConfig, 

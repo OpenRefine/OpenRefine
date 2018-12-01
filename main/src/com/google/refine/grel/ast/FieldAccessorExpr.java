@@ -35,13 +35,13 @@ package com.google.refine.grel.ast;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.refine.expr.EvalError;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
+import com.google.refine.expr.util.JsonValueConverter;
 
 /**
  * An abstract syntax tree node encapsulating a field accessor,
@@ -66,12 +66,9 @@ public class FieldAccessorExpr implements Evaluable {
             return null;
         } else if (o instanceof HasFields) {
             return ((HasFields) o).getField(_fieldName, bindings);
-        } else if (o instanceof JSONObject) {
-            try {
-                return ((JSONObject) o).get(_fieldName);
-            } catch (JSONException e) {
-                return null;
-            }
+        } else if (o instanceof ObjectNode) {
+        	JsonNode value = ((ObjectNode) o).get(_fieldName);
+        	return JsonValueConverter.convert(value);
         } else {
             return null;
         }

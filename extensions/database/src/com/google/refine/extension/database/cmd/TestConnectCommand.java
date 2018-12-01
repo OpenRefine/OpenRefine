@@ -36,13 +36,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
+import com.google.refine.util.ParsingUtilities;
 
 
 
@@ -69,7 +71,7 @@ public class TestConnectCommand extends DatabaseCommand {
             response.setHeader("Content-Type", "application/json");
            
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
+            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
             
             try {
                 
@@ -77,20 +79,18 @@ public class TestConnectCommand extends DatabaseCommand {
                         .testConnection(databaseConfiguration);
                 
                 response.setStatus(HttpStatus.SC_OK);
-                writer.object();
+                writer.writeStartObject();
                 
-                writer.key("connectionResult"); 
-                writer.value(connectionTestResult);
-                writer.key("code"); 
-                writer.value("ok");
-                writer.endObject();
+                writer.writeBooleanField("connectionResult", connectionTestResult);
+                writer.writeStringField("code", "ok");
+                writer.writeEndObject();
                 
             } catch (DatabaseServiceException e) {
                 logger.error("TestConnectCommand::Post::DatabaseServiceException::{}", e);
-                sendError(HttpStatus.SC_UNAUTHORIZED,response, writer, e);
+                sendError(HttpStatus.SC_UNAUTHORIZED,response, e);
             } finally {
-               // writer.endObject();
-              //  w.flush();
+                writer.flush();
+                writer.close();
                 w.close();
             }
         } catch (Exception e) {

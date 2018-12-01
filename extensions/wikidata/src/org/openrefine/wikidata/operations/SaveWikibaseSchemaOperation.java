@@ -28,50 +28,53 @@ import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.openrefine.wikidata.schema.WikibaseSchema;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
-    final public String operationDescription = "Save Wikibase schema";
-    final protected WikibaseSchema _schema;
+    @JsonIgnore
+    final public static String operationDescription = "Save Wikibase schema";
+    @JsonProperty("schema")
+    protected WikibaseSchema _schema;
 
-    public SaveWikibaseSchemaOperation(WikibaseSchema schema) {
+    @JsonCreator
+    public SaveWikibaseSchemaOperation(
+    		@JsonProperty("schema")
+    		WikibaseSchema schema) {
         this._schema = schema;
-
     }
-
-    static public AbstractOperation reconstruct(Project project, JSONObject obj)
-            throws Exception {
-        return new SaveWikibaseSchemaOperation(WikibaseSchema.reconstruct(obj.getJSONObject("schema")));
+    
+    /* The constructor above should be enough for deserialization,
+     * but for some unknown reason it can fail in certain cases
+     * (might be due to caching deserializers across threads?)
+     * 
+     * So we sadly add a default constructor and a setter below.
+     * 
+     * TODO delete the default constructor and setter, make schema final
+     */
+    public SaveWikibaseSchemaOperation() {
+    	
     }
-
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("op");
-        writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description");
-        writer.value(operationDescription);
-        writer.key("schema");
-        _schema.write(writer, options);
-        writer.endObject();
-
+    
+    @JsonProperty("schema")
+    public void setSchema(WikibaseSchema schema) {
+    	this._schema = schema;
     }
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Save Wikibase schema skelton";
+        return operationDescription;
     }
 
     @Override
@@ -134,9 +137,9 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
                 String value = line.substring(equal + 1);
 
                 if ("oldSchema".equals(field) && value.length() > 0) {
-                    oldSchema = WikibaseSchema.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                    oldSchema = ParsingUtilities.mapper.readValue(value, WikibaseSchema.class);
                 } else if ("newSchema".equals(field) && value.length() > 0) {
-                    newSchema = WikibaseSchema.reconstruct(ParsingUtilities.evaluateJsonStringToObject(value));
+                    newSchema = ParsingUtilities.mapper.readValue(value, WikibaseSchema.class);
                 }
             }
 
@@ -149,12 +152,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         static protected void writeWikibaseSchema(WikibaseSchema s, Writer writer)
                 throws IOException {
             if (s != null) {
-                JSONWriter jsonWriter = new JSONWriter(writer);
-                try {
-                    s.write(jsonWriter, new Properties());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                ParsingUtilities.defaultWriter.writeValue(writer, s);
             }
         }
     }

@@ -3,10 +3,10 @@ package com.google.refine.tests.operations.recon;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -24,10 +24,11 @@ import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconJudgeSimilarCellsTests extends RefineTest {
     
-    static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct(new JSONObject("{\"mode\":\"row-based\"}}"));
+    static final EngineConfig ENGINE_CONFIG = EngineConfig.reconstruct("{\"mode\":\"row-based\"}}");
     
     @Override
     @BeforeTest
@@ -37,20 +38,29 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
     }
     
     @Test
-    public void serializeReconJudgeSimilarCellsOperation() {
-        AbstractOperation op = new ReconJudgeSimilarCellsOperation(
-                ENGINE_CONFIG,
-                "A",
-                "foo",
-                Recon.Judgment.New,
-                null, true);
-        TestUtils.isSerializedTo(op, "{\"op\":\"core/recon-judge-similar-cells\","
+    public void serializeReconJudgeSimilarCellsOperation() throws  IOException {
+        String json = "{\"op\":\"core/recon-judge-similar-cells\","
                 + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"A\","
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
-                + "\"shareNewTopics\":true}");
+                + "\"shareNewTopics\":true}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
+    }
+    
+    @Test
+    public void serializeReconJudgeSimilarCellsOperationMatch() throws  IOException {
+        String json = "{\"op\":\"core/recon-judge-similar-cells\","
+                + "\"description\":\"Match item Douglas Adams (Q42) for cells containing \\\"foo\\\" in column A\","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"A\","
+                + "\"similarValue\":\"foo\","
+                + "\"judgment\":\"matched\","
+                + "\"match\":{\"id\":\"Q42\",\"name\":\"Douglas Adams\",\"types\":[\"Q5\"],\"score\":85},"
+                + "\"shareNewTopics\":false"
+                + "}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
     }
     
     @Test

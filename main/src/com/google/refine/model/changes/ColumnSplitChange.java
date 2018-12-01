@@ -42,9 +42,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
@@ -52,9 +49,10 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
-public class ColumnSplitChange extends ColumnChange {
+public class ColumnSplitChange implements Change {
     final protected String              _columnName;
     
     final protected List<String>        _columnNames;
@@ -116,21 +114,6 @@ public class ColumnSplitChange extends ColumnChange {
         _firstNewCellIndex = firstNewCellIndex;
         _oldRows = oldRows;
         _newRows = newRows;
-    }
-
-    
-    public List<String> getColumnNames() {
-        return _columnNames;
-    }
-
-    
-    public boolean isRemoveOriginalColumn() {
-        return _removeOriginalColumn;
-    }
-
-    
-    public int getColumnIndex() {
-        return _columnIndex;
     }
 
     @Override
@@ -287,7 +270,7 @@ public class ColumnSplitChange extends ColumnChange {
                 if (value == null) {
                     writer.write("null");
                 } else if (value instanceof String) {
-                    writer.write(JSONObject.quote((String) value));
+                    writer.write(ParsingUtilities.mapper.writeValueAsString((String) value));
                 } else {
                     writer.write(value.toString());
                 }
@@ -376,10 +359,7 @@ public class ColumnSplitChange extends ColumnChange {
                     for (int r = 0; r < valueCount; r++) {
                         line = reader.readLine();
                         
-                        JSONTokener t = new JSONTokener(line);
-                        Object o = t.nextValue();
-                        
-                        tuple.add((o != JSONObject.NULL) ? (Serializable) o : null);
+                        tuple.add((Serializable) ParsingUtilities.mapper.readValue(line, Object.class));
                     }
                     
                     tuples.add(tuple);

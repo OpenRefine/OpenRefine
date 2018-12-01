@@ -41,15 +41,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class MassReconChange implements Change {
@@ -110,12 +108,7 @@ public class MassReconChange implements Change {
             Pool pool = (Pool) options.get("pool");
             pool.poolReconCandidates(recon);
 
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            try {
-                recon.write(jsonWriter, options);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ParsingUtilities.saveWriter.writeValue(writer, recon);
             writer.write("\n");
         }
     }
@@ -147,7 +140,7 @@ public class MassReconChange implements Change {
         
         for (int i = 0; i < count; i++) {
             String line = reader.readLine();
-            Recon recon = Recon.loadStreaming(line, pool);
+            Recon recon = Recon.loadStreaming(line);
             
             recons.put(recon.id, recon);
         }

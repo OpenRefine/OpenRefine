@@ -34,12 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.io.Serializable;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 
 /**
  * An error that occurs during the evaluation of an Evaluable. Errors are values, too
@@ -47,9 +44,10 @@ import com.google.refine.Jsonizable;
  * thrown because an error might occupy just one element in an array and doesn't need
  * to make the whole array erroneous.
  */
-public class EvalError implements Serializable, Jsonizable {
+public class EvalError implements Serializable {
     private static final long serialVersionUID = -102681220092874080L;
     
+    @JsonProperty("message")
     final public String message;
     
     public EvalError(String message) {
@@ -66,14 +64,9 @@ public class EvalError implements Serializable, Jsonizable {
         return this.message;
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("type"); writer.value("error");
-        writer.key("message"); writer.value(message);
-        writer.endObject();
+    @JsonProperty("type")
+    public String getType() {
+        return "error";
     }
 
 }

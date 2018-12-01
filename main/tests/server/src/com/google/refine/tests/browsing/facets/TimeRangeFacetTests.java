@@ -1,10 +1,12 @@
 package com.google.refine.tests.browsing.facets;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.facets.TimeRangeFacet;
 import com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
@@ -12,6 +14,7 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class TimeRangeFacetTests extends RefineTest {
@@ -20,13 +23,13 @@ public class TimeRangeFacetTests extends RefineTest {
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
             + "\"columnName\":\"my column\","
-            + "\"min\":1.199329445E12,"
-            + "\"max\":1.51496695E12,"
-            + "\"step\":3.1556952E10,"
+            + "\"min\":1199329445000,"
+            + "\"max\":1514966950000,"
+            + "\"step\":31556952000,"
             + "\"bins\":[1,0,0,0,1,0,0,0,0,0,1],"
             + "\"baseBins\":[1,0,0,0,1,0,0,0,0,0,1],"
-            + "\"from\":1.262443349E12,"
-            + "\"to\":1.51496695E12,"
+            + "\"from\":1262443349000,"
+            + "\"to\":1514966950000,"
             + "\"baseTimeCount\":3,"
             + "\"baseNonTimeCount\":1,"
             + "\"baseBlankCount\":0,"
@@ -50,14 +53,13 @@ public class TimeRangeFacetTests extends RefineTest {
             "        }";
     
     @Test
-    public void serializeTimeRangeFacetConfig() {
-        TimeRangeFacetConfig config = new TimeRangeFacetConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+    public void serializeTimeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+        TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
     
     @Test
-    public void serializeTimeRangeFacet() {
+    public void serializeTimeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("my column\n"
                 + "placeholder\n"
                 + "nontime\n"
@@ -68,8 +70,7 @@ public class TimeRangeFacetTests extends RefineTest {
         project.rows.get(3).cells.set(0, new Cell(OffsetDateTime.parse("2012-04-05T02:00:01Z"), null));
         
         Engine engine = new Engine(project);
-        TimeRangeFacetConfig config = new TimeRangeFacetConfig();
-        config.initializeFromJSON(new JSONObject(configJson));
+        TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TimeRangeFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
         TestUtils.isSerializedTo(facet, facetJson);

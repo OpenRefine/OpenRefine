@@ -10,8 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -20,10 +18,12 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
+import com.google.refine.util.ParsingUtilities;
 
 @Test(groups = { "requiresMySQL" })
 public class TestQueryCommandTest extends DBExtensionTests {
@@ -64,7 +64,7 @@ public class TestQueryCommandTest extends DBExtensionTests {
     
 
     @Test
-    public void testDoPost() throws IOException, ServletException, JSONException {
+    public void testDoPost() throws IOException, ServletException {
 
         when(request.getParameter("databaseType")).thenReturn(testDbConfig.getDatabaseType());
         when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
@@ -85,12 +85,12 @@ public class TestQueryCommandTest extends DBExtensionTests {
         executeQueryCommand.doPost(request, response);
         
         String result = sw.getBuffer().toString().trim();
-        JSONObject json = new JSONObject(result);
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
    
-        String code = json.getString("code");
+        String code = json.get("code").asText();
         Assert.assertEquals(code, "ok");
 
-        String queryResult = json.getString("QueryResult");
+        String queryResult = json.get("QueryResult").asText();
         Assert.assertNotNull(queryResult);
 
     }

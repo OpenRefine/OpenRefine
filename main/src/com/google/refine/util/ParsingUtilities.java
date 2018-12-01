@@ -54,12 +54,48 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 public class ParsingUtilities {
+    public static JsonFactory jsonFactory = new JsonFactory();
+    static {
+        jsonFactory.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+    }
+    public static final ObjectMapper mapper = new ObjectMapper(jsonFactory);
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Double.class, new SerializationFilters.DoubleSerializer());
+        module.addSerializer(double.class, new SerializationFilters.DoubleSerializer());
+        module.addSerializer(OffsetDateTime.class, new SerializationFilters.OffsetDateSerializer());
+        module.addSerializer(LocalDateTime.class, new SerializationFilters.LocalDateSerializer());
+        module.addDeserializer(OffsetDateTime.class, new SerializationFilters.OffsetDateDeserializer());
+        module.addDeserializer(LocalDateTime.class, new SerializationFilters.LocalDateDeserializer());
+        
+        mapper.registerModule(module);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    }
+    
+    public static final FilterProvider defaultFilters = new SimpleFilterProvider()
+            .addFilter("reconCandidateFilter", SerializationFilters.reconCandidateFilter);
+    public static final FilterProvider saveFilters = new SimpleFilterProvider()
+            .addFilter("reconCandidateFilter", SerializationFilters.noFilter);
+    
+    public static final ObjectWriter saveWriter = mapper.writerWithView(JsonViews.SaveMode.class).with(saveFilters);
+    public static final ObjectWriter defaultWriter = mapper.writerWithView(JsonViews.NonSaveMode.class).with(defaultFilters);
+
     public static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
                 
     static public Properties parseUrlParameters(HttpServletRequest request) {
@@ -116,29 +152,6 @@ public class ParsingUtilities {
         }
 
         return sb.toString();
-    }
-
-    static public JSONObject evaluateJsonStringToObject(String s) throws JSONException {
-        if( s == null ) {
-            throw new IllegalArgumentException("parameter 's' should not be null");
-        }
-        JSONTokener t = new JSONTokener(s);
-        Object o = t.nextValue();
-        if (o instanceof JSONObject) {
-            return (JSONObject) o;
-        } else {
-            throw new JSONException(s + " couldn't be parsed as JSON object");
-        }
-    }
-
-    static public JSONArray evaluateJsonStringToArray(String s) throws JSONException {
-        JSONTokener t = new JSONTokener(s);
-        Object o = t.nextValue();
-        if (o instanceof JSONArray) {
-            return (JSONArray) o;
-        } else {
-            throw new JSONException(s + " couldn't be parsed as JSON array");
-        }
     }
 
     private static final URLCodec codec = new URLCodec();
@@ -236,4 +249,28 @@ public class ParsingUtilities {
         cal.setTimeInMillis(offsetDateTime.toInstant().toEpochMilli());
         return cal;
     }
+
+	public static ObjectNode evaluateJsonStringToObjectNode(String optionsString) {
+		try {
+			JsonNode tree = mapper.readTree(optionsString);
+			if(tree instanceof ObjectNode) {
+				return (ObjectNode)tree;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ArrayNode evaluateJsonStringToArrayNode(String parameter) {
+		try {
+			JsonNode tree = mapper.readTree(parameter);
+			if(tree instanceof ArrayNode) {
+				return (ArrayNode)tree;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

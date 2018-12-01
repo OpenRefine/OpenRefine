@@ -37,9 +37,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -72,13 +69,17 @@ public class Type implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the type of o";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the type of o");
-        writer.key("params"); writer.value("object o");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "object o";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

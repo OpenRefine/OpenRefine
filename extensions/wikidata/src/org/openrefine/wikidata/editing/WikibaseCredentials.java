@@ -23,13 +23,9 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import java.util.Properties;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
 
 /**
  * This is just the necessary bits to store Wikidata credentials in OpenRefine's
@@ -38,9 +34,11 @@ import com.google.refine.Jsonizable;
  * @author Antonin Delpeuch
  *
  */
-class WikibaseCredentials implements Jsonizable {
+class WikibaseCredentials  {
 
+    @JsonProperty("username")
     private String username;
+    @JsonProperty("password")
     private String password;
 
     public WikibaseCredentials() {
@@ -48,7 +46,12 @@ class WikibaseCredentials implements Jsonizable {
         password = null;
     }
 
-    public WikibaseCredentials(String username, String password) {
+    @JsonCreator
+    public WikibaseCredentials(
+    		@JsonProperty("username")
+    		String username,
+    		@JsonProperty("password")
+    		String password) {
         this.username = username;
         this.password = password;
     }
@@ -64,23 +67,9 @@ class WikibaseCredentials implements Jsonizable {
     public boolean isNonNull() {
         return username != null && password != null && !"null".equals(username) && !"null".equals(password);
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        writer.object();
-        writer.key("class");
-        writer.value(this.getClass().getName());
-        writer.key("username");
-        writer.value(username);
-        writer.key("password");
-        writer.value(password);
-        writer.endObject();
+    
+    @JsonProperty("class")
+    public String getClassName() {
+        return getClass().getName();
     }
-
-    public static WikibaseCredentials load(JSONObject obj)
-            throws JSONException {
-        return new WikibaseCredentials(obj.getString("username"), obj.getString("password"));
-    }
-
 }

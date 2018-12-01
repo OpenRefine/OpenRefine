@@ -45,16 +45,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
@@ -65,9 +68,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.tests.util.TestUtils;
-import com.google.refine.util.JSONUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -165,7 +166,7 @@ public class RefineTest {
         ProjectMetadata metadata = new ProjectMetadata();
         metadata.setName(projectName);
         
-        JSONObject options = mock(JSONObject.class);
+        ObjectNode options = mock(ObjectNode.class);
         prepareImportOptions(options, ",", -1, 0, 0, 1, false, false);
         
         ImportingJob job = ImportingManager.createJob();
@@ -193,7 +194,7 @@ public class RefineTest {
      * @param guessValueType
      * @param ignoreQuotes
      */
-    private void prepareImportOptions(JSONObject options,
+    private void prepareImportOptions(ObjectNode options,
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
             
@@ -276,48 +277,36 @@ public class RefineTest {
     
     //----helpers----
     
-    static public void whenGetBooleanOption(String name, JSONObject options, Boolean def){
+    
+    static public void whenGetBooleanOption(String name, ObjectNode options, Boolean def){
         when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getBoolean(options, name, def)).thenReturn(def);
+        when(options.get(name)).thenReturn(def ? BooleanNode.TRUE : BooleanNode.FALSE);
     }
     
-    static public void whenGetIntegerOption(String name, JSONObject options, int def){
+    static public void whenGetIntegerOption(String name, ObjectNode options, int def){
         when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getInt(options, name, def)).thenReturn(def);
+        when(options.get(name)).thenReturn(new IntNode(def));
     }
     
-    static public void whenGetStringOption(String name, JSONObject options, String def){
+    static public void whenGetStringOption(String name, ObjectNode options, String def){
         when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getString(options, name, def)).thenReturn(def);
+        when(options.get(name)).thenReturn(new TextNode(def));
     }
     
-    static public void whenGetObjectOption(String name, JSONObject options, JSONObject def){
+    static public void whenGetObjectOption(String name, ObjectNode options, ObjectNode def){
         when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getObject(options, name)).thenReturn(def);
+        when(options.get(name)).thenReturn(def);
     }
     
-    static public void whenGetArrayOption(String name, JSONObject options, JSONArray def){
+    static public void whenGetArrayOption(String name, ObjectNode options, ArrayNode def){
         when(options.has(name)).thenReturn(true);
-        when(JSONUtilities.getArray(options, name)).thenReturn(def);
-    }
-    
-    static public void verifyGetOption(String name, JSONObject options){
-        verify(options, times(1)).has(name);
-        try {
-            verify(options, times(1)).get(name);
-        } catch (JSONException e) {
-            Assert.fail("JSONException",e);
-        }
+        when(options.get(name)).thenReturn(def);
     }
     
     // Works for both int, String, and JSON arrays
-    static public void verifyGetArrayOption(String name, JSONObject options){
+    static public void verifyGetArrayOption(String name, ObjectNode options){
         verify(options, times(1)).has(name);
-        try {
-            verify(options, times(1)).getJSONArray(name);
-        } catch (JSONException e) {
-            Assert.fail("JSONException",e);
-        }
+        verify(options, times(1)).get(name);
     }
 
     protected ButterflyModule getCoreModule() {

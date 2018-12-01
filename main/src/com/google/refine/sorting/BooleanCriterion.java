@@ -62,4 +62,9 @@ public class BooleanCriterion extends Criterion {
             }
         };
     }
+
+    @Override
+    public String getValueType() {
+        return "boolean";
+    }
 }

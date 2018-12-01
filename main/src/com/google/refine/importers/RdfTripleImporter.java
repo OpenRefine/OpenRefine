@@ -44,8 +44,9 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
-import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Cell;
@@ -53,7 +54,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.model.metadata.ProjectMetadata;
+
 
 public class RdfTripleImporter extends ImportingParserBase {
     private Mode mode;
@@ -76,7 +77,7 @@ public class RdfTripleImporter extends ImportingParserBase {
     }
 
     public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            InputStream input, int limit, JSONObject options, List<Exception> exceptions) {
+            InputStream input, int limit, ObjectNode options, List<Exception> exceptions) {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 

@@ -35,12 +35,9 @@ package com.google.refine.operations.row;
 
  import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.RecordVisitor;
@@ -51,37 +48,32 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowReorderChange;
-import com.google.refine.operations.OperationRegistry;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 
 public class RowReorderOperation extends AbstractOperation {
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        String mode = obj.getString("mode");
-        JSONObject sorting = obj.has("sorting") && !obj.isNull("sorting") ?
-                obj.getJSONObject("sorting") : null;
-
-                return new RowReorderOperation(Engine.stringToMode(mode), sorting);
-    }
-
     final protected Mode _mode;
-    final protected JSONObject _sorting;
+    final protected SortingConfig _sorting;
 
-    public RowReorderOperation(Mode mode, JSONObject sorting) {
+    @JsonCreator
+    public RowReorderOperation(
+            @JsonProperty("mode")
+            Mode mode,
+            @JsonProperty("sorting")
+            SortingConfig sorting) {
         _mode = mode;
         _sorting = sorting;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("mode"); writer.value(Engine.modeToString(_mode));
-        writer.key("sorting"); writer.value(_sorting);
-        writer.endObject();
+    
+    @JsonProperty("mode")
+    public Mode getMode() {
+        return _mode;
+    }
+    
+    @JsonProperty("sorting")
+    public SortingConfig getSortingConfig() {
+        return _sorting;
     }
 
     @Override
@@ -100,7 +92,7 @@ public class RowReorderOperation extends AbstractOperation {
             if (_sorting != null) {
                 SortingRowVisitor srv = new SortingRowVisitor(visitor);
 
-                srv.initializeFromJSON(project, _sorting);
+                srv.initializeFromConfig(project, _sorting);
                 if (srv.hasCriteria()) {
                     visitor = srv;
                 }
@@ -112,7 +104,7 @@ public class RowReorderOperation extends AbstractOperation {
             if (_sorting != null) {
                 SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
 
-                srv.initializeFromJSON(project, _sorting);
+                srv.initializeFromConfig(project, _sorting);
                 if (srv.hasCriteria()) {
                     visitor = srv;
                 }

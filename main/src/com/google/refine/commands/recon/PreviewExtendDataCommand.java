@@ -45,24 +45,36 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.commands.Command;
-import com.google.refine.model.recon.ReconciledDataExtensionJob;
-import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
-import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
-import com.google.refine.model.Column;
 import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.ReconciledDataExtensionJob;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
+import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreviewExtendDataCommand extends Command {
+    
+    protected static class PreviewResponse {
+        public PreviewResponse(List<ColumnInfo> columns2, List<List<Object>> rows2) {
+            columns = columns2;
+            rows = rows2;
+        }
+        @JsonProperty("code")
+        protected String code = "ok";
+        @JsonProperty("columns")
+        protected List<ColumnInfo> columns;
+        @JsonProperty("rows")
+        protected List<List<Object>> rows;
+    }
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -79,20 +91,20 @@ public class PreviewExtendDataCommand extends Command {
             }
             
             String jsonString = request.getParameter("extension");
-            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
+            DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
             
-            JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
-            int length = rowIndices.length();
-	    Column column = project.columnModel.getColumnByName(columnName);
+            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
+            int length = rowIndices.size();
+            Column column = project.columnModel.getColumnByName(columnName);
             int cellIndex = column.getCellIndex();
 
-	    // get the endpoint to extract data from
+            // get the endpoint to extract data from
             String endpoint = null;
-	    ReconConfig cfg = column.getReconConfig();
-	    if (cfg != null &&
-		cfg instanceof StandardReconConfig) {
-		StandardReconConfig scfg = (StandardReconConfig)cfg;
-		endpoint = scfg.service;
+		    ReconConfig cfg = column.getReconConfig();
+		    if (cfg != null &&
+			cfg instanceof StandardReconConfig) {
+			StandardReconConfig scfg = (StandardReconConfig)cfg;
+			endpoint = scfg.service;
 	    } else {
                 respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
                 return;
@@ -103,7 +115,7 @@ public class PreviewExtendDataCommand extends Command {
             List<String> topicIds = new ArrayList<String>();
             Set<String> ids = new HashSet<String>();
             for (int i = 0; i < length; i++) {
-                int rowIndex = rowIndices.getInt(i);
+                int rowIndex = rowIndices.get(i);
                 if (rowIndex >= 0 && rowIndex < project.rows.size()) {
                     Row row = project.rows.get(rowIndex);
                     Cell cell = row.getCell(cellIndex);
@@ -120,79 +132,47 @@ public class PreviewExtendDataCommand extends Command {
             }
             
             Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
-            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(json, endpoint);
+            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint);
             Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
-            
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
-            writer.key("code"); writer.value("ok");
-            writer.key("columns");
-                writer.array();
-                for (ColumnInfo info : job.columns) {
-                    writer.object();
-                    writer.key("name");
-		    writer.value(info.name);
-                    writer.key("id");
-		    writer.value(info.id);
-		    writer.endObject();
-                }
-                writer.endArray();
-            
-            writer.key("rows");
-                writer.array();
-                for (int r = 0; r < topicNames.size(); r++) {
-                    String id = topicIds.get(r);
-                    String topicName = topicNames.get(r);
-                    
-                    if (id != null && map.containsKey(id)) {
-                        DataExtension ext = map.get(id);
-                        boolean first = true;
-                        
-                        if (ext.data.length > 0) {
-                            for (Object[] row : ext.data) {
-                                writer.array();
-                                if (first) {
-                                    writer.value(topicName);
-                                    first = false;
-                                } else {
-                                    writer.value(null);
-                                }
-                                
-                                for (Object cell : row) {
-                                    if (cell != null && cell instanceof ReconCandidate) {
-                                        ReconCandidate rc = (ReconCandidate) cell;
-                                        writer.object();
-                                        writer.key("id"); writer.value(rc.id);
-                                        writer.key("name"); writer.value(rc.name);
-                                        writer.endObject();
-                                    } else {
-                                        writer.value(cell);
-                                    }
-                                }
-                                
-                                writer.endArray();
-                            }
-                            continue;
-                        }
-                    }
-                    
-                    writer.array();
-                    if (id != null) {
-                        writer.object();
-                        writer.key("id"); writer.value(id);
-                        writer.key("name"); writer.value(topicName);
-                        writer.endObject();
-                    } else {
-                        writer.value("<not reconciled>");
-                    }
-                    writer.endArray();
-                }
-                writer.endArray();
+            List<List<Object>> rows = new ArrayList<>();
+
+            for (int r = 0; r < topicNames.size(); r++) {
+                String id = topicIds.get(r);
+                String topicName = topicNames.get(r);
                 
-            writer.endObject();
+                if (id != null && map.containsKey(id)) {
+                    DataExtension ext = map.get(id);
+                    boolean first = true;
+                    
+                    if (ext.data.length > 0) {
+                        for (Object[] row : ext.data) {
+                            List<Object> jsonRow = new ArrayList<>();
+                            if (first) {
+                                jsonRow.add(topicName);
+                                first = false;
+                            } else {
+                                jsonRow.add(null);
+                            }
+                            
+                            for (Object cell : row) {
+                                jsonRow.add(cell);
+                            }
+                            rows.add(jsonRow);
+                        }
+                        continue;
+                    }
+                }
+                
+                List<Object> supplement = new ArrayList<>();
+                if (id != null) {
+                    supplement.add(new ReconCandidate(id, topicName, new String[0], 100));
+                } else {
+                    supplement.add("<not reconciled>");
+                }
+                rows.add(supplement);
+            }
+            
+            respondJSON(response, new PreviewResponse(job.columns, rows));
         } catch (Exception e) {
             respondException(response, e);
         }

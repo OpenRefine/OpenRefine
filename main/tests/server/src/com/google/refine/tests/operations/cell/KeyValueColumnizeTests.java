@@ -42,8 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -51,7 +49,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
@@ -60,13 +60,13 @@ import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.metadata.ProjectMetadata;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.process.Process;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class KeyValueColumnizeTests extends RefineTest {
@@ -74,7 +74,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     private RefineServlet servlet;
     private Project project;
     private ProjectMetadata pm;
-    private JSONObject options;
+    private ObjectNode options;
     private ImportingJob job;
     private SeparatorBasedImporter importer;
 
@@ -86,7 +86,7 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void SetUp() throws JSONException, IOException, ModelException {
+    public void SetUp() throws IOException, ModelException {
 	servlet = new RefineServletStub();
         File dir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
         FileProjectManager.initialize(dir);
@@ -94,7 +94,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         pm = new ProjectMetadata();
         pm.setName("KeyValueColumnize test");
         ProjectManager.singleton.registerProject(project, pm);
-        options = mock(JSONObject.class);
+        options = mock(ObjectNode.class);
         OperationRegistry.registerOperation(getCoreModule(), "key-value-columnize", KeyValueColumnizeOperation.class);
 
 	ImportingManager.initialize(servlet);
@@ -113,20 +113,20 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
     
     @Test
-    public void serializeKeyValueColumnizeOperation() throws JSONException, Exception {
+    public void serializeKeyValueColumnizeOperation() throws Exception {
         String json = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":null}";
-        TestUtils.isSerializedTo(KeyValueColumnizeOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json);
 
         String jsonFull = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column with note column note column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":\"note column\"}";
-        TestUtils.isSerializedTo(KeyValueColumnizeOperation.reconstruct(project, new JSONObject(jsonFull)), jsonFull);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull);
     }
 
     /**

@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,19 +108,19 @@ import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Diff;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
+import com.google.refine.expr.functions.strings.Find;
 import com.google.refine.expr.functions.strings.Fingerprint;
 import com.google.refine.expr.functions.strings.IndexOf;
 import com.google.refine.expr.functions.strings.LastIndexOf;
 import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.expr.functions.strings.Match;
-import com.google.refine.expr.functions.strings.Find;
 import com.google.refine.expr.functions.strings.NGram;
 import com.google.refine.expr.functions.strings.NGramFingerprint;
 import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.expr.functions.strings.Partition;
 import com.google.refine.expr.functions.strings.Phonetic;
-import com.google.refine.expr.functions.strings.Range;
 import com.google.refine.expr.functions.strings.RPartition;
+import com.google.refine.expr.functions.strings.Range;
 import com.google.refine.expr.functions.strings.Reinterpret;
 import com.google.refine.expr.functions.strings.Replace;
 import com.google.refine.expr.functions.strings.ReplaceChars;
@@ -143,8 +144,8 @@ import com.google.refine.grel.controls.ForNonBlank;
 import com.google.refine.grel.controls.ForRange;
 import com.google.refine.grel.controls.If;
 import com.google.refine.grel.controls.IsBlank;
-import com.google.refine.grel.controls.IsError;
 import com.google.refine.grel.controls.IsEmptyString;
+import com.google.refine.grel.controls.IsError;
 import com.google.refine.grel.controls.IsNonBlank;
 import com.google.refine.grel.controls.IsNotNull;
 import com.google.refine.grel.controls.IsNull;
@@ -168,6 +169,9 @@ public class ControlFunctionRegistry {
     static public Set<Entry<String, Function>> getFunctionMapping() {
         return s_nameToFunction.entrySet();
     }
+    static public Map<String,Function> getFunctionMap() {
+        return Collections.unmodifiableMap(s_nameToFunction);
+    }
 
     static public Control getControl(String name) {
         return s_nameToControl.get(name);
@@ -177,6 +181,9 @@ public class ControlFunctionRegistry {
     }
     static public Set<Entry<String, Control>> getControlMapping() {
         return s_nameToControl.entrySet();
+    }
+    static public Map<String,Control> getControlMap() {
+        return Collections.unmodifiableMap(s_nameToControl);
     }
 
     static public void registerFunction(String name, Function f) {

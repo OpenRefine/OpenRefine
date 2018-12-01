@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -56,13 +53,17 @@ public class StartsWith implements Function {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns whether s starts with sub";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns whether s starts with sub");
-        writer.key("params"); writer.value("string s, string sub");
-        writer.key("returns"); writer.value("boolean");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string sub";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

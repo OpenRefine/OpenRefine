@@ -1,17 +1,13 @@
 package com.google.refine.tests.operations.column;
 
-import static org.mockito.Mockito.mock;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnSplitOperation;
 import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 
 public class ColumnSplitOperationTests extends RefineTest {
     @BeforeSuite
@@ -20,7 +16,7 @@ public class ColumnSplitOperationTests extends RefineTest {
     }
     
     @Test
-    public void serializeColumnSplitOperation() throws JSONException, Exception {
+    public void serializeColumnSplitOperationBySeparator() throws Exception {
         String json = "{\n" + 
                 "    \"op\": \"core/column-split\",\n" + 
                 "    \"description\": \"Split column ea by separator\",\n" + 
@@ -36,7 +32,24 @@ public class ColumnSplitOperationTests extends RefineTest {
                 "    \"regex\": false,\n" + 
                 "    \"maxColumns\": 0\n" + 
                 "  }";
-        Project project = mock(Project.class);
-        TestUtils.isSerializedTo(ColumnSplitOperation.reconstruct(project, new JSONObject(json)), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json);
+    }
+    
+    @Test
+    public void serializeColumnSplitOperationByLengths() throws Exception {
+        String json = "{\n" + 
+                "    \"op\": \"core/column-split\",\n" + 
+                "    \"description\": \"Split column ea by field lengths\",\n" + 
+                "    \"engineConfig\": {\n" + 
+                "      \"mode\": \"row-based\",\n" + 
+                "      \"facets\": []\n" + 
+                "    },\n" + 
+                "    \"columnName\": \"ea\",\n" + 
+                "    \"guessCellType\": true,\n" + 
+                "    \"removeOriginalColumn\": true,\n" + 
+                "    \"mode\": \"lengths\",\n" + 
+                "    \"fieldLengths\": [1,1]\n" + 
+                "  }";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json);
     }
 }

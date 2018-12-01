@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -57,13 +54,17 @@ public class IndexOf implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the index of sub first ocurring in s";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the index of sub first ocurring in s");
-        writer.key("params"); writer.value("string s, string sub");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string sub";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

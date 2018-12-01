@@ -32,9 +32,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.json.JSONObject;
-import org.json.JSONWriter;
-import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -43,6 +40,8 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -68,18 +67,17 @@ public abstract class OperationTest extends RefineTest {
     public abstract AbstractOperation reconstruct()
             throws Exception;
 
-    public abstract JSONObject getJson()
+    public abstract String getJson()
             throws Exception;
 
     @Test
     public void testReconstruct()
             throws Exception {
-        JSONObject json = getJson();
+        String json = getJson();
         AbstractOperation op = reconstruct();
         StringWriter writer = new StringWriter();
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        op.write(jsonWriter, new Properties());
-        JacksonSerializationTest.assertJsonEquals(json.toString(), writer.toString());
+        ParsingUtilities.defaultWriter.writeValue(writer, op);
+        TestUtils.assertEqualAsJson(json, writer.toString());
     }
 
     protected LineNumberReader makeReader(String input) {

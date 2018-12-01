@@ -58,18 +58,6 @@ public class ColumnMoveChange extends ColumnChange {
         _newColumnIndex = index;
     }
     
-    public int getOldColumnIndex() {
-        return _oldColumnIndex;
-    }
-
-    public String getColumnName() {
-        return _columnName;
-    }
-    
-    public int getNewColumnIndex() {
-        return _newColumnIndex;
-    }
-
     @Override
     public void apply(Project project) {
         synchronized (project) {

@@ -35,13 +35,13 @@ package com.google.refine.browsing.facets;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.browsing.FilteredRecords;
@@ -57,84 +57,67 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class ListFacet implements Facet {
+    public static final String ERR_TOO_MANY_CHOICES = "Too many choices";
+    
+    /**
+     * Wrapper to respect the serialization format
+     */
+    public static class DecoratedValueWrapper {
+        @JsonProperty("v")
+        public final DecoratedValue value;
+        @JsonCreator
+        public DecoratedValueWrapper(
+                @JsonProperty("v") DecoratedValue value) {
+            this.value = value;
+        }
+    }
+    
     /*
      * Configuration
      */
     public static class ListFacetConfig implements FacetConfig {
+        @JsonProperty("name")
         public String     name;
+        @JsonProperty("expression")
         public String     expression;
+        @JsonProperty("columnName")
         public String     columnName;
+        @JsonProperty("invert")
         public boolean    invert;
         
         // If true, then facet won't show the blank and error choices
+        @JsonProperty("omitBlank")
         public boolean omitBlank;
+        @JsonProperty("omitError")
         public boolean omitError;
         
+        @JsonIgnore
         public List<DecoratedValue> selection = new LinkedList<>();
+        @JsonProperty("selectNumber")
         public boolean selectNumber;
+        @JsonProperty("selectDateTime")
         public boolean selectDateTime;
+        @JsonProperty("selectBoolean")
         public boolean selectBoolean;
+        @JsonProperty("selectBlank")
         public boolean selectBlank;
+        @JsonProperty("selectError")
         public boolean selectError;
 
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("type"); writer.value("list");
-            writer.key("name"); writer.value(name);
-            writer.key("expression"); writer.value(expression);
-            writer.key("columnName"); writer.value(columnName);
-            writer.key("invert"); writer.value(invert);
-            writer.key("selection"); writer.array();
-            for (DecoratedValue choice : selection) {
-                writer.object();
-                writer.key("v");
-                choice.write(writer, options);
-                writer.endObject();
-            }
-            writer.endArray();
-            writer.key("selectNumber"); writer.value(selectNumber);
-            writer.key("selectDateTime"); writer.value(selectDateTime);
-            writer.key("selectBoolean"); writer.value(selectBoolean);
-            writer.key("omitBlank"); writer.value(omitBlank);
-            writer.key("selectBlank"); writer.value(selectBlank);
-            writer.key("omitError"); writer.value(omitError);
-            writer.key("selectError"); writer.value(selectError);
-            writer.endObject();
+        @JsonProperty("selection")
+        public List<DecoratedValueWrapper> getWrappedSelection() {
+            return selection.stream()
+                    .map(e -> new DecoratedValueWrapper(e))
+                    .collect(Collectors.toList());
         }
         
-        @Override
-        public void initializeFromJSON(JSONObject o) {
-            name = o.getString("name");
-            expression = o.getString("expression");
-            columnName = o.getString("columnName");
-            invert = o.has("invert") && o.getBoolean("invert");
-                      
-            JSONArray a = o.getJSONArray("selection");
-            int length = a.length();
-            
-            for (int i = 0; i < length; i++) {
-                JSONObject oc = a.getJSONObject(i);
-                JSONObject ocv = oc.getJSONObject("v");
-                
-                DecoratedValue decoratedValue = new DecoratedValue(
-                    ocv.get("v"), ocv.getString("l"));
-                
-                selection.add(decoratedValue);
-            }
-            
-            omitBlank = JSONUtilities.getBoolean(o, "omitBlank", false);
-            omitError = JSONUtilities.getBoolean(o, "omitError", false);
-            
-            selectNumber = JSONUtilities.getBoolean(o, "selectNumber", false);
-            selectDateTime = JSONUtilities.getBoolean(o, "selectDateTime", false);
-            selectBoolean = JSONUtilities.getBoolean(o, "selectBoolean", false);
-            selectBlank = JSONUtilities.getBoolean(o, "selectBlank", false);
-            selectError = JSONUtilities.getBoolean(o, "selectError", false);
+        @JsonProperty("selection")
+        public void setSelection(List<DecoratedValueWrapper> wrapped) {
+            selection = wrapped.stream()
+                    .map(e -> e.value)
+                    .collect(Collectors.toList());
         }
         
         @Override
@@ -142,6 +125,27 @@ public class ListFacet implements Facet {
             ListFacet facet = new ListFacet();
             facet.initializeFromConfig(this, project);
             return facet;
+        }
+
+        @Override
+        public String getJsonType() {
+            return "list";
+        }
+    }
+    
+    /**
+     * Wrapper class for choice counts and selection status for blank and error
+     */
+    public static class OtherChoice {
+        @JsonProperty("s")
+        boolean selected;
+        @JsonProperty("c")
+        int count;
+        public OtherChoice(
+                @JsonProperty("s") boolean selected,
+                @JsonProperty("c") int count) {
+            this.selected = selected;
+            this.count = count;
         }
     }
     
@@ -166,66 +170,70 @@ public class ListFacet implements Facet {
     
     public ListFacet() {
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_config.name);
-        writer.key("expression"); writer.value(_config.expression);
-        writer.key("columnName"); writer.value(_config.columnName);
-        writer.key("invert"); writer.value(_config.invert);
-        
-        if (_errorMessage != null) {
-            writer.key("error"); writer.value(_errorMessage);
-        } else if (_choices.size() > getLimit()) {
-            writer.key("error"); writer.value("Too many choices");
-            writer.key("choiceCount"); writer.value(_choices.size());
-        } else {
-            writer.key("choices"); writer.array();
-            for (NominalFacetChoice choice : _choices) {
-                choice.write(writer, options);
-            }
-            writer.endArray();
-            if (_config.selectNumber || _numberCount > 0) {
-                writer.key("numberChoice");
-                writer.object();
-                writer.key("s"); writer.value(_config.selectNumber);
-                writer.key("c"); writer.value(_numberCount);
-                writer.endObject();
-            }
-            if (_config.selectDateTime || _datetimeCount > 0) {
-                writer.key("datetimeChoice");
-                writer.object();
-                writer.key("s"); writer.value(_config.selectDateTime);
-                writer.key("c"); writer.value(_datetimeCount);
-                writer.endObject();
-            }
-            if (_config.selectBoolean || _booleanCount > 0) {
-                writer.key("booleanChoice");
-                writer.object();
-                writer.key("s"); writer.value(_config.selectBoolean);
-                writer.key("c"); writer.value(_booleanCount);
-                writer.endObject();
-            }
-            if (!_config.omitBlank && (_config.selectBlank || _blankCount > 0)) {
-                writer.key("blankChoice");
-                writer.object();
-                writer.key("s"); writer.value(_config.selectBlank);
-                writer.key("c"); writer.value(_blankCount);
-                writer.endObject();
-            }
-            if (!_config.omitError && (_config.selectError || _errorCount > 0)) {
-                writer.key("errorChoice");
-                writer.object();
-                writer.key("s"); writer.value(_config.selectError);
-                writer.key("c"); writer.value(_errorCount);
-                writer.endObject();
-            }
+    
+    @JsonProperty("name")
+    public String getName() {
+        return _config.name;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config.columnName;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _config.expression;
+    }
+    
+    @JsonProperty("invert")
+    public boolean getInvert() {
+        return _config.invert;
+    }
+    
+    @JsonProperty("error")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        if (_errorMessage == null && _choices.size() > getLimit()) {
+            return ERR_TOO_MANY_CHOICES;
         }
-        
-        writer.endObject();
+        return _errorMessage;
+    }
+    
+    @JsonProperty("choiceCount")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getChoiceCount() {
+        if (_errorMessage == null && _choices.size() > getLimit()) {
+            return _choices.size();
+        }
+        return null;
+    }
+    
+    @JsonProperty("choices")
+    @JsonInclude(Include.NON_NULL)
+    public List<NominalFacetChoice> getChoices() {
+        if (getError() == null) {
+            return _choices;
+        }
+        return null;
+    }
+    
+    @JsonProperty("blankChoice")
+    @JsonInclude(Include.NON_NULL)
+    public OtherChoice getBlankChoice() {
+        if (getError() == null && !_config.omitBlank && (_config.selectBlank || _blankCount > 0)) {
+            return new OtherChoice(_config.selectBlank, _blankCount);
+        }
+        return null;
+    }
+    
+    @JsonProperty("errorChoice")
+    @JsonInclude(Include.NON_NULL)
+    public OtherChoice getErrorChoice() {
+        if (getError() == null && !_config.omitError && (_config.selectError || _errorCount > 0)) {
+            return new OtherChoice(_config.selectError, _errorCount);
+        }
+        return null;
     }
     
     protected int getLimit() {

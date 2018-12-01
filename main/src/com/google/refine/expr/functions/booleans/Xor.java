@@ -27,9 +27,6 @@ package com.google.refine.expr.functions.booleans;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -45,16 +42,17 @@ public class Xor implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("description");
-        writer.value("XORs two or more boolean values");
-        writer.key("params");
-        writer.value("boolean a, boolean b");
-        writer.key("returns");
-        writer.value("boolean");
-        writer.endObject();
+    public String getDescription() {
+    	return "XORs two or more boolean values";
+    }
+    
+    @Override
+    public String getParams() {
+        return "boolean a, boolean b";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

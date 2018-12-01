@@ -1,11 +1,8 @@
 package com.google.refine.expr.functions.strings;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -295,14 +292,18 @@ public class Range implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value(
-                "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).");
-        writer.key("params"); writer.value("A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    public String getDescription() {
+        return 
+                "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).";
+    }
+    
+    @Override
+    public String getParams() {
+        return "A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

@@ -33,12 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -56,72 +54,50 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class TimeRangeFacet implements Facet {
     /*
      * Configuration, from the client side
      */
     public static class TimeRangeFacetConfig implements FacetConfig {
+        @JsonProperty("name")
         protected String     _name;       // name of facet
+        @JsonProperty("expression")
         protected String     _expression; // expression to compute numeric value(s) per row
+        @JsonProperty("columnName")
         protected String     _columnName; // column to base expression on, if any
         
-        protected double      _from; // the numeric selection
-        protected double      _to;
+        @JsonProperty(FROM)
+        protected double      _from = 0; // the numeric selection
+        @JsonProperty(TO)
+        protected double      _to = 0;
         
+        @JsonProperty("selectTime")
         protected boolean   _selectTime; // whether the time selection applies, default true
+        @JsonProperty("selectNonTime")
         protected boolean   _selectNonTime;
+        @JsonProperty("selectBlank")
         protected boolean   _selectBlank;
+        @JsonProperty("selectError")
         protected boolean   _selectError;
         
-        protected boolean    _selected; // false if we're certain that all rows will match
-                        // and there isn't any filtering to do
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("type"); writer.value("timerange");
-            writer.key("name"); writer.value(_name);
-            writer.key("expression"); writer.value(_expression);
-            writer.key("columnName"); writer.value(_columnName);
-            writer.key("selectTime"); writer.value(_selectTime);
-            writer.key("selectNonTime"); writer.value(_selectNonTime);
-            writer.key("selectBlank"); writer.value(_selectBlank);
-            writer.key("selectError"); writer.value(_selectError);
-            writer.key(FROM); writer.value((long)_from);
-            writer.key(TO); writer.value((long)_to);
-            writer.endObject();
-        }
-        
-        @Override
-        public void initializeFromJSON(JSONObject o) throws JSONException {        
-            _name = o.getString("name");
-            _expression = o.getString("expression");
-            _columnName = o.getString("columnName");
-            
-            if (o.has(FROM) || o.has(TO)) {
-                _from = o.has(FROM) ? o.getDouble(FROM) : 0;
-                _to = o.has(TO) ? o.getDouble(TO) : 0;
-                _selected = true;
-            }
-            
-            _selectTime = JSONUtilities.getBoolean(o, "selectTime", true);
-            _selectNonTime = JSONUtilities.getBoolean(o, "selectNonTime", true);
-            _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
-            _selectError = JSONUtilities.getBoolean(o, "selectError", true);
-            
-            if (!_selectTime || !_selectNonTime || !_selectBlank || !_selectError) {
-                _selected = true;
-            }
-        }
+        // false if we're certain that all rows will match
+        // and there isn't any filtering to do
+        @JsonIgnore
+        protected boolean isSelected() {
+            return _from != 0 || _to != 0 || !_selectTime || !_selectNonTime || !_selectBlank || !_selectError;
+        }; 
         
         @Override
         public TimeRangeFacet apply(Project project) {
             TimeRangeFacet facet = new TimeRangeFacet();
             facet.initializeFromConfig(this, project);
             return facet;
+        }
+
+        @Override
+        public String getJsonType() {
+            return "timerange";
         }
     }
     protected TimeRangeFacetConfig _config;
@@ -142,14 +118,22 @@ public class TimeRangeFacet implements Facet {
     /*
      * Computed data
      */
+    @JsonProperty("baseTimeCount")
     protected int       _baseTimeCount;
+    @JsonProperty("baseNonTimeCount")
     protected int       _baseNonTimeCount;
+    @JsonProperty("baseBlankCount")
     protected int       _baseBlankCount;
+    @JsonProperty("baseErrorCount")
     protected int       _baseErrorCount;
-      
+     
+    @JsonProperty("timeCount")
     protected int       _timeCount;
+    @JsonProperty("nonTimeCount")
     protected int       _nonTimeCount;
+    @JsonProperty("blankCount")
     protected int       _blankCount;
+    @JsonProperty("errorCount")
     protected int       _errorCount;
 
     protected static final String MIN = "min";
@@ -157,49 +141,85 @@ public class TimeRangeFacet implements Facet {
     protected static final String TO = "to";
     protected static final String FROM = "from";
     
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_config._name);
-        writer.key("expression"); writer.value(_config._expression);
-        writer.key("columnName"); writer.value(_config._columnName);
-        
-        if (_errorMessage != null) {
-            writer.key("error"); writer.value(_errorMessage);
-        } else {
-            if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
-                writer.key(MIN); writer.value(_min);
-                writer.key(MAX); writer.value(_max);
-                writer.key("step"); writer.value(_step);
-                                
-                writer.key("bins"); writer.array();
-                for (int b : _bins) {
-                    writer.value(b);
-                }
-                writer.endArray();
-                
-                writer.key("baseBins"); writer.array();
-                for (int b : _baseBins) {
-                    writer.value(b);
-                }
-                writer.endArray();
-                
-                writer.key(FROM); writer.value(_config._from);
-                writer.key(TO); writer.value(_config._to);
-            }
-            
-            writer.key("baseTimeCount"); writer.value(_baseTimeCount);
-            writer.key("baseNonTimeCount"); writer.value(_baseNonTimeCount);
-            writer.key("baseBlankCount"); writer.value(_baseBlankCount);
-            writer.key("baseErrorCount"); writer.value(_baseErrorCount);
-            
-            writer.key("timeCount"); writer.value(_timeCount);
-            writer.key("nonTimeCount"); writer.value(_nonTimeCount);
-            writer.key("blankCount"); writer.value(_blankCount);
-            writer.key("errorCount"); writer.value(_errorCount);
+    @JsonProperty("name")
+    public String getName() {
+        return _config._name;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _config._expression;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config._columnName;
+    }
+    
+    @JsonProperty("error")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        return _errorMessage;
+    }
+    
+    @JsonProperty(MIN)
+    @JsonInclude(Include.NON_NULL)
+    public Double getMin() {
+        if(getError() == null) {
+            return _min;
         }
-        writer.endObject();
+        return null;
+    }
+    
+    @JsonProperty(MAX)
+    @JsonInclude(Include.NON_NULL)
+    public Double getMax() {
+        if(getError() == null) {
+            return _max;
+        }
+        return null;
+    }
+    
+    @JsonProperty("step")
+    @JsonInclude(Include.NON_NULL)
+    public Double getStep() {
+        return _step;
+    }
+    
+    @JsonProperty("bins")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getBins() {
+        if (getError() == null) {
+            return _bins;
+        }
+        return null;
+    }
+    
+    @JsonProperty("baseBins")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getBaseBins() {
+        if (getError() == null) {
+            return _baseBins;
+        }
+        return null;
+    }
+    
+    @JsonProperty(FROM)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFrom() {
+        if (getError() == null) {
+            return _config._from;
+        }
+        return null;
+    }
+    
+    @JsonProperty(TO)
+    @JsonInclude(Include.NON_NULL)
+    public Double getTo() {
+        if (getError() == null) {
+            return _config._to;
+        }
+        return null;
     }
     
     public void initializeFromConfig(TimeRangeFacetConfig config, Project project) {
@@ -224,7 +244,7 @@ public class TimeRangeFacet implements Facet {
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (_eval != null && _errorMessage == null && _config._selected) {
+        if (_eval != null && _errorMessage == null && _config.isSelected()) {
             return new ExpressionTimeComparisonRowFilter(
                     getRowEvaluable(project), _config._selectTime, _config._selectNonTime, _config._selectBlank, _config._selectError) {
                 
@@ -294,7 +314,7 @@ public class TimeRangeFacet implements Facet {
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
         
-        if (_config._selected) {
+        if (_config.isSelected()) {
             _config._from = Math.max(_config._from, _min);
             _config._to = Math.min(_config._to, _max);
         } else {

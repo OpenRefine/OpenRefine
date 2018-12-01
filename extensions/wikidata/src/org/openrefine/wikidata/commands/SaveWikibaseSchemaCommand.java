@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -30,11 +32,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
@@ -57,15 +56,14 @@ public class SaveWikibaseSchemaCommand extends Command {
                 return;
             }
 
-            JSONObject json = ParsingUtilities.evaluateJsonStringToObject(jsonString);
-            WikibaseSchema schema = WikibaseSchema.reconstruct(json);
+            WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
 
             AbstractOperation op = new SaveWikibaseSchemaOperation(schema);
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);
 
-        } catch (JSONException e) {
+        } catch (IOException e) {
             // We do not use respondException here because this is an expected
             // exception which happens every time a user tries to save an incomplete
             // schema - the exception should not be logged.

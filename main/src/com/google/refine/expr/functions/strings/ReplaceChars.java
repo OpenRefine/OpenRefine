@@ -36,8 +36,6 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -61,13 +59,17 @@ public class ReplaceChars implements Function {
 
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the string obtained by replacing all chars in f with the char in s at that same position";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the string obtained by replacing all chars in f with the char in s at that same position");
-        writer.key("params"); writer.value("string s, string f, string r");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string f, string r";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

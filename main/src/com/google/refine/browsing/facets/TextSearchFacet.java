@@ -33,13 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -58,26 +54,18 @@ public class TextSearchFacet implements Facet {
      *  Configuration
      */
     public static class TextSearchFacetConfig implements FacetConfig {  
+        @JsonProperty("name")
         protected String     _name;
+        @JsonProperty("columnName")
         protected String     _columnName;
+        @JsonProperty("query")
         protected String     _query = null;
+        @JsonProperty("mode")
         protected String     _mode;
+        @JsonProperty("caseSensitive")
         protected boolean    _caseSensitive;
+        @JsonProperty("invert")
         protected boolean    _invert;
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            writer.object();
-            writer.key("name"); writer.value(_name);
-            writer.key("columnName"); writer.value(_columnName);
-            writer.key("query"); writer.value(_query);
-            writer.key("mode"); writer.value(_mode);
-            writer.key("caseSensitive"); writer.value(_caseSensitive);
-            writer.key("invert"); writer.value(_invert);
-            writer.key("type"); writer.value("text");
-            writer.endObject();  
-        }
         
         @Override
         public TextSearchFacet apply(Project project) {
@@ -87,15 +75,8 @@ public class TextSearchFacet implements Facet {
         }
         
         @Override
-        public void initializeFromJSON(JSONObject o) {
-            _name = o.getString("name");
-            _columnName = o.getString("columnName");
-            _mode = o.getString("mode");
-            _caseSensitive = o.getBoolean("caseSensitive");
-            if (!o.isNull("query")) {
-                _query = o.getString("query"); 
-            }
-            _invert = o.has("invert") && o.getBoolean("invert");
+        public String getJsonType() {
+            return "text";
         }
     }
     TextSearchFacetConfig _config = new TextSearchFacetConfig();
@@ -109,21 +90,37 @@ public class TextSearchFacet implements Facet {
     
     public TextSearchFacet() {
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_config._name);
-        writer.key("columnName"); writer.value(_config._columnName);
-        writer.key("query"); writer.value(_config._query);
-        writer.key("mode"); writer.value(_config._mode);
-        writer.key("caseSensitive"); writer.value(_config._caseSensitive);
-        writer.key("invert"); writer.value(_config._invert);
-        writer.endObject();
+    
+    @JsonProperty("name")
+    public String getName() {
+        return _config._name;
     }
     
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config._columnName;
+    }
+    
+    @JsonProperty("query")
+    public String getQuery() {
+        return _config._query;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _config._mode;
+    }
+    
+    @JsonProperty("caseSensitive")
+    public boolean isCaseSensitive() {
+        return _config._caseSensitive;
+    }
+    
+    @JsonProperty("invert")
+    public boolean isInverted() {
+        return _config._invert;
+    }
+
     public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
         _config = config;
         
@@ -139,7 +136,7 @@ public class TextSearchFacet implements Facet {
                             _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
-                    throw new JSONException(err.getUserMessage());
+                    throw new IllegalArgumentException(err.getUserMessage());
                 }
             } else if (!_config._caseSensitive) {
                 _query = _query.toLowerCase();
