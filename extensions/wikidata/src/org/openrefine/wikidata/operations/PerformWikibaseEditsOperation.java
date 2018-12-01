@@ -75,6 +75,28 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
     }
+    
+    /* The constructor above should be enough for deserialization,
+     * but for some unknown reason it can fail in certain cases
+     * (might be due to caching deserializers across threads?)
+     * 
+     * So we sadly add a default constructor and a setter below.
+     * 
+     * TODO delete the default constructor and setter, make summary final
+     */
+    public PerformWikibaseEditsOperation() {
+    	super(null);
+    }
+    
+    @JsonProperty("engineConfig")
+    public void setEngineConfig(EngineConfig config) {
+    	this._engineConfig = config;
+    }
+    
+    @JsonProperty("summary")
+    public void setSummary(String summary) {
+    	this.summary = summary;
+    }
 
     @Override
     protected String getBriefDescription(Project project) {
