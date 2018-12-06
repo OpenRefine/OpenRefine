@@ -710,5 +710,6 @@
     "core-buttons/apply-to-all": "Appliquer à toutes les cellules identiques",
     "core-buttons/add-url": "Ajouter une autre URL",
     "core-buttons/new-topic": "Nouveau sujet",
-    "core-buttons/pick-record": "Sélectionner les éléments des entrées"
+    "core-buttons/pick-record": "Sélectionner les éléments des entrées",
+    "core-index/metaDatas": "Métadonnées du projet"
 }
