@@ -229,7 +229,8 @@ public class ParsingUtilities {
         if (parsed == null) {
             return null;
         }
-        return parsed.toLocalDateTime();
+        return parsed.withOffsetSameInstant(OffsetDateTime.now().getOffset())
+        		.toLocalDateTime();
     }
     
     static public String instantToString(Instant instant) {

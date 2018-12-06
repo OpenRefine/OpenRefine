@@ -37,6 +37,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,23 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43+00:00").getYear());
+    }
+    
+    /**
+     * Converting between string and local time must be reversible, no matter the timezone.
+     */
+    @Test
+    public void stringToLocalDateNonUTC() {
+    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+    	try {
+    		Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
+    		Assert.assertEquals(ParsingUtilities.localDateToString(
+    				ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
+    				"2001-08-12T00:00:00Z");
+    		
+    	} finally {
+    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    	}
     }
     
     @Test

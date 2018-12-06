@@ -35,6 +35,7 @@ package com.google.refine.tests.expr.functions.strings;
 
 import java.time.OffsetDateTime;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -49,6 +50,7 @@ import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 
 /**
@@ -161,10 +163,10 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parseAsOffsetDateTime("2013-06-01"));
       
       //if invalid format/locale strings are passed, ignore them
-      Assert.assertEquals(invoke("toDate", "2012-03-01","XXX"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","XXX"), invoke("toDate", "2012-03-01"));
 
       // If a long, convert to string
-      Assert.assertEquals(invoke("toDate", (long) 2012), CalendarParser.parseAsOffsetDateTime("2012-01-01"));
+      Assert.assertEquals(invoke("toDate", (long) 2012), invoke("toDate", "2012-01-01"));
 
       // If already a date, leave it alone
       Assert.assertEquals(invoke("toDate", CalendarParser.parseAsOffsetDateTime("2012-03-01")),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
