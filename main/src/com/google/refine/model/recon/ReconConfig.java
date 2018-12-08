@@ -93,7 +93,6 @@ abstract public class ReconConfig  {
         
         // TODO: This can fail silently if the Freebase extension is not installed.
         List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(mode);
-        System.out.println(classes);
         if (classes != null && classes.size() > 0) {
             return classes.get(classes.size() - 1);
         }
