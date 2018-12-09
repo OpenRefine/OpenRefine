@@ -20,6 +20,7 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
+import com.google.refine.model.recon.StandardReconConfig.ReconResult;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.tests.RefineTest;
@@ -171,5 +172,18 @@ public class StandardReconConfigTests extends RefineTest {
     			+ "\"propertyName\":\"Director\"}";
     	ColumnDetail cd = ParsingUtilities.mapper.readValue(uiJson, ColumnDetail.class);
     	TestUtils.isSerializedTo(cd, backendJson);
+    }
+    
+    @Test
+    public void deserializeReconResult() throws JsonParseException, JsonMappingException, IOException {
+    	String json = "{\"score\":100.0,"
+    			+ "\"match\":false,"
+    			+ "\"type\":["
+    			+ "   {\"id\":\"Q17366755\","
+    			+ "    \"name\":\"hamlet in Alberta\"}],"
+    			+ "\"id\":\"Q5136635\","
+    			+ "\"name\":\"Cluny\"}";
+    	ReconResult rr = ParsingUtilities.mapper.readValue(json, ReconResult.class);
+    	assertEquals(rr.types.get(0).name, "hamlet in Alberta");
     }
 }

@@ -334,7 +334,7 @@ public class StandardReconConfig extends ReconConfig {
     	public String name;
     	@JsonProperty("id")
     	public String id;
-    	@JsonProperty("types")
+    	@JsonProperty("type")
 		public List<ReconType> types = Collections.emptyList();
     	@JsonProperty("score")
     	public double score;
