@@ -17,6 +17,7 @@ env:
   - secure: "VmS4He99YlI6rdmw8Q25OZ9kUp11sRbt0W1QMBvA5lzNSmhN1Q1KtaMj9AGwpCZWcyGWri4AQxEmloARxACxQHXRmNE7ro2DESGw46RAocBAf+RfBxYTifIyUGu5TnSCQhz56SkgpyWpedZAZWyah9ZxgUMfet4KXFUfeiUgYQA="
   
 before_install:
+  - sudo apt-get install -y procps
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar
   # create test database for mysql, mariadb and postgresql
   - mysql -u root -e 'CREATE DATABASE test_db;'
