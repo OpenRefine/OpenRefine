@@ -11,7 +11,7 @@
     "database-source/alert-initial-database": "Du må angi en initiell database",
     "database-source/alert-query": "Du må angi en gyldig spørring",
     "database-source/alert-invalid-query-select": "Spørringen må starte med nøkkelordet SELECT",
-    "database-source/alert-connection-edit": "Tilkoblingen ble redigert",
+    "database-source/alert-connection-edit": "Tilkobling redigert",
     "database-source/connectionNameLabel": "Navn:",
     "database-source/databaseTypeLabel": "Type:",
     "database-source/databaseHostLabel": "Vert:",
@@ -26,7 +26,7 @@
     "database-source/newConnectionButtonDiv": "Ny tilkobling",
     "database-source/savedConnectionSpan": "Lagrede tilkoblinger",
     "database-parsing/start-over": "&laquo; Begynn på nytt",
-    "database-parsing/conf-pars": "Konfigurer tolkningsinnstillinger",
+    "database-parsing/conf-pars": "Sett opp tolkningsinnstillinger",
     "database-parsing/proj-name": "Prosjektnavn",
     "database-parsing/create-proj": "Opprett prosjekt &raquo;",
     "database-parsing/updating-preview": "Oppdaterer forhåndsvisning …",
@@ -43,6 +43,6 @@
     "database-parsing/store-row": "Lagre blanke rader",
     "database-parsing/store-cell": "Lagre blanke celler som null",
     "database-source/alert-invalid-query-keyword": "Spørring kan ikke inneholde datamanipuleringsnøkkelord:",
-    "database-source/form-validation-failure": "Nytt tilkoblingsskjema er ugyldig!",
+    "database-source/form-validation-failure": "Nytt tilkoblingsskjema ugyldig!",
     "database-parsing/worksheet": "Regneark"
 }
