@@ -604,6 +604,7 @@
     "core-views/trim-all": "Trim leading and trailing whitespace",
     "core-views/collapse-white": "Collapse consecutive whitespace",
     "core-views/unescape-html": "Unescape HTML entities",
+    "core-views/replace-smartquotes": "Replace Smart quotes with ascii",
     "core-views/titlecase": "To titlecase",
     "core-views/uppercase": "To uppercase",
     "core-views/lowercase": "To lowercase",
