@@ -36,6 +36,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertTrue(pm.getTags().length == 0);
     }
     
+    @Test(expectedExceptions=IllegalArgumentException.class)
+    public void testZipSlip() {
+        // For CVE-2018-19859, issue #1840
+    	ImportingUtilities.allocateFile(workspaceDir, "../../script.sh");
+    }
+    
     private ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
