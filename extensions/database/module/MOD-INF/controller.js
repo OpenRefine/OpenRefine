@@ -48,22 +48,20 @@ refineServlet = Packages.com.google.refine.RefineServlet;
  */
 function registerCommands() {
   
-  logger.info("Registering Database Extension Commands......");
+  logger.trace("Registering Database Extension Commands......");
   var RS = Packages.com.google.refine.RefineServlet;
   RS.registerCommand(module, "test-connect", Packages.com.google.refine.extension.database.cmd.TestConnectCommand());
   RS.registerCommand(module, "connect", Packages.com.google.refine.extension.database.cmd.ConnectCommand());
   RS.registerCommand(module, "saved-connection", Packages.com.google.refine.extension.database.cmd.SavedConnectionCommand());
   RS.registerCommand(module, "execute-query", Packages.com.google.refine.extension.database.cmd.ExecuteQueryCommand());
   RS.registerCommand(module, "test-query", Packages.com.google.refine.extension.database.cmd.TestQueryCommand());
-  logger.info("Database Extension Command Registeration done!!");
+  logger.trace("Database Extension Command Registeration done!!");
 }
 
 function registerOperations() {
-  logger.info("Database Operations Registered successfully...");
 }
 
 function registerFunctions() {
-  logger.info("Database Functions Registered successfully...");
 }
 
 
@@ -72,8 +70,8 @@ function registerFunctions() {
  */
 function init() {
   
-  logger.info("Initializing OpenRefine Database...");
-  logger.info("Database Extension Mount point " + module.getMountPoint());
+  logger.trace("Initializing OpenRefine Database Extension...");
+  logger.trace("Database Extension Mount point " + module.getMountPoint());
 
   registerCommands();
   registerOperations();
@@ -134,8 +132,7 @@ function process(path, request, response) {
   
    var method = request.getMethod();
     
-   logger.info('receiving request for ' + path);	
-   logger.info('receiving method for ' + method);	
+   logger.trace('receiving request for ' + path);	
   
   if (path == "/" || path == "") {
       var context = {};
