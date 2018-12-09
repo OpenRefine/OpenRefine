@@ -33,15 +33,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.jython;
 
-import com.google.refine.expr.*;
-import org.python.core.*;
-import org.python.util.PythonInterpreter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import org.python.core.Py;
+import org.python.core.PyException;
+import org.python.core.PyFloat;
+import org.python.core.PyFunction;
+import org.python.core.PyInteger;
+import org.python.core.PyLong;
+import org.python.core.PyNone;
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.util.PythonInterpreter;
+
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.HasFields;
+import com.google.refine.expr.LanguageSpecificParser;
+import com.google.refine.expr.ParsingException;
 
 public class JythonEvaluable implements Evaluable {
     

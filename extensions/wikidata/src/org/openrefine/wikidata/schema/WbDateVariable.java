@@ -30,7 +30,6 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import com.google.refine.model.Cell;
 
 /**

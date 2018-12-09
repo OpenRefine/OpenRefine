@@ -26,7 +26,6 @@ package org.openrefine.wikidata.schema;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.FullyPropertySerializingValueSnak;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;

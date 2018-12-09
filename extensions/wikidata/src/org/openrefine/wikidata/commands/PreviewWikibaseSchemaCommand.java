@@ -43,7 +43,6 @@ import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommand extends Command {
     

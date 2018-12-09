@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.schema.entityvalues;
 
+import org.wikidata.wdtk.datamodel.implementation.SnakImpl;
 import org.wikidata.wdtk.datamodel.implementation.ValueSnakImpl;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;

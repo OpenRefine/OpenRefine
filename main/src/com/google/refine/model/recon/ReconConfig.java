@@ -43,8 +43,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;	
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
