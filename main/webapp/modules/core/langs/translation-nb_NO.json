@@ -340,5 +340,6 @@
     "core-views/errors": "Feil",
     "core-views/copy-to-col": "Kopier til kolonner",
     "core-views/copy-opt": "Kopieringsvalg",
-    "core-views/what-to-copy": "Hva som skal kopieres:"
+    "core-views/what-to-copy": "Hva som skal kopieres:",
+    "core-index/metaDatas": "Prosjektmetadata"
 }
