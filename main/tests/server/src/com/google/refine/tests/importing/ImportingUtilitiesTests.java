@@ -1,6 +1,8 @@
 
 package com.google.refine.tests.importing;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import org.testng.Assert;
@@ -14,6 +16,7 @@ import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.tests.importers.ImporterTest;
+import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -34,6 +37,13 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertEquals(pm.getName(), "acme");
         Assert.assertEquals(pm.getEncoding(), "UTF-8");
         Assert.assertTrue(pm.getTags().length == 0);
+    }
+    
+    @Test(expectedExceptions=IllegalArgumentException.class)
+    public void testZipSlip() throws IOException {
+    	File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
+        // For CVE-2018-19859, issue #1840
+    	ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
     }
     
     private ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {

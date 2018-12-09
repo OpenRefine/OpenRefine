@@ -440,7 +440,11 @@ public class ImportingUtilities {
             name = name.substring(0, q);
         }
         
-        File file = new File(dir, name);
+        File file = new File(dir, name);     
+        // For CVE-2018-19859, issue #1840
+        if (!file.toPath().normalize().startsWith(dir.toPath().normalize())) {
+        	throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+        }
         
         int dot = name.indexOf('.');
         String prefix = dot < 0 ? name : name.substring(0, dot);
