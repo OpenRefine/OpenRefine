@@ -2,7 +2,6 @@ package com.google.refine.tests.expr.functions.date;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -58,12 +57,7 @@ public class DatePartTests extends RefineTest {
         }
     }
     
-    private DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .append(DateTimeFormatter.BASIC_ISO_DATE).appendLiteral('-')
-            .appendPattern("HH:mm:ss")
-            .appendPattern("[.SSSSSSSSS][.SSSSSS][.SSS]")       // optional nanos, with 9, 6 or 3 digits
-            .appendOffset("+HH:mm", "Z")
-            .toFormatter();
+    private  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
     
     @Test
     public void testOffsetDateTimeDatePart() {        
