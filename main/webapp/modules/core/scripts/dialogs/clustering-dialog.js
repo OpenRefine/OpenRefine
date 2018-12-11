@@ -127,18 +127,26 @@ ClusteringDialog.prototype._createDialog = function() {
        var distances = data.distances != null ? data.distances : [];
        var i = 0;
        for(; i < keyers.length; i++) {
+          var label = $.i18n('clustering-keyers/'+keyers[i]);
+          if (label.startsWith('clustering-keyers')) {
+              label = keyers[i];
+          }
           var option = $('<option></option>')
              .attr('value', keyers[i])
-             .text($.i18n('clustering-keyers/'+keyers[i]))
+             .text(label)
              .appendTo(self._elmts.keyingFunctionSelector);
           if (i == 0) {
              option.attr('selected', 'true');
           }
        }
        for(i = 0; i < distances.length; i++) {
+          var label = $.i18n('clustering-distances/'+distances[i]);
+          if (label.startsWith('clustering-distances')) {
+              label = distances[i];
+          }
           var option = $('<option></option>')
              .attr('value', distances[i])
-             .text($.i18n('clustering-distances/'+distances[i]))
+             .text(label)
              .appendTo(self._elmts.distanceFunctionSelector);
           if (i == 0) {
              option.attr('selected', 'true');
