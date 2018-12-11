@@ -89,7 +89,7 @@ public class kNNClusterer extends Clusterer {
         @JsonProperty("function")
         public void setDistance(String distanceStr) {
         	_distanceStr = distanceStr;
-        	_distance = _distances.get(_distanceStr.toLowerCase());
+        	_distance = DistanceFactory.get(_distanceStr.toLowerCase());
         }
         
         @JsonProperty("function")
@@ -132,25 +132,12 @@ public class kNNClusterer extends Clusterer {
 
     private Distance _distance;
     private kNNClustererConfigParameters _params;
-    
-    static final protected Map<String, Distance> _distances = new HashMap<String, Distance>();
 
     List<Set<Serializable>> _clusters;
 
     Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
 
     final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
-    
-    static {
-        _distances.put("levenshtein", new LevenshteinDistance());
-        _distances.put("jaccard", new JaccardDistance());
-        _distances.put("jaro", new JaroDistance());
-        _distances.put("jaro-winkler", new JaroWinklerDistance());
-        _distances.put("jaro-winkler-tfidf", new JaroWinklerTFIDFDistance());
-        _distances.put("gzip", new GZipDistance());
-        _distances.put("bzip2", new BZip2Distance());
-        _distances.put("ppm", new PPMDistance());
-    }
 
     class VPTreeClusteringRowVisitor implements RowVisitor {
 
