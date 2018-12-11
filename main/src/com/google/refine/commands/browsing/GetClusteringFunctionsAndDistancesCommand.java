@@ -2,7 +2,7 @@ package com.google.refine.commands.browsing;
 
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,14 +21,10 @@ public class GetClusteringFunctionsAndDistancesCommand extends Command {
 	
 	private static class FunctionsAndDistancesResponse {
 		@JsonProperty("distances")
-		public Set<String> getDistances() {
-			return DistanceFactory.getDistanceNames();
-		}
+		public List<String> distances = DistanceFactory.getDistanceNames();
 		
 		@JsonProperty("keyers")
-		public Set<String> getKeyers() {
-			return KeyerFactory.getKeyerNames();
-		}
+		public List<String> keyers = KeyerFactory.getKeyerNames();
 	}
 
     @Override

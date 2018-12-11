@@ -1,8 +1,10 @@
 package com.google.refine.clustering.knn;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import edu.mit.simile.vicino.distances.BZip2Distance;
 import edu.mit.simile.vicino.distances.GZipDistance;
@@ -21,16 +23,18 @@ import edu.mit.simile.vicino.distances.PPMDistance;
 public class DistanceFactory {
     
     static final protected Map<String, SimilarityDistance> _distances = new HashMap<>();
+    // We cannot derive this from the hashmap as the order matters
+	private static List<String> _distanceNames = new LinkedList<>();
     
     static {
-        _distances.put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
-        _distances.put("jaccard", new VicinoDistance(new JaccardDistance()));
-        _distances.put("jaro", new VicinoDistance(new JaroDistance()));
-        _distances.put("jaro-winkler", new VicinoDistance(new JaroWinklerDistance()));
-        _distances.put("jaro-winkler-tfidf", new VicinoDistance(new JaroWinklerTFIDFDistance()));
-        _distances.put("gzip", new VicinoDistance(new GZipDistance()));
-        _distances.put("bzip2", new VicinoDistance(new BZip2Distance()));
-        _distances.put("ppm", new VicinoDistance(new PPMDistance()));
+        put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
+        put("jaccard", new VicinoDistance(new JaccardDistance()));
+        put("jaro", new VicinoDistance(new JaroDistance()));
+        put("jaro-winkler", new VicinoDistance(new JaroWinklerDistance()));
+        put("jaro-winkler-tfidf", new VicinoDistance(new JaroWinklerTFIDFDistance()));
+        put("gzip", new VicinoDistance(new GZipDistance()));
+        put("bzip2", new VicinoDistance(new BZip2Distance()));
+        put("ppm", new VicinoDistance(new PPMDistance()));
     }
     
     /**
@@ -45,12 +49,13 @@ public class DistanceFactory {
      */
     public static void put(String name, SimilarityDistance distance) {
     	_distances.put(name, distance);
+    	_distanceNames.add(name);
     }
     
     /**
      * Lists the available distances, by name.
      */
-    public static Set<String> getDistanceNames() {
-    	return _distances.keySet();
+    public static List<String> getDistanceNames() {
+    	return Collections.unmodifiableList(_distanceNames);
     }
 }
