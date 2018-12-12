@@ -35,8 +35,6 @@ package com.google.refine.expr.functions.html;
 
 import java.util.Properties;
 
-import org.jsoup.Jsoup;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.grel.ControlFunctionRegistry;

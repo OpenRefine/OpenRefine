@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpHeadersSupport;
 import com.google.refine.commands.HttpHeadersSupport.HttpHeaderInfo;
-import com.google.refine.commands.HttpUtilities;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.MetaParser.LanguageInfo;
 import com.google.refine.importing.ImportingJob;

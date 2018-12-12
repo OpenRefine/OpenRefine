@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;

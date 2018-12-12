@@ -66,7 +66,7 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
          // Set the singleton.
         instance = this;
        
-        logger.info("*** Database Extension Module Initialization Completed!!***");
+        logger.trace("Database Extension module initialization completed");
     }
     
     public static String getImportCreateBatchSize() {

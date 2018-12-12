@@ -34,7 +34,6 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.refine.model.Recon;
 
 /**

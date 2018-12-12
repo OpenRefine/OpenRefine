@@ -38,7 +38,6 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.google.common.collect.ImmutableMap;
 
 /**

@@ -28,7 +28,6 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import com.google.refine.model.Cell;
 
 /**

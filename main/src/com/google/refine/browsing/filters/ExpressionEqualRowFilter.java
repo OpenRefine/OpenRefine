@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.browsing.filters;
 
 import java.time.OffsetDateTime;
-
 import java.util.Collection;
 import java.util.Properties;
 

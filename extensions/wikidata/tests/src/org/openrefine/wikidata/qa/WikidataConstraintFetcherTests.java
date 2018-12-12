@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
+import java.util.regex.Pattern;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
-import java.util.regex.Pattern;
 
 public class WikidataConstraintFetcherTests {
 

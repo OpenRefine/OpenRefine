@@ -30,7 +30,6 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon.Judgment;
 

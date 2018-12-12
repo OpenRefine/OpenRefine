@@ -58,7 +58,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
-import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
