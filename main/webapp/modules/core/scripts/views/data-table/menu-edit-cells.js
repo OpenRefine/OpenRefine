@@ -384,6 +384,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           label: $.i18n('core-views/unescape-html'),
           click: function() { doTextTransform("value.unescape('html')", "keep-original", true, 10); }
         },
+        {
+          id: "core/replace-smartquotes",
+          label: $.i18n('core-views/replace-smartquotes'),
+          click: function() { doTextTransform("value.replace(/[\u2018\u2019\u201A\u201B\u2039\u203A\u201A]/,\"\\\'\").replace(/[\u201C\u201D\u00AB\u00BB\u201E]/,\"\\\"\")", "keep-original", false, ""); }
+        },
         {},
         {
           id: "core/to-titlecase",
