@@ -21,7 +21,7 @@
     "core-index/add-pref": "設定項目を追加",
     "core-index/rowCount": "行数:",
     "core-index/key": "設定項目",
-    "core-index/new-version": "新バージョン!",
+    "core-index/new-version": "新バージョン",
     "core-index/now": "いま",
     "core-index/change-value": "設定値を変える",
     "core-index/about": "OpenRefineとは",
@@ -713,5 +713,6 @@
     "core-buttons/add-url": "URLを追加",
     "core-buttons/unselect": "選択解除",
     "core-buttons/pick-record": "レコード要素を選択",
-    "core-index/metaDatas": "プロジェクトのメタデータ"
+    "core-index/metaDatas": "プロジェクトのメタデータ",
+    "core-views/replace-smartquotes": "スマート置換"
 }
