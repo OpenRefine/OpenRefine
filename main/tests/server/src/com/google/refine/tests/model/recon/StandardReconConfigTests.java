@@ -270,4 +270,54 @@ public class StandardReconConfigTests extends RefineTest {
     	assertTrue(recon.candidates.get(0).score > 0.2);
     	assertEquals(recon.candidates.get(0).id, "102271932");
     }
+    
+    @Test
+    public void reorderReconciliationResultsStableSort() throws JsonParseException, JsonMappingException, IOException {
+    	String viafJson = " [\n" + 
+    			"\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"18951129\",\n" + 
+    			"        \"name\": \"Varano, Camilla Battista da 1458-1524\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.3,\n" + 
+    			"        \"match\": false\n" + 
+    			"    },\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"102271932\",\n" + 
+    			"        \"name\": \"Shamsie, Kamila, 1973-....\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.23076923076923078,\n" + 
+    			"        \"match\": false\n" + 
+    			"    },\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"63233597\",\n" + 
+    			"        \"name\": \"Camilla, Duchess of Cornwall, 1947-\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.3,\n" + 
+    			"        \"match\": false\n" + 
+    			"    }\n" + 
+    			"\n" + 
+    			"]";
+    	
+    	StandardReconConfigStub stub = new StandardReconConfigStub();
+    	ArrayNode node = ParsingUtilities.mapper.readValue(viafJson, ArrayNode.class);
+    	Recon recon = stub.createReconServiceResults("Kamila", node, 1234L);
+    	assertEquals(recon.candidates.get(0).score, 0.3);
+    	assertEquals(recon.candidates.get(0).id, "18951129");
+    }
 }
