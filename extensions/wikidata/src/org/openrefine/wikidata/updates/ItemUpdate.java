@@ -24,12 +24,15 @@
 package org.openrefine.wikidata.updates;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
@@ -57,9 +60,9 @@ public class ItemUpdate {
     private final ItemIdValue qid;
     private final List<Statement> addedStatements;
     private final Set<Statement> deletedStatements;
-    private final Set<MonolingualTextValue> labels;
-    private final Set<MonolingualTextValue> descriptions;
-    private final Set<MonolingualTextValue> aliases;
+    private final Map<String, MonolingualTextValue> labels;
+    private final Map<String, MonolingualTextValue> descriptions;
+    private final Map<String, List<MonolingualTextValue>> aliases;
 
     /**
      * Constructor.
@@ -69,7 +72,7 @@ public class ItemUpdate {
      *            new items.
      * @param addedStatements
      *            the statements to add on the item. They should be distinct. They
-     *            are modelled as a list because their insertion order matters.
+     *            are modeled as a list because their insertion order matters.
      * @param deletedStatements
      *            the statements to remove from the item
      * @param labels
@@ -98,18 +101,43 @@ public class ItemUpdate {
             deletedStatements = Collections.emptySet();
         }
         this.deletedStatements = deletedStatements;
-        if (labels == null) {
-            labels = Collections.emptySet();
-        }
-        this.labels = labels;
-        if (descriptions == null) {
-            descriptions = Collections.emptySet();
-        }
-        this.descriptions = descriptions;
-        if (aliases == null) {
-            aliases = Collections.emptySet();
-        }
-        this.aliases = aliases;
+        this.labels = constructTermMap(labels != null ? labels : Collections.emptyList());
+        this.descriptions = constructTermMap(descriptions != null ? descriptions : Collections.emptyList());
+        this.aliases = constructTermListMap(aliases != null ? aliases : Collections.emptyList());
+    }
+    
+    /**
+     * Private constructor to avoid re-constructing term maps when
+     * merging two item updates.
+     * 
+     * No validation is done on the arguments, they all have to be non-null.
+     * 
+     * @param qid
+     * 		the subject of the update
+     * @param addedStatements
+     *      the statements to add
+     * @param deletedStatements
+     *      the statements to delete
+     * @param labels
+     *      the labels to add
+     * @param descriptions
+     *      the descriptions to add
+     * @param aliases
+     *      the aliases to add
+     */
+    private ItemUpdate(
+    		ItemIdValue qid,
+    		List<Statement> addedStatements,
+    		Set<Statement> deletedStatements,
+    		Map<String, MonolingualTextValue> labels,
+    		Map<String, MonolingualTextValue> descriptions,
+    		Map<String, List<MonolingualTextValue>> aliases) {
+    	this.qid = qid;
+    	this.addedStatements = addedStatements;
+    	this.deletedStatements = deletedStatements;
+    	this.labels = labels;
+    	this.descriptions = descriptions;
+    	this.aliases = aliases;
     }
 
     /**
@@ -144,7 +172,7 @@ public class ItemUpdate {
      */
     @JsonProperty("labels")
     public Set<MonolingualTextValue> getLabels() {
-        return labels;
+        return labels.values().stream().collect(Collectors.toSet());
     }
 
     /**
@@ -152,7 +180,7 @@ public class ItemUpdate {
      */
     @JsonProperty("descriptions")
     public Set<MonolingualTextValue> getDescriptions() {
-        return descriptions;
+        return descriptions.values().stream().collect(Collectors.toSet());
     }
 
     /**
@@ -160,7 +188,7 @@ public class ItemUpdate {
      */
     @JsonProperty("addedAliases")
     public Set<MonolingualTextValue> getAliases() {
-        return aliases;
+        return aliases.values().stream().flatMap(List::stream).collect(Collectors.toSet());
     }
 
     /**
@@ -181,8 +209,10 @@ public class ItemUpdate {
     }
 
     /**
-     * Merges all the changes in other into this instance. Both updates should have
-     * the same subject.
+     * Merges all the changes in other with this instance. Both updates should have
+     * the same subject. Changes coming from `other` have priority over changes
+     * from this instance. This instance is not modified, the merged update is returned
+     * instead.
      * 
      * @param other
      *            the other change that should be merged
@@ -197,12 +227,25 @@ public class ItemUpdate {
         }
         Set<Statement> newDeletedStatements = new HashSet<>(deletedStatements);
         newDeletedStatements.addAll(other.getDeletedStatements());
-        Set<MonolingualTextValue> newLabels = new HashSet<>(labels);
-        newLabels.addAll(other.getLabels());
-        Set<MonolingualTextValue> newDescriptions = new HashSet<>(descriptions);
-        newDescriptions.addAll(other.getDescriptions());
-        Set<MonolingualTextValue> newAliases = new HashSet<>(aliases);
-        newAliases.addAll(other.getAliases());
+        Map<String,MonolingualTextValue> newLabels = new HashMap<>(labels);
+        for(MonolingualTextValue otherLabel : other.getLabels()) {
+        	newLabels.put(otherLabel.getLanguageCode(), otherLabel);
+        }
+        Map<String,MonolingualTextValue> newDescriptions = new HashMap<>(descriptions);
+        for(MonolingualTextValue otherDescription : other.getDescriptions()) {
+        	newDescriptions.put(otherDescription.getLanguageCode(), otherDescription);
+        }
+        Map<String,List<MonolingualTextValue>> newAliases = new HashMap<>(aliases);
+        for(MonolingualTextValue alias : other.getAliases()) {
+        	List<MonolingualTextValue> aliases = newAliases.get(alias.getLanguageCode());
+        	if(aliases == null) {
+        		aliases = new LinkedList<>();
+        		newAliases.put(alias.getLanguageCode(), aliases);
+        	}
+        	if(!aliases.contains(alias)) {
+        		aliases.add(alias);
+        	}
+        }
         return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newDescriptions, newAliases);
     }
 
@@ -265,19 +308,17 @@ public class ItemUpdate {
      */
     public ItemUpdate normalizeLabelsAndAliases() {
         // Ensure that we are only adding aliases with labels
-        Set<String> labelLanguages = labels.stream().map(l -> l.getLanguageCode()).collect(Collectors.toSet());
-
         Set<MonolingualTextValue> filteredAliases = new HashSet<>();
-        Set<MonolingualTextValue> newLabels = new HashSet<>(labels);
-        for (MonolingualTextValue alias : aliases) {
-            if (!labelLanguages.contains(alias.getLanguageCode())) {
-                labelLanguages.add(alias.getLanguageCode());
-                newLabels.add(alias);
+        Map<String, MonolingualTextValue> newLabels = new HashMap<>(labels);
+        for (MonolingualTextValue alias : getAliases()) {
+            if (!labels.containsKey(alias.getLanguageCode())) {
+                newLabels.put(alias.getLanguageCode(), alias);
             } else {
                 filteredAliases.add(alias);
             }
         }
-        return new ItemUpdate(qid, addedStatements, deletedStatements, newLabels, descriptions, filteredAliases);
+        return new ItemUpdate(qid, addedStatements, deletedStatements,
+        		newLabels, descriptions, constructTermListMap(filteredAliases));
     }
 
     @Override
@@ -288,8 +329,9 @@ public class ItemUpdate {
         ItemUpdate otherUpdate = (ItemUpdate) other;
         return qid.equals(otherUpdate.getItemId()) && addedStatements.equals(otherUpdate.getAddedStatements())
                 && deletedStatements.equals(otherUpdate.getDeletedStatements())
-                && labels.equals(otherUpdate.getLabels()) && descriptions.equals(otherUpdate.getDescriptions())
-                && aliases.equals(otherUpdate.getAliases());
+                && getLabels().equals(otherUpdate.getLabels())
+                && getDescriptions().equals(otherUpdate.getDescriptions())
+                && getAliases().equals(otherUpdate.getAliases());
     }
 
     @Override
@@ -329,5 +371,22 @@ public class ItemUpdate {
         builder.append("\n>");
         return builder.toString();
     }
+    
+    protected Map<String,MonolingualTextValue> constructTermMap(Collection<MonolingualTextValue> mltvs) {
+    	return mltvs.stream()
+    			.collect(Collectors.toMap(MonolingualTextValue::getLanguageCode, Function.identity()));
+    }
 
+    protected Map<String, List<MonolingualTextValue>> constructTermListMap(Collection<MonolingualTextValue> mltvs) {
+    	Map<String,List<MonolingualTextValue>> result = new HashMap<>();
+    	for(MonolingualTextValue mltv : mltvs) {
+    		List<MonolingualTextValue> values = result.get(mltv.getLanguageCode());
+    		if (values == null) {
+    			values = new LinkedList<>();
+    			result.put(mltv.getLanguageCode(), values);
+    		}
+    		values.add(mltv);
+    	}
+    	return result;
+    }
 }
