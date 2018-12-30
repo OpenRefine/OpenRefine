@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -524,6 +525,14 @@ public class StandardReconConfig extends ReconConfig {
     protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
         List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {});
+        
+        // Sort results by decreasing score
+        results.sort(new Comparator<ReconResult>() {
+        	@Override
+        	public int compare(ReconResult a, ReconResult b) {
+        		return Double.compare(b.score, a.score);
+        	}
+        });
         
         int length = results.size();
         int count = 0;
