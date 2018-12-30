@@ -74,7 +74,7 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
 	public void testGetFunctionsAndKeyers() throws ServletException, IOException {
     	command.doGet(request, response);
     	ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
-    	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone"));
+    	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone3"));
     	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "distances")).contains("levenshtein"));
 	}
 }
