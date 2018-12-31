@@ -542,8 +542,20 @@ public class StandardReconConfig extends ReconConfig {
             recon.addCandidate(candidate);
             count++;
         }
-        
-        if (count > 0) {
+          
+        computeFeatures(recon, text);
+        return recon;
+    } 
+
+    /**
+     * Recomputes the features associated with this reconciliation
+     * object (only if we have at least one candidate).
+     * 
+     * @param text
+     * 	    the cell value to compare the reconciliation data to
+     */
+	public void computeFeatures(Recon recon, String text) {
+        if (!recon.candidates.isEmpty()) {
             ReconCandidate candidate = recon.candidates.get(0);
             
             recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
@@ -561,8 +573,7 @@ public class StandardReconConfig extends ReconConfig {
                 }
             }
         }
-        return recon;
-    }
+	}
     
     static protected double wordDistance(String s1, String s2) {
         Set<String> words1 = breakWords(s1);
