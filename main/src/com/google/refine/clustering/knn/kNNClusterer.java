@@ -61,15 +61,7 @@ import com.google.refine.model.Row;
 
 import edu.mit.simile.vicino.clustering.NGramClusterer;
 import edu.mit.simile.vicino.clustering.VPTreeClusterer;
-import edu.mit.simile.vicino.distances.BZip2Distance;
 import edu.mit.simile.vicino.distances.Distance;
-import edu.mit.simile.vicino.distances.GZipDistance;
-import edu.mit.simile.vicino.distances.JaccardDistance;
-import edu.mit.simile.vicino.distances.JaroDistance;
-import edu.mit.simile.vicino.distances.JaroWinklerDistance;
-import edu.mit.simile.vicino.distances.JaroWinklerTFIDFDistance;
-import edu.mit.simile.vicino.distances.LevenshteinDistance;
-import edu.mit.simile.vicino.distances.PPMDistance;
 
 public class kNNClusterer extends Clusterer {
     
@@ -77,19 +69,19 @@ public class kNNClusterer extends Clusterer {
         @JsonIgnore
         private String _distanceStr;
         @JsonIgnore
-        private Distance _distance;
+        private SimilarityDistance _distance;
         @JsonIgnore
         private kNNClustererConfigParameters _parameters = null;
         
         @JsonIgnore
-        public Distance getDistance() {
+        public SimilarityDistance getDistance() {
             return _distance;
         }
         
         @JsonProperty("function")
         public void setDistance(String distanceStr) {
         	_distanceStr = distanceStr;
-        	_distance = _distances.get(_distanceStr.toLowerCase());
+        	_distance = DistanceFactory.get(_distanceStr.toLowerCase());
         }
         
         @JsonProperty("function")
@@ -130,27 +122,14 @@ public class kNNClusterer extends Clusterer {
         public int blockingNgramSize = defaultBlockingNgramSize;
     }
 
-    private Distance _distance;
+    private SimilarityDistance _distance;
     private kNNClustererConfigParameters _params;
-    
-    static final protected Map<String, Distance> _distances = new HashMap<String, Distance>();
 
     List<Set<Serializable>> _clusters;
 
     Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
 
     final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
-    
-    static {
-        _distances.put("levenshtein", new LevenshteinDistance());
-        _distances.put("jaccard", new JaccardDistance());
-        _distances.put("jaro", new JaroDistance());
-        _distances.put("jaro-winkler", new JaroWinklerDistance());
-        _distances.put("jaro-winkler-tfidf", new JaroWinklerTFIDFDistance());
-        _distances.put("gzip", new GZipDistance());
-        _distances.put("bzip2", new BZip2Distance());
-        _distances.put("ppm", new PPMDistance());
-    }
 
     class VPTreeClusteringRowVisitor implements RowVisitor {
 
@@ -193,18 +172,31 @@ public class kNNClusterer extends Clusterer {
 
     class BlockingClusteringRowVisitor implements RowVisitor {
 
-        Distance _distance;
+        SimilarityDistance _distance;
         double _radius = 1.0d;
         int _blockingNgramSize = 6;
         HashSet<String> _data;
         NGramClusterer _clusterer;
         
-        public BlockingClusteringRowVisitor(Distance d, kNNClustererConfigParameters params) {
-            _distance = d;
+        private class DistanceWrapper extends Distance {
+        	private final SimilarityDistance _d;
+        	
+        	protected DistanceWrapper(SimilarityDistance d) {
+        		_d = d;
+        	}
+
+			@Override
+			public double d(String arg0, String arg1) {
+				return _d.compute(arg0, arg1);
+			}
+        }
+        
+        public BlockingClusteringRowVisitor(SimilarityDistance _distance2, kNNClustererConfigParameters params) {
+            _distance = _distance2;
             _data = new HashSet<String>();
             _blockingNgramSize = params.blockingNgramSize;
             _radius = params.radius;
-            _clusterer = new NGramClusterer(_distance, _blockingNgramSize);
+            _clusterer = new NGramClusterer(new DistanceWrapper(_distance), _blockingNgramSize);
         }
         
         @Override

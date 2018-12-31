@@ -81,7 +81,7 @@ public class BinningClusterer extends Clusterer {
         @JsonProperty("function")
         public void setKeyer(String keyerName) {
         	_keyerName = keyerName;
-        	_keyer = _keyers.get(_keyerName.toLowerCase());
+        	_keyer = KeyerFactory.get(_keyerName.toLowerCase());
         }
         
         @JsonProperty("function")
@@ -123,21 +123,9 @@ public class BinningClusterer extends Clusterer {
     protected Keyer _keyer;
     protected BinningParameters _parameters;
     
-    static final protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
-
     final static Logger logger = LoggerFactory.getLogger("binning_clusterer");
     
     List<Map<String,Integer>> _clusters;
-     
-    static {
-        _keyers.put("fingerprint", new FingerprintKeyer());
-        _keyers.put("ngram-fingerprint", new NGramFingerprintKeyer());
-        _keyers.put("metaphone", new MetaphoneKeyer());
-        _keyers.put("double-metaphone", new DoubleMetaphoneKeyer());
-        _keyers.put("metaphone3", new Metaphone3Keyer());
-        _keyers.put("soundex", new SoundexKeyer());
-        _keyers.put("cologne-phonetic", new ColognePhoneticKeyer());
-    }
 
     class BinningRowVisitor implements RowVisitor {
 
