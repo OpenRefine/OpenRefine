@@ -572,6 +572,8 @@ public class StandardReconConfig extends ReconConfig {
                     }
                 }
             }
+        } else {
+        	recon.features = new Object[Recon.Feature_max];
         }
 	}
     
