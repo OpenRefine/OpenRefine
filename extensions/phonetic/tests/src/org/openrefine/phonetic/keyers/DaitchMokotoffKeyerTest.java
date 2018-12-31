@@ -18,4 +18,10 @@ public class DaitchMokotoffKeyerTest {
     public void testAccents() {
         assertEquals(keyer.key("Éléonore"), "086900");
     }
+    
+    
+    @Test
+    public void testEmpty() {
+        assertEquals(keyer.key(""), "000000");
+    }
 }

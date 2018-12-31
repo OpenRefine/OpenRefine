@@ -1,11 +1,10 @@
 package org.openrefine.phonetic.keyers;
 
-import com.google.refine.clustering.binning.Keyer;
-
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
+
+import com.google.refine.clustering.binning.Keyer;
 
 public class BeiderMorseKeyerTest  {
     
@@ -13,12 +12,17 @@ public class BeiderMorseKeyerTest  {
     
     @Test
     public void testKey() {
-        assertTrue(keyer.key("Alphonse").contains("alponzi"));
+        assertEquals(keyer.key("Alphonse"), "YlfYnzi");
     }
     
     @Test
     public void testAccents() {
-        assertEquals(keyer.key("Éléonore"), "ilionor|ilionori");
+        assertEquals(keyer.key("Éléonore"), "ilionor");
+    }
+    
+    @Test
+    public void testEmpty() {
+        assertEquals(keyer.key(""), "");
     }
 
 }
