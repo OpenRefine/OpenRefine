@@ -45,6 +45,16 @@ function init() {
 
   // Similarly, we could register new distances like this:
   // Packages.com.google.refine.clustering.knn.DistanceFactory.put("my-distance", new Packages.org.openrefine.mydistances.MyDistance());
+
+    /*
+     * Resources: just some javascript to load the localized strings
+     */
+    ClientSideResourceManager.addPaths(
+      "project/scripts",
+      module,
+      [
+        "scripts/load-language.js",
+      ]
+    );
+
 }
-
-
