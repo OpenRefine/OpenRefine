@@ -714,5 +714,6 @@
     "core-buttons/unselect": "選択解除",
     "core-buttons/pick-record": "レコード要素を選択",
     "core-index/metaDatas": "プロジェクトのメタデータ",
-    "core-views/replace-smartquotes": "スマート置換"
+    "core-views/replace-smartquotes": "スマート置換",
+    "core-dialogs/no-clustering-functions-and-distances": "クラスタリング関数が読み込めませんでした。"
 }
