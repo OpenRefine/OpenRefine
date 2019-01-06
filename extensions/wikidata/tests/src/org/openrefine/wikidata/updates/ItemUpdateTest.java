@@ -156,4 +156,14 @@ public class ItemUpdateTest {
                 .addLabel(aliasFr).build();
         assertEquals(expectedUpdate, normalized);
     }
+    
+    @Test
+    public void testMergeLabels() {
+    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(label2), merged.getLabels());
+    }
 }
