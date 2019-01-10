@@ -50,6 +50,7 @@ import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -239,19 +240,19 @@ public class ExcelImporter extends TabularImportingParserBase {
     }
     
     static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
-        int cellType = cell.getCellType();
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+        CellType cellType = cell.getCellType();
+        if (cellType.equals(CellType.FORMULA)) {
             cellType = cell.getCachedFormulaResultType();
         }
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
-            cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
+        if (cellType.equals(CellType.ERROR) ||
+            cellType.equals(CellType.BLANK)) {
             return null;
         }
         
         Serializable value = null;
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
+        if (cellType.equals(CellType.BOOLEAN)) {
             value = cell.getBooleanCellValue();
-        } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
+        } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
             
             if (HSSFDateUtil.isCellDateFormatted(cell)) {
