@@ -710,5 +710,6 @@
     "core-views/choose-reconciliation-service": "Wählen Sie einen Abgleichdienst aus",
     "core-views/choose-reconciliation-service-alert": "Bitte wählen Sie zuerst einen Abstimmungsdienst aus.",
     "core-index/metaDatas": "Projekt-Metadaten",
-    "core-views/replace-smartquotes": "Typografische Anführungszeichen durch ASCII ersetzen"
+    "core-views/replace-smartquotes": "Typografische Anführungszeichen durch ASCII ersetzen",
+    "core-dialogs/no-clustering-functions-and-distances": "Die Clustering-Funktionen und Entfernungen konnten nicht geladen werden."
 }
