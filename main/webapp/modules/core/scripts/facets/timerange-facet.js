@@ -290,7 +290,7 @@ TimeRangeFacet.prototype._setRangeIndicators = function() {
   } else {
     var timeOfDayformat = "HH:mm:ss";
     var dayOfYearFormat = "yyyy-MM-dd";
-    this._elmts.statusDiv.html("<b>" + fromDate.toString(dayOfYearFormat) + "</b>  " + fromDate.toString(timeOfDayformat) + " &mdash; " + toDate.toString(timeOfDayformat) + "<b>  " + toDate.toString(dayOfYearFormat) + "</b>" );
+    this._elmts.statusDiv.html("<b>" + fromDate.toString(dayOfYearFormat) + "</b>  " + fromDate.toString(timeOfDayformat) + " &mdash; "  + "<b>" + toDate.toString(dayOfYearFormat) + "</b>  " + toDate.toString(timeOfDayformat) );
   }
 };
 
