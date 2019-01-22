@@ -288,8 +288,9 @@ TimeRangeFacet.prototype._setRangeIndicators = function() {
     var format = "yyyy-MM-dd";
     this._elmts.statusDiv.html(fromDate.toString(format) + " &mdash; " + toDate.toString(format));
   } else {
-    var format = "HH:mm:ss";
-    this._elmts.statusDiv.html("<b style='margin-right: 4em'>" + fromDate.toString("yyyy-MM-dd") + "</b> " + fromDate.toString(format) + " &mdash; " + toDate.toString(format));
+    var timeOfDayformat = "HH:mm:ss";
+    var dayOfYearFormat = "yyyy-MM-dd";
+    this._elmts.statusDiv.html("<b>" + fromDate.toString(dayOfYearFormat) + "</b>  " + fromDate.toString(timeOfDayformat) + " &mdash; "  + "<b>" + toDate.toString(dayOfYearFormat) + "</b>  " + toDate.toString(timeOfDayformat) );
   }
 };
 
