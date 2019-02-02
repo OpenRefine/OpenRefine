@@ -37,7 +37,7 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
     private WbDateConstant month = new WbDateConstant("2018-02");
     private WbDateConstant day = new WbDateConstant("2018-02-27");
     private WbDateConstant whitespace = new WbDateConstant("   2018-02-27  ");
-    private WbDateConstant hour = new WbDateConstant("2018-02-27T13");
+    private WbDateConstant second = new WbDateConstant("2017-01-03T04:12:45");
 
     @Test
     public void testSerialize() {
@@ -62,8 +62,8 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
                 TimeValue.CM_GREGORIAN_PRO), month);
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), day);
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 13, (byte) 0, (byte) 0, (byte) 12, 0, 0,
-                0, TimeValue.CM_GREGORIAN_PRO), hour);
+        evaluatesTo(Datamodel.makeTimeValue(2017, (byte) 1, (byte) 3, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), second);
 
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), whitespace);
@@ -74,8 +74,9 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
         new WbDateConstant("invalid format");
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
     public void testPartlyValid() {
-        new WbDateConstant("2018-partly valid");
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), new WbDateConstant("2018-partly valid"));
     }
 }
