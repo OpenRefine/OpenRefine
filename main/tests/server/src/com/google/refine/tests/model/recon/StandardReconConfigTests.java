@@ -155,6 +155,19 @@ public class StandardReconConfigTests extends RefineTest {
     }
     
     @Test
+    public void testReconstructNoIdentifierSchemaSpaces() throws IOException {
+    	String json = "{\"mode\":\"standard-service\","
+    			+ "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+    			+ "\"type\":null,"
+    			+ "\"autoMatch\":true,"
+    			+ "\"columnDetails\":[],"
+    			+ "\"limit\":0}";
+    	StandardReconConfig config = StandardReconConfig.reconstruct(json);
+    	assertEquals(config.identifierSpace, "http://localhost/identifier");
+    	assertEquals(config.schemaSpace, "http://localhost/schema");
+    }
+    
+    @Test
     public void formulateQueryTest() throws IOException {
     	Project project = createCSVProject("title,director\n"
     			+ "mulholland drive,david lynch");
