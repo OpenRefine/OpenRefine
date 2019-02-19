@@ -802,6 +802,10 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
+    if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
+       suggestOptions.view_url = this._reconService.view.url;
+    }
+
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
@@ -820,6 +824,9 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
+    if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
+       suggestOptions.view_url = this._reconService.view.url;
+    }
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
