@@ -108,6 +108,8 @@ DataTableCellUI.prototype._render = function() {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
       }
 
+      self._previewOnHover(service, match, a);
+
       $('<span> </span>').appendTo(divContent);
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
@@ -125,18 +127,19 @@ DataTableCellUI.prototype._render = function() {
           var candidates = r.c;
           var renderCandidate = function(candidate, index) {
             var li = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
+            var liSpan = $('<span></span>').appendTo(li);
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match-similar")
             .attr("title", $.i18n('core-views/match-all-cells'))
-            .appendTo(li).click(function(evt) {
+            .appendTo(liSpan).click(function(evt) {
               self._doMatchTopicToSimilarCells(candidate);
             });
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match")
             .attr("title", $.i18n('core-views/match-this-cell') )
-            .appendTo(li).click(function(evt) {
+            .appendTo(liSpan).click(function(evt) {
               self._doMatchTopicToOneCell(candidate);
             });
 
@@ -144,26 +147,13 @@ DataTableCellUI.prototype._render = function() {
             .addClass("data-table-recon-topic")
             .attr("target", "_blank")
             .text(_.unescape(candidate.name)) // TODO: only use of _.unescape - consolidate
-            .appendTo(li);
+            .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
               a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
             }
 
-            var preview = null;
-            if ((service) && (service.preview)) {
-              preview = service.preview;
-            }
-
-            if (preview) {
-              a.click(function(evt) {
-                if (!evt.metaKey && !evt.ctrlKey) {
-                  self._previewCandidateTopic(candidate, this, preview);
-                  evt.preventDefault();
-                  return false;
-                }
-              });
-            }
+            self._previewOnHover(service, candidate, liSpan);
 
             var score;
             if (candidate.score < 1) {
@@ -171,7 +161,7 @@ DataTableCellUI.prototype._render = function() {
             } else {
               score = Math.round(candidate.score);
             }
-            $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(li);
+            $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(liSpan);
           };
 
           for (var i = 0; i < candidates.length; i++) {
@@ -428,20 +418,11 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
   );
 };
 
-// TODO delete this
-DataTableCellUI.internalPreview = {
-  srchurl: 'https://www.googleapis.com/freebase/v1/search?filter=(all mid:${id})'
-    + '&output=(notable:/client/summary (description citation provenance) type)'
-    + '&key='+CustomSuggest.FREEBASE_API_KEY+'&callback=?',
-  imgurl : 'https://www.googleapis.com/freebase/v1/image${id}?maxwidth=75&errorid=/freebase/no_image_png&key='+CustomSuggest.FREEBASE_API_KEY,
-  width: 430,
-  height: 300
-};
-
 DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, preview) {
   var self = this;
   var id = candidate.id;
-  var fakeMenu = MenuSystem.createMenu();
+  var fakeMenu = $('<div></div>')
+        .addClass("menu-container");
   fakeMenu
   .width(preview.width?preview.width:414)
   .addClass('data-table-topic-popup')
@@ -454,19 +435,17 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     .height(preview.height)
     .attr("src", url)
     .appendTo(fakeMenu);
-  } else { // Otherwise use our internal preview
-    var url = encodeURI(DataTableCellUI.internalPreview.srchurl.replace("\${id}", id));
-    $.ajax(url,{dataType:"jsonp"}).done(function(searchResponse) {
-      var data = searchResponse.result[0];
-      var html = $.suggest.suggest.create_flyout(data, preview.imgurl);
-      var container = $('<div></div>').css({fontSize:16}); // Suggest assumes this as a base font size
-      container.append(html);
-      fakeMenu.append(container);
-    });
+  } else {
+    return; // no preview service available
   }
 
-  MenuSystem.showMenu(fakeMenu, function(){});
   MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+  fakeMenu.appendTo(elmt);
+
+  var dismissMenu = function() {
+     fakeMenu.remove();
+     fakeMenu.unbind();  
+  };
 
   var elmts = DOM.bind(fakeMenu);
   
@@ -476,15 +455,41 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   
   elmts.matchButton.click(function() {
     self._doMatchTopicToOneCell(candidate);
-    MenuSystem.dismissAll();
+    dismissMenu();
   });
   elmts.matchSimilarButton.click(function() {
     self._doMatchTopicToSimilarCells(candidate);
-    MenuSystem.dismissAll();
+    dismissMenu();
   });
   elmts.cancelButton.click(function() {
-    MenuSystem.dismissAll();
+    dismissMenu();
   });
+  return dismissMenu;
+};
+
+/**
+ * Sets up a preview widget to appear when hovering the given DOM element.
+ */
+DataTableCellUI.prototype._previewOnHover = function(service, candidate, element) {
+    var self = this;
+    var preview = null;
+    if ((service) && (service.preview)) {
+        preview = service.preview;
+    }
+
+    if (preview) {
+        var dismissCallback = null;
+        element.hover(function(evt) {
+        if (!evt.metaKey && !evt.ctrlKey) {
+            dismissCallback = self._previewCandidateTopic(candidate, this, preview);
+            evt.preventDefault();
+        }
+        }, function(evt) {
+        if(dismissCallback !== null) {
+            dismissCallback();
+        }
+        });
+    }
 };
 
 DataTableCellUI.prototype._startEdit = function(elmt) {
