@@ -42,7 +42,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.dialogHeader.text($.i18n('core-views/add-col-col')+" " + column.name);
     
     elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
-    elmts.or_views_onErr.text($.i18n('core-views/addasdasd'));
+    elmts.or_views_onErr.text($.i18n('core-views/on-error'));
     elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
     elmts.or_views_storeErr.text($.i18n('core-views/store-err'));
     elmts.or_views_copyVal.text($.i18n('core-views/copy-val'));
