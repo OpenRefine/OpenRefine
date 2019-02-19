@@ -834,7 +834,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     fixSuggestInput(input);
 
   } else if (mode === "time") {
-     input.attr("placeholder", "YYYY(-MM(-DD))...");
+     input.attr("placeholder", "YYYY(-MM(-DD))");
      var propagateValue = function(val) {
         // TODO add validation here
         inputContainer.data("jsonValue", {
@@ -848,7 +848,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
 
-    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d(T[0-2]\d(:[0-5]\d(:[0-5]\dZ)?)?)?)?)?$/);
+    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d)?)?$/);
    } else if (mode === "globe-coordinate") {
      input.attr("placeholder", "lat,lon");
      var propagateValue = function(val) {

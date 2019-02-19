@@ -77,8 +77,8 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
         new WbDateConstant("invalid format");
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testPartlyValid() {
-        isSkipped(new WbDateConstant("2018-partly valid"));
+        new WbDateConstant("2018-partly valid");
     }
 }
