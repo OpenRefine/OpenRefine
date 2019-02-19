@@ -106,7 +106,9 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             Date date = entry.getKey().parse(trimmedDatestamp, position);
 
             // Ignore parses which failed or do not consume all the input
-            if (date != null && position.getIndex() > maxLength) {
+            if (date != null && position.getIndex() > maxLength
+            		// only allow to partially consume the input if the precision is more than a year
+            		&& (entry.getValue() > 9 || position.getIndex() == trimmedDatestamp.length())) {
                 precision = entry.getValue();
                 bestDate = date;
                 maxLength = position.getIndex();
