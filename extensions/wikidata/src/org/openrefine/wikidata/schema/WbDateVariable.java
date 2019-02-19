@@ -54,7 +54,7 @@ public class WbDateVariable extends WbVariableExpr<TimeValue> {
     public TimeValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         try {
-            // TODO accept parsed dates (without converting them to strings)
+            // parsed dates are accepted by converting them to strings
             return WbDateConstant.parse(cell.value.toString());
         } catch (ParseException e) {
             if(!cell.value.toString().isEmpty()) {
