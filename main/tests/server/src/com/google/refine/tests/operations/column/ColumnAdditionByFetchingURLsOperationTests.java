@@ -286,14 +286,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         // Over Quota
         // This application is temporarily over its serving quota. Please try again later.
         try { 
-            headersUsed = ParsingUtilities.mapper.readValue(project.rows.get(0).getCellValue(newCol).toString(), ObjectNode.class);
+            String response = project.rows.get(0).getCellValue(newCol).toString();
+            headersUsed = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
         } catch (IOException ex) {
             return;
         }
         // Inspect the results we got from remote service
-        Assert.assertEquals(headersUsed.get("User-Agent").asText(), userAgentValue);
-        Assert.assertEquals(headersUsed.get("Authorization").asText(), authorizationValue);
-        Assert.assertEquals(headersUsed.get("Accept").asText(), acceptValue);
+        Assert.assertEquals(headersUsed.get("user-agent").asText(), userAgentValue);
+        Assert.assertEquals(headersUsed.get("authorization").asText(), authorizationValue);
+        Assert.assertEquals(headersUsed.get("accept").asText(), acceptValue);
     }
 
 }
