@@ -200,6 +200,9 @@ DataTableCellUI.prototype._render = function() {
         var addSuggest = false;
         if ((service) && (service.suggest) && (service.suggest.entity)) {
           suggestOptions = service.suggest.entity;
+          if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
+            suggestOptions.view_url = service.view.url;
+          }
           addSuggest = true;
         }
 
