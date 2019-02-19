@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -55,7 +55,7 @@ DataTableView._extenders = [];
       "label": "Test",
       "click": function() {
           alert("Test");
-      } 
+      }
     });
   });
 */
@@ -69,12 +69,12 @@ DataTableView.prototype.getSorting = function() {
 
 DataTableView.prototype.resize = function() {
   this._adjustDataTables();
-  
+
   var topHeight =
     this._div.find(".viewpanel-header").outerHeight(true) +
     this._div.find(".data-header-table-container").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
-  
+
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
   var tableContainerVPadding = tableContainer.outerHeight(true) - tableContainer.height();
   tableContainer.height((tableContainerIntendedHeight - tableContainerVPadding) + "px");
@@ -93,7 +93,7 @@ DataTableView.prototype.render = function() {
   var html = $(
     '<div class="viewpanel-header">' +
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
-        '<span bind="modeSelectors"></span>' + 
+        '<span bind="modeSelectors"></span>' +
       '</div>' +
       '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
       '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
@@ -140,7 +140,7 @@ DataTableView.prototype.render = function() {
   $(".data-table-null").toggle(self._shownulls);
 
   this.resize();
-  
+
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
 };
 
@@ -289,10 +289,10 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
 
   if (columnGroups.length > 0) {
     renderColumnGroups(
-        columnGroups, 
+        columnGroups,
         [ theProject.columnModel.keyCellIndex ]
     );
-  }    
+  }
 
   /*------------------------------------------------------------
    *  Column Headers with Menus
@@ -423,7 +423,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     }
     renderRow(tr, r, row, even);
   }
-  
+
   $(table.parentNode).bind('scroll', function(evt) {
     self._adjustDataTableScroll();
   });
@@ -437,27 +437,27 @@ DataTableView.prototype._adjustDataTables = function() {
   }
   dataTable = dataTable[0];
   headerTable = headerTable[0];
-  
+
   if (dataTable.rows.length === 0) {
     return;
   }
-  
+
   var dataTr = dataTable.rows[0];
   var headerTr = headerTable.rows[headerTable.rows.length - 1];
-  
+
   var marginColumnWidths =
     $(dataTr.cells[0]).outerWidth(true) +
     $(dataTr.cells[1]).outerWidth(true) +
     $(dataTr.cells[2]).outerWidth(true) -
     DOM.getHPaddings($(headerTr.cells[0])) + 1;
-  
+
   $(headerTable)
     .find('> tbody > tr > td:first-child')
     .width('1%')
     .children()
       .first()
       .width(marginColumnWidths);
-  
+
   for (var i = 1; i < headerTr.cells.length; i++) {
     var headerTd = $(headerTr.cells[i]);
     var dataTd = $(dataTr.cells[i + 2]);
@@ -468,7 +468,7 @@ DataTableView.prototype._adjustDataTables = function() {
     headerTd.width('1%').find('> div').width(commonWidth);
     dataTd.children().first().width(commonWidth);
   }
-  
+
   this._adjustDataTableScroll();
 };
 
@@ -571,7 +571,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
     elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
     elmts.okButton.html($.i18n('core-buttons/ok'));
-    elmts.cancelButton.text($.i18n('core-buttons/cancel'));    
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
@@ -585,7 +585,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
                 elmts.repeatCountInput[0].value
         );
     });
-    
+
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts,
       -1,
@@ -599,19 +599,19 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     };
   };
   /** above can be move to seperate file **/
-  
+
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
-        {
-            label: $.i18n('core-views/transform'),
-            id: "core/facets",
-            width: "200px",
-            click: function() {
-                   doTextTransformPrompt();
-            }
-        },
-    {},
+    //     {
+    //         label: $.i18n('core-views/transform'),
+    //         id: "core/facets",
+    //         width: "200px",
+    //         click: function() {
+    //                doTextTransformPrompt();
+    //         }
+    //     },
+    // {},
     {
       label: $.i18n('core-views/facet'),
       id: "core/facets",
@@ -622,10 +622,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-star",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/starred-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "row.starred.toString()"
               },
               {
@@ -639,10 +639,10 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           id: "core/facet-by-flag",
           click: function() {
             ui.browsingEngine.addFacet(
-              "list", 
+              "list",
               {
                 "name" : $.i18n('core-views/flagged-rows'),
-                "columnName" : "", 
+                "columnName" : "",
                 "expression" : "row.flagged.toString()"
               },
               {
@@ -654,65 +654,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
       ]
     },
     {},
-    {
-      label: $.i18n('core-views/edit-rows'),
-      id: "core/edit-rows",
-      width: "200px",
-      submenu: [
-        {
-          label: $.i18n('core-views/star-rows'),
-          id: "core/star-rows",
-          click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
-          }
-        },
-        {
-          label: $.i18n('core-views/unstar-rows'),
-          id: "core/unstar-rows",
-          click: function() {
-            Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
-          }
-        },
-        {},
-        {
-          label: $.i18n('core-views/flag-rows'),
-          id: "core/flag-rows",
-          click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
-          }
-        },
-        {
-          label: $.i18n('core-views/unflag-rows'),
-          id: "core/unflag-rows",
-          click: function() {
-            Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
-          }
-        },
-        {},
-        {
-          label: $.i18n('core-views/remove-matching'),
-          id: "core/remove-rows",
-          click: function() {
-            Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
-          }
-        }
-      ]
-    },
-    {
-      label: $.i18n('core-views/edit-col'),
-      id: "core/edit-columns",
-      width: "200px",
-      submenu: [
-        {
-          label: $.i18n('core-views/reorder-remove')+"...",
-          id: "core/reorder-columns",
-          click: function() {
-            new ColumnReorderingDialog();
-          }
-        }
-      ]
-    },
-    {},
+
     {
       label: $.i18n('core-views/view'),
       id: "core/view",
@@ -859,8 +801,8 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
   var self = this;
   new ExpressionPreviewDialog(
     title,
-    column.cellIndex, 
-    o.rowIndices, 
+    column.cellIndex,
+    o.rowIndices,
     o.values,
     expression,
     onDone

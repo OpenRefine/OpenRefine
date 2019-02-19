@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -48,16 +48,16 @@ DataTableCellUI.prototype._render = function() {
   var divContent = $('<div/>')
   .addClass("data-table-cell-content");
 
-  var editLink = $('<a href="javascript:{}">&nbsp;</a>')
-  .addClass("data-table-cell-edit")
-  .attr("title", $.i18n('core-views/edit-cell'))
-  .appendTo(divContent)
-  .click(function() { self._startEdit(this); });
-
-  $(this._td).empty()
-  .unbind()
-  .mouseenter(function() { editLink.css("visibility", "visible"); })
-  .mouseleave(function() { editLink.css("visibility", "hidden"); });
+  // var editLink = $('<a href="javascript:{}">&nbsp;</a>')
+  // .addClass("data-table-cell-edit")
+  // .attr("title", $.i18n('core-views/edit-cell'))
+  // .appendTo(divContent)
+  // .click(function() { self._startEdit(this); });
+  //
+  // $(this._td).empty()
+  // .unbind()
+  // .mouseenter(function() { editLink.css("visibility", "visible"); })
+  // .mouseleave(function() { editLink.css("visibility", "hidden"); });
 
   if (!cell || ("v" in cell && cell.v === null)) {
     $('<span>').addClass("data-table-null").html('null').appendTo(divContent);
@@ -308,7 +308,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var self = this;
   var frame = $(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-search-for-match.html"));
   var elmts = DOM.bind(frame);
-  
+
   elmts.dialogHeader.html($.i18n('core-views/search-match'));
   elmts.or_views_searchFor.html($.i18n('core-views/search-for'));
   elmts.or_views_matchOther.html($.i18n('core-views/match-other'));
@@ -331,7 +331,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
       var notable_types = null;
       if (match.notable) {
         notable_types = $.map(match.notable, function(elmt) {
-          return typeof elmt == "string" ? elmt : elmt.id; 
+          return typeof elmt == "string" ? elmt : elmt.id;
         }).join(",");
       }
       var params = {
@@ -378,7 +378,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.clearButton.click(commitClear);
   elmts.cancelButton.click(dismiss);
 
-  var suggestOptions2 = $.extend({ align: "left" }, suggestOptions 
+  var suggestOptions2 = $.extend({ align: "left" }, suggestOptions
                           || { all_types: true, // FIXME: all_types isn't documented for Suggest.  Is it still implemented?
                                filter: "(not (any type:/common/document type:/type/content type:/common/resource))" }); // blacklist documents and images
   if (suggestOptions2.service_url) {
@@ -401,8 +401,8 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
   var self = this;
 
   Refine.postCoreProcess(
-    command, 
-    params, 
+    command,
+    params,
     bodyParams,
     { columnStatsChanged: columnStatsChanged },
     {
@@ -421,8 +421,8 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
 
 DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, bodyParams, columnStatsChanged) {
   Refine.postCoreProcess(
-    command, 
-    params, 
+    command,
+    params,
     bodyParams,
     { cellsChanged: true, columnStatsChanged: columnStatsChanged }
   );
@@ -469,11 +469,11 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
 
   var elmts = DOM.bind(fakeMenu);
-  
+
   elmts.matchButton.html($.i18n('core-views/match-cell'));
   elmts.matchSimilarButton.html($.i18n('core-views/match-identical'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  
+
   elmts.matchButton.click(function() {
     self._doMatchTopicToOneCell(candidate);
     MenuSystem.dismissAll();
@@ -482,130 +482,6 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     self._doMatchTopicToSimilarCells(candidate);
     MenuSystem.dismissAll();
   });
-  elmts.cancelButton.click(function() {
-    MenuSystem.dismissAll();
-  });
-};
-
-DataTableCellUI.prototype._startEdit = function(elmt) {
-  self = this;
-
-  var originalContent = !this._cell || ("v" in this._cell && this._cell.v === null) ? "" : this._cell.v;
-
-  var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
-  menu.html(DOM.loadHTML("core", "scripts/views/data-table/cell-editor.html"));
-  var elmts = DOM.bind(menu);
-
-  elmts.or_views_dataType.html($.i18n('core-views/data-type'));
-  elmts.or_views_text.html($.i18n('core-views/text'));
-  elmts.or_views_number.html($.i18n('core-views/number'));
-  elmts.or_views_boolean.html($.i18n('core-views/boolean'));
-  elmts.or_views_date.html($.i18n('core-views/date'));
-  elmts.okButton.html($.i18n('core-buttons/apply'));
-  elmts.or_views_enter.html($.i18n('core-buttons/enter'));
-  elmts.okallButton.html($.i18n('core-buttons/apply-to-all'));
-  elmts.or_views_ctrlEnter.html($.i18n('core-views/ctrl-enter'));
-  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  elmts.or_views_esc.html($.i18n('core-buttons/esc'));
-  
-  MenuSystem.showMenu(menu, function(){});
-  MenuSystem.positionMenuLeftRight(menu, $(this._td));
-
-  var commit = function() {
-    var type = elmts.typeSelect[0].value;
-
-    var applyOthers = 0;
-    if (this === elmts.okallButton[0]) {
-      applyOthers = 1;
-    }
-
-    var text = elmts.textarea[0].value;
-    var value = text;
-
-    if (type == "number") {
-      value = parseFloat(text);
-      if (isNaN(value)) {
-        alert($.i18n('core-views/not-valid-number'));
-        return;
-      }
-    } else if (type == "boolean") {
-      value = ("true" == text);
-    } else if (type == "date") {
-      value = Date.parse(text);
-      if (!value) {
-        value = DateTimeUtil.parseIso8601DateTime(text);
-      }
-      if (!value) {
-        alert($.i18n('core-views/not-valid-date'));
-        return;
-      }
-      value = value.toString("yyyy-MM-ddTHH:mm:ssZ");
-    }
-
-    MenuSystem.dismissAll();
-
-    if (applyOthers) {
-      Refine.postCoreProcess(
-        "mass-edit",
-        {},
-        {
-          columnName: Refine.cellIndexToColumn(self._cellIndex).name,
-          expression: "value",
-          edits: JSON.stringify([{
-            from: [ originalContent ],
-            to: value,
-            type: type
-          }])
-        },
-        { cellsChanged: true }
-      );
-    } else {
-      Refine.postCoreProcess(
-        "edit-one-cell", 
-        {},
-        {
-          row: self._rowIndex,
-          cell: self._cellIndex,
-          value: value,
-          type: type
-        },
-        {},
-        {
-          onDone: function(o) {
-            if (o.cell.r) {
-              o.cell.r = o.pool.recons[o.cell.r];
-            }
-
-            self._cell = o.cell;
-            self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
-            self._render();
-            self._dataTableView._adjustDataTables();
-          }
-        }
-      );
-    }
-  };
-
-  elmts.okButton.click(commit);
-  elmts.okallButton.click(commit);
-  elmts.textarea
-  .text(originalContent)
-  .keydown(function(evt) {
-    if (!evt.shiftKey) {
-      if (evt.keyCode == 13) {
-        if (evt.ctrlKey) {
-          elmts.okallButton.trigger('click');
-        } else {
-          elmts.okButton.trigger('click');
-        }
-      } else if (evt.keyCode == 27) {
-        MenuSystem.dismissAll();
-      }
-    }
-  })
-  .select()
-  .focus();
-
   elmts.cancelButton.click(function() {
     MenuSystem.dismissAll();
   });

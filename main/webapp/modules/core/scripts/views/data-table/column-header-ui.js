@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -106,23 +106,6 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       submenu: []
     },
     {},
-    {
-      id: "core/edit-cells",
-      label: $.i18n('core-views/edit-cells'),
-      width: "170px",
-      submenu: []
-    },
-    {
-      id: "core/edit-column",
-      label: $.i18n('core-views/edit-column'),
-      submenu: []
-    },
-    {
-      id: "core/transpose",
-      label: $.i18n('core-views/transpose'),
-      submenu: []
-    },
-    {},
     (
       this._dataTableView._getSortingCriterionForColumn(this._column.name) === null ?
         {
@@ -184,13 +167,6 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       ]
     },
     {},
-    {
-      id: "core/reconcile",
-      label: $.i18n('core-views/reconcile'),
-      tooltip: $.i18n('core-views/reconcile-tooltip'),
-      width: "170px",
-      submenu: []
-    }
   ];
 
   for (var i = 0; i < DataTableColumnHeaderUI._extenders.length; i++) {
@@ -248,10 +224,10 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   var elmts = DOM.bind(frame);
 
   elmts.dialogHeader.text($.i18n('core-views/sort-by')+' ' + this._column.name);
-  
+
   elmts.or_views_sortAs.text($.i18n('core-views/sort-cell'));
   elmts.or_views_positionBlank.text($.i18n('core-views/pos-blank'));
-  
+
   elmts.or_views_text.text($.i18n('core-views/text'));
   elmts.or_views_caseSens.text($.i18n('core-views/case-sensitive'));
   elmts.or_views_numbers.text($.i18n('core-views/numbers'));
@@ -329,7 +305,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() { DialogSystem.dismissLevel(level - 1); };
 
-  setValueType(criterion.valueType); 
+  setValueType(criterion.valueType);
 
   elmts.cancelButton.click(dismiss);
   elmts.okButton.click(function() {

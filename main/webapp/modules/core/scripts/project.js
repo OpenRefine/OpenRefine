@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -109,7 +109,6 @@ function resizeTabs() {
 function resizeAll() {
   resize();
   resizeTabs();
-  ui.extensionBar.resize();
   ui.browsingEngine.resize();
   ui.processPanel.resize();
   ui.historyPanel.resize();
@@ -119,10 +118,8 @@ function resizeAll() {
 function initializeUI(uiState) {
   $("#loading-message").hide();
   $("#notification-container").hide();
-  $("#project-title").show();
-  $("#project-controls").show();
   $("#body").show();
-  
+
   $("#or-proj-open").text($.i18n('core-project/open')+"...");
   $("#project-permalink-button").text($.i18n('core-project/permalink'));
   $("#project-name-button").attr("title",$.i18n('core-project/proj-name'));
@@ -131,7 +128,6 @@ function initializeUI(uiState) {
   $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
   $("#or-proj-facFil").text($.i18n('core-project/facet-filter'));
   $("#or-proj-undoRedo").text($.i18n('core-project/undo-redo'));
-  $("#or-proj-ext").text($.i18n('core-project/extensions')+":");
 
   $('#project-name-button').click(Refine._renameProject);
   $('#project-permalink-button').mouseenter(function() {
@@ -141,9 +137,6 @@ function initializeUI(uiState) {
   Refine.setTitle();
 
   ui = DOM.bind($("#body"));
-
-  ui.extensionBar = new ExtensionBar(ui.extensionBarDiv); // construct the menu first so we can resize everything else
-  ui.exporterManager = new ExporterManager($("#export-button"));
 
   ui.leftPanelTabs.tabs({ selected: 0 });
   resize();
@@ -279,7 +272,7 @@ Refine.createUpdateFunction = function(options, onFinallyDone) {
 /*
  * Registers a callback function to be called after each update.
  * This is provided for extensions which need to run some code when
- * the project is updated. This was introduced for the Wikidata 
+ * the project is updated. This was introduced for the Wikidata
  * extension as a means to avoid monkey-patching Refine's core
  * methods (which was the solution adopted for GOKb, as they had
  * no way to change Refine's code directly).

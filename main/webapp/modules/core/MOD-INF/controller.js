@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,7 +37,7 @@ var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceMan
 var bundle = true;
 
 var templatedFiles = {
-  // Requests with last path segments mentioned here 
+  // Requests with last path segments mentioned here
   // will get served from .vt files with the same names
   "index" : {
     outputEncodings: true
@@ -91,55 +91,21 @@ function registerCommands() {
   RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
   RS.registerCommand(module, "compute-clusters", new Packages.com.google.refine.commands.browsing.ComputeClustersCommand());
   RS.registerCommand(module, "get-clustering-functions-and-distances", new Packages.com.google.refine.commands.browsing.GetClusteringFunctionsAndDistancesCommand());
-
-  RS.registerCommand(module, "edit-one-cell", new Packages.com.google.refine.commands.cell.EditOneCellCommand());
-  RS.registerCommand(module, "text-transform", new Packages.com.google.refine.commands.cell.TextTransformCommand());
-  RS.registerCommand(module, "mass-edit", new Packages.com.google.refine.commands.cell.MassEditCommand());
-  RS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.refine.commands.cell.JoinMultiValueCellsCommand());
-  RS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.refine.commands.cell.SplitMultiValueCellsCommand());
-  RS.registerCommand(module, "fill-down", new Packages.com.google.refine.commands.cell.FillDownCommand());
-  RS.registerCommand(module, "blank-down", new Packages.com.google.refine.commands.cell.BlankDownCommand());
-  RS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.refine.commands.cell.TransposeColumnsIntoRowsCommand());
-  RS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
   RS.registerCommand(module, "key-value-columnize", new Packages.com.google.refine.commands.cell.KeyValueColumnizeCommand());
-
   RS.registerCommand(module, "get-languages", Packages.com.google.refine.commands.lang.GetLanguagesCommand());
   RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
-  
-  RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
-  RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
-  RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
-  RS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
-  RS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
-  RS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
+
   RS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
 
   RS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
-
-  RS.registerCommand(module, "reconcile", new Packages.com.google.refine.commands.recon.ReconcileCommand());
-  RS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.refine.commands.recon.ReconMatchBestCandidatesCommand());
-  RS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.refine.commands.recon.ReconMarkNewTopicsCommand());
-  RS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.refine.commands.recon.ReconDiscardJudgmentsCommand());
-  RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
-  RS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
-  RS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
-  RS.registerCommand(module, "recon-clear-one-cell", new Packages.com.google.refine.commands.recon.ReconClearOneCellCommand());
-  RS.registerCommand(module, "recon-clear-similar-cells", new Packages.com.google.refine.commands.recon.ReconClearSimilarCellsCommand());
-  RS.registerCommand(module, "recon-copy-across-columns", new Packages.com.google.refine.commands.recon.ReconCopyAcrossColumnsCommand());
-  RS.registerCommand(module, "recon-use-values-as-identifiers", new Packages.com.google.refine.commands.recon.ReconUseValuesAsIdentifiersCommand());
-  RS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.recon.PreviewExtendDataCommand());
-  RS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.recon.ExtendDataCommand());
-
   RS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.recon.GuessTypesOfColumnCommand());
 
   RS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
   RS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
-  RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
-  RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
-  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());     
+  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());
   RS.registerCommand(module, "toggle-starred-expression", new Packages.com.google.refine.commands.expr.ToggleStarredExpressionCommand());
   RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
   RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
@@ -148,7 +114,7 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
-  
+
   RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
   RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
 
@@ -158,39 +124,12 @@ function registerOperations() {
   var OR = Packages.com.google.refine.operations.OperationRegistry;
 
   OR.registerOperation(module, "text-transform", Packages.com.google.refine.operations.cell.TextTransformOperation);
-  OR.registerOperation(module, "mass-edit", Packages.com.google.refine.operations.cell.MassEditOperation);
-
-  OR.registerOperation(module, "multivalued-cell-join", Packages.com.google.refine.operations.cell.MultiValuedCellJoinOperation);
-  OR.registerOperation(module, "multivalued-cell-split", Packages.com.google.refine.operations.cell.MultiValuedCellSplitOperation);
-  OR.registerOperation(module, "fill-down", Packages.com.google.refine.operations.cell.FillDownOperation);
-  OR.registerOperation(module, "blank-down", Packages.com.google.refine.operations.cell.BlankDownOperation);
   OR.registerOperation(module, "transpose-columns-into-rows", Packages.com.google.refine.operations.cell.TransposeColumnsIntoRowsOperation);
   OR.registerOperation(module, "transpose-rows-into-columns", Packages.com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation);
   OR.registerOperation(module, "key-value-columnize", Packages.com.google.refine.operations.cell.KeyValueColumnizeOperation);
-
-  OR.registerOperation(module, "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
-  OR.registerOperation(module, "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
-  OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
-  OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
-  OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
-  OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
-  OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
-
-  OR.registerOperation(module, "row-removal", Packages.com.google.refine.operations.row.RowRemovalOperation);
   OR.registerOperation(module, "row-star", Packages.com.google.refine.operations.row.RowStarOperation);
   OR.registerOperation(module, "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
   OR.registerOperation(module, "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
-
-  OR.registerOperation(module, "recon", Packages.com.google.refine.operations.recon.ReconOperation);
-  OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
-  OR.registerOperation(module, "recon-match-best-candidates", Packages.com.google.refine.operations.recon.ReconMatchBestCandidatesOperation);
-  OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
-  OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
-  OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
-  OR.registerOperation(module, "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
-  OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
-  OR.registerOperation(module, "extend-reconciled-data", Packages.com.google.refine.operations.recon.ExtendDataOperation);
-  OR.registerOperation(module, "recon-use-values-as-identifiers", Packages.com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation);
 }
 
 function registerImporting() {
@@ -212,11 +151,11 @@ function registerImporting() {
   IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI",
               new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI",
           new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI",
                   new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
   IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
@@ -248,7 +187,7 @@ function registerImporting() {
   IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
   IM.registerExtension(".ods", "text/xml/ods");
-  
+
   IM.registerExtension(".nt", "text/rdf/nt");
   IM.registerExtension(".n3", "text/rdf/n3");
   IM.registerExtension(".ttl", "text/rdf/ttl");
@@ -269,7 +208,7 @@ function registerImporting() {
   IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
 
   IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
-  
+
   IM.registerMimeType("application/n-triples", "text/rdf/nt");
   IM.registerMimeType("text/n3", "text/rdf/n3");
   IM.registerMimeType("text/rdf+n3", "text/rdf/n3");
@@ -284,7 +223,7 @@ function registerImporting() {
   IM.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
-  
+
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   IM.registerMimeType("application/json", "text/json");
@@ -292,7 +231,7 @@ function registerImporting() {
   IM.registerMimeType("text/json", "text/json");
 
   IM.registerMimeType("application/marc", "text/marc");
-  
+
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
    *  look at the actual files' content, and try to guess a better format.
@@ -330,7 +269,7 @@ function init() {
     "index/scripts",
     module,
     [
-      
+
       "externals/jquery-1.11.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
@@ -397,7 +336,7 @@ function init() {
       "styles/pure.css",
       "styles/util/dialog.less",
       "styles/util/encoding.less",
-      
+
       "styles/index.less",
       "styles/index/create-project-ui.less",
       "styles/index/open-project-ui.less",
@@ -570,10 +509,10 @@ function process(path, request, response) {
   if (path == "wirings.js") {
     var wirings = butterfly.getWirings(request);
     butterfly.sendString(
-      request, 
-      response, 
-      "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";", 
-      encoding, 
+      request,
+      response,
+      "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";",
+      encoding,
       "text/javascript"
     );
   } else {
@@ -604,8 +543,8 @@ function process(path, request, response) {
             input = new Packages.java.io.BufferedReader(
                 new Packages.java.io.InputStreamReader(urlConnection.getInputStream(), "UTF8"));
 
-            output.write("/* ===== "); 
-            output.write(qualifiedPath.fullPath); 
+            output.write("/* ===== ");
+            output.write(qualifiedPath.fullPath);
             output.write(" ===== */\n\n");
 
             Packages.org.apache.commons.io.IOUtils.copy(input, output);
@@ -634,10 +573,10 @@ function process(path, request, response) {
           params.put(name, request.getParameterValues(name)[0]);
         }
         context.params = params;
-        
+
         // We prepend '' to convert the Java string to a Javascript string.
         context.projectID = ('' + request.getParameter("project")).replace(/\D/g, '');
-        
+
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
         for each (var qualifiedPath in styles) {
@@ -657,10 +596,10 @@ function process(path, request, response) {
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
-        
+
         if (templatedFiles[lastSegment].outputEncodings) {
           var encodings = [];
-          
+
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
           for each (var code in sortedCharsetMap.keySet().toArray()) {
             var charset = sortedCharsetMap.get(code);
@@ -668,18 +607,18 @@ function process(path, request, response) {
             for each (var alias in charset.aliases().toArray()) {
               aliases.push(alias);
             }
-            
+
             encodings.push({
               code: code,
               name: charset.displayName(),
               aliases: aliases
             });
           }
-          
+
           context.encodingJson = butterfly.toJSONString(encodings);
           context.defaultEncoding = butterfly.toJSONString(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
-        
+
         send(request, response, path + ".vt", context);
       }
     }
