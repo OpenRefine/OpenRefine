@@ -36,7 +36,7 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
             0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
     private TimeValue day = Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11,
             0, 0, 0,  TimeValue.CM_GREGORIAN_PRO);
-    private TimeValue minute = Datamodel.makeTimeValue(2001, (byte) 2, (byte) 3, (byte)4, (byte)5, (byte)0, (byte)13, (byte)0, (byte)0, (byte)0, TimeValue.CM_GREGORIAN_PRO);
+    private TimeValue minute = Datamodel.makeTimeValue(2001, (byte) 2, (byte) 3, (byte)0, (byte)0, (byte)0, (byte)11, (byte)0, (byte)0, (byte)0, TimeValue.CM_GREGORIAN_PRO);
 
     
     @Override
@@ -71,6 +71,7 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
     
     @Test
     public void testMinutesISO() {
+    	// Wikidata currently only supports up to day precision
         evaluatesTo(minute, "2001-02-03T04:05Z");
     }
 
