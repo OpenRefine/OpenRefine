@@ -627,8 +627,10 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     var pasteToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(referencesToggleContainer);
     var referencePaste = $('<span></span>')
         .addClass('wbs-paste-reference')
-        .appendTo(pasteToolbar)
-        .hide();
+        .appendTo(pasteToolbar);
+    if (SchemaAlignmentDialog._copiedReference === null) {
+        referencePaste.hide();
+    }
     var pasteIcon = $('<span></span>').addClass('wbs-icon').appendTo(referencePaste);
     var referencePasteButton = $('<a></a>')
         .addClass('wbs-paste-reference-button')
@@ -1232,6 +1234,10 @@ SchemaAlignmentDialog._hasChanged = function() {
   SchemaAlignmentDialog._schemaElmts.discardButton
         .prop('disabled', false)
         .removeClass('disabled');
+   $('.wbs-copy-reference-button')
+        .text($.i18n('wikidata-schema/copy-reference'));
+   $('.wbs-copy-reference')
+        .removeClass('wbs-copied-reference');
 }
 
 SchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
