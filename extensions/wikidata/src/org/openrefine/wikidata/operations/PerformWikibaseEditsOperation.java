@@ -169,8 +169,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             
             // Generate batch token
             long token = (new Random()).nextLong();
-            String summary = _summary + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 8)));
+            // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+            // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+            // from the user-supplied ones, we replace these separators by similar unicode characters to
+            // make sure they can be told apart.
+            String summaryWithoutCommas = _summary.replace(",","ꓹ").replace(":","։");
+            String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
+                    (Long.toHexString(token).substring(0, 9)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
