@@ -44,9 +44,6 @@ function ListFacet(div, config, options, selection) {
   }
 
   this._selection = selection || [];
-  this._numberChoice = (config.selectNumber) ? { s : true, c : 0 } : null;
-  this._datetimeChoice = (config.selectDateTime) ? { s : true, c : 0 } : null;
-  this._booleanChoice = (config.selecBoolean) ? { s : true, c : 0 } : null;
   this._blankChoice = (config.selectBlank) ? { s : true, c : 0 } : null;
   this._errorChoice = (config.selectError) ? { s : true, c : 0 } : null;
 
@@ -65,9 +62,6 @@ ListFacet.prototype.dispose = function() {
 
 ListFacet.prototype.reset = function() {
   this._selection = [];
-  this._numberChoice = null;
-  this._datetimeChoice = null;
-  this._booleanChoice = null;
   this._blankChoice = null;
   this._errorChoice = null;
 };
@@ -91,14 +85,11 @@ ListFacet.prototype.getJSON = function() {
       columnName: this._config.columnName,
       expression: this._config.expression,
       omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
-      omitError: "omitError" in this._config ? this._config.omitError : false,
-      selection: [],
-      selectNumber: this._numberChoice !== null && this._numberChoice.s,
-      selectDateTime: this._datetimeChoice !== null && this._datetimeChoice.s,
-      selectBoolean: this._booleanChoice !== null && this._booleanChoice.s,
-      selectBlank: this._blankChoice !== null && this._blankChoice.s,
-      selectError: this._errorChoice !== null && this._errorChoice.s,
-      invert: this._config.invert
+          omitError: "omitError" in this._config ? this._config.omitError : false,
+              selection: [],
+              selectBlank: this._blankChoice !== null && this._blankChoice.s,
+              selectError: this._errorChoice !== null && this._errorChoice.s,
+              invert: this._config.invert
   };
   for (var i = 0; i < this._selection.length; i++) {
     var choice = {
@@ -111,11 +102,8 @@ ListFacet.prototype.getJSON = function() {
 
 ListFacet.prototype.hasSelection = function() {
   return this._selection.length > 0 || 
-  ( this._numberChoice !== null && this._numberChoice.s ) || 
-  ( this._datetimeChoice !== null && this._datetimeChoice.s ) || 
-  ( this._booleanChoice !== null && this._booleanChoice.s ) || 
-  ( this._blankChoice !== null && this._blankChoice.s ) || 
-  ( this._errorChoice !== null && this._errorChoice.s );
+  (this._blankChoice !== null && this._blankChoice.s) || 
+  (this._errorChoice !== null && this._errorChoice.s);
 };
 
 ListFacet.prototype.updateState = function(data) {
@@ -133,9 +121,6 @@ ListFacet.prototype.updateState = function(data) {
     this._selection = selection;
     this._reSortChoices();
 
-    this._numberChoice = data.numberChoice || null;
-    this._datetimeChoice = data.datetimeChoice || null;
-    this._booleanChoice = data.booleanChoice || null;
     this._blankChoice = data.blankChoice || null;
     this._errorChoice = data.errorChoice || null;
   }
@@ -254,15 +239,6 @@ ListFacet.prototype._copyChoices = function() {
     var choice = this._data.choices[i];
     lines.push(choice.v.l + "\t" + choice.c);
   }
-  if (this._numberChoice) {
-    lines.push("(number)\t" + this._numberChoice.c);
-  }
-  if (this._datetimeChoice) {
-    lines.push("(date)\t" + this._datetimeChoice.c);
-  }
-  if (this._booleanChoice) {
-    lines.push("(boolean)\t" + this._booleanChoice.c);
-  }
   if (this._blankChoice) {
     lines.push("(blank)\t" + this._blankChoice.c);
   }
@@ -359,9 +335,6 @@ ListFacet.prototype._update = function(resetScroll) {
 
   var choices = this._data.choices;
   var selectionCount = this._selection.length +
-  (this._numberChoice !== null && this._numberChoice.s ? 1 : 0) +
-  (this._datetimeChoice !== null && this._datetimeChoice.s ? 1 : 0) +
-  (this._booleanChoice !== null && this._booleanChoice.s ? 1 : 0) +
   (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
   (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
 
@@ -416,24 +389,10 @@ ListFacet.prototype._update = function(resetScroll) {
   for (var i = 0; i < choices.length; i++) {
     renderChoice(i, choices[i]);
   }
-  if (this._numberChoice !== null) {
-    renderEdit = false;
-    renderChoice(-5, this._numberChoice, "(number)");
-  }
-  if (this._datetimeChoice !== null) {
-    renderEdit = false;
-    renderChoice(-4, this._datetimeChoice, "(date)");
-  }
-  if (this._booleanChoice !== null) {
-    renderEdit = false;
-    renderChoice(-3, this._booleanChoice, "(boolean)");
-  }
   if (this._blankChoice !== null) {
-    renderEdit = false;
     renderChoice(-1, this._blankChoice, "(blank)");
   }
   if (this._errorChoice !== null) {
-    renderEdit = false;
     renderChoice(-2, this._errorChoice, "(error)");
   }
 
@@ -447,12 +406,6 @@ ListFacet.prototype._update = function(resetScroll) {
       return self._blankChoice;
     } else if (index === -2) {
       return self._errorChoice;
-    } else if (index === -3) {
-      return self._booleanChoice;
-    } else if (index === -4) {
-      return self._datetimeChoice;
-    } else if (index === -5) {
-      return self._numberChoice;
     } else {
       return choices[index];
     }
@@ -589,12 +542,6 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
     originalContent = "(blank)";
   } else if (choice === this._errorChoice) {
     originalContent = "(error)";
-  } else if (choice === this._booleanChoice) {
-    originalContent = "(boolean)";
-  } else if (choice === this._datetimeChoice) {
-    originalContent = "(date)";
-  } else if (choice === this._numberChoice) {
-    originalContent = "(number)";
   } else {
     originalContent = choice.v.v;
   }
@@ -670,15 +617,6 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
 ListFacet.prototype._select = function(choice, only) {
   if (only) {
     this._selection = [];
-    if (this._numberChoice !== null) {
-      this._numberChoice.s = false;
-    }
-    if (this._datetimeChoice !== null) {
-      this._datetimeChoice.s = false;
-    }
-    if (this._booleanChoice !== null) {
-      this._booleanChoice.s = false;
-    }
     if (this._blankChoice !== null) {
       this._blankChoice.s = false;
     }
@@ -688,11 +626,7 @@ ListFacet.prototype._select = function(choice, only) {
   }
 
   choice.s = true;
-  if (choice !== this._errorChoice && 
-      choice !== this._blankChoice && 
-      choice !== this._numberChoice && 
-      choice !== this._datetimeChoice && 
-      choice !== this._booleanChoice ) {
+  if (choice !== this._errorChoice && choice !== this._blankChoice) {
     this._selection.push(choice);
   }
 
@@ -700,7 +634,7 @@ ListFacet.prototype._select = function(choice, only) {
 };
 
 ListFacet.prototype._deselect = function(choice) {
-  if (choice === this._errorChoice || choice === this._blankChoice || choice === this._numberChoice || choice === this._datetimeChoice || choice === this._booleanChoice) {
+  if (choice === this._errorChoice || choice === this._blankChoice) {
     choice.s = false;
   } else {
     for (var i = this._selection.length - 1; i >= 0; i--) {
@@ -715,9 +649,6 @@ ListFacet.prototype._deselect = function(choice) {
 
 ListFacet.prototype._reset = function() {
   this._selection = [];
-  this._numberChoice = null;
-  this._datetimeChoice = null;
-  this._booleanChoice = null;
   this._blankChoice = null;
   this._errorChoice = null;
   this._config.invert = false;
@@ -738,9 +669,6 @@ ListFacet.prototype._remove = function() {
   this._config = null;
 
   this._selection = null;
-  this._numberChoice = null;
-  this._datetimeChoice = null;
-  this._booleanChoice = null;
   this._blankChoice = null;
   this._errorChoice = null;
   this._data = null;
