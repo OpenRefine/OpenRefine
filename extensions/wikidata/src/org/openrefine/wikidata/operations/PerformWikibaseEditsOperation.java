@@ -173,7 +173,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Because commas and colons are used by Wikibase to separate the auto-generated summaries
             // from the user-supplied ones, we replace these separators by similar unicode characters to
             // make sure they can be told apart.
-            String summaryWithoutCommas = _summary.replace(",","ꓹ").replace(":","։");
+            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
             String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
                     (Long.toHexString(token).substring(0, 9)));
 
