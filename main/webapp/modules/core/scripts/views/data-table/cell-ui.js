@@ -108,7 +108,7 @@ DataTableCellUI.prototype._render = function() {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
       }
 
-      self._previewOnHover(service, match, a, false);
+      self._previewOnHover(service, match, a, a, false);
 
       $('<span> </span>').appendTo(divContent);
       $('<a href="javascript:{}"></a>')
@@ -153,7 +153,7 @@ DataTableCellUI.prototype._render = function() {
               a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
             }
 
-            self._previewOnHover(service, candidate, liSpan, true);
+            self._previewOnHover(service, candidate, liSpan.parent(), liSpan, true);
 
             var score;
             if (candidate.score < 1) {
@@ -475,7 +475,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 /**
  * Sets up a preview widget to appear when hovering the given DOM element.
  */
-DataTableCellUI.prototype._previewOnHover = function(service, candidate, element, showActions) {
+DataTableCellUI.prototype._previewOnHover = function(service, candidate, hoverElement, coreElement, showActions) {
     var self = this;
     var preview = null;
     if ((service) && (service.preview)) {
@@ -484,9 +484,9 @@ DataTableCellUI.prototype._previewOnHover = function(service, candidate, element
 
     if (preview) {
         var dismissCallback = null;
-        element.hover(function(evt) {
+        hoverElement.hover(function(evt) {
         if (!evt.metaKey && !evt.ctrlKey) {
-            dismissCallback = self._previewCandidateTopic(candidate, this, preview, showActions);
+            dismissCallback = self._previewCandidateTopic(candidate, coreElement, preview, showActions);
             evt.preventDefault();
         }
         }, function(evt) {
