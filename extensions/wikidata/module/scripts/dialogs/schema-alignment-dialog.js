@@ -802,8 +802,12 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
+    if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
+       suggestConfig.view_url = this._reconService.view.url;
+    }
 
-    input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
+
+    input.suggest(suggestConfig).bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
             type : "wbitemconstant",
             qid : data.id,

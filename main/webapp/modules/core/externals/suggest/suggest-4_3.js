@@ -1299,6 +1299,20 @@
           name.append($("<span></span>").text(data.description));
       }
 
+      // If we know of a view URL for this suggest service,
+      // clicking with the middle button sends the user to
+      // the view page.
+      if('view_url' in this.options && data.id) {
+        var view_url = this.options.view_url.replace('{{id}}', data.id).replace('${id}', data.id);
+        li.on('mousedown', function(e) {
+           if (e.which == 2) {
+              var win = window.open(view_url, '_blank');
+              win.focus();
+              e.preventDefault();
+           }
+        });
+      }
+
       //console.log("create_item", li);
       return li;
     },
