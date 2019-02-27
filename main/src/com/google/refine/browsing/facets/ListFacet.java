@@ -95,12 +95,6 @@ public class ListFacet implements Facet {
         
         @JsonIgnore
         public List<DecoratedValue> selection = new LinkedList<>();
-        @JsonProperty("selectNumber")
-        public boolean selectNumber;
-        @JsonProperty("selectDateTime")
-        public boolean selectDateTime;
-        @JsonProperty("selectBoolean")
-        public boolean selectBoolean;
         @JsonProperty("selectBlank")
         public boolean selectBlank;
         @JsonProperty("selectError")
@@ -162,9 +156,6 @@ public class ListFacet implements Facet {
      * Computed results
      */
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
-    protected int _numberCount;
-    protected int _datetimeCount;
-    protected int _booleanCount;
     protected int _blankCount;
     protected int _errorCount;
     
@@ -278,16 +269,13 @@ public class ListFacet implements Facet {
         return 
             _eval == null || 
             _errorMessage != null ||
-            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError && !_config.selectNumber && !_config.selectDateTime && !_config.selectBoolean) ? 
+            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? 
                 null :
                 new ExpressionEqualRowFilter(
                     _eval, 
                     _config.columnName,
                     _cellIndex, 
                     createMatches(), 
-                    _config.selectNumber,
-                    _config.selectDateTime,
-                    _config.selectBoolean,
                     _config.selectBlank, 
                     _config.selectError,
                     _config.invert);
@@ -353,9 +341,6 @@ public class ListFacet implements Facet {
             }
         }
         
-        _numberCount = grouper.numberCount;
-        _datetimeCount = grouper.datetimeCount;
-        _booleanCount = grouper.booleanCount;
         _blankCount = grouper.blankCount;
         _errorCount = grouper.errorCount;
     }

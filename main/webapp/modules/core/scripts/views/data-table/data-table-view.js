@@ -626,7 +626,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               {
                 "name" : $.i18n('core-views/starred-rows'),
                 "columnName" : "", 
-                "expression" : "row.starred.toString()"
+                "expression" : "row.starred"
               },
               {
                 "scroll" : false
@@ -643,7 +643,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               {
                 "name" : $.i18n('core-views/flagged-rows'),
                 "columnName" : "", 
-                "expression" : "row.flagged.toString()"
+                "expression" : "row.flagged"
               },
               {
                 "scroll" : false

@@ -57,6 +57,15 @@ import com.google.refine.util.StringUtils;
  * from a given expression.
  */
 public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor {
+    static public class IndexedNominalFacetChoice extends NominalFacetChoice {
+        int _latestIndex;
+
+        public IndexedNominalFacetChoice(DecoratedValue decoratedValue, int latestIndex) {
+            super(decoratedValue);
+            _latestIndex = latestIndex;
+        }
+    }
+
     /*
      * Configuration
      */
@@ -68,29 +77,14 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
      * Computed results
      */
     final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<Object, IndexedNominalFacetChoice>();
-    public int numberCount = 0;
-    public int datetimeCount = 0;
-    public int booleanCount = 0;
     public int blankCount = 0;
     public int errorCount = 0;
 
     /*
      * Scratch pad variables
      */
-    protected boolean hasNumber;
-    protected boolean hasDateTime;
-    protected boolean hasBoolean;
     protected boolean hasBlank;
     protected boolean hasError;
-    
-    static public class IndexedNominalFacetChoice extends NominalFacetChoice {
-        int _latestIndex;
-
-        public IndexedNominalFacetChoice(DecoratedValue decoratedValue, int latestIndex) {
-            super(decoratedValue);
-            _latestIndex = latestIndex;
-        }
-    }
 
     public ExpressionNominalValueGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
@@ -110,25 +104,13 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
     @Override
     public boolean visit(Project project, int rowIndex, Row row) {
-        hasNumber = false;
-        hasDateTime = false;
-        hasBoolean = false;
         hasError = false;
         hasBlank = false;
 
         Properties bindings = ExpressionUtils.createBindings(project);
 
         visitRow(project, rowIndex, row, bindings, rowIndex);
-        
-        if (hasNumber) {
-            numberCount++;
-        }
-        if (hasDateTime) {
-            datetimeCount++;
-        }
-        if (hasBoolean) {
-            booleanCount++;
-        }
+
         if (hasError) {
             errorCount++;
         }
@@ -141,9 +123,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
     @Override
     public boolean visit(Project project, Record record) {
-        hasNumber = false;
-        hasDateTime = false;
-        hasBoolean = false;
         hasError = false;
         hasBlank = false;
 
@@ -154,15 +133,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
             visitRow(project, r, row, bindings, record.recordIndex);
         }
 
-        if (hasNumber) {
-            numberCount++;
-        }
-        if (hasDateTime) {
-            datetimeCount++;
-        }
-        if (hasBoolean) {
-            booleanCount++;
-        }
         if (hasError) {
             errorCount++;
         }
@@ -204,12 +174,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     protected void processValue(Object value, int index) {
         if (ExpressionUtils.isError(value)) {
             hasError = true;
-        } else if (ExpressionUtils.isNumber(value)) {
-            hasNumber = true;
-        } else if (ExpressionUtils.isDateTime(value)) {
-            hasDateTime = true;
-        } else if (ExpressionUtils.isBoolean(value)) {
-            hasBoolean = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
             String valueString = StringUtils.toString(value);
             IndexedNominalFacetChoice facetChoice = choices.get(valueString);
@@ -272,12 +236,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     public Integer getChoiceValueCount(Object choiceValue) {
         if (ExpressionUtils.isError(choiceValue)) {
             return errorCount;
-        } else if (ExpressionUtils.isNumber(choiceValue)) {
-            return numberCount;
-        } else if (ExpressionUtils.isDateTime(choiceValue)) {
-            return datetimeCount;
-        } else if (ExpressionUtils.isBoolean(choiceValue)) {
-            return booleanCount;
         } else if (ExpressionUtils.isNonBlankData(choiceValue)) {
             IndexedNominalFacetChoice choice = choices.get(StringUtils.toString(choiceValue));
             return choice != null ? choice.count : 0;
