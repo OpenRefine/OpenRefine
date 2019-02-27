@@ -41,6 +41,23 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
+DataTableCellUI.previewMatchedCells = true;
+
+(function() {
+   
+   $.ajax({
+     url: "command/core/get-preference?" + $.param({
+        name: "cell-ui.previewMatchedCells"
+     }),
+    success: function(data) {
+      if (data.value && data.value == "false") {
+        DataTableCellUI.previewMatchedCells = false;
+     }
+   },
+   dataType: "json",
+  });
+})();
+
 DataTableCellUI.prototype._render = function() {
   var self = this;
   var cell = this._cell;
@@ -108,7 +125,9 @@ DataTableCellUI.prototype._render = function() {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
       }
 
-      self._previewOnHover(service, match, a, a, false);
+      if (DataTableCellUI.previewMatchedCells) {
+        self._previewOnHover(service, match, a, a, false);
+      }
 
       $('<span> </span>').appendTo(divContent);
       $('<a href="javascript:{}"></a>')
