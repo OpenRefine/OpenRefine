@@ -366,6 +366,7 @@
     "core-project/last-op-er": "The last operation encountered some errors",
     "core-project/continue-remaining": "Continue with the remaining operations",
     "core-project/undo": "Undo",
+    "core-recon/add-std-srv": "Add standard service",
     "core-recon/access": "Access",
     "core-recon/service-api": "Service API",
     "core-recon/cell-type": "Reconcile each cell to an entity of one of these types",
