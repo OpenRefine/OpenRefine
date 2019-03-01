@@ -85,6 +85,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     if (service && service.suggest && service.suggest.entity) {
        suggestOptions = $.extend({}, service.suggest.entity);
        suggestOptions.query_param_name = "prefix";
+       if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
+          suggestOptions.formatter_url = service.view.url;
+       }
     }
 
     var frame = DialogSystem.createDialog();
@@ -294,7 +297,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name" : column.name + " "+$.i18n('core-views/hist-entries'),
                   "columnName" : column.name, 
-                  "expression" : "cell.recon.judgmentHistoryEntry.toString()"
+                  "expression" : "cell.recon.judgmentHistoryEntry"
                 }
             );
           }
@@ -326,7 +329,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name" : column.name + ": "+$.i18n('core-views/best-cand-type-match'),
                   "columnName" : column.name, 
-                  "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)")).toString()'
+                  "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'
                 },
                 {
                   "scroll" : false
@@ -343,7 +346,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name" : column.name + ": "+ $.i18n('core-views/best-cand-name'),
                   "columnName" : column.name, 
-                  "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), if(cell.recon.new,"(new)","(unreconciled)"), "(blank)")).toString()'
+                  "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
                 {
                   "scroll" : false

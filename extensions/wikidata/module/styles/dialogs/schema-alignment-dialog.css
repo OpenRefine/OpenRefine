@@ -143,6 +143,7 @@
     opacity: 0.7;
 }
 
+
 .wbs-remove .wbs-icon {
     background-image:linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2224%22%20height=%2224%22%20viewBox=%220%200%2024%2024%22%3E%20%3Cg%20id=%22remove%22%3E%20%3Cpath%20id=%22trash-can%22%20d=%22M12%2010h-1v6h1v-6zm-2%200H9v6h1v-6zm4%200h-1v6h1v-6zm0-4V5H9v1H6v3h1v7.966l1%201.03v-.073V18h6.984l.016-.018v.015l1-1.03V9h1V6h-3zm1%2011H8V9h7v8zm1-9H7V7h9v1z%22/%3E%20%3C/g%3E%20%3C/svg%3E");
 }
@@ -211,7 +212,8 @@
 
 .wbs-remove,
 .wbs-add-item, .wbs-add-statement-group, .wbs-add-statement,
-.wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc {
+.wbs-add-qualifier, .wbs-add-reference, .wbs-add-namedesc,
+.wbs-copy-reference-button, .wbs-paste-reference-button {
     color: #0645ad !important;
     font-size: 0.9em;
     cursor: pointer;
@@ -248,6 +250,10 @@
 .wbs-statement-group-container:empty:before {
     content: attr(data-emptyplaceholder);
     color: gray;
+}
+
+.schema-alignment-dialog-preview .wbs-prop-input {
+    float: left;
 }
 
 .schema-alignment-dialog-preview .wbs-qualifier .wbs-statement-container {
@@ -303,7 +309,7 @@
 
 .wbs-qualifier, .wbs-reference {
     position: relative;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .wbs-qualifier .wbs-right {
@@ -318,14 +324,50 @@
 }
 
 .wbs-references-toggle {
-    width: 12em;
     margin: 5px;
+    margin-right: 0px;
 }
 
 .wbs-references-toggle a {
     color: #0645ad !important;
 }
 
+.wbs-copy-reference {
+    float: left;
+    padding: 2px;
+}
+
+.wbs-copied-reference {
+   opacity: 0.6;
+}
+
+.wbs-copied-reference .wbs-copy-reference-button {
+    color: black !important;
+    cursor: default;
+}
+
+.wbs-copied-reference span:hover {
+    text-decoration: none;
+}
+
+.wbs-paste-reference .wbs-icon,
+.wbs-copy-reference .wbs-icon {
+   height: 13px;
+   width: 13px;
+   background-size: 13px 13px;
+   opacity: 0.6;
+   margin-right: 2px;
+}
+
+/* source: Font Awesome by Dave Gandy. https://commons.wikimedia.org/wiki/File:Paste_font_awesome.svg */
+.wbs-paste-reference .wbs-icon {
+   background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg version='1.1' viewBox='0 -256 1900 1900' xmlns='http://www.w3.org/2000/svg' xmlns:cc='http://creativecommons.org/ns%23' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23'%3E%3Cmetadata%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage'/%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cg transform='matrix(1 0 0 -1 53.153 1325.1)'%3E%3Cpath d='m768-128h896v640h-416q-40 0-68 28t-28 68v416h-384v-1152zm256 1440v64q0 13-9.5 22.5t-22.5 9.5h-704q-13 0-22.5-9.5t-9.5-22.5v-64q0-13 9.5-22.5t22.5-9.5h704q13 0 22.5 9.5t9.5 22.5zm256-672h299l-299 299v-299zm512-128v-672q0-40-28-68t-68-28h-960q-40 0-68 28t-28 68v160h-544q-40 0-68 28t-28 68v1344q0 40 28 68t68 28h1088q40 0 68-28t28-68v-328q21-13 36-28l408-408q28-28 48-76t20-88z' fill='currentColor'/%3E%3C/g%3E%3C/svg%3E%0A");
+}
+
+/* source: Font Awesome by Dave Gandy. https://commons.wikimedia.org/wiki/File:Copy_font_awesome.svg */
+.wbs-copy-reference .wbs-icon {
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg version='1.1' viewBox='0 -256 1850 1850' xmlns='http://www.w3.org/2000/svg' xmlns:cc='http://creativecommons.org/ns%23' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23'%3E%3Cmetadata%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage'/%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cg transform='matrix(1 0 0 -1 37.966 1305.5)'%3E%3Cpath d='m1696 1152q40 0 68-28t28-68v-1216q0-40-28-68t-68-28h-960q-40 0-68 28t-28 68v288h-544q-40 0-68 28t-28 68v672q0 40 20 88t48 76l408 408q28 28 76 48t88 20h416q40 0 68-28t28-68v-328q68 40 128 40h416zm-544-213-299-299h299v299zm-640 384-299-299h299v299zm196-647 316 316v416h-384v-416q0-40-28-68t-68-28h-416v-640h512v256q0 40 20 88t48 76zm956-804v1152h-384v-416q0-40-28-68t-68-28h-416v-640h896z' fill='currentColor'/%3E%3C/g%3E%3C/svg%3E");
+}
 
 .wbs-references-toggle .triangle-icon {
     background: transparent url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%20standalone%3D%22no%22%3F%3E%0A%3Csvg%0A%20%20%20xmlns%3Adc%3D%22http%3A//purl.org/dc/elements/1.1/%22%0A%20%20%20xmlns%3Acc%3D%22http%3A//creativecommons.org/ns%23%22%0A%20%20%20xmlns%3Ardf%3D%22http%3A//www.w3.org/1999/02/22-rdf-syntax-ns%23%22%0A%20%20%20xmlns%3Asvg%3D%22http%3A//www.w3.org/2000/svg%22%0A%20%20%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%0A%20%20%20id%3D%22svg8%22%0A%20%20%20version%3D%221.1%22%0A%20%20%20viewBox%3D%220%200%202.6458332%202.6458332%22%0A%20%20%20height%3D%2210%22%0A%20%20%20width%3D%2210%22%3E%0A%20%20%3Cdefs%0A%20%20%20%20%20id%3D%22defs2%22%20/%3E%0A%20%20%3Cmetadata%0A%20%20%20%20%20id%3D%22metadata5%22%3E%0A%20%20%20%20%3Crdf%3ARDF%3E%0A%20%20%20%20%20%20%3Ccc%3AWork%0A%20%20%20%20%20%20%20%20%20rdf%3Aabout%3D%22%22%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Aformat%3Eimage/svg+xml%3C/dc%3Aformat%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Atype%0A%20%20%20%20%20%20%20%20%20%20%20rdf%3Aresource%3D%22http%3A//purl.org/dc/dcmitype/StillImage%22%20/%3E%0A%20%20%20%20%20%20%20%20%3Cdc%3Atitle%3E%3C/dc%3Atitle%3E%0A%20%20%20%20%20%20%3C/cc%3AWork%3E%0A%20%20%20%20%3C/rdf%3ARDF%3E%0A%20%20%3C/metadata%3E%0A%20%20%3Cg%0A%20%20%20%20%20transform%3D%22translate%280%2C-294.35416%29%22%0A%20%20%20%20%20id%3D%22layer1%22%3E%0A%20%20%20%20%3Cpath%0A%20%20%20%20%20%20%20id%3D%22path12%22%0A%20%20%20%20%20%20%20d%3D%22m%200.21601809%2C294.5035%202.28763941%2C1.14744%20-2.29850705%2C1.20871%20z%22%0A%20%20%20%20%20%20%20style%3D%22fill%3A%23645eea%3Bfill-opacity%3A1%3Bfill-rule%3Aevenodd%3Bstroke%3A%23645eea%3Bstroke-width%3A0.06161711px%3Bstroke-linecap%3Abutt%3Bstroke-linejoin%3Amiter%3Bstroke-opacity%3A1%22%20/%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E%0A) no-repeat center center;
