@@ -567,9 +567,6 @@ run() {
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
 
-    echo "${RUN_CMD[@]}"
-    #echo ""
-  
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
