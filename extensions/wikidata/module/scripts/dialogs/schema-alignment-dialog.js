@@ -232,6 +232,7 @@ $(window).bind('beforeunload', beforeUnload);
 SchemaAlignmentDialog._reset = function(schema) {
   this._originalSchema = schema || { itemDocuments: [] };
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
+  this._copiedReference = null;
 
   $('#schema-alignment-statements-container').empty();
 
@@ -244,8 +245,6 @@ SchemaAlignmentDialog._reset = function(schema) {
   if (!this._schema.itemDocuments.length) {
     // this._addItem();
   }
-
-  this._copiedReference = null;
 };
 
 SchemaAlignmentDialog._save = function(onDone) {
