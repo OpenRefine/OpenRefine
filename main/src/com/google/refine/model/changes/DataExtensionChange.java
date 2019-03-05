@@ -221,8 +221,9 @@ public class DataExtensionChange implements Change {
                         _identifierSpace,
                         _schemaSpace,
                         columnType));
-                if (columnType != null) {
-                        column.setReconStats(ReconStats.create(project, cellIndex));
+                ReconStats reconStats = ReconStats.create(project, cellIndex);
+                if (reconStats.matchedTopics > 0) {
+                    column.setReconStats(reconStats);
                 }
                 
                 try {
