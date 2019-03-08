@@ -684,6 +684,23 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               }
             );
           }
+        },
+        {
+          label: $.i18n('core-views/count-non-blank-records'),
+          id: "core/count-non-blank-records",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/non-blank-records'),
+                "columnName" : "", 
+                "expression" : "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
         }
       ]
     },
