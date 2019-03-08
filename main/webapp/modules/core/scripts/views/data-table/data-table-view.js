@@ -660,7 +660,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               {
                 "name" : $.i18n('core-views/blank-rows'),
                 "columnName" : "", 
-                "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()>0).toString()"
+                "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()"
               },
               {
                 "scroll" : false
