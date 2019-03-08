@@ -582,6 +582,8 @@
     "core-views/facet-flag": "Facet by flag",
     "core-views/flagged-rows": "Flagged Rows",
     "core-views/blank-rows": "Blank Rows",
+    "core-views/count-non-blank-values": "Count non-blank values/column",
+    "core-views/non-blank-values": "Non-blank values per column",
     "core-views/edit-rows": "Edit rows",
     "core-views/star-rows": "Star rows",
     "core-views/unstar-rows": "Unstar rows",
