@@ -650,6 +650,23 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               }
             );
           }
+        },
+        {
+          label: $.i18n('core-views/facet-blank'),
+          id: "core/facet-by-blank",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/blank-rows'),
+                "columnName" : "", 
+                "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()>0).toString()"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
         }
       ]
     },
