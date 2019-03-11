@@ -669,8 +669,8 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n('core-views/count-non-blank-values'),
-          id: "core/count-non-blank-values",
+          label: $.i18n('core-views/non-blank-values'),
+          id: "core/non-blank-values",
           click: function() {
             ui.browsingEngine.addFacet(
               "list", 
@@ -686,8 +686,8 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n('core-views/count-non-blank-records'),
-          id: "core/count-non-blank-records",
+          label: $.i18n('core-views/non-blank-records'),
+          id: "core/non-blank-records",
           click: function() {
             ui.browsingEngine.addFacet(
               "list", 
