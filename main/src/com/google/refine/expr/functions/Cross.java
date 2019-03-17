@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
+import com.google.refine.util.GetProjectIDException;
 import java.util.Properties;
 
 import com.google.refine.InterProjectModel.ProjectJoin;
@@ -51,17 +52,27 @@ public class Cross implements Function {
             // 1st argument can take either value or cell(for backward compatibility)
             Object v = args[0];
             Object toProjectName = args[1];
-            Object toColumnName = args[2];
+            Object toColumnName = args[2]; 
+            Long toProjectID;           
             
             if (v != null && 
                 ( v instanceof String || v instanceof WrappedCell ) &&
                 toProjectName != null && toProjectName instanceof String &&
                 toColumnName != null && toColumnName instanceof String) {
-                
+                try {
+                    toProjectID = ProjectManager.singleton.getProjectID((String) toProjectName);
+                } catch (GetProjectIDException e){
+                    return new EvalError(e.getMessage());
+                }
                 ProjectJoin join = ProjectManager.singleton.getInterProjectModel().getJoin(
-                        ProjectManager.singleton.getProjectMetadata(((Project) bindings.get("project")).id).getName(),
+                        // getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
+                        // source project name 
+                        (Long) ((Project) bindings.get("project")).id,
+                        // source column name
                         (String) bindings.get("columnName"), 
-                        (String) toProjectName, 
+                        // target project name
+                        toProjectID,
+                        // target column name
                         (String) toColumnName
                         );
                 if(v instanceof String) {

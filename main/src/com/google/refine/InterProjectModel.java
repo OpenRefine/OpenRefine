@@ -97,13 +97,13 @@ public class InterProjectModel {
      * @param toColumn
      * @return
      */
-    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn) {
+    public ProjectJoin getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
         String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;
         if (!_joins.containsKey(key)) {
             ProjectJoin join = new ProjectJoin(
-                ProjectManager.singleton.getProjectID(fromProject), 
+                fromProject, 
                 fromColumn, 
-                ProjectManager.singleton.getProjectID(toProject), 
+                toProject, 
                 toColumn
             );
             

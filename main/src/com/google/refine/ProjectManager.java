@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
+import com.google.refine.util.GetProjectIDException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -383,15 +384,26 @@ public abstract class ProjectManager {
      * @param name
      *     The name of the project
      * @return
-     *     The id of the project, or -1 if it cannot be found
+     *     The id of the project
+     * @throws GetProjectIDException
+     *     If no unique project is found with the given name
      */
-    public long getProjectID(String name) {
+    public long getProjectID(String name) throws GetProjectIDException {
+        Integer c = 0;
+        Long id = 0L;
         for (Entry<Long, ProjectMetadata> entry : _projectsMetadata.entrySet()) {
             if (entry.getValue().getName().equals(name)) {
-                return entry.getKey();
+                id = entry.getKey();
+                c += 1;
             }
         }
-        return -1;
+        if (c == 1) {
+            return id;
+        } else if (c == 0) {
+            throw new GetProjectIDException("Unable to find project with name: " + name); 
+        } else {
+            throw new GetProjectIDException(c + " projects found with name: " + name); 
+        }
     }
     
     /**
