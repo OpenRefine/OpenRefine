@@ -12,6 +12,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedRow;
@@ -22,6 +23,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.Cell;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.GetProjectIDException;
 
 /**
  * Test cases for cross function.
@@ -39,6 +41,8 @@ public class CrossFunctionTests extends RefineTest {
     // dependencies
     Project projectGift;
     Project projectAddress;
+    Project projectDuplicate1;
+    Project projectDuplicate2;
     
     // data from: https://github.com/OpenRefine/OpenRefine/wiki/GREL-Other-Functions
     @BeforeMethod
@@ -64,6 +68,11 @@ public class CrossFunctionTests extends RefineTest {
                 + "integer,1600\n"
                 + "boolean,true\n";
         projectGift = createCSVProject(projectName, input);
+        projectName = "Duplicate";
+        input = "Col1,Col2";
+        projectDuplicate1 = createCSVProject(projectName, input);
+        projectDuplicate2 = createCSVProject(projectName, input);
+
         
         bindings.put("project", projectGift);
         
@@ -77,6 +86,28 @@ public class CrossFunctionTests extends RefineTest {
         
         // add a column address based on column recipient
         bindings.put("columnName", "recipient");
+    }
+    
+    @Test
+    public void crossFunctionMissingProject() throws Exception {
+        String nonExistentProject = "NOPROJECT";
+        Assert.assertEquals(((EvalError) invoke("cross", "Anne", nonExistentProject, "friend")).message, 
+                "Unable to find project with name: " + nonExistentProject);
+    }
+    
+    @Test
+    public void crossFunctionMultipleProjects() throws Exception {
+        String duplicateProjectName = "Duplicate";
+        Assert.assertEquals(((EvalError) invoke("cross", "Anne", duplicateProjectName, "friend")).message, 
+                "2 projects found with name: " + duplicateProjectName);
+    }
+    
+    @Test
+    public void crossFunctionMissingColumn() throws Exception {
+        String nonExistentColumn = "NoColumn";
+        String projectName = "My Address Book";
+        Assert.assertEquals(((EvalError) invoke("cross", "mary", projectName, nonExistentColumn)).message, 
+                "Unable to find column " + nonExistentColumn + " in project " + projectName);
     }
     
     @Test
