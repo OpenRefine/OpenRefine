@@ -42,6 +42,8 @@ import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
+import com.google.refine.util.GetProjectIDException;
+import com.google.refine.util.JoinException;
 
 public class Cross implements Function {
     
@@ -51,19 +53,35 @@ public class Cross implements Function {
             // 1st argument can take either value or cell(for backward compatibility)
             Object v = args[0];
             Object toProjectName = args[1];
-            Object toColumnName = args[2];
+            Object toColumnName = args[2]; 
+            Long toProjectID;
+            ProjectJoin join;           
             
             if (v != null && 
                 ( v instanceof String || v instanceof WrappedCell ) &&
                 toProjectName != null && toProjectName instanceof String &&
                 toColumnName != null && toColumnName instanceof String) {
-                
-                ProjectJoin join = ProjectManager.singleton.getInterProjectModel().getJoin(
-                        ProjectManager.singleton.getProjectMetadata(((Project) bindings.get("project")).id).getName(),
-                        (String) bindings.get("columnName"), 
-                        (String) toProjectName, 
-                        (String) toColumnName
-                        );
+                try {
+                    toProjectID = ProjectManager.singleton.getProjectID((String) toProjectName);
+                } catch (GetProjectIDException e){
+                    return new EvalError(e.getMessage());
+                }
+                // add a try/catch here - error should bubble up from getInterProjectModel.computeJoin once that's modified
+                try {
+                    join = ProjectManager.singleton.getInterProjectModel().getJoin(
+                            // getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
+                            // source project name 
+                            (Long) ((Project) bindings.get("project")).id,
+                            // source column name
+                            (String) bindings.get("columnName"), 
+                            // target project name
+                            toProjectID,
+                            // target column name
+                            (String) toColumnName
+                            );
+                } catch (JoinException e) {
+                    return new EvalError(e.getMessage());
+                }
                 if(v instanceof String) {
                     return join.getRows(v);
                 } else {

@@ -46,6 +46,7 @@ import com.google.refine.expr.WrappedRow;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.JoinException;
 
 public class InterProjectModel {
     static public class ProjectJoin {
@@ -97,13 +98,13 @@ public class InterProjectModel {
      * @param toColumn
      * @return
      */
-    public ProjectJoin getJoin(String fromProject, String fromColumn, String toProject, String toColumn) {
+    public ProjectJoin getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) throws JoinException {
         String key = fromProject + ";" + fromColumn + ";" + toProject + ";" + toColumn;
         if (!_joins.containsKey(key)) {
             ProjectJoin join = new ProjectJoin(
-                ProjectManager.singleton.getProjectID(fromProject), 
+                fromProject, 
                 fromColumn, 
-                ProjectManager.singleton.getProjectID(toProject), 
+                toProject, 
                 toColumn
             );
             
@@ -142,21 +143,28 @@ public class InterProjectModel {
         }
     }
 
-    protected void computeJoin(ProjectJoin join) {
+    protected void computeJoin(ProjectJoin join) throws JoinException {
         if (join.fromProjectID < 0 || join.toProjectID < 0) {
             return;
         }
         
         Project fromProject = ProjectManager.singleton.getProject(join.fromProjectID);
+        ProjectMetadata fromProjectMD = ProjectManager.singleton.getProjectMetadata(join.fromProjectID);
         Project toProject = ProjectManager.singleton.getProject(join.toProjectID);
+        ProjectMetadata toProjectMD = ProjectManager.singleton.getProjectMetadata(join.toProjectID);
+        
+        // split this test to check each one and throw an appropriate error
         if (fromProject == null || toProject == null) {
             return;
         }
         
         Column fromColumn = fromProject.columnModel.getColumnByName(join.fromProjectColumnName);
         Column toColumn = toProject.columnModel.getColumnByName(join.toProjectColumnName);
-        if (fromColumn == null || toColumn == null) {
-            return;
+        if (fromColumn == null) {
+            throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " + fromProjectMD.getName()); 
+        }
+        if (toColumn == null) {
+            throw new JoinException("Unable to find column " + join.toProjectColumnName + " in project " + toProjectMD.getName()); 
         }
         
         for (Row fromRow : fromProject.rows) {
