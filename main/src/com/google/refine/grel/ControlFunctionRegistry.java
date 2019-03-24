@@ -92,6 +92,7 @@ import com.google.refine.expr.functions.math.Odd;
 import com.google.refine.expr.functions.math.Pow;
 import com.google.refine.expr.functions.math.Quotient;
 import com.google.refine.expr.functions.math.Radians;
+import com.google.refine.expr.functions.math.RandomNumber;
 import com.google.refine.expr.functions.math.Round;
 import com.google.refine.expr.functions.math.Sin;
 import com.google.refine.expr.functions.math.Sinh;
@@ -299,6 +300,7 @@ public class ControlFunctionRegistry {
         registerFunction("combin", new Combin());
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
+        registerFunction("randomNumber", new RandomNumber());
         registerFunction("gcd", new GreatestCommonDenominator());
         registerFunction("lcm", new LeastCommonMultiple());
         registerFunction("multinomial", new Multinomial());
