@@ -51,6 +51,7 @@ import com.google.refine.expr.functions.ToDate;
 import com.google.refine.expr.functions.ToNumber;
 import com.google.refine.expr.functions.ToString;
 import com.google.refine.expr.functions.Type;
+import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.expr.functions.arrays.Join;
 import com.google.refine.expr.functions.arrays.Reverse;
 import com.google.refine.expr.functions.arrays.Sort;
@@ -263,6 +264,7 @@ public class ControlFunctionRegistry {
         registerFunction("reverse", new Reverse());
         registerFunction("sort", new Sort());
         registerFunction("uniques", new Uniques());
+        registerFunction("inArray", new InArray());
 
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
