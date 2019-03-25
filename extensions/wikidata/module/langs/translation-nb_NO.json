@@ -145,5 +145,8 @@
     "warnings-messages/no-unit-provided/title": "Enhet mangler for {property_entity}",
     "warnings-messages/no-unit-provided/body": "Verdier som <span class=\"wb-issue-preformat\">{example_value}</span> i {example_item_entity} forventes å ha enheter.",
     "warnings-messages/invalid-entity-type/title": "{property_entity} brukt i elementer",
-    "warnings-messages/invalid-entity-type/body": "Bruken av {property_entity} i elementer som {example_entity} er ugyldig."
+    "warnings-messages/invalid-entity-type/body": "Bruken av {property_entity} i elementer som {example_entity} er ugyldig.",
+    "wikidata-schema/copy-reference": "kopier",
+    "wikidata-schema/paste-reference": "lim inn referanse",
+    "wikidata-schema/reference-copied": "kopiert"
 }
