@@ -51,6 +51,7 @@ import com.google.refine.expr.functions.ToDate;
 import com.google.refine.expr.functions.ToNumber;
 import com.google.refine.expr.functions.ToString;
 import com.google.refine.expr.functions.Type;
+import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.expr.functions.arrays.Join;
 import com.google.refine.expr.functions.arrays.Reverse;
 import com.google.refine.expr.functions.arrays.Sort;
@@ -91,6 +92,7 @@ import com.google.refine.expr.functions.math.Odd;
 import com.google.refine.expr.functions.math.Pow;
 import com.google.refine.expr.functions.math.Quotient;
 import com.google.refine.expr.functions.math.Radians;
+import com.google.refine.expr.functions.math.RandomNumber;
 import com.google.refine.expr.functions.math.Round;
 import com.google.refine.expr.functions.math.Sin;
 import com.google.refine.expr.functions.math.Sinh;
@@ -263,6 +265,7 @@ public class ControlFunctionRegistry {
         registerFunction("reverse", new Reverse());
         registerFunction("sort", new Sort());
         registerFunction("uniques", new Uniques());
+        registerFunction("inArray", new InArray());
 
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
@@ -297,6 +300,7 @@ public class ControlFunctionRegistry {
         registerFunction("combin", new Combin());
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
+        registerFunction("randomNumber", new RandomNumber());
         registerFunction("gcd", new GreatestCommonDenominator());
         registerFunction("lcm", new LeastCommonMultiple());
         registerFunction("multinomial", new Multinomial());
