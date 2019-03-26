@@ -82,7 +82,7 @@
     "warnings-messages/new-item-without-P31-or-P279/title": "型(Type)のない項目が作られます.",
     "warnings-messages/new-item-without-P31-or-P279/body": "(P31)のインスタンスか、(P279)のサブクラスが必要です.",
     "warnings-messages/add-statements-with-invalid-format/title": "{property_entity} ステートメントが無効なフォーマットです.",
-    "warnings-messages/add-statements-with-invalid-format/body": "この項目は、正規表現の<span class=\"wb-issue-preformat\">{regex}</span>に合致する必要があります。対象：{example_item_entity}の<span class=\"wb-issue-preformat\">{example_value}</span>",
+    "warnings-messages/add-statements-with-invalid-format/body": "この項目は、正規表現の<span class=\"wb-issue-preformat\">{regex}</span>に合致する必要があります。対象：{example_item_entity}の<span class=\"wb-issue-preformat\">{example_value}</span>.",
     "warnings-messages/remove-statements-with-invalid-format/title": "無効なフォーマットのステートメントが削除されました.",
     "warnings-messages/remove-statements-with-invalid-format/body": "Wikidataにステートメントが存在する場合、問題が解消します.",
     "warnings-messages/missing-inverse-statements/title": "{added_property_entity}の逆ステートメントがありません.",
@@ -157,5 +157,8 @@
     "import-wikibase-schema/file-label": "JSONファイル: ",
     "import-wikibase-schema/schema-label": "あるいは、JSONテキスト:",
     "import-wikibase-schema/invalid-schema": "無効のWikidataスキーマです。",
-    "import-wikibase-schema/import": "インポート"
+    "import-wikibase-schema/import": "インポート",
+    "wikidata-schema/copy-reference": "コピー",
+    "wikidata-schema/paste-reference": "参照貼り付け",
+    "wikidata-schema/reference-copied": "コピー済み"
 }
