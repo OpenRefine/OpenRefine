@@ -55,7 +55,7 @@ function registerCommands() {
   RS.registerCommand(module, "saved-connection", Packages.com.google.refine.extension.database.cmd.SavedConnectionCommand());
   RS.registerCommand(module, "execute-query", Packages.com.google.refine.extension.database.cmd.ExecuteQueryCommand());
   RS.registerCommand(module, "test-query", Packages.com.google.refine.extension.database.cmd.TestQueryCommand());
-  logger.trace("Database Extension Command Registeration done!!");
+  logger.trace("Database Extension Command Registration done!!");
 }
 
 function registerOperations() {

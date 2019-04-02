@@ -49,7 +49,7 @@ How to become an OpenRefine Committers?  Be a contributor and be nominated as a 
 
 From a practical point of view, the direction that the project takes is controlled by the contributors, not the users (unless they're contributors too). Development is made based on contributors and committers donating their time and money to the community. OpenRefine use the [Apache Decision Making](http://community.apache.org/committers/decisionMaking.html) process to decide the future of the project. 
 
-### Lazy Concensus
+### Lazy Consensus
 
 The [lazy consensus](http://community.apache.org/committers/lazyConsensus.html) is used for most of the contributions ranging from bug fixes to minor changes where the contributor assumes to have the support of the community to tackle the issue.
 
@@ -59,7 +59,7 @@ In all cases silence is consent.
 
 ### Consensus Building
 
-If you feel that lazy consensus isn't appropriate for your proposal, you can explicitly request for feedback on the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev). [Building concensus](http://community.apache.org/committers/consensusBuilding.html) help contributors and committers to gather feedback early on and pool the interest by the community for a new feature.
+If you feel that lazy consensus isn't appropriate for your proposal, you can explicitly request for feedback on the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev). [Building consensus](http://community.apache.org/committers/consensusBuilding.html) help contributors and committers to gather feedback early on and pool the interest by the community for a new feature.
 
 Everyone is invited to express their opinion of any given feature or pull request. Support is expressed using:
 

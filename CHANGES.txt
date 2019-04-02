@@ -144,7 +144,7 @@ Bugs fixed:
 - Issue 258: JAVA_HOME ignored if "which java" returns nonzero
 - Issue 262: Refine does not start
 - Issue 263: & symbol being parsed in url's in xml
-- Issue 276: strange character while create new project with a chinese poject name
+- Issue 276: strange character while create new project with a chinese project name
 - Issue 294: Exporting date type column to TSV/CSV shows java debugging information instead of value
 - Issue 295: Binaries under 'root' user on *nix
 - Issue 304: CsvExporter tests fail after commit for issue 294
