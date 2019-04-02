@@ -227,6 +227,6 @@ abstract public class GoogleAPIExtension {
         }    
       }
       
-      throw new IllegalArgumentException("Uknown URL format.");
+      throw new IllegalArgumentException("Unknown URL format.");
     }
 }
