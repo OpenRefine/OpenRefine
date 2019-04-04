@@ -95,4 +95,18 @@ public class CellTests {
         String json = "{\"v\":\"2018-03-04T08:09:10Z\",\"t\":\"date\"}";
         TestUtils.isSerializedTo(Cell.loadStreaming(json, pool), json);
     }
+
+    @Test
+    public void serializeNumberCell() throws Exception {
+        String json = "{\"v\": 1}";
+        Cell c = Cell.loadStreaming(json, pool);
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeBooleanCell() throws Exception {
+        String json = "{\"v\": true}";
+        Cell c = Cell.loadStreaming(json, pool);
+        TestUtils.isSerializedTo(c, json);
+    }
 }
