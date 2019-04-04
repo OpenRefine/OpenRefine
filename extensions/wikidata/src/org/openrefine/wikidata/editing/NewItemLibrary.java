@@ -134,8 +134,8 @@ public class NewItemLibrary {
 	                ReconConfig config = column.getReconConfig();
 	                if (config instanceof StandardReconConfig) {
 	                	StandardReconConfig stdConfig = (StandardReconConfig)config;
-										if (cell instanceof (String)) {
-	                		stdConfig.computeFeatures(recon, cell.getValue());
+										if (cell.getValue() instanceof String) {
+	                		stdConfig.computeFeatures(recon, (String) cell.getValue());
 										}
 	                }
                 }
