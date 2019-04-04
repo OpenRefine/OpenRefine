@@ -102,7 +102,7 @@ public class Cell implements HasFields {
     
     @JsonProperty("v")
     @JsonInclude(Include.NON_NULL)
-    public String getValueAsString() {
+    public Object getValue() {
         if (value != null && !ExpressionUtils.isError(value)) {
             Instant instant = null;
             if (value instanceof OffsetDateTime) {
@@ -119,8 +119,9 @@ public class Cell implements HasFields {
                  return ((Double)value).toString();
             } else if (value instanceof Float
                     && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
-                // TODO: Skip?  Write as string?
                 return ((Float)value).toString();
+            } else if (value instanceof Boolean || value instanceof Number){
+                return value;
             } else {
                 return value.toString();
             }
