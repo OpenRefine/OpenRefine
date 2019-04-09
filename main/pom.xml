@@ -348,12 +348,12 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>4.0.1</version>
+      <version>4.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>3.8</version> <!-- in classpath: 3.13-20150929 -->
+      <version>4.1.0</version> <!-- in classpath: 3.13-20150929 -->
     </dependency>
     <dependency>
       <groupId>org.apache.odftoolkit</groupId>

@@ -44,8 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLDocument;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -95,7 +95,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
 
                 try {
-                    Workbook wb = POIXMLDocument.hasOOXMLHeader(is) ?
+                    Workbook wb = FileMagic.valueOf(is) == FileMagic.OOXML ?
                             new XSSFWorkbook(is) :
                                 new HSSFWorkbook(new POIFSFileSystem(is));
 
@@ -147,7 +147,7 @@ public class ExcelImporter extends TabularImportingParserBase {
         }
         
         try {
-            wb = POIXMLDocument.hasOOXMLHeader(inputStream) ?
+            wb = FileMagic.valueOf(InputStream) == FileMagic.OOXML ?
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
