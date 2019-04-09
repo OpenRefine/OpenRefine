@@ -141,8 +141,8 @@ public class XlsExporter implements StreamExporter {
                 project, engine, params, serializer);
         
         wb.write(outputStream);
-        wb.close();
         outputStream.flush();
+        wb.close();
     }
 
 }

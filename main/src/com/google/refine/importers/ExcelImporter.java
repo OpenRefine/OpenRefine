@@ -117,6 +117,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                                 }
                                 JSONUtilities.append(sheetRecords, sheetRecord);
                             }
+                            wb.close();
                 } finally {
                     is.close();
                 }
@@ -146,7 +147,6 @@ public class ExcelImporter extends TabularImportingParserBase {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
           inputStream = new BufferedInputStream(inputStream);
-;
         }
         
         try {
@@ -238,7 +238,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 exceptions
             );
         }
-        
+
         super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
     
