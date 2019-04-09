@@ -35,6 +35,7 @@ package com.google.refine.importers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -44,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -54,6 +54,8 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.poifs.filesystem.FileMagic;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +93,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 InputStream is = new FileInputStream(file);
 
                 if (!is.markSupported()) {
-                  is = new PushbackInputStream(is, 8);
+                  is = new BufferedInputStream(is);
                 }
 
                 try {
@@ -143,11 +145,12 @@ public class ExcelImporter extends TabularImportingParserBase {
     ) {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
-          inputStream = new PushbackInputStream(inputStream, 8);
+          inputStream = new BufferedInputStream(inputStream);
+;
         }
         
         try {
-            wb = FileMagic.valueOf(InputStream) == FileMagic.OOXML ?
+            wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ?
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
