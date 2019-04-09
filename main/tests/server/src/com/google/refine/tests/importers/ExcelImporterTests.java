@@ -73,6 +73,7 @@ public class ExcelImporterTests extends ImporterTest {
     
     //private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
+    private static final File xlsxFile = createSpreadsheet(true);
     
     @Override
     @BeforeTest
@@ -112,6 +113,45 @@ public class ExcelImporterTests extends ImporterTest {
         whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
         
         InputStream stream = new FileInputStream(xlsFile);
+        
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+        
+        Assert.assertEquals(project.rows.size(), ROWS);
+        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
+        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+
+        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+        
+        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
+        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
+    }
+    
+    @Test
+    public void readXlsx() throws FileNotFoundException, IOException{
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+        
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        
+        InputStream stream = new FileInputStream(xlsxFile);
         
         try {
             parseOneFile(SUT, stream);
