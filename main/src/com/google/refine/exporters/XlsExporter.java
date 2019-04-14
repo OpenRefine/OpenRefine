@@ -142,6 +142,7 @@ public class XlsExporter implements StreamExporter {
         
         wb.write(outputStream);
         outputStream.flush();
+        wb.close();
     }
 
 }
