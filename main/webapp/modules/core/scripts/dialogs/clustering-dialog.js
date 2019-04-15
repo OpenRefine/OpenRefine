@@ -57,13 +57,6 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_keyCollision.html($.i18n('core-dialogs/key-collision'));
     this._elmts.or_dialog_neighbor.html($.i18n('core-dialogs/nearest-neighbor'));
     this._elmts.or_dialog_keying.html($.i18n('core-dialogs/keying-function'));
-    this._elmts.or_dialog_fingerprint.html($.i18n('core-dialogs/fingerprint'));
-    this._elmts.or_dialog_ngram.html($.i18n('core-dialogs/ngram'));
-    this._elmts.or_dialog_metaphone.html($.i18n('core-dialogs/metaphone'));
-    this._elmts.or_dialog_phonetic.html($.i18n('core-dialogs/phonetic'));
-    this._elmts.or_dialog_distance.html($.i18n('core-dialogs/distance-fun'));
-    this._elmts.or_dialog_leven.html($.i18n('core-dialogs/leven'));
-    this._elmts.or_dialog_ppm.html($.i18n('core-dialogs/ppm'));
     this._elmts.or_dialog_ngramSize.html($.i18n('core-dialogs/ngram-size'));
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
@@ -127,7 +120,43 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.click(function() { self._onApplyClose(); });
     this._elmts.closeButton.click(function() { self._dismiss(); });
 
-    this._level = DialogSystem.showDialog(dialog);
+    // Fill in all the keyers and distances
+    $.get("command/core/get-clustering-functions-and-distances")
+    .success(function(data) {
+       var keyers = data.keyers != null ? data.keyers : [];
+       var distances = data.distances != null ? data.distances : [];
+       var i = 0;
+       for(; i < keyers.length; i++) {
+          var label = $.i18n('clustering-keyers/'+keyers[i]);
+          if (label.startsWith('clustering-keyers')) {
+              label = keyers[i];
+          }
+          var option = $('<option></option>')
+             .attr('value', keyers[i])
+             .text(label)
+             .appendTo(self._elmts.keyingFunctionSelector);
+          if (i == 0) {
+             option.attr('selected', 'true');
+          }
+       }
+       for(i = 0; i < distances.length; i++) {
+          var label = $.i18n('clustering-distances/'+distances[i]);
+          if (label.startsWith('clustering-distances')) {
+              label = distances[i];
+          }
+          var option = $('<option></option>')
+             .attr('value', distances[i])
+             .text(label)
+             .appendTo(self._elmts.distanceFunctionSelector);
+          if (i == 0) {
+             option.attr('selected', 'true');
+          }
+       }
+       self._level = DialogSystem.showDialog(dialog);
+    })
+    .error(function(error) {
+            alert($.i18n('core-dialogs/no-clustering-functions-and-distances'));
+    });
 };
 
 ClusteringDialog.prototype._renderTable = function(clusters) {

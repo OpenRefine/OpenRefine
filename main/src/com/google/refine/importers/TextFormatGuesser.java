@@ -87,7 +87,7 @@ public class TextFormatGuesser implements FormatGuesser {
                         return "text/json";
                     } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
                         if (trailingPeriods > 0) {
-                            return "text/rdf+n3";
+                            return "text/rdf/n3";
                         } else if (firstChar == '<') {
                             return "text/xml";
                         }

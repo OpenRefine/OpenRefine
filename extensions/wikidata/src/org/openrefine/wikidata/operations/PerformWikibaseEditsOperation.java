@@ -74,28 +74,6 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
     }
-    
-    /* The constructor above should be enough for deserialization,
-     * but for some unknown reason it can fail in certain cases
-     * (might be due to caching deserializers across threads?)
-     * 
-     * So we sadly add a default constructor and a setter below.
-     * 
-     * TODO delete the default constructor and setter, make summary final
-     */
-    public PerformWikibaseEditsOperation() {
-    	super(null);
-    }
-    
-    @JsonProperty("engineConfig")
-    public void setEngineConfig(EngineConfig config) {
-    	this._engineConfig = config;
-    }
-    
-    @JsonProperty("summary")
-    public void setSummary(String summary) {
-    	this.summary = summary;
-    }
 
     @Override
     protected String getBriefDescription(Project project) {
@@ -191,8 +169,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             
             // Generate batch token
             long token = (new Random()).nextLong();
-            String summary = _summary + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 8)));
+            // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+            // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+            // from the user-supplied ones, we replace these separators by similar unicode characters to
+            // make sure they can be told apart.
+            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+            String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
+                    (Long.toHexString(token).substring(0, 9)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);

@@ -59,9 +59,10 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
     private static Properties bindings;
     
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    private static String dateTimeStringValue = "2017-05-12T05:45:00Z";
     private static int integerValue = 1;
+    private static String integerStringValue = "1";
     private static String stringStringValue = "a";
-    private static Boolean booleanValue = true;
     
     private static ExpressionNominalValueGrouper grouper;
     private static Evaluable eval;
@@ -139,7 +140,11 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
           grouper.end(project);
       }
       
-      Assert.assertEquals(grouper.choices.size(),0);
+      Assert.assertEquals(grouper.choices.size(),1);
+      
+      Assert.assertTrue(grouper.choices.containsKey(integerStringValue));
+      Assert.assertEquals(grouper.choices.get(integerStringValue).decoratedValue.label,integerStringValue);
+      Assert.assertEquals(grouper.choices.get(integerStringValue).decoratedValue.value.toString(),integerStringValue);
     }
     
     @Test
@@ -163,30 +168,10 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
           grouper.end(project);
       }
       
-      Assert.assertEquals(grouper.choices.size(),0);
-    }
-    
-    @Test
-    public void expressionNominalValueGrouperBooleans() throws Exception {
-      //populate project
-      for (int i = 0; i < numberOfRows; i++) {
-          Row row = new Row(1);
-          row.setCell(0, new Cell(booleanValue, null));
-          project.rows.add(row);
-      }
-      //create grouper
-      eval = MetaParser.parse("value");
-      grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
-      try {
-          grouper.start(project);
-          for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
-              Row row = project.rows.get(rowIndex);
-              grouper.visit(project, rowIndex, row);
-          }
-      } finally {
-          grouper.end(project);
-      }
+      Assert.assertEquals(grouper.choices.size(),1);
       
-      Assert.assertEquals(grouper.choices.size(),0);
+      Assert.assertTrue(grouper.choices.containsKey(dateTimeStringValue));
+      Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.label,dateTimeStringValue);
+      Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.value.toString(),dateTimeStringValue);
     }
 }

@@ -626,7 +626,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               {
                 "name" : $.i18n('core-views/starred-rows'),
                 "columnName" : "", 
-                "expression" : "row.starred.toString()"
+                "expression" : "row.starred"
               },
               {
                 "scroll" : false
@@ -643,7 +643,58 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
               {
                 "name" : $.i18n('core-views/flagged-rows'),
                 "columnName" : "", 
-                "expression" : "row.flagged.toString()"
+                "expression" : "row.flagged"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/facet-blank'),
+          id: "core/facet-by-blank",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/blank-rows'),
+                "columnName" : "", 
+                "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/non-blank-values'),
+          id: "core/non-blank-values",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/non-blank-values'),
+                "columnName" : "", 
+                "expression" : "filter(row.columnNames,cn,isNonBlank(cells[cn].value))"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/non-blank-records'),
+          id: "core/non-blank-records",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/non-blank-records'),
+                "columnName" : "", 
+                "expression" : "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))"
               },
               {
                 "scroll" : false

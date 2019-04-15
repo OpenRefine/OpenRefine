@@ -232,6 +232,7 @@ $(window).bind('beforeunload', beforeUnload);
 SchemaAlignmentDialog._reset = function(schema) {
   this._originalSchema = schema || { itemDocuments: [] };
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
+  this._copiedReference = null;
 
   $('#schema-alignment-statements-container').empty();
 
@@ -249,6 +250,10 @@ SchemaAlignmentDialog._reset = function(schema) {
 SchemaAlignmentDialog._save = function(onDone) {
   var self = this;
   var schema = this.getJSON();
+
+  if (schema === null) {
+    alert($.i18n('wikidata-schema/incomplete-schema-could-not-be-saved'));
+  }
 
   Refine.postProcess(
     "wikidata",
@@ -394,17 +399,32 @@ SchemaAlignmentDialog._addItem = function(json) {
 
 SchemaAlignmentDialog._itemToJSON = function (item) {
     var statementGroupLst = new Array();
-    item.find('.wbs-statement-group').each(function () {
-        statementGroupLst.push(SchemaAlignmentDialog._statementGroupToJSON($(this)));
+    var statementsDom = item.find('.wbs-statement-group');
+    statementsDom.each(function () {
+        var statementGroupJSON = SchemaAlignmentDialog._statementGroupToJSON($(this));
+        if (statementGroupJSON !== null) {
+          statementGroupLst.push(statementGroupJSON);
+        }
     });
     var nameDescLst = new Array();
-    item.find('.wbs-namedesc').each(function () {
-        nameDescLst.push(SchemaAlignmentDialog._nameDescToJSON($(this)));
+    var nameDescsDom = item.find('.wbs-namedesc');
+    nameDescsDom.each(function () {
+        var nameDescJSON = SchemaAlignmentDialog._nameDescToJSON($(this));
+        if (nameDescJSON !== null) {
+           nameDescLst.push(nameDescJSON);
+        }
     });
     var inputContainer = item.find(".wbs-item-input").first();
-    return {subject: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
+    var subjectJSON = SchemaAlignmentDialog._inputContainerToJSON(inputContainer);
+    if (subjectJSON !== null &&
+        statementGroupLst.length === statementsDom.length &&
+        nameDescLst.length === nameDescsDom.length) {
+      return {subject: subjectJSON,
             statementGroups: statementGroupLst,
             nameDescs: nameDescLst}; 
+    } else {
+      return null;
+    }
 };
 
 /**************************
@@ -513,12 +533,21 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
 
 SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
     var lst = new Array();
-    statementGroup.find('.wbs-statement-container').first().children('.wbs-statement').each(function () {
-    lst.push(SchemaAlignmentDialog._statementToJSON($(this)));
+    var domStatements = statementGroup.find('.wbs-statement-container').first().children('.wbs-statement');
+    domStatements.each(function () {
+       var statementJSON = SchemaAlignmentDialog._statementToJSON($(this));
+       if (statementJSON !== null) {
+          lst.push(statementJSON);
+       } 
     });
     var inputContainer = statementGroup.find(".wbs-prop-input").first();
-    return {property: SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
-            statements: lst};
+    var propertyJSON = SchemaAlignmentDialog._inputContainerToJSON(inputContainer);
+    if (propertyJSON !== null && domStatements.length === lst.length && lst.length > 0) {
+       return {property: propertyJSON,
+              statements: lst};
+    } else {
+       return null;
+    }
 };
 
 /**************
@@ -593,6 +622,30 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
         e.preventDefault();
     }).appendTo(toolbar3);
     SchemaAlignmentDialog._plusButton($.i18n('wikidata-schema/add-reference'), addReferenceButton);
+
+    var pasteToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(referencesToggleContainer);
+    var referencePaste = $('<span></span>')
+        .addClass('wbs-paste-reference')
+        .appendTo(pasteToolbar);
+    if (SchemaAlignmentDialog._copiedReference === null) {
+        referencePaste.hide();
+    }
+    var pasteIcon = $('<span></span>').addClass('wbs-icon').appendTo(referencePaste);
+    var referencePasteButton = $('<a></a>')
+        .addClass('wbs-paste-reference-button')
+        .text($.i18n('wikidata-schema/paste-reference'))
+        .appendTo(referencePaste)
+        .click(function(e) {
+        if (SchemaAlignmentDialog._copiedReference !== null) {
+           SchemaAlignmentDialog._addReference(referenceContainer, SchemaAlignmentDialog._copiedReference); 
+           SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
+           referencePaste.hide();
+           SchemaAlignmentDialog._hasChanged();
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
     if (references) {
         for (var i = 0; i != references.length; i++) {
           SchemaAlignmentDialog._addReference(referenceContainer, references[i]);
@@ -607,17 +660,32 @@ SchemaAlignmentDialog._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
     var qualifiersList = new Array();
     var referencesList = new Array();
-    statement.find('.wbs-qualifier-container').first().children().each(function () {
-        qualifiersList.push(SchemaAlignmentDialog._qualifierToJSON($(this)));
+    var qualifiersDom = statement.find('.wbs-qualifier-container').first().children();
+    qualifiersDom.each(function () {
+        var qualifierJSON = SchemaAlignmentDialog._qualifierToJSON($(this));
+        if (qualifierJSON !== null) {
+           qualifiersList.push(qualifierJSON);
+        }
     });
-    statement.find('.wbs-reference-container').first().children().each(function () {
-        referencesList.push(SchemaAlignmentDialog._referenceToJSON($(this)));
+    var referencesDom = statement.find('.wbs-reference-container').first().children();
+    referencesDom.each(function () {
+        var referenceJSON = SchemaAlignmentDialog._referenceToJSON($(this));
+        if (referenceJSON !== null) {
+          referencesList.push(referenceJSON);
+        }
     });
-    return {
-        value:SchemaAlignmentDialog._inputContainerToJSON(inputContainer),
+    var valueJSON = SchemaAlignmentDialog._inputContainerToJSON(inputContainer);
+    if (referencesList.length === referencesDom.length &&
+        qualifiersList.length === qualifiersDom.length &&
+        valueJSON !== null) {
+      return {
+        value: valueJSON,
         qualifiers: qualifiersList,
         references: referencesList,
-    };
+      };
+    } else {
+      return null;
+    }
 };
 
 /**************
@@ -655,10 +723,16 @@ SchemaAlignmentDialog._addQualifier = function(container, json) {
 SchemaAlignmentDialog._qualifierToJSON = function(elem) {
   var prop = elem.find(".wbs-prop-input").first();
   var target = elem.find(".wbs-target-input").first();
-  return {
-      prop: SchemaAlignmentDialog._inputContainerToJSON(prop),
-      value: SchemaAlignmentDialog._inputContainerToJSON(target),
-  };
+  var propJSON = SchemaAlignmentDialog._inputContainerToJSON(prop);
+  var valueJSON = SchemaAlignmentDialog._inputContainerToJSON(target);
+  if (propJSON !== null && valueJSON !== null) {
+    return {
+        prop: propJSON,
+        value: valueJSON,
+    };
+  } else {
+    return null;
+  }
 }
 
 /**************
@@ -673,6 +747,20 @@ SchemaAlignmentDialog._addReference = function(container, json) {
 
   var reference = $('<div></div>').addClass('wbs-reference').appendTo(container);
   var referenceHeader = $('<div></div>').addClass('wbs-reference-header').appendTo(reference);
+  var referenceCopy = $('<span></span>').addClass('wbs-copy-reference').appendTo(referenceHeader);
+  var referenceCopyIcon = $('<span></span>').addClass('wbs-icon').appendTo(referenceCopy);
+  var copyButton = $('<span></span>')
+        .addClass('wbs-copy-reference-button')
+        .text($.i18n('wikidata-schema/copy-reference'))
+        .appendTo(referenceCopy)
+        .click(function(e) {
+     if (SchemaAlignmentDialog._copyReference(reference)) {
+       $(this).text($.i18n('wikidata-schema/reference-copied'))
+              .parent().addClass('wbs-copied-reference');
+       container.parent().parent().find('.wbs-paste-reference').hide();
+     }
+     e.preventDefault();
+  });
   var toolbarRef = $('<div></div>').addClass('wbs-toolbar').appendTo(referenceHeader);
   SchemaAlignmentDialog._makeDeleteButton().click(function(e) {
      reference.remove();
@@ -703,9 +791,16 @@ SchemaAlignmentDialog._referenceToJSON = function(reference) {
   var snaks = reference.find('.wbs-qualifier-container').first().children();
   var snaksList = new Array();
   snaks.each(function () {
-      snaksList.push(SchemaAlignmentDialog._qualifierToJSON($(this)));
+      var qualifier = SchemaAlignmentDialog._qualifierToJSON($(this));
+      if (qualifier !== null) {
+         snaksList.push(qualifier);
+      }
   });
-  return {snaks:snaksList};
+  if (snaksList.length === snaks.length) {
+      return {snaks:snaksList};
+  } else {
+      return null;
+  }
 }
 
 SchemaAlignmentDialog._updateReferencesNumber = function(container) {
@@ -713,6 +808,22 @@ SchemaAlignmentDialog._updateReferencesNumber = function(container) {
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
   a.html(childrenCount+$.i18n('wikidata-schema/nb-references'));
+}
+
+SchemaAlignmentDialog._copyReference = function(reference) {
+   // mark any other copied reference as not copied
+   $('.wbs-copy-reference-button')
+        .text($.i18n('wikidata-schema/copy-reference'));
+   $('.wbs-copy-reference')
+        .removeClass('wbs-copied-reference');
+   var copiedReference = SchemaAlignmentDialog._referenceToJSON(reference);
+   if (copiedReference !== null) {
+      SchemaAlignmentDialog._copiedReference = copiedReference;
+      $('.wbs-paste-reference').show();
+      return true;
+   } else {
+      return false;
+   }
 }
 
 /************************
@@ -802,8 +913,12 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
+    if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
+       suggestConfig.view_url = this._reconService.view.url;
+    }
 
-    input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
+
+    input.suggest(suggestConfig).bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
             type : "wbitemconstant",
             qid : data.id,
@@ -834,7 +949,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
     fixSuggestInput(input);
 
   } else if (mode === "time") {
-     input.attr("placeholder", "YYYY(-MM(-DD))...");
+     input.attr("placeholder", "YYYY(-MM(-DD))");
      var propagateValue = function(val) {
         // TODO add validation here
         inputContainer.data("jsonValue", {
@@ -848,7 +963,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
 
-    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d(T[0-2]\d(:[0-5]\d(:[0-5]\dZ)?)?)?)?)?$/);
+    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d)?)?$/);
    } else if (mode === "globe-coordinate") {
      input.attr("placeholder", "lat,lon");
      var propagateValue = function(val) {
@@ -1076,7 +1191,7 @@ SchemaAlignmentDialog.setupStringInputValidation = function(input, regex) {
 
 SchemaAlignmentDialog._inputContainerToJSON = function (inputContainer) {
     var data = inputContainer.data();
-    if (data) {
+    if (data && 'jsonValue' in data) {
        return data.jsonValue;
     } else {
        return null;
@@ -1095,13 +1210,21 @@ SchemaAlignmentDialog._removeStatement = function(statement) {
 
 SchemaAlignmentDialog.getJSON = function() {
   var list = new Array();
-  $('#schema-alignment-statements-container .wbs-item').each(function () {
-     list.push(SchemaAlignmentDialog._itemToJSON($(this)));
+  var itemsDom = $('#schema-alignment-statements-container .wbs-item');
+  itemsDom.each(function () {
+     var itemJSON = SchemaAlignmentDialog._itemToJSON($(this));
+     if (itemJSON !== null) {
+        list.push(itemJSON);
+     }
   });
-  return {
+  if (list.length === itemsDom.length) {
+    return {
         'itemDocuments': list,
         'wikibasePrefix': this._wikibasePrefix,
-  };
+    };
+  } else {
+    return null;
+  }
 };
 
 SchemaAlignmentDialog._hasChanged = function() {
@@ -1114,6 +1237,10 @@ SchemaAlignmentDialog._hasChanged = function() {
   SchemaAlignmentDialog._schemaElmts.discardButton
         .prop('disabled', false)
         .removeClass('disabled');
+   $('.wbs-copy-reference-button')
+        .text($.i18n('wikidata-schema/copy-reference'));
+   $('.wbs-copy-reference')
+        .removeClass('wbs-copied-reference');
 }
 
 SchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
@@ -1130,6 +1257,10 @@ SchemaAlignmentDialog.preview = function() {
   this.issueSpinner.show();
   this.previewSpinner.show();
   var schema = this.getJSON();
+  if (schema === null) {
+    $('.invalid-schema-warning').show();
+    return;
+  }
   $.post(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },

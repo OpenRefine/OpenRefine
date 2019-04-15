@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -73,6 +74,9 @@ import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
+    
+	private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
+	private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
     
     static public class ColumnDetail  {
         @JsonProperty("column")
@@ -207,8 +211,8 @@ public class StandardReconConfig extends ReconConfig {
         int limit
     ) {
         this.service = service;
-        this.identifierSpace = identifierSpace;
-        this.schemaSpace = schemaSpace;
+        this.identifierSpace = identifierSpace != null ? identifierSpace : DEFAULT_IDENTIFIER_SPACE;
+        this.schemaSpace = schemaSpace != null ? schemaSpace : DEFAULT_SCHEMA_SPACE;
         
         this.typeID = typeID;
         this.typeName = typeName;
@@ -525,6 +529,14 @@ public class StandardReconConfig extends ReconConfig {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
         List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {});
         
+        // Sort results by decreasing score
+        results.sort(new Comparator<ReconResult>() {
+        	@Override
+        	public int compare(ReconResult a, ReconResult b) {
+        		return Double.compare(b.score, a.score);
+        	}
+        });
+        
         int length = results.size();
         int count = 0;
         for (int i = 0; i < length; i++) {
@@ -542,8 +554,20 @@ public class StandardReconConfig extends ReconConfig {
             recon.addCandidate(candidate);
             count++;
         }
-        
-        if (count > 0) {
+          
+        computeFeatures(recon, text);
+        return recon;
+    } 
+
+    /**
+     * Recomputes the features associated with this reconciliation
+     * object (only if we have at least one candidate).
+     * 
+     * @param text
+     * 	    the cell value to compare the reconciliation data to
+     */
+    public void computeFeatures(Recon recon, String text) {
+        if (recon.candidates != null && !recon.candidates.isEmpty()) {
             ReconCandidate candidate = recon.candidates.get(0);
             
             recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
@@ -560,8 +584,9 @@ public class StandardReconConfig extends ReconConfig {
                     }
                 }
             }
+        } else {
+        	recon.features = new Object[Recon.Feature_max];
         }
-        return recon;
     }
     
     static protected double wordDistance(String s1, String s2) {

@@ -60,10 +60,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             .put(new SimpleDateFormat("yyyy"), 9)
             .put(new SimpleDateFormat("yyyy-MM"), 10)
             .put(new SimpleDateFormat("yyyy-MM-dd"), 11)
-            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH"), 12)
-            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm"), 13)
-            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"), 13)
-            .put(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"), 14).build();
+            .build();
 
     private TimeValue parsed;
     private String origDatestamp;
@@ -100,25 +97,29 @@ public class WbDateConstant implements WbExpression<TimeValue> {
      */
     public static TimeValue parse(String datestamp)
             throws ParseException {
-        Date date = null;
-        int precision = 9; // default precision (will be overridden)
+        Date bestDate = null;
+        int precision = 0; // default precision (will be overridden if successfully parsed)
+        int maxLength = 0; // the maximum length parsed
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
             String trimmedDatestamp = datestamp.trim();
-            date = entry.getKey().parse(trimmedDatestamp, position);
+            Date date = entry.getKey().parse(trimmedDatestamp, position);
 
             // Ignore parses which failed or do not consume all the input
-            if (date != null && position.getIndex() == trimmedDatestamp.length()) {
+            if (date != null && position.getIndex() > maxLength
+            		// only allow to partially consume the input if the precision is more than a year
+            		&& (entry.getValue() > 9 || position.getIndex() == trimmedDatestamp.length())) {
                 precision = entry.getValue();
-                break;
+                bestDate = date;
+                maxLength = position.getIndex();
             }
         }
-        if (date == null) {
+        if (bestDate == null || precision == 0) {
             throw new ParseException("Invalid date.", 0);
         } else {
             Calendar calendar = Calendar.getInstance();
             calendar = Calendar.getInstance();
-            calendar.setTime(date);
+            calendar.setTime(bestDate);
             return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1), 
                     (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,

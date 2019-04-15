@@ -93,7 +93,9 @@ EOF
 }
                 
 add_option() {
-    OPTS="$OPTS $1"
+    if [ ! -z "$*" ] ; then
+        OPTS+=("$@")
+    fi
 }
                 
 load_configs() {
@@ -497,7 +499,7 @@ ui_test() {
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
     echo "Cleaning up"
-    rm -rf $REFINE_DATA_DIR
+    rm -rf "$REFINE_DATA_DIR"
 }
 
 server_test() {
@@ -530,7 +532,7 @@ run() {
     fi
 
     if [ -d $REFINE_CLASSES_DIR ] ; then
-        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
     fi
 
     if [ "$OS" = "macosx" ] ; then
@@ -563,18 +565,15 @@ run() {
 
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
+    RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
 
-    echo "$RUN_CMD"
-    #echo ""
-  
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
-        exec $RUN_CMD
+        exec "${RUN_CMD[@]}"
     else
-        $RUN_CMD &
+        "${RUN_CMD[@]}" &
         REFINE_PID="$!"
     fi
 }
@@ -595,7 +594,7 @@ broker_run() {
     fi
 
     if [ -d $REFINE_CLASSES_DIR ] ; then
-        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
         add_option "-Drefine.development=true"
     fi
 
@@ -729,7 +728,7 @@ cd `dirname $0`
 
 # ----- Default values ------------------------------------------
 
-OPTS=""
+OPTS=()
 
 # ---- OS-specific support --------------------------------------
 
@@ -786,7 +785,7 @@ while [ $# -ne 0 ] ; do
     -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
-    --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
     *) break;;
@@ -806,7 +805,7 @@ fi
 if [ -z "$JAVA_OPTIONS" ] ; then
   JAVA_OPTIONS=""
 fi
-add_option "$JAVA_OPTIONS"
+add_option "${JAVA_OPTIONS[@]}"
 
 if [ -z "$REFINE_MEMORY" ] ; then
     REFINE_MEMORY="1024M"
@@ -814,7 +813,7 @@ fi
 if [ -z "$REFINE_MIN_MEMORY" ] ; then
     REFINE_MIN_MEMORY="256M"
 fi
-add_option "-Xms$REFINE_MIN_MEMORY -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
+add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFINE_MEMORY"
 
 freeRam=UNKNOWN
 if [ "$OS" = "macosx" ] ; then

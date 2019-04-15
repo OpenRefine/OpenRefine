@@ -86,7 +86,7 @@ public abstract class WbVariableExpr<T> implements WbExpression<T> {
 
     /**
      * Method that should be implemented by subclasses, converting an OpenRefine
-     * cell to a Wikibase value. Access to other values and emiting warnings is
+     * cell to a Wikibase value. Access to other values and emitting warnings is
      * possible via the supplied EvaluationContext object.
      * 
      * @param cell

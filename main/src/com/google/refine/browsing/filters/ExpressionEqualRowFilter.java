@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.filters;
 
-import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -58,10 +57,8 @@ public class ExpressionEqualRowFilter implements RowFilter {
     final protected int             _cellIndex; // the expression is based on this column;
                                                 // -1 if based on no column in particular,
                                                 // for expression such as "row.starred".
+    
     final protected Object[]        _matches;
-    final protected boolean         _selectNumber;
-    final protected boolean         _selectDateTime;
-    final protected boolean         _selectBoolean;
     final protected boolean         _selectBlank;
     final protected boolean         _selectError;
     final protected boolean         _invert;
@@ -71,9 +68,6 @@ public class ExpressionEqualRowFilter implements RowFilter {
         String columnName,
         int cellIndex, 
         Object[] matches, 
-        boolean selectNumber,
-        boolean selectDateTime,
-        boolean selectBoolean,
         boolean selectBlank, 
         boolean selectError,
         boolean invert
@@ -82,9 +76,6 @@ public class ExpressionEqualRowFilter implements RowFilter {
         _columnName = columnName;
         _cellIndex = cellIndex;
         _matches = matches;
-        _selectNumber = selectNumber;
-        _selectDateTime = selectDateTime;
-        _selectBoolean = selectBoolean;
         _selectBlank = selectBlank;
         _selectError = selectError;
         _invert = invert;
@@ -178,12 +169,6 @@ public class ExpressionEqualRowFilter implements RowFilter {
     protected boolean testValue(Object v) {
         if (ExpressionUtils.isError(v)) {
             return _selectError;
-        } else if (v instanceof Number) {
-          return _selectNumber;
-        } else if (v instanceof OffsetDateTime) {
-          return _selectDateTime;
-        } else if (v instanceof Boolean) {
-          return _selectBoolean;
         } else if (ExpressionUtils.isNonBlankData(v)) {
             for (Object match : _matches) {
                 if (testValue(v, match)) {

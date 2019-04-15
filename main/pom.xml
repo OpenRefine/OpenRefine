@@ -155,11 +155,11 @@
                 <id>install-butterfly</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib-local/butterfly-1.0.1.jar</file>
+                    <file>${basedir}/lib-local/butterfly-1.0.2.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>edu.mit.simile</groupId>
                     <artifactId>butterfly</artifactId>
-                    <version>1.0.1</version>
+                    <version>1.0.2</version>
                     <packaging>jar</packaging>
                     <generatePom>true</generatePom>
                 </configuration>
@@ -268,7 +268,7 @@
     <dependency>
       <groupId>edu.mit.simile</groupId>
       <artifactId>butterfly</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
@@ -278,12 +278,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.9.7</version>
+      <version>2.9.8</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.9.7</version>
+      <version>2.9.8</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -308,7 +308,7 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.2.1</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
@@ -348,12 +348,12 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>3.8</version> <!-- in classpath: 3.13-20150929 -->
+      <version>4.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>3.8</version> <!-- in classpath: 3.13-20150929 -->
+      <version>4.1.0</version> <!-- in classpath: 3.13-20150929 -->
     </dependency>
     <dependency>
       <groupId>org.apache.odftoolkit</groupId>

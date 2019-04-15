@@ -37,6 +37,8 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconStats;
 import com.google.refine.model.Row;
+import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.StandardReconConfig;
 
 /**
  * This keeps track of the new items that we have created for each internal
@@ -106,17 +108,36 @@ public class NewItemLibrary {
                     continue;
                 }
                 Recon recon = cell.recon;
+                boolean changed = false;
                 if (Recon.Judgment.New.equals(recon.judgment) && !reset
                         && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.Matched;
                     recon.match = new ReconCandidate(map.get(recon.id), cell.value.toString(),
                             new String[0], 100);
-                    impactedColumns.add(i);
+                    recon.addCandidate(recon.match);
+                    changed = true;
+                    
                 } else if (Recon.Judgment.Matched.equals(recon.judgment) && reset
                         && map.containsKey(recon.id)) {
                     recon.judgment = Recon.Judgment.New;
+                    if(recon.candidates != null) {
+                    	recon.candidates.remove(recon.candidates.size()-1);
+                    }
                     recon.match = null;
-                    impactedColumns.add(i);
+                    changed = true;
+                }
+                
+                if (changed) {
+	                impactedColumns.add(i);
+	                // Compute features
+	                Column column = project.columnModel.getColumnByCellIndex(i);
+	                ReconConfig config = column.getReconConfig();
+	                if (config instanceof StandardReconConfig) {
+	                	StandardReconConfig stdConfig = (StandardReconConfig)config;
+										if (cell.getValue() instanceof String) {
+	                		stdConfig.computeFeatures(recon, (String) cell.getValue());
+										}
+	                }
                 }
             }
         }

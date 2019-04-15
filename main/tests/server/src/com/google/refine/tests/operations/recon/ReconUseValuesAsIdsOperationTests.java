@@ -50,8 +50,8 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
             + "\"columnName\":\"ids\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"service\":\"http://localhost:8080/api\","
-            + "\"identifierSpace\":\"http://test.org/entities\","
-            + "\"schemaSpace\":\"http://test.org/schema\""
+            + "\"identifierSpace\":\"http://test.org/entities/\","
+            + "\"schemaSpace\":\"http://test.org/schema/\""
             + "}";
     
     @BeforeSuite
@@ -69,15 +69,15 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
         Project project = createCSVProject("ids,v\n"
                 + "Q343,hello\n"
                 + ",world\n"
-                + "Q31,test");
+                + "http://test.org/entities/Q31,test");
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
         op.createProcess(project, new Properties()).performImmediate();
         
         assertEquals("Q343", project.rows.get(0).cells.get(0).recon.match.id);
-        assertEquals("http://test.org/entities", project.rows.get(0).cells.get(0).recon.identifierSpace);
+        assertEquals("http://test.org/entities/", project.rows.get(0).cells.get(0).recon.identifierSpace);
         assertNull(project.rows.get(1).cells.get(0));
         assertEquals("Q31", project.rows.get(2).cells.get(0).recon.match.id);
         assertEquals(2, project.columnModel.columns.get(0).getReconStats().matchedTopics);
-        assertEquals("http://test.org/schema", ((StandardReconConfig)project.columnModel.columns.get(0).getReconConfig()).schemaSpace);
+        assertEquals("http://test.org/schema/", ((StandardReconConfig)project.columnModel.columns.get(0).getReconConfig()).schemaSpace);
     }
 }

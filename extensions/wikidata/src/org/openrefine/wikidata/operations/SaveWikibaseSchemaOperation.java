@@ -45,30 +45,14 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
     @JsonIgnore
     final public static String operationDescription = "Save Wikibase schema";
     @JsonProperty("schema")
-    protected WikibaseSchema _schema;
+    final protected WikibaseSchema _schema;
 
     @JsonCreator
     public SaveWikibaseSchemaOperation(
     		@JsonProperty("schema")
     		WikibaseSchema schema) {
         this._schema = schema;
-    }
-    
-    /* The constructor above should be enough for deserialization,
-     * but for some unknown reason it can fail in certain cases
-     * (might be due to caching deserializers across threads?)
-     * 
-     * So we sadly add a default constructor and a setter below.
-     * 
-     * TODO delete the default constructor and setter, make schema final
-     */
-    public SaveWikibaseSchemaOperation() {
-    	
-    }
-    
-    @JsonProperty("schema")
-    public void setSchema(WikibaseSchema schema) {
-    	this._schema = schema;
+
     }
 
     @Override

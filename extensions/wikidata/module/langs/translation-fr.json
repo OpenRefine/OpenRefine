@@ -20,6 +20,9 @@
     "wikidata-schema/add-statement": "ajouter une déclaration",
     "wikidata-schema/add-value": "ajouter une valeur",
     "wikidata-schema/add-qualifier": "ajouter un qualificatif",
+    "wikidata-schema/copy-reference": "copier",
+    "wikidata-schema/paste-reference": "coller une référence",
+    "wikidata-schema/reference-copied": "copiée",
     "wikidata-schema/add-reference": "ajouter une référence",
     "wikidata-schema/add-reference-snak": "ajouter",
     "wikidata-schema/property-placeholder": "propriété",
@@ -138,5 +141,12 @@
     "warnings-messages/no-unit-provided/title": "Unité manquante pour {property_entity}",
     "warnings-messages/no-unit-provided/body": "Des valeurs telles que <span class=\"wb-issue-preformat\">{example_value}</span> sur {example_item_entity} devraient avoir des unités.",
     "warnings-messages/invalid-entity-type/title": "{property_entity} utilisée sur des éléments",
-    "warnings-messages/invalid-entity-type/body": "Les utilisations de {property_entity} sur des éléments tels que {example_entity} sont invalides."
+    "warnings-messages/invalid-entity-type/body": "Les utilisations de {property_entity} sur des éléments tels que {example_entity} sont invalides.",
+    "wikidata-extension/import-wikidata-schema": "Importer un schéma",
+    "wikidata-extension/export-schema": "Exporter le schéma",
+    "import-wikibase-schema/dialog-header": "Importer un schéma Wikidata",
+    "import-wikibase-schema/file-label": "A partir du fichier JSON : ",
+    "import-wikibase-schema/schema-label": "Ou à partir d'un texte JSON :",
+    "import-wikibase-schema/invalid-schema": "Schéma Wikibase non valide.",
+    "import-wikibase-schema/import": "Importer"
 }

@@ -116,6 +116,9 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String id = cell.value.toString();
+                    if(id.startsWith(identifierSpace)) {
+                    	id = id.substring(identifierSpace.length());
+                    }
                     
                     ReconCandidate match = new ReconCandidate(id, id, new String[0], 100);
                     Recon newRecon = reconConfig.createNewRecon(historyEntryID);

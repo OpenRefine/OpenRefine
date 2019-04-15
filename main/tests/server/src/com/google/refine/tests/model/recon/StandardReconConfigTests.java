@@ -27,7 +27,9 @@
 package com.google.refine.tests.model.recon;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,7 +42,9 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.model.Project;
+import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
@@ -75,6 +79,10 @@ public class StandardReconConfigTests extends RefineTest {
 
         public double wordDistanceTest(String s1, String s2) {
             return wordDistance(s1, s2);
+        }
+        
+        protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
+        	return super.createReconServiceResults(text, resultsList, historyEntryID);
         }
     }
 
@@ -148,6 +156,19 @@ public class StandardReconConfigTests extends RefineTest {
     }
     
     @Test
+    public void testReconstructNoIdentifierSchemaSpaces() throws IOException {
+    	String json = "{\"mode\":\"standard-service\","
+    			+ "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+    			+ "\"type\":null,"
+    			+ "\"autoMatch\":true,"
+    			+ "\"columnDetails\":[],"
+    			+ "\"limit\":0}";
+    	StandardReconConfig config = StandardReconConfig.reconstruct(json);
+    	assertEquals(config.identifierSpace, "http://localhost/identifier");
+    	assertEquals(config.schemaSpace, "http://localhost/schema");
+    }
+    
+    @Test
     public void formulateQueryTest() throws IOException {
     	Project project = createCSVProject("title,director\n"
     			+ "mulholland drive,david lynch");
@@ -211,5 +232,117 @@ public class StandardReconConfigTests extends RefineTest {
     			+ "\"name\":\"Cluny\"}";
     	ReconResult rr = ParsingUtilities.mapper.readValue(json, ReconResult.class);
     	assertEquals(rr.types.get(0).name, "hamlet in Alberta");
+    }
+    
+    // Issue #1913
+    @Test
+    public void reorderReconciliationResults() throws JsonParseException, JsonMappingException, IOException {
+    	String viafJson = " [\n" + 
+    			"\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"18951129\",\n" + 
+    			"        \"name\": \"Varano, Camilla Battista da 1458-1524\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.1282051282051282,\n" + 
+    			"        \"match\": false\n" + 
+    			"    },\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"102271932\",\n" + 
+    			"        \"name\": \"Shamsie, Kamila, 1973-....\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.23076923076923078,\n" + 
+    			"        \"match\": false\n" + 
+    			"    },\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"63233597\",\n" + 
+    			"        \"name\": \"Camilla, Duchess of Cornwall, 1947-\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.14285714285714285,\n" + 
+    			"        \"match\": false\n" + 
+    			"    }\n" + 
+    			"\n" + 
+    			"]";
+    	
+    	StandardReconConfigStub stub = new StandardReconConfigStub();
+    	ArrayNode node = ParsingUtilities.mapper.readValue(viafJson, ArrayNode.class);
+    	Recon recon = stub.createReconServiceResults("Kamila", node, 1234L);
+    	assertTrue(recon.candidates.get(0).score > 0.2);
+    	assertEquals(recon.candidates.get(0).id, "102271932");
+    }
+    
+    @Test
+    public void reorderReconciliationResultsStableSort() throws JsonParseException, JsonMappingException, IOException {
+    	String viafJson = " [\n" + 
+    			"\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"18951129\",\n" + 
+    			"        \"name\": \"Varano, Camilla Battista da 1458-1524\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.3,\n" + 
+    			"        \"match\": false\n" + 
+    			"    },\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"102271932\",\n" + 
+    			"        \"name\": \"Shamsie, Kamila, 1973-....\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.23076923076923078,\n" + 
+    			"        \"match\": false\n" + 
+    			"    },\n" + 
+    			"    {\n" + 
+    			"        \"id\": \"63233597\",\n" + 
+    			"        \"name\": \"Camilla, Duchess of Cornwall, 1947-\",\n" + 
+    			"        \"type\": [\n" + 
+    			"            {\n" + 
+    			"                \"id\": \"/people/person\",\n" + 
+    			"                \"name\": \"Person\"\n" + 
+    			"            }\n" + 
+    			"        ],\n" + 
+    			"        \"score\": 0.3,\n" + 
+    			"        \"match\": false\n" + 
+    			"    }\n" + 
+    			"\n" + 
+    			"]";
+    	
+    	StandardReconConfigStub stub = new StandardReconConfigStub();
+    	ArrayNode node = ParsingUtilities.mapper.readValue(viafJson, ArrayNode.class);
+    	Recon recon = stub.createReconServiceResults("Kamila", node, 1234L);
+    	assertEquals(recon.candidates.get(0).score, 0.3);
+    	assertEquals(recon.candidates.get(0).id, "18951129");
+    }
+    
+    /**
+     * computing the features on an empty recon should not fail
+     */
+    @Test
+    public void testComputeFeatures() {
+    	StandardReconConfigStub stub = new StandardReconConfigStub();
+    	Recon recon = stub.createNewRecon(2384738L);
+    	stub.computeFeatures(recon, "my string");
+    	assertNotNull(recon.features);
     }
 }

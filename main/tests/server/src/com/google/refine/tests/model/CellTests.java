@@ -26,6 +26,10 @@
  ******************************************************************************/
 package com.google.refine.tests.model;
 
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -94,5 +98,67 @@ public class CellTests {
     public void serializeDateCell() throws Exception {
         String json = "{\"v\":\"2018-03-04T08:09:10Z\",\"t\":\"date\"}";
         TestUtils.isSerializedTo(Cell.loadStreaming(json, pool), json);
+    }
+
+    @Test
+    public void serializeNumberCell() throws Exception {
+        String json = "{\"v\": 1}";
+        Cell c = Cell.loadStreaming(json, pool);
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeBooleanCell() throws Exception {
+        String json = "{\"v\": true}";
+        Cell c = Cell.loadStreaming(json, pool);
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeDatewithOffset() throws Exception {
+        OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+01:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        Cell c = new Cell(dateTimeValue, null);
+        String json = "{\"v\":\"2017-05-12T04:45:00Z\",\"t\":\"date\"}";
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeLocalDate() throws Exception {
+        LocalDateTime dateTimeValue = LocalDateTime.of(2017,5,12,0,0,0);
+        Cell c = new Cell(dateTimeValue, null);
+        String json = "{\"v\":\"2017-05-12T00:00:00Z\",\"t\":\"date\"}";
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeDoubleNan() throws Exception {
+        double dn = Double.NaN;
+        Cell c = new Cell(dn, null);
+        String json = "{\"v\":\"NaN\"}";
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeFloatNan() throws Exception {
+        Float fn = Float.NaN;
+        Cell c = new Cell(fn, null);
+        String json = "{\"v\":\"NaN\"}";
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeDoubleInfinity() throws Exception {
+        double di = Double.POSITIVE_INFINITY;
+        Cell c = new Cell(di, null);
+        String json = "{\"v\":\"Infinity\"}";
+        TestUtils.isSerializedTo(c, json);
+    }
+    
+    @Test
+    public void serializeFloatInfinity() throws Exception {
+        Float fi = Float.POSITIVE_INFINITY;
+        Cell c = new Cell(fi, null);
+        String json = "{\"v\":\"Infinity\"}";
+        TestUtils.isSerializedTo(c, json);
     }
 }

@@ -36,7 +36,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
- * A simple scheduler for batches commited via the Wikibase API.
+ * A simple scheduler for batches committed via the Wikibase API.
  * 
  * The strategy is quite simple and makes at most two edits per touched item
  * (which is not minimal though). Each update is split between statements making

@@ -17,17 +17,11 @@
         </td>
         <td>
           <div class="binning-controls"><span bind="or_dialog_keying"></span>
-          <select bind="keyingFunctionSelector">
-            <option selected="true" bind="or_dialog_fingerprint" value="fingerprint"></option>
-            <option bind="or_dialog_ngram" value="ngram-fingerprint"></option>
-            <option bind="or_dialog_metaphone" value="metaphone3"></option>
-            <option bind="or_dialog_phonetic" value="cologne-phonetic"></option>
-          </select></div>
+             <select bind="keyingFunctionSelector"></select>
+          </div>
           <div class="knn-controls hidden"><span bind="or_dialog_distance"></span>
-          <select bind="distanceFunctionSelector">
-            <option selected="true" bind="or_dialog_leven" value="levenshtein"></option>
-            <option bind="or_dialog_ppm" value="PPM"></option>
-          </select></div>
+             <select bind="distanceFunctionSelector"></select>
+          </div>
         </td>
         <td>
           <div id="ngram-fingerprint-params" class="function-params hidden">

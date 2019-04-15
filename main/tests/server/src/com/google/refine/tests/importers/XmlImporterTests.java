@@ -130,6 +130,17 @@ public class XmlImporterTests extends ImporterTest {
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
     }
+    
+    @Test
+    public void ignoresDtds() {
+    	RunTest(getSampleWithDtd());
+    	
+    	assertProjectCreated(project, 4, 6);
+    	Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    }
 
     @Test
     public void canParseSampleWithDuplicateNestedElements(){
@@ -224,6 +235,21 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
     
+    public static String getSampleWithDtd(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\"?>");
+        sb.append("<!DOCTYPE library [\n" + 
+    			"<!ENTITY % asd SYSTEM \"http://domain.does.not.exist:4444/ext.dtd\">\n" + 
+    			"%asd;\n" + 
+    			"%c;\n" + 
+    			"]><library>");
+        for(int i = 1; i < 7; i++){
+            sb.append(getTypicalElement(i));
+        }
+        sb.append("</library>");
+        return sb.toString();
+    }
+
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
