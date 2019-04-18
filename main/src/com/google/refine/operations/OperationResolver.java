@@ -51,11 +51,20 @@ public class OperationResolver extends TypeIdResolverBase {
 
     @Override
     public String idFromValueAndType(Object instance, Class<?> type) {
-        return OperationRegistry.s_opClassToName.get(type);
+        String id = OperationRegistry.s_opClassToName.get(type);
+        if (id != null) {
+        	return id;
+        } else { // this happens for an UnknownOperation
+        	return ((AbstractOperation) instance).getOperationId();
+        }
     }
     
     @Override
     public JavaType typeFromId(DatabindContext context, String id) throws IOException {
-        return factory.constructSimpleType(OperationRegistry.resolveOperationId(id), new JavaType[0]);
+    	Class<? extends AbstractOperation> opClass = OperationRegistry.resolveOperationId(id);
+    	if (opClass == null) {
+    		opClass = UnknownOperation.class;
+    	}
+    	return factory.constructSimpleType(opClass, new JavaType[0]);
     }
 }
