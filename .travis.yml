@@ -3,7 +3,7 @@ jdk:
   - oraclejdk8
   - openjdk8
   - oraclejdk9
-  - openjdk11
+  - openjdk9
   
 addons:
   mariadb: '10.0'
