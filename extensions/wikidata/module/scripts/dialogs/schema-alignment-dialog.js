@@ -241,10 +241,6 @@ SchemaAlignmentDialog._reset = function(schema) {
       this._addItem(this._schema.itemDocuments[i]);
     }
   }
-
-  if (!this._schema.itemDocuments.length) {
-    // this._addItem();
-  }
 };
 
 SchemaAlignmentDialog._save = function(onDone) {
