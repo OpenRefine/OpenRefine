@@ -233,7 +233,14 @@ Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
          return false;
      }
 
-     if(!allCapsQuery.startsWith('SELECT')) {
+     if(allCapsQuery.startsWith('SPARQL')) {
+       var tokens = allCapsQuery.split(/\s+/,2);
+       if (tokens.length > 1 && tokens[1]!=='SELECT') {
+         window.alert($.i18n('database-source/alert-invalid-query-select'));
+         return false;
+       }
+     }
+     else if(!allCapsQuery.startsWith('SELECT')) {
          window.alert($.i18n('database-source/alert-invalid-query-select'));
          return false;
      }
