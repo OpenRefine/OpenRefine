@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import com.google.refine.operations.UnknownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
@@ -79,7 +80,7 @@ public class ApplyOperationsCommand extends Command {
     
     protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
         AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
-        if (operation != null) {
+        if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
                 Process process = operation.createProcess(project, new Properties());
                 
