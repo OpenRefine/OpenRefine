@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function BrowsingEngine(div, facetConfigs) {
   this._div = div;
-  this._mode = theProject.recordModel.hasRecords ? 'record-based' : 'row-based';
+  this._mode = theProject.recordModel.hasRecords ? "record-based" : "row-based";
 
   this._facets = [];
   this._initializeUI();
@@ -96,20 +96,21 @@ BrowsingEngine.prototype._initializeUI = function() {
 
   this._div.html(
     '<div class="browsing-panel-help" bind="help">' +
-    '<h1>'+$.i18n._('core-project')["use-facets"]+'</h1>' +
-    '<p>'+$.i18n._('core-project')["use-to-select"]+'</p>' +
-    '<p>'+$.i18n._('core-project')["not-sure"]+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n._('core-project')["watch-cast"]+'</b></a></p>' +
+    '<h1>'+$.i18n('core-project/use-facets')+'</h1>' +
+    '<p>'+$.i18n('core-project/use-to-select')+'</p>' +
+    '<p>'+$.i18n('core-project/not-sure')+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n('core-project/watch-cast')+'</b></a></p>' +
     '</div>' +
     '<div class="browsing-panel-header" bind="header">' +
+    '<div class="browsing-panel-errors" bind="errors"></div>' +
     '<div class="browsing-panel-indicator" bind="indicator">' +
-    '<img src="images/small-spinner.gif" /> '+$.i18n._('core-project')["refreshing-facet"]+'' +
+    '<img src="images/small-spinner.gif" /> '+$.i18n('core-project/refreshing-facet')+'' +
     '</div>' +
     '<div class="browsing-panel-controls" bind="controls">' +
     '<div class="browsing-panel-controls-refresh">' +
-    '<a href="javascript:{}" bind="refreshLink" class="button" title="'+$.i18n._('core-project')["update-facets"]+'">'+$.i18n._('core-buttons')["refresh"]+'</a>' +
+    '<a href="javascript:{}" bind="refreshLink" class="button" title="'+$.i18n('core-project/update-facets')+'">'+$.i18n('core-buttons/refresh')+'</a>' +
     '</div>' +              
-    '<a href="javascript:{}" bind="resetLink" class="button button-pill-left" title="'+$.i18n._('core-project')["clear-selection"]+'">'+$.i18n._('core-buttons')["reset-all"]+'</a>' +
-    '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="'+$.i18n._('core-project')["remove-all"]+'">'+$.i18n._('core-buttons')["remove-all"]+'</a>' +
+    '<a href="javascript:{}" bind="resetLink" class="button button-pill-left" title="'+$.i18n('core-project/clear-selection')+'">'+$.i18n('core-buttons/reset-all')+'</a>' +
+    '<a href="javascript:{}" bind="removeLink" class="button button-pill-right" title="'+$.i18n('core-project/remove-all')+'">'+$.i18n('core-buttons/remove-all')+'</a>' +
     '</div>' +
     '</div>' +
     '<ul bind="facets" class="facets-container"></ul>'
@@ -240,19 +241,31 @@ BrowsingEngine.prototype.update = function(onDone) {
 
   this._elmts.header.show();
   this._elmts.controls.css("visibility", "hidden");
-  this._elmts.indicator.css("visibility", "visible");
+  this._elmts.indicator.css("display", "block");
 
   $.post(
     "command/core/compute-facets?" + $.param({ project: theProject.id }),
     { engine: JSON.stringify(this.getJSON(true)) },
     function(data) {
+      if(data.code === "error") {
+        var clearErr = $('#err-text').remove();
+        var err = $('<div id="err-text">')
+                  .text(data.message)
+                  .appendTo(self._elmts.errors);
+         self._elmts.errors.css("display", "block");
+        if (onDone) {
+          onDone();
+        }
+        return;
+      }
       var facetData = data.facets;
 
       for (var i = 0; i < facetData.length; i++) {
         self._facets[i].facet.updateState(facetData[i]);
       }
 
-      self._elmts.indicator.css("visibility", "hidden");
+      self._elmts.indicator.css("display", "none");
+      self._elmts.errors.css("display", "none");
       if (self._facets.length > 0) {
         self._elmts.header.show();
         self._elmts.controls.css("visibility", "visible");

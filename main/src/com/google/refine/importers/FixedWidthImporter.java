@@ -1,3 +1,29 @@
+/*******************************************************************************
+ * Copyright (C) 2018, OpenRefine contributors
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package com.google.refine.importers;
 
 import java.io.File;
@@ -11,14 +37,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporter extends TabularImportingParserBase {
     public FixedWidthImporter() {
@@ -26,12 +52,12 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
-        JSONArray columnWidths = new JSONArray();
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         if (fileRecords.size() > 0) {
-            JSONObject firstFileRecord = fileRecords.get(0);
+            ObjectNode firstFileRecord = fileRecords.get(0);
             String encoding = ImportingUtilities.getEncoding(firstFileRecord);
             String location = JSONUtilities.getString(firstFileRecord, "location", null);
             if (location != null) {
@@ -59,7 +85,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
         String fileSource,
         Reader reader,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
@@ -107,6 +133,8 @@ public class FixedWidthImporter extends TabularImportingParserBase {
         };
         
         TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+        
+        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }
     
     /**

@@ -35,11 +35,10 @@ package com.google.refine.tests.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -47,6 +46,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.JsonImporter;
 import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.tree.TreeImportingParserBase;
@@ -54,6 +55,7 @@ import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class JsonImporterTests extends ImporterTest {
     @Override
@@ -170,12 +172,12 @@ public class JsonImporterTests extends ImporterTest {
     public void testElementWithMqlReadOutput(){
         String mqlOutput = "{\"code\":\"/api/status/ok\",\"result\":[{\"armed_force\":{\"id\":\"/en/wehrmacht\"},\"id\":\"/en/afrika_korps\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/en/sacred_band_of_thebes\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/british_army\"},\"id\":\"/en/british_16_air_assault_brigade\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/british_army\"},\"id\":\"/en/pathfinder_platoon\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0ch7qgz\"},\"id\":\"/en/sacred_band\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/polish_navy\"},\"id\":\"/en/3rd_ship_flotilla\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxn9\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxq9\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqh\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqp\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqw\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c1wxl3\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c1wxlp\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0ck96kz\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0cm3j23\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0cw8hb4\",\"type\":\"/military/military_unit\"}],\"status\":\"200 OK\",\"transaction_id\":\"cache;cache01.p01.sjc1:8101;2010-10-04T15:04:33Z;0007\"}";
         
-        JSONObject options = SUT.createParserUIInitializationData(
-                job, new LinkedList<JSONObject>(), "text/json");
-        JSONArray path = new JSONArray();
-        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
-        JSONUtilities.append(path, "result");
-        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        path.add(JsonImporter.ANONYMOUS);
+        path.add("result");
+        path.add(JsonImporter.ANONYMOUS);
         JSONUtilities.safePut(options, "recordPath", path);
 
         RunTest(mqlOutput, options);
@@ -363,6 +365,21 @@ public class JsonImporterTests extends ImporterTest {
         // TODO: check data types
     }
 
+
+    @Test
+    public void testComplexJsonStructure() throws IOException{
+        String fileName = "grid_small.json";
+        RunComplexJSONTest(getComplexJSON(fileName));
+
+        log(project);
+        logger.info("************************ columnu number:" + project.columnModel.columns.size() + 
+                ". \tcolumn groups number:" + project.columnModel.columnGroups.size() + 
+                ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount()) ;
+        
+        
+        assertProjectCreated(project, 63, 63, 8);
+    }   
+    
     //------------helper methods---------------
 
     private static String getTypicalElement(int id){
@@ -397,13 +414,13 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
     
-    private static JSONObject getOptions(ImportingJob job, TreeImportingParserBase parser) {
-        JSONObject options = parser.createParserUIInitializationData(
-                job, new LinkedList<JSONObject>(), "text/json");
+    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector) {
+        ObjectNode options = parser.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
         
-        JSONArray path = new JSONArray();
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, JsonImporter.ANONYMOUS);
-        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.append(path, pathSelector);
         
         JSONUtilities.safePut(options, "recordPath", path);
         JSONUtilities.safePut(options, "trimStrings", false);
@@ -493,10 +510,14 @@ public class JsonImporterTests extends ImporterTest {
     
 
     private void RunTest(String testString) {
-        RunTest(testString, getOptions(job, SUT));
+        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
     }
     
-    private void RunTest(String testString, JSONObject options) {
+    private void RunComplexJSONTest(String testString) {
+        RunTest(testString, getOptions(job, SUT, "institutes"));
+    }
+    
+    private void RunTest(String testString, ObjectNode options) {
         try {
             inputStream = new ByteArrayInputStream( testString.getBytes( "UTF-8" ) );
         } catch (UnsupportedEncodingException e1) {
@@ -508,5 +529,13 @@ public class JsonImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail();
         }
+    }
+    
+    private String getComplexJSON(String fileName) throws IOException {
+        InputStream in = this.getClass().getClassLoader()
+                .getResourceAsStream(fileName);
+        String content = org.apache.commons.io.IOUtils.toString(in);
+        
+        return content;
     }
 }

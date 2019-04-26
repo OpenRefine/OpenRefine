@@ -35,8 +35,8 @@ package com.google.refine.commands.expr;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -44,11 +44,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -65,6 +68,50 @@ import com.google.refine.util.ParsingUtilities;
 
 public class PreviewExpressionCommand extends Command {
     
+    protected static interface ExpressionValue  { }
+    protected static class ErrorMessage implements ExpressionValue {
+        @JsonProperty("message")
+        protected String message;
+        public ErrorMessage(String m) {
+            message = m;
+        }
+    }
+    protected static class SuccessfulEvaluation implements ExpressionValue {
+        @JsonValue
+        protected String value;
+        protected SuccessfulEvaluation(String value) {
+            this.value = value;
+        }
+    }
+    
+    protected static class PreviewResult  {
+        @JsonProperty("code")
+        protected String code;
+        @JsonProperty("message")
+        @JsonInclude(Include.NON_NULL)
+        protected String message;
+        @JsonProperty("type")
+        @JsonInclude(Include.NON_NULL)
+        protected String type;
+        @JsonProperty("results")
+        @JsonInclude(Include.NON_NULL)
+        List<ExpressionValue> results; 
+        
+        public PreviewResult(String code, String message, String type) {
+            this.code = code;
+            this.message = message;
+            this.type = type;
+            this.results = null;
+        }
+
+        public PreviewResult(List<ExpressionValue> evaluated) {
+            this.code = "ok";
+            this.message = null;
+            this.type = null;
+            this.results = evaluated;
+        }
+    }
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -78,7 +125,7 @@ public class PreviewExpressionCommand extends Command {
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");
             if (rowIndicesString == null) {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
+                respondJSON(response, new PreviewResult("error", "No row indices specified", null));
                 return;
             }
             
@@ -92,26 +139,18 @@ public class PreviewExpressionCommand extends Command {
                 }
             }
             
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONArray rowIndices = ParsingUtilities.evaluateJsonStringToArray(rowIndicesString);
-            int length = rowIndices.length();
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            writer.object();
+            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
+            int length = rowIndices.size();
             
             try {
                 Evaluable eval = MetaParser.parse(expression);
                 
-                writer.key("code"); writer.value("ok");
-                writer.key("results"); writer.array();
-                
+                List<ExpressionValue> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings(project);
                 for (int i = 0; i < length; i++) {
                     Object result = null;
                     
-                    int rowIndex = rowIndices.getInt(i);
+                    int rowIndex = rowIndices.get(i);
                     if (rowIndex >= 0 && rowIndex < project.rows.size()) {
                         Row row = project.rows.get(rowIndex);
                         Cell cell = row.getCell(cellIndex);
@@ -141,37 +180,29 @@ public class PreviewExpressionCommand extends Command {
                     }
                     
                     if (result == null) {
-                        writer.value(null);
+                        evaluated.add(null);
                     } else if (ExpressionUtils.isError(result)) {
-                        writer.object();
-                        writer.key("message"); writer.value(((EvalError) result).message);
-                        writer.endObject();
+                        evaluated.add(new ErrorMessage(((EvalError) result).message));
                     } else {
                         StringBuffer sb = new StringBuffer();
                         
                         writeValue(sb, result, false);
                         
-                        writer.value(sb.toString());
+                        evaluated.add(new SuccessfulEvaluation(sb.toString()));
                     }
                 }
-                writer.endArray();
+                respondJSON(response, new PreviewResult(evaluated));
             } catch (ParsingException e) {
-                writer.key("code"); writer.value("error");
-                writer.key("type"); writer.value("parser");
-                writer.key("message"); writer.value(e.getMessage());
+                respondJSON(response, new PreviewResult("error", e.getMessage(), "parser"));
             } catch (Exception e) {
-                writer.key("code"); writer.value("error");
-                writer.key("type"); writer.value("other");
-                writer.key("message"); writer.value(e.getMessage());
+                respondJSON(response, new PreviewResult("error", e.getMessage(), "other"));
             }
-            
-            writer.endObject();
         } catch (Exception e) {
             respondException(response, e);
         }
     }
     
-    static protected void writeValue(StringBuffer sb, Object v, boolean quote) throws JSONException {
+    static protected void writeValue(StringBuffer sb, Object v, boolean quote) {
         if (ExpressionUtils.isError(v)) {
             sb.append("[error: " + ((EvalError) v).message + "]");
         } else {
@@ -182,10 +213,10 @@ public class PreviewExpressionCommand extends Command {
                     sb.append("[object Cell]");
                 } else if (v instanceof WrappedRow) {
                     sb.append("[object Row]");
-                } else if (v instanceof JSONObject) {
-                   sb.append(((JSONObject) v).toString());
-                } else if (v instanceof JSONArray) {
-                    sb.append(((JSONArray) v).toString());
+                } else if (v instanceof ObjectNode) {
+                   sb.append(((ObjectNode) v).toString());
+                } else if (v instanceof ArrayNode) {
+                    sb.append(((ArrayNode) v).toString());
                 } else if (ExpressionUtils.isArray(v)) {
                     Object[] a = (Object[]) v;
                     sb.append("[ ");
@@ -208,17 +239,16 @@ public class PreviewExpressionCommand extends Command {
                     sb.append(" ]");
                 } else if (v instanceof HasFields) {
                     sb.append("[object " + v.getClass().getSimpleName() + "]");
-                } else if (v instanceof Calendar) {
-                    Calendar c = (Calendar) v;
-                    
+                } else if (v instanceof OffsetDateTime) {
                     sb.append("[date " + 
-                        ParsingUtilities.dateToString(c.getTime()) +"]");
-                } else if (v instanceof Date) {
-                    sb.append("[date " + 
-                            ParsingUtilities.dateToString((Date) v) +"]");
+                            ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
                 } else if (v instanceof String) {
                     if (quote) {
-                        sb.append(JSONObject.quote((String) v));
+                        try {
+							sb.append(ParsingUtilities.mapper.writeValueAsString(((String) v)));
+						} catch (JsonProcessingException e) {
+							// will not happen
+						}
                     } else {
                         sb.append((String) v);
                     }

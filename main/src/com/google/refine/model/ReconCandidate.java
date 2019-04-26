@@ -37,25 +37,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.google.refine.expr.HasFields;
+import com.google.refine.util.ParsingUtilities;
 
-public class ReconCandidate implements HasFields, Jsonizable {
+public class ReconCandidate implements HasFields {
+    @JsonProperty("id")
     final public String     id;
+    @JsonProperty("name")
     final public String     name;
+    @JsonProperty("types")
     final public String[]   types;
+    @JsonProperty("score")
     final public double     score;
     
-    public ReconCandidate(String topicID, String topicName, String[] typeIDs, double score) {
+    @JsonCreator
+    public ReconCandidate(
+            @JsonProperty("id")
+            String topicID,
+            @JsonProperty("name")
+            String topicName,
+            @JsonProperty("types")
+            String[] typeIDs,
+            @JsonProperty("score")
+            double score) {
         this.id = topicID;
         this.name = topicName;
-        this.types = typeIDs;
+        this.types = typeIDs == null ? new String[0] : typeIDs;
         this.score = score;
     }
     
@@ -77,37 +88,12 @@ public class ReconCandidate implements HasFields, Jsonizable {
     public boolean fieldAlsoHasFields(String name) {
         return false;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("id"); writer.value(id);
-        writer.key("name"); writer.value(name);
-        writer.key("score"); writer.value(score);
-        
-        /* if (!options.containsKey("reconCandidateOmitTypes")) */ {
-            writer.key("types"); writer.array();
-            for (String typeID : types) {
-                writer.value(typeID);
-            }
-            writer.endArray();
-        }
-        
-        writer.endObject();
-    }
     
     static public ReconCandidate loadStreaming(String s) throws Exception {
-        JsonFactory jsonFactory = new JsonFactory(); 
-        JsonParser jp = jsonFactory.createJsonParser(s);
-        
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            return null;
-        }
-        return loadStreaming(jp);
+        return ParsingUtilities.mapper.readValue(s, ReconCandidate.class);
     }
     
+    @Deprecated
     static public ReconCandidate loadStreaming(JsonParser jp) throws Exception {
         JsonToken t = jp.getCurrentToken();
         if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {

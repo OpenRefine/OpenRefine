@@ -33,16 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.Project;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
@@ -67,24 +63,13 @@ public abstract class OperationRegistry {
         classes.add(klass);
     }
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) {
-        try {
-            String op = obj.getString("op");
-            if (!op.contains("/")) {
-                op = "core/" + op; // backward compatible
-            }
-            
-            List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(op);
-            if (classes != null && classes.size() > 0) {
-                Class<? extends AbstractOperation> klass = classes.get(classes.size() - 1);
-                
-                Method reconstruct = klass.getMethod("reconstruct", Project.class, JSONObject.class);
-                if (reconstruct != null) {
-                    return (AbstractOperation) reconstruct.invoke(null, project, obj);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    static public Class<? extends AbstractOperation> resolveOperationId(String op) {
+        if (!op.contains("/")) {
+            op = "core/" + op; // backward compatible
+        }
+        List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(op);
+        if (classes != null && classes.size() > 0) {
+            return classes.get(classes.size() - 1);
         }
         return null;
     }

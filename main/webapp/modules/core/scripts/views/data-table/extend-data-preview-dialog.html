@@ -1,0 +1,26 @@
+<div class="dialog-frame extend-data-preview-dialog" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <div class="grid-layout layout-normal layout-full"><table rows="4">
+      <tr>
+        <td width="300" height="1">Add Property</td>
+        <td height="1">Preview</td>
+        <td height="1" style="text-align: right"><button class="button" bind="resetButton">Reset</button></td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;" height="1"><div class="input-container"><input bind="addPropertyInput" /></div></td>
+        <td style="vertical-align: top;" rowspan="3" colspan="2"><div class="preview-container" bind="previewContainer"></div></td>
+      </tr>
+      <tr>
+        <td height="1">Suggested Properties</td>
+      </tr>
+      <tr>
+        <td><div class="suggested-property-container" bind="suggestedPropertyContainer"></div></td>
+      </tr>
+    </table></div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="okButton">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+    <button class="button" bind="cancelButton">Cancel</button>
+  </div>
+</div>

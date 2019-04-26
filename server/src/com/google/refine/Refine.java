@@ -39,7 +39,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.BindException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -50,9 +49,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 import org.apache.log4j.Level;
 import org.mortbay.jetty.Connector;
@@ -66,7 +62,6 @@ import org.slf4j.LoggerFactory;
 
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
-
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 
 /**
@@ -285,11 +280,13 @@ class RefineServer extends Server {
     // inject configuration parameters in the servlets
     // NOTE: this is done *after* starting the server because jetty might override the init
     // parameters if we set them in the webapp context upon reading the web.xml file    
+
     static private void configure(WebAppContext context) throws Exception {
         ServletHolder servlet = context.getServletHandler().getServlet("refine");
         if (servlet != null) {
             servlet.setInitParameter("refine.data", getDataDir());
             servlet.setInitParameter("butterfly.modules.path", getDataDir() + "/extensions");
+            servlet.setInitParameter("refine.autosave", Configurations.get("refine.autosave", "5")); // default: 5 minutes
             servlet.setInitOrder(1);
             servlet.doStart();
         }

@@ -37,12 +37,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -51,46 +48,39 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowColumnChange;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.util.JSONUtilities;
 
 public class KeyValueColumnizeOperation extends AbstractOperation {
     final protected String  _keyColumnName;
     final protected String  _valueColumnName;
     final protected String  _noteColumnName;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new KeyValueColumnizeOperation(
-            obj.getString("keyColumnName"),
-            obj.getString("valueColumnName"),
-            JSONUtilities.getString(obj, "noteColumnName", null)
-        );
-    }
-    
+    @JsonCreator
     public KeyValueColumnizeOperation(
+        @JsonProperty("keyColumnName")
         String keyColumnName,
+        @JsonProperty("valueColumnName")
         String valueColumnName,
+        @JsonProperty("noteColumnName")
         String noteColumnName
     ) {
         _keyColumnName = keyColumnName;
         _valueColumnName = valueColumnName;
         _noteColumnName = noteColumnName;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(
-            "Columnize by key column " +
-            _keyColumnName + " and value column " + _valueColumnName +
-            (_noteColumnName != null ? (" with note column " + _noteColumnName) : ""));
-        writer.key("keyColumnName"); writer.value(_keyColumnName);
-        writer.key("valueColumnName"); writer.value(_valueColumnName);
-        writer.key("noteColumnName"); writer.value(_noteColumnName);
-        writer.endObject();
+    
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return _keyColumnName;
+    }
+    
+    @JsonProperty("valueColumnName")
+    public String getValueColumnName() {
+        return _valueColumnName;
+    }
+    
+    @JsonProperty("noteColumnName")
+    public String getNoteColumnName() {
+        return _noteColumnName;
     }
 
     @Override
@@ -251,16 +241,10 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         allColumns.addAll(newColumns);
         allColumns.addAll(newNoteColumns);
         
-        // clean up the reused column model and row model
-        int smallIndex = Math.min(keyColumnIndex, valueColumnIndex);
-        int bigIndex = Math.max(keyColumnIndex, valueColumnIndex);
-        
-        project.columnModel.removeCellIndex(bigIndex);
-        project.columnModel.removeCellIndex(smallIndex);
-        
-        for (Row row : newRows) {
-            row.cells.remove(bigIndex);
-            row.cells.remove(smallIndex);
+        // clean up the empty rows 
+        for (int i = newRows.size() - 1;i>=0;i--) {
+            if (newRows.get(i).isEmpty())
+                newRows.remove(i);
         }
         
         return new HistoryEntry(

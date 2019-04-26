@@ -35,12 +35,26 @@ package com.google.refine.grel;
 
 import java.util.Properties;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Interface for functions. When a function is called, its arguments have already
  * been evaluated down into non-error values.
  */
-public interface Function extends Jsonizable {
+public interface Function  {
     public Object call(Properties bindings, Object[] args);
+    
+    @JsonProperty("description")
+    public String getDescription();
+    
+    @JsonProperty("params")
+    @JsonInclude(Include.NON_EMPTY)
+    default public String getParams() {
+    	return "";
+    }
+    
+    @JsonProperty("returns")
+    public String getReturns();
 }

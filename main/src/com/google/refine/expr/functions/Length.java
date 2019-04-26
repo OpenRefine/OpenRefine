@@ -36,10 +36,7 @@ package com.google.refine.expr.functions;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -60,8 +57,8 @@ public class Length implements Function {
                     return ((Collection<?>) v).size();
                 } else if (v instanceof HasFieldsList) {
                     return ((HasFieldsList) v).length();
-                } else if (v instanceof JSONArray) {
-                    return ((JSONArray) v).length();
+                } else if (v instanceof ArrayNode) {
+                    return ((ArrayNode) v).size();
                 } else {
                     String s = (v instanceof String ? (String) v : v.toString());
                     return s.length();
@@ -72,13 +69,17 @@ public class Length implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the length of o";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the length of o");
-        writer.key("params"); writer.value("array or string o");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array or string o";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

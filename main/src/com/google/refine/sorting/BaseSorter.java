@@ -35,10 +35,6 @@ package com.google.refine.sorting;
 
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.Project;
 import com.google.refine.sorting.Criterion.KeyMaker;
@@ -104,52 +100,20 @@ abstract public class BaseSorter {
         }
     }
 
-    public void initializeFromJSON(Project project, JSONObject obj) throws JSONException {
-        if (obj.has("criteria") && !obj.isNull("criteria")) {
-            JSONArray a = obj.getJSONArray("criteria");
-            int count = a.length();
+    public void initializeFromConfig(Project project, SortingConfig config) {
+        _criteria = config.getCriteria();
+        int count = _criteria.length;
+        _keyMakers = new KeyMaker[count];
+        _comparatorWrappers = new ComparatorWrapper[count];
 
-            _criteria = new Criterion[count];
-            _keyMakers = new KeyMaker[count];
-            _comparatorWrappers = new ComparatorWrapper[count];
-
-            for (int i = 0; i < count; i++) {
-                JSONObject obj2 = a.getJSONObject(i);
-
-                _criteria[i] = createCriterionFromJSON(project, obj2);
-                _keyMakers[i] = _criteria[i].createKeyMaker();
-                _comparatorWrappers[i] = new ComparatorWrapper(i);
-            }
-        } else {
-            _criteria = new Criterion[0];
-            _keyMakers = new KeyMaker[0];
-            _comparatorWrappers = new ComparatorWrapper[0];
+        for (int i = 0; i < count; i++) {
+            _keyMakers[i] = _criteria[i].createKeyMaker();
+            _comparatorWrappers[i] = new ComparatorWrapper(i);
         }
     }
 
     public boolean hasCriteria() {
         return _criteria != null && _criteria.length > 0;
-    }
-
-    protected Criterion createCriterionFromJSON(Project project, JSONObject obj) throws JSONException {
-        String valueType = "string";
-        if (obj.has("valueType") && !obj.isNull("valueType")) {
-            valueType = obj.getString("valueType");
-        }
-
-        Criterion c = null;
-        if ("boolean".equals(valueType)) {
-            c = new BooleanCriterion();
-        } else if ("date".equals(valueType)) {
-            c = new DateCriterion();
-        } else if ("number".equals(valueType)) {
-            c = new NumberCriterion();
-        } else {
-            c = new StringCriterion();
-        }
-
-        c.initializeFromJSON(project, obj);
-        return c;
     }
 
     abstract protected Object makeKey(

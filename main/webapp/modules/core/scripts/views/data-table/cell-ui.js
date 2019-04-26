@@ -41,6 +41,23 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
+DataTableCellUI.previewMatchedCells = true;
+
+(function() {
+   
+   $.ajax({
+     url: "command/core/get-preference?" + $.param({
+        name: "cell-ui.previewMatchedCells"
+     }),
+    success: function(data) {
+      if (data.value && data.value == "false") {
+        DataTableCellUI.previewMatchedCells = false;
+     }
+   },
+   dataType: "json",
+  });
+})();
+
 DataTableCellUI.prototype._render = function() {
   var self = this;
   var cell = this._cell;
@@ -50,7 +67,7 @@ DataTableCellUI.prototype._render = function() {
 
   var editLink = $('<a href="javascript:{}">&nbsp;</a>')
   .addClass("data-table-cell-edit")
-  .attr("title", $.i18n._('core-views')["edit-cell"])
+  .attr("title", $.i18n('core-views/edit-cell'))
   .appendTo(divContent)
   .click(function() { self._startEdit(this); });
 
@@ -60,7 +77,7 @@ DataTableCellUI.prototype._render = function() {
   .mouseleave(function() { editLink.css("visibility", "hidden"); });
 
   if (!cell || ("v" in cell && cell.v === null)) {
-    $('<span>').html("&nbsp;").appendTo(divContent);
+    $('<span>').addClass("data-table-null").html('null').appendTo(divContent);
   } else if ("e" in cell) {
     $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
   } else if (!("r" in cell) || !cell.r) {
@@ -92,7 +109,7 @@ DataTableCellUI.prototype._render = function() {
       $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContent);
 
       $('<a href="javascript:{}"></a>')
-      .text($.i18n._('core-views')["choose-match"])
+      .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContent).click(function(evt) {
         self._doRematch();
@@ -106,13 +123,15 @@ DataTableCellUI.prototype._render = function() {
 
       if (service && (service.view) && (service.view.url)) {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
-      } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-        a.attr("href", "http://www.freebase.com/view" + match.id);
+      }
+
+      if (DataTableCellUI.previewMatchedCells) {
+        self._previewOnHover(service, match, a, a, false);
       }
 
       $('<span> </span>').appendTo(divContent);
       $('<a href="javascript:{}"></a>')
-      .text($.i18n._('core-views')["choose-match"])
+      .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContent)
       .click(function(evt) {
@@ -127,18 +146,19 @@ DataTableCellUI.prototype._render = function() {
           var candidates = r.c;
           var renderCandidate = function(candidate, index) {
             var li = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
+            var liSpan = $('<span></span>').appendTo(li);
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match-similar")
-            .attr("title", $.i18n._('core-views')["match-all-cells"])
-            .appendTo(li).click(function(evt) {
+            .attr("title", $.i18n('core-views/match-all-cells'))
+            .appendTo(liSpan).click(function(evt) {
               self._doMatchTopicToSimilarCells(candidate);
             });
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match")
-            .attr("title", $.i18n._('core-views')["match-this-cell"] )
-            .appendTo(li).click(function(evt) {
+            .attr("title", $.i18n('core-views/match-this-cell') )
+            .appendTo(liSpan).click(function(evt) {
               self._doMatchTopicToOneCell(candidate);
             });
 
@@ -146,30 +166,13 @@ DataTableCellUI.prototype._render = function() {
             .addClass("data-table-recon-topic")
             .attr("target", "_blank")
             .text(_.unescape(candidate.name)) // TODO: only use of _.unescape - consolidate
-            .appendTo(li);
+            .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
               a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
-            } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-              a.attr("href", "http://www.freebase.com/view" + candidate.id);
             }
 
-            var preview = null;
-            if ((service) && (service.preview) 
-                && service.preview.url.indexOf("http://www.freebase.com/widget/topic") < 0) {
-              preview = service.preview;
-            } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
-              preview = DataTableCellUI.internalPreview;
-            }
-            if (preview) {
-              a.click(function(evt) {
-                if (!evt.metaKey && !evt.ctrlKey) {
-                  self._previewCandidateTopic(candidate, this, preview);
-                  evt.preventDefault();
-                  return false;
-                }
-              });
-            }
+            self._previewOnHover(service, candidate, liSpan.parent(), liSpan, true);
 
             var score;
             if (candidate.score < 1) {
@@ -177,7 +180,7 @@ DataTableCellUI.prototype._render = function() {
             } else {
               score = Math.round(candidate.score);
             }
-            $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(li);
+            $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(liSpan);
           };
 
           for (var i = 0; i < candidates.length; i++) {
@@ -188,26 +191,27 @@ DataTableCellUI.prototype._render = function() {
         var liNew = $('<div></div>').addClass("data-table-recon-candidate").appendTo(ul);
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match-similar")
-        .attr("title", $.i18n._('core-views')["create-topic-cells"])
+        .attr("title", $.i18n('core-views/create-topic-cells'))
         .appendTo(liNew).click(function(evt) {
           self._doMatchNewTopicToSimilarCells();
         });
 
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match")
-        .attr("title", $.i18n._('core-views')["create-topic-cell"])
+        .attr("title", $.i18n('core-views/create-topic-cell'))
         .appendTo(liNew).click(function(evt) {
           self._doMatchNewTopicToOneCell();
         });
 
-        $('<span>').text($.i18n._('core-views')["create-topic"]).appendTo(liNew);
+        $('<span>').text($.i18n('core-views/create-topic')).appendTo(liNew);
 
         var suggestOptions;
         var addSuggest = false;
         if ((service) && (service.suggest) && (service.suggest.entity)) {
           suggestOptions = service.suggest.entity;
-          addSuggest = true;
-        } else if (ReconciliationManager.isFreebaseIdOrMid(r.identifierSpace)) {
+          if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
+            suggestOptions.view_url = service.view.url;
+          }
           addSuggest = true;
         }
 
@@ -218,7 +222,7 @@ DataTableCellUI.prototype._render = function() {
             self._searchForMatch(suggestOptions);
             return false;
           })
-          .text($.i18n._('core-views')["search-match"])
+          .text($.i18n('core-views/search-match'))
           .appendTo(extraChoices);
         }
       }
@@ -317,14 +321,14 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var frame = $(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-search-for-match.html"));
   var elmts = DOM.bind(frame);
   
-  elmts.dialogHeader.html($.i18n._('core-views')["search-match"]);
-  elmts.or_views_searchFor.html($.i18n._('core-views')["search-for"]);
-  elmts.or_views_matchOther.html($.i18n._('core-views')["match-other"]);
-  elmts.or_views_matchThis.html($.i18n._('core-views')["match-this"]);
-  elmts.okButton.html($.i18n._('core-buttons')["match"]);
-  elmts.newButton.html($.i18n._('core-buttons')["new-topic"]);
-  elmts.clearButton.html($.i18n._('core-buttons')["dont-reconcile"]);
-  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+  elmts.dialogHeader.html($.i18n('core-views/search-match'));
+  elmts.or_views_searchFor.html($.i18n('core-views/search-for'));
+  elmts.or_views_matchOther.html($.i18n('core-views/match-other'));
+  elmts.or_views_matchThis.html($.i18n('core-views/match-this'));
+  elmts.okButton.html($.i18n('core-buttons/match'));
+  elmts.newButton.html($.i18n('core-buttons/new-topic'));
+  elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
@@ -436,23 +440,18 @@ DataTableCellUI.prototype._postProcessSeveralCells = function(command, params, b
   );
 };
 
-DataTableCellUI.internalPreview = {
-  srchurl: 'https://www.googleapis.com/freebase/v1/search?filter=(all mid:${id})'
-    + '&output=(notable:/client/summary (description citation provenance) type)'
-    + '&key='+CustomSuggest.FREEBASE_API_KEY+'&callback=?',
-  imgurl : 'https://www.googleapis.com/freebase/v1/image${id}?maxwidth=75&errorid=/freebase/no_image_png&key='+CustomSuggest.FREEBASE_API_KEY,
-  width: 430,
-  height: 300
-};
-
-DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, preview) {
+DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, preview, showActions) {
   var self = this;
   var id = candidate.id;
-  var fakeMenu = MenuSystem.createMenu();
+  var fakeMenu = $('<div></div>')
+        .addClass("menu-container");
   fakeMenu
   .width(preview.width?preview.width:414)
-  .addClass('data-table-topic-popup')
-  .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
+  .addClass('data-table-topic-popup');
+  if (showActions) {
+    fakeMenu
+      .html(DOM.loadHTML("core", "scripts/views/data-table/cell-recon-preview-popup-header.html"));
+  }
 
   if (preview && preview.url) { // Service has a preview URL associated with it
     var url = encodeURI(preview.url.replace("{{id}}", id));
@@ -461,37 +460,63 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     .height(preview.height)
     .attr("src", url)
     .appendTo(fakeMenu);
-  } else { // Otherwise use our internal preview
-    var url = encodeURI(DataTableCellUI.internalPreview.srchurl.replace("\${id}", id));
-    $.ajax(url,{dataType:"jsonp"}).done(function(searchResponse) {
-      var data = searchResponse.result[0];
-      var html = $.suggest.suggest.create_flyout(data, preview.imgurl);
-      var container = $('<div></div>').css({fontSize:16}); // Suggest assumes this as a base font size
-      container.append(html);
-      fakeMenu.append(container);
-    });
+  } else {
+    return; // no preview service available
   }
 
-  MenuSystem.showMenu(fakeMenu, function(){});
   MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
+  fakeMenu.appendTo(elmt);
 
-  var elmts = DOM.bind(fakeMenu);
-  
-  elmts.matchButton.html($.i18n._('core-views')["match-cell"]);
-  elmts.matchSimilarButton.html($.i18n._('core-views')["match-identical"]);
-  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-  
-  elmts.matchButton.click(function() {
-    self._doMatchTopicToOneCell(candidate);
-    MenuSystem.dismissAll();
-  });
-  elmts.matchSimilarButton.click(function() {
-    self._doMatchTopicToSimilarCells(candidate);
-    MenuSystem.dismissAll();
-  });
-  elmts.cancelButton.click(function() {
-    MenuSystem.dismissAll();
-  });
+  var dismissMenu = function() {
+     fakeMenu.remove();
+     fakeMenu.unbind();  
+  };
+
+  if (showActions) {
+    var elmts = DOM.bind(fakeMenu);
+    
+    elmts.matchButton.html($.i18n('core-views/match-cell'));
+    elmts.matchSimilarButton.html($.i18n('core-views/match-identical'));
+    elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+    
+    elmts.matchButton.click(function() {
+        self._doMatchTopicToOneCell(candidate);
+        dismissMenu();
+    });
+    elmts.matchSimilarButton.click(function() {
+        self._doMatchTopicToSimilarCells(candidate);
+        dismissMenu();
+    });
+    elmts.cancelButton.click(function() {
+        dismissMenu();
+    });
+  }
+  return dismissMenu;
+};
+
+/**
+ * Sets up a preview widget to appear when hovering the given DOM element.
+ */
+DataTableCellUI.prototype._previewOnHover = function(service, candidate, hoverElement, coreElement, showActions) {
+    var self = this;
+    var preview = null;
+    if ((service) && (service.preview)) {
+        preview = service.preview;
+    }
+
+    if (preview) {
+        var dismissCallback = null;
+        hoverElement.hover(function(evt) {
+        if (!evt.metaKey && !evt.ctrlKey) {
+            dismissCallback = self._previewCandidateTopic(candidate, coreElement, preview, showActions);
+            evt.preventDefault();
+        }
+        }, function(evt) {
+        if(dismissCallback !== null) {
+            dismissCallback();
+        }
+        });
+    }
 };
 
 DataTableCellUI.prototype._startEdit = function(elmt) {
@@ -503,17 +528,17 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   menu.html(DOM.loadHTML("core", "scripts/views/data-table/cell-editor.html"));
   var elmts = DOM.bind(menu);
 
-  elmts.or_views_dataType.html($.i18n._('core-views')["data-type"]);
-  elmts.or_views_text.html($.i18n._('core-views')["text"]);
-  elmts.or_views_number.html($.i18n._('core-views')["number"]);
-  elmts.or_views_boolean.html($.i18n._('core-views')["boolean"]);
-  elmts.or_views_date.html($.i18n._('core-views')["date"]);
-  elmts.okButton.html($.i18n._('core-buttons')["apply"]);
-  elmts.or_views_enter.html($.i18n._('core-buttons')["enter"]);
-  elmts.okallButton.html($.i18n._('core-buttons')["apply-to-all"]);
-  elmts.or_views_ctrlEnter.html($.i18n._('core-views')["ctrl-enter"]);
-  elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
-  elmts.or_views_esc.html($.i18n._('core-buttons')["esc"]);
+  elmts.or_views_dataType.html($.i18n('core-views/data-type'));
+  elmts.or_views_text.html($.i18n('core-views/text'));
+  elmts.or_views_number.html($.i18n('core-views/number'));
+  elmts.or_views_boolean.html($.i18n('core-views/boolean'));
+  elmts.or_views_date.html($.i18n('core-views/date'));
+  elmts.okButton.html($.i18n('core-buttons/apply'));
+  elmts.or_views_enter.html($.i18n('core-buttons/enter'));
+  elmts.okallButton.html($.i18n('core-buttons/apply-to-all'));
+  elmts.or_views_ctrlEnter.html($.i18n('core-views/ctrl-enter'));
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  elmts.or_views_esc.html($.i18n('core-buttons/esc'));
   
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
@@ -532,7 +557,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     if (type == "number") {
       value = parseFloat(text);
       if (isNaN(value)) {
-        alert($.i18n._('core-views')["not-valid-number"]);
+        alert($.i18n('core-views/not-valid-number'));
         return;
       }
     } else if (type == "boolean") {
@@ -543,7 +568,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         value = DateTimeUtil.parseIso8601DateTime(text);
       }
       if (!value) {
-        alert($.i18n._('core-views')["not-valid-date"]);
+        alert($.i18n('core-views/not-valid-date'));
         return;
       }
       value = value.toString("yyyy-MM-ddTHH:mm:ssZ");

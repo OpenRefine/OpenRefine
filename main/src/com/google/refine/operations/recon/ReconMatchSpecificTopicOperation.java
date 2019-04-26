@@ -36,16 +36,13 @@ package com.google.refine.operations.recon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -56,43 +53,50 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
-    final protected ReconCandidate match;
-    final protected String identifierSpace;
-    final protected String schemaSpace;
-
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        JSONObject match = obj.getJSONObject("match");
-        
-        JSONArray types = obj.getJSONArray("types");
-        String[] typeIDs = new String[types.length()];
-        for (int i = 0; i < typeIDs.length; i++) {
-            typeIDs[i] = types.getString(i);
+    
+    public static class ReconItem {
+        @JsonProperty("id")
+        public final String id; 
+        @JsonProperty("name")
+        public final String name;
+        @JsonProperty("types")
+        public final String[] types;
+        @JsonCreator
+        public ReconItem(
+                @JsonProperty("id") String id,
+                @JsonProperty("name") String name,
+                @JsonProperty("types") String[] types) {
+            this.id = id;
+            this.name = name;
+            this.types = types;
         }
         
-        return new ReconMatchSpecificTopicOperation(
-            engineConfig,
-            obj.getString("columnName"),
-            new ReconCandidate(
-                match.getString("id"),
-                match.getString("name"),
-                typeIDs,
-                100
-            ),
-            obj.getString("identifierSpace"),
-            obj.getString("schemaSpace")
-        );
+        @JsonIgnore
+        public ReconCandidate getCandidate() {
+            return new ReconCandidate(id, name, types, 100);
+        }
     }
     
+    @JsonProperty("match")
+    final protected ReconItem match;
+    @JsonProperty("identifierSpace")
+    final protected String identifierSpace;
+    @JsonProperty("schemaSpace")
+    final protected String schemaSpace;
+
+    @JsonCreator
     public ReconMatchSpecificTopicOperation(
-        JSONObject engineConfig, 
+        @JsonProperty("engineConfig")
+        EngineConfig engineConfig, 
+        @JsonProperty("columnName")
         String columnName, 
-        ReconCandidate match,
+        @JsonProperty("match")
+        ReconItem match,
+        @JsonProperty("identifierSpace")
         String identifierSpace,
+        @JsonProperty("schemaSpace")
         String schemaSpace
     ) {
         super(engineConfig, columnName, false);
@@ -100,35 +104,10 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("match");
-            writer.object();
-            writer.key("id"); writer.value(match.id);
-            writer.key("name"); writer.value(match.name);
-            writer.key("types");
-                writer.array();
-                for (String typeID : match.types) {
-                    writer.value(typeID);
-                }
-                writer.endArray();
-            writer.endObject();
-        writer.key("identifierSpace"); writer.value(identifierSpace);
-        writer.key("schemaSpace"); writer.value(schemaSpace);
-        writer.endObject();
-    }
     
     @Override
     protected String getBriefDescription(Project project) {
-        return "Match specific topic " +
+        return "Match specific item " +
             match.name + " (" + 
             match.id + ") to cells in column " + _columnName;
     }
@@ -136,7 +115,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
-        return "Match specific topic " + 
+        return "Match specific item " + 
             match.name + " (" + 
             match.id + ") to " + cellChanges.size() + 
             " cells in column " + column.getName();
@@ -145,6 +124,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        ReconCandidate candidate = match.getCandidate();
         
         return new RowVisitor() {
             int cellIndex;
@@ -187,7 +167,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
                                 identifierSpace,
                                 schemaSpace);
                             
-                        newRecon.match = match;
+                        newRecon.match = candidate;
                         newRecon.matchRank = -1;
                         newRecon.judgment = Judgment.Matched;
                         newRecon.judgmentAction = "mass";

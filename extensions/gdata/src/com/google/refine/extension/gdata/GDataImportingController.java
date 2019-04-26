@@ -1,41 +1,7 @@
-/*
-
-Copyright 2011, Google Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
-
 package com.google.refine.extension.gdata;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -44,26 +10,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.User;
 import com.google.api.services.fusiontables.Fusiontables;
 import com.google.api.services.fusiontables.model.Table;
 import com.google.api.services.fusiontables.model.TableList;
-import com.google.gdata.client.docs.DocsService;
-import com.google.gdata.client.spreadsheet.FeedURLFactory;
-import com.google.gdata.client.spreadsheet.SpreadsheetService;
-import com.google.gdata.data.DateTime;
-import com.google.gdata.data.Person;
-import com.google.gdata.data.spreadsheet.SpreadsheetEntry;
-import com.google.gdata.data.spreadsheet.SpreadsheetFeed;
-import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.data.spreadsheet.WorksheetFeed;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
-
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -77,7 +40,7 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 public class GDataImportingController implements ImportingController {
-
+    private static final Logger logger = LoggerFactory.getLogger("GDataImportingController");
     protected RefineServlet servlet;
     
     @Override
@@ -121,171 +84,139 @@ public class GDataImportingController implements ImportingController {
         }
         
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
-            writer.object();
-            writer.key("documents");
-            writer.array();
+            writer.writeStartObject();
+            writer.writeArrayFieldStart("documents");
             
             try {
-                listSpreadsheets(GDataExtension.getDocsService(token), writer);
+                listSpreadsheets(GoogleAPIExtension.getDriveService(token), writer);
                 listFusionTables(FusionTableHandler.getFusionTablesService(token), writer);
-            } catch (AuthenticationException e) {
-                TokenCookie.deleteToken(request, response);
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            } finally {
-                writer.endArray();
-                writer.endObject();
+            }  catch (Exception e) {
+                logger.error("doListDocuments exception:" + ExceptionUtils.getStackTrace(e));
+            }  finally {
+                writer.writeEndArray();
+                writer.writeEndObject();
             }
-        } catch (JSONException e) {
+        } catch (IOException e) {
             throw new ServletException(e);
         } finally {
+            writer.flush();
+            writer.close();
             w.flush();
             w.close();
         }
     }
     
-    private void listSpreadsheets(DocsService service, JSONWriter writer)
-            throws IOException, ServiceException, JSONException {
-        URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/private/full");
-        SpreadsheetFeed feed = service.getFeed(metafeedUrl, SpreadsheetFeed.class);
-        for (SpreadsheetEntry entry : feed.getEntries()) {
-            writer.object();
-            writer.key("docId"); writer.value(entry.getId());
-            writer.key("docLink"); writer.value(entry.getHtmlLink().getHref());
-            writer.key("docSelfLink"); writer.value(entry.getSelfLink().getHref());
-            writer.key("title"); writer.value(entry.getTitle().getPlainText());
-            writer.key("type"); writer.value("spreadsheet");
+    private void listSpreadsheets(Drive drive, JsonGenerator writer)
+            throws IOException {
+         com.google.api.services.drive.Drive.Files.List files = drive.files().list();
+         files.setQ("mimeType = 'application/vnd.google-apps.spreadsheet'");
+         files.setFields("nextPageToken, files(id, name, webViewLink, owners, modifiedTime)");
+         FileList fileList = files.execute();
+         
+        for (File entry : fileList.getFiles()) {
+            writer.writeStartObject();
+            writer.writeStringField("docId", entry.getId());
+            writer.writeStringField("docLink", entry.getWebViewLink());
+            writer.writeStringField("docSelfLink", entry.getWebViewLink());
+            writer.writeStringField("title", entry.getName());
             
-            DateTime updated = entry.getUpdated();
+            writer.writeStringField("type", "spreadsheet");
+            
+            com.google.api.client.util.DateTime updated = entry.getModifiedTime();
             if (updated != null) {
-                writer.key("updated"); writer.value(updated.toStringRfc822());
+                writer.writeStringField("updated", updated.toString());
             }
             
-            writer.key("authors"); writer.array();
-            for (Person person : entry.getAuthors()) {
-                writer.value(person.getName());
+            writer.writeArrayFieldStart("authors");
+            for (User user : entry.getOwners()) {
+                writer.writeString(user.getDisplayName());
             }
-            writer.endArray();
+            writer.writeEndArray();
             
-            writer.endObject();
+            writer.writeEndObject();
         }
     }
     
-    private void listFusionTables(Fusiontables service, JSONWriter writer)
-        throws IOException, ServiceException, JSONException {
+    private void listFusionTables(Fusiontables service, JsonGenerator writer)
+        throws IOException {
         
         Fusiontables.Table.List listTables = service.table().list();
         TableList tablelist = listTables.execute();
+        
+        if (tablelist == null || tablelist.getItems() == null)
+            return;
+        
         for (Table table : tablelist.getItems()) {
             String id = table.getTableId();
             String name = table.getName();
             String link = "https://www.google.com/fusiontables/DataSource?docid=" + id;
             
             // Add JSON object to our stream
-            writer.object();
-            writer.key("docId"); writer.value(id);
-            writer.key("docLink"); writer.value(link);
-            writer.key("docSelfLink"); writer.value(link);
-            writer.key("title"); writer.value(name);
-            writer.key("type"); writer.value("table");
-            writer.endObject();
+            writer.writeStartObject();
+            writer.writeStringField("docId", id);
+            writer.writeStringField("docLink", link);
+            writer.writeStringField("docSelfLink", link);
+            writer.writeStringField("title", name);
+            writer.writeStringField("type", "table");
+            writer.writeEndObject();
         }
     }
     
     private void doInitializeParserUI(
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
-        
         String token = TokenCookie.getToken(request);
-        
         String type = parameters.getProperty("docType");
         String urlString = parameters.getProperty("docUrl");
+        ObjectNode result = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         
-        URL url = new URL(urlString);
-        try {
-            JSONObject result = new JSONObject();
-            JSONObject options = new JSONObject();
-            JSONUtilities.safePut(result, "status", "ok");
-            JSONUtilities.safePut(result, "options", options);
+        JSONUtilities.safePut(result, "status", "ok");
+        JSONUtilities.safePut(result, "options", options);
+        JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
+        JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        
+        if ("spreadsheet".equals(type)) {
+            ArrayNode worksheets = ParsingUtilities.mapper.createArrayNode();
+            // extract spreadSheetId from URL
+            String spreadSheetId = GoogleAPIExtension.extractSpreadSheetId(urlString);
             
-            JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
-            JSONUtilities.safePut(options, "storeBlankRows", true);
-            JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+            JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
+            JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+            JSONUtilities.safePut(options, "worksheets", worksheets);
             
-            if ("spreadsheet".equals(type)) {
-                JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
-                JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+            List<Sheet> worksheetEntries =
+                    getWorksheetEntriesForDoc(token, spreadSheetId);
+            for (Sheet sheet : worksheetEntries) {
+                ObjectNode worksheetO = ParsingUtilities.mapper.createObjectNode();
+                JSONUtilities.safePut(worksheetO, "name", sheet.getProperties().getTitle());
+                JSONUtilities.safePut(worksheetO, "rows", sheet.getProperties().getGridProperties().getRowCount());
+                JSONUtilities.safePut(worksheetO, "link", 
+                        "https://sheets.googleapis.com/v4/spreadsheets/" + spreadSheetId + "/values/" + sheet.getProperties().getTitle());
                 
-                JSONArray worksheets = new JSONArray();
-                JSONUtilities.safePut(options, "worksheets", worksheets);
-                
-                List<WorksheetEntry> worksheetEntries =
-                    reallyTryToGetWorksheetEntriesForDoc(url, token);
-                for (WorksheetEntry worksheetEntry : worksheetEntries) {
-                    JSONObject worksheetO = new JSONObject();
-                    JSONUtilities.safePut(worksheetO, "name", worksheetEntry.getTitle().getPlainText());
-                    JSONUtilities.safePut(worksheetO, "rows", worksheetEntry.getRowCount());
-                    JSONUtilities.safePut(worksheetO, "link", worksheetEntry.getSelfLink().getHref());
-                    
-                    JSONUtilities.append(worksheets, worksheetO);
-                }
-            } else if ("table".equals(type)) {
-                // No metadata for a fusion table.
+                JSONUtilities.append(worksheets, worksheetO);
             }
-            /* TODO: else */
+        } else if ("table".equals(type)) {
+            // No metadata for a fusion table.
+        }
             
-            HttpUtilities.respond(response, result.toString());
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            HttpUtilities.respond(response, "error", "Internal error: " + e.getLocalizedMessage());
-        }
+        HttpUtilities.respond(response, result.toString());
     }
-    
-    private List<WorksheetEntry> reallyTryToGetWorksheetEntriesForDoc(URL docUrl, String token) throws IOException, ServiceException {
-        try {
-            return getWorksheetEntriesForDoc(docUrl, token);
-        } catch (ServiceException e) {
-            /*
-             * TODO: figure out if we can rewire the URL somehow. This code below
-             * doesn't work but maybe we need to try something similar to it.
-             * 
-            String urlString = docUrl.toString();
-            if (urlString.startsWith("https://docs.google.com/spreadsheet/ccc?key=") ||
-                urlString.startsWith("http://docs.google.com/spreadsheet/ccc?key=")) {
-                
-                String urlString2 = "https://spreadsheets.google.com/spreadsheet/ccc?key=" +
-                    urlString.substring(urlString.indexOf("?key=") + 5);
-                
-                return getWorksheetEntriesForDoc(new URL(urlString2), token);
-            }
-            */
-            throw e;
-        }
-    }
-    
-    private List<WorksheetEntry> getWorksheetEntriesForDoc(URL docUrl, String token) throws IOException, ServiceException {
-        if (token != null) {
-            try {
-                SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(token);
-                SpreadsheetEntry spreadsheetEntry = spreadsheetService.getEntry(docUrl, SpreadsheetEntry.class);
-                return spreadsheetEntry.getWorksheets();
-            } catch (ServiceException e) {
-                // Ignore and fall through, pretending that we're not logged in.
-            }
-        }
-        return getWorksheetEntriesForDoc(docUrl);
-    }
-    
-    private List<WorksheetEntry> getWorksheetEntriesForDoc(URL docUrl) throws IOException, ServiceException {
-        SpreadsheetService spreadsheetService = GDataExtension.getSpreadsheetService(null);
-        String visibility = "public";
-        FeedURLFactory factory = FeedURLFactory.getDefault();
-        String key = GDataExtension.getSpreadsheetID(docUrl);
-        docUrl = factory.getWorksheetFeedUrl(key, visibility, "values");
-        WorksheetFeed feed = spreadsheetService.getFeed(docUrl, WorksheetFeed.class);
-        return feed.getEntries(); 
+
+    private List<Sheet> getWorksheetEntriesForDoc(String token, String spreadsheetId) throws IOException {
+        Sheets sheetsService = GoogleAPIExtension.getSheetsService(token);
+        
+        boolean includeGridData = true; 
+
+        Sheets.Spreadsheets.Get request = sheetsService.spreadsheets().get(spreadsheetId);
+        request.setIncludeGridData(includeGridData);
+
+        Spreadsheet response = request.execute();
+        
+        return response.getSheets();
     }
     
     private void doParsePreview(
@@ -302,54 +233,50 @@ public class GDataImportingController implements ImportingController {
         }
         
         job.updating = true;
+        ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+            request.getParameter("options"));
+        
+        List<Exception> exceptions = new LinkedList<Exception>();
+        
+        job.prepareNewProject();
+        
+        GDataImporter.parse(
+            token,
+            job.project,
+            job.metadata,
+            job,
+            100,
+            optionObj,
+            exceptions
+        );
+        
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
-            JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
-                request.getParameter("options"));
-            
-            List<Exception> exceptions = new LinkedList<Exception>();
-            
-            job.prepareNewProject();
-            
-            GDataImporter.parse(
-                token,
-                job.project,
-                job.metadata,
-                job,
-                100,
-                optionObj,
-                exceptions
-            );
-            
-            Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
-            try {
-                writer.object();
-                if (exceptions.size() == 0) {
-                    job.project.update(); // update all internal models, indexes, caches, etc.
-                    
-                    writer.key("status"); writer.value("ok");
-                } else {
-                    writer.key("status"); writer.value("error");
-                    
-                    writer.key("errors");
-                    writer.array();
-                    DefaultImportingController.writeErrors(writer, exceptions);
-                    writer.endArray();
-                }
-                writer.endObject();
-            } catch (JSONException e) {
-                throw new ServletException(e);
-            } finally {
-                w.flush();
-                w.close();
+            writer.writeStartObject();
+            if (exceptions.size() == 0) {
+                job.project.update(); // update all internal models, indexes, caches, etc.
+                
+                writer.writeStringField("status", "ok");
+            } else {
+                writer.writeStringField("status", "error");
+                
+                writer.writeArrayFieldStart("errors");
+                DefaultImportingController.writeErrors(writer, exceptions);
+                writer.writeEndArray();
             }
-
-        } catch (JSONException e) {
+            writer.writeEndObject();
+        } catch (IOException e) {
             throw new ServletException(e);
         } finally {
-            job.touch();
-            job.updating = false;
+            writer.flush();
+            writer.close();
+            w.flush();
+            w.close();
         }
+
+        job.touch();
+        job.updating = false;
     }
     
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
@@ -365,22 +292,22 @@ public class GDataImportingController implements ImportingController {
         }
         
         job.updating = true;
-        try {
-            final JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
-                request.getParameter("options"));
-            
-            final List<Exception> exceptions = new LinkedList<Exception>();
-            
-            job.setState("creating-project");
-            
-            final Project project = new Project();
-            new Thread() {
-                @Override
-                public void run() {
-                    ProjectMetadata pm = new ProjectMetadata();
-                    pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
-                    pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
-                    
+        final ObjectNode optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(
+            request.getParameter("options"));
+        
+        final List<Exception> exceptions = new LinkedList<Exception>();
+        
+        job.setState("creating-project");
+        
+        final Project project = new Project();
+        new Thread() {
+            @Override
+            public void run() {
+                ProjectMetadata pm = new ProjectMetadata();
+                pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
+                pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
+                
+                try {
                     GDataImporter.parse(
                         token,
                         project,
@@ -390,28 +317,28 @@ public class GDataImportingController implements ImportingController {
                         optionObj,
                         exceptions
                     );
-                    
-                    if (!job.canceled) {
-                        if (exceptions.size() > 0) {
-                            job.setError(exceptions);
-                        } else {
-                            project.update(); // update all internal models, indexes, caches, etc.
-                            
-                            ProjectManager.singleton.registerProject(project, pm);
-                            
-                            job.setState("created-project");
-                            job.setProjectID(project.id);
-                        }
-                        
-                        job.touch();
-                        job.updating = false;
-                    }
+                } catch (IOException e) {
+                    logger.error(ExceptionUtils.getStackTrace(e));
                 }
-            }.start();
-            
-            HttpUtilities.respond(response, "ok", "done");
-        } catch (JSONException e) {
-            throw new ServletException(e);
-        }
+                
+                if (!job.canceled) {
+                    if (exceptions.size() > 0) {
+                        job.setError(exceptions);
+                    } else {
+                        project.update(); // update all internal models, indexes, caches, etc.
+                        
+                        ProjectManager.singleton.registerProject(project, pm);
+                        
+                        job.setState("created-project");
+                        job.setProjectID(project.id);
+                    }
+                    
+                    job.touch();
+                    job.updating = false;
+                }
+            }
+        }.start();
+        
+        HttpUtilities.respond(response, "ok", "done");
     }
 }

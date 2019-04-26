@@ -36,9 +36,6 @@ package com.google.refine.expr.functions.math;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -82,13 +79,17 @@ public class Sum implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Sums numbers in array a";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Sums numbers in array a");
-        writer.key("params"); writer.value("array a");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array a";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

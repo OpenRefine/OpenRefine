@@ -33,18 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.process;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntry;
 
 abstract public class LongRunningProcess extends Process {
+    @JsonProperty("description")
     final protected String       _description;
+    @JsonIgnore
     protected ProcessManager     _manager;
+    @JsonIgnore
     protected Thread             _thread;
+    @JsonProperty("progress")
     protected int                _progress; // out of 100
+    @JsonIgnore
     protected boolean            _canceled;
     
     protected LongRunningProcess(String description) {
@@ -59,17 +61,9 @@ abstract public class LongRunningProcess extends Process {
         }
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("id"); writer.value(hashCode());
-        writer.key("description"); writer.value(_description);
-        writer.key("immediate"); writer.value(false);
-        writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-        writer.key("progress"); writer.value(_progress);
-        writer.endObject();
+    @JsonProperty("status")
+    public String getStatus() {
+        return _thread == null ? "pending" : (_thread.isAlive() ? "running" : "done");
     }
 
     @Override

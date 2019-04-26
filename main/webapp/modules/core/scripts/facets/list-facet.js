@@ -129,7 +129,7 @@ ListFacet.prototype.updateState = function(data) {
 };
 
 ListFacet.prototype._reSortChoices = function() {
-  this._data.choices.sort(this._options.sort == "name" ?
+  this._data.choices.sort(this._options.sort === "name" ?
       function(a, b) {
     return a.v.l.toLowerCase().localeCompare(b.v.l.toLowerCase());
   } :
@@ -146,25 +146,25 @@ ListFacet.prototype._initializeUI = function() {
   var facet_id = this._div.attr("id");
 
   this._div.empty().show().html(
-      '<div class="facet-title">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-          '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+          '<td width="1%"><a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
           '<td>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n._('core-facets')["reset"]+'</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n._('core-facets')["invert"]+'</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n._('core-facets')["change"]+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
             '<span bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n._('core-facets')["click-to-edit"]+'"></div>' +
+      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
       '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
         '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
-        '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n._('core-facets')["sort-by"]+': ' +
-          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n._('core-facets')["name"]+'</a>' +
-          '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n._('core-facets')["count"]+'</a>' +
+        '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n('core-facets/sort-by')+': ' +
+          '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n('core-facets/name')+'</a>' +
+          '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n('core-facets/count')+'</a>' +
         '</span>' +
-        '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n._('core-facets')["cluster"]+'</button>' +
+        '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n('core-facets/cluster')+'</button>' +
       '</div>' +
       '<div class="facet-body" bind="bodyDiv">' +
         '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
@@ -173,7 +173,7 @@ ListFacet.prototype._initializeUI = function() {
   this._elmts = DOM.bind(this._div);
 
   this._elmts.titleSpan.text(this._config.name);
-  this._elmts.changeButton.attr("title",$.i18n._('core-facets')["current-exp"]+": " + this._config.expression).click(function() {
+  this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
       if (self._elmts.expressionDiv.css("display") != "none") {
         self._editExpression();
@@ -223,14 +223,14 @@ ListFacet.prototype._copyChoices = function() {
   var frame = DialogSystem.createDialog();
   frame.width("600px");
 
-  var header = $('<div></div>').addClass("dialog-header").text($.i18n._('core-facets')["facet-choices"]).appendTo(frame);
+  var header = $('<div></div>').addClass("dialog-header").text($.i18n('core-facets/facet-choices')).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
   body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
   var elmts = DOM.bind(body);
 
-  $('<button class="button"></button>').text($.i18n._('core-buttons')["close"]).click(function() {
+  $('<button class="button"></button>').text($.i18n('core-buttons/close')).click(function() {
     DialogSystem.dismissUntil(level - 1);
   }).appendTo(footer);
 
@@ -259,9 +259,11 @@ ListFacet.prototype._update = function(resetScroll) {
 
   var invert = this._config.invert;
   if (invert) {
+    this._elmts.facetTitle.addClass("facet-title-inverted");
     this._elmts.bodyInnerDiv.addClass("facet-mode-inverted");
     this._elmts.invertButton.addClass("facet-mode-inverted");
   } else {
+    this._elmts.facetTitle.removeClass("facet-title-inverted");
     this._elmts.bodyInnerDiv.removeClass("facet-mode-inverted");
     this._elmts.invertButton.removeClass("facet-mode-inverted");
   }
@@ -270,23 +272,23 @@ ListFacet.prototype._update = function(resetScroll) {
     //this._elmts.statusDiv.hide();
     this._elmts.controlsDiv.hide();
     this._elmts.bodyInnerDiv.empty().append(
-        $('<div>').text($.i18n._('core-facets')["loading"]).addClass("facet-body-message"));
+        $('<div>').text($.i18n('core-facets/loading')).addClass("facet-body-message"));
 
     return;
   } else if ("error" in this._data) {
     //this._elmts.statusDiv.hide();
     this._elmts.controlsDiv.hide();
 
-    if (this._data.error == "Too many choices") {
+    if (this._data.error === "Too many choices") {
       this._elmts.bodyInnerDiv.empty();
       
       var messageDiv = $('<div>')
-        .text(this._data.choiceCount + " "+$.i18n._('core-facets')["too-many-choices"])
+        .text(this._data.choiceCount + " "+$.i18n('core-facets/too-many-choices'))
         .addClass("facet-body-message")
         .appendTo(this._elmts.bodyInnerDiv);
       $('<br>').appendTo(messageDiv);
       $('<a>')
-      .text($.i18n._('core-facets')["set-choice-count"])
+      .text($.i18n('core-facets/set-choice-count'))
       .attr("href", "javascript:{}")
       .addClass("action")
       .addClass("secondary")
@@ -345,7 +347,7 @@ ListFacet.prototype._update = function(resetScroll) {
     this._elmts.invertButton.hide();
   }
 
-  if (this._options.sort == "name") {
+  if (this._options.sort === "name") {
     this._elmts.sortByNameLink.removeClass("action").addClass("selected");
     this._elmts.sortByCountLink.removeClass("selected").addClass("action");
   } else {
@@ -359,7 +361,7 @@ ListFacet.prototype._update = function(resetScroll) {
     return temp.text(s).html();
   };
 
-  var renderEdit = this._config.expression == "value";
+  var renderEdit = this._config.expression === "value";
   var renderChoice = function(index, choice, customLabel) {
     var label = customLabel || choice.v.l;
     var count = choice.c;
@@ -376,7 +378,7 @@ ListFacet.prototype._update = function(resetScroll) {
 
     // edit link
     if (renderEdit) {
-      html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">'+$.i18n._('core-facets')["edit"]+'</a>');
+      html.push('<a href="javascript:{}" class="facet-choice-link facet-choice-edit" style="visibility: hidden">'+$.i18n('core-facets/edit')+'</a>');
     }
 
     html.push('<a href="javascript:{}" class="facet-choice-label">' + encodeHtml(label) + '</a>');
@@ -400,9 +402,9 @@ ListFacet.prototype._update = function(resetScroll) {
 
   var getChoice = function(elmt) {
     var index = parseInt(elmt.attr("choiceIndex"),10);
-    if (index == -1) {
+    if (index === -1) {
       return self._blankChoice;
-    } else if (index == -2) {
+    } else if (index === -2) {
       return self._errorChoice;
     } else {
       return choices[index];
@@ -448,7 +450,7 @@ ListFacet.prototype._update = function(resetScroll) {
     bodyInnerDiv.on('mouseenter mouseleave', '.facet-choice', function(e) {
       e.preventDefault();
       var visibility = 'visible';
-      if (e.type == 'mouseleave') {
+      if (e.type === 'mouseleave') {
         visibility = 'hidden';
       }
       $(this).find('.facet-choice-edit').css("visibility", visibility);
@@ -479,7 +481,7 @@ ListFacet.prototype._renderBodyControls = function() {
   .appendTo(this._elmts.bodyInnerDiv);
 
   $('<a>')
-  .text($.i18n._('core-facets')["facet-by-count"])
+  .text($.i18n('core-facets/facet-by-count'))
   .attr("href", "javascript:{}")
   .addClass("action")
   .addClass("secondary")
@@ -521,12 +523,12 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
       '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
       '<div id="data-table-cell-editor-actions">' +
         '<div class="data-table-cell-editor-action">' +
-          '<button class="button" bind="okButton">'+$.i18n._('core-buttons')["apply"]+'</button>' +
-          '<div class="data-table-cell-editor-key">'+$.i18n._('core-buttons')["enter"]+'</div>' +
+          '<button class="button" bind="okButton">'+$.i18n('core-buttons/apply')+'</button>' +
+          '<div class="data-table-cell-editor-key">'+$.i18n('core-buttons/enter')+'</div>' +
         '</div>' +
         '<div class="data-table-cell-editor-action">' +
-          '<button class="button" bind="cancelButton">'+$.i18n._('core-buttons')["cancel"]+'</button>' +
-          '<div class="data-table-cell-editor-key">'+$.i18n._('core-buttons')["esc"]+'</div>' +
+          '<button class="button" bind="cancelButton">'+$.i18n('core-buttons/cancel')+'</button>' +
+          '<div class="data-table-cell-editor-key">'+$.i18n('core-buttons/esc')+'</div>' +
         '</div>' +
       '</div>'
   );
@@ -577,7 +579,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
           var gotSelection = false;
           for (var i = 0; i < self._selection.length; i++) {
             var choice = self._selection[i];
-            if (choice.v.v == originalContent) {
+            if (choice.v.v === originalContent) {
               if (gotSelection) {
                 continue;
               }
@@ -597,9 +599,9 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
   .text(originalContent)
   .keydown(function(evt) {
     if (!evt.shiftKey) {
-      if (evt.keyCode == 13) {
+      if (evt.keyCode === 13) {
         commit();
-      } else if (evt.keyCode == 27) {
+      } else if (evt.keyCode === 27) {
         MenuSystem.dismissAll();
       }
     }
@@ -679,8 +681,8 @@ ListFacet.prototype._updateRest = function() {
 ListFacet.prototype._editExpression = function() {
   var self = this;
   var title = (this._config.columnName) ? 
-      ($.i18n._('core-facets')["edit-based-col"]+" " + this._config.columnName) : 
-    	  $.i18n._('core-facets')["edit-facet-exp"];
+      ($.i18n('core-facets/edit-based-col')+" " + this._config.columnName) : 
+    	  $.i18n('core-facets/edit-facet-exp');
 
   var column = Refine.columnNameToColumn(this._config.columnName);
   var o = DataTableView.sampleVisibleRows(column);
@@ -696,8 +698,8 @@ ListFacet.prototype._editExpression = function() {
         self._config.expression = expr;
 
         self._elmts.expressionDiv.text(self._config.expression);
-        self._elmts.changeButton.attr("title", $.i18n._('core-facets')["current-exp"]+": " + self._config.expression);
-        if (self._config.expression == "value" || self._config.expression == "grel:value") {
+        self._elmts.changeButton.attr("title", $.i18n('core-facets/current-exp')+": " + self._config.expression);
+        if (self._config.expression === "value" || self._config.expression === "grel:value") {
           self._elmts.clusterLink.show();
         } else {
           self._elmts.clusterLink.hide();
@@ -713,7 +715,7 @@ ListFacet.prototype._editExpression = function() {
 
 ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
   var limit = Math.ceil(choiceCount / 1000) * 1000;
-  var s = window.prompt($.i18n._('core-facets')["set-max-choices"], limit);
+  var s = window.prompt($.i18n('core-facets/set-max-choices'), limit);
   if (s) {
     var n = parseInt(s,10);
 
@@ -726,9 +728,9 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
           value : n
         },
         function(o) {
-          if (o.code == "ok") {
+          if (o.code === "ok") {
             ui.browsingEngine.update();
-          } else if (o.code == "error") {
+          } else if (o.code === "error") {
             alert(o.message);
           }
         },

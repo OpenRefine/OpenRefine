@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
@@ -80,6 +81,8 @@ public class MassRowColumnChange implements Change {
             project.rows.clear();
             project.rows.addAll(_newRows);
             
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
+            
             project.update();
         }
     }
@@ -95,6 +98,8 @@ public class MassRowColumnChange implements Change {
             
             project.rows.clear();
             project.rows.addAll(_oldRows);
+            
+            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
             
             project.update();
         }

@@ -33,12 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.importers;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import java.io.StringReader;
 
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -48,6 +44,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
 
@@ -487,6 +484,54 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
     }
 
+
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
+    public void customQuoteCharacter(String sep){
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = "'col1'" + inputSeparator + "'col2'" + inputSeparator + "'col3'\n" +
+                       "'data1'" + inputSeparator + "'data2'" + inputSeparator + "'data3'";
+        
+        
+        try {
+            prepareOptions(sep, -1, 0, 0, 1, false, false, "'");
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+    
+    @Test(dataProvider = "CSV-TSV-AutoDetermine")
+    public void readCustomColumnNames(String sep){
+        //create input
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
+        
+        try {
+            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[\"col1\",\"col2\",\"col3\"]");
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+    
     //---------------------read tests------------------------
     @Test
     public void readCsvWithProperties() {
@@ -505,8 +550,6 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(0).value, "NDB_No");
         Assert.assertEquals((String)project.rows.get(0).cells.get(1).value, "Shrt_Desc");
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "Water");
-
-        verifyOptions();
     }
 
     @Test
@@ -528,8 +571,6 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(0).cells.get(1).value, "data2");
         Assert.assertEquals((String)project.rows.get(0).cells.get(2).value, "data3");
         Assert.assertEquals((String)project.rows.get(0).cells.get(3).value, "data4");
-
-        verifyOptions();
     }
 
     //--helpers--
@@ -543,33 +584,32 @@ public class TsvCsvImporterTests extends ImporterTest {
         };
     }
     
+    protected void prepareOptions(
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
+    }
+
     private void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
-        int headerLines, boolean guessValueType, boolean ignoreQuotes) {
+        int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
         
-        whenGetStringOption("separator", options, sep);
-        whenGetIntegerOption("limit", options, limit);
-        whenGetIntegerOption("skipDataLines", options, skip);
-        whenGetIntegerOption("ignoreLines", options, ignoreLines);
-        whenGetIntegerOption("headerLines", options, headerLines);
-        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]");      
     }
-
-    private void verifyOptions() {
-        try {
-            verify(options, times(1)).getString("separator");
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
-            verify(options, times(1)).getBoolean("guessCellValueTypes");
-            verify(options, times(1)).getBoolean("processQuotes");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
+    
+    protected void prepareOptions(
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames) {
+            
+            whenGetStringOption("separator", options, sep);
+            whenGetStringOption("quoteCharacter", options, quoteCharacter);
+            whenGetIntegerOption("limit", options, limit);
+            whenGetIntegerOption("skipDataLines", options, skip);
+            whenGetIntegerOption("ignoreLines", options, ignoreLines);
+            whenGetIntegerOption("headerLines", options, headerLines);
+            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+            whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
         }
-
-    }
 }

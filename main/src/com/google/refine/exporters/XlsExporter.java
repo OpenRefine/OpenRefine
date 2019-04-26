@@ -35,12 +35,12 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.poi.hssf.usermodel.HSSFHyperlink;
+import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -49,11 +49,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 
 public class XlsExporter implements StreamExporter {
     final private boolean xml;
@@ -79,7 +80,7 @@ public class XlsExporter implements StreamExporter {
             CellStyle dateStyle;
             
             @Override
-            public void startFile(JSONObject options) {
+            public void startFile(JsonNode options) {
                 s = wb.createSheet();
                 String sheetName = WorkbookUtil.createSafeSheetName(
                         ProjectManager.singleton.getProjectMetadata(project.id).getName());
@@ -112,11 +113,9 @@ public class XlsExporter implements StreamExporter {
                                 c.setCellValue(((Number) v).doubleValue());
                             } else if (v instanceof Boolean) {
                                 c.setCellValue(((Boolean) v).booleanValue());
-                            } else if (v instanceof Date) {
-                                c.setCellValue((Date) v);
-                                c.setCellStyle(dateStyle);
-                            } else if (v instanceof Calendar) {
-                                c.setCellValue((Calendar) v);
+                            } else if (v instanceof OffsetDateTime) {
+                                OffsetDateTime odt = (OffsetDateTime)v;
+                                c.setCellValue(ParsingUtilities.offsetDateTimeToCalendar(odt));
                                 c.setCellStyle(dateStyle);
                             } else {
                                 String s = cellData.text;
@@ -128,12 +127,11 @@ public class XlsExporter implements StreamExporter {
                             }
                             
                             if (cellData.link != null) {
-                                HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+                                Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
                                 hl.setLabel(cellData.text);
                                 hl.setAddress(cellData.link);
                             }
                         }
-
                     }
                 }
             }
@@ -144,6 +142,7 @@ public class XlsExporter implements StreamExporter {
         
         wb.write(outputStream);
         outputStream.flush();
+        wb.close();
     }
 
 }

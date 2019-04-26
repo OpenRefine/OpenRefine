@@ -36,9 +36,10 @@ package com.google.refine.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
@@ -49,11 +50,13 @@ import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassCellChange;
 
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
+    @JsonIgnore
     final protected String    _columnName;
+    @JsonIgnore
     final protected boolean _updateRowContextDependencies;
     
     protected EngineDependentMassCellOperation(
-            JSONObject engineConfig, String columnName, boolean updateRowContextDependencies) {
+            EngineConfig engineConfig, String columnName, boolean updateRowContextDependencies) {
         super(engineConfig);
         _columnName = columnName;
         _updateRowContextDependencies = updateRowContextDependencies;
@@ -86,6 +89,11 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
     protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
         return new MassCellChange(
             cellChanges, column.getName(), _updateRowContextDependencies);
+    }
+    
+    @JsonProperty("columnName")
+    protected String getColumnName() {
+        return _columnName;
     }
     
     abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception;

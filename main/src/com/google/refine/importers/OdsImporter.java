@@ -44,8 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
@@ -53,15 +51,18 @@ import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Recon.Judgment;
+import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 
 public class OdsImporter extends TabularImportingParserBase { 
@@ -73,36 +74,37 @@ public class OdsImporter extends TabularImportingParserBase {
 
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
-        JSONArray sheetRecords = new JSONArray();
+        ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         OdfDocument odfDoc = null;
         try {
-            JSONObject firstFileRecord = fileRecords.get(0);
-            File file = ImportingUtilities.getFile(job, firstFileRecord);
-            InputStream is = new FileInputStream(file);
-            odfDoc = OdfDocument.loadDocument(is);
-            List<OdfTable> tables = odfDoc.getTableList();
-            int sheetCount = tables.size();
-
-            boolean hasData = false;
-            for (int i = 0; i < sheetCount; i++) {
-                OdfTable sheet = tables.get(i);
-                int rows = sheet.getRowCount();
-
-                JSONObject sheetRecord = new JSONObject();
-                JSONUtilities.safePut(sheetRecord, "name", sheet.getTableName());
-                JSONUtilities.safePut(sheetRecord, "rows", rows);
-                if (hasData) {
-                    JSONUtilities.safePut(sheetRecord, "selected", false);
-                } else if (rows > 0) {
-                    JSONUtilities.safePut(sheetRecord, "selected", true);
-                    hasData = true;
+            for (int index = 0;index < fileRecords.size();index++) {
+                ObjectNode fileRecord = fileRecords.get(index);
+                File file = ImportingUtilities.getFile(job, fileRecord);
+                InputStream is = new FileInputStream(file);
+                odfDoc = OdfDocument.loadDocument(is);
+                List<OdfTable> tables = odfDoc.getTableList();
+                int sheetCount = tables.size();
+    
+                for (int i = 0; i < sheetCount; i++) {
+                    OdfTable sheet = tables.get(i);
+                    int rows = sheet.getRowCount();
+    
+                    ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
+                    JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
+                    JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
+                    JSONUtilities.safePut(sheetRecord, "rows", rows);
+                    if (rows > 0) {
+                        JSONUtilities.safePut(sheetRecord, "selected", true);
+                    } else {
+                        JSONUtilities.safePut(sheetRecord, "selected", false);
+                    }
+                    JSONUtilities.append(sheetRecords, sheetRecord);
                 }
-                JSONUtilities.append(sheetRecords, sheetRecord);
             }
         } catch (FileNotFoundException e) {
             logger.info("File not found",e);
@@ -126,7 +128,7 @@ public class OdsImporter extends TabularImportingParserBase {
             String fileSource,
             InputStream inputStream,
             int limit,
-            JSONObject options,
+            ObjectNode options,
             List<Exception> exceptions
     ) {
         OdfDocument odfDoc;
@@ -139,9 +141,17 @@ public class OdsImporter extends TabularImportingParserBase {
 
         List<OdfTable> tables = odfDoc.getTableList();
 
-        int[] sheets = JSONUtilities.getIntArray(options, "sheets");
-        for (int sheetIndex : sheets) {
-            final OdfTable table = tables.get(sheetIndex);
+        ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
+        for(int i=0;i<sheets.size();i++)  {
+            String[] fileNameAndSheetIndex = new String[2];
+            ObjectNode sheetObj = JSONUtilities.getObjectElement(sheets, i);
+            // value is fileName#sheetIndex
+            fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
+        
+            if (!fileNameAndSheetIndex[0].equals(fileSource))
+                continue;
+            
+            final OdfTable table = tables.get(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = table.getRowCount();
 
             TableDataReader dataReader = new TableDataReader() {
@@ -183,6 +193,8 @@ public class OdsImporter extends TabularImportingParserBase {
                     exceptions
             );
         }
+        
+        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {

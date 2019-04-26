@@ -35,9 +35,6 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.InterProjectModel.ProjectJoin;
 import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
@@ -45,43 +42,68 @@ import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
+import com.google.refine.util.GetProjectIDException;
+import com.google.refine.util.JoinException;
 
 public class Cross implements Function {
-
+    
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3) {
-            // from project is implied
-            
-            Object wrappedCell = args[0]; // from cell
+            // 1st argument can take either value or cell(for backward compatibility)
+            Object v = args[0];
             Object toProjectName = args[1];
-            Object toColumnName = args[2];
+            Object toColumnName = args[2]; 
+            Long toProjectID;
+            ProjectJoin join;           
             
-            if (wrappedCell != null && wrappedCell instanceof WrappedCell &&
+            if (v != null && 
+                ( v instanceof String || v instanceof WrappedCell ) &&
                 toProjectName != null && toProjectName instanceof String &&
                 toColumnName != null && toColumnName instanceof String) {
-                
-                ProjectJoin join = ProjectManager.singleton.getInterProjectModel().getJoin(
-                        ProjectManager.singleton.getProjectMetadata(((Project) bindings.get("project")).id).getName(),
-                        ((WrappedCell) wrappedCell).columnName, 
-                        (String) toProjectName, 
-                        (String) toColumnName
-                        );
-                
-                return join.getRows(((WrappedCell) wrappedCell).cell.value);
+                try {
+                    toProjectID = ProjectManager.singleton.getProjectID((String) toProjectName);
+                } catch (GetProjectIDException e){
+                    return new EvalError(e.getMessage());
+                }
+                // add a try/catch here - error should bubble up from getInterProjectModel.computeJoin once that's modified
+                try {
+                    join = ProjectManager.singleton.getInterProjectModel().getJoin(
+                            // getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
+                            // source project name 
+                            (Long) ((Project) bindings.get("project")).id,
+                            // source column name
+                            (String) bindings.get("columnName"), 
+                            // target project name
+                            toProjectID,
+                            // target column name
+                            (String) toColumnName
+                            );
+                } catch (JoinException e) {
+                    return new EvalError(e.getMessage());
+                }
+                if(v instanceof String) {
+                    return join.getRows(v);
+                } else {
+                    return join.getRows(((WrappedCell) v).cell.value);
+                }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell, a project name to join with, and a column name in that project");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
     
-        writer.object();
-        writer.key("description"); writer.value("TODO");
-        writer.key("params"); writer.value("cell c, string projectName, string columnName");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getDescription() {
+        return "join with another project by column";
+    }
+    
+    @Override
+    public String getParams() {
+        return "cell c or string value, string projectName, string columnName";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

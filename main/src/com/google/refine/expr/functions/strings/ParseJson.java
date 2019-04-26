@@ -33,15 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
+import java.io.IOException;
 import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 
 public class ParseJson implements Function {
 
@@ -51,8 +49,8 @@ public class ParseJson implements Function {
             Object o1 = args[0];
             if (o1 != null) {
                 try {
-                    return new JSONTokener(o1.toString()).nextValue();
-                } catch (JSONException e) {
+                    return ParsingUtilities.mapper.readTree(o1.toString());
+                } catch (IOException e) {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed: " + e.getMessage());
                 }
             }
@@ -62,13 +60,17 @@ public class ParseJson implements Function {
 
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Parses a string as JSON";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Parses a string as JSON");
-        writer.key("params"); writer.value("string s");
-        writer.key("returns"); writer.value("JSON object");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "JSON object";
     }
 }

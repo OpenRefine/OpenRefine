@@ -43,11 +43,11 @@ ColumnReorderingDialog.prototype._createDialog = function() {
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     this._elmts.okButton.click(function() { self._commit(); });
     
-    this._elmts.dialogHeader.html($.i18n._('core-dialogs')["reorder-column"]);
-    this._elmts.or_dialog_dragCol.html($.i18n._('core-dialogs')["drag-column"]);
-    this._elmts.or_dialog_dropCol.html($.i18n._('core-dialogs')["drop-column"]);
-    this._elmts.okButton.html($.i18n._('core-buttons')["ok"]);
-    this._elmts.cancelButton.html($.i18n._('core-buttons')["cancel"]);
+    this._elmts.dialogHeader.html($.i18n('core-dialogs/reorder-column'));
+    this._elmts.or_dialog_dragCol.html($.i18n('core-dialogs/drag-column'));
+    this._elmts.or_dialog_dropCol.html($.i18n('core-dialogs/drop-column'));
+    this._elmts.okButton.html($.i18n('core-buttons/ok'));
+    this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
     
     this._level = DialogSystem.showDialog(dialog);
     

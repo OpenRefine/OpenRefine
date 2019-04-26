@@ -40,8 +40,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -59,7 +57,6 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
-import com.google.refine.util.ParsingUtilities;
 
 public class CsvExporterTests extends RefineTest {
 
@@ -126,6 +123,23 @@ public class CsvExporterTests extends RefineTest {
                                                "row1cell0,row1cell1\n");
 
         verify(options,times(2)).getProperty("printColumnHeader");
+    }
+    
+    @Test
+    public void exportSimpleCsvCustomLineSeparator(){
+        CreateGrid(2, 2);
+        when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "column0,column1X" +
+                                               "row0cell0,row0cell1X" +
+                                               "row1cell0,row1cell1X");
+
     }
 
     @Test
@@ -197,8 +211,11 @@ public class CsvExporterTests extends RefineTest {
                                                ",row2cell1,row2cell2\n");
     }
     
+    // all date type cells are in unified format   
+    /**
+    @Ignore
     @Test
-    public void exportDateColumns(){
+    public void exportDateColumnsPreVersion28(){
         CreateGrid(1,2);
         Calendar calendar = Calendar.getInstance();
         Date date = new Date();
@@ -213,12 +230,12 @@ public class CsvExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        String expectedOutput = ParsingUtilities.dateToString(calendar.getTime()) + "," +
-            ParsingUtilities.dateToString(date) + "\n";
+        String expectedOutput = ParsingUtilities.instantToLocalDateTimeString(calendar.toInstant()) + "," +
+            ParsingUtilities.instantToLocalDateTimeString(date.toInstant()) + "\n";
 
         Assert.assertEquals(writer.toString(), expectedOutput);
     }
-
+    */
     //helper methods
 
     protected void CreateColumns(int noOfColumns){

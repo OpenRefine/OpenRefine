@@ -33,15 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
@@ -49,47 +50,105 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
-import com.google.refine.operations.OperationRegistry;
 
 public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _columnName;
     final protected String  _keyColumnName;
-    final protected String  _separator;
     final protected String  _mode;
+    final protected String  _separator;
+    final protected Boolean _regex;
+    
+    final protected int[]      _fieldLengths;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        return new MultiValuedCellSplitOperation(
-            obj.getString("columnName"),
-            obj.getString("keyColumnName"),
-            obj.getString("separator"),
-            obj.getString("mode")
-        );
+    @JsonCreator
+    public static MultiValuedCellSplitOperation deserialize(
+            @JsonProperty("columnName")
+            String columnName,
+            @JsonProperty("keyColumnName")
+            String keyColumnName,
+            @JsonProperty("mode")
+            String mode,
+            @JsonProperty("separator")
+            String separator,
+            @JsonProperty("regex")
+            boolean regex,
+            @JsonProperty("fieldLengths")
+            int[] fieldLengths) {
+        if ("separator".equals(mode)) {
+            return new MultiValuedCellSplitOperation(
+                    columnName,
+                    keyColumnName,
+                    separator,
+                    regex);
+        } else {
+            return new MultiValuedCellSplitOperation(
+                    columnName,
+                    keyColumnName,
+                    fieldLengths);
+        }
     }
     
     public MultiValuedCellSplitOperation(
         String      columnName,
         String      keyColumnName,
-        String    separator,
-        String    mode
+        String      separator,
+        boolean     regex
     ) {
         _columnName = columnName;
         _keyColumnName = keyColumnName;
         _separator = separator;
-        _mode = mode;
+        _mode = "separator";
+        _regex = regex;
+        
+        _fieldLengths = null;
     }
 
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
+    public MultiValuedCellSplitOperation(
+        String      columnName,
+        String      keyColumnName,
+        int[]       fieldLengths
+    ) {
+        _columnName = columnName;
+        _keyColumnName = keyColumnName;
 
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value("Split multi-valued cells in column " + _columnName);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("keyColumnName"); writer.value(_keyColumnName);
-        writer.key("separator"); writer.value(_separator);
-        writer.key("mode"); writer.value(_mode);
-        writer.endObject();
+        _mode = "lengths";
+        _separator = null;
+        _regex = null;
+
+        _fieldLengths = fieldLengths;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return _keyColumnName;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _mode;
+    }
+    
+    @JsonProperty("separator")
+    @JsonInclude(Include.NON_NULL)
+    public String getSeparator() {
+        return _separator;
+    }
+    
+    @JsonProperty("regex")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getRegex() {
+        return _regex;
+    }
+    
+    @JsonProperty("fieldLengths")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getFieldLengths() {
+        return _fieldLengths;
     }
 
     @Override
@@ -110,7 +169,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             throw new Exception("No key column named " + _keyColumnName);
         }
         int keyCellIndex = keyColumn.getCellIndex();
-        
+
         List<Row> newRows = new ArrayList<Row>();
         
         int oldRowCount = project.rows.size();
@@ -124,8 +183,28 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
-            if (_mode.equals("regex")) {
-                values = s.split(_separator);
+            if("lengths".equals(_mode)) {
+                if (_fieldLengths.length >= 0 && _fieldLengths[0] > 0) {
+                    values = new String[_fieldLengths.length];
+                    
+                    int lastIndex = 0;
+                    
+                    for (int i = 0; i < _fieldLengths.length; i++) {
+                        int thisIndex = lastIndex;
+                        
+                        Object o = _fieldLengths[i];
+                        if (o instanceof Number) {
+                            thisIndex = Math.min(s.length(), lastIndex + Math.max(0, ((Number) o).intValue()));
+                        }
+                        
+                        values[i] = s.substring(lastIndex, thisIndex);
+                        lastIndex = thisIndex;
+                    }
+                }
+            }
+            else if (_regex) {
+                Pattern pattern = Pattern.compile(_separator);
+                values = pattern.split(s);
             } else {
                 values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);
             }
@@ -138,14 +217,14 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             // First value goes into the same row
             {
                 Row firstNewRow = oldRow.dup();
-                firstNewRow.setCell(cellIndex, new Cell(values[0].trim(), null));
+                firstNewRow.setCell(cellIndex, new Cell(values[0], null));
                 
                 newRows.add(firstNewRow);
             }
             
             int r2 = r + 1;
             for (int v = 1; v < values.length; v++) {
-                Cell newCell = new Cell(values[v].trim(), null);
+                Cell newCell = new Cell(values[v], null);
                 
                 if (r2 < project.rows.size()) {
                     Row oldRow2 = project.rows.get(r2);

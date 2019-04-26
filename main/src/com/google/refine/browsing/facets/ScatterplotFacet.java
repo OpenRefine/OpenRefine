@@ -40,17 +40,17 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -79,30 +79,91 @@ public class ScatterplotFacet implements Facet {
     /*
      * Configuration, from the client side
      */
-    protected String name; // name of facet
-
-    protected String expression_x; // expression to compute the x numeric value(s) per row
-    protected String expression_y; // expression to compute the y numeric value(s) per row
-    protected String columnName_x; // column to base the x expression on, if any
-    protected String columnName_y; // column to base the y expression on, if any
+    public static class ScatterplotFacetConfig implements FacetConfig {
+        @JsonProperty("name")
+        protected String name; // name of facet
     
-    protected int size;
-    protected int dim_x;
-    protected int dim_y;
-    protected int rotation;
-
-    protected double l;
-    protected double dot;
-
-    protected String image;
+        @JsonProperty(X_EXPRESSION)
+        protected String expression_x; // expression to compute the x numeric value(s) per row
+        @JsonProperty(Y_EXPRESSION)
+        protected String expression_y; // expression to compute the y numeric value(s) per row
+        @JsonProperty(X_COLUMN_NAME)
+        protected String columnName_x; // column to base the x expression on, if any
+        @JsonProperty(Y_COLUMN_NAME)
+        protected String columnName_y; // column to base the y expression on, if any
+        
+        @JsonProperty(SIZE)
+        protected int size;
+        @JsonIgnore
+        protected int dim_x;
+        @JsonIgnore
+        protected int dim_y;
+        @JsonIgnore
+        protected String rotation_str;
+        @JsonIgnore
+        protected int rotation;
     
-    protected String color_str;
-    protected Color color;
+        @JsonIgnore
+        protected double l;
+        @JsonProperty(DOT)
+        protected double dot;
     
-    protected double from_x; // the numeric selection for the x axis, from 0 to 1
-    protected double to_x;
-    protected double from_y; // the numeric selection for the y axis, from 0 to 1
-    protected double to_y;
+        @JsonIgnore
+        protected String color_str = "000000";
+        @JsonIgnore
+        protected Color getColor() {
+            return new Color(Integer.parseInt(color_str,16));
+        }
+        
+        @JsonProperty(FROM_X)
+        protected double from_x; // the numeric selection for the x axis, from 0 to 1
+        @JsonProperty(TO_X)
+        protected double to_x;
+        @JsonProperty(FROM_Y)
+        protected double from_y; // the numeric selection for the y axis, from 0 to 1
+        @JsonProperty(TO_Y)
+        protected double to_y;
+        
+        // false if we're certain that all rows will match
+        // and there isn't any filtering to do
+        protected boolean isSelected() {
+            return from_x > 0 || to_x < 1 || from_y > 0 || to_y < 1;
+        }
+        
+        @JsonProperty(DIM_X)
+        public String getDimX() {
+            return dim_x == LIN ? "lin" : "log";
+        }
+        
+        @JsonProperty(DIM_Y)
+        public String getDimY() {
+            return dim_y == LIN ? "lin" : "log";
+        }
+        
+        @Override
+        public ScatterplotFacet apply(Project project) {
+            ScatterplotFacet facet = new ScatterplotFacet();
+            facet.initializeFromConfig(this, project);
+            return facet;
+        }
+        
+        public static int getRotation(String rotation) {
+            rotation = rotation.toLowerCase();
+            if ("cw".equals(rotation) || "right".equals(rotation)) {
+                return ScatterplotFacet.ROTATE_CW;
+            } else if ("ccw".equals(rotation) || "left".equals(rotation)) {
+                return ScatterplotFacet.ROTATE_CCW;
+            } else {
+                return NO_ROTATION;
+            }
+        }
+
+        @Override
+        public String getJsonType() {
+            return "scatterplot";
+        }
+    }
+    ScatterplotFacetConfig config;
 
     /*
      * Derived configuration data
@@ -120,8 +181,8 @@ public class ScatterplotFacet implements Facet {
     protected double max_y;
     protected AffineTransform t;
     
-    protected boolean selected; // false if we're certain that all rows will match
-                                // and there isn't any filtering to do
+    protected String image;
+    
         
     public static final String NAME = "name";
     public static final String IMAGE = "image";
@@ -163,124 +224,161 @@ public class ScatterplotFacet implements Facet {
         }
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        
-        writer.object();
-        
-        writer.key(NAME); writer.value(name);
-        writer.key(X_COLUMN_NAME); writer.value(columnName_x);
-        writer.key(X_EXPRESSION); writer.value(expression_x);
-        writer.key(Y_COLUMN_NAME); writer.value(columnName_y);
-        writer.key(Y_EXPRESSION); writer.value(expression_y);
-        writer.key(SIZE); writer.value(size);
-        writer.key(DOT); writer.value(dot);
-        writer.key(ROTATION); writer.value(rotation);
-        writer.key(DIM_X); writer.value(dim_x);
-        writer.key(DIM_Y); writer.value(dim_y);
-        writer.key(COLOR); writer.value(color_str);
-
-        if (IMAGE_URI) {
-            writer.key(IMAGE); writer.value(image);
-        }
-        
-        if (errorMessage_x != null) {
-            writer.key(ERROR_X); writer.value(errorMessage_x);
-        } else {
-            if (!Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
-                writer.key(FROM_X); writer.value(from_x);
-                writer.key(TO_X); writer.value(to_x);
-            }
-        }
-            
-        if (errorMessage_y != null) {
-            writer.key(ERROR_Y); writer.value(errorMessage_y);
-        } else {
-            if (!Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
-                writer.key(FROM_Y); writer.value(from_y);
-                writer.key(TO_Y); writer.value(to_y);
-            }
-        }
-        
-        writer.endObject();
+    @JsonProperty(NAME)
+    public String getName() {
+        return config.name;
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        name = o.getString(NAME);
-        l = size = (o.has(SIZE)) ? o.getInt(SIZE) : 100;
-        dot = (o.has(DOT)) ? o.getInt(DOT) : 0.5d;
-        
-        dim_x = (o.has(DIM_X)) ? getAxisDim(o.getString(DIM_X)) : LIN;
-        if (o.has(FROM_X) && o.has(TO_X)) {
-            from_x = o.getDouble(FROM_X);
-            to_x = o.getDouble(TO_X);
-            selected = true;
-        } else {
-            from_x = 0;
-            to_x = 1;
+    
+    @JsonProperty(X_COLUMN_NAME)
+    public String getXColumnName() {
+        return config.columnName_x;
+    }
+    
+    @JsonProperty(X_EXPRESSION)
+    public String getXExpression() {
+        return config.expression_x;
+    }
+    
+    @JsonProperty(Y_COLUMN_NAME)
+    public String getYColumnName() {
+        return config.columnName_y;
+    }
+    
+    @JsonProperty(Y_EXPRESSION)
+    public String getYExpression() {
+        return config.expression_y;
+    }
+    
+    @JsonProperty(SIZE)
+    public int getSize() {
+        return config.size;
+    }
+    
+    @JsonProperty(DIM_X)
+    public int getDimX() {
+        return config.dim_x;
+    }
+    
+    @JsonProperty(DIM_Y)
+    public int getDimY() {
+        return config.dim_y;
+    }
+    
+    @JsonProperty(DOT)
+    public double getDot() {
+        return config.dot;
+    }
+    
+    @JsonProperty(ROTATION)
+    public double getRotation() {
+        return config.rotation;
+    }
+    
+    @JsonProperty(COLOR)
+    public String getColorString() {
+        return config.color_str;
+    }
+    
+    @JsonProperty(IMAGE)
+    @JsonInclude(Include.NON_NULL)
+    public String getImage() {
+        if(IMAGE_URI) {
+            return image;
         }
-        
-        dim_y = (o.has(DIM_Y)) ? getAxisDim(o.getString(DIM_Y)) : LIN;
-        if (o.has(FROM_Y) && o.has(TO_Y)) {
-            from_y = o.getDouble(FROM_Y);
-            to_y = o.getDouble(TO_Y);
-            selected = true;
-        } else {
-            from_y = 0;
-            to_y = 1;
+        return null;
+    }
+    
+    @JsonProperty(ERROR_X)
+    @JsonInclude(Include.NON_NULL)
+    public String getErrorX() {
+        return errorMessage_x;
+    }
+    
+    @JsonProperty(FROM_X)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFromX() {
+        if (errorMessage_x == null && !Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
+            return config.from_x;
         }
+        return null;
+    }
+    
+    @JsonProperty(TO_X)
+    @JsonInclude(Include.NON_NULL)
+    public Double getToX() {
+        if (errorMessage_x == null && !Double.isInfinite(min_x) && !Double.isInfinite(max_x)) {
+            return config.to_x;
+        }
+        return null;
+    }
+    
+    @JsonProperty(ERROR_Y)
+    @JsonInclude(Include.NON_NULL)
+    public String getErrorY() {
+        return errorMessage_y;
+    }
+    
+    @JsonProperty(FROM_Y)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFromY() {
+        if (errorMessage_y == null && !Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
+            return config.from_y;
+        }
+        return null;
+    }
+    
+    @JsonProperty(TO_Y)
+    @JsonInclude(Include.NON_NULL)
+    public Double getToY() {
+        if (errorMessage_y == null && !Double.isInfinite(min_y) && !Double.isInfinite(max_y)) {
+            return config.to_y;
+        }
+        return null;
+    }
+     
+    public void initializeFromConfig(ScatterplotFacetConfig configuration, Project project) {
+        config = configuration;
         
-        rotation = (o.has(ROTATION)) ? getRotation(o.getString(ROTATION)) : NO_ROTATION;
-        t = createRotationMatrix(rotation, l);
+        t = createRotationMatrix(config.rotation, config.l);
         
-        color_str = (o.has(COLOR)) ? o.getString(COLOR) : "000000";
-        color = new Color(Integer.parseInt(color_str,16));
-        
-        columnName_x = o.getString(X_COLUMN_NAME);
-        expression_x = o.getString(X_EXPRESSION);
-        
-        if (columnName_x.length() > 0) {
-            Column x_column = project.columnModel.getColumnByName(columnName_x);
+        if (config.columnName_x.length() > 0) {
+            Column x_column = project.columnModel.getColumnByName(config.columnName_x);
             if (x_column != null) {
                 columnIndex_x = x_column.getCellIndex();
                 
-                NumericBinIndex index_x = ScatterplotFacet.getBinIndex(project, x_column, eval_x, expression_x);
+                NumericBinIndex index_x = ScatterplotFacet.getBinIndex(project, x_column, eval_x, config.expression_x);
                 min_x = index_x.getMin();
                 max_x = index_x.getMax();
             } else {
-                errorMessage_x = "No column named " + columnName_x;
+                errorMessage_x = "No column named " + config.columnName_x;
             }
         } else {
             columnIndex_x = -1;
         }
         
         try {
-            eval_x = MetaParser.parse(expression_x);
+            eval_x = MetaParser.parse(config.expression_x);
         } catch (ParsingException e) {
             errorMessage_x = e.getMessage();
         }
         
-        columnName_y = o.getString(Y_COLUMN_NAME);
-        expression_y = o.getString(Y_EXPRESSION);
-        
-        if (columnName_y.length() > 0) {
-            Column y_column = project.columnModel.getColumnByName(columnName_y);
+        if (config.columnName_y.length() > 0) {
+            Column y_column = project.columnModel.getColumnByName(config.columnName_y);
             if (y_column != null) {
                 columnIndex_y = y_column.getCellIndex();
                 
-                NumericBinIndex index_y = ScatterplotFacet.getBinIndex(project, y_column, eval_y, expression_y);
+                NumericBinIndex index_y = ScatterplotFacet.getBinIndex(project, y_column, eval_y, config.expression_y);
                 min_y = index_y.getMin();
                 max_y = index_y.getMax();
             } else {
-                errorMessage_y = "No column named " + columnName_y;
+                errorMessage_y = "No column named " + config.columnName_y;
             }
         } else {
             columnIndex_y = -1;
         }
         
         try {
-            eval_y = MetaParser.parse(expression_y);
+            eval_y = MetaParser.parse(config.expression_y);
         } catch (ParsingException e) {
             errorMessage_y = e.getMessage();
         }
@@ -289,22 +387,22 @@ public class ScatterplotFacet implements Facet {
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (selected && 
+        if (config.isSelected() && 
             eval_x != null && errorMessage_x == null && 
             eval_y != null && errorMessage_y == null) 
         {
             return new DualExpressionsNumberComparisonRowFilter(
-                    eval_x, columnName_x, columnIndex_x, eval_y, columnName_y, columnIndex_y) {
+                    eval_x, config.columnName_x, columnIndex_x, eval_y, config.columnName_y, columnIndex_y) {
                 
-                double from_x_pixels = from_x * l;
-                double to_x_pixels = to_x * l;
-                double from_y_pixels = from_y * l;
-                double to_y_pixels = to_y * l;
+                double from_x_pixels = config.from_x * config.l;
+                double to_x_pixels = config.to_x * config.l;
+                double from_y_pixels = config.from_y * config.l;
+                double to_y_pixels = config.to_y * config.l;
                 
                 @Override
                 protected boolean checkValues(double x, double y) {
                     Point2D.Double p = new Point2D.Double(x,y);
-                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, t);
+                    p = translateCoordinates(p, min_x, max_x, min_y, max_y, config.dim_x, config.dim_y, config.l, t);
                     return p.x >= from_x_pixels && p.x <= to_x_pixels && p.y >= from_y_pixels && p.y <= to_y_pixels;
                 };
             };
@@ -323,10 +421,10 @@ public class ScatterplotFacet implements Facet {
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
             Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
-            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, expression_x, "row-based");
+            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, config.expression_x, "row-based");
             
             Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
-            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, expression_y, "row-based");
+            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, config.expression_y, "row-based");
 
             retrieveDataFromBinIndices(index_x, index_y);
             
@@ -334,7 +432,7 @@ public class ScatterplotFacet implements Facet {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
                     ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
                       columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                      size, dim_x, dim_y, rotation, dot, color
+                      config.size, config.dim_x, config.dim_y, config.rotation, config.dot, config.getColor()
                     );
                     filteredRows.accept(project, drawer);
                  
@@ -354,10 +452,10 @@ public class ScatterplotFacet implements Facet {
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
             Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
-            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, expression_x, "record-based");
+            NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, config.expression_x, "record-based");
             
             Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
-            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, expression_y, "record-based");
+            NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, config.expression_y, "record-based");
             
             retrieveDataFromBinIndices(index_x, index_y);
             
@@ -365,7 +463,7 @@ public class ScatterplotFacet implements Facet {
                 if (index_x.isNumeric() && index_y.isNumeric()) {
                     ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
                       columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                      size, dim_x, dim_y, rotation, dot, color
+                      config.size, config.dim_x, config.dim_y, config.rotation, config.dot, config.getColor()
                     );
                     filteredRecords.accept(project, drawer);
                  
@@ -401,17 +499,7 @@ public class ScatterplotFacet implements Facet {
     public static int getAxisDim(String type) {
         return ("log".equals(type.toLowerCase())) ? LOG : LIN;
     }
-    
-    public static int getRotation(String rotation) {
-        rotation = rotation.toLowerCase();
-        if ("cw".equals(rotation) || "right".equals(rotation)) {
-            return ScatterplotFacet.ROTATE_CW;
-        } else if ("ccw".equals(rotation) || "left".equals(rotation)) {
-            return ScatterplotFacet.ROTATE_CCW;
-        } else {
-            return NO_ROTATION;
-        }
-    }
+   
     
     public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression) {
         return getBinIndex(project, column, eval, expression, "row-based");

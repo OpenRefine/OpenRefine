@@ -1,13 +1,34 @@
+/*******************************************************************************
+ * Copyright (C) 2018, OpenRefine contributors
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package com.google.refine.tests.importers;
 
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import java.io.StringReader;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -15,8 +36,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.importers.FixedWidthImporter;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporterTests extends ImporterTest {
     @Override
@@ -50,16 +73,16 @@ public class FixedWidthImporterTests extends ImporterTest {
     public void readFixedWidth(){
         StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
         
-        JSONArray columnWidths = new JSONArray();
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
         JSONUtilities.append(columnWidths, 5);
         whenGetArrayOption("columnWidths", options, columnWidths);
 
-        JSONArray columnNames = new JSONArray();
-        JSONUtilities.append(columnNames, "Col 1");
-        JSONUtilities.append(columnNames, "Col 2");
-        JSONUtilities.append(columnNames, "Col 3");
+        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
+        columnNames.add("Col 1");
+        columnNames.add("Col 2"); 
+        columnNames.add("Col 3");
         whenGetArrayOption("columnNames", options, columnNames);
 
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -83,17 +106,5 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(2).getCellValue(0), "TooSho");
         Assert.assertEquals((String)project.rows.get(2).getCellValue(1), "rt");
         Assert.assertNull(project.rows.get(2).getCellValue(2));
-        
-        verifyGetArrayOption("columnNames", options);
-        try {
-            verify(options, times(1)).getJSONArray("columnWidths");
-            verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
-        }
     }
 }

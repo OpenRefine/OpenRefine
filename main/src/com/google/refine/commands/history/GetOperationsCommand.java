@@ -34,50 +34,60 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.history;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import com.google.refine.history.HistoryEntry;
+import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 
 public class GetOperationsCommand extends Command {
+    protected static class SimpleHistoryEntry  {
+        protected HistoryEntry entry;
+
+        public SimpleHistoryEntry(HistoryEntry e) {
+            entry = e;
+        }
+        
+        @JsonProperty("description")
+        public String getDescription() {
+            return entry.description;
+        }
+        
+        @JsonProperty("operation")
+        @JsonInclude(Include.NON_NULL)
+        public AbstractOperation getOperation() {
+            return entry.operation;
+        }
+    }
+    
+    protected static class HistoryEntries  {
+        @JsonProperty("entries")
+        List<SimpleHistoryEntry> entries;
+        
+        protected HistoryEntries(List<HistoryEntry> entries) {
+            this.entries = entries.stream()
+                    .map(e -> new SimpleHistoryEntry(e))
+                    .collect(Collectors.toList());
+        }
+    }
+    
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         Project project = getProject(request);
         
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            Properties options = new Properties();
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            
-            writer.object();
-            writer.key("entries"); writer.array();
-            
-            for (HistoryEntry entry : project.history.getLastPastEntries(-1)) {
-                writer.object();
-                writer.key("description"); writer.value(entry.description);
-                if (entry.operation != null) {
-                    writer.key("operation");
-                    entry.operation.write(writer, options);
-                }
-                writer.endObject();
-            }
-            writer.endArray();
-            writer.endObject();
-        } catch (JSONException e) {
-            respondException(response, e);
-        }
+        HistoryEntries entries = new HistoryEntries(project.history.getLastPastEntries(-1));
+        respondJSON(response, entries);
     }
 
 }

@@ -1,0 +1,20 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <p class="body-text" bind="reviewYourEdits">
+    </p>
+    <div class="perform-edits-warnings-area" bind="warningsArea">
+    </div>
+    <div class="wikibase-perform-edits-area">
+        <form id="wikibase-perform-edits-form" onsubmit="return false;" bind="performEditsForm" autocomplete="on">
+            <p><span bind="loggedInAs"></span> <a bind="loggedInUsername" target="_blank"></a>.</p>
+            <p><span bind="editSummaryLabel"></span> <input type="text" name="editSummary" bind="editSummary" class="edit-summary" value="" /></p>
+            <div class="wikibase-login-buttons">
+                <button class="button cancel-button" bind="cancelButton"></button>
+                <button class="button button-primary" bind="performEditsButton"></button>
+            </div>
+        </form>
+        <iframe id="hiddeniframe" src="javascript:false" class="hidden" bind="hiddenIframe"></iframe>
+    </div>
+  </div>
+</div>

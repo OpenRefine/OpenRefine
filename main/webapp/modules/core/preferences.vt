@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" /></a>
+    <a id="app-home-button" href="./"><img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" /></a>
   </div>
 
   <div id="body-info">

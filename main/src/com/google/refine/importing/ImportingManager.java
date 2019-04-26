@@ -43,28 +43,32 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.RefineServlet;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class ImportingManager {
     static public class Format {
+        @JsonProperty("id")
         final public String id;
+        @JsonProperty("label")
         final public String label;
+        @JsonProperty("download")
         final public boolean download;
+        @JsonProperty("uiClass")
         final public String uiClass;
+        @JsonIgnore
         final public ImportingParser parser;
         
         private Format(
@@ -223,41 +227,13 @@ public class ImportingManager {
         }
     }
     
-    static public void writeConfiguration(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        
-        writer.key("formats");
-        writer.object();
-        for (String format : formatToRecord.keySet()) {
-            Format record = formatToRecord.get(format);
-            
-            writer.key(format);
-            writer.object();
-            writer.key("id"); writer.value(record.id);
-            writer.key("label"); writer.value(record.label);
-            writer.key("download"); writer.value(record.download);
-            writer.key("uiClass"); writer.value(record.uiClass);
-            writer.endObject();
-        }
-        writer.endObject();
-        
-        writer.key("mimeTypeToFormat");
-        writer.object();
-        for (String mimeType : mimeTypeToFormat.keySet()) {
-            writer.key(mimeType);
-            writer.value(mimeTypeToFormat.get(mimeType));
-        }
-        writer.endObject();
-        
-        writer.key("extensionToFormat");
-        writer.object();
-        for (String extension : extensionToFormat.keySet()) {
-            writer.key(extension);
-            writer.value(extensionToFormat.get(extension));
-        }
-        writer.endObject();
-        
-        writer.endObject();
+    static public class ImportingConfiguration {
+        @JsonProperty("formats")
+        public Map<String, Format> getFormats() { return formatToRecord; }
+        @JsonProperty("mimeTypeToFormat")
+        public Map<String, String> getMimeTypeToFormat() { return mimeTypeToFormat; }
+        @JsonProperty("extensionToFormat")
+        public Map<String, String> getExtensionToFormat() { return extensionToFormat; }
     }
     
     static public String getFormatFromFileName(String fileName) {
@@ -312,7 +288,7 @@ public class ImportingManager {
             if (job != null && !job.updating && now - job.lastTouched > STALE_PERIOD) {
                 job.dispose();
                 jobs.remove(id);
-                logger.info("Disposed " + id);
+                logger.info("Removed Stale Import Job ID " + id);
             }
         }
     }

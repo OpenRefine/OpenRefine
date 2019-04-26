@@ -1,3 +1,29 @@
+/*******************************************************************************
+ * Copyright (C) 2018, OpenRefine contributors
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package com.google.refine.importers;
 
 import java.io.File;
@@ -24,6 +50,8 @@ public class TextFormatGuesser implements FormatGuesser {
                 int closeBraces = 0;
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
+                int wikiTableBegin = 0;
+                int wikiTableRow = 0;
                 int trailingPeriods = 0;
                 
                 char firstChar = ' ';
@@ -37,6 +65,8 @@ public class TextFormatGuesser implements FormatGuesser {
                     closeBraces += countSubstrings(chunk, "}");
                     openAngleBrackets += countSubstrings(chunk, "<");
                     closeAngleBrackets += countSubstrings(chunk, ">");
+                    wikiTableBegin += countSubstrings(chunk, "{|");
+                    wikiTableRow += countSubstrings(chunk, "|-");
                     trailingPeriods += countLineSuffix(chunk, ".");
                     
                     if (!foundFirstChar) {
@@ -50,12 +80,14 @@ public class TextFormatGuesser implements FormatGuesser {
                 }
                 
                 if (foundFirstChar) {
-                    if ((firstChar == '{' || firstChar == '[') &&
+                    if (wikiTableBegin >= 1 && wikiTableRow >= 2) {
+                        return "text/wiki";
+                    } if ((firstChar == '{' || firstChar == '[') &&
                         openBraces >= 5 && closeBraces >= 5) {
                         return "text/json";
                     } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
                         if (trailingPeriods > 0) {
-                            return "text/rdf+n3";
+                            return "text/rdf/n3";
                         } else if (firstChar == '<') {
                             return "text/xml";
                         }

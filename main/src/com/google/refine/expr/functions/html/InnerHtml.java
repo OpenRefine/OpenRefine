@@ -35,11 +35,10 @@ package com.google.refine.expr.functions.html;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -47,29 +46,31 @@ public class InnerHtml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
-                return e1.html();
-
+                return new InnerXml().call(bindings, args, "html");
             }else{
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("The innerHtml of an HTML element");
-        writer.key("params"); writer.value("Element e");
-        writer.key("returns"); writer.value("String innerHtml");
-        writer.endObject();
+    public String getDescription() {
+        return "The innerHtml of an HTML element";
+    }
+    
+    @Override
+    public String getParams() {
+        return "Element e";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "String innerHtml";
     }
 }
 

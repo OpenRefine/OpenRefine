@@ -38,17 +38,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
 
-public class RecordModel implements Jsonizable {
+public class RecordModel  {
     final static Logger logger = LoggerFactory.getLogger("RecordModel");
 
     final static public class CellDependency {
@@ -85,6 +83,7 @@ public class RecordModel implements Jsonizable {
                 _rowDependencies.get(rowIndex) : null;
     }
 
+    @JsonIgnore
     public int getRecordCount() {
         return _records.size();
     }
@@ -104,17 +103,11 @@ public class RecordModel implements Jsonizable {
         }
         return null;
     }
-
-    @Override
-    synchronized public void write(JSONWriter writer, Properties options)
-    throws JSONException {
-
-        writer.object();
-        writer.key("hasRecords");
-        writer.value(
-            _records != null && _rowDependencies != null &&
-            _records.size() < _rowDependencies.size());
-        writer.endObject();
+    
+    @JsonProperty("hasRecords")
+    public boolean hasRecords() {
+        return _records != null && _rowDependencies != null &&
+                _records.size() < _rowDependencies.size();
     }
 
     static protected class KeyedGroup {
@@ -155,7 +148,8 @@ public class RecordModel implements Jsonizable {
                 for (int g = 0; g < groupCount; g++) {
                     KeyedGroup group = keyedGroups.get(g);
 
-                    if (!ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
+                    if (!ExpressionUtils.isNonBlankData(row.getCellValue(keyedGroups.get(0).keyCellIndex)) &&
+                        !ExpressionUtils.isNonBlankData(row.getCellValue(group.keyCellIndex))) {
                         int contextRowIndex = lastNonBlankRowsByGroup[g];
                         if (contextRowIndex >= 0) {
                             for (int dependentCellIndex : group.cellIndices) {

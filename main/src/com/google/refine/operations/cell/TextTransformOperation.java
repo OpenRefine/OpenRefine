@@ -37,16 +37,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.WrappedCell;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -54,26 +52,16 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
+    @JsonProperty("expression")
     final protected String  _expression;
+    @JsonProperty("onError")
     final protected OnError _onError;
+    @JsonProperty("repeat")
     final protected boolean _repeat;
+    @JsonProperty("repeatCount")
     final protected int     _repeatCount;
-    
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new TextTransformOperation(
-            engineConfig,
-            obj.getString("columnName"),
-            obj.getString("expression"),
-            stringToOnError(obj.getString("onError")),
-            obj.getBoolean("repeat"),
-            obj.getInt("repeatCount")
-        );
-    }
     
     static public OnError stringToOnError(String s) {
         if ("set-to-blank".equalsIgnoreCase(s)) {
@@ -94,12 +82,19 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         }
     }
     
+    @JsonCreator
     public TextTransformOperation(
-            JSONObject engineConfig, 
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig, 
+            @JsonProperty("columnName")
             String columnName, 
-            String expression, 
+            @JsonProperty("expression")
+            String expression,
+            @JsonProperty("onError")
             OnError onError,
+            @JsonProperty("repeat")
             boolean repeat,
+            @JsonProperty("repeatCount")
             int repeatCount
         ) {
         super(engineConfig, columnName, true);
@@ -107,22 +102,6 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         _onError = onError;
         _repeat = repeat;
         _repeatCount = repeatCount;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("onError"); writer.value(onErrorToString(_onError));
-        writer.key("repeat"); writer.value(_repeat);
-        writer.key("repeatCount"); writer.value(_repeatCount);
-        writer.endObject();
     }
 
     @Override

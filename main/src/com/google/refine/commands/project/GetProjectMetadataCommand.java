@@ -39,8 +39,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
@@ -50,18 +48,14 @@ public class GetProjectMetadataCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        Project project;
         try {
-            Project project;
-            try {
-                project = getProject(request);
-            } catch (ServletException e) {
-                respond(response, "error", e.getLocalizedMessage());
-                return;
-            }
-            
-            respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
-        } catch (JSONException e) {
-            respondException(response, e);
+            project = getProject(request);
+        } catch (ServletException e) {
+            respond(response, "error", e.getLocalizedMessage());
+            return;
         }
+        
+        respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
     }
 }

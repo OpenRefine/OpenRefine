@@ -87,7 +87,7 @@ abstract public class NumericBinIndex {
         if (_min >= _max) {
             _step = 1;
             _min = Math.min(_min, _max);
-            _max = _step;
+            _max = _min+_step;
             _bins = new int[1];
             
             return;

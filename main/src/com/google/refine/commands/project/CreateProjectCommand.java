@@ -42,18 +42,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
-import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.importing.ImportingManager.Format;
+import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -69,7 +69,7 @@ public class CreateProjectCommand extends Command {
         try {
             Properties parameters = ParsingUtilities.parseUrlParameters(request);
             ImportingJob job = ImportingManager.createJob();
-            JSONObject config = job.getOrCreateDefaultConfig();
+            ObjectNode config = job.getOrCreateDefaultConfig();
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job, config);
             
@@ -93,9 +93,9 @@ public class CreateProjectCommand extends Command {
                            "\\t".equals(parameters.getProperty("separator"))) {
                     format = "text/line-based/*sv";
                 } else {
-                    JSONArray rankedFormats = JSONUtilities.getArray(config, "rankedFormats");
-                    if (rankedFormats != null && rankedFormats.length() > 0) {
-                        format = rankedFormats.getString(0);
+                    ArrayNode rankedFormats = JSONUtilities.getArray(config, "rankedFormats");
+                    if (rankedFormats != null && rankedFormats.size() > 0) {
+                        format = rankedFormats.get(0).asText();
                     }
                 }
                 
@@ -105,10 +105,10 @@ public class CreateProjectCommand extends Command {
                 }
             }
             
-            JSONObject optionObj = null;
-            String optionsString = request.getParameter("options");
+            ObjectNode optionObj = null;
+            String optionsString = parameters.getProperty("options");
             if (optionsString != null && !optionsString.isEmpty()) {
-                optionObj = ParsingUtilities.evaluateJsonStringToObject(optionsString);
+                optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(optionsString);
             } else {
                 Format formatRecord = ImportingManager.formatToRecord.get(format);
                 optionObj = formatRecord.parser.createParserUIInitializationData(
@@ -133,7 +133,7 @@ public class CreateProjectCommand extends Command {
         }
     }
 
-    static private void adjustLegacyOptions(String format, Properties parameters, JSONObject optionObj) {
+    static private void adjustLegacyOptions(String format, Properties parameters, ObjectNode optionObj) {
         if (",".equals(parameters.getProperty("separator"))) {
             JSONUtilities.safePut(optionObj, "separator", ",");
         } else if ("\\t".equals(parameters.getProperty("separator"))) {
@@ -150,7 +150,7 @@ public class CreateProjectCommand extends Command {
     }
 
     static private void adjustLegacyIntegerOption(
-        String format, Properties parameters, JSONObject optionObj, String legacyName, String newName) {
+        String format, Properties parameters, ObjectNode optionObj, String legacyName, String newName) {
         
         String s = parameters.getProperty(legacyName);
         if (s != null && !s.isEmpty()) {
@@ -165,7 +165,7 @@ public class CreateProjectCommand extends Command {
     static private void adjustLegacyBooleanOption(
         String format,
         Properties parameters,
-        JSONObject optionObj,
+        ObjectNode optionObj,
         String legacyName,
         String newName,
         boolean invert) {

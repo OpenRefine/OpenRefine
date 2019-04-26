@@ -36,15 +36,12 @@ package com.google.refine.operations.recon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -54,36 +51,30 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOperation {
     final protected boolean _clearData;
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconDiscardJudgmentsOperation(
-            engineConfig, 
-            obj.getString("columnName"),
-            obj.has("clearData") && obj.getBoolean("clearData")
-        );
-    }
-    
-    public ReconDiscardJudgmentsOperation(JSONObject engineConfig, String columnName, boolean clearData) {
+    @JsonCreator
+    public ReconDiscardJudgmentsOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("columnName")
+            String columnName, 
+            @JsonProperty("clearData")
+            boolean clearData) {
         super(engineConfig, columnName, false);
         _clearData = clearData;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("clearData"); writer.value(_clearData);
-        writer.endObject();
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("clearData")
+    public boolean getClearData() {
+        return _clearData;
     }
 
     @Override

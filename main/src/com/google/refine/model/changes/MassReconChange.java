@@ -37,17 +37,17 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class MassReconChange implements Change {
@@ -71,6 +71,7 @@ public class MassReconChange implements Change {
     
     protected void switchRecons(Project project, Map<Long, Recon> reconMap) {
         synchronized (project) {
+            HashSet<String> flushedColumn = new HashSet<String>(); 
             for (Row row : project.rows) {
                 for (int c = 0; c < row.cells.size(); c++) {
                     Cell cell = row.cells.get(c);
@@ -78,6 +79,14 @@ public class MassReconChange implements Change {
                         Recon recon = cell.recon;
                         
                         if (reconMap.containsKey(recon.id)) {
+                            // skip the flushing if already done
+                            String columnName = project.columnModel.getColumnByCellIndex(c).getName();
+                            if (!flushedColumn.contains(columnName)) {
+                                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, 
+                                    columnName);
+                                flushedColumn.add(columnName);
+                            }
+                            
                             row.setCell(c, new Cell(cell.value, reconMap.get(recon.id)));
                         }
                     }
@@ -99,12 +108,7 @@ public class MassReconChange implements Change {
             Pool pool = (Pool) options.get("pool");
             pool.poolReconCandidates(recon);
 
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            try {
-                recon.write(jsonWriter, options);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            ParsingUtilities.saveWriter.writeValue(writer, recon);
             writer.write("\n");
         }
     }
@@ -136,7 +140,7 @@ public class MassReconChange implements Change {
         
         for (int i = 0; i < count; i++) {
             String line = reader.readLine();
-            Recon recon = Recon.loadStreaming(line, pool);
+            Recon recon = Recon.loadStreaming(line);
             
             recons.put(recon.id, recon);
         }

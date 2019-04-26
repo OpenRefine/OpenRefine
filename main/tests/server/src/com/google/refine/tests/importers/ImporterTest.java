@@ -1,4 +1,32 @@
+/*******************************************************************************
+ * Copyright (C) 2018, OpenRefine contributors
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package com.google.refine.tests.importers;
+
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,9 +35,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.importers.ImportingParserBase;
@@ -21,15 +49,16 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineServletStub;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
-abstract class ImporterTest extends RefineTest {
+public abstract class ImporterTest extends RefineTest {
     //mock dependencies
     protected Project project;
     protected ProjectMetadata metadata;
     protected ImportingJob job;
     protected RefineServlet servlet;
     
-    protected JSONObject options;
+    protected ObjectNode options;
     
     public void setUp(){
         //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
@@ -38,9 +67,11 @@ abstract class ImporterTest extends RefineTest {
         ImportingManager.initialize(servlet);
         project = new Project();
         metadata = new ProjectMetadata();
-        job = ImportingManager.createJob();
+        ImportingJob spiedJob = ImportingManager.createJob();
+        job = Mockito.spy(spiedJob);
+        when(job.getRetrievalRecord()).thenReturn(ParsingUtilities.mapper.createObjectNode());
         
-        options = Mockito.mock(JSONObject.class);
+        options = Mockito.mock(ObjectNode.class);
     }
     
     public void tearDown(){
@@ -98,12 +129,12 @@ abstract class ImporterTest extends RefineTest {
         project.columnModel.update();
     }
     
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         parseOneInputStreamAsReader(parser, inputStream, options);
     }
     
     protected void parseOneInputStream(
-            TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
         
@@ -122,7 +153,7 @@ abstract class ImporterTest extends RefineTest {
     }
 
     protected void parseOneInputStreamAsReader(
-            TreeImportingParserBase parser, InputStream inputStream, JSONObject options) {
+            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
         

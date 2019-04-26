@@ -33,8 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.filters;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import com.google.refine.browsing.util.RowEvaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -67,11 +66,8 @@ abstract public class ExpressionTimeComparisonRowFilter extends ExpressionNumber
         if (ExpressionUtils.isError(v)) {
             return _selectError;
         } else if (ExpressionUtils.isNonBlankData(v)) {
-            if (v instanceof Date) {
-                long time = ((Date) v).getTime();
-                return _selectTime && checkValue(time);
-            } else if (v instanceof Calendar) {
-                long time = ((Calendar) v).getTime().getTime();
+            if (v instanceof OffsetDateTime) {
+                long time = ((OffsetDateTime) v).toInstant().toEpochMilli();
                 return _selectTime && checkValue(time);
             } else {
                 return _selectNonTime;

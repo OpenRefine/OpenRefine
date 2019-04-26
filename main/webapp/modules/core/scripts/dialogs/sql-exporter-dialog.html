@@ -1,0 +1,131 @@
+<div class="dialog-frame" style="width: 800px;">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div id="sql-exporter-tabs" class="refine-tabs">
+        <ul>
+          <li><a href="#sql-exporter-tabs-content" bind="or_dialog_content"></a></li>
+          <li><a href="#sql-exporter-tabs-download" bind="or_dialog_download"></a></li>
+        </ul>
+        
+        <div id="sql-exporter-tabs-content" class="sql-exporter-tabs-content-main">
+         <div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table>
+          <!-- <tr>
+            <td bind="or_dialog_selAndOrd"></td>
+            <td><span bind="or_dialog_optFor"></span><span bind="columnNameSpan" class="sql-exporter-selected-column"></span></td>
+          </tr> -->
+          <tr>
+            <td width="100%">
+            	
+                <!-- <div bind="columnList" class="sql-exporter-columns"></div> -->
+                <div class="grid-layout layout-tighter layout-full">
+                     <div class="sql-exporter-columns">
+	            			<table bind = "columnListTable">
+	            				 <thead class="header">
+							    <tr>
+							      <th>Field Name</th>
+							      <th>SQL Type</th>
+							      <th>Size</th>
+							      <th></th>
+							      <th> Allow Null <span style="text-align:center;"><input type="checkbox" bind="allowNullToggleCheckbox" id="allowNullToggleCheckbox" checked /></span></th>
+							      <th>  Default</th>
+							   </tr>
+						
+							 </thead>
+	            				
+	            			</table>
+	            		</div>
+	            		
+            		</div>
+            </td>
+         
+          </tr>
+          <tr>
+            <td colspan="2">
+              <button class="button" bind="selectAllButton"></button>
+              <button class="button" bind="deselectAllButton"></button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
+              <tr>
+          
+                 <td width="1%"><input type="checkbox" bind="sqlExportOutputEmptyRowsCheckbox" id="sqlExportOutputEmptyRowsCheckboxId" /></td>
+			     <td width="25%"><label for="sqlExportOutputEmptyRowsCheckbox" bind="sqlExportOutputEmptyRowsLabel"></label></td>
+			  
+			     <td width="1%"><input type="checkbox" bind="sqlExportAllRowsCheckbox" id="sqlExportAllRowsCheckboxId" /></td>
+			     <td width="25%"><label for="sqlExportAllRowsCheckbox" bind="sqlExportIgnoreFacetsLabel"></label></td>
+			     
+			     <td width="1%"><input type="checkbox" bind="sqlExportTrimAllColumnsCheckbox" id="sqlExportTrimAllColumnsCheckboxId" /></td>
+			     <td width="25%"><label for="sqlExportTrimAllColumnsCheckbox" bind="sqlExportTrimAllColumnsLabel"></label></td>
+                
+              </tr>
+            </table></div></td>
+          </tr>
+        </table></div></div>
+        
+        
+        <div id="sql-exporter-tabs-download" style="display: none;">
+        
+        <div>
+	        <table>
+	        	  <tr>
+		           	<td><label for="tableNameTextBox" bind="tableNameLabel"></label></td>
+		          	<td width="90%"><input type="text" bind="tableNameTextBox" id="tableNameTextBoxId" size="50%"/></td>
+	          	    
+	          	</tr>
+	          	<tr>
+	          	</tr>
+	        </table>
+        
+        </div>
+        
+        <div class="grid-layout grid-layout-for-text layout-tightest"><table>
+         
+         <tr>
+         <td><span style="margin:2px; padding:2px;"></span></td>
+	     </tr>
+          <tr>
+          	<td width="1%"><input type="checkbox" bind="includeStructureCheckbox" id="includeStructureCheckboxId" checked/></td>
+          	<td><label for="includeStructureCheckboxId" bind="includeStructureLabel"></label></td>
+          </tr>
+           <tr>
+          	<td width="1%"><input type="checkbox" bind="includeDropStatementCheckbox" id="includeDropStatementCheckboxId"/></td>
+          	<td><label for="includeDropStatementCheckboxId" bind="includeDropStatementLabel"></label></td>
+          </tr>
+           <tr>
+          	<td width="1%"><input type="checkbox" bind="includeIfExistDropStatementCheckbox" id="includeIfExistDropStatementCheckboxId"/></td>
+          	<td><label for="includeIfExistDropStatementCheckboxId" bind="includeIfExistDropStatementLabel"></label></td>
+          </tr>
+           <tr>
+           <td><span style="margin:2px; padding:2px;"></span></td>
+          </tr>
+          <tr>
+          	<td width="1%"><input type="checkbox" bind="includeContentCheckbox" id="includeContentCheckboxId" checked/></td>
+          	<td><label for="includeContentCheckboxId" bind="includeContentLabel"></label></td>
+          </tr>
+         
+          <tr>
+          	<td width="1%"><input type="checkbox" bind="nullCellValueToEmptyStringCheckbox" id="nullCellValueToEmptyStringCheckboxId" checked/></td>
+          	<td><label for="nullCellValueToEmptyStringCheckbox" bind="nullCellValueToEmptyStringLabel"></label></td>
+          </tr>
+         
+        
+          <tr>
+            <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table><tr>
+              <td width="100%"> </td>
+              <td width="1%"><button class="button" bind="downloadPreviewButton"></button></td>
+              <td width="1%"><button class="button button-primary" bind="downloadButton"></button></td>
+            </tr></table></div></td>
+          </tr>
+        </table></div></div>
+      
+        <div id="sql-exporter-tabs-code" style="display: none;">
+          <textarea class="sql-exporter-code" bind="optionCodeInput"></textarea>
+        </div>
+   
+      </div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-tightest layout-full"><table><tr>
+      <td><button class="button" bind="cancelButton"></button></td>
+    </tr></table></div></div>
+</div>

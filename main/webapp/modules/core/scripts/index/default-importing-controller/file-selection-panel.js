@@ -59,17 +59,17 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
 
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);
   
-  $('#or-import-select').text($.i18n._('core-index-import')["select-file"]);
-  $('#or-import-severalFile').text($.i18n._('core-index-import')["several-file"]);
-  $('#or-import-selExt').text($.i18n._('core-index-import')["sel-by-extension"]);
-  $('#or-import-regex').text($.i18n._('core-index-import')["sel-by-regex"]);
+  $('#or-import-select').text($.i18n('core-index-import/select-file'));
+  $('#or-import-severalFile').text($.i18n('core-index-import/several-file'));
+  $('#or-import-selExt').text($.i18n('core-index-import/sel-by-extension'));
+  $('#or-import-regex').text($.i18n('core-index-import/sel-by-regex'));
   
-  this._fileSelectionPanelElmts.startOverButton.html($.i18n._('core-buttons')["startover"]);
-  this._fileSelectionPanelElmts.nextButton.html($.i18n._('core-buttons')["conf-pars-opt"]);
-  this._fileSelectionPanelElmts.selectAllButton.text($.i18n._('core-buttons')["select-all"]);
-  this._fileSelectionPanelElmts.unselectAllButton.text($.i18n._('core-buttons')["unselect-all"]);
-  this._fileSelectionPanelElmts.selectRegexButton.text($.i18n._('core-buttons')["select"]);
-  this._fileSelectionPanelElmts.unselectRegexButton.text($.i18n._('core-buttons')["unselect"]);
+  this._fileSelectionPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
+  this._fileSelectionPanelElmts.nextButton.html($.i18n('core-buttons/conf-pars-opt'));
+  this._fileSelectionPanelElmts.selectAllButton.text($.i18n('core-buttons/select-all'));
+  this._fileSelectionPanelElmts.unselectAllButton.text($.i18n('core-buttons/unselect-all'));
+  this._fileSelectionPanelElmts.selectRegexButton.text($.i18n('core-buttons/select'));
+  this._fileSelectionPanelElmts.unselectRegexButton.text($.i18n('core-buttons/unselect'));
   
   this._fileSelectionPanelElmts.startOverButton.click(function() {
     self._startOver();
@@ -110,7 +110,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable =
 
   this._fileSelectionPanelElmts.filePanel.empty();
 
-  var fileTable = $('<table><tr><th>'+$.i18n._('core-index-import')["import"]+'</th><th>'+$.i18n._('core-index-import')["name"]+'</th><th>'+$.i18n._('core-index-import')["mime-type"]+'</th><th>'+$.i18n._('core-index-import')["format"]+'</th><th>'+$.i18n._('core-index-import')["size"]+'</th></tr></table>')
+  var fileTable = $('<table><tr><th>'+$.i18n('core-index-import/import')+'</th><th>'+$.i18n('core-index-import/name')+'</th><th>'+$.i18n('core-index-import/mime-type')+'</th><th>'+$.i18n('core-index-import/format')+'</th><th>'+$.i18n('core-index-import/size')+'</th></tr></table>')
     .appendTo(this._fileSelectionPanelElmts.filePanel)[0];
 
   var round = function(n) {
@@ -202,7 +202,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     $('<td>').text(extension.extension).appendTo(tr);
     $('<td>').text(extension.count + (extension.count > 1 ? " files" : " file")).appendTo(tr);
     $('<button>')
-    .text($.i18n._('core-buttons')["select"])
+    .text($.i18n('core-buttons/select'))
     .addClass("button")
     .appendTo($('<td>').appendTo(tr))
     .click(function() {
@@ -220,7 +220,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       self._updateFileSelectionSummary();
     });
     $('<button>')
-    .text($.i18n._('core-buttons')["unselect"])
+    .text($.i18n('core-buttons/unselect'))
     .addClass("button")
     .appendTo($('<td>').appendTo(tr))
     .click(function() {
@@ -327,7 +327,7 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
   }
 
   var self = this;
-  var dismissBusy = DialogSystem.showBusy($.i18n._('core-index-import')["inspecting-files"]);
+  var dismissBusy = DialogSystem.showBusy($.i18n('core-index-import/inspecting-files'));
   $.post(
     "command/core/importing-controller?" + $.param({
       "controller": "core/default-importing-controller",
@@ -341,9 +341,9 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
       dismissBusy();
 
       if (!(data)) {
-        self._createProjectUI.showImportJobError($.i18n._('core-index-import')["unknown-err"]);
+        self._createProjectUI.showImportJobError($.i18n('core-index-import/unknown-err'));
       } else if (data.code == "error" || !("job" in data)) {
-        self._createProjectUI.showImportJobError((data.message) ? ($.i18n._('core-index-import')["error"]+ ' ' + data.message) : $.i18n._('core-index-import')["unknown-err"]);
+        self._createProjectUI.showImportJobError((data.message) ? ($.i18n('core-index-import/error')+ ' ' + data.message) : $.i18n('core-index-import/unknown-err'));
       } else {
         // Different files might be selected. We start over again.
         delete this._parserOptions;

@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -53,13 +50,17 @@ public class Sin implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Returns the trigonometric sine of an angle");
-        writer.key("params"); writer.value("number d");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    public String getDescription() {
+        return "Returns the trigonometric sine of an angle";
+    }
+    
+    @Override
+    public String getParams() {
+        return "number d";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

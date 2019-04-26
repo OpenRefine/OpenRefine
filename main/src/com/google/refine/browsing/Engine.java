@@ -33,22 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.facets.Facet;
-import com.google.refine.browsing.facets.ListFacet;
-import com.google.refine.browsing.facets.RangeFacet;
-import com.google.refine.browsing.facets.ScatterplotFacet;
-import com.google.refine.browsing.facets.TextSearchFacet;
-import com.google.refine.browsing.facets.TimeRangeFacet;
 import com.google.refine.browsing.util.ConjunctiveFilteredRecords;
 import com.google.refine.browsing.util.ConjunctiveFilteredRows;
 import com.google.refine.browsing.util.FilteredRecordsAsFilteredRows;
@@ -58,10 +50,13 @@ import com.google.refine.model.Row;
 /**
  * Faceted browsing engine.
  */
-public class Engine implements Jsonizable {
+public class Engine  {
     static public enum Mode {
+        @JsonProperty("row-based")
         RowBased,
+        @JsonProperty("record-based")
         RecordBased
+       
     }
 
     public final static String INCLUDE_DEPENDENT = "includeDependent";
@@ -69,9 +64,12 @@ public class Engine implements Jsonizable {
     public final static String MODE_ROW_BASED = "row-based";
     public final static String MODE_RECORD_BASED = "record-based";
 
+    @JsonIgnore
     protected Project _project;
+    @JsonProperty("facets")
     protected List<Facet> _facets = new LinkedList<Facet>();
-    protected Mode _mode = Mode.RowBased;
+    @JsonIgnore
+    protected EngineConfig _config = new EngineConfig(Collections.emptyList(), Mode.RowBased);
 
     static public String modeToString(Mode mode) {
         return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
@@ -84,13 +82,15 @@ public class Engine implements Jsonizable {
         _project  = project;
     }
 
+    @JsonProperty("engine-mode")
     public Mode getMode() {
-        return _mode;
+        return _config.getMode();
     }
     public void setMode(Mode mode) {
-        _mode = mode;
+        _config = new EngineConfig(_config.getFacetConfigs(), mode);
     }
 
+    @JsonIgnore
     public FilteredRows getAllRows() {
         return new FilteredRows() {
             @Override
@@ -112,14 +112,15 @@ public class Engine implements Jsonizable {
         };
     }
 
+    @JsonIgnore
     public FilteredRows getAllFilteredRows() {
         return getFilteredRows(null);
     }
 
     public FilteredRows getFilteredRows(Facet except) {
-        if (_mode == Mode.RecordBased) {
+        if (_config.getMode().equals(Mode.RecordBased)) {
             return new FilteredRecordsAsFilteredRows(getFilteredRecords(except));
-        } else if (_mode == Mode.RowBased) {
+        } else if (_config.getMode().equals(Mode.RowBased)) {
             ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows();
             for (Facet facet : _facets) {
                 if (facet != except) {
@@ -134,6 +135,7 @@ public class Engine implements Jsonizable {
         throw new InternalError("Unknown mode.");
     }
 
+    @JsonIgnore
     public FilteredRecords getAllRecords() {
         return new FilteredRecords() {
             @Override
@@ -152,12 +154,13 @@ public class Engine implements Jsonizable {
         };
     }
 
+    @JsonIgnore
     public FilteredRecords getFilteredRecords() {
         return getFilteredRecords(null);
     }
 
     public FilteredRecords getFilteredRecords(Facet except) {
-        if (_mode == Mode.RecordBased) {
+        if (_config.getMode().equals(Mode.RecordBased)) {
             ConjunctiveFilteredRecords cfr = new ConjunctiveFilteredRecords();
             for (Facet facet : _facets) {
                 if (facet != except) {
@@ -171,58 +174,22 @@ public class Engine implements Jsonizable {
         }
         throw new InternalError("This method should not be called when the engine is not in record mode.");
     }
-
-    public void initializeFromJSON(JSONObject o) throws JSONException {
-        if (o == null) {
-            return;
-        }
-
-        if (o.has("facets") && !o.isNull("facets")) {
-            JSONArray a = o.getJSONArray("facets");
-            int length = a.length();
-
-            for (int i = 0; i < length; i++) {
-                JSONObject fo = a.getJSONObject(i);
-                String type = fo.has("type") ? fo.getString("type") : "list";
-
-                Facet facet = null;
-                if ("list".equals(type)) {
-                    facet = new ListFacet();
-                } else if ("range".equals(type)) {
-                    facet = new RangeFacet();
-                } else if ("timerange".equals(type)) {
-                    facet = new TimeRangeFacet();
-                } else if ("scatterplot".equals(type)) {
-                    facet = new ScatterplotFacet();
-                } else if ("text".equals(type)) {
-                    facet = new TextSearchFacet();
-                }
-
-                if (facet != null) {
-                    facet.initializeFromJSON(_project, fo);
-                    _facets.add(facet);
-                }
-            }
-        }
-
-        // for backward compatibility
-        if (o.has(INCLUDE_DEPENDENT) && !o.isNull(INCLUDE_DEPENDENT)) {
-            _mode = o.getBoolean(INCLUDE_DEPENDENT) ? Mode.RecordBased : Mode.RowBased;
-        }
-
-        if (o.has(MODE) && !o.isNull(MODE)) {
-            _mode = MODE_ROW_BASED.equals(o.getString(MODE)) ? Mode.RowBased : Mode.RecordBased;
-        }
+    
+    public void initializeFromConfig(EngineConfig config) {
+        _config = config;
+        _facets = config.getFacetConfigs().stream()
+                .map(c -> c.apply(_project))
+                .collect(Collectors.toList());
     }
 
-    public void computeFacets() throws JSONException {
-        if (_mode == Mode.RowBased) {
+    public void computeFacets() {
+        if (_config.getMode().equals(Mode.RowBased)) {
             for (Facet facet : _facets) {
                 FilteredRows filteredRows = getFilteredRows(facet);
 
                 facet.computeChoices(_project, filteredRows);
             }
-        } else if (_mode == Mode.RecordBased) {
+        } else if (_config.getMode().equals(Mode.RecordBased)) {
             for (Facet facet : _facets) {
                 FilteredRecords filteredRecords = getFilteredRecords(facet);
 
@@ -231,20 +198,5 @@ public class Engine implements Jsonizable {
         } else {
             throw new InternalError("Unknown mode.");
         }
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-    throws JSONException {
-
-        writer.object();
-        writer.key("facets");
-        writer.array();
-        for (Facet facet : _facets) {
-            facet.write(writer, options);
-        }
-        writer.endArray();
-        writer.key(MODE); writer.value(_mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED);
-        writer.endObject();
     }
 }

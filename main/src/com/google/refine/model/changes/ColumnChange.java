@@ -40,11 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.history.Change;
 import com.google.refine.model.ColumnGroup;
+import com.google.refine.util.ParsingUtilities;
 
 abstract public class ColumnChange implements Change {
     
@@ -52,13 +50,8 @@ abstract public class ColumnChange implements Change {
             List<ColumnGroup> oldColumnGroups) throws IOException {
         writer.write("oldColumnGroupCount=");
         writer.write(Integer.toString(oldColumnGroups.size())); writer.write('\n');
-        for (ColumnGroup cg : oldColumnGroups) {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            try {
-                cg.write(jsonWriter, options);
-            } catch (JSONException e) {
-                throw new IOException(e);
-            }
+        for (ColumnGroup cg : oldColumnGroups) {     
+            ParsingUtilities.saveWriter.writeValue(writer, cg);
             writer.write('\n');
         }
     }

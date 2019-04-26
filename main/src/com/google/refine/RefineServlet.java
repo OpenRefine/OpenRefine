@@ -35,6 +35,7 @@ package com.google.refine;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -52,6 +53,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.io.FileProjectManager;
@@ -60,7 +63,7 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    static private String ASSIGNED_VERSION = "2.6";
+    static private String ASSIGNED_VERSION = "3.2-beta";
     
     static public String VERSION = "";
     static public String REVISION = "";
@@ -85,8 +88,6 @@ public class RefineServlet extends Butterfly {
 
     static final Logger logger = LoggerFactory.getLogger("refine");
 
-    static final protected long AUTOSAVE_PERIOD = 5; // 5 minutes
-    
     static protected class AutoSaveTimerTask implements Runnable {
         @Override
         public void run() {
@@ -109,7 +110,15 @@ public class RefineServlet extends Butterfly {
             VERSION = ASSIGNED_VERSION;
         }
         if (REVISION.equals("$REVISION")) {
-            REVISION = "TRUNK";
+            ClassLoader classLoader = getClass().getClassLoader();
+            try {
+                InputStream gitStats = classLoader.getResourceAsStream("git.properties");
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode parsedGit = mapper.readValue(gitStats, ObjectNode.class);
+                REVISION = parsedGit.get("git.commit.id.abbrev").asText("TRUNK");
+            } catch (IOException e) {
+                REVISION = "TRUNK";
+            }
         }
         
         FULL_VERSION = VERSION + " [" + REVISION + "]";
@@ -126,10 +135,13 @@ public class RefineServlet extends Butterfly {
         if (data == null) {
             throw new ServletException("can't find servlet init config 'refine.data', I have to give up initializing");
         }
-
+        logger.error("initializing FileProjectManager with dir");
+        logger.error(data);
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_dataDir);
         ImportingManager.initialize(this);
+
+	long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
 
         service.scheduleWithFixedDelay(new AutoSaveTimerTask(), AUTOSAVE_PERIOD, 
                 AUTOSAVE_PERIOD, TimeUnit.MINUTES);

@@ -33,41 +33,54 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.history;
 
+import java.io.IOException;
 import java.io.Writer;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.ProjectManager;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
-import com.google.refine.operations.OperationRegistry;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
 /**
  * This is the metadata of a Change. It's small, so we can load it in order to
  * obtain information about a change without actually loading the change.
  */
-public class HistoryEntry implements Jsonizable {
+public class HistoryEntry {
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
+    @JsonProperty("id")
     final public long   id;
+    @JsonIgnore
     final public long   projectID;
+    @JsonProperty("description")
     final public String description;
-    final public Date   time;
+    @JsonProperty("time")
+    final public OffsetDateTime   time;
 
     // the manager (deals with IO systems or databases etc.)
+    @JsonIgnore
     final public HistoryEntryManager _manager;
 
     // the abstract operation, if any, that results in the change
+    @JsonProperty("operation")
+    @JsonView(JsonViews.SaveMode.class)
     final public AbstractOperation operation;
 
     // the actual change, loaded on demand
+    @JsonIgnore
     private transient Change _change;
 
     private final static String OPERATION = "operation";
@@ -76,6 +89,7 @@ public class HistoryEntry implements Jsonizable {
         this._change = _change;
     }
 
+    @JsonIgnore
     public Change getChange() {
         return _change;
     }
@@ -83,13 +97,26 @@ public class HistoryEntry implements Jsonizable {
     static public long allocateID() {
         return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
     }
+    
+    @JsonCreator
+    protected HistoryEntry(
+    		@JsonProperty("id")
+    		long id,
+    		@JacksonInject("projectID")
+    		long projectID,
+    		@JsonProperty("description")
+    		String description,
+    		@JsonProperty(OPERATION)
+    		AbstractOperation operation) {
+    	this(id,projectID,description,operation,OffsetDateTime.now(ZoneId.of("Z")));
+    }
 
     public HistoryEntry(long id, Project project, String description, AbstractOperation operation, Change change) {
-        this(id,project.id,description,operation,new Date());
+        this(id,project.id,description,operation,OffsetDateTime.now(ZoneId.of("Z")));
         setChange(change);
     }
 
-    protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, Date time) {
+    protected HistoryEntry(long id, long projectID, String description, AbstractOperation operation, OffsetDateTime time) {
         this.id = id;
         this.projectID = projectID;
         this.description = description;
@@ -100,20 +127,6 @@ public class HistoryEntry implements Jsonizable {
             logger.error("Failed to get history entry manager from project manager: " 
                     + ProjectManager.singleton );
         }
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("id"); writer.value(id);
-        writer.key("description"); writer.value(description);
-        writer.key("time"); writer.value(ParsingUtilities.dateToString(time));
-        if ("save".equals(options.getProperty("mode")) && operation != null) {
-            writer.key(OPERATION); operation.write(writer, options);
-        }
-        writer.endObject();
     }
 
     public void save(Writer writer, Properties options){
@@ -156,21 +169,13 @@ public class HistoryEntry implements Jsonizable {
         getChange().revert(project);
     }
 
-    static public HistoryEntry load(Project project, String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-
-        AbstractOperation operation = null;
-        if (obj.has(OPERATION) && !obj.isNull(OPERATION)) {
-            operation = OperationRegistry.reconstruct(project, obj.getJSONObject(OPERATION));
-        }
-
-        return new HistoryEntry(
-            obj.getLong("id"),
-            project.id,
-            obj.getString("description"),
-            operation,
-            ParsingUtilities.stringToDate(obj.getString("time"))
-        );
+    static public HistoryEntry load(Project project, String s) throws IOException {
+    	ObjectMapper mapper = ParsingUtilities.mapper.copy();
+    	InjectableValues injection = new InjectableValues.Std()
+				.addValue("projectID", project.id);
+    	mapper.setInjectableValues(injection);
+    	
+    	return mapper.readValue(s, HistoryEntry.class);
     }
 
     public void delete(){

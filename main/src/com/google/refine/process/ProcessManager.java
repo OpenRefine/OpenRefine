@@ -36,47 +36,42 @@ package com.google.refine.process;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryProcess;
 
-public class ProcessManager implements Jsonizable {
+public class ProcessManager  {
+    @JsonProperty("processes")
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
+    @JsonIgnore
     protected List<Exception> _latestExceptions = null;
+    
+    public static class ExceptionMessage {
+        @JsonProperty("message")
+        public final String message;
+        public ExceptionMessage(Exception e) {
+            message = e.getLocalizedMessage();
+        }
+    }
     
     public ProcessManager() {
         
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("processes"); writer.array();
-        synchronized (_processes) {
-            for (Process p : _processes) {
-                p.write(writer, options);
-            }
-        }
-        writer.endArray();
-        
+    @JsonProperty("exceptions")
+    @JsonInclude(Include.NON_NULL)
+    public List<ExceptionMessage> getJsonExceptions() {
         if (_latestExceptions != null) {
-            writer.key("exceptions"); writer.array();
-            for (Exception e : _latestExceptions) {
-                writer.object();
-                writer.key("message"); writer.value(e.getLocalizedMessage());
-                writer.endObject();
-            }
-            writer.endArray();
+            return _latestExceptions.stream()
+                    .map(e -> new ExceptionMessage(e))
+                    .collect(Collectors.toList());
         }
-        
-        writer.endObject();
+        return null;
     }
 
     public HistoryEntry queueProcess(Process process) throws Exception {

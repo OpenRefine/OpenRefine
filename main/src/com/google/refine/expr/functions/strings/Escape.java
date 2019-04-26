@@ -37,9 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -65,13 +63,13 @@ public class Escape implements Function {
             if (o2 instanceof String) {
                 String mode = ((String) o2).toLowerCase();
                 if ("html".equals(mode)) {
-                    return StringEscapeUtils.escapeHtml(s);
+                    return StringEscapeUtils.escapeHtml4(s);
                 } else if ("xml".equals(mode)) {
-                    return StringEscapeUtils.escapeXml(s);
+                    return StringEscapeUtils.escapeXml11(s);
                 } else if ("csv".equals(mode)) {
                     return StringEscapeUtils.escapeCsv(s);
                 } else if ("javascript".equals(mode)) {
-                    return StringEscapeUtils.escapeJavaScript(s);
+                    return StringEscapeUtils.escapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
                         return URLEncoder.encode(s,"UTF-8");
@@ -85,13 +83,17 @@ public class Escape implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Escapes a string depending on the given escaping mode.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Escapes a string depending on the given escaping mode.");
-        writer.key("params"); writer.value("string s, string mode ['html','xml','csv','url','javascript']");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string mode ['html','xml','csv','url','javascript']";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

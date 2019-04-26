@@ -34,17 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -125,11 +123,9 @@ public class ExpressionUtils {
 
     static public boolean sameValue(Object v1, Object v2) {
         if (v1 == null) {
-            return (v2 == null)
-                    || (v2 instanceof String && ((String) v2).length() == 0);
+            return (v2 == null) ;
         } else if (v2 == null) {
-            return (v1 == null)
-                    || (v1 instanceof String && ((String) v1).length() == 0);
+            return (v1 == null);
         } else {
             return v1.equals(v2);
         }
@@ -140,16 +136,15 @@ public class ExpressionUtils {
             v instanceof Number ||
             v instanceof String ||
             v instanceof Boolean ||
-            v instanceof Date ||
-            v instanceof Calendar ||
+            v instanceof OffsetDateTime ||
             v instanceof EvalError;
     }
 
     static public Serializable wrapStorable(Object v) {
-        if (v instanceof JSONArray) {
-            return ((JSONArray) v).toString();
-        } else if (v instanceof JSONObject) {
-            return ((JSONObject) v).toString();
+        if (v instanceof ArrayNode) {
+            return ((ArrayNode) v).toString();
+        } else if (v instanceof ObjectNode) {
+            return ((ObjectNode) v).toString();
         } else {
             return isStorable(v) ?
                 (Serializable) v :

@@ -1,0 +1,40 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-looser layout-full"><table><tr>
+        <td>
+          <div class="grid-layout layout-tighter"><table>
+            <tr>
+              <td colspan="3"><h3><span bind="or_views_howSplit"></span></h3></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" id="$split-multi-valued-cells-by-separator" /></td>
+              <td colspan="2"><label for="$split-multi-valued-cells-by-separator" bind="or_views_bySep"></label></td>
+            </tr>
+            <tr><td></td>
+              <td bind="or_views_separator"></td>
+              <td><input size="10" value="," bind="separatorInput" />
+                <input type="checkbox" bind="regexInput" id="$split-column-regex" />
+                <label for="$split-multi-valued-cells-regex" bind="or_views_regExp"></label></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="split-by-mode" value="lengths" id="$split-multi-valued-cells-by-lengths" /></td>
+              <td colspan="2"><label for="$split-multi-valued-cells-by-lengths" bind="or_views_fieldLen"></label></td>
+            </tr>
+            <tr><td></td>
+              <td colspan="2"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
+            </tr>
+            <tr><td></td>
+              <td colspan="2" bind="or_views_listInt"></td>
+            </tr>
+          </table></div>
+        </td>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="okButton"></button>
+      <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>

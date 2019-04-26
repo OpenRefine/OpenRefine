@@ -93,7 +93,7 @@ public class RowStarChange implements Change {
             } else if ("oldStarred".equals(field)) {
                 oldStarred = Boolean.parseBoolean(value);
             } else if ("newStarred".equals(field)) {
-                oldStarred = Boolean.parseBoolean(value);
+                newStarred = Boolean.parseBoolean(value);
             }
         }
         

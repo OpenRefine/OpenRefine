@@ -41,8 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
@@ -94,8 +93,9 @@ public class ProjectManagerTests extends RefineTest {
 
         SUT.registerProject(project, metadata);
 
-        AssertProjectRegistered();
-
+        AssertProjectRegistered();      
+        verify(metadata, times(1)).getTags();
+        
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -119,7 +119,8 @@ public class ProjectManagerTests extends RefineTest {
         }
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
-
+        verify(metadata, times(1)).getTags();
+        
         //ensure end
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
@@ -160,6 +161,7 @@ public class ProjectManagerTests extends RefineTest {
         SUT.save(true);
 
         verify(metadata, times(1)).getModified();
+        verify(metadata, times(1)).getTags();
         verify(project, times(1)).getProcessManager();
         verify(project, times(2)).getLastSave();
         verify(project, times(1)).dispose();
@@ -180,6 +182,7 @@ public class ProjectManagerTests extends RefineTest {
 
         verify(SUT, never()).saveProjects(Mockito.anyBoolean());
         verify(SUT, never()).saveWorkspace();
+        verify(metadata, times(1)).getTags();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -222,7 +225,7 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     protected void whenProjectGetLastSave(Project proj){
-        Date projectLastSaveDate = new GregorianCalendar(1970,01,02,00,30,00).getTime();
+        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970,01,02,00,30,00);
         when(proj.getLastSave()).thenReturn(projectLastSaveDate);
     }
 
@@ -230,7 +233,7 @@ public class ProjectManagerTests extends RefineTest {
         whenMetadataGetModified(meta, 5*60);
     }
     protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference){
-        Date metadataModifiedDate = new GregorianCalendar(1970,01,02,00, 30, secondsDifference).getTime();
+        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970,01,02,00, 30 + secondsDifference);
         when(meta.getModified()).thenReturn(metadataModifiedDate);
     }
 
@@ -246,6 +249,7 @@ public class ProjectManagerTests extends RefineTest {
         verify(meta, times(1)).getModified();
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(proj);
+        verify(meta, times(1)).getTags();
 
         verifyNoMoreInteractions(proj);
         verifyNoMoreInteractions(meta);

@@ -50,5 +50,6 @@ public interface Change {
     public void apply(Project project);
     public void revert(Project project);
     
+    
     public void save(Writer writer, Properties options) throws IOException;
 }

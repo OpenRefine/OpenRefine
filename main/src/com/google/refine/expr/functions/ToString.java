@@ -33,16 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.StringUtils;
 
@@ -54,9 +50,9 @@ public class ToString implements Function {
             Object o1 = args[0];
             if (args.length == 2 && args[1] instanceof String) {
                 Object o2 = args[1];
-                if (o1 instanceof Calendar || o1 instanceof Date) {
-                    DateFormat formatter = new SimpleDateFormat((String) o2);
-                    return formatter.format(o1 instanceof Date ? ((Date) o1) : ((Calendar) o1).getTime());
+                if (o1 instanceof OffsetDateTime) {
+                    OffsetDateTime odt = (OffsetDateTime)o1;
+                    return odt.format(DateTimeFormatter.ofPattern((String)o2));
                 } else if (o1 instanceof Number) {
                     return String.format((String) o2, (Number) o1);
                 }
@@ -68,18 +64,22 @@ public class ToString implements Function {
                 } 
             }
         }
-        return new EvalError("ToString accepts an object and an optional second argument containing a date format string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a date format string");
     }
 
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns o converted to a string";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns o converted to a string");
-        writer.key("params"); writer.value("o, string format (optional)");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "o, string format (optional)";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

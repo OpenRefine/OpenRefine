@@ -302,13 +302,17 @@ a.fbs-more-link {
     margin: 2px 2px -2px 2px;
 }
 
-.fbs-item-name label {
+.fbs-item-name label, .fbs-item-name span {
     font-size: 0.9em;
 }
 
+.fbs-item-name label {
+    color: black;
+}
 
 .fbs-item-type,
-.fbs-item-name label {
+.fbs-item-name label,
+.fbs-item-name span {
     display: block;
     overflow: hidden;
     white-space: nowrap;

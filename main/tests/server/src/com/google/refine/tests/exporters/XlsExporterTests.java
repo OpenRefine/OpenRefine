@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,20 @@ public class XlsExporterTests extends RefineTest {
         Assert.assertEquals(stream.size(),4096);
 
     }
+    
+    @Test
+    public void exportDateType() throws IOException{
+        OffsetDateTime odt = OffsetDateTime.now();
+        createDateGrid(2, 2, odt);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        Assert.assertEquals(stream.size(),4096);
+    }
 
     @Test(enabled=false)
     public void exportSimpleXlsNoHeader(){
@@ -175,6 +190,18 @@ public class XlsExporterTests extends RefineTest {
             Row row = new Row(noOfColumns);
             for(int j = 0; j < noOfColumns; j++){
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
+            }
+            project.rows.add(row);
+        }
+    }
+    
+    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now){
+        CreateColumns(noOfColumns);
+
+        for(int i = 0; i < noOfRows; i++){
+            Row row = new Row(noOfColumns);
+            for(int j = 0; j < noOfColumns; j++){
+                row.cells.add(new Cell(now, null));
             }
             project.rows.add(row);
         }

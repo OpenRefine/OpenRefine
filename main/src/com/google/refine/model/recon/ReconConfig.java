@@ -33,29 +33,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
+import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
-abstract public class ReconConfig implements Jsonizable {
+@JsonTypeInfo(
+    use=JsonTypeInfo.Id.CUSTOM,
+    include=JsonTypeInfo.As.PROPERTY,
+    property="mode")
+@JsonTypeIdResolver(ReconConfigResolver.class)
+abstract public class ReconConfig  {
     final static protected Logger LOGGER = LoggerFactory.getLogger("recon-config");
 
     static final public Map<String, List<Class<? extends ReconConfig>>> s_opNameToClass =
@@ -77,33 +81,26 @@ abstract public class ReconConfig implements Jsonizable {
         classes.add(klass);
     }
     
-    static public ReconConfig reconstruct(JSONObject obj) throws Exception {
-        try {
-            String mode = obj.getString("mode");
-            
-            // Backward compatibility
-            if ("extend".equals(mode) || "strict".equals(mode)) {
-                mode = "freebase/" + mode;
-            } else if ("heuristic".equals(mode)) {
-                mode = "core/standard-service"; // legacy
-            } else if (!mode.contains("/")) {
-                mode = "core/" + mode;
-            }
-            
-            // TODO: This can fail silently if the Freebase extension is not installed.
-            List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(mode);
-            if (classes != null && classes.size() > 0) {
-                Class<? extends ReconConfig> klass = classes.get(classes.size() - 1);
-                
-                Method reconstruct = klass.getMethod("reconstruct", JSONObject.class);
-                if (reconstruct != null) {
-                    return (ReconConfig) reconstruct.invoke(null, obj);
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.error("Reconstruct failed",e);
+    static public Class<? extends ReconConfig> getClassFromMode(String mode) {
+        // Backward compatibility
+        if ("extend".equals(mode) || "strict".equals(mode)) {
+            mode = "freebase/" + mode;
+        } else if ("heuristic".equals(mode)) {
+            mode = "core/standard-service"; // legacy
+        } else if (!mode.contains("/")) {
+            mode = "core/" + mode;
+        }
+        
+        // TODO: This can fail silently if the Freebase extension is not installed.
+        List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(mode);
+        if (classes != null && classes.size() > 0) {
+            return classes.get(classes.size() - 1);
         }
         return null;
+    }
+    
+    static public ReconConfig reconstruct(String json) throws Exception {
+        return ParsingUtilities.mapper.readValue(json, ReconConfig.class);
     }
     
     abstract public int getBatchSize();
@@ -123,11 +120,18 @@ abstract public class ReconConfig implements Jsonizable {
     abstract public Recon createNewRecon(long historyEntryID);
     
     public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
-           LOGGER.error("Save failed",e);
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+    
+    /**
+     * Returns the identifier for the reconciliation mode, as serialized in JSON.
+     * This is the same identifier that was used to register the registration mode.
+     * Jackson already adds the mode during serialization hence the JsonIgnore here.
+     */
+    @JsonIgnore
+    abstract public String getMode();
 }

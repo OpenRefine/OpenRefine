@@ -36,12 +36,10 @@ package com.google.refine.expr.functions.arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -56,7 +54,7 @@ public class Join implements Function {
             if (v != null && s != null && s instanceof String) {
                 String separator = (String) s;
                 
-                if (v.getClass().isArray() || v instanceof List<?> || v instanceof JSONArray) {
+                if (v.getClass().isArray() || v instanceof List<?> || v instanceof ArrayNode) {
                     StringBuffer sb = new StringBuffer();
                     if (v.getClass().isArray()) {
                         for (Object o : (Object[]) v) {
@@ -67,20 +65,15 @@ public class Join implements Function {
                                 sb.append(o.toString());
                             }
                         }
-                    } else if (v instanceof JSONArray) {
-                        JSONArray a = (JSONArray) v;
-                        int l = a.length();
+                    } else if (v instanceof ArrayNode) {
+                        ArrayNode a = (ArrayNode) v;
+                        int l = a.size();
                         
                         for (int i = 0; i < l; i++) {
                             if (sb.length() > 0) {
                                 sb.append(separator);
                             }
-                            try {
-                                sb.append(a.get(i).toString());
-                            } catch (JSONException e) {
-                                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
-                                    " cannot retrieve element " + i + " of array");
-                            }
+                            sb.append(JsonValueConverter.convert(a.get(i)).toString());
                         }
                     } else {
                         for (Object o : ExpressionUtils.toObjectList(v)) {
@@ -101,13 +94,17 @@ public class Join implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the string obtained by joining the array a with the separator sep";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the string obtained by joining the array a with the separator sep");
-        writer.key("params"); writer.value("array a, string sep");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "array a, string sep";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

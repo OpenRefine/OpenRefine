@@ -35,16 +35,17 @@ package com.google.refine.commands.row;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.browsing.FilteredRecords;
@@ -54,15 +55,61 @@ import com.google.refine.browsing.RowVisitor;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
+import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 public class GetRowsCommand extends Command {
+    
+    protected static class WrappedRow  {
+        @JsonUnwrapped
+        protected final Row row;
+        @JsonProperty("i")
+        protected final int rowIndex;
+        @JsonProperty("j")
+        @JsonInclude(Include.NON_NULL)
+        protected final Integer recordIndex;
+        
+        protected WrappedRow(Row rowOrRecord, int rowIndex, Integer recordIndex) {
+            this.row = rowOrRecord;
+            this.rowIndex = rowIndex;
+            this.recordIndex = recordIndex;
+        }
+    }
+    
+    protected static class JsonResult  {
+        @JsonProperty("mode")
+        protected final Mode mode;
+        @JsonProperty("rows")
+        protected final List<WrappedRow> rows;
+        @JsonProperty("filtered")
+        protected final int filtered;
+        @JsonProperty("total")
+        protected final int totalCount;
+        @JsonProperty("start")
+        protected final int start;
+        @JsonProperty("limit")
+        protected final int limit;
+        @JsonProperty("pool")
+        protected final Pool pool;
+        
+        protected JsonResult(Mode mode, List<WrappedRow> rows, int filtered,
+                int totalCount, int start, int limit, Pool pool) {
+            this.mode = mode;
+            this.rows = rows;
+            this.filtered = filtered;
+            this.totalCount = totalCount;
+            this.start = start;
+            this.limit = limit;
+            this.pool = pool;
+        }
+    }
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -101,10 +148,10 @@ public class GetRowsCommand extends Command {
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
             
             Pool pool = new Pool();
-            Properties options = new Properties();
+            /* Properties options = new Properties();
             options.put("project", project);
             options.put("reconCandidateOmitTypes", true);
-            options.put("pool", pool);
+            options.put("pool", pool); */
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
@@ -115,69 +162,68 @@ public class GetRowsCommand extends Command {
                 writer.write("(");
             }
             
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            jsonWriter.object();
+            RowWritingVisitor rwv = new RowWritingVisitor(start, limit);
             
-            RowWritingVisitor rwv = new RowWritingVisitor(start, limit, jsonWriter, options);
-            
-            JSONObject sortingJson = null;
-            try{
-                String json = request.getParameter("sorting");
-                sortingJson = (json == null) ? null : 
-                    ParsingUtilities.evaluateJsonStringToObject(json);
-            } catch (JSONException e) {
+            SortingConfig sortingConfig = null;
+            try {
+                String sortingJson = request.getParameter("sorting");
+                if (sortingJson != null) {
+                    sortingConfig = SortingConfig.reconstruct(sortingJson);
+                }
+            } catch (IOException e) {
             }
-
+            
             if (engine.getMode() == Mode.RowBased) {
                 FilteredRows filteredRows = engine.getAllFilteredRows();
                 RowVisitor visitor = rwv;
                 
-                if (sortingJson != null) {
+                if (sortingConfig != null) {
                     SortingRowVisitor srv = new SortingRowVisitor(visitor);
                     
-                    srv.initializeFromJSON(project, sortingJson);
+                    srv.initializeFromConfig(project, sortingConfig);
                     if (srv.hasCriteria()) {
                         visitor = srv;
                     }
                 }
-                
-                jsonWriter.key("mode"); jsonWriter.value("row-based");
-                jsonWriter.key("rows"); jsonWriter.array();
                 filteredRows.accept(project, visitor);
-                jsonWriter.endArray();
-                jsonWriter.key("filtered"); jsonWriter.value(rwv.total);
-                jsonWriter.key("total"); jsonWriter.value(project.rows.size());
             } else {
                 FilteredRecords filteredRecords = engine.getFilteredRecords();
                 RecordVisitor visitor = rwv;
                 
-                if (sortingJson != null) {
+                if (sortingConfig != null) {
                     SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
                     
-                    srv.initializeFromJSON(project, sortingJson);
+                    srv.initializeFromConfig(project, sortingConfig);
                     if (srv.hasCriteria()) {
                         visitor = srv;
                     }
                 }
-                
-                jsonWriter.key("mode"); jsonWriter.value("record-based");
-                jsonWriter.key("rows"); jsonWriter.array();
                 filteredRecords.accept(project, visitor);
-                jsonWriter.endArray();
-                jsonWriter.key("filtered"); jsonWriter.value(rwv.total);
-                jsonWriter.key("total"); jsonWriter.value(project.recordModel.getRecordCount());
             }
             
+            // Pool all the recons occuring in the rows seen
+            for(WrappedRow wr : rwv.results) {
+                for(Cell c : wr.row.cells) {
+                    if(c != null && c.recon != null) {
+                        pool.pool(c.recon);
+                    }
+                }
+            }
             
-            jsonWriter.key("start"); jsonWriter.value(start);
-            jsonWriter.key("limit"); jsonWriter.value(limit);
-            jsonWriter.key("pool"); pool.write(jsonWriter, options);
+            JsonResult result = new JsonResult(engine.getMode(),
+                    rwv.results, rwv.total,
+                    engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
+                            start, limit, pool);
             
-            jsonWriter.endObject();
-            
+            ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {
                 writer.write(")");
             }
+            
+            // metadata refresh for row mode and record mode
+	    if (project.getMetadata() != null) {
+            	project.getMetadata().setRowCount(project.rows.size());
+	    }
         } catch (Exception e) {
             respondException(response, e);
         }
@@ -186,16 +232,14 @@ public class GetRowsCommand extends Command {
     static protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
         final int           start;
         final int           limit;
-        final JSONWriter  writer;
-        final Properties  options;
+        public List<WrappedRow> results;
         
         public int total;
         
-        public RowWritingVisitor(int start, int limit, JSONWriter writer, Properties options) {
+        public RowWritingVisitor(int start, int limit) {
             this.start = start;
             this.limit = limit;
-            this.writer = writer;
-            this.options = options;
+            this.results = new ArrayList<>();
         }
         
         @Override
@@ -229,29 +273,14 @@ public class GetRowsCommand extends Command {
         }
         
         public boolean internalVisit(Project project, int rowIndex, Row row) {
-            try {
-                options.put("rowIndex", rowIndex);
-                row.write(writer, options);
-            } catch (JSONException e) {
-            }
+            results.add(new WrappedRow(row, rowIndex, null));
             return false;
         }
         
         protected boolean internalVisit(Project project, Record record) {
-            options.put("recordIndex", record.recordIndex);
-            
             for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-                try {
-                    Row row = project.rows.get(r);
-                    
-                    options.put("rowIndex", r);
-                    
-                    row.write(writer, options);
-                    
-                } catch (JSONException e) {
-                }
-                
-                options.remove("recordIndex");
+                Row row = project.rows.get(r);
+                results.add(new WrappedRow(row, r, r == record.fromRowIndex ? record.recordIndex : null));
             }
             return false;
         }

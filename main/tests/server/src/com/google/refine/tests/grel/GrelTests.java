@@ -99,7 +99,7 @@ public class GrelTests extends RefineTest {
     public void testEvalError() {
         String tests[] = {
 //                "1=1", // TODO: Throws NullPointerException
-                "a.value",
+                "value.datePart()",
                 };
         for (String test : tests) {
             try {
@@ -166,12 +166,53 @@ public class GrelTests extends RefineTest {
             parseEval(bindings, test);
         }
     }
+
+    @Test
+    public void testGetJsonFieldExists() throws ParsingException {
+        String test[] = { "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].one", "1" };
+        parseEval(bindings, test);
+    }
+
+    @Test
+    public void testGetJsonFieldAbsent() throws ParsingException {
+        String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        Assert.assertNull(eval.evaluate(bindings));
+    }
+    
+    @Test
+    public void testJoinJsonArray() throws ParsingException {
+        String test[] = { "\"{\\\"values\\\":[\\\"one\\\",\\\"two\\\",\\\"three\\\"]}\".parseJson().values.join(\",\")", "one,two,three" };
+        parseEval(bindings, test);
+    }
+
+    @Test
+    public void testGetFieldFromNull() throws ParsingException {
+        String test =  "null.value";
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        Assert.assertNull(eval.evaluate(bindings));
+    }
+    
+    // to demonstrate bug fixing for #1204
+    @Test
+    public void testCrossFunctionEval() {
+            String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
+            
+            try {
+                Evaluable eval = MetaParser.parse("grel:" + test);
+                Object result = eval.evaluate(bindings);
+                Assert.assertTrue(result instanceof EvalError );
+            } catch (ParsingException e) {
+                Assert.fail("Unexpected parse failure for cross function: " + test);                
+            }
+    }
+    
     private void parseEval(Properties bindings, String[] test)
-            throws ParsingException {
+    throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
         Assert.assertEquals(result.toString(), test[1], 
-                "Wrong result for expression: "+test[0]);
+                            "Wrong result for expression: "+test[0]);
     }
 
 }

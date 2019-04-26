@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="DatabaseExtensionUnitTestSuite">
+    <!--
+        To test the database extension against a particular
+        database, provide the connection settings below,
+        and remove the <exclude /> tag which corresponds
+        to the database to test. All tests which rely on
+        this database will then run.
+    -->
+
+    <parameter name = "mySqlDbName" value="test_db"/> 
+    <parameter name = "mySqlDbHost" value="127.0.0.1"/> 
+    <parameter name = "mySqlDbPort" value="3306"/> 
+    <parameter name = "mySqlDbUser" value="root"/>
+    <parameter name = "mySqlDbPassword" value=""/>
+    <parameter name = "mySqlTestTable" value="test_table"/>
+    
+    <parameter name = "pgSqlDbName" value="test_db"/> 
+    <parameter name = "pgSqlDbHost" value="127.0.0.1"/> 
+    <parameter name = "pgSqlDbPort" value="5432"/> 
+    <parameter name = "pgSqlDbUser" value="postgres"/>
+    <parameter name = "pgSqlDbPassword" value=""/>
+    <parameter name = "pgSqlTestTable" value="test_table"/>
+    
+    <parameter name = "mariaDbName" value="test_db"/> 
+    <parameter name = "mariaDbHost" value="127.0.0.1"/> 
+    <parameter name = "mariadbDbPort" value="3306"/> 
+    <parameter name = "mariaDbUser" value="root"/>
+    <parameter name = "mariaDbPassword" value=""/>
+    <parameter name = "mariaDbTestTable" value="test_table"/>
+    <test name="DatabaseExtensionUnitTest">
+        <groups>
+            <run>
+                <exclude name="requiresMySQL"/>
+                <exclude name="requiresPgSQL"/>
+                <exclude name="requiresMariaDB" />
+            </run>
+        </groups> <!--
+        <classes>
+            <class name="com.google.refine.extension.database.DatabaseImportControllerTest"/>
+            <class name="com.google.refine.extension.database.DatabaseServiceTest"/>
+            <class name="com.google.refine.extension.database.SimpleTextEncryptorTest"/>
+            <class name="com.google.refine.extension.database.cmd.ConnectCommandTest"/>
+            <class name="com.google.refine.extension.database.cmd.ExecuteQueryCommandTest"/>
+            <class name="com.google.refine.extension.database.cmd.SavedConnectionCommandTest"/>
+            <class name="com.google.refine.extension.database.cmd.TestConnectCommandTest"/>
+            <class name="com.google.refine.extension.database.cmd.TestQueryCommandTest"/>
+            <class name="com.google.refine.extension.database.mariadb.MariaDBConnectionManagerTest"/>
+            <class name="com.google.refine.extension.database.mariadb.MariaDBDatabaseServiceTest"/>
+            <class name="com.google.refine.extension.database.mysql.MySQLConnectionManagerTest"/>
+            <class name="com.google.refine.extension.database.mysql.MySQLDatabaseServiceTest"/>
+            <class name="com.google.refine.extension.database.pgsql.PgSQLConnectionManagerTest"/>
+            <class name="com.google.refine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
+        </classes> -->
+        <packages>
+          <package name="org.openrefine.wikidata.*" />
+        </packages>
+
+    </test>
+</suite>

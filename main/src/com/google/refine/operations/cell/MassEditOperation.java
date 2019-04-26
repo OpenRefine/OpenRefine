@@ -40,133 +40,91 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.StringUtils;
 
 public class MassEditOperation extends EngineDependentMassCellOperation {
     final protected String         _expression;
     final protected List<Edit>     _edits;
     
-    static public class Edit implements Jsonizable {
+    static public class Edit  {
+        @JsonProperty("from")
         final public List<String>     from;
+        @JsonProperty("fromBlank")
         final public boolean          fromBlank;
+        @JsonProperty("fromError")
         final public boolean          fromError;
+        @JsonProperty("to")
         final public Serializable     to;
         
-        public Edit(List<String> from, boolean fromBlank, boolean fromError, Serializable to) {
+        public Edit(
+            List<String> from,
+            boolean fromBlank,
+            boolean fromError,
+            Serializable to) {
             this.from = from;
-            this.fromBlank = fromBlank;
+            this.fromBlank = fromBlank || (from.size() == 1 && from.get(0).length() == 0);
             this.fromError = fromError;
             this.to = to;
         }
         
-        @Override
-        public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-            
-            writer.object();
-            writer.key("fromBlank"); writer.value(fromBlank);
-            writer.key("fromError"); writer.value(fromError);
-            writer.key("from");
-                writer.array();
-                for (String s : from) {
-                    writer.value(s);
-                }
-                writer.endArray();
-            writer.key("to"); writer.value(to);
-            writer.endObject();
+        @JsonCreator
+        public static Edit deserialize(
+                @JsonProperty("from")
+                List<String> from,
+                @JsonProperty("fromBlank")
+                boolean fromBlank,
+                @JsonProperty("fromError")
+                boolean fromError,
+                @JsonProperty("to")
+                Object to,
+                @JsonProperty("type")
+                String type) {
+            Serializable serializable = (Serializable)to;
+            if ("date".equals(type)) {
+                serializable = ParsingUtilities.stringToDate((String) to);
+            }
+            return new Edit(from == null ? new ArrayList<>() : from,
+                    fromBlank, fromError, serializable);
         }
     }
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.has("engineConfig") && !obj.isNull("engineConfig") ?
-                obj.getJSONObject("engineConfig") : null;
-        
-        return new MassEditOperation(
-            engineConfig,
-            obj.getString("columnName"),
-            obj.getString("expression"),
-            reconstructEdits(obj.getJSONArray("edits"))
-        );
-    }
-    
-    static public List<Edit> reconstructEdits(JSONArray editsA) throws Exception {
-        int editCount = editsA.length();
-        
-        List<Edit> edits = new ArrayList<Edit>(editCount);
-        for (int i = 0; i < editCount; i++) {
-            JSONObject editO = editsA.getJSONObject(i);
-            
-            List<String> from = null;
-            if (editO.has("from") && !editO.isNull("from")) {
-                JSONArray fromA = editO.getJSONArray("from");
-                int fromCount = fromA.length();
-                
-                from = new ArrayList<String>(fromCount);
-                for (int j = 0; j < fromCount; j++) {
-                    from.add(fromA.getString(j));
-                }
-            } else {
-                from = new ArrayList<String>();
-            }
-            
-            boolean fromBlank = editO.has("fromBlank") && editO.getBoolean("fromBlank");
-            boolean fromError = editO.has("fromError") && editO.getBoolean("fromError");
-            
-            Serializable to = (Serializable) editO.get("to");
-            if (editO.has("type")) {
-                String type = editO.getString("type");
-                if ("date".equals(type)) {
-                    to = ParsingUtilities.stringToDate((String) to);
-                }
-            }
-
-            edits.add(new Edit(from, fromBlank, fromError, to));
-        }
-        
-        return edits;
-    }
-    
-    public MassEditOperation(JSONObject engineConfig, String columnName, String expression, List<Edit> edits) {
+    @JsonCreator
+    public MassEditOperation(
+    		@JsonProperty("engineConfig")
+    		EngineConfig engineConfig,
+    		@JsonProperty("columnName")
+    		String columnName,
+    		@JsonProperty("expression")
+    		String expression,
+    		@JsonProperty("edits")
+    		List<Edit> edits) {
         super(engineConfig, columnName, true);
         _expression = expression;
         _edits = edits;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("edits");
-            writer.array();
-            for (Edit edit : _edits) {
-                edit.write(writer, options);
-            }
-            writer.endArray();
-        writer.endObject();
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _expression;
+    }
+    
+    @JsonProperty("edits")
+    public List<Edit> getEdits() {
+        return _edits;
     }
 
     @Override
@@ -259,7 +217,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                         newCell = new Cell(fromErrorTo, (cell != null) ? cell.recon : null);
                     }
                 } else if (ExpressionUtils.isNonBlankData(v)) {
-                    String from = v.toString();
+                    String from = StringUtils.toString(v);
                     Serializable to = fromTo.get(from);
                     if (to != null) {
                         newCell = new Cell(to, (cell != null) ? cell.recon : null);

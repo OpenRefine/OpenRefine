@@ -34,51 +34,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.cell;
 
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class FillDownOperation extends EngineDependentMassCellOperation {
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new FillDownOperation(
-            engineConfig,
-            obj.getString("columnName")
-        );
-    }
-    
+    @JsonCreator
     public FillDownOperation(
-            JSONObject engineConfig, 
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("columnName")
             String columnName
         ) {
         super(engineConfig, columnName, true);
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.endObject();
     }
 
     @Override
@@ -97,21 +77,27 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        Engine engine = createEngine(project);
+        Mode engineMode = engine.getMode();
         
         return new RowVisitor() {
             int                 cellIndex;
+            int 			    keyCellIndex;
             List<CellChange>    cellChanges;
             Cell                previousCell;
+            Mode                engineMode;
             
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges) {
+            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, Mode engineMode) {
                 this.cellIndex = cellIndex;
                 this.cellChanges = cellChanges;
+                this.engineMode = engineMode;
                 return this;
             }
             
             @Override
             public void start(Project project) {
-                // nothing to do
+                keyCellIndex = project.columnModel.columns.get(
+                		project.columnModel.getKeyColumnIndex()).getCellIndex();
             }
 
             @Override
@@ -122,6 +108,9 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Object value = row.getCellValue(cellIndex);
+                if (engineMode.equals(Mode.RecordBased) && ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))) {
+                    previousCell = null;
+                }
                 if (ExpressionUtils.isNonBlankData(value)) {
                     previousCell = row.getCell(cellIndex);
                 } else if (previousCell != null) {
@@ -130,6 +119,6 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
                 }
                 return false;
             }
-        }.init(column.getCellIndex(), cellChanges);
+        }.init(column.getCellIndex(), cellChanges, engineMode);
     }
 }

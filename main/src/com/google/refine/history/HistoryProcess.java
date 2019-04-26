@@ -33,11 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.history;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;
@@ -68,6 +65,12 @@ public class HistoryProcess extends Process {
     }
     
     @Override
+    @JsonIgnore
+    public long getId() {
+        return super.getId();
+    }
+    
+    @Override
     public void cancel() {
         throw new RuntimeException(WARN);
     }
@@ -89,16 +92,15 @@ public class HistoryProcess extends Process {
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException(WARN);
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("description"); writer.value(_description);
-        writer.key("immediate"); writer.value(true);
-        writer.key("status"); writer.value(_done ? "done" : "pending");
-        writer.endObject();
+    
+    @JsonProperty("status")
+    public String getStatus() {
+        return _done ? "done" : "pending";
+    }
+    
+    @JsonProperty("description")
+    public String getDescription() {
+        return _description;
     }
 
     @Override

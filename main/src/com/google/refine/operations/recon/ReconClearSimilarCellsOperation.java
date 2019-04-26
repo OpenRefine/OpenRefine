@@ -34,15 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.recon;
 
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -50,41 +47,31 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
     final protected String _similarValue;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconClearSimilarCellsOperation(
-            engineConfig,
-            obj.getString("columnName"),
-            obj.getString("similarValue")
-        );
-    }
-    
+    @JsonCreator
     public ReconClearSimilarCellsOperation(
-        JSONObject engineConfig, 
+        @JsonProperty("engineConfig")
+        EngineConfig engineConfig,
+        @JsonProperty("columnName")
         String     columnName, 
+        @JsonProperty("similarValue")
         String     similarValue
     ) {
         super(engineConfig, columnName, false);
         this._similarValue = similarValue;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("similarValue"); writer.value(_similarValue);
-        
-        writer.endObject();
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("similarValue")
+    public String getSimilarValue() {
+        return _similarValue;
     }
     
     @Override

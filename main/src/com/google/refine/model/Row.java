@@ -33,28 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 /**
  * Class representing a single Row which contains a list of {@link Cell}s.  There may
  * be multiple rows in a {@link Record}.
  */
-public class Row implements HasFields, Jsonizable {
+public class Row implements HasFields {
     public boolean             flagged;
     public boolean             starred;
     final public List<Cell>    cells;
@@ -106,6 +104,7 @@ public class Row implements HasFields, Jsonizable {
         return "cells".equals(name) || "record".equals(name);
     }
     
+    @JsonIgnore
     public boolean isEmpty() {
         for (Cell cell : cells) {
             if (cell != null && cell.value != null && !isValueBlank(cell.value)) {
@@ -160,55 +159,42 @@ public class Row implements HasFields, Jsonizable {
         return new CellTuple(project, this);
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key(FLAGGED); writer.value(flagged);
-        writer.key(STARRED); writer.value(starred);
-        
-        writer.key("cells"); writer.array();
-        for (Cell cell : cells) {
-            if (cell != null) {
-                cell.write(writer, options);
-            } else {
-                writer.value(null);
-            }
+    @JsonProperty(FLAGGED)
+    public boolean isFlagged() {
+        return flagged;
+    }
+    
+    @JsonProperty(STARRED)
+    public boolean isStarred() {
+        return starred;
+    }
+    
+    @JsonProperty("cells")
+    public List<Cell> getCells() {
+        return cells;
+    }
+    
+    /*
+    @JsonView(JsonViews.SaveMode.class)
+    public 
+    */
+    
+    public void save(Writer writer, Properties options) {
+        if (options.containsKey("rowIndex")) {
+            // See GetRowsCommand to serialize a row with indices
+            throw new IllegalArgumentException("Serializing with row indices is not supported anymore.");
         }
-        writer.endArray();
-        
-        if (!"save".equals(options.getProperty("mode"))) {
-            if (options.containsKey("rowIndex")) {
-                int rowIndex = (Integer) options.get("rowIndex");
-                writer.key("i"); writer.value(rowIndex);
-
-                if (options.containsKey("recordIndex")) {
-                    int recordIndex = (Integer) options.get("recordIndex");
-
-                    writer.key("j"); writer.value(recordIndex);
-                }
-            }
-            
-            if (options.containsKey("extra")) {
-                Properties extra = (Properties) options.get("extra");
-                if (extra != null) {
-                    for (Entry<Object,Object> e : extra.entrySet()) {
-                        writer.key((String) e.getKey());
-                        writer.value(e.getValue());
+        try {
+            ParsingUtilities.saveWriter.writeValue(writer, this);
+            Pool pool = (Pool)options.get("pool");
+            if(pool != null) {
+                for(Cell c : cells) {
+                    if (c != null && c.recon != null) {
+                        pool.pool(c.recon);
                     }
                 }
             }
-        }
-        
-        writer.endObject();
-    }
-    
-    public void save(Writer writer, Properties options) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
-        try {
-            write(jsonWriter, options);
-        } catch (JSONException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -218,40 +204,25 @@ public class Row implements HasFields, Jsonizable {
             loadStreaming(s, pool);
     }
     
+    @JsonCreator
+    static public Row deserialize(
+            @JsonProperty(STARRED)
+            boolean starred,
+            @JsonProperty(FLAGGED)
+            boolean flagged,
+            @JsonProperty("cells")
+            List<Cell> cells) {
+        if (cells == null) {
+            cells = new ArrayList<>();
+        }
+        return new Row(cells, flagged, starred);
+    }
+    
     static public Row loadStreaming(String s, Pool pool) throws Exception {
-        JsonFactory jsonFactory = new JsonFactory(); 
-        JsonParser jp = jsonFactory.createJsonParser(s);
-        
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        List<Cell>  cells = new ArrayList<Cell>();
-        boolean     starred = false;
-        boolean     flagged = false;
-        
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jp.getCurrentName();
-            jp.nextToken();
-            
-            if (STARRED.equals(fieldName)) {
-                starred = jp.getBooleanValue();
-            } else if (FLAGGED.equals(fieldName)) {
-                flagged = jp.getBooleanValue();
-            } else if ("cells".equals(fieldName)) {
-                if (jp.getCurrentToken() != JsonToken.START_ARRAY) {
-                    return null;
-                }
-                
-                while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    Cell cell = Cell.loadStreaming(jp, pool);
-                    
-                    cells.add(cell);
-                }
-            }
-        }
-        
-        return (cells.size() > 0) ? new Row(cells, flagged, starred) : new Row(0);
+        InjectableValues injectableValues = new InjectableValues.Std()
+                .addValue("pool", pool);
+        return ParsingUtilities.mapper.setInjectableValues(injectableValues)
+                .readValue(s, Row.class);
     }
     
     @Override

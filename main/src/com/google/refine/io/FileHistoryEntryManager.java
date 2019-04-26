@@ -35,6 +35,7 @@ package com.google.refine.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Properties;
@@ -42,13 +43,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 
 
@@ -64,10 +63,9 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
 
     @Override
     public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            historyEntry.write(jsonWriter, options);
-        } catch (JSONException e) {
+            ParsingUtilities.defaultWriter.writeValue(writer, historyEntry);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -116,6 +114,8 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
             out.putNextEntry(new ZipEntry("change.txt"));
             try {
                 History.writeOneChange(out, historyEntry.getChange(), pool);
+            } catch(Exception e) {
+                e.printStackTrace();
             } finally {
                 out.closeEntry();
             }

@@ -725,7 +725,11 @@
       var css = this.options.css;
       var li = $("<li>").addClass(css.item);
       var label = $("<label>").text(data.name);
-      li.append($("<div>").addClass(css.item_name).append(label));
+      var div = $("<div>").addClass(css.item_name).append(label);
+      if(data.description) {
+          div.append($('<span></span>').text(data.description));
+      }
+      li.append(div);
       return li;
     },
 
@@ -1291,6 +1295,23 @@
           type.text(data.id);
       }
       name.prepend(type);
+      if(data.description) {
+          name.append($("<span></span>").text(data.description));
+      }
+
+      // If we know of a view URL for this suggest service,
+      // clicking with the middle button sends the user to
+      // the view page.
+      if('view_url' in this.options && data.id) {
+        var view_url = this.options.view_url.replace('{{id}}', data.id).replace('${id}', data.id);
+        li.on('mousedown', function(e) {
+           if (e.which == 2) {
+              var win = window.open(view_url, '_blank');
+              win.focus();
+              e.preventDefault();
+           }
+        });
+      }
 
       //console.log("create_item", li);
       return li;
@@ -1455,7 +1476,7 @@
 
       //this.flyoutpane.hide();
       var flyout_id = data.id;
-      var url = this.flyout_url.replace(/\$\{id\}/g, data.id);
+      var url = this.flyout_url.replace(/\$\{id\}/g, encodeURIComponent(data.id));
 
       var ajax_options = {
         url: url,
@@ -1825,7 +1846,7 @@
       }
       else {
         id = data['mid'];
-        image = flyout_image_url.replace(/\$\{id\}/g, id);
+        image = flyout_image_url.replace(/\$\{id\}/g, encodeURIComponent(id));
       }
 
       var desc_text = null;

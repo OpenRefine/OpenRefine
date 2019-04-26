@@ -33,8 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -51,38 +56,74 @@ public class ParsingUtilitiesTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
     
-    //--------------evaluateJsonStringToObject tests-----------------------
-
     @Test
-    public void evaluateJsonStringToObjectRegressionTest(){
-        try {
-            JSONObject o = ParsingUtilities.evaluateJsonStringToObject("{\"foo\":\"bar\"}");
-            Assert.assertNotNull(o);
-            Assert.assertEquals("bar", o.getString("foo"));
-        } catch (JSONException e) {
-            Assert.fail();
-        }
+    public void zonedDateTimeTest() {
+        String  d = "2017-12-01T14:53:36Z";
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+        OffsetDateTime.parse(d, formatter);
     }
-
+    
     @Test
-    public void evaluateJsonStringToObjectWithNullParameters(){
-        try {
-            Assert.assertNull(ParsingUtilities.evaluateJsonStringToObject(null));
-            Assert.fail();
-        } catch (IllegalArgumentException e){
-            //expected
-        } catch (JSONException e) {
-            Assert.fail();
-        }
+    public void parseProjectBeforeJDK8() {
+        String historyEntryDate = "2017-12-01T14:53:36Z";
+        
+        OffsetDateTime zdt = ParsingUtilities.stringToDate(historyEntryDate);
+        String zdtString = ParsingUtilities.dateToString(zdt);
+        Assert.assertEquals(zdtString, historyEntryDate);
     }
-
+    
     @Test
-    public void evaluateJsonStringToObjectWithMalformedParameters(){
-        try {
-            ParsingUtilities.evaluateJsonStringToObject("malformed");
-            Assert.fail();
-        } catch (JSONException e) {
-            //expected
-        }
+    public void stringToDate() {
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43+00:00").getYear());
+    }
+    
+    @Test
+    public void stringToLocalDate() {
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123Z").getYear());
+        Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43+00:00").getYear());
+    }
+    
+    /**
+     * Converting between string and local time must be reversible, no matter the timezone.
+     */
+    @Test
+    public void stringToLocalDateNonUTC() {
+    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+    	try {
+    		Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
+    		Assert.assertEquals(ParsingUtilities.localDateToString(
+    				ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
+    				"2001-08-12T00:00:00Z");
+    		
+    	} finally {
+    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    	}
+    }
+    
+    @Test
+    public void parseProjectModifiedBeforeJDK8() {
+        String modified = "2014-01-15T21:46:25Z";
+        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(), 
+                modified);
+    }
+    
+    @Test
+    public void strSubstitutorTest() {
+        Map<String, String> data = new HashMap<String, String>(6);
+        
+        data.put("value", "1234");
+        data.put("field_format", "String");
+        
+        StrSubstitutor sub = new StrSubstitutor(data);
+        String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
+        String result = sub.replace(message);
+        Assert.assertTrue(result.contains("1234"));
     }
 }

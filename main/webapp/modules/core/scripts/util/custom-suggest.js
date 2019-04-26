@@ -33,16 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var CustomSuggest = {};
 
-// Default API key for Refine to use for freebase suggest widget
-//CustomSuggest.setFreebaseAPIKey("AIzaSyBBTAtJ31v_jlg_ImbQuBNnAaAyrHzRyW8"); // Google key
-CustomSuggest.FREEBASE_API_KEY = "AIzaSyBAZ_EjMPKlOzyyZXv6JKXPPwJFISVji3M"; // OpenRefine default key
-
-CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
-  $.suggest.suggest.defaults.key = freebaseAPIKey;
-  $.suggest.suggestT.defaults.key = freebaseAPIKey;
-  $.suggest.suggestP.defaults.key = freebaseAPIKey;
-};
-
 (function() {
 
   /*
@@ -84,6 +74,10 @@ CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
           );
 
           data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+          if (data.description) {
+             var descriptionSpan = $("<span></span>").text(data.description);
+             name.append(descriptionSpan);
+          }
           li.append(name);
 
           name.prepend($("<div>").addClass(css.item_type).text(data.id));
@@ -144,6 +138,11 @@ CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
               .append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
 
           data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+          if (data.description) {
+             var descriptionSpan = $("<span></span>").text(data.description);
+             name.append(descriptionSpan);
+          }
+
           li.append(name);
 
           name.prepend($("<div>").addClass(css.item_type).text(data.id));
@@ -168,18 +167,4 @@ CustomSuggest.setFreebaseAPIKey = function(freebaseAPIKey) {
     }
   );
   
-  // Use Freebase API Key
-  $.ajax("command/core/get-preference", 
-    {
-      async: false,
-      data: {name: "freebase.api.key"},
-      success: function(data) {
-        if (data.value && data.value != "null") {
-          CustomSuggest.setFreebaseAPIKey(data.value);
-        } else {
-          CustomSuggest.setFreebaseAPIKey(CustomSuggest.FREEBASE_API_KEY);
-        }
-      }
-    }
-  );
 })();

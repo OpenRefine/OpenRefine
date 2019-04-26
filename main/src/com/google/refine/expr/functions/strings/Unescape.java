@@ -37,9 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -56,13 +54,13 @@ public class Unescape implements Function {
                 String s = (String) o1;
                 String mode = ((String) o2).toLowerCase();
                 if ("html".equals(mode)) {
-                    return StringEscapeUtils.unescapeHtml(s);
+                    return StringEscapeUtils.unescapeHtml4(s);
                 } else if ("xml".equals(mode)) {
                     return StringEscapeUtils.unescapeXml(s);
                 } else if ("csv".equals(mode)) {
                     return StringEscapeUtils.unescapeCsv(s);
                 } else if ("javascript".equals(mode)) {
-                    return StringEscapeUtils.unescapeJavaScript(s);
+                    return StringEscapeUtils.unescapeEcmaScript(s);
                 } else if ("url".equals(mode)) {
                     try {
                         return URLDecoder.decode(s,"UTF-8");
@@ -76,13 +74,17 @@ public class Unescape implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Unescapes all escaped parts of the string depending on the given escaping mode.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Unescapes all escaped parts of the string depending on the given escaping mode.");
-        writer.key("params"); writer.value("string s, string mode ['html','xml','csv','url','javascript']");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string mode ['html','xml','csv','url','javascript']";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

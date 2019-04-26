@@ -52,6 +52,7 @@ public class FingerprintKeyer extends Keyer {
         s = s.trim(); // first off, remove whitespace around the string
         s = s.toLowerCase(); // then lowercase it
         s = punctctrl.matcher(s).replaceAll(""); // then remove all punctuation and control chars
+        s = asciify(s); // find ASCII equivalent to characters
         String[] frags = StringUtils.split(s); // split by whitespace
         TreeSet<String> set = new TreeSet<String>();
         for (String ss : frags) {
@@ -65,7 +66,7 @@ public class FingerprintKeyer extends Keyer {
                 b.append(' ');
             }
         }
-        return asciify(b.toString()); // find ASCII equivalent to characters 
+        return b.toString();
     }
 
     protected String asciify(String s) {

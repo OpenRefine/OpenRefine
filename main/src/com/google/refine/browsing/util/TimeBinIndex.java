@@ -33,10 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -181,13 +180,9 @@ abstract public class TimeBinIndex {
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
-                        if (v instanceof Calendar) {
-                            v = ((Calendar) v).getTime();
-                        }
-                        
-                        if (v instanceof Date) {
+                        if (v instanceof OffsetDateTime) {
                             _hasTime = true;
-                            processValue(((Date) v).getTime(), allValues);
+                            processValue(((OffsetDateTime) v).toInstant().toEpochMilli(), allValues);
                         } else {
                             _hasNonTime = true;
                         }
@@ -202,13 +197,9 @@ abstract public class TimeBinIndex {
                     if (ExpressionUtils.isError(v)) {
                         _hasError = true;
                     } else if (ExpressionUtils.isNonBlankData(v)) {
-                        if (v instanceof Calendar) {
-                            v = ((Calendar) v).getTime();
-                        }
-
-                        if (v instanceof Date) {
+                        if (v instanceof OffsetDateTime) {
                             _hasTime = true;
-                            processValue(((Date) v).getTime(), allValues);
+                            processValue(((OffsetDateTime) v).toInstant().toEpochMilli(), allValues);
                         } else {
                             _hasNonTime = true;
                         }
@@ -219,13 +210,9 @@ abstract public class TimeBinIndex {
             } else {
                 _totalValueCount++;
 
-                if (value instanceof Calendar) {
-                    value = ((Calendar) value).getTime();
-                }
-
-                if (value instanceof Date) {
+                if (value instanceof OffsetDateTime) {
                     _hasTime = true;
-                    processValue(((Date) value).getTime(), allValues);
+                    processValue(((OffsetDateTime) value).toInstant().toEpochMilli(), allValues);
                 } else {
                     _hasNonTime = true;
                 }

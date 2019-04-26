@@ -35,53 +35,37 @@ package com.google.refine.operations.row;
 
  import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.model.changes.RowStarChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class RowStarOperation extends EngineDependentOperation {
     final protected boolean _starred;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        boolean starred = obj.getBoolean("starred");
-        
-        return new RowStarOperation(
-            engineConfig, 
-            starred
-        );
-    }
-    
-    public RowStarOperation(JSONObject engineConfig, boolean starred) {
+    @JsonCreator
+    public RowStarOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("starred")
+            boolean starred) {
         super(engineConfig);
         _starred = starred;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("starred"); writer.value(_starred);
-        writer.endObject();
+    
+    @JsonProperty("starred")
+    public boolean getStarred() {
+        return _starred;
     }
 
     @Override

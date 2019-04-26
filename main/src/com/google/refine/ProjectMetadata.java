@@ -34,227 +34,222 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.preference.PreferenceStore;
-import com.google.refine.preference.TopList;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
-public class ProjectMetadata implements Jsonizable {
-    private final Date     _created;
-    private Date           _modified;
-    private Date written = null;
-    private String         _name;
-    private String         _password;
-
-    private String         _encoding;
-    private int            _encodingConfidence;
+public class ProjectMetadata {
+    public final static String DEFAULT_FILE_NAME = "metadata.json";
+    public final static String TEMP_FILE_NAME = "metadata.temp.json";
+    public final static String OLD_FILE_NAME = "metadata.old.json";
     
+    @JsonProperty("created")
+    private final LocalDateTime     _created;
+    @JsonProperty("modified")
+    private LocalDateTime           _modified;
+    @JsonIgnore
+    private LocalDateTime written = null;
+    @JsonProperty("name")
+    private String         _name = "";
+    @JsonProperty("password")
+    @JsonView(JsonViews.SaveMode.class)
+    private String         _password = "";
+
+    @JsonProperty("encoding")
+    @JsonView(JsonViews.SaveMode.class)
+    private String _encoding = "";
+    @JsonProperty("encodingConfidence")
+    @JsonView(JsonViews.SaveMode.class)
+    private int _encodingConfidence;
+
+    @JsonProperty("tags")
+    private String[] _tags = new String[0];
+
+    @JsonProperty("creator")
+    private String _creator = "";
+    @JsonProperty("contributors")
+    private String _contributors = "";
+    @JsonProperty("subject")
+    private String _subject = ""; // Several refine projects may be linked
+    @JsonProperty("description")
+    private String _description = ""; // free form of comment
+    @JsonProperty("rowCount")
+    private int _rowCount; // at the creation. Essential for cleaning old projects too heavy
+    
+    @JsonProperty("title")
+    private String _title = "";
+    @JsonProperty("version")
+    private String _version = "";
+    @JsonProperty("license")
+    private String license = "";
+    @JsonProperty("homepage")
+    private String homepage = "";
+    @JsonProperty("image")
+    private String image = "";
+
+    // import options is an array for 1-n data sources
+    @JsonProperty("importOptionMetadata")
+    private ArrayNode _importOptionMetadata = ParsingUtilities.mapper.createArrayNode();
+
+    // user metadata
+    @JsonIgnore
+    private ArrayNode _userMetadata = ParsingUtilities.mapper.createArrayNode();
+    
+    @JsonProperty("customMetadata")
     private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
+    @JsonProperty("preferences")
+    @JsonView(JsonViews.SaveMode.class)
     private PreferenceStore             _preferenceStore = new PreferenceStore();
 
-    final Logger logger = LoggerFactory.getLogger("project_metadata");
+    private final static Logger logger = LoggerFactory.getLogger("project_metadata");
 
-    protected ProjectMetadata(Date date) {
+    protected ProjectMetadata(LocalDateTime date) {
         _created = date;
         preparePreferenceStore(_preferenceStore);
     }
 
     public ProjectMetadata() {
-        this(new Date());
+        this(LocalDateTime.now());
         _modified = _created;
     }
 
-    public ProjectMetadata(Date created, Date modified, String name) {
+    public ProjectMetadata(LocalDateTime created, LocalDateTime modified, String name) {
         this(created);
         _modified = modified;
         _name = name;
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-
-        writer.object();
-        writer.key("name"); writer.value(_name);
-        writer.key("created"); writer.value(ParsingUtilities.dateToString(_created));
-        writer.key("modified"); writer.value(ParsingUtilities.dateToString(_modified));
-
-        writer.key("customMetadata"); writer.object();
-        for (String key : _customMetadata.keySet()) {
-            Serializable value = _customMetadata.get(key);
-            writer.key(key);
-            writer.value(value);
-        }
-        writer.endObject();
-        
-        if ("save".equals(options.getProperty("mode"))) {
-            writer.key("password"); writer.value(_password);
-
-            writer.key("encoding"); writer.value(_encoding);
-            writer.key("encodingConfidence"); writer.value(_encodingConfidence);
-
-            writer.key("preferences"); _preferenceStore.write(writer, options);
-        }
-        
-        writer.endObject();
-        
-        if ("save".equals(options.getProperty("mode"))) {
-            written = new Date();
-        }
-    }
-
+    @JsonIgnore
     public boolean isDirty() {
-        return written == null || _modified.after(written);
+        return written == null || _modified.isAfter(written);
     }
-    
-    public void write(JSONWriter jsonWriter) throws JSONException  {
-        write(jsonWriter, false);
-    }
-    
-    /**
-     * @param jsonWriter writer to save metadatea to
-     * @param onlyIfDirty true to not write unchanged metadata
-     * @throws JSONException
-     */
-    public void write(JSONWriter jsonWriter, boolean onlyIfDirty) throws JSONException  {
-        if (!onlyIfDirty || isDirty()) {
-            Properties options = new Properties();
-            options.setProperty("mode", "save");
 
-            write(jsonWriter, options);
-        }
-    }
-    
-    static public ProjectMetadata loadFromJSON(JSONObject obj) {
-        // TODO: Is this correct?  It's using modified date for creation date
-        ProjectMetadata pm = new ProjectMetadata(JSONUtilities.getDate(obj, "modified", new Date()));
-
-        pm._modified = JSONUtilities.getDate(obj, "modified", new Date());
-        pm._name = JSONUtilities.getString(obj, "name", "<Error recovering project name>");
-        pm._password = JSONUtilities.getString(obj, "password", "");
-
-        pm._encoding = JSONUtilities.getString(obj, "encoding", "");
-        pm._encodingConfidence = JSONUtilities.getInt(obj, "encodingConfidence", 0);
-
-        if (obj.has("preferences") && !obj.isNull("preferences")) {
-            try {
-                pm._preferenceStore.load(obj.getJSONObject("preferences"));
-            } catch (JSONException e) {
-                // ignore
-            }
-        }
-        
-        if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
-            try {
-                ((TopList) pm._preferenceStore.get("scripting.expressions"))
-                    .load(obj.getJSONArray("expressions"));
-            } catch (JSONException e) {
-                // ignore
-            }
-        }
-        
-        if (obj.has("customMetadata") && !obj.isNull("customMetadata")) {
-            try {
-                JSONObject obj2 = obj.getJSONObject("customMetadata");
-                
-                @SuppressWarnings("unchecked")
-                Iterator<String> keys = obj2.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    Object value = obj2.get(key);
-                    if (value != null && value instanceof Serializable) {
-                        pm._customMetadata.put(key, (Serializable) value);
-                    }
-                }
-            } catch (JSONException e) {
-                // ignore
-            }
-        }
-
-        pm.written = new Date(); // Mark it as not needing writing until modified
-        
-        return pm;
-    }
-    
     static protected void preparePreferenceStore(PreferenceStore ps) {
         ProjectManager.preparePreferenceStore(ps);
         // Any project specific preferences?
     }
 
-    public Date getCreated() {
+    @JsonIgnore
+    public LocalDateTime getCreated() {
         return _created;
     }
 
+    @JsonIgnore
     public void setName(String name) {
         this._name = name;
         updateModified();
     }
 
+    @JsonIgnore
     public String getName() {
         return _name;
     }
 
+    @JsonIgnore
     public void setEncoding(String encoding) {
         this._encoding = encoding;
         updateModified();
     }
 
+    @JsonIgnore
     public String getEncoding() {
         return _encoding;
     }
 
+    @JsonIgnore
     public void setEncodingConfidence(int confidence) {
         this._encodingConfidence = confidence;
         updateModified();
     }
 
+    @JsonIgnore
     public void setEncodingConfidence(String confidence) {
         if (confidence != null) {
             this.setEncodingConfidence(Integer.parseInt(confidence));
         }
     }
 
+    @JsonIgnore
     public int getEncodingConfidence() {
         return _encodingConfidence;
     }
 
+    @JsonIgnore
+    public void setTags(String[] tags) {
+        if (tags != null) {
+            List<String> tmpTags = new ArrayList<String>(tags.length);
+            for (String tag : tags) {
+                if (tag != null) {
+                    String trimmedTag = tag.trim();
+
+                    if (!trimmedTag.isEmpty()) {
+                        tmpTags.add(trimmedTag);
+                    }
+                }
+            }
+            this._tags = tmpTags.toArray(new String[tmpTags.size()]);
+        } else {
+            this._tags = tags;
+        }
+
+        updateModified();
+    }
+
+    @JsonIgnore
+    public String[] getTags() {
+        if (_tags == null) this._tags = new String[0];
+        return _tags;
+    }
+
+    @JsonIgnore
     public void setPassword(String password) {
         this._password = password;
         updateModified();
     }
 
+    @JsonIgnore
     public String getPassword() {
         return _password;
     }
 
-    public Date getModified() {
+    @JsonIgnore
+    public  LocalDateTime getModified() {
         return _modified;
     }
 
+    @JsonIgnore
     public void updateModified() {
-        _modified = new Date();
+        _modified = LocalDateTime.now();
     }
 
+    @JsonIgnore
     public PreferenceStore getPreferenceStore() {
         return _preferenceStore;
     }
-    
+
+    @JsonIgnore
     public Serializable getCustomMetadata(String key) {
         return _customMetadata.get(key);
     }
-    
+
     public void setCustomMetadata(String key, Serializable value) {
         if (value == null) {
             _customMetadata.remove(key);
@@ -262,5 +257,120 @@ public class ProjectMetadata implements Jsonizable {
             _customMetadata.put(key, value);
         }
         updateModified();
+    }
+
+    @JsonIgnore
+    public ArrayNode getImportOptionMetadata() {
+        return _importOptionMetadata;
+    }
+
+    @JsonIgnore
+    public void setImportOptionMetadata(ArrayNode jsonArray) {
+        _importOptionMetadata = jsonArray;
+        updateModified();
+    }
+
+    public void appendImportOptionMetadata(ObjectNode options) {
+        _importOptionMetadata.add(options);
+        updateModified();
+    }
+
+    @JsonIgnore
+    public String getCreator() {
+        return _creator;
+    }
+
+    @JsonIgnore
+    public void setCreator(String creator) {
+        this._creator = creator;
+        updateModified();
+    }
+
+    @JsonIgnore
+    public String getContributors() {
+        return _contributors;
+    }
+
+    @JsonIgnore
+    public void setContributors(String contributors) {
+        this._contributors = contributors;
+        updateModified();
+    }
+
+    @JsonIgnore
+    public String getSubject() {
+        return _subject;
+    }
+
+    @JsonIgnore
+    public void setSubject(String subject) {
+        this._subject = subject;
+        updateModified();
+    }
+
+    @JsonIgnore
+    public String getDescription() {
+        return _description;
+    }
+
+    @JsonIgnore
+    public void setDescription(String description) {
+        this._description = description;
+        updateModified();
+    }
+
+    @JsonIgnore
+    public int getRowCount() {
+        return _rowCount;
+    }
+
+    @JsonIgnore
+    public void setRowCount(int rowCount) {
+        this._rowCount = rowCount;
+        updateModified();
+    }
+
+    @JsonIgnore
+    public ArrayNode getUserMetadata() {
+        return _userMetadata;
+    }
+    
+    @JsonProperty("userMetadata")
+    @JsonInclude(Include.NON_NULL)
+    public ArrayNode getUserMetadataJson() {
+    	if (_userMetadata != null && _userMetadata.size() > 0) {
+    		return _userMetadata;
+    	}
+    	return null;
+    }
+
+    @JsonIgnore
+    public void setUserMetadata(ArrayNode userMetadata) {
+        this._userMetadata = userMetadata;
+    }
+
+    private void updateUserMetadata(String metaName, String valueString) {
+        for (int i = 0; i < _userMetadata.size(); i++) {
+            ObjectNode obj = (ObjectNode)_userMetadata.get(i);
+            if (obj.get("name").asText("").equals(metaName)) {
+                obj.put("value", valueString);
+            }
+        }
+    }
+
+    public void setAnyField(String metaName, String valueString) {
+        Class<? extends ProjectMetadata> metaClass = this.getClass();
+        try {
+            Field metaField = metaClass.getDeclaredField("_" + metaName);
+            if (metaName.equals("tags")) {
+                metaField.set(this, valueString.split(","));
+            } else {
+                metaField.set(this, valueString);
+            }
+        } catch (NoSuchFieldException e) {
+            updateUserMetadata(metaName, valueString);
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            logger.error(ExceptionUtils.getFullStackTrace(e));
+        }
     }
 }

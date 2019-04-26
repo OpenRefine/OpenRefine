@@ -35,8 +35,7 @@ package com.google.refine.grel.ast;
 
 import java.util.Properties;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.expr.Evaluable;
 
 /**
@@ -56,6 +55,6 @@ public class LiteralExpr implements Evaluable {
 
     @Override
     public String toString() {
-        return _value instanceof String ? JSONObject.quote((String) _value) : _value.toString();
+        return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
     }
 }

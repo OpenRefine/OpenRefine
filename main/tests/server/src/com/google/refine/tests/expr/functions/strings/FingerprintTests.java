@@ -40,9 +40,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.refine.expr.functions.strings.Fingerprint;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.tests.util.TestUtils;
 
 
 public class FingerprintTests extends RefineTest {
@@ -110,4 +112,12 @@ public class FingerprintTests extends RefineTest {
                     "Fingerprint for string: " + ss[0] + " failed");
         }
     }
+    
+    @Test
+    public void serializeFingerprint() {
+        String json = "{\"description\":\"Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).\",\"params\":\"string s\",\"returns\":\"string\"}";
+        TestUtils.isSerializedTo(new Fingerprint(), json);
+    }
+
+
 }

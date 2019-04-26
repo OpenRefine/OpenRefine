@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import static org.jrdf.graph.AnyObjectNode.ANY_OBJECT_NODE;
-import static org.jrdf.graph.AnyPredicateNode.ANY_PREDICATE_NODE;
-import static org.jrdf.graph.AnySubjectNode.ANY_SUBJECT_NODE;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -44,12 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jrdf.graph.Graph;
-import org.jrdf.graph.Triple;
-import org.jrdf.parser.RdfReader;
-import org.jrdf.util.ClosableIterable;
-import org.json.JSONObject;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.importing.ImportingJob;
@@ -59,14 +55,16 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
+
 public class RdfTripleImporter extends ImportingParserBase {
-    private RdfReader rdfReader;
     private Mode mode;
     
     public enum Mode {
         RDFXML,
         NT,
-        N3
+        N3,
+        TTL,
+        JSONLD
     }
 
     public RdfTripleImporter() {
@@ -75,27 +73,30 @@ public class RdfTripleImporter extends ImportingParserBase {
     
     public RdfTripleImporter(Mode mode) {
         super(true);
-        rdfReader = new RdfReader();
         this.mode = mode;
     }
 
-    
-    @Override
-    public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, InputStream input, int limit,
-            JSONObject options, List<Exception> exceptions) {
-        
-        Graph graph;
+    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            InputStream input, int limit, ObjectNode options, List<Exception> exceptions) {
+        // create an empty model
+        Model model = ModelFactory.createDefaultModel();
+
         try {
             switch (mode) {
             case NT:
-                graph = rdfReader.parseNTriples(input);
+                model.read(input, null, "NT");
                 break;
             case N3:
-                graph = rdfReader.parseN3(input);
+                model.read(input, null, "N3");
+                break;
+            case TTL:
+                model.read(input, null, "TTL");
+                break;
+            case JSONLD:
+                model.read(input, null, "JSON-LD");
                 break;
             case RDFXML:
-                graph = rdfReader.parseRdfXml(input);             
+                model.read(input, null);            
                 break;
             default:
                 throw new IllegalArgumentException("Unknown parsing mode");    
@@ -104,61 +105,63 @@ public class RdfTripleImporter extends ImportingParserBase {
             exceptions.add(e);
             return;
         }
-        
-        ClosableIterable<Triple> triples = graph.find(ANY_SUBJECT_NODE, ANY_PREDICATE_NODE, ANY_OBJECT_NODE);
-        try {
-            Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
-            Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
-            project.columnModel.addColumn(0, subjectColumn, false);
-            project.columnModel.setKeyColumnIndex(0);
-            
-            for (Triple triple : triples) {
-                String subject = triple.getSubject().toString();
-                String predicate = triple.getPredicate().toString();
-                String object = triple.getObject().toString();
 
-                Column column = project.columnModel.getColumnByName(predicate);
-                if (column == null) {
-                    column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
-                    project.columnModel.addColumn(-1, column, true);
-                }
+      StmtIterator triples = model.listStatements();
+      
+      try {
+          Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
+          Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
+          project.columnModel.addColumn(0, subjectColumn, false);
+          project.columnModel.setKeyColumnIndex(0);
+          
+          while (triples.hasNext()) {
+              Statement triple = triples.nextStatement();
+              String subject = triple.getSubject().toString();
+              String predicate = triple.getPredicate().toString();
+              String object = triple.getObject().toString();
 
-                int cellIndex = column.getCellIndex();
-                if (subjectToRows.containsKey(subject)) {
-                    List<Row> rows = subjectToRows.get(subject);
-                    for (Row row : rows) {
-                        if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
-                            row.setCell(cellIndex, new Cell(object, null));
-                            object = null;
-                            break;
-                        }
-                    }
+              Column column = project.columnModel.getColumnByName(predicate);
+              if (column == null) {
+                  column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
+                  project.columnModel.addColumn(-1, column, true);
+              }
 
-                    if (object != null) {
-                        Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                        rows.add(row);
+              int cellIndex = column.getCellIndex();
+              if (subjectToRows.containsKey(subject)) {
+                  List<Row> rows = subjectToRows.get(subject);
+                  for (Row row : rows) {
+                      if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
+                          row.setCell(cellIndex, new Cell(object, null));
+                          object = null;
+                          break;
+                      }
+                  }
 
-                        row.setCell(cellIndex, new Cell(object, null));
-                    }
-                } else {
-                    List<Row> rows = new ArrayList<Row>();
-                    subjectToRows.put(subject, rows);
+                  if (object != null) {
+                      Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
+                      rows.add(row);
 
-                    Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                    rows.add(row);
+                      row.setCell(cellIndex, new Cell(object, null));
+                  }
+              } else {
+                  List<Row> rows = new ArrayList<Row>();
+                  subjectToRows.put(subject, rows);
 
-                    row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
-                    row.setCell(cellIndex, new Cell(object, null));
-                }
-            }
+                  Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
+                  rows.add(row);
 
-            for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
-                project.rows.addAll(entry.getValue());
-            }
-        } catch (ModelException e) {
-            exceptions.add(e);
-        } finally {
-            triples.iterator().close();
-        }
+                  row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
+                  row.setCell(cellIndex, new Cell(object, null));
+              }
+          }
+
+          for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
+              project.rows.addAll(entry.getValue());
+          }
+      } catch (ModelException e) {
+          exceptions.add(e);
+      } 
+      
+      super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
     }
 }

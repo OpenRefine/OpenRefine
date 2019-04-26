@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -54,13 +51,17 @@ public class ATan2 implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Converts rectangular coordinates (x, y) to polar (r, theta)");
-        writer.key("params"); writer.value("number x, number y");
-        writer.key("returns"); writer.value("number theta");
-        writer.endObject();
+    public String getDescription() {
+        return "Converts rectangular coordinates (x, y) to polar (r, theta)";
+    }
+    
+    @Override
+    public String getParams() {
+        return "number x, number y";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number theta";
     }
 }

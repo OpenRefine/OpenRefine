@@ -76,10 +76,12 @@ Refine.ExcelParserUI.prototype.getOptions = function() {
     }
     return def;
   };
-
+  
+  var self = this;
+  
   this._optionContainerElmts.sheetRecordContainer.find('input').each(function() {
     if (this.checked) {
-      options.sheets.push(parseInt(this.getAttribute('index'),10));
+        options.sheets.push(self._config.sheetRecords[parseInt(this.getAttribute('index'))]);
     }
   });
 
@@ -116,21 +118,24 @@ Refine.ExcelParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/excel-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
-  
-  this._optionContainerElmts.previewButton.html($.i18n._('core-buttons')["update-preview"]);
-  $('#or-import-worksheet').text($.i18n._('core-index-import')["import-worksheet"]);
-  $('#or-import-ignore').text($.i18n._('core-index-parser')["ignore-first"]);
-  $('#or-import-lines').text($.i18n._('core-index-parser')["lines-beg"]);
-  $('#or-import-parse').text($.i18n._('core-index-parser')["parse-next"]);
-  $('#or-import-header').text($.i18n._('core-index-parser')["lines-header"]);
-  $('#or-import-discard').text($.i18n._('core-index-parser')["discard-initial"]);
-  $('#or-import-rows').text($.i18n._('core-index-parser')["rows-data"]);
-  $('#or-import-load').text($.i18n._('core-index-parser')["load-at-most"]);
-  $('#or-import-rows2').text($.i18n._('core-index-parser')["rows-data"]);
-  $('#or-import-blank').text($.i18n._('core-index-parser')["store-blank"]);
-  $('#or-import-null').text($.i18n._('core-index-parser')["store-nulls"]);
-  $('#or-import-source').html($.i18n._('core-index-parser')["store-source"]);
+  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });  
+  this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
+  this._optionContainerElmts.selectAllButton.click(function() { self._selectAll(); }); 
+  this._optionContainerElmts.selectAllButton.html($.i18n('core-buttons/select-all'));
+  this._optionContainerElmts.unselectAllButton.click(function() { self._unselectAll(); }); 
+  this._optionContainerElmts.unselectAllButton.html($.i18n('core-buttons/unselect-all'));
+  $('#or-import-worksheet').text($.i18n('core-index-import/import-worksheet'));
+  $('#or-import-ignore').text($.i18n('core-index-parser/ignore-first'));
+  $('#or-import-lines').text($.i18n('core-index-parser/lines-beg'));
+  $('#or-import-parse').text($.i18n('core-index-parser/parse-next'));
+  $('#or-import-header').text($.i18n('core-index-parser/lines-header'));
+  $('#or-import-discard').text($.i18n('core-index-parser/discard-initial'));
+  $('#or-import-rows').text($.i18n('core-index-parser/rows-data'));
+  $('#or-import-load').text($.i18n('core-index-parser/load-at-most'));
+  $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));
+  $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
+  $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
+  $('#or-import-source').html($.i18n('core-index-parser/store-source'));
 
   var sheetTable = this._optionContainerElmts.sheetRecordContainer[0];
   $.each(this._config.sheetRecords, function(i, v) {
@@ -140,6 +145,7 @@ Refine.ExcelParserUI.prototype._initialize = function() {
     var checkbox = $('<input>')
     .attr('id', id)
     .attr('type', 'checkbox')
+    .attr('class', 'core-excel-worksheet')
     .attr('index', i)
     .appendTo(td0);
     if (this.selected) {
@@ -220,3 +226,23 @@ Refine.ExcelParserUI.prototype._updatePreview = function() {
 	  self._progressContainer.hide();
   });
 };
+
+Refine.ExcelParserUI.prototype._selectAll = function() {
+  var self = this;
+
+  $(".core-excel-worksheet").each(function(index, value){
+    $(value).prop('checked', true);
+  });
+  
+  self._scheduleUpdatePreview();
+}
+
+Refine.ExcelParserUI.prototype._unselectAll = function() {
+  var self = this;
+
+  $(".core-excel-worksheet").each(function(index, value){
+    $(value).prop('checked', false);
+  });
+
+  self._scheduleUpdatePreview();
+}

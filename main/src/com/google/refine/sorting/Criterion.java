@@ -33,48 +33,57 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 
-abstract public class Criterion {
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.NAME,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="valueType")
+@JsonSubTypes({
+    @Type(value = BooleanCriterion.class, name = "boolean"),
+    @Type(value = DateCriterion.class, name = "date"),
+    @Type(value = NumberCriterion.class, name = "number"),
+    @Type(value = StringCriterion.class, name = "string") })
+abstract public class Criterion  {
+    @JsonProperty("column")
     public String columnName;
-    protected int cellIndex;
+    @JsonIgnore
+    protected int cellIndex = -2;
 
     // These take on positive and negative values to indicate where blanks and errors
     // go relative to non-blank values. They are also relative to each another.
     // Blanks and errors are not affected by the reverse flag.
+    @JsonProperty("blankPosition")
     public int blankPosition = 1;
+    @JsonProperty("errorPosition")
     public int errorPosition = 2;
 
-    public boolean reverse;
+    @JsonProperty("reverse")
+    public boolean reverse = false;
 
-    public void initializeFromJSON(Project project, JSONObject obj) 
-            throws JSONException {
-        if (obj.has("column") && !obj.isNull("column")) {
-            columnName = obj.getString("column");
-
+    @JsonProperty("valueType")
+    public abstract String getValueType();
+    
+    // Returns a cached cell index
+    // We delay this fetching because the column might not exist
+    // at deserialization (for instance if the column is created by an operation
+    // that has not been applied yet).
+    protected int getCellIndex(Project project) {
+        if (cellIndex == -2) {
             Column column = project.columnModel.getColumnByName(columnName);
             cellIndex = column != null ? column.getCellIndex() : -1;
         }
-
-        if (obj.has("blankPosition") && !obj.isNull("blankPosition")) {
-            blankPosition = obj.getInt("blankPosition");
-        }
-        if (obj.has("errorPosition") && !obj.isNull("errorPosition")) {
-            errorPosition = obj.getInt("errorPosition");
-        }
-
-        if (obj.has("reverse") && !obj.isNull("reverse")) {
-            reverse = obj.getBoolean("reverse");
-        }
+        return cellIndex;
     }
-
 
     // TODO: We'd like things to be more strongly typed a la the following, but
     // it's too involved to change right now
@@ -119,10 +128,10 @@ abstract public class Criterion {
         }
 
         public Object makeKey(Project project, Row row, int rowIndex) {
-            if (cellIndex < 0) {
+            if (getCellIndex(project) < 0) {
                 return null;
             } else {
-                Object value = row.getCellValue(cellIndex);
+                Object value = row.getCellValue(getCellIndex(project));
                 return makeKey(value);
             }
         }

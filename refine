@@ -66,6 +66,7 @@ and <action> is one of
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
    ui_test ............................. Run only the UI tests
+   extensions_test ..................... Run only the extensions tests
 
    broker .............................. Run OpenRefine Broker
    
@@ -92,7 +93,9 @@ EOF
 }
                 
 add_option() {
-    OPTS="$OPTS $1"
+    if [ ! -z "$*" ] ; then
+        OPTS+=("$@")
+    fi
 }
                 
 load_configs() {
@@ -296,32 +299,33 @@ tools_prepare() {
         mkdir $REFINE_TOOLS_DIR || error "Error while making directory $REFINE_TOOLS_DIR"
     fi
 }
-                        
-ant_prepare() {
+
+mvn_prepare() {
     tools_prepare
 
-    ANT_VERSION="1.9.0"
-    ANT_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz"
-    ANT_FILE=`echo $ANT_URL | sed 's|.*/||'`
-    ANT_DIR="apache-ant-${ANT_VERSION}"
-    
-    ANT="`which ant 2> /dev/null`"
-    if [ -z "$ANT" ] ; then
-        if [ -z "$ANT_HOME" ] ; then
+    MVN_VERSION="3.2.2"
+    MVN_URL="https://archive.apache.org/dist/maven/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
+    MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
+    MVN_DIR="apache-maven-${MVN_VERSION}"
+
+    MVN="`which mvn 2> /dev/null`"
+   
+    if [ -z "$MVN" ] ; then
+        if [ -z "$MVN_HOME" ] ; then
             cd $REFINE_TOOLS_DIR
-                if [ ! -f "$ANT_FILE" ] ; then
-                    download $ANT_URL $ANT_FILE
+                if [ ! -f "$MVN_FILE" ] ; then
+                    download $MVN_URL $MVN_FILE
                 fi
-                if [ ! -d "$ANT_DIR" ] ; then
-                    tar xzf $ANT_FILE -C . || error "Error while expanding $ANT_FILE"
+                if [ ! -d "$MVN_DIR" ] ; then
+                    tar xzf $MVN_FILE -C . || error "Error while expanding $MVN_FILE"
                 fi
-                export ANT_HOME="`pwd`/$ANT_DIR"
+                export MVN_HOME="`pwd`/$MVN_DIR"
                 if [ "$OS" = "windows" ] ; then
-                    export ANT_HOME=`cygpath --unix "$ANT_HOME"`
+                    export MVN_HOME=`cygpath --unix "$MVN_HOME"`
                 fi
             cd ..
         fi
-        ANT="$ANT_HOME/bin/ant"
+        MVN="$MVN_HOME/bin/mvn"
     fi
 }
 
@@ -335,52 +339,6 @@ appengine_prepare() {
     APPENGINE_LOCAL="$APPENGINE_HOME/bin/dev_appserver.sh"
     
     ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
-}
-
-launch4j_prepare() {
-    tools_prepare
-
-    L4J_VERSION="3.8"
-    if [ "$OS" = "macosx" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-macosx-x86-10.8.tgz"
-    elif [ "$OS" = "windows" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-win32.zip"
-    elif [ "$OS" = "linux" ] ; then
-        LAUNCH4J_URL="http://downloads.sourceforge.net/project/launch4j/launch4j-3/${L4J_VERSION}/launch4j-${L4J_VERSION}-linux.tgz"
-    fi
-    
-    LAUNCH4J_FILE=`echo $LAUNCH4J_URL | sed 's|.*/||'`
-    LAUNCH4J_DIR="launch4j"
-    
-    tool_download $LAUNCH4J_URL $LAUNCH4J_FILE $LAUNCH4J_DIR
-
-    # Workaround: launch4j 3.0.2 & earlier does not work on versions of MacOS
-    # without PPC support (e.g. Lion) so we patch it to include Intel binaries; 
-    # the following lines can be removed once we update to a version of 
-    # launch4j that fixes the issue (not available yet).
-    # (3.1.0-beta1 fixes this, but introduces other bugs which make it unusable)
-    if [ "$OS" = "macosx" ] ; then
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/windres" "$REFINE_TOOLS_DIR/launch4j/bin/windres.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/windres" $REFINE_TOOLS_DIR/launch4j/bin/windres
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/windres"
-        fi
-        if [ ! -f "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak" ] ; then
-            mv "$REFINE_TOOLS_DIR/launch4j/bin/ld" "$REFINE_TOOLS_DIR/launch4j/bin/ld.bak"
-            download "http://launch4j.cvs.sourceforge.net/viewvc/launch4j/launch4j/bin/bin-macosx-x86/ld" $REFINE_TOOLS_DIR/launch4j/bin/ld
-            chmod +x "$REFINE_TOOLS_DIR/launch4j/bin/ld"
-        fi
-    fi
-}
-    
-appbundler_prepare() {
-    tools_prepare
-    
-    APPBUNDLER_URL="http://java.net/projects/appbundler/downloads/download/appbundler-1.0.jar"
-    APPBUNDLER_DIR="."
-    APPBUNDLER_FILE=`echo $APPBUNDLER_URL | sed 's|.*/||'`
-
-    tool_download $APPBUNDLER_URL $APPBUNDLER_FILE $APPBUNDLER_DIR
 }
    
 virtualenv_prepare() {
@@ -412,111 +370,25 @@ virtualenv_prepare() {
     fi
 }
     
-windmill_prepare() {
-    WINDMILL="`which windmill 2> /dev/null`"
-    if [ -z "$WINDMILL" ] ; then
-        check_python
-        tools_prepare
-        virtualenv_prepare
-
-        if [ "$OS" = "windows" ] ; then
-            check_pywin32
-            WINDMILL="$PYTHON_HOME/Scripts/windmill.exe"
-        else 
-            WINDMILL="$PYTHON_HOME/bin/windmill"
-        fi
-        
-        if [ ! -f "$WINDMILL" ] ; then
-            "$PYTHON_INSTALL" windmill
-        fi
-    fi    
-}
-
-findbugs_prepare() {
-    tools_prepare
-    FB_VERSION="2.0.2"
-    FINDBUGS_URL="http://downloads.sourceforge.net/project/findbugs/findbugs/${FB_VERSION}/findbugs-${FB_VERSION}.tar.gz"
-    FINDBUGS_FILE=`echo $FINDBUGS_URL | sed 's|.*/||'`
-    FINDBUGS_DIR="findbugs-${FB_VERSION}"
-
-    tool_download $FINDBUGS_URL $FINDBUGS_FILE $FINDBUGS_DIR
-}
-
-pmd_prepare() {
-    tools_prepare
-    
-    PMD_VERSION="4.2.6"
-    PMD_URL="http://downloads.sourceforge.net/project/pmd/pmd/${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip"
-    PMD_FILE=`echo $PMD_URL | sed 's|.*/||'`
-    PMD_DIR="pmd-bin-${PMD_VERSION}"
-
-    tool_download $PMD_URL $PMD_FILE $PMD_DIR
-}
-
-jslint_prepare() {
-    tools_prepare
-
-    JSLINT_VERSION="2.0.3"
-    JSLINT_URL="http://jslint4java.googlecode.com/files/jslint4java-${JSLINT_VERSION}-dist.zip"
-    JSLINT_FILE=`echo $JSLINT_URL | sed 's|.*/||'`
-    JSLINT_DIR="jslint4java-${JSLINT_VERSION}"
-
-    tool_download $JSLINT_URL $JSLINT_FILE $JSLINT_DIR
-}
-            
 # ----------------------------------------------------------------------------------------------
 
-ant() {
-    ant_prepare   
+mvn() {
+    mvn_prepare   
     
-    #export ANT_OPTS="-Xmx1024M"
-    
-    "$ANT" -f build.xml $ANT_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running ant task '$1'"
+    "$MVN" $MVN_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running maven task '$1'"
 }
 
 # ----------------------------------------------------------------------------------------------
 
 dist() {
-    windows_dist $1
-    linux_dist $1
-    mac_dist $1
-    
-    echo "All distributions were built and are located at $REFINE_DIST_DIR"
-    echo 
-    echo "Upload them to the distibution site, then prepend the releases array at"
-    echo
-    echo "   https://github.com/OpenRefine/OpenRefine/tree/gh-pages/javascript/releases.js"
-    echo
-    echo "with"
-    echo 
-    echo "    {"
-    echo "        \"description\": \"OpenRefine ${VERSION}\","
-    echo "        \"version\": \"${VERSION}\","
-    # TODO: We need to modify version checking for the future
-    echo "        \"revision\": \"${REVISION}\""
-    echo "    },"
-    echo
-}
-
-windows_dist() {
-    dist_prepare
     get_version $1
-    get_revision
-
-    launch4j_prepare
-    
-    ANT_PARAMS="-Dlaunch4j.dir=${REFINE_TOOLS_DIR}/${LAUNCH4J_DIR}"
-    ant windows
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    mvn package
 }
-
-linux_dist() {
-    dist_prepare
-    get_version $1
-    get_revision
-    
-    ant linux
-}
-    
+ 
+# Kept just in case someone wants to follow this workflow on a mac,
+# but no longer needed as "mvn package" does it directly on both mac and linux.
 mac_dist() {
     check_macosx
     dist_prepare
@@ -531,7 +403,7 @@ mac_dist() {
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
     
-    SIZE=250
+    SIZE=350
     
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
@@ -588,8 +460,8 @@ mac_dist() {
 }
 
 test() {
-    server_test $1
-    ui_test $1 
+    mvn_prepare
+    $MVN test
 }
 
 ui_test() {
@@ -627,11 +499,17 @@ ui_test() {
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
     echo "Cleaning up"
-    rm -rf $REFINE_DATA_DIR
+    rm -rf "$REFINE_DATA_DIR"
 }
 
 server_test() {
-    ant server_test
+    mvn_prepare
+    $MVN test -f main
+}
+
+extensions_test() {
+    mvn_prepare
+    $MVN test -f extensions
 }
 
 run() {
@@ -646,13 +524,15 @@ run() {
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
-            ant build
+            mvn_prepare
+            $MVN process-resources
+            $MVN compile test-compile
             echo ""
         fi
     fi
-            
+
     if [ -d $REFINE_CLASSES_DIR ] ; then
-        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
     fi
 
     if [ "$OS" = "macosx" ] ; then
@@ -679,20 +559,21 @@ run() {
         add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
     fi
 
+    if [ "$REFINE_AUTOSAVE_PERIOD" ] ; then
+        add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
+    fi
+
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
+    RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
 
-    #echo "$RUN_CMD"
-    #echo ""
-  
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
-        exec $RUN_CMD
+        exec "${RUN_CMD[@]}"
     else
-        $RUN_CMD &
+        "${RUN_CMD[@]}" &
         REFINE_PID="$!"
     fi
 }
@@ -700,7 +581,8 @@ run() {
 broker_build() {
     build_prepare
     get_revision    
-    ant prepare_broker
+    # TODO migrate to Maven
+    $MVN prepare_broker
 }
 
 broker_run() {
@@ -712,7 +594,7 @@ broker_run() {
     fi
 
     if [ -d $REFINE_CLASSES_DIR ] ; then
-        add_option "-Drefine.autoreload=true -Dbutterfly.autoreload=true"
+        add_option "-Drefine.autoreload=true" "-Dbutterfly.autoreload=true"
         add_option "-Drefine.development=true"
     fi
 
@@ -722,7 +604,8 @@ broker_run() {
     add_option "-Drefine.port=$REFINE_PORT"
     add_option "-Drefine.host=0.0.0.0"
                     
-    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
+    LIB_PATHS=`cat server/classpath.txt`
+    CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
 
     RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
 
@@ -745,17 +628,18 @@ broker_appengine_build() {
     appengine_prepare
     get_revision
     
-    ANT_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
+    MVN_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
 
     if [ "$1" ] ; then
-        ANT_PARAMS="$ANT_PARAMS -Dappengine.app_id=$1"
+        MVN_PARAMS="$MVN_PARAMS -Dappengine.app_id=$1"
     fi
     
     if [ "$2" ] ; then
-        ANT_PARAMS="$ANT_PARAMS -Dappengine.version=$2"
+        MVN_PARAMS="$MVN_PARAMS -Dappengine.version=$2"
     fi
         
-    ant prepare_broker_appengine
+    # TODO migrate this to Maven
+    $MVN prepare_broker_appengine
 }
        
 broker_appengine_upload() {
@@ -771,7 +655,7 @@ broker_appengine_run() {
 findbugs() {
     findbugs_prepare
     
-    ANT_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
+    MVN_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
     
     display "$REFINE_BUILD_DIR/reports/findbugs.html"
@@ -819,6 +703,23 @@ whitespace() {
     done
 }   
     
+checkJavaMajorVersion() {
+  java_ver=$("$JAVA" -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
+  # Java 6, 7, 8 starts with 1.x
+  if [ ${java_ver:0:2} == "1." ] ; then
+    major=`echo ${java_ver} | sed -E 's/1\.([0-9])[0-9_.]{2,6}/\1/g'`
+  else
+    # Java 9+ starts with x using semver versioning
+    major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
+  fi
+  if (( ${major} < 7 )); then
+    error "OpenRefine requires Java version 7 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  fi
+  if (( ${major} > 9 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 9."
+  fi
+}
+
 # -------------------------- script -----------------------------
     
 # ----- Normalize the current directory -------------------------
@@ -827,7 +728,7 @@ cd `dirname $0`
 
 # ----- Default values ------------------------------------------
 
-OPTS=""
+OPTS=()
 
 # ---- OS-specific support --------------------------------------
 
@@ -869,10 +770,7 @@ if [ ! -x "$JAVA" ] ; then
     error "Could not find the 'java' executable at '$JAVA', are you sure your JAVA_HOME environment variable is pointing to a proper java installation?"
 fi
 
-JAVA_VERSION=`$JAVA -version 2>&1 | grep version | cut -d ' ' -f 3 | egrep '^\"1\.(6|7|8|9)'`
-if [ -z "$JAVA_VERSION" ] ; then
-    error "OpenRefine requires Java version 6 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
-fi
+checkJavaMajorVersion
 
 # ----- Parse the command line args ------------------------------------------
 
@@ -887,7 +785,7 @@ while [ $# -ne 0 ] ; do
     -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
-    --debug) shift; add_option '-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
+    --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
     *) break;;
@@ -907,12 +805,27 @@ fi
 if [ -z "$JAVA_OPTIONS" ] ; then
   JAVA_OPTIONS=""
 fi
-add_option "$JAVA_OPTIONS"
+add_option "${JAVA_OPTIONS[@]}"
 
 if [ -z "$REFINE_MEMORY" ] ; then
     REFINE_MEMORY="1024M"
 fi
-add_option "-Xms256M -Xmx$REFINE_MEMORY -Drefine.memory=$REFINE_MEMORY"
+if [ -z "$REFINE_MIN_MEMORY" ] ; then
+    REFINE_MIN_MEMORY="256M"
+fi
+add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFINE_MEMORY"
+
+freeRam=UNKNOWN
+if [ "$OS" = "macosx" ] ; then
+	freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+elif [ "$OS" = "linux" ] ; then
+	freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+fi
+
+echo You have "$freeRam"M of free memory. 
+echo Your current configuration is set to use $REFINE_MEMORY of memory.
+echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
+echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
@@ -940,7 +853,7 @@ if [ -z "$REFINE_CLASSES_DIR" ] ; then
 fi
 
 if [ -z "$REFINE_LIB_DIR" ] ; then
-    REFINE_LIB_DIR="server/lib"
+    REFINE_LIB_DIR="server/target/lib"
 fi
 
 if [ -z "$REFINE_BUILD_DIR" ] ; then
@@ -975,16 +888,18 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; ant build;;
-  clean) ant clean;;
+  build) build_prepare; mvn process-resources; mvn compile\ test-compile;;
+  clean) mvn clean;;
   whitespace) whitespace $1;;
-  distclean) ant distclean;;
+  distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
   ui_test) ui_test $1;;  
   ui_tests) ui_test $1;;  
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
+  extensions_test) extensions_test $1;;
+  extensions_tests) extensions_test $1;;
   findbugs) findbugs;;  
   pmd) pmd;;  
   cpd) cpd;;  

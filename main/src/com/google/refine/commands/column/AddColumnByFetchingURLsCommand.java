@@ -33,20 +33,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.column;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
+import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+        HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String baseColumnName = request.getParameter("baseColumnName");
         String urlExpression = request.getParameter("urlExpression");
@@ -54,7 +58,10 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
         int columnInsertIndex = Integer.parseInt(request.getParameter("columnInsertIndex"));
         int delay = Integer.parseInt(request.getParameter("delay"));
         String onError = request.getParameter("onError");
-        
+        boolean cacheResponses = Boolean.parseBoolean(request.getParameter("cacheResponses"));
+        ObjectMapper mapper = new ObjectMapper();
+        List<HttpHeader> headers = Arrays.asList(mapper.readValue(request.getParameter("httpHeaders"), HttpHeader[].class));
+
         return new ColumnAdditionByFetchingURLsOperation(
             engineConfig, 
             baseColumnName, 
@@ -62,7 +69,9 @@ public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
             TextTransformOperation.stringToOnError(onError),
             newColumnName,
             columnInsertIndex,
-            delay
+            delay,
+            cacheResponses,
+            headers
         );
     }
 

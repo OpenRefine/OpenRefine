@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -43,12 +43,15 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.EvalError;
@@ -57,7 +60,6 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -66,142 +68,203 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
+
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
+    public static final class HttpHeader  {
+        @JsonProperty("name")
+        final public String name;
+        @JsonProperty("value")
+        final public String value;
+        
+        @JsonCreator
+        public HttpHeader(
+                @JsonProperty("name")
+                String name,
+                @JsonProperty("value")
+                String value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+    
     final protected String     _baseColumnName;
     final protected String     _urlExpression;
     final protected OnError    _onError;
-    
+
     final protected String     _newColumnName;
     final protected int        _columnInsertIndex;
     final protected int        _delay;
+    final protected boolean    _cacheResponses;
+    final protected List<HttpHeader>  _httpHeadersJson;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ColumnAdditionByFetchingURLsOperation(
-            engineConfig,
-            obj.getString("baseColumnName"),
-            obj.getString("urlExpression"),
-            TextTransformOperation.stringToOnError(obj.getString("onError")),
-            obj.getString("newColumnName"),
-            obj.getInt("columnInsertIndex"),
-            obj.getInt("delay")
-        );
-    }
-    
+    @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
-        JSONObject     engineConfig,
+        @JsonProperty("engineConfig")
+        EngineConfig   engineConfig,
+        @JsonProperty("baseColumnName")
         String         baseColumnName,
+        @JsonProperty("urlExpression")
         String         urlExpression,
+        @JsonProperty("onError")
         OnError        onError,
-        String         newColumnName, 
+        @JsonProperty("newColumnName")
+        String         newColumnName,
+        @JsonProperty("columnInsertIndex")
         int            columnInsertIndex,
-        int            delay
+        @JsonProperty("delay")
+        int            delay,
+        @JsonProperty("cacheResponses")
+        boolean        cacheResponses,
+        @JsonProperty("httpHeadersJson")
+        List<HttpHeader>      httpHeadersJson
     ) {
         super(engineConfig);
-        
+
         _baseColumnName = baseColumnName;
         _urlExpression = urlExpression;
         _onError = onError;
-        
+
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
-        
-        _delay = delay;
-    }
 
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("newColumnName"); writer.value(_newColumnName);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("urlExpression"); writer.value(_urlExpression);
-        writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
-        writer.key("delay"); writer.value(_delay);
-        writer.endObject();
+        _delay = delay;
+        _cacheResponses = cacheResponses;
+        _httpHeadersJson = httpHeadersJson;
+    }
+    
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+        return _newColumnName;
+    }
+    
+    @JsonProperty("columnInsertIndex")
+    public int getColumnInsertIndex() {
+        return _columnInsertIndex;
+    }
+    
+    @JsonProperty("baseColumnName")
+    public String getBaseColumnName() {
+        return _baseColumnName;
+    }
+    
+    @JsonProperty("urlExpression")
+    public String getUrlExpression() {
+        return _urlExpression;
+    }
+    
+    @JsonProperty("onError")
+    public OnError getOnError() {
+        return _onError;
+    }
+    
+    @JsonProperty("delay")
+    public int getDelay() {
+        return _delay;
+    }
+    
+    @JsonProperty("httpHeadersJson")
+    public List<HttpHeader> getHttpHeadersJson() {
+        return _httpHeadersJson;
+    }
+    
+    @JsonProperty("cacheResponses")
+    public boolean getCacheResponses() {
+        return _cacheResponses;
     }
 
     @Override
     protected String getBriefDescription(Project project) {
-        return "Create column " + _newColumnName + 
-            " at index " + _columnInsertIndex + 
-            " by fetching URLs based on column " + _baseColumnName + 
+        return "Create column " + _newColumnName +
+            " at index " + _columnInsertIndex +
+            " by fetching URLs based on column " + _baseColumnName +
             " using expression " + _urlExpression;
     }
 
     protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
-        return "Create new column " + _newColumnName + 
+        return "Create new column " + _newColumnName +
             ", filling " + cellsAtRows.size() +
-            " rows by fetching URLs based on column " + column.getName() + 
+            " rows by fetching URLs based on column " + column.getName() +
             " and formulated as " + _urlExpression;
     }
-    
-    
+
+
     @Override
     public Process createProcess(Project project, Properties options) throws Exception {
         Engine engine = createEngine(project);
-        engine.initializeFromJSON(_engineConfig);
-        
+        engine.initializeFromConfig(_engineConfig);
+
         Evaluable eval = MetaParser.parse(_urlExpression);
-        
+
         return new ColumnAdditionByFetchingURLsProcess(
-            project, 
+            project,
             engine,
             eval,
-            getBriefDescription(null)
+            getBriefDescription(null),
+            _cacheResponses
         );
     }
-    
+
     public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
-        final protected Project     _project;
-        final protected Engine      _engine;
-        final protected Evaluable   _eval;
-        final protected long        _historyEntryID;
-        protected int               _cellIndex;
+        final protected Project       _project;
+        final protected Engine        _engine;
+        final protected Evaluable     _eval;
+        final protected long          _historyEntryID;
+        protected int                 _cellIndex;
+        protected LoadingCache<String, Serializable> _urlCache;
 
         public ColumnAdditionByFetchingURLsProcess(
-            Project project, 
+            Project project,
             Engine engine,
             Evaluable eval,
-            String description
-        ) throws JSONException {
+            String description,
+            boolean cacheResponses
+        ) {
             super(description);
             _project = project;
             _engine = engine;
             _eval = eval;
             _historyEntryID = HistoryEntry.allocateID();
-        }
-        
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            
-            writer.object();
-            writer.key("id"); writer.value(hashCode());
-            writer.key("description"); writer.value(_description);
-            writer.key("immediate"); writer.value(false);
-            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-            writer.key("progress"); writer.value(_progress);
-            writer.endObject();
+            _urlCache = null;
+            if (cacheResponses) {
+                _urlCache = CacheBuilder.newBuilder()
+                .maximumSize(2048)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .build(
+                     new CacheLoader<String, Serializable>() {
+                        public Serializable load(String urlString) throws Exception {
+                            Serializable result = fetch(urlString);
+                            try {
+                                // Always sleep for the delay, no matter how long the
+                                // request took. This is more responsible than substracting
+                                // the time spend requesting the URL, because it naturally
+                                // slows us down if the server is busy and takes a long time
+                                // to reply.
+                                if (_delay > 0) {
+                                    Thread.sleep(_delay);
+                                }
+                            } catch (InterruptedException e) {
+                                result = null;
+                            }
+
+                            if (result == null) {
+                                // the load method should not return any null value
+                                throw new Exception("null result returned by fetch");
+                            }
+                            return result;
+                        }
+                        });
+            }
         }
         
         @Override
         protected Runnable getRunnable() {
             return this;
         }
-        
+
         @Override
         public void run() {
             Column column = _project.columnModel.getColumnByName(_baseColumnName);
@@ -213,66 +276,84 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 _project.processManager.onFailedProcess(this, new Exception("Another column already named " + _newColumnName));
                 return;
             }
-            
+
             List<CellAtRow> urls = new ArrayList<CellAtRow>(_project.rows.size());
-            
+
             FilteredRows filteredRows = _engine.getAllFilteredRows();
             filteredRows.accept(_project, createRowVisitor(urls));
-            
+
             List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(urls.size());
             for (int i = 0; i < urls.size(); i++) {
                 CellAtRow urlData = urls.get(i);
-                long start = System.currentTimeMillis();
-                CellAtRow cellAtRow = fetch(urlData);
-                if (cellAtRow != null) {
+                String urlString = urlData.cell.value.toString();
+
+                Serializable response = null;
+                if (_urlCache != null) {
+                    response = cachedFetch(urlString);
+                } else {
+                    response = fetch(urlString);
+                }
+
+                if (response != null) {
+                    CellAtRow cellAtRow = new CellAtRow(
+                            urlData.row,
+                            new Cell(response, null));
+
                     responseBodies.add(cellAtRow);
                 }
-                
+
                 _progress = i * 100 / urls.size();
-                try {
-                    long delay = _delay - (System.currentTimeMillis() - start);
-                    if (delay > 0) {
-                        Thread.sleep(delay);
-                    }
-                } catch (InterruptedException e) {
-                    if (_canceled) {
-                        break;
-                    }
+
+                if (_canceled) {
+                    break;
                 }
             }
-            
+
             if (!_canceled) {
-                
                 HistoryEntry historyEntry = new HistoryEntry(
                     _historyEntryID,
-                    _project, 
-                    _description, 
-                    ColumnAdditionByFetchingURLsOperation.this, 
+                    _project,
+                    _description,
+                    ColumnAdditionByFetchingURLsOperation.this,
                     new ColumnAdditionChange(
                         _newColumnName,
                         _columnInsertIndex,
                         responseBodies)
                 );
-                
+
                 _project.history.addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }
         }
-        
-        CellAtRow fetch(CellAtRow urlData) {
-            String urlString = urlData.cell.value.toString();
+
+        Serializable cachedFetch(String urlString) {
+            try {
+                return  _urlCache.get(urlString);
+            } catch(Exception e) {
+                return null;
+            }
+        }
+
+        Serializable fetch(String urlString) {
             URL url = null;
-            
             try {
                 url = new URL(urlString);
             } catch (MalformedURLException e) {
                 return null;
             }
-            
+
             try {
                 URLConnection urlConnection = url.openConnection();
-//                    urlConnection.setRequestProperty(_headerKey, _headerValue);
-                
+                if (_httpHeadersJson != null) {
+                    for (int i = 0; i < _httpHeadersJson.size(); i++) {
+                        String headerLabel = _httpHeadersJson.get(i).name;
+                        String headerValue = _httpHeadersJson.get(i).value;
+                        if (headerValue != null && !headerValue.isEmpty()) {
+                            urlConnection.setRequestProperty(headerLabel, headerValue);
+                        }
+                    }
+                }
+
                 try {
                     InputStream is = urlConnection.getInputStream();
                     try {
@@ -287,12 +368,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                                 }
                             }
                         }
-                        return new CellAtRow(
-                                urlData.row,
-                                new Cell(
-                                        ParsingUtilities.inputStreamToString(
-                                                is, (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding),
-                                                null));
+                        return ParsingUtilities.inputStreamToString(
+                                                is, (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
 
                     } finally {
                         is.close();
@@ -313,11 +390,11 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         message = e.toString();
                     }
                     return _onError == OnError.StoreError ?
-                            new CellAtRow(urlData.row, new Cell(new EvalError(message), null)) : null;
+                            new EvalError(message) : null;
                 }
             } catch (Exception e) {
                 return _onError == OnError.StoreError ?
-                        new CellAtRow(urlData.row, new Cell(new EvalError(e.getMessage()), null)) : null;
+                        new EvalError(e.getMessage()) : null;
             }
         }
 
@@ -326,33 +403,33 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 int              cellIndex;
                 Properties       bindings;
                 List<CellAtRow>  cellsAtRows;
-                
+
                 public RowVisitor init(List<CellAtRow> cellsAtRows) {
                     Column column = _project.columnModel.getColumnByName(_baseColumnName);
-                    
+
                     this.cellIndex = column.getCellIndex();
                     this.bindings = ExpressionUtils.createBindings(_project);
                     this.cellsAtRows = cellsAtRows;
                     return this;
                 }
-                
+
                 @Override
                 public void start(Project project) {
                     // nothing to do
                 }
-                
+
                 @Override
                 public void end(Project project) {
                     // nothing to do
                 }
-                
+
                 @Override
                 public boolean visit(Project project, int rowIndex, Row row) {
                     Cell cell = row.getCell(cellIndex);
                     Cell newCell = null;
-                    
+
                     ExpressionUtils.bind(bindings, row, rowIndex, _baseColumnName, cell);
-                    
+
                     Object o = _eval.evaluate(bindings);
                     if (o != null) {
                         if (o instanceof Cell) {
@@ -366,11 +443,11 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                             }
                         }
                     }
-                    
+
                     if (newCell != null) {
                         cellsAtRows.add(new CellAtRow(rowIndex, newCell));
                     }
-                    
+
                     return false;
                 }
             }.init(cellsAtRows);

@@ -168,6 +168,7 @@ div.data-table-cell-content {
   line-height: 1.2;
   color: #222;
   position: relative;
+  white-space: pre-wrap;
   }
 
 div.data-table-cell-content-numeric {
@@ -198,6 +199,11 @@ div.data-table-cell-content-numeric > a.data-table-cell-edit {
 
 .data-table-value-nonstring {
   color: #282;
+  }
+
+.data-table-null {
+  color: #aaa;
+  display: none;
   }
 
 .data-table-error {
@@ -292,6 +298,13 @@ a.data-table-flag-off {
   padding: @padding_tight;
   .rounded_corners();
   }
+
+.data-table-topic-popup {
+  z-index: 1010;
+  position: fixed;
+  line-height: 1;
+  white-space: initial;
+  }
  
 .data-table-topic-popup-header {
   padding: 0 0 5px;
@@ -314,6 +327,21 @@ a.data-table-flag-off {
 .data-table-cell-editor-key {
   font-size: 0.8em;
   color: @light_grey;
+  }
+
+.set-httpheaders-container {
+  display: none;
+  }
+
+.set-httpheaders-container label {
+  display: inline-block;
+  width: 15%;
+  text-align: left;
+  }
+
+.set-httpheaders-container input {
+  display: inline-block;
+  width: 50%;
   }
 
 ul.sorting-dialog-blank-error-positions {

@@ -33,83 +33,88 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.InterProjectModel;
-import com.google.refine.Jsonizable;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
-public class Column implements Jsonizable {
+public class Column  {
     final private int       _cellIndex;
     final private String    _originalName;
     private String          _name;
     private ReconConfig     _reconConfig;
     private ReconStats      _reconStats;
     
+    // from data package metadata Field.java:
+    private String type = "";
+    private String format = "default";
+    private String title = "";
+    private String description = "";
+    private Map<String, Object> constraints = Collections.emptyMap();
+    
     transient protected Map<String, Object> _precomputes;
     
-    public Column(int cellIndex, String originalName) {
+    @JsonCreator
+    public Column(
+            @JsonProperty("cellIndex")
+            int cellIndex,
+            @JsonProperty("originalName")
+            String originalName) {
         _cellIndex = cellIndex;
         _originalName = _name = originalName;
     }
     
+    @JsonProperty("cellIndex")
     public int getCellIndex() {
         return _cellIndex;
     }
 
+    @JsonProperty("originalName")
     public String getOriginalHeaderLabel() {
         return _originalName;
     }
     
+    @JsonProperty("name")
     public void setName(String name) {
         this._name = name;
     }
 
+    @JsonProperty("name")
     public String getName() {
         return _name;
     }
 
+    @JsonProperty("reconConfig")
     public void setReconConfig(ReconConfig config) {
         this._reconConfig = config;
     }
 
+    @JsonProperty("reconConfig")
+    @JsonInclude(Include.NON_NULL)
     public ReconConfig getReconConfig() {
         return _reconConfig;
     }
 
+    @JsonProperty("reconStats")
     public void setReconStats(ReconStats stats) {
         this._reconStats = stats;
     }
 
+    @JsonProperty("reconStats")
+    @JsonInclude(Include.NON_NULL)
     public ReconStats getReconStats() {
         return _reconStats;
-    }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("cellIndex"); writer.value(_cellIndex);
-        writer.key("originalName"); writer.value(_originalName);
-        writer.key("name"); writer.value(_name);
-        if (_reconConfig != null) {
-            writer.key("reconConfig");
-            _reconConfig.write(writer, options);
-        }
-        if (_reconStats != null) {
-            writer.key("reconStats");
-            _reconStats.write(writer, options);
-        }
-        writer.endObject();
     }
     
     /**
@@ -140,28 +145,86 @@ public class Column implements Jsonizable {
         _precomputes.put(key, value);
     }
     
-    public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
+    @JsonProperty("type")
+    public String getType() {
+        return type;
+    }
+
+    @JsonProperty("type")
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    
+    @JsonProperty("format")
+    public String getFormat() {
+        return format;
+    }
+
+    @JsonProperty("format")
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    
+    @JsonProperty("title")
+    public String getTitle() {
+        return title;
+    }
+
+    @JsonProperty("title")
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonProperty("description")
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @JsonProperty("constraints")
+    public String getConstraintsString() {
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
+            return ParsingUtilities.mapper.writeValueAsString(constraints);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+    
+    @JsonProperty("constraints")
+    public void setConstraintsJson(String json) {
+        try {
+            setConstraints(ParsingUtilities.mapper.readValue(json, new TypeReference<Map<String,Object>>() {}));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public Map<String, Object> getConstraints() {
+        return constraints;
+    }
+
+    
+    public void setConstraints(Map<String, Object> constraints) {
+        this.constraints = constraints;
+    }
+
+    public void save(Writer writer) {
+        try {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
     static public Column load(String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-        Column column = new Column(obj.getInt("cellIndex"), obj.getString("originalName"));
-        
-        column._name = obj.getString("name");
-        if (obj.has("reconConfig")) {
-            column._reconConfig = ReconConfig.reconstruct(obj.getJSONObject("reconConfig"));
-        }
-        if (obj.has("reconStats")) {
-            column._reconStats = ReconStats.load(obj.getJSONObject("reconStats"));
-        }
-        
-        return column;
+        return ParsingUtilities.mapper.readValue(s, Column.class);
     }
     
     @Override

@@ -35,35 +35,38 @@ package com.google.refine.expr.functions.html;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-import org.jsoup.Jsoup;
-
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.xml.ParseXml;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class ParseHtml implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length >= 1) {
+        if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof String) {
-                return Jsoup.parse(o1.toString());
+                return new ParseXml().call(bindings,args,"html");
             }
         }
-        return null;
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
-
-        writer.object();
-        writer.key("description"); writer.value("Parses a string as HTML");
-        writer.key("params"); writer.value("string s");
-        writer.key("returns"); writer.value("HTML object");
-        writer.endObject();
+    public String getDescription() {
+        return "Parses a string as HTML";
+    }
+    
+    @Override
+    public String getParams() {
+        return "string s";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "HTML object";
     }
 }
 

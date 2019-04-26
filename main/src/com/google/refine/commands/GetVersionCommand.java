@@ -39,27 +39,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.RefineServlet;
 
 public class GetVersionCommand extends Command {
+
+	protected class VersionResponse {
+		@JsonProperty("version")
+		public String version = RefineServlet.VERSION;
+		@JsonProperty("revision")
+		public String revision = RefineServlet.REVISION;
+		@JsonProperty("full_version")
+		public String full_version = RefineServlet.FULL_VERSION;
+		@JsonProperty("full_name")
+		public String full_name = RefineServlet.FULLNAME;
+	}
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            JSONObject o = new JSONObject();
-            o.put("version", RefineServlet.VERSION);
-            o.put("revision", RefineServlet.REVISION);
-            o.put("full_version", RefineServlet.FULL_VERSION);
-            o.put("full_name", RefineServlet.FULLNAME);
-
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            respond(response, o.toString());
-        } catch (JSONException e) {
-            e.printStackTrace(response.getWriter());
-        }
+        respondJSON(response, new VersionResponse());
     }
 }

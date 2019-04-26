@@ -33,19 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Properties;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
@@ -53,8 +56,10 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
 import com.google.refine.util.StringUtils;
 
-public class Cell implements HasFields, Jsonizable {
+public class Cell implements HasFields {
+    @JsonIgnore
     final public Serializable   value;
+    @JsonIgnore
     final public Recon          recon;
     
     public Cell(Serializable value, Recon recon) {
@@ -76,120 +81,113 @@ public class Cell implements HasFields, Jsonizable {
     public boolean fieldAlsoHasFields(String name) {
         return "recon".equals(name);
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
+    
+    @JsonProperty("e")
+    @JsonInclude(Include.NON_NULL)
+    public String getErrorMessage() {
         if (ExpressionUtils.isError(value)) {
-            writer.key("e");
-            writer.value(((EvalError) value).message);
-        } else {
-            writer.key("v");
-            if (value != null) {
-                if (value instanceof Calendar) {
-                    writer.value(ParsingUtilities.dateToString(((Calendar) value).getTime()));
-                    writer.key("t"); writer.value("date");
-                } else if (value instanceof Date) {
-                    writer.value(ParsingUtilities.dateToString((Date) value));
-                    writer.key("t"); writer.value("date");
-                } else if (value instanceof Double 
-                        && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
-                    // write as a string
-                    writer.value(((Double)value).toString());
-                } else if (value instanceof Float
-                        && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
-                    // TODO: Skip?  Write as string?
-                    writer.value(((Float)value).toString());
-                } else {
-                    writer.value(value);
-                }
-            } else {
-                writer.value(null);
+            return ((EvalError) value).message;
+        }
+        return null;
+    }
+    
+    @JsonProperty("t")
+    @JsonInclude(Include.NON_NULL)
+    public String getTypeString() {
+        if (value instanceof OffsetDateTime || value instanceof LocalDateTime) {
+            return "date";
+        }
+        return null;
+    }
+    
+    @JsonProperty("v")
+    @JsonInclude(Include.NON_NULL)
+    public Object getValue() {
+        if (value != null && !ExpressionUtils.isError(value)) {
+            Instant instant = null;
+            if (value instanceof OffsetDateTime) {
+                instant = ((OffsetDateTime)value).toInstant();
+            } else if (value instanceof LocalDateTime) {
+                instant = ((LocalDateTime)value).toInstant(ZoneOffset.of("Z"));
             }
-        }
-        
-        if (recon != null) {
-            writer.key("r");
-            writer.value(Long.toString(recon.id));
             
-            Pool pool = (Pool) options.get("pool");
-            pool.pool(recon);
+            if (instant != null) {
+                return ParsingUtilities.instantToString(instant);
+            } else if (value instanceof Double 
+                    && (((Double)value).isNaN() || ((Double)value).isInfinite())) {
+                // write as a string
+                 return ((Double)value).toString();
+            } else if (value instanceof Float
+                    && (((Float)value).isNaN() || ((Float)value).isInfinite())) {
+                return ((Float)value).toString();
+            } else if (value instanceof Boolean || value instanceof Number){
+                return value;
+            } else {
+                return value.toString();
+            }
+        } else {
+           return null;
         }
-        writer.endObject();
+    }
+    
+    /**
+     * TODO
+     * - use JsonIdentityInfo on recon
+     * - implement custom resolver to tie it to a pool
+     * - figure it all out
+     * @return
+     */
+    @JsonProperty("r")
+    @JsonInclude(Include.NON_NULL)
+    public String getReconIdString() {
+        if (recon != null) {
+            return Long.toString(recon.id);
+        }
+        return null;
     }
     
     public void save(Writer writer, Properties options) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, options);
-        } catch (JSONException e) {
+            Pool pool = (Pool)options.get("pool");
+            if(pool != null && recon != null) {
+                pool.pool(recon);
+            }
+            ParsingUtilities.saveWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
     static public Cell loadStreaming(String s, Pool pool) throws Exception {
-        JsonFactory jsonFactory = new JsonFactory(); 
-        JsonParser jp = jsonFactory.createJsonParser(s);
-        
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        return loadStreaming(jp, pool);
+        InjectableValues injectableValues = new InjectableValues.Std()
+                .addValue("pool", pool);
+        return ParsingUtilities.mapper.setInjectableValues(injectableValues)
+                .readValue(s, Cell.class);
     }
     
-    static public Cell loadStreaming(JsonParser jp, Pool pool) throws Exception {
-        JsonToken t = jp.getCurrentToken();
-        if (t == JsonToken.VALUE_NULL || t != JsonToken.START_OBJECT) {
-            return null;
-        }
-        
-        Serializable value = null;
-        String type = null;
+    @JsonCreator
+    static public Cell deserialize(
+            @JsonProperty("v")
+            Object value,
+            @JsonProperty("t")
+            String type,
+            @JsonProperty("r")
+            String reconId,
+            @JsonProperty("e")
+            String error,
+            @JacksonInject("pool")
+            Pool pool) {
         Recon recon = null;
-        
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jp.getCurrentName();
-            jp.nextToken();
-            
-            if ("r".equals(fieldName)) {
-                if (jp.getCurrentToken() == JsonToken.VALUE_STRING) {
-                    String reconID = jp.getText();
-                    
-                    recon = pool.getRecon(reconID);
-                } else {
-                    // legacy
-                    recon = Recon.loadStreaming(jp, pool);
-                }
-            } else if ("e".equals(fieldName)) {
-                value = new EvalError(jp.getText());
-            } else if ("v".equals(fieldName)) {
-                JsonToken token = jp.getCurrentToken();
-            
-                if (token == JsonToken.VALUE_STRING) {
-                    value = jp.getText();
-                } else if (token == JsonToken.VALUE_NUMBER_INT) {
-                    value = jp.getLongValue();
-                } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
-                    value = jp.getDoubleValue();
-                } else if (token == JsonToken.VALUE_TRUE) {
-                    value = true;
-                } else if (token == JsonToken.VALUE_FALSE) {
-                    value = false;
-                }
-            } else if ("t".equals(fieldName)) {
-                type = jp.getText();
-            }
+        if(reconId != null) {
+            recon = pool.getRecon(reconId);
         }
-        
-        if (value != null) {
-            if (type != null && "date".equals(type)) {
-                value = ParsingUtilities.stringToDate((String) value); 
-            }
-            return new Cell(value, recon);
-        } else {
-            return null;
+        if (type != null && "date".equals(type)) {
+            value = ParsingUtilities.stringToDate((String) value); 
         }
+        if (error != null) {
+            value = new EvalError(error);
+        }
+        return new Cell((Serializable)value, recon);
     }
     
     @Override

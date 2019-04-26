@@ -36,9 +36,6 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 import java.util.TreeSet;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 import com.google.refine.expr.EvalError;
@@ -76,13 +73,17 @@ public class NGramFingerprint implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the n-gram fingerprint of s";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the n-gram fingerprint of s");
-        writer.key("params"); writer.value("string s, number n");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, number n";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

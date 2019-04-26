@@ -33,11 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.refine.expr.functions.Coalesce;
 import com.google.refine.expr.functions.Cross;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.expr.functions.Get;
@@ -49,6 +51,7 @@ import com.google.refine.expr.functions.ToDate;
 import com.google.refine.expr.functions.ToNumber;
 import com.google.refine.expr.functions.ToString;
 import com.google.refine.expr.functions.Type;
+import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.expr.functions.arrays.Join;
 import com.google.refine.expr.functions.arrays.Reverse;
 import com.google.refine.expr.functions.arrays.Sort;
@@ -60,12 +63,8 @@ import com.google.refine.expr.functions.booleans.Xor;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.expr.functions.date.Now;
-import com.google.refine.expr.functions.html.HtmlAttr;
-import com.google.refine.expr.functions.html.HtmlText;
 import com.google.refine.expr.functions.html.InnerHtml;
-import com.google.refine.expr.functions.html.OwnText;
 import com.google.refine.expr.functions.html.ParseHtml;
-import com.google.refine.expr.functions.html.SelectHtml;
 import com.google.refine.expr.functions.math.ACos;
 import com.google.refine.expr.functions.math.ASin;
 import com.google.refine.expr.functions.math.ATan;
@@ -93,6 +92,7 @@ import com.google.refine.expr.functions.math.Odd;
 import com.google.refine.expr.functions.math.Pow;
 import com.google.refine.expr.functions.math.Quotient;
 import com.google.refine.expr.functions.math.Radians;
+import com.google.refine.expr.functions.math.RandomNumber;
 import com.google.refine.expr.functions.math.Round;
 import com.google.refine.expr.functions.math.Sin;
 import com.google.refine.expr.functions.math.Sinh;
@@ -104,6 +104,7 @@ import com.google.refine.expr.functions.strings.Contains;
 import com.google.refine.expr.functions.strings.Diff;
 import com.google.refine.expr.functions.strings.EndsWith;
 import com.google.refine.expr.functions.strings.Escape;
+import com.google.refine.expr.functions.strings.Find;
 import com.google.refine.expr.functions.strings.Fingerprint;
 import com.google.refine.expr.functions.strings.IndexOf;
 import com.google.refine.expr.functions.strings.LastIndexOf;
@@ -115,6 +116,7 @@ import com.google.refine.expr.functions.strings.ParseJson;
 import com.google.refine.expr.functions.strings.Partition;
 import com.google.refine.expr.functions.strings.Phonetic;
 import com.google.refine.expr.functions.strings.RPartition;
+import com.google.refine.expr.functions.strings.Range;
 import com.google.refine.expr.functions.strings.Reinterpret;
 import com.google.refine.expr.functions.strings.Replace;
 import com.google.refine.expr.functions.strings.ReplaceChars;
@@ -131,6 +133,12 @@ import com.google.refine.expr.functions.strings.Trim;
 import com.google.refine.expr.functions.strings.Unescape;
 import com.google.refine.expr.functions.strings.Unicode;
 import com.google.refine.expr.functions.strings.UnicodeType;
+import com.google.refine.expr.functions.xml.InnerXml;
+import com.google.refine.expr.functions.xml.OwnText;
+import com.google.refine.expr.functions.xml.ParseXml;
+import com.google.refine.expr.functions.xml.SelectXml;
+import com.google.refine.expr.functions.xml.XmlAttr;
+import com.google.refine.expr.functions.xml.XmlText;
 import com.google.refine.grel.controls.Filter;
 import com.google.refine.grel.controls.ForEach;
 import com.google.refine.grel.controls.ForEachIndex;
@@ -138,6 +146,7 @@ import com.google.refine.grel.controls.ForNonBlank;
 import com.google.refine.grel.controls.ForRange;
 import com.google.refine.grel.controls.If;
 import com.google.refine.grel.controls.IsBlank;
+import com.google.refine.grel.controls.IsEmptyString;
 import com.google.refine.grel.controls.IsError;
 import com.google.refine.grel.controls.IsNonBlank;
 import com.google.refine.grel.controls.IsNotNull;
@@ -162,6 +171,9 @@ public class ControlFunctionRegistry {
     static public Set<Entry<String, Function>> getFunctionMapping() {
         return s_nameToFunction.entrySet();
     }
+    static public Map<String,Function> getFunctionMap() {
+        return Collections.unmodifiableMap(s_nameToFunction);
+    }
 
     static public Control getControl(String name) {
         return s_nameToControl.get(name);
@@ -171,6 +183,9 @@ public class ControlFunctionRegistry {
     }
     static public Set<Entry<String, Control>> getControlMapping() {
         return s_nameToControl.entrySet();
+    }
+    static public Map<String,Control> getControlMap() {
+        return Collections.unmodifiableMap(s_nameToControl);
     }
 
     static public void registerFunction(String name, Function f) {
@@ -184,6 +199,7 @@ public class ControlFunctionRegistry {
     }
 
     static {
+        registerFunction("coalesce", new Coalesce());
         registerFunction("type", new Type());
 
         registerFunction("toString", new ToString());
@@ -200,6 +216,7 @@ public class ControlFunctionRegistry {
         registerFunction("substring", new Slice());
         registerFunction("replace", new Replace());
         registerFunction("replaceChars", new ReplaceChars());
+        registerFunction("range", new Range());
         registerFunction("split", new Split());
         registerFunction("smartSplit", new SmartSplit());
         registerFunction("splitByCharType", new SplitByCharType());
@@ -226,12 +243,17 @@ public class ControlFunctionRegistry {
         registerFunction("parseJson", new ParseJson());
         registerFunction("ngram", new NGram());
         registerFunction("match", new Match());
+        registerFunction("find", new Find());
 
-        // HTML functions from JSoup
+        // XML and HTML functions from JSoup
+        registerFunction("parseXml", new ParseXml());
         registerFunction("parseHtml", new ParseHtml());
-        registerFunction("select", new SelectHtml());
-        registerFunction("htmlAttr", new HtmlAttr());
-        registerFunction("htmlText", new HtmlText());
+        registerFunction("select", new SelectXml());
+        registerFunction("xmlAttr", new XmlAttr());
+        registerFunction("htmlAttr", new XmlAttr());
+        registerFunction("xmlText", new XmlText());
+        registerFunction("htmlText", new XmlText());
+        registerFunction("innerXml", new InnerXml());
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
 
@@ -243,6 +265,7 @@ public class ControlFunctionRegistry {
         registerFunction("reverse", new Reverse());
         registerFunction("sort", new Sort());
         registerFunction("uniques", new Uniques());
+        registerFunction("inArray", new InArray());
 
         registerFunction("now", new Now());
         registerFunction("inc", new Inc());
@@ -277,6 +300,7 @@ public class ControlFunctionRegistry {
         registerFunction("combin", new Combin());
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
+        registerFunction("randomNumber", new RandomNumber());
         registerFunction("gcd", new GreatestCommonDenominator());
         registerFunction("lcm", new LeastCommonMultiple());
         registerFunction("multinomial", new Multinomial());
@@ -301,6 +325,7 @@ public class ControlFunctionRegistry {
 
         registerControl("isNull", new IsNull());
         registerControl("isNotNull", new IsNotNull());
+        registerControl("isEmptyString", new IsEmptyString());
         registerControl("isBlank", new IsBlank());
         registerControl("isNonBlank", new IsNonBlank());
         registerControl("isNumeric", new IsNumeric());

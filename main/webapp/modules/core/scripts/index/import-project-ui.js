@@ -37,15 +37,15 @@ Refine.ImportProjectUI = function(elmt) {
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
   
-  $('#or-import-locate').text($.i18n._('core-index-import')["locate"]);
-  $('#or-import-file').text($.i18n._('core-index-import')["file"]);
-  $('#or-import-rename').text($.i18n._('core-index-import')["rename"]);
-  $('#import-project-button').attr("value",$.i18n._('core-buttons')["import-proj"]);
+  $('#or-import-locate').text($.i18n('core-index-import/locate'));
+  $('#or-import-file').text($.i18n('core-index-import/file'));
+  $('#or-import-rename').text($.i18n('core-index-import/rename'));
+  $('#import-project-button').attr("value",$.i18n('core-buttons/import-proj'));
 };
 
 Refine.actionAreas.push({
   id: "import-project",
-  label: $.i18n._('core-index-import')["import-proj"],
+  label: $.i18n('core-index-import/import-proj'),
   uiClass: Refine.ImportProjectUI
 });
 

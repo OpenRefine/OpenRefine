@@ -35,10 +35,7 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.HasFields;
 import com.google.refine.grel.Function;
 
@@ -54,12 +51,8 @@ public class HasField implements Function {
                 String name = (String) f;
                 if (v instanceof HasFields) {
                     return ((HasFields) v).getField(name, bindings) != null;
-                } else if (v instanceof JSONObject) {
-                    try {
-                        return ((JSONObject) v).get(name) != null;
-                    } catch (JSONException e) {
-                        // ignore; will return false
-                    }
+                } else if (v instanceof ObjectNode) {
+                    return ((ObjectNode) v).has(name);
                 }
             }
         }
@@ -67,13 +60,17 @@ public class HasField implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns whether o has field name";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns whether o has field name");
-        writer.key("params"); writer.value("o, string name");
-        writer.key("returns"); writer.value("boolean");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "o, string name";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

@@ -43,7 +43,7 @@ function ProcessPanel(div) {
   this._div.html(DOM.loadHTML("core", "scripts/project/progress-panel.html"));
   this._elmts = DOM.bind(this._div);
 
-  this._elmts.undoLink.html($.i18n._('core-project')["undo"]);
+  this._elmts.undoLink.html($.i18n('core-project/undo'));
   
   var self = this;
   $(window).keypress(function(evt) {
@@ -96,10 +96,13 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
 
   this._latestHistoryEntry = historyEntry;
 
+  truncDescription = historyEntry.description.length > 250 ?
+  	historyEntry.description.substring(0, 250) + " ..." : historyEntry.description  
+
   this._div.stop(true, false);
   this._elmts.progressDiv.hide();
   this._elmts.undoDiv.show();
-  this._elmts.undoDescription.text(historyEntry.description);
+  this._elmts.undoDescription.text( truncDescription );
   this._elmts.undoLink.unbind().click(function() { self.undo(); });
   
   this._div
@@ -150,9 +153,9 @@ ProcessPanel.prototype._render = function(newData) {
       var process = processes[i];
       if (process.status != "pending") {
         // TODO: We should be using formatting, not string concatenation here
-        Refine.setTitle(process.progress + "% "+$.i18n._('core-project')["complete"]);
+        Refine.setTitle(process.progress + "% "+$.i18n('core-project/complete'));
         this._elmts.progressDescription.text(process.description);
-        this._elmts.progressSpan.text(process.progress  + '% '+$.i18n._('core-project')["complete"]);
+        this._elmts.progressSpan.text(process.progress  + '% '+$.i18n('core-project/complete'));
       }
       if ("onDone" in process) {
         newProcessMap[process.id] = process;
@@ -161,16 +164,16 @@ ProcessPanel.prototype._render = function(newData) {
     
     if (processes.length > 1) {
       var pending = processes.length - 1;
-      this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' '+$.i18n._('core-project')["other-processes"]+')' : ' '+$.i18n._('core-project')["other-process"]+')'));
+      this._elmts.countSpan.text('(' + pending + (pending > 1 ? ' '+$.i18n('core-project/other-processes')+')' : ' '+$.i18n('core-project/other-process')+')'));
     } else {
       this._elmts.countSpan.empty();
     }
     this._elmts.cancelLink
       .unbind()
-      .text(processes.length > 1 ? $.i18n._('core-project')["cancel-all"] : $.i18n._('core-project')["cancel"])
+      .text(processes.length > 1 ? $.i18n('core-project/cancel-all') : $.i18n('core-project/cancel'))
       .click(function() {
         self._cancelAll();
-        $(this).text($.i18n._('core-project')["canceling"]).unbind();
+        $(this).text($.i18n('core-project/canceling')).unbind();
       });
     
     this._div.fadeIn(200);
@@ -193,10 +196,10 @@ ProcessPanel.prototype._render = function(newData) {
     }).join('\n');
     
     if (this._data.processes.length == 0) {
-      window.alert($.i18n._('core-project')["last-op-er"]+':\n' + messages);
+      window.alert($.i18n('core-project/last-op-er')+':\n' + messages);
     } else {
-      if (window.confirm($.i18n._('core-project')["last-op-er"]+':\n' + messages +
-            '\n\n'+$.i18n._('core-project')["continue-remaining"]+'?')) {
+      if (window.confirm($.i18n('core-project/last-op-er')+':\n' + messages +
+            '\n\n'+$.i18n('core-project/continue-remaining')+'?')) {
         $.post(
           "command/core/apply-operations?" + $.param({ project: theProject.id }), 
           { operations: '[]' },

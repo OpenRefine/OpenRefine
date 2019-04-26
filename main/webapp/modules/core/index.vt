@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="OpenRefine" src="images/logo-openrefine-30.png" width="129" height="29" />
+    <img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" />
     <span id="slogan"></span>
   </div>
   
@@ -54,10 +54,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     <div id="project-links">
       <div id="logo-container">
-        <img alt="OpenRefine" src="images/logo-gem-40.png" />
+        <img alt="OpenRefine" src="images/logo-gem-126.png" height="65" />
         <div id="openrefine-version"></div>
       </div>
       <ul>
+        <li><a href="preferences" id="or-index-pref"></a></li>
         <li><a href="https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users" id="or-index-help"></a></li>
         <li><a href="about.html" id="or-index-about"></a></li>
       </ul>

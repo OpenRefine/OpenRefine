@@ -35,7 +35,7 @@ package com.google.refine.grel.controls;
 
 public class IsNull extends IsTest {
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Returns whether o is null";
     }
 

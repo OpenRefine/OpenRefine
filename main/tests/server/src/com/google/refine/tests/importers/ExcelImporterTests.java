@@ -53,8 +53,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -62,8 +60,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.importers.ExcelImporter;
-import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
     
@@ -74,6 +73,7 @@ public class ExcelImporterTests extends ImporterTest {
     
     //private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
+    private static final File xlsxFile = createSpreadsheet(true);
     
     @Override
     @BeforeTest
@@ -100,12 +100,10 @@ public class ExcelImporterTests extends ImporterTest {
     
     //---------------------read tests------------------------
     @Test
-    public void readXls() throws FileNotFoundException{
+    public void readXls() throws FileNotFoundException, IOException{
 
-        JSONArray sheets = new JSONArray();
-        JSONUtilities.append(sheets, 0);
-//        JSONUtilities.append(sheets, 1);
-//        JSONUtilities.append(sheets, 2);
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
         
         whenGetIntegerOption("ignoreLines", options, 0);
@@ -133,15 +131,50 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
+    }
+    
+    @Test
+    public void readXlsx() throws FileNotFoundException, IOException{
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+        
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        
+        InputStream stream = new FileInputStream(xlsxFile);
+        
         try {
-            verify(options, times(1)).getInt("ignoreLines");
-            verify(options, times(1)).getInt("headerLines");
-            verify(options, times(1)).getInt("skipDataLines");
-            verify(options, times(1)).getInt("limit");
-            verify(options, times(1)).getBoolean("storeBlankCellsAsNulls");
-        } catch (JSONException e) {
-            Assert.fail("JSON exception",e);
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
         }
+        
+        Assert.assertEquals(project.rows.size(), ROWS);
+        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
+        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+
+        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+        
+        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
+        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+
+        verify(options, times(1)).get("ignoreLines");
+        verify(options, times(1)).get("headerLines");
+        verify(options, times(1)).get("skipDataLines");
+        verify(options, times(1)).get("limit");
+        verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
     
     private static File createSpreadsheet(boolean xml) {
@@ -189,6 +222,7 @@ public class ExcelImporterTests extends ImporterTest {
             wb.write(outputStream);
             outputStream.flush();
             outputStream.close();
+            wb.close();
         } catch (IOException e) {
             return null;
         }

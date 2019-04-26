@@ -1,0 +1,29 @@
+2.8
+com.google.refine.model.changes.DataExtensionChange
+baseColumnName=item
+service=https://tools.wmflabs.org/openrefine-wikidata/en/api
+identifierSpace=http://www.wikidata.org/entity/
+schemaSpace=http://www.wikidata.org/prop/direct/
+columnInsertIndex=1
+columnNameCount=2
+instance of
+inception
+columnTypeCount=2
+{"id":"Q21503252","name":"instance of"}
+
+rowIndexCount=1
+0
+firstNewCellIndex=1
+newRowCount=9
+{"flagged":false,"starred":false,"cells":[{"v":"Wikidata","r":"1526743824662484326"},{"v":"Wikimedia content project","r":"1527019713238399737"},{"v":"2012-10-29T00:00:00Z","t":"date"}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"semantic wiki","r":"1527019713239325739"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"knowledge base","r":"1527019713239978180"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"wiki with script conversion","r":"1527019713239859496"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"online database","r":"1527019713239103094"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"Semantic Web","r":"1527019713239599435"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"Wikimedia project","r":"1527019713239979343"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"knowledge graph","r":"1527019713239208298"},{"v":null}]}
+{"flagged":false,"starred":false,"cells":[null,{"v":"website","r":"1527019713239148006"},{"v":null}]}
+oldRowCount=1
+{"flagged":false,"starred":false,"cells":[{"v":"Wikidata","r":"1526743824662484326"}]}
+/ec/

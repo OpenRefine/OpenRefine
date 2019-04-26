@@ -35,6 +35,7 @@ package com.google.refine.importers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -44,20 +45,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.apache.poi.poifs.filesystem.FileMagic;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
@@ -67,6 +70,7 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
@@ -76,44 +80,44 @@ public class ExcelImporter extends TabularImportingParserBase {
     }
     
     @Override
-    public JSONObject createParserUIInitializationData(
-            ImportingJob job, List<JSONObject> fileRecords, String format) {
-        JSONObject options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
-        JSONArray sheetRecords = new JSONArray();
+        ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
-            if (fileRecords.size() > 0) {
-                JSONObject firstFileRecord = fileRecords.get(0);
-                File file = ImportingUtilities.getFile(job, firstFileRecord);
+            for (int index = 0;index < fileRecords.size();index++) {
+                ObjectNode fileRecord = fileRecords.get(index);
+                File file = ImportingUtilities.getFile(job, fileRecord);
                 InputStream is = new FileInputStream(file);
 
                 if (!is.markSupported()) {
-                  is = new PushbackInputStream(is, 8);
+                  is = new BufferedInputStream(is);
                 }
 
                 try {
-                    Workbook wb = POIXMLDocument.hasOOXMLHeader(is) ?
+                    Workbook wb = FileMagic.valueOf(is) == FileMagic.OOXML ?
                             new XSSFWorkbook(is) :
                                 new HSSFWorkbook(new POIFSFileSystem(is));
 
                             int sheetCount = wb.getNumberOfSheets();
-                            boolean hasData = false;
                             for (int i = 0; i < sheetCount; i++) {
                                 Sheet sheet = wb.getSheetAt(i);
                                 int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
 
-                                JSONObject sheetRecord = new JSONObject();
-                                JSONUtilities.safePut(sheetRecord, "name", sheet.getSheetName());
+                                ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
+                                JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
+                                JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
                                 JSONUtilities.safePut(sheetRecord, "rows", rows);
-                                if (hasData) {
-                                    JSONUtilities.safePut(sheetRecord, "selected", false);
-                                } else if (rows > 1) {
+                                if (rows > 1) {
                                     JSONUtilities.safePut(sheetRecord, "selected", true);
-                                    hasData = true;
+                                } else {
+                                    JSONUtilities.safePut(sheetRecord, "selected", false);
                                 }
                                 JSONUtilities.append(sheetRecords, sheetRecord);
                             }
+                            wb.close();
                 } finally {
                     is.close();
                 }
@@ -137,16 +141,16 @@ public class ExcelImporter extends TabularImportingParserBase {
         String fileSource,
         InputStream inputStream,
         int limit,
-        JSONObject options,
+        ObjectNode options,
         List<Exception> exceptions
     ) {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
-          inputStream = new PushbackInputStream(inputStream, 8);
+          inputStream = new BufferedInputStream(inputStream);
         }
         
         try {
-            wb = POIXMLDocument.hasOOXMLHeader(inputStream) ?
+            wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ?
                 new XSSFWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
@@ -181,9 +185,18 @@ public class ExcelImporter extends TabularImportingParserBase {
                 return;
         }
         
-        int[] sheets = JSONUtilities.getIntArray(options, "sheets");
-        for (int sheetIndex : sheets) {
-            final Sheet sheet = wb.getSheetAt(sheetIndex);
+        ArrayNode sheets = (ArrayNode) options.get("sheets");
+        
+        for(int i=0;i<sheets.size();i++)  {
+            String[] fileNameAndSheetIndex = new String[2];
+            ObjectNode sheetObj = (ObjectNode) sheets.get(i);
+            // value is fileName#sheetIndex
+            fileNameAndSheetIndex = sheetObj.get("fileNameAndSheetIndex").asText().split("#");
+            
+            if (!fileNameAndSheetIndex[0].equals(fileSource))
+                continue;
+            
+            final Sheet sheet = wb.getSheetAt(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = sheet.getLastRowNum();
             
             TableDataReader dataReader = new TableDataReader() {
@@ -225,22 +238,24 @@ public class ExcelImporter extends TabularImportingParserBase {
                 exceptions
             );
         }
+
+        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
     
     static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
-        int cellType = cell.getCellType();
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+        CellType cellType = cell.getCellType();
+        if (cellType.equals(CellType.FORMULA)) {
             cellType = cell.getCachedFormulaResultType();
         }
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR ||
-            cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK) {
+        if (cellType.equals(CellType.ERROR) ||
+            cellType.equals(CellType.BLANK)) {
             return null;
         }
         
         Serializable value = null;
-        if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN) {
+        if (cellType.equals(CellType.BOOLEAN)) {
             value = cell.getBooleanCellValue();
-        } else if (cellType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) {
+        } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
             
             if (HSSFDateUtil.isCellDateFormatted(cell)) {

@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.clustering.binning.ColognePhoneticKeyer;
 import com.google.refine.clustering.binning.DoubleMetaphoneKeyer;
 import com.google.refine.clustering.binning.Metaphone3Keyer;
@@ -100,13 +97,17 @@ public class Phonetic implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the a phonetic encoding of s (optionally indicating which encoding to use')";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the a phonetic encoding of s (optionally indicating which encoding to use')");
-        writer.key("params"); writer.value("string s, string encoding (optional, defaults to 'metaphone3')");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s, string encoding (optional, defaults to 'metaphone3')";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

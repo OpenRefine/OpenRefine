@@ -36,10 +36,8 @@ package com.google.refine.tests.commands;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
@@ -53,8 +51,8 @@ public class CommandStub extends Command {
         return getProject(request);
     }
 
-    public JSONObject wrapGetEngineConfig(HttpServletRequest request)
-    throws JSONException {
+    public EngineConfig wrapGetEngineConfig(HttpServletRequest request)
+    {
         return getEngineConfig(request);
     }
 
@@ -65,9 +63,5 @@ public class CommandStub extends Command {
 
     public int wrapGetIntegerParameter(HttpServletRequest request, String name,int def) {
         return getIntegerParameter(request, name, def);
-    }
-
-    public JSONObject wrapGetJsonParameter(HttpServletRequest request,String name) {
-        return getJsonParameter(request, name);
     }
 }

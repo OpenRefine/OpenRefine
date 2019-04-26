@@ -39,6 +39,7 @@ function DataTableView(div) {
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
+  this._shownulls = false;
 
   this._showRows(0);
 }
@@ -91,7 +92,7 @@ DataTableView.prototype.render = function() {
 
   var html = $(
     '<div class="viewpanel-header">' +
-      '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n._('core-views')["show-as"]+': ' +
+      '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
         '<span bind="modeSelectors"></span>' + 
       '</div>' +
       '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
@@ -123,8 +124,8 @@ DataTableView.prototype.render = function() {
       });
     }
   };
-  renderBrowsingModeLink($.i18n._('core-views')["rows"], "row-based");
-  renderBrowsingModeLink($.i18n._('core-views')["records"], "record-based");
+  renderBrowsingModeLink($.i18n('core-views/rows'), "row-based");
+  renderBrowsingModeLink($.i18n('core-views/records'), "record-based");
 
   this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
 
@@ -134,7 +135,10 @@ DataTableView.prototype.render = function() {
 
   this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
   this._div.empty().append(html);
-  
+
+  // show/hide null values in cells
+  $(".data-table-null").toggle(self._shownulls);
+
   this.resize();
   
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
@@ -159,8 +163,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var from = (theProject.rowModel.start + 1);
   var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
 
-  var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n._('core-views')["first"]+'</a>').appendTo(pagingControls);
-  var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n._('core-views')["previous"]+'</a>').appendTo(pagingControls);
+  var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
+  var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
   if (theProject.rowModel.start > 0) {
     firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
     previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
@@ -171,8 +175,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 
   $('<span>').addClass("viewpanel-pagingcount").html(" " + from + " - " + to + " ").appendTo(pagingControls);
 
-  var nextPage = $('<a href="javascript:{}">'+$.i18n._('core-views')["next"]+' &rsaquo;</a>').appendTo(pagingControls);
-  var lastPage = $('<a href="javascript:{}">'+$.i18n._('core-views')["last"]+' &raquo;</a>').appendTo(pagingControls);
+  var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
+  var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
   if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
     nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
     lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
@@ -181,7 +185,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     lastPage.addClass("inaction");
   }
 
-  $('<span>'+$.i18n._('core-views')["show"]+': </span>').appendTo(pageSizeControls);
+  $('<span>'+$.i18n('core-views/show')+': </span>').appendTo(pageSizeControls);
   var sizes = [ 5, 10, 25, 50 ];
   var renderPageSize = function(index) {
     var pageSize = sizes[index];
@@ -202,7 +206,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   $('<span>')
-  .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n._('core-views')["records"] : ' '+$.i18n._('core-views')["rows"])
+  .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
   .appendTo(pageSizeControls);
 };
 
@@ -302,7 +306,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       .addClass("column-header")
       .html(
         '<div class="column-header-title">' +
-          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n._('core-views')["all"]+'</span>' +
+          '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
         '</div>'
       )
   ).dropdownMenu.click(function() {
@@ -544,39 +548,83 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     for (var i = 0; i < this._sorting.criteria.length; i++) {
       if (this._sorting.criteria[i].column == criterion.column) {
         this._sorting.criteria[i] = criterion;
-    	var dismissBusy = DialogSystem.showBusy();
-        var onDone = function() {
-          dismissBusy();
-    	}
-        this.update(onDone);
+        this.update();
         return;
       }
     }
   }
   this._sorting.criteria.push(criterion);
-  var dismissBusy = DialogSystem.showBusy();
-  var onDone = function() {
-    dismissBusy();
-  }
-  this.update(onDone);
+  this.update();
 };
 
+/** below can be move to seperate file **/
+  var doTextTransformPrompt = function() {
+    var frame = $(
+        DOM.loadHTML("core", "scripts/views/data-table/text-transform-dialog.html")
+        .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
+
+    var elmts = DOM.bind(frame);
+    elmts.or_views_errorOn.text($.i18n('core-views/on-error'));
+    elmts.or_views_keepOr.text($.i18n('core-views/keep-or'));
+    elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));
+    elmts.or_views_storeErr.text($.i18n('core-views/store-err'));
+    elmts.or_views_reTrans.text($.i18n('core-views/re-trans'));
+    elmts.or_views_timesChang.text($.i18n('core-views/times-chang'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));    
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
+        new ExpressionColumnDialog(
+                previewWidget.getExpression(true),
+                $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
+                elmts.repeatCheckbox[0].checked,
+                elmts.repeatCountInput[0].value
+        );
+    });
+    
+    var previewWidget = new ExpressionPreviewDialog.Widget(
+      elmts,
+      -1,
+      [],
+      [],
+      null
+    );
+    previewWidget._prepareUpdate = function(params) {
+      params.repeat = elmts.repeatCheckbox[0].checked;
+      params.repeatCount = elmts.repeatCountInput[0].value;
+    };
+  };
+  /** above can be move to seperate file **/
+  
 DataTableView.prototype._createMenuForAllColumns = function(elmt) {
   var self = this;
   var menu = [
+        {
+            label: $.i18n('core-views/transform'),
+            id: "core/facets",
+            width: "200px",
+            click: function() {
+                   doTextTransformPrompt();
+            }
+        },
+    {},
     {
-      label: $.i18n._('core-views')["facet"],
+      label: $.i18n('core-views/facet'),
       id: "core/facets",
       width: "200px",
       submenu: [
         {
-          label: $.i18n._('core-views')["facet-star"],
+          label: $.i18n('core-views/facet-star'),
           id: "core/facet-by-star",
           click: function() {
             ui.browsingEngine.addFacet(
               "list", 
               {
-                "name" : $.i18n._('core-views')["starred-rows"],
+                "name" : $.i18n('core-views/starred-rows'),
                 "columnName" : "", 
                 "expression" : "row.starred"
               },
@@ -587,15 +635,66 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n._('core-views')["facet-flag"],
+          label: $.i18n('core-views/facet-flag'),
           id: "core/facet-by-flag",
           click: function() {
             ui.browsingEngine.addFacet(
               "list", 
               {
-                "name" : $.i18n._('core-views')["flagged-rows"],
+                "name" : $.i18n('core-views/flagged-rows'),
                 "columnName" : "", 
                 "expression" : "row.flagged"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/facet-blank'),
+          id: "core/facet-by-blank",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/blank-rows'),
+                "columnName" : "", 
+                "expression" : "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/non-blank-values'),
+          id: "core/non-blank-values",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/non-blank-values'),
+                "columnName" : "", 
+                "expression" : "filter(row.columnNames,cn,isNonBlank(cells[cn].value))"
+              },
+              {
+                "scroll" : false
+              }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/non-blank-records'),
+          id: "core/non-blank-records",
+          click: function() {
+            ui.browsingEngine.addFacet(
+              "list", 
+              {
+                "name" : $.i18n('core-views/non-blank-records'),
+                "columnName" : "", 
+                "expression" : "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))"
               },
               {
                 "scroll" : false
@@ -607,19 +706,19 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     },
     {},
     {
-      label: $.i18n._('core-views')["edit-rows"],
+      label: $.i18n('core-views/edit-rows'),
       id: "core/edit-rows",
       width: "200px",
       submenu: [
         {
-          label: $.i18n._('core-views')["star-rows"],
+          label: $.i18n('core-views/star-rows'),
           id: "core/star-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "starred" : "true" }, null, { rowMetadataChanged: true });
           }
         },
         {
-          label: $.i18n._('core-views')["unstar-rows"],
+          label: $.i18n('core-views/unstar-rows'),
           id: "core/unstar-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "starred" : "false" }, null, { rowMetadataChanged: true });
@@ -627,14 +726,14 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         },
         {},
         {
-          label: $.i18n._('core-views')["flag-rows"],
+          label: $.i18n('core-views/flag-rows'),
           id: "core/flag-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "flagged" : "true" }, null, { rowMetadataChanged: true });
           }
         },
         {
-          label: $.i18n._('core-views')["unflag-rows"],
+          label: $.i18n('core-views/unflag-rows'),
           id: "core/unflag-rows",
           click: function() {
             Refine.postCoreProcess("annotate-rows", { "flagged" : "false" }, null, { rowMetadataChanged: true });
@@ -642,7 +741,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         },
         {},
         {
-          label: $.i18n._('core-views')["remove-matching"],
+          label: $.i18n('core-views/remove-matching'),
           id: "core/remove-rows",
           click: function() {
             Refine.postCoreProcess("remove-rows", {}, null, { rowMetadataChanged: true });
@@ -651,12 +750,12 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
       ]
     },
     {
-      label: $.i18n._('core-views')["edit-col"],
+      label: $.i18n('core-views/edit-col'),
       id: "core/edit-columns",
       width: "200px",
       submenu: [
         {
-          label: $.i18n._('core-views')["reorder-remove"]+"...",
+          label: $.i18n('core-views/reorder-remove')+"...",
           id: "core/reorder-columns",
           click: function() {
             new ColumnReorderingDialog();
@@ -666,12 +765,12 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     },
     {},
     {
-      label: $.i18n._('core-views')["view"],
+      label: $.i18n('core-views/view'),
       id: "core/view",
       width: "200px",
       submenu: [
         {
-          label: $.i18n._('core-views')["collapse-all"],
+          label: $.i18n('core-views/collapse-all'),
           id: "core/collapse-all-columns",
           click: function() {
             for (var i = 0; i < theProject.columnModel.columns.length; i++) {
@@ -681,11 +780,19 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
-          label: $.i18n._('core-views')["expand-all"],
+          label: $.i18n('core-views/expand-all'),
           id: "core/expand-all-columns",
           click: function() {
             self._collapsedColumnNames = [];
             self.render();
+          }
+        },
+        {
+          label: $.i18n('core-views/display-null'),
+          id: "core/display-null",
+          click: function() {
+            $(".data-table-null").toggle();
+            self._shownulls = !(self._shownulls);
           }
         }
       ]
@@ -703,19 +810,22 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
   var self = this;
   var items = [
     {
-      "label" : $.i18n._('core-views')["remove-sort"],
+      "label" : $.i18n('core-views/remove-sort'),
       "click" : function() {
         self._sorting.criteria = [];
         self.update();
       }
     },
     {
-      "label" : $.i18n._('core-views')["reorder-perma"],
+      "label" : $.i18n('core-views/reorder-perma'),
       "click" : function() {
         Refine.postCoreProcess(
           "reorder-rows",
           null,
-          { "sorting" : JSON.stringify(self._sorting) }, 
+          {
+            "sorting" : JSON.stringify(self._sorting),
+            "mode" : ui.browsingEngine.getMode()
+          },
           { rowMetadataChanged: true },
           {
             onDone: function() {
@@ -741,7 +851,7 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
     var columnHeaderUI = getColumnHeaderUI(criterion.column);
     if (columnHeaderUI !== null) {
       items.push({
-        "label" : $.i18n._('core-views')["by"]+" " + criterion.column,
+        "label" : $.i18n('core-views/by')+" " + criterion.column,
         "submenu" : columnHeaderUI.createSortingMenu()
       });
     }

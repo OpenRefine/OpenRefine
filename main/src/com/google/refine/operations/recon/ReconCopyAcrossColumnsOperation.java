@@ -38,19 +38,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -60,8 +58,6 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.util.JSONUtilities;
 
 public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     final protected String   _fromColumnName;
@@ -69,22 +65,17 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     final protected String[] _judgments;
     final protected boolean  _applyToJudgedCells;
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        return new ReconCopyAcrossColumnsOperation(
-            engineConfig, 
-            obj.getString("fromColumnName"),
-            JSONUtilities.getStringArray(obj, "toColumnNames"),
-            JSONUtilities.getStringArray(obj, "judgments"),
-            obj.getBoolean("applyToJudgedCells")
-        );
-    }
-    
+    @JsonCreator
     public ReconCopyAcrossColumnsOperation(
-        JSONObject engineConfig,
+        @JsonProperty("engineConfig")
+        EngineConfig engineConfig,
+        @JsonProperty("fromColumnName")
         String fromColumnName,
+        @JsonProperty("toColumnNames")
         String[] toColumnNames,
+        @JsonProperty("judgments")
         String[] judgments,
+        @JsonProperty("applyToJudgedCells")
         boolean applyToJudgedCells) {
         super(engineConfig);
         _fromColumnName = fromColumnName;
@@ -92,30 +83,25 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
         _judgments = judgments;
         _applyToJudgedCells = applyToJudgedCells;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("fromColumnName"); writer.value(_fromColumnName);
-        writer.key("toColumnNames");
-            writer.array();
-            for (String s : _toColumnNames) {
-                writer.value(s);
-            }
-            writer.endArray();
-        writer.key("judgments");
-            writer.array();
-            for (String s : _judgments) {
-                writer.value(s);
-            }
-            writer.endArray();
-        writer.key("applyToJudgedCells"); writer.value(_applyToJudgedCells);
-        writer.endObject();
+    
+    @JsonProperty("fromColumnName")
+    public String getFromColumnName() {
+        return _fromColumnName;
+    }
+    
+    @JsonProperty("toColumnNames")
+    public String[] getToColumnNames() {
+        return _toColumnNames;
+    }
+    
+    @JsonProperty("judgments")
+    public String[] getJudgments() {
+        return _judgments;
+    }
+    
+    @JsonProperty("applyToJudgedCells")
+    public boolean getApplyToJudgedCells() {
+        return _applyToJudgedCells;
     }
 
     @Override

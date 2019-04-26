@@ -36,32 +36,35 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
+import com.google.refine.util.ParsingUtilities;
 
-public class FileProjectManager extends ProjectManager {
+
+public class FileProjectManager extends ProjectManager  {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File                       _workspaceDir;
@@ -89,6 +92,7 @@ public class FileProjectManager extends ProjectManager {
         load();
     }
 
+    @JsonIgnore
     public File getWorkspaceDir() {
         return _workspaceDir;
     }
@@ -101,6 +105,7 @@ public class FileProjectManager extends ProjectManager {
         return dir;
     }
 
+    @JsonIgnore
     public File getProjectDir(long projectID) {
         return getProjectDir(_workspaceDir, projectID);
     }
@@ -118,8 +123,22 @@ public class FileProjectManager extends ProjectManager {
             if (metadata == null) {
                 metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
             }
+            
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
+                if (_projectsTags == null) {
+                    _projectsTags = new HashMap<String, Integer>();
+                }
+                
+                if (metadata != null && metadata.getTags() != null) {
+                    for (String tag : metadata.getTags()) {
+                      if (_projectsTags.containsKey(tag)) {
+                        _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                      } else {
+                        _projectsTags.put(tag, 1);
+                      }
+                    }
+                }
                 return true;
             } else {
                 return false;
@@ -215,7 +234,7 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    protected void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
+    public void saveMetadata(ProjectMetadata metadata, long projectId) throws Exception {
         File projectDir = getProjectDir(projectId);
         ProjectMetadataUtilities.save(metadata, projectDir);
     }
@@ -238,6 +257,7 @@ public class FileProjectManager extends ProjectManager {
     @Override
     protected void saveWorkspace() {
         synchronized (this) {
+            // TODO refactor this so that we check if the save is needed before writing to the file!
             File tempFile = new File(_workspaceDir, "workspace.temp.json");
             try {
                 if (!saveToFile(tempFile)) {
@@ -265,37 +285,31 @@ public class FileProjectManager extends ProjectManager {
             }
 
             tempFile.renameTo(file);
-
             logger.info("Saved workspace");
         }
     }
-
-    protected boolean saveToFile(File file) throws IOException, JSONException {
-        FileWriter writer = new FileWriter(file);
-        boolean saveWasNeeded = false;
-        try {
-            JSONWriter jsonWriter = new JSONWriter(writer);
-            jsonWriter.object();
-            jsonWriter.key("projectIDs");
-            jsonWriter.array();
-            for (Long id : _projectsMetadata.keySet()) {
-                ProjectMetadata metadata = _projectsMetadata.get(id);
-                if (metadata != null) {
-                    jsonWriter.value(id);
-                    if (metadata.isDirty()) {
-                        ProjectMetadataUtilities.save(metadata, getProjectDir(id));
-                        saveWasNeeded = true;
-                    }
-                }
+    
+    protected boolean saveNeeded() {
+        boolean projectSaveNeeded = _projectsMetadata.entrySet().stream()
+                .anyMatch(e -> e.getValue() != null && e.getValue().isDirty());
+        return projectSaveNeeded || _preferenceStore.isDirty();
+    }
+    
+    protected void saveProjectMetadata() throws IOException {
+        for(Entry<Long,ProjectMetadata> entry : _projectsMetadata.entrySet()) {
+            ProjectMetadata metadata = entry.getValue();
+            if (metadata != null && metadata.isDirty()) {
+                ProjectMetadataUtilities.save(metadata, getProjectDir(entry.getKey()));
             }
-            jsonWriter.endArray();
-            writer.write('\n');
+        }
+    }
 
-            jsonWriter.key("preferences");
-            saveWasNeeded |= _preferenceStore.isDirty();
-            _preferenceStore.write(jsonWriter, new Properties());
-
-            jsonWriter.endObject();
+    protected boolean saveToFile(File file) throws IOException {
+        FileWriter writer = new FileWriter(file);
+        boolean saveWasNeeded = saveNeeded();
+        try {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+            saveProjectMetadata();
         } finally {
             writer.close();
         }
@@ -341,7 +355,7 @@ public class FileProjectManager extends ProjectManager {
         }
         logger.error("Failed to load workspace from any attempted alternatives.");
     }
-
+    
     protected boolean loadFromFile(File file) {
         logger.info("Loading workspace: {}", file.getAbsolutePath());
 
@@ -349,47 +363,11 @@ public class FileProjectManager extends ProjectManager {
 
         boolean found = false;
 
-        if (file.exists() || file.canRead()) {
-            FileReader reader = null;
-            try {
-                reader = new FileReader(file);
-                JSONTokener tokener = new JSONTokener(reader);
-                JSONObject obj = (JSONObject) tokener.nextValue();
-
-                JSONArray a = obj.getJSONArray("projectIDs");
-                int count = a.length();
-                for (int i = 0; i < count; i++) {
-                    long id = a.getLong(i);
-
-                    File projectDir = getProjectDir(id);
-                    ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
-
-                    _projectsMetadata.put(id, metadata);
-                }
-
-                if (obj.has("preferences") && !obj.isNull("preferences")) {
-                    _preferenceStore.load(obj.getJSONObject("preferences"));
-                }
-
-                if (obj.has("expressions") && !obj.isNull("expressions")) { // backward compatibility
-                    ((TopList) _preferenceStore.get("scripting.expressions"))
-                    .load(obj.getJSONArray("expressions"));
-                }
-
-                found = true;
-            } catch (JSONException e) {
-                logger.warn("Error reading file", e);
-            } catch (IOException e) {
-                logger.warn("Error reading file", e);
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    logger.warn("Exception closing file",e);
-                }
-            }
+        try {
+        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+            found = true;
+        } catch(IOException e) {
+        	logger.warn(e.toString());
         }
 
         return found;
@@ -432,5 +410,59 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public HistoryEntryManager getHistoryEntryManager(){
         return new FileHistoryEntryManager();
+    }
+    
+    public static void gzipTarToOutputStream(Project project, OutputStream os) throws IOException {
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+        TarOutputStream tos = new TarOutputStream(gos);
+        try {
+            ProjectManager.singleton.exportProject(project.id, tos);
+        } finally {
+            tos.close();
+            gos.close();
+        }
+    }
+    
+    @JsonProperty("projectIDs")
+    public Set<Long> getProjectIds() {
+        return _projectsMetadata.keySet();
+    }
+    
+    @JsonProperty("projectIDs")
+    protected void loadProjects(List<Long> projectIDs) {
+        for (Long id : projectIDs) {
+
+            File projectDir = getProjectDir(id);
+            ProjectMetadata metadata = ProjectMetadataUtilities.load(projectDir);
+            
+            mergeEmptyUserMetadata(metadata);
+
+            _projectsMetadata.put(id, metadata);
+            
+            if (metadata != null && metadata.getTags() != null) {
+                for (String tag : metadata.getTags()) {
+                  if (_projectsTags.containsKey(tag)) {
+                    _projectsTags.put(tag, _projectsTags.get(tag) + 1);
+                  } else {
+                    _projectsTags.put(tag, 1);
+                  }
+                }
+            }
+        }
+    }
+    
+    @JsonProperty("preferences")
+    protected void setPreferences(PreferenceStore preferences) {
+    	if(preferences != null) {
+    		_preferenceStore = preferences;
+    	}
+    }
+    
+    // backwards compatibility
+    @JsonProperty("expressions")
+	protected void setExpressions(TopList newExpressions) {
+    	if (newExpressions != null) {
+    		_preferenceStore.put("scripting.expressions", newExpressions);
+    	}
     }
 }

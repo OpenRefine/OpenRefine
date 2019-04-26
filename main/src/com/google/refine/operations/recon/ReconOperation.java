@@ -33,25 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -63,9 +64,9 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 
 public class ReconOperation extends EngineDependentOperation {
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
@@ -73,19 +74,13 @@ public class ReconOperation extends EngineDependentOperation {
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ReconOperation(
-            engineConfig, 
-            obj.getString("columnName"),
-            ReconConfig.reconstruct(obj.getJSONObject("config"))
-        );
-    }
-    
+    @JsonCreator
     public ReconOperation(
-        JSONObject engineConfig, 
+        @JsonProperty("engineConfig")
+        EngineConfig engineConfig, 
+        @JsonProperty("columnName")
         String columnName, 
+        @JsonProperty("config")
         ReconConfig reconConfig
     ) {
         super(engineConfig);
@@ -106,18 +101,15 @@ public class ReconOperation extends EngineDependentOperation {
     protected String getBriefDescription(Project project) {
         return _reconConfig.getBriefDescription(project, _columnName);
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("config"); _reconConfig.write(writer, options);
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.endObject();
+    
+    @JsonProperty("config")
+    public ReconConfig getReconConfig() {
+        return _reconConfig;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
     }
 
     static protected class ReconEntry {
@@ -140,65 +132,63 @@ public class ReconOperation extends EngineDependentOperation {
     }
     
     public class ReconProcess extends LongRunningProcess implements Runnable {
-        final protected Project     _project;
-        final protected JSONObject  _engineConfig;
-        final protected long        _historyEntryID;
-        protected List<ReconEntry>  _entries;
-        protected int               _cellIndex;
+        final protected Project      _project;
+        final protected EngineConfig _engineConfig;
+        final protected long         _historyEntryID;
+        protected List<ReconEntry>   _entries;
+        protected int                _cellIndex;
+        
+        protected final String _addJudgmentFacetJson =
+                "{\n" + 
+                "  \"action\" : \"createFacet\",\n" + 
+                "  \"facetConfig\" : {\n" + 
+                "  \"columnName\" : \"" + _columnName + "\",\n" + 
+                "  \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n" + 
+                "    \"name\" : \"" + _columnName + ": judgment\"\n" + 
+                "    },\n" + 
+                "    \"facetOptions\" : {\n" + 
+                "      \"scroll\" : false\n" + 
+                "    },\n" + 
+                "    \"facetType\" : \"list\"\n" + 
+                " }";
+        protected final String _addScoreFacetJson = 
+                "{\n" + 
+                "  \"action\" : \"createFacet\",\n" + 
+                "  \"facetConfig\" : {\n" + 
+                "    \"columnName\" : \"" + _columnName + "\",\n" + 
+                "    \"expression\" : \"cell.recon.best.score\",\n" + 
+                "    \"mode\" : \"range\",\n" + 
+                "    \"name\" : \"" + _columnName + ": best candidate's score\"\n" + 
+                "         },\n" + 
+                "         \"facetType\" : \"range\"\n" + 
+                "}";
+        protected JsonNode _addJudgmentFacet, _addScoreFacet;
         
         public ReconProcess(
             Project project, 
-            JSONObject engineConfig, 
+            EngineConfig engineConfig, 
             String description
         ) {
             super(description);
             _project = project;
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
+            try {               
+                _addJudgmentFacet = ParsingUtilities.mapper.readValue(_addJudgmentFacetJson, JsonNode.class);
+                _addScoreFacet = ParsingUtilities.mapper.readValue(_addScoreFacetJson, JsonNode.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         
-        @Override
-        public void write(JSONWriter writer, Properties options)
-                throws JSONException {
-            
-            writer.object();
-            writer.key("id"); writer.value(hashCode());
-            writer.key("description"); writer.value(_description);
-            writer.key("immediate"); writer.value(false);
-            writer.key("status"); writer.value(_thread == null ? "pending" : (_thread.isAlive() ? "running" : "done"));
-            writer.key("progress"); writer.value(_progress);
-            writer.key("onDone");
-                writer.array();
-                    writer.object();
-                        writer.key("action"); writer.value("createFacet");
-                        writer.key("facetType"); writer.value("list");
-                        writer.key("facetConfig");
-                            writer.object();
-                                writer.key("name"); writer.value(_columnName + ": judgment");
-                                writer.key("columnName"); writer.value(_columnName);
-                                writer.key("expression"); writer.value("forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \"(unreconciled)\", \"(blank)\"))");
-                            writer.endObject();
-                        writer.key("facetOptions");
-                            writer.object();
-                                writer.key("scroll"); writer.value(false);
-                            writer.endObject();
-                    writer.endObject();
-
-                    if (_reconConfig instanceof StandardReconConfig) {
-                        writer.object();
-                            writer.key("action"); writer.value("createFacet");
-                            writer.key("facetType"); writer.value("range");
-                            writer.key("facetConfig");
-                                writer.object();
-                                    writer.key("name"); writer.value(_columnName + ": best candidate's score");
-                                    writer.key("columnName"); writer.value(_columnName);
-                                    writer.key("expression"); writer.value("cell.recon.best.score");
-                                    writer.key("mode"); writer.value("range");
-                                writer.endObject();
-                        writer.endObject();
-                    }
-                writer.endArray();
-            writer.endObject();
+        @JsonProperty("onDone")
+        public List<JsonNode> onDoneActions() {
+            List<JsonNode> onDone = new ArrayList<>();
+            onDone.add(_addJudgmentFacet);
+            if (_reconConfig instanceof StandardReconConfig) {
+                onDone.add(_addScoreFacet);
+            }
+            return onDone;
         }
         
         @Override
@@ -208,7 +198,7 @@ public class ReconOperation extends EngineDependentOperation {
         
         protected void populateEntries() throws Exception {
             Engine engine = new Engine(_project);
-            engine.initializeFromJSON(_engineConfig);
+            engine.initializeFromConfig(_engineConfig);
             
             Column column = _project.columnModel.getColumnByName(_columnName);
             if (column == null) {

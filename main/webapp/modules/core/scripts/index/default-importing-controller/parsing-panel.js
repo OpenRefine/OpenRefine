@@ -92,12 +92,19 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   });
   this._parsingPanelElmts.progressPanel.hide();
 
-  this._parsingPanelElmts.startOverButton.html($.i18n._('core-buttons')["startover"]);
-  this._parsingPanelElmts.nextButton.html($.i18n._('core-buttons')["create-project"]);
-  $('#or-import-parsopt').text($.i18n._('core-index-import')["parsing-options"]);
-  $('#or-import-projname').html($.i18n._('core-index-import')["project-name"]);
-  $('#or-import-updating').text($.i18n._('core-index-import')["updating-preview"]);
-  $('#or-import-parseas').text($.i18n._('core-index-import')["parse-as"]);
+  this._parsingPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
+  this._parsingPanelElmts.nextButton.html($.i18n('core-buttons/create-project'));
+  $('#or-import-parsopt').text($.i18n('core-index-import/parsing-options'));
+  $('#or-import-projname').html($.i18n('core-index-import/project-name'));
+  $('#or-import-projtags').html($.i18n('core-index-import/project-tags'));
+  $('#or-import-updating').text($.i18n('core-index-import/updating-preview'));
+  $('#or-import-parseas').text($.i18n('core-index-import/parse-as'));
+  
+  //tags dropdown
+  $("#tagsInput").select2({
+          tags: Refine.TagsManager._getAllProjectTags() ,
+          tokenSeparators: [",", " "]
+  });
   
   this._parsingPanelResizer = function() {
     var elmts = self._parsingPanelElmts;

@@ -35,9 +35,8 @@ package com.google.refine.commands.column;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
@@ -47,7 +46,7 @@ import com.google.refine.util.ParsingUtilities;
 public class SplitColumnCommand extends EngineDependentCommand {
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String columnName = request.getParameter("columnName");
         boolean guessCellType = Boolean.parseBoolean(request.getParameter("guessCellType"));
@@ -68,12 +67,7 @@ public class SplitColumnCommand extends EngineDependentCommand {
         } else {
             String s = request.getParameter("fieldLengths");
             
-            JSONArray a = ParsingUtilities.evaluateJsonStringToArray(s);
-            int[] fieldLengths = new int[a.length()];
-            
-            for (int i = 0; i < fieldLengths.length; i++) {
-                fieldLengths[i] = a.getInt(i);
-            }
+            int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
             
             return new ColumnSplitOperation(
                 engineConfig, 

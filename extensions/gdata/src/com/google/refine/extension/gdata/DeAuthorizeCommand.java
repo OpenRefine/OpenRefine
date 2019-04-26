@@ -40,7 +40,6 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-
 import com.google.refine.commands.Command;
 
 public class DeAuthorizeCommand extends Command {

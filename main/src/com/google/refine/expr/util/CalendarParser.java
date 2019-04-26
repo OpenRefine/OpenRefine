@@ -35,11 +35,14 @@ package com.google.refine.expr.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.refine.util.ParsingUtilities;
 
 // Taken from http://icecube.wisc.edu/~dglo/software/calparse/index.html
 // Copyright Dave Glowacki. Released under the BSD license.
@@ -865,7 +868,11 @@ public class CalendarParser {
             throws CalendarParserException {
         return parse(dateStr, YY_MM_DD);
     }
-
+    
+    public static final OffsetDateTime parseAsOffsetDateTime(String dateStr) throws CalendarParserException {
+        return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr));
+    }
+    
     /**
      * Extract a date from a string.
      * 
@@ -883,6 +890,11 @@ public class CalendarParser {
     public static final Calendar parse(String dateStr, int order)
             throws CalendarParserException {
         return parse(dateStr, order, true);
+    }
+    
+    public static final OffsetDateTime parseAsOffsetDateTime(String dateStr, int order)
+            throws CalendarParserException {
+        return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr, order));
     }
 
     /**
@@ -911,6 +923,11 @@ public class CalendarParser {
         return parseString(dateStr, order, ignoreChanges);
     }
 
+    public static final OffsetDateTime parseAsOffsetDateTime(String dateStr, int order,
+            boolean ignoreChanges) throws CalendarParserException {
+        return ParsingUtilities.calendarToOffsetDateTime(parse(dateStr, order, ignoreChanges));
+    }
+    
     /**
      * Parse a non-numeric token from the date string.
      * 
@@ -1620,7 +1637,7 @@ public class CalendarParser {
             state.setYear(tmpYear + (CENTURY_OFFSET - 100));
         }
 
-        GregorianCalendar cal = new GregorianCalendar();
+        GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("Z"));
 
         state.setCalendar(cal, ignoreChanges);
 
@@ -1631,6 +1648,7 @@ public class CalendarParser {
                     + state.getMillisecond() + " => " + toString(cal));
         }
 
+//        return cal.toInstant().atOffset(ZoneOffset.of("Z"));
         return cal;
     }
 

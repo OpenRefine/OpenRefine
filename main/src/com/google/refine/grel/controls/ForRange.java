@@ -37,9 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -132,15 +129,17 @@ public class ForRange implements Control {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Iterates over the variable v starting at \"from\", incrementing by \"step\" each time while less than \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value(
-            "Iterates over the variable v starting at \"from\", incrementing by \"step\" each time while less than \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array."
-        );
-        writer.key("params"); writer.value("number from, number to, number step, variable v, expression e");
-        writer.key("returns"); writer.value("array");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "number from, number to, number step, variable v, expression e";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "array";
     }
 }

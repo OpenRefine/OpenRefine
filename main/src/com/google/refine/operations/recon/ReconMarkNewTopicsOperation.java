@@ -36,15 +36,12 @@ package com.google.refine.operations.recon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.Change;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -53,62 +50,57 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
+import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
-import com.google.refine.operations.OperationRegistry;
 
 public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
     final protected boolean    _shareNewTopics;
     
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ReconMarkNewTopicsOperation(
-            engineConfig, 
-            obj.getString("columnName"),
-            obj.has("shareNewTopics") ? obj.getBoolean("shareNewTopics") : false
-        );
-    }
-
-    public ReconMarkNewTopicsOperation(JSONObject engineConfig, String columnName, boolean shareNewTopics) {
+    @JsonCreator
+    public ReconMarkNewTopicsOperation(
+            @JsonProperty("engineConfig")
+            EngineConfig engineConfig,
+            @JsonProperty("columnName")
+            String columnName,
+            @JsonProperty("shareNewTopics")
+            boolean shareNewTopics) {
         super(engineConfig, columnName, false);
         _shareNewTopics = shareNewTopics;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("shareNewTopics"); writer.value(_shareNewTopics);
-        writer.endObject();
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("shareNewTopics")
+    public boolean getShareNewTopics() {
+        return _shareNewTopics;
     }
     
     @Override
     protected String getBriefDescription(Project project) {
-        return "Mark to create new topics for cells in column " + _columnName +
+        return "Mark to create new items for cells in column " + _columnName +
             (_shareNewTopics ? 
-                ", one topic for each group of similar cells" : 
-                ", one topic for each cell");
+                ", one item for each group of similar cells" : 
+                ", one item for each cell");
     }
 
     @Override
     protected String createDescription(Column column,
             List<CellChange> cellChanges) {
         
-        return "Mark to create new topics for " + cellChanges.size() + 
+        return "Mark to create new items for " + cellChanges.size() + 
             " cells in column " + column.getName() +
             (_shareNewTopics ? 
-                ", one topic for each group of similar cells" : 
-                ", one topic for each cell");
+                ", one item for each group of similar cells" : 
+                ", one item for each cell");
     }
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
         Column column = project.columnModel.getColumnByName(_columnName);
+        ReconConfig reconConfig = column.getReconConfig();
         
         return new RowVisitor() {
             int                 cellIndex;
@@ -133,6 +125,17 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                 // nothing to do
             }
             
+            private Recon createNewRecon() {
+                if(reconConfig != null) {
+                    return reconConfig.createNewRecon(historyEntryID);
+                } else {
+                    // This should only happen when marking cells as reconciled
+                    // in a column that has never been reconciled before. In this case,
+                    // we just resort to the default reconciliation space.
+                    return new Recon(historyEntryID, null, null);
+                }
+            }
+            
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
                 Cell cell = row.getCell(cellIndex);
@@ -144,7 +147,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             recon = sharedRecons.get(s);
                             recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon(historyEntryID, null, null);
+                            recon = createNewRecon();
                             recon.judgment = Judgment.New;
                             recon.judgmentBatchSize = 1;
                             recon.judgmentAction = "mass";
@@ -152,7 +155,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
                             sharedRecons.put(s, recon);
                         }
                     } else {
-                        recon = cell.recon == null ? new Recon(historyEntryID, null, null) : cell.recon.dup(historyEntryID);
+                        recon = cell.recon == null ? createNewRecon() : cell.recon.dup(historyEntryID);
                         recon.match = null;
                         recon.matchRank = -1;
                         recon.judgment = Judgment.New;

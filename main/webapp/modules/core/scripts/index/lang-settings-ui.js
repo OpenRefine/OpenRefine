@@ -6,8 +6,8 @@ Refine.SetLanguageUI = function(elmt) {
 	this._elmt = elmt;
 	this._elmts = DOM.bind(elmt);
 
-	this._elmts.or_lang_label.text($.i18n._('core-index-lang')["label"]+":");
-	this._elmts.set_lan_btn.attr("value", $.i18n._('core-index-lang')["send-req"]);
+	this._elmts.or_lang_label.text($.i18n('core-index-lang/label')+":");
+	this._elmts.set_lan_btn.attr("value", $.i18n('core-index-lang/send-req'));
 	
 
   $.ajax({
@@ -37,7 +37,7 @@ Refine.SetLanguageUI = function(elmt) {
 				value : $("#langDD option:selected").val()
 			},
 			success : function(data) {
-				alert($.i18n._('core-index-lang')["page-reload"]);
+				alert($.i18n('core-index-lang/page-reload'));
 				location.reload(true);
 			}
 		});
@@ -49,6 +49,6 @@ Refine.SetLanguageUI.prototype.resize = function() {
 
 Refine.actionAreas.push({
 	id : "lang-settings",
-	label : $.i18n._('core-index-lang')["lang-settings"],
+	label : $.i18n('core-index-lang/lang-settings'),
 	uiClass : Refine.SetLanguageUI
 });

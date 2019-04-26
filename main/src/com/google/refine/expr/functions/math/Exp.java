@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.grel.Function;
 
 public class Exp implements Function {
@@ -51,13 +48,17 @@ public class Exp implements Function {
     }
 
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns e^n";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns e^n");
-        writer.key("params"); writer.value("number n");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "number n";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 }

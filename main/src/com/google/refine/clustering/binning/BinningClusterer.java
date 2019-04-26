@@ -41,62 +41,107 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
+import com.google.refine.clustering.ClusteredEntry;
 import com.google.refine.clustering.Clusterer;
+import com.google.refine.clustering.ClustererConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class BinningClusterer extends Clusterer {
-
-    private Keyer _keyer;
     
-    static final protected Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
+    public static class BinningClustererConfig extends ClustererConfig {
+       
+        @JsonIgnore
+        private String _keyerName;
+        @JsonIgnore
+        private Keyer _keyer;
+        @JsonIgnore
+        private BinningParameters _parameters = null;
+        
+        @JsonIgnore
+        public Keyer getKeyer() {
+            return _keyer;
+        }
+        
+        @JsonProperty("function")
+        public void setKeyer(String keyerName) {
+        	_keyerName = keyerName;
+        	_keyer = KeyerFactory.get(_keyerName.toLowerCase());
+        }
+        
+        @JsonProperty("function")
+        public String getKeyerName() {
+        	return _keyerName;
+        }
+        
+        @JsonProperty("params")
+        @JsonInclude(Include.NON_NULL)
+        public BinningParameters getParameters() {
+            return _parameters;
+        }
+        
+        @JsonProperty("params")
+        public void setParameters(BinningParameters params) {
+        	_parameters = params;
+        }
 
+        @Override
+        public BinningClusterer apply(Project project) {
+            BinningClusterer clusterer = new BinningClusterer();
+            clusterer.initializeFromConfig(project, this);
+            return clusterer;
+        }
+
+        @Override
+        public String getType() {
+            return "binning";
+        }
+        
+    }
+    
+    public static class BinningParameters  {
+        @JsonProperty("ngram-size")
+        @JsonInclude(Include.NON_DEFAULT)
+        public int ngramSize = 0;
+    }
+
+    protected Keyer _keyer;
+    protected BinningParameters _parameters;
+    
     final static Logger logger = LoggerFactory.getLogger("binning_clusterer");
     
     List<Map<String,Integer>> _clusters;
-     
-    static {
-        _keyers.put("fingerprint", new FingerprintKeyer());
-        _keyers.put("ngram-fingerprint", new NGramFingerprintKeyer());
-        _keyers.put("metaphone", new MetaphoneKeyer());
-        _keyers.put("double-metaphone", new DoubleMetaphoneKeyer());
-        _keyers.put("metaphone3", new Metaphone3Keyer());
-        _keyers.put("soundex", new SoundexKeyer());
-        _keyers.put("cologne-phonetic", new ColognePhoneticKeyer());
-    }
 
     class BinningRowVisitor implements RowVisitor {
 
         Keyer _keyer;
         Object[] _params;
-        JSONObject _config;
+        BinningParameters _parameters;
         
         Map<String,Map<String,Integer>> _map = new HashMap<String,Map<String,Integer>>();
         
-        public BinningRowVisitor(Keyer k, JSONObject o) {
+        public BinningRowVisitor(Keyer k, BinningParameters parameters) {
             _keyer = k;
-            _config = o;
+            _parameters = parameters;
             if (k instanceof NGramFingerprintKeyer) {
-                try {
-                    int size = _config.getJSONObject("params").getInt("ngram-size");
-                    logger.debug("Using ngram size: {}", size);
+                if(_parameters != null) {
                     _params = new Object[1];
-                    _params[0] = size;
-                } catch (JSONException e) {
-                    //Refine.warn("No params specified, using default");
+                    _params[0] = _parameters.ngramSize;
                 }
             }
         }
@@ -169,15 +214,15 @@ public class BinningClusterer extends Clusterer {
         }
     }
     
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws Exception {
-        super.initializeFromJSON(project, o);
-        _keyer = _keyers.get(o.getString("function").toLowerCase());
+    public void initializeFromConfig(Project project, BinningClustererConfig config) {
+        super.initializeFromConfig(project, config);
+        _keyer = config.getKeyer();
+        _parameters = config.getParameters();
     }
 
     @Override
     public void computeClusters(Engine engine) {
-        BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_config);
+        BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_parameters);
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(_project, visitor);
      
@@ -186,25 +231,21 @@ public class BinningClusterer extends Clusterer {
         Collections.sort(_clusters, new SizeComparator());
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
+    protected static Map<String,Object> entryToMap(Entry<String,Integer> entry) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("v", entry.getKey());
+        map.put("c", entry.getValue());
+        return map;
+    }
+    
+    @JsonValue
+    public List<List<ClusteredEntry>> getJsonRepresentation() {
         EntriesComparator c = new EntriesComparator();
-        
-        writer.array();        
-        for (Map<String,Integer> m : _clusters) {
-            if (m.size() > 1) {
-                writer.array();        
-                List<Entry<String,Integer>> entries = new ArrayList<Entry<String,Integer>>(m.entrySet());
-                Collections.sort(entries,c);
-                for (Entry<String,Integer> e : entries) {
-                    writer.object();
-                    writer.key("v"); writer.value(e.getKey());
-                    writer.key("c"); writer.value(e.getValue());
-                    writer.endObject();
-                }
-                writer.endArray();
-            }
-        }
-        writer.endArray();
+        return _clusters.stream()
+                .map(m -> m.entrySet().stream()
+                        .sorted(c)
+                        .map(e -> new ClusteredEntry(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 }

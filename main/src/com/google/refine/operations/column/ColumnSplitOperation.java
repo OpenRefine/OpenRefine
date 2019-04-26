@@ -36,29 +36,27 @@ package com.google.refine.operations.column;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.importers.ImporterUtilities;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.ColumnSplitChange;
 import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.util.JSONUtilities;
 
 public class ColumnSplitOperation extends EngineDependentOperation {
     final protected String     _columnName;
@@ -67,38 +65,52 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     final protected String     _mode;
     
     final protected String     _separator;
-    final protected boolean    _regex;
-    final protected int        _maxColumns;
+    final protected Boolean    _regex;
+    final protected Integer    _maxColumns;
     
     final protected int[]      _fieldLengths;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        String mode = obj.getString("mode");
-        
+    @JsonCreator
+    public static ColumnSplitOperation deserialize(
+            @JsonProperty("engineConfig")
+            EngineConfig   engineConfig,
+            @JsonProperty("columnName")
+            String         columnName,
+            @JsonProperty("guessCellType")
+            boolean        guessCellType,
+            @JsonProperty("removeOriginalColumn")
+            boolean        removeOriginalColumn,
+            @JsonProperty("mode")
+            String mode,
+            @JsonProperty("separator")
+            String         separator,
+            @JsonProperty("regex")
+            Boolean        regex,
+            @JsonProperty("maxColumns")
+            Integer        maxColumns,
+            @JsonProperty("fieldLengths")
+            int[]          fieldLengths) {
         if ("separator".equals(mode)) {
             return new ColumnSplitOperation(
-                engineConfig,
-                obj.getString("columnName"),
-                obj.getBoolean("guessCellType"),
-                obj.getBoolean("removeOriginalColumn"),
-                obj.getString("separator"),
-                obj.getBoolean("regex"),
-                obj.getInt("maxColumns")
-            );
+                    engineConfig,
+                    columnName,
+                    guessCellType,
+                    removeOriginalColumn,
+                    separator,
+                    regex,
+                    maxColumns);
         } else {
             return new ColumnSplitOperation(
-                engineConfig,
-                obj.getString("columnName"),
-                obj.getBoolean("guessCellType"),
-                obj.getBoolean("removeOriginalColumn"),
-                JSONUtilities.getIntArray(obj, "fieldLengths")
-            );
+                    engineConfig,
+                    columnName,
+                    guessCellType,
+                    removeOriginalColumn,
+                    fieldLengths);
         }
     }
     
     public ColumnSplitOperation(
-        JSONObject     engineConfig,
+        EngineConfig   engineConfig,
         String         columnName,
         boolean        guessCellType,
         boolean        removeOriginalColumn,
@@ -121,7 +133,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     }
     
     public ColumnSplitOperation(
-        JSONObject     engineConfig,
+        EngineConfig   engineConfig,
         String         columnName,
         boolean        guessCellType,
         boolean        removeOriginalColumn,
@@ -135,36 +147,54 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         
         _mode = "lengths";
         _separator = null;
-        _regex = false;
-        _maxColumns = -1;
+        _regex = null;
+        _maxColumns = null;
         
         _fieldLengths = fieldLengths;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("guessCellType"); writer.value(_guessCellType);
-        writer.key("removeOriginalColumn"); writer.value(_removeOriginalColumn);
-        writer.key("mode"); writer.value(_mode);
-        if ("separator".equals(_mode)) {
-            writer.key("separator"); writer.value(_separator);
-            writer.key("regex"); writer.value(_regex);
-            writer.key("maxColumns"); writer.value(_maxColumns);
-        } else {
-            writer.key("fieldLengths"); writer.array();
-            for (int l : _fieldLengths) {
-                writer.value(l);
-            }
-            writer.endArray();
-        }
-        writer.endObject();
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+    
+    @JsonProperty("guessCellType")
+    public boolean getGuessCellType() {
+        return _guessCellType;
+    }
+    
+    @JsonProperty("removeOriginalColumn")
+    public boolean getRemoveOriginalColumn() {
+        return _removeOriginalColumn;
+    }
+    
+    @JsonProperty("mode")
+    public String getMode() {
+        return _mode;
+    }
+    
+    @JsonProperty("separator")
+    @JsonInclude(Include.NON_NULL)
+    public String getSeparator() {
+        return _separator;
+    }
+    
+    @JsonProperty("regex")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getRegex() {
+        return _regex;
+    }
+    
+    @JsonProperty("maxColumns")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getMaxColumns() {
+        return _maxColumns;
+    }
+    
+    @JsonProperty("fieldLengths")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getFieldLengths() {
+        return _fieldLengths;
     }
 
     @Override

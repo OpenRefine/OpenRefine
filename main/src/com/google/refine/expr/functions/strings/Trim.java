@@ -35,11 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.common.base.CharMatcher;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 
@@ -56,13 +52,17 @@ public class Trim implements Function {
         return new EvalError("Invalid parameters");
     }
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns copy of the string, with leading and trailing whitespace omitted.";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns copy of the string, with leading and trailing whitespace omitted.");
-        writer.key("params"); writer.value("string s");
-        writer.key("returns"); writer.value("string");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "string s";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string";
     }
 }

@@ -53,7 +53,7 @@ public class BooleanCriterion extends Criterion {
                         return s_error;
                     }
                 }
-                return value;
+                return null;
             }
 
             @Override
@@ -61,5 +61,10 @@ public class BooleanCriterion extends Criterion {
                 return ((Boolean) key1).compareTo((Boolean) key2);
             }
         };
+    }
+
+    @Override
+    public String getValueType() {
+        return "boolean";
     }
 }

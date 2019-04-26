@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.tests.expr.functions.strings;
 
-import java.text.DateFormat;
-import java.util.GregorianCalendar;
+import java.time.OffsetDateTime;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -50,6 +50,7 @@ import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.tests.RefineTest;
+import com.google.refine.util.ParsingUtilities;
 
 
 /**
@@ -98,10 +99,9 @@ public class ToFromConversionTests extends RefineTest {
     
     @Test
     public void testToNumber() {
-//        Assert.assertTrue(invoke("toNumber") instanceof EvalError);
-        Assert.assertNull(invoke("toNumber"));
-//        Assert.assertTrue(invoke("toNumber", (Object) null) instanceof EvalError);
-        Assert.assertNull(invoke("toNumber", (Object) null));
+        Assert.assertTrue(invoke("toNumber") instanceof EvalError);
+        Assert.assertTrue(invoke("toNumber", (Object) null) instanceof EvalError);
+        Assert.assertTrue(invoke("toNumber", "") instanceof EvalError);
         Assert.assertTrue(invoke("toNumber", "string") instanceof EvalError);
         Assert.assertEquals(invoke("toNumber", "0.0"), 0.0);
         Assert.assertEquals(invoke("toNumber", "123"), Long.valueOf(123));
@@ -114,40 +114,62 @@ public class ToFromConversionTests extends RefineTest {
     @Test
     public void testToString() throws CalendarParserException {
       Assert.assertTrue(invoke("toString") instanceof EvalError);
-      Assert.assertEquals(invoke("toString", (Object) null), "null");
+      Assert.assertEquals(invoke("toString", (Object) null), "");
       Assert.assertEquals(invoke("toString", Long.valueOf(100)),"100");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
       Assert.assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
       
-      String expectedDate = DateFormat.getDateInstance().format(new GregorianCalendar(2013,5,1).getTime());
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01")), expectedDate);
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01").getTime()), expectedDate);
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy"),"2013");      
-      Assert.assertEquals(invoke("toString", CalendarParser.parse("2013-06-01"),"yyyy-MM-dd"),"2013-06-01");
+      String inputDate = "2013-06-01";
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), 
+              "2013-06-01T00:00:00Z");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd"),
+              "2013-06-01");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy/dd/MM"), "2013/01/06");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 12:00:00");
+      
+      String inputDateTime = "2013-06-01 13:12:11";
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime)), "2013-06-01T13:12:11Z");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd"), "2013-06-01");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"),"2013-06-01 01:12:11");
+      Assert.assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"),"2013-06-01 13:12:11");
     }
     
     @Test
     public void testToDate() throws CalendarParserException {
-//      Assert.assertTrue(invoke("toDate") instanceof EvalError);
-      Assert.assertNull(invoke("toDate"));
+      Assert.assertTrue(invoke("toDate") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", (Object) null) instanceof EvalError);
+      Assert.assertTrue(invoke("toDate", "") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
-      Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
-      Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof GregorianCalendar);
-      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalendarParser.parse("2012-03-01"));
-      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parse("2012-03-01"));
+      //Assert.assertTrue(invoke("toDate", "2012-03-01","xxx") instanceof EvalError); // bad format string
+      Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof OffsetDateTime);
+      Assert.assertEquals(invoke("toDate", "2012-03-01"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      //parse as 'month first' date with and without explicit 'true' parameter
+      Assert.assertEquals(invoke("toDate", "01/03/2012"),CalendarParser.parseAsOffsetDateTime("2012-01-03"));
+      Assert.assertEquals(invoke("toDate", "01/03/2012",true),CalendarParser.parseAsOffsetDateTime("2012-01-03"));
+      //parse as 'month first' date with 'false' parameter
+      Assert.assertEquals(invoke("toDate", "01/03/2012",false),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      //parse as 'month first' date without 'false' parameter but with format specified
+      Assert.assertEquals(invoke("toDate", "01/03/2012","dd/MM/yyyy"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","yyyy-MM-dd"),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      //Two digit year
+      Assert.assertEquals(invoke("toDate", "02-02-01"),CalendarParser.parseAsOffsetDateTime("2001-02-02"));
       // Multiple format strings should get tried sequentially until one succeeds or all are exhausted
-      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parse("2012-03-01"));
+      Assert.assertEquals(invoke("toDate", "2012-03-01","MMM","yyyy-MM-dd"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      
+      // Boolean argument combined with Multiple format strings 
+      Assert.assertEquals(invoke("toDate", "01/03/2012",false, "MMM","yyyy-MM-dd","MM/dd/yyyy"), CalendarParser.parseAsOffsetDateTime("2012-03-01"));
+      
       // First string can be a locale identifier instead of a format string
-      Assert.assertEquals(invoke("toDate", "2013-06-01","zh"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_HK","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_TW","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
-      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh_CN","dd-MMM-yyyy"), CalendarParser.parse("2013-06-01")); 
+      Assert.assertEquals(invoke("toDate", "01-六月-2013","zh","dd-MMM-yyyy"), CalendarParser.parseAsOffsetDateTime("2013-06-01"));
+      
+      //if invalid format/locale strings are passed, ignore them
+      Assert.assertEquals(invoke("toDate", "2012-03-01","XXX"), invoke("toDate", "2012-03-01"));
 
-        // Date
-        // Calendar
-        // String
+      // If a long, convert to string
+      Assert.assertEquals(invoke("toDate", (long) 2012), invoke("toDate", "2012-01-01"));
+
+      // If already a date, leave it alone
+      Assert.assertEquals(invoke("toDate", CalendarParser.parseAsOffsetDateTime("2012-03-01")),CalendarParser.parseAsOffsetDateTime("2012-03-01"));
     }
     
     @Test
@@ -175,5 +197,11 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "url"),"1.23");
       Assert.assertEquals(invoke("escape", Double.parseDouble("1.23"), "javascript"),"1.23");
    }
+    
+    @Test
+    public void testUnescape() {
+        Assert.assertEquals(invoke("unescape", "&Auml;", "html"),"Ä");
+        Assert.assertEquals(invoke("unescape", "\\u00C4", "javascript"),"Ä");
+    }
 
 }

@@ -1,0 +1,267 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>packaging</artifactId>
+  <name>OpenRefine - packaging</name>
+  <description>Creates packages for all supported operating systems</description>
+  <url>http://openrefine.org/</url>
+
+  <parent>
+    <groupId>org.openrefine</groupId>
+    <artifactId>openrefine</artifactId>
+    <version>3.2-SNAPSHOT</version>
+  </parent>
+  <properties>
+    <rootdir>${basedir}/..</rootdir>
+    <fullversion>0.0.0.0</fullversion>
+    <built.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</built.webapp.dir>
+    <webapp.dir>../main/webapp</webapp.dir>
+    <webapp.target>../main/target</webapp.target>
+    <icon.path>../graphics/icon/openrefine.icns</icon.path>
+    <mac.jre.path>/opt/jre1.8.0_181.jre</mac.jre.path>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin> <!-- necessary for launch4j -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>generate-test-resources</phase>
+            <configuration>
+
+              <tasks>
+                <mkdir dir="./target/"/>
+
+                <mkdir dir="${built.webapp.dir}" />
+                    
+                    <copy todir="${built.webapp.dir}">
+                        <fileset dir="${webapp.dir}">
+                            <include name="**/*"/>
+                            <exclude name="WEB-INF/classes/**"/>
+                            <exclude name="WEB-INF/lib-local/**"/>
+                            <exclude name="WEB-INF/lib-local-src/**"/>
+                            <exclude name="WEB-INF/lib/icu4j*.jar"/>
+                        </fileset>
+                    </copy>
+                    <copy todir="${built.webapp.dir}">
+                        <fileset dir="${webapp.dir}">
+                            <include name="**/*.properties"/>
+                        </fileset>
+                    </copy>
+                    <copy todir="${built.webapp.dir}/WEB-INF/lib/">
+                        <fileset dir="${webapp.target}">
+                            <include name="openrefine-main.jar" />
+                        </fileset>
+                    </copy>
+                    
+                    <!-- <copy file="../server/target/openrefine-${project.version}-server.jar" tofile="${built.webapp.dir}/WEB-INF/lib/openrefine-${project.version}.jar"/> -->
+
+                    <copy todir="${built.webapp.dir}/extensions">
+                        <fileset dir="../extensions">
+                            <include name="**/*"/>
+                            <exclude name="**/pom.xml"/>
+                            <exclude name="**/src/**"/>
+                            <exclude name="**/lib-local/**"/>
+                            <exclude name="**/lib-local-src/**"/>
+                            <exclude name="**/target/**" />
+                            <exclude name="**/tests/**" />
+                            <exclude name="**/*.java"/>
+                            <exclude name="**/.settings/**" />
+                            <exclude name="**/.project" />
+                        </fileset>
+                    </copy>
+                    
+                    <replace file="${built.webapp.dir}/WEB-INF/web.xml">
+                        <replacefilter token="$VERSION" value="${version}"/>
+                    </replace>
+
+                    <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
+                        <replacefilter token="../../extensions" value="extensions"/>
+                    </replace>
+
+              </tasks>
+
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <version>1.7.23</version>
+        <executions>
+          <execution>
+            <id>l4j-clui</id>
+            <phase>package</phase>
+            <goals><goal>launch4j</goal></goals>
+            <configuration>
+              <headerType>console</headerType>
+              <outfile>target/openrefine.exe</outfile>
+              <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
+              <dontWrapJar>true</dontWrapJar>
+              <saveConfig>true</saveConfig>
+              <classPath>
+                <mainClass>com.google.refine.Refine</mainClass>
+                <jarLocation>server/target/lib/</jarLocation>
+                <postCp>server/target/lib/*.jar</postCp>
+              </classPath>
+              <jre>
+                <minVersion>1.8.0</minVersion>
+                <jdkPreference>preferJre</jdkPreference>
+                <initialHeapSize>512</initialHeapSize>
+                <maxHeapSize>2048</maxHeapSize>
+                <opts>
+                  <opt>-Djava.library.path=server/target/lib/native/windows</opt>
+                </opts>
+              </jre>
+              <versionInfo>
+                <fileVersion>${fullversion}</fileVersion>
+                <txtFileVersion>${project.version}</txtFileVersion>
+                <fileDescription>openrefine</fileDescription>
+                <copyright>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</copyright>
+                <productVersion>${fullversion}</productVersion>
+                <txtProductVersion>${project.version}</txtProductVersion>
+                <productName>OpenRefine</productName>
+                <internalName>openrefine</internalName>
+                <originalFilename>openrefine.exe</originalFilename>
+              </versionInfo>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>sh.tak.appbundler</groupId>
+        <artifactId>appbundle-maven-plugin</artifactId>
+        <version>1.2.0</version>
+        <configuration>
+          <mainClass>com.google.refine.Refine</mainClass>
+          <bundleName>OpenRefine</bundleName>
+          <buildDirectory>target/OpenRefine ${version}</buildDirectory>
+          <iconFile>${icon.path}</iconFile>
+          <generateDiskImageFile>true</generateDiskImageFile>
+          <diskImageFile>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</diskImageFile>
+          <jvmVersion>1.8</jvmVersion>
+          <jrePath>${mac.jre.path}</jrePath>
+          <jvmOptions>
+            <param>-Xms512M</param>
+            <param>-Xmx2048M</param>
+            <param>-Drefine.version=${project.version}</param>
+            <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
+          </jvmOptions>
+          <additionalResources>
+            <fileSet>
+              <directory>target</directory>
+              <includes>
+                <include>OpenRefine.app/Contents/Resources/webapp/**/**</include>
+              </includes>
+            </fileSet>
+          </additionalResources>
+          <additionalBundledClasspathResources>
+            <fileSet>
+              <directory>${rootdir}/server/target/lib/</directory>
+              <includes>
+                <include>*.jar</include>
+              </includes>
+            </fileSet>
+            <fileSet>
+              <directory>${rootdir}/server/target</directory>
+              <includes>
+                <include>openrefine-${version}-server.jar</include>
+              </includes>
+              <excludes>
+                <exclude>**/lib/**</exclude>
+                <exclude>**/org/**</exclude>
+              </excludes>
+            </fileSet>
+          </additionalBundledClasspathResources>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-assembly-plugin</artifactId>
+	<version>3.1.0</version>
+	<executions>
+	  <execution>
+	    <id>package-distributions</id>
+	    <goals>
+	      <goal>single</goal>
+	    </goals>
+	    <phase>package</phase>
+	    <configuration>
+	      <descriptors>
+		<descriptor>linux.xml</descriptor>
+		<descriptor>windows.xml</descriptor>
+	      </descriptors>
+	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+    </plugins>
+    <pluginManagement>
+    	<plugins>
+    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+    		<plugin>
+    			<groupId>org.eclipse.m2e</groupId>
+    			<artifactId>lifecycle-mapping</artifactId>
+    			<version>1.0.0</version>
+    			<configuration>
+    				<lifecycleMappingMetadata>
+    					<pluginExecutions>
+    						<pluginExecution>
+    							<pluginExecutionFilter>
+    								<groupId>
+    									org.apache.maven.plugins
+    								</groupId>
+    								<artifactId>
+    									maven-antrun-plugin
+    								</artifactId>
+    								<versionRange>[1.4,)</versionRange>
+    								<goals>
+    									<goal>run</goal>
+    								</goals>
+    							</pluginExecutionFilter>
+    							<action>
+    								<ignore></ignore>
+    							</action>
+    						</pluginExecution>
+    					</pluginExecutions>
+    				</lifecycleMappingMetadata>
+    			</configuration>
+    		</plugin>
+    	</plugins>
+    </pluginManagement>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>server</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>
+
+

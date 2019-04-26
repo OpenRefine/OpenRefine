@@ -33,12 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.Properties;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RecordFilter;
@@ -56,23 +55,85 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class RangeFacet implements Facet {
+    
+    public static final String ERR_NO_NUMERIC_VALUE_PRESENT = "No numeric value present.";
+    
     /*
      * Configuration, from the client side
      */
-    protected String     _name;       // name of facet
-    protected String     _expression; // expression to compute numeric value(s) per row
-    protected String     _columnName; // column to base expression on, if any
-    
-    protected double    _from; // the numeric selection
-    protected double    _to;
-    
-    protected boolean   _selectNumeric; // whether the numeric selection applies, default true
-    protected boolean   _selectNonNumeric;
-    protected boolean   _selectBlank;
-    protected boolean   _selectError;
+    public static class RangeFacetConfig implements FacetConfig {
+        @JsonProperty("name")
+        protected String     _name;       // name of facet
+        @JsonProperty("expression")
+        protected String     _expression; // expression to compute numeric value(s) per row
+        @JsonProperty("columnName")
+        protected String     _columnName; // column to base expression on, if any
+        
+        @JsonProperty(FROM)
+        protected double    _from; // the numeric selection
+        @JsonProperty(TO)
+        protected double    _to;
+        
+        @JsonProperty("selectNumeric")
+        protected boolean   _selectNumeric; // whether the numeric selection applies, default true
+        @JsonProperty("selectNonNumeric")
+        protected boolean   _selectNonNumeric;
+        @JsonProperty("selectBlank")
+        protected boolean   _selectBlank;
+        @JsonProperty("selectError")
+        protected boolean   _selectError;
+        
+        @JsonIgnore
+        protected boolean    _selected; // false if we're certain that all rows will match
+                        // and there isn't any filtering to do
+        
+        @JsonCreator
+        public RangeFacetConfig(
+                @JsonProperty("name")
+                String name,
+                @JsonProperty("expression")
+                String expression,
+                @JsonProperty("columnName")
+                String columnName,
+                @JsonProperty(FROM)
+                Double from,
+                @JsonProperty(TO)
+                Double to,
+                @JsonProperty("selectNumeric")
+                Boolean selectNumeric,
+                @JsonProperty("selectNonNumeric")
+                Boolean selectNonNumeric,
+                @JsonProperty("selectBlank")
+                Boolean selectBlank,
+                @JsonProperty("selectError")
+                Boolean selectError) {
+            _name = name;
+            _expression = expression;
+            _columnName = columnName;
+            _from = from == null ? 0 : from;
+            _to = to == null ? 0 : to;
+            _selectNumeric = selectNumeric == null ? true : selectNumeric;
+            _selectNonNumeric = selectNonNumeric == null ? true : selectNonNumeric;
+            _selectBlank = selectBlank == null ? true : selectBlank;
+            _selectError = selectError == null ? true : selectError;
+            _selected = !_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError || from != null || to != null;
+        }
+        
+        @Override
+        public RangeFacet apply(Project project) {
+            RangeFacet facet = new RangeFacet();
+            facet.initializeFromConfig(this, project);
+            return facet;
+        }
+
+        @Override
+        public String getJsonType() {
+            return "range";
+        }
+    }
+    RangeFacetConfig _config = null;
     
     /*
      * Derived configuration data
@@ -80,8 +141,6 @@ public class RangeFacet implements Facet {
     protected int        _cellIndex;
     protected Evaluable  _eval;
     protected String     _errorMessage;
-    protected boolean    _selected; // false if we're certain that all rows will match
-                                    // and there isn't any filtering to do
     
     /*
      * Computed data, to return to the client side
@@ -92,16 +151,24 @@ public class RangeFacet implements Facet {
     protected int[]     _baseBins;
     protected int[]     _bins;
     
+    @JsonProperty("baseNumericCount")
     protected int       _baseNumericCount;
+    @JsonProperty("baseNonNumericCount")
     protected int       _baseNonNumericCount;
+    @JsonProperty("baseBlankCount")
     protected int       _baseBlankCount;
+    @JsonProperty("baseErrorCount")
     protected int       _baseErrorCount;
     
+    @JsonProperty("numericCount")
     protected int       _numericCount;
+    @JsonProperty("nonNumericCount")
     protected int       _nonNumericCount;
+    @JsonProperty("blankCount")
     protected int       _blankCount;
+    @JsonProperty("errorCount")
     protected int       _errorCount;
-    
+
     public RangeFacet() {
     }
 
@@ -110,102 +177,130 @@ public class RangeFacet implements Facet {
     protected static final String TO = "to";
     protected static final String FROM = "from";
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_name);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("columnName"); writer.value(_columnName);
-        
-        if (_errorMessage != null) {
-            writer.key("error"); writer.value(_errorMessage);
-        } else {
-            if (!Double.isInfinite(_min) && !Double.isInfinite(_max)) {
-                writer.key(MIN); writer.value(_min);
-                writer.key(MAX); writer.value(_max);
-                writer.key("step"); writer.value(_step);
-                
-                writer.key("bins"); writer.array();
-                for (int b : _bins) {
-                    writer.value(b);
-                }
-                writer.endArray();
-                
-                writer.key("baseBins"); writer.array();
-                for (int b : _baseBins) {
-                    writer.value(b);
-                }
-                writer.endArray();
-                
-                writer.key(FROM); writer.value(_from);
-                writer.key(TO); writer.value(_to);
-            } else {
-                writer.key("error"); writer.value("No numeric value present.");
-            }
-            
-            writer.key("baseNumericCount"); writer.value(_baseNumericCount);
-            writer.key("baseNonNumericCount"); writer.value(_baseNonNumericCount);
-            writer.key("baseBlankCount"); writer.value(_baseBlankCount);
-            writer.key("baseErrorCount"); writer.value(_baseErrorCount);
-            
-            writer.key("numericCount"); writer.value(_numericCount);
-            writer.key("nonNumericCount"); writer.value(_nonNumericCount);
-            writer.key("blankCount"); writer.value(_blankCount);
-            writer.key("errorCount"); writer.value(_errorCount);
-        }
-        writer.endObject();
+    @JsonProperty("name")
+    public String getName() {
+        return _config._name;
     }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _config._expression;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config._columnName;
+    }
+    
+    @JsonProperty("error")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        if (_errorMessage != null) {
+            return _errorMessage;
+        } else if (!isFiniteRange()) {
+            return ERR_NO_NUMERIC_VALUE_PRESENT;
+        }
+        return null;
+    }
+    
+    @JsonIgnore
+    public boolean isFiniteRange() {
+        return !Double.isInfinite(_min) && !Double.isInfinite(_max);
+    }
+    
+    @JsonProperty(MIN)
+    @JsonInclude(Include.NON_NULL)
+    public Double getMin() {
+        if (getError() == null) {
+            return _min;
+        }
+        return null;
+    }
+    
+    @JsonProperty(MAX)
+    @JsonInclude(Include.NON_NULL)
+    public Double getMax() {
+        if (getError() == null) {
+            return _max;
+        }
+        return null;
+    }
+    
+    @JsonProperty("step")
+    @JsonInclude(Include.NON_NULL)
+    public Double getStep() {
+        if (getError() == null) {
+            return _step;
+        }
+        return null;
+    }
+    
+    @JsonProperty("bins")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getBins() {
+        if (getError() == null) {
+            return _bins;
+        }
+        return null;
+    }
+    
+    @JsonProperty("baseBins")
+    @JsonInclude(Include.NON_NULL)
+    public int[] getBaseBins() {
+        if (getError() == null) {
+            return _baseBins;
+        }
+        return null;
+    }
+    
+    @JsonProperty(FROM)
+    @JsonInclude(Include.NON_NULL)
+    public Double getFrom() {
+        if (getError() == null) {
+            return _config._from;
+        }
+        return null;
+    }
+    
+    @JsonProperty(TO)
+    @JsonInclude(Include.NON_NULL)
+    public Double getTo() {
+        if (getError() == null) {
+            return _config._to;
+        }
+        return null;
+    }    
 
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        _name = o.getString("name");
-        _expression = o.getString("expression");
-        _columnName = o.getString("columnName");
+    public void initializeFromConfig(RangeFacetConfig config, Project project) {
+        _config = config;
         
-        if (_columnName.length() > 0) {
-            Column column = project.columnModel.getColumnByName(_columnName);
+        if (_config._columnName.length() > 0) {
+            Column column = project.columnModel.getColumnByName(_config._columnName);
             if (column != null) {
                 _cellIndex = column.getCellIndex();
             } else {
-                _errorMessage = "No column named " + _columnName;
+                _errorMessage = "No column named " + _config._columnName;
             }
         } else {
             _cellIndex = -1;
         }
         
         try {
-            _eval = MetaParser.parse(_expression);
+            _eval = MetaParser.parse(_config._expression);
         } catch (ParsingException e) {
             _errorMessage = e.getMessage();
-        }
-        
-        if (o.has(FROM) || o.has(TO)) {
-            _from = o.has(FROM) ? o.getDouble(FROM) : _min;
-            _to = o.has(TO) ? o.getDouble(TO) : _max;
-            _selected = true;
-        }
-        
-        _selectNumeric = JSONUtilities.getBoolean(o, "selectNumeric", true);
-        _selectNonNumeric = JSONUtilities.getBoolean(o, "selectNonNumeric", true);
-        _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", true);
-        _selectError = JSONUtilities.getBoolean(o, "selectError", true);
-        
-        if (!_selectNumeric || !_selectNonNumeric || !_selectBlank || !_selectError) {
-            _selected = true;
         }
     }
 
     @Override
     public RowFilter getRowFilter(Project project) {
-        if (_eval != null && _errorMessage == null && _selected) {
+        if (_eval != null && _errorMessage == null && _config._selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    getRowEvaluable(project), _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                    getRowEvaluable(project), _config._selectNumeric, _config._selectNonNumeric, _config._selectBlank, _config._selectError) {
 
                 @Override
                 protected boolean checkValue(double d) {
-                    return d >= _from && d < _to;
+                    return d >= _config._from && d < _config._to;
                 };
             };
         } else {
@@ -225,7 +320,7 @@ public class RangeFacet implements Facet {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
             
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-            String key = "numeric-bin:row-based:" + _expression;
+            String key = "numeric-bin:row-based:" + _config._expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
                 index = new NumericBinRowIndex(project, rowEvaluable);
@@ -248,7 +343,7 @@ public class RangeFacet implements Facet {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
             
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
-            String key = "numeric-bin:record-based:" + _expression;
+            String key = "numeric-bin:record-based:" + _config._expression;
             NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
             if (index == null) {
                 index = new NumericBinRecordIndex(project, rowEvaluable);
@@ -267,7 +362,7 @@ public class RangeFacet implements Facet {
     }
     
     protected RowEvaluable getRowEvaluable(Project project) {
-        return new ExpressionBasedRowEvaluable(_columnName, _cellIndex, _eval);
+        return new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _eval);
     }
     
     protected void retrieveDataFromBaseBinIndex(NumericBinIndex index) {
@@ -281,12 +376,12 @@ public class RangeFacet implements Facet {
         _baseBlankCount = index.getBlankRowCount();
         _baseErrorCount = index.getErrorRowCount();
         
-        if (_selected) {
-            _from = Math.max(_from, _min);
-            _to = Math.min(_to, _max);
+        if (_config._selected) {
+            _config._from = Math.max(_config._from, _min);
+            _config._to = Math.min(_config._to, _max);
         } else {
-            _from = _min;
-            _to = _max;
+            _config._from = _min;
+            _config._to = _max;
         }
     }
     

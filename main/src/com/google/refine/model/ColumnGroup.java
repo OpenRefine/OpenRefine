@@ -33,19 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
 
-public class ColumnGroup implements Jsonizable {
+public class ColumnGroup  {
     final public int    startColumnIndex;
     final public int    columnSpan;
     final public int    keyColumnIndex; // could be -1 if there is no key cell 
@@ -53,31 +54,40 @@ public class ColumnGroup implements Jsonizable {
     transient public ColumnGroup        parentGroup;
     transient public List<ColumnGroup>  subgroups;
     
-    public ColumnGroup(int startColumnIndex, int columnSpan, int keyColumnIndex) {
+    @JsonCreator
+    public ColumnGroup(
+            @JsonProperty("startColumnIndex")
+            int startColumnIndex,
+            @JsonProperty("columnSpan")
+            int columnSpan,
+            @JsonProperty("keyColumnIndex")
+            int keyColumnIndex) {
         this.startColumnIndex = startColumnIndex;
         this.columnSpan = columnSpan;
         this.keyColumnIndex = keyColumnIndex;
         internalInitialize();
     }
     
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        
-        writer.key("startColumnIndex"); writer.value(startColumnIndex);
-        writer.key("columnSpan"); writer.value(columnSpan);
-        writer.key("keyColumnIndex"); writer.value(keyColumnIndex);
-        
-        if (!"save".equals(options.get("mode")) && (subgroups != null) && (subgroups.size() > 0)) {
-            writer.key("subgroups"); writer.array();
-            for (ColumnGroup g : subgroups) {
-                g.write(writer, options);
-            }
-            writer.endArray();
-        }
-        writer.endObject();
+    @JsonProperty("startColumnIndex")
+    public int getStartColumnIndex() {
+        return startColumnIndex;
+    }
+    
+    @JsonProperty("columnSpan")
+    public int getColumnSpan() {
+        return columnSpan;
+    }
+    
+    @JsonProperty("keyColumnIndex")
+    public int getKeyColumnIndex() {
+        return keyColumnIndex;
+    }
+    
+    @JsonProperty("subgroups")
+    @JsonView(JsonViews.NonSaveMode.class)
+    @JsonInclude(Include.NON_EMPTY)
+    public List<ColumnGroup> getSubGroups() {
+        return subgroups;
     }
     
     public boolean contains(ColumnGroup g) {
@@ -86,22 +96,15 @@ public class ColumnGroup implements Jsonizable {
     }
     
     public void save(Writer writer) {
-        JSONWriter jsonWriter = new JSONWriter(writer);
         try {
-            write(jsonWriter, new Properties());
-        } catch (JSONException e) {
+            ParsingUtilities.defaultWriter.writeValue(writer, this);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    static public ColumnGroup load(String s) throws Exception {
-        JSONObject obj = ParsingUtilities.evaluateJsonStringToObject(s);
-        
-        return new ColumnGroup(
-            obj.getInt("startColumnIndex"),
-            obj.getInt("columnSpan"),
-            obj.getInt("keyColumnIndex")
-        );
+    static public ColumnGroup load(String s) throws IOException {
+        return ParsingUtilities.mapper.readValue(s, ColumnGroup.class);
     }
     
     protected void internalInitialize() {

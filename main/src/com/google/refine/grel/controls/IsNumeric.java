@@ -37,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class IsNumeric extends IsTest {
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Returns whether o can represent a number";
     }
 

@@ -35,7 +35,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doFilterByExpressionPrompt = function(expression, type) {
     DataTableView.promptExpressionOnVisibleRows(
       column,
-      (type == "list" ? $.i18n._('core-views')["custom-facet"] : $.i18n._('core-views')["custom-numeric-label"]) +" "+ column.name, 
+      (type == "list" ? $.i18n('core-views/custom-facet') : $.i18n('core-views/custom-numeric-label')) +" "+ column.name, 
       expression,
       function(expression) {
         var config = {
@@ -55,7 +55,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/facet" ], [
     {
       id: "core/text-facet",
-      label: $.i18n._('core-views')["text-facet"],
+      label: $.i18n('core-views/text-facet'),
       click: function() {
         ui.browsingEngine.addFacet(
             "list",
@@ -69,7 +69,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/numeric-facet",
-      label:  $.i18n._('core-views')["numeric-facet"],
+      label:  $.i18n('core-views/numeric-facet'),
       click: function() {
         ui.browsingEngine.addFacet(
             "range",
@@ -84,7 +84,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/time-facet",
-      label: $.i18n._('core-views')["timeline-facet"],
+      label: $.i18n('core-views/timeline-facet'),
       click: function() {
         ui.browsingEngine.addFacet(
             "timerange",
@@ -99,7 +99,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {
       id: "core/scatterplot-facet",
-      label: $.i18n._('core-views')["scatterplot-facet"],
+      label: $.i18n('core-views/scatterplot-facet'),
       click: function() {
         new ScatterplotDialog(column.name);
       }
@@ -107,25 +107,25 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/custom-text-facet",
-      label: $.i18n._('core-views')["custom-text-facet"]+'...',
+      label: $.i18n('core-views/custom-text-facet')+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "list");
       }
     },
     {
       id: "core/custom-numeric-facet",
-      label: $.i18n._('core-views')["custom-numeric"]+'...',
+      label: $.i18n('core-views/custom-numeric')+'...',
       click: function() {
         doFilterByExpressionPrompt(null, "range");
       }
     },
     {
       id: "core/customized-facets",
-      label: $.i18n._('core-views')["custom-facets"],
+      label: $.i18n('core-views/custom-facets'),
       submenu: [
         {
           id: "core/word-facet",
-          label: $.i18n._('core-views')["word-facet"],
+          label: $.i18n('core-views/word-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -140,7 +140,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/duplicates-facet",
-          label: $.i18n._('core-views')["duplicates-facet"],
+          label: $.i18n('core-views/duplicates-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -156,7 +156,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/numeric-log-facet",
-          label: $.i18n._('core-views')["numeric-log-facet"],
+          label: $.i18n('core-views/numeric-log-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -171,7 +171,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/bounded-numeric-log-facet",
-          label: $.i18n._('core-views')["bounded-log-facet"],
+          label: $.i18n('core-views/bounded-log-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -187,7 +187,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/text-length-facet",
-          label: $.i18n._('core-views')["text-length-facet"],
+          label: $.i18n('core-views/text-length-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -202,7 +202,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/log-text-length-facet",
-          label: $.i18n._('core-views')["log-length-facet"],
+          label: $.i18n('core-views/log-length-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -217,7 +217,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         },
         {
           id: "core/unicode-charcode-facet",
-          label: $.i18n._('core-views')["unicode-facet"],
+          label: $.i18n('core-views/unicode-facet'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "range",
@@ -233,7 +233,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {},
         {
           id: "core/error-facet",
-          label: $.i18n._('core-views')["facet-error"],
+          label: $.i18n('core-views/facet-error'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -246,8 +246,36 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           }
         },
         {
+          id: "core/null-facet",
+          label: $.i18n('core-views/facet-null'),
+          click: function() {
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name": column.name,
+                  "columnName": column.name,
+                  "expression": "isNull(value)"
+                }
+            );
+          }
+        },
+        {
+          id: "core/empty-string-facet",
+          label: $.i18n('core-views/facet-empty-string'),
+          click: function() {
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name": column.name,
+                  "columnName": column.name,
+                  "expression": "isEmptyString(value)"
+                }
+            );
+          }
+        },
+        {
           id: "core/blank-facet",
-          label: $.i18n._('core-views')["facet-blank"],
+          label: $.i18n('core-views/facet-blank'),
           click: function() {
             ui.browsingEngine.addFacet(
                 "list",
@@ -265,7 +293,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   MenuSystem.insertAfter(menu, [ "core/facet" ], [
     {
-      label: $.i18n._('core-views')["text-filter"],
+      label: $.i18n('core-views/text-filter'),
       click: function() {
         ui.browsingEngine.addFacet(
             "text", 

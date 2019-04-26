@@ -33,23 +33,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.preference;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.util.ParsingUtilities;
 
-import com.google.refine.Jsonizable;
-import com.google.refine.RefineServlet;
-
-public class PreferenceStore implements Jsonizable {
+public class PreferenceStore  {
+    public static final String USER_METADATA_KEY = "userMetadata";
+    
     private boolean dirty = false;
-    protected Map<String, Object> _prefs = new HashMap<String, Object>();
+    protected Map<String, Object> _prefs = new HashMap<>();
     
     public void put(String key, Object value) {
         if (value == null) {
@@ -59,76 +61,70 @@ public class PreferenceStore implements Jsonizable {
         }
         dirty = true;
     }
-    
+
     public Object get(String key) {
         return _prefs.get(key);
     }
     
+    @JsonIgnore
     public Set<String> getKeys() {
         return _prefs.keySet();
-    }
-    
-    @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        
-        writer.key("entries");
-            writer.object();
-            for (String k : _prefs.keySet()) {
-                writer.key(k);
-                
-                Object o = _prefs.get(k);
-                if (o instanceof Jsonizable) {
-                    ((Jsonizable) o).write(writer, options);
-                } else {
-                    writer.value(o);
-                }
-            }
-            writer.endObject();
-        
-        writer.endObject();
-        dirty = false;
     }
     
     /**
      * @return true if the preference store has unsaved changes
      */
+    @JsonIgnore
     public boolean isDirty() {
         return dirty;
     }
     
-    @SuppressWarnings("unchecked")
-    public void load(JSONObject obj) throws JSONException {
-        if (obj.has("entries") && !obj.isNull("entries")) {
-            JSONObject entries = obj.getJSONObject("entries");
-            
-            Iterator<String> i = entries.keys();
-            while (i.hasNext()) {
-                String key = i.next();
-                if (!entries.isNull(key)) {
-                    Object o = entries.get(key);
-                    _prefs.put(key, loadObject(o));
-                }
-            }
-            dirty = false; // internal puts don't count
-        }
+    /**
+     * Mark the object as clean every time it is serialized.
+     * This behaviour is not very clean - it is inherited from
+     * the previous deserialization code.
+     * @return
+     */
+    @JsonProperty("makeClean")
+    @JsonInclude(Include.NON_NULL)
+    public Integer markAsClean() {
+        dirty = false;
+        return null;
     }
     
-    static public Object loadObject(Object o) {
-        if (o instanceof JSONObject) {
-            try {
-                JSONObject obj2 = (JSONObject) o;
-                String className = obj2.getString("class");
-                Class<?> klass = RefineServlet.getClass(className);
-                Method method = klass.getMethod("load", JSONObject.class);
-                
-                return method.invoke(null, obj2);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+    @JsonProperty("entries")
+    public void setEntries(JsonNode entries) {
+        Iterator<String> i = entries.fieldNames();
+        while (i.hasNext()) {
+            String key = i.next();
+            if (entries.get(key) != null) {
+                JsonNode o = entries.get(key);
+                Object loaded = loadObject(o);
+                _prefs.put(key, loaded);
             }
-        } else {
-            return o;
+        }
+        dirty = false; // internal puts don't count
+    }
+    
+    @JsonProperty("entries")
+    public Map<String, Object> getEntries() {
+    	return _prefs;
+    }
+    
+    static public Object loadObject(JsonNode o) {
+        try {
+	        if (o instanceof ObjectNode) {
+                ObjectNode obj2 = (ObjectNode) o;
+                return ParsingUtilities.mapper.treeToValue(obj2, PreferenceValue.class);
+	        } else if (o instanceof ArrayNode) {
+	        	return o;
+	        } else {
+	        	// basic datatypes (int, double, boolean, string)
+	            return ParsingUtilities.mapper.treeToValue(o, Object.class);
+	        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

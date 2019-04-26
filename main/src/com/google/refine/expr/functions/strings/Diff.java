@@ -33,17 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
-import org.json.JSONWriter;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.util.CalendarParser;
-import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.Function;
 
 public class Diff implements Function {
@@ -56,21 +51,24 @@ public class Diff implements Function {
             if (o1 != null && o2 != null) {
                 if (args.length == 2 && o1 instanceof String && o2 instanceof String) {
                     return StringUtils.difference((String) o1,(String) o2);
-                } else if ((o1 instanceof Date || o1 instanceof Calendar) && args.length == 3) {
+                } else if (o1 instanceof OffsetDateTime && o2 instanceof OffsetDateTime && args.length == 3) {
                     Object o3 = args[2];
                     if (o3 != null && o3 instanceof String) {
-                        try {
                             String unit = ((String) o3).toLowerCase();
-                            Date c1 = (o1 instanceof Date) ? (Date) o1 : ((Calendar) o1).getTime();
-                            Date c2;
-                            if (o2 instanceof Date) {
-                                c2 = (Date) o2;
-                            } else if (o2 instanceof Calendar) {
-                                c2 = ((Calendar) o2).getTime();
-                            } else {
-                                c2 = CalendarParser.parse((o2 instanceof String) ? (String) o2 : o2.toString()).getTime();
+                            OffsetDateTime c1 = (OffsetDateTime)o1;
+                            OffsetDateTime c2 = (OffsetDateTime)o2;
+
+                            long delta = getNano(c1) - getNano(c2);
+                            if ("nanos".equals(unit)) {
+                                return delta;
                             }
-                            long delta = (c1.getTime() - c2.getTime()) / 1000;
+                            
+                            delta /= 1000;
+                            if ("milliseconds".equals(unit)) {
+                                return delta;
+                            }
+                            
+                            delta /= 1000000;
                             if ("seconds".equals(unit)) {
                                 return delta;
                             }
@@ -96,22 +94,29 @@ public class Diff implements Function {
                                 return days / 365;
                             }
                             return new EvalError("Unknown time unit " + unit);
-                        } catch (CalendarParserException e) {
-                            return new EvalError(e);
-                        }
+                        } 
                     }
                 }
             }
-        }
         return new EvalError("Unexpected arguments - expecting either 2 strings or 2 dates and a unit string");
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options) throws JSONException {
-        writer.object();
-        writer.key("description"); writer.value("For strings, returns the portion where they differ. For dates, it returns the difference in given time units");
-        writer.key("params"); writer.value("o1, o2, time unit (optional)");
-        writer.key("returns"); writer.value("string for strings, number for dates");
-        writer.endObject();
+    public String getDescription() {
+    	return "For strings, returns the portion where they differ. For dates, it returns the difference in given time units";
+    }
+    
+    @Override
+    public String getParams() {
+        return "o1, o2, time unit (optional)";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "string for strings, number for dates";
+    }
+    
+    private long getNano(OffsetDateTime odt) {
+        return odt.toEpochSecond() * 1000000000l + odt.toInstant().getNano();
     }
 }

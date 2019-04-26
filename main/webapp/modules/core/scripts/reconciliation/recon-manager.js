@@ -37,18 +37,6 @@ var ReconciliationManager = {
   _urlMap : {}
 };
 
-ReconciliationManager.isFreebaseId = function(s) {
-  return s == "http://rdf.freebase.com/ns/type.object.id";
-};
-
-ReconciliationManager.isFreebaseMid = function(s) {
-  return s == "http://rdf.freebase.com/ns/type.object.mid";
-};
-
-ReconciliationManager.isFreebaseIdOrMid = function(s) {
-  return ReconciliationManager.isFreebaseMid(s) || ReconciliationManager.isFreebaseId(s);
-};
-
 ReconciliationManager._rebuildMap = function() {
   var map = {};
   $.each(ReconciliationManager.getAllServices(), function(i, service) {
@@ -75,7 +63,7 @@ ReconciliationManager.registerService = function(service) {
 };
 
 ReconciliationManager.registerStandardService = function(url, f) {
-  var dismissBusy = DialogSystem.showBusy($.i18n._('core-recon')["contact-service"]+"...");
+  var dismissBusy = DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
 
   $.ajax(
     url,
@@ -103,7 +91,7 @@ ReconciliationManager.registerStandardService = function(url, f) {
   })
   .error(function(jqXHR, textStatus, errorThrown) {
     dismissBusy(); 
-    alert($.i18n._('core-recon')["error-contact"]+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+    alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
   });
 };
 
@@ -139,11 +127,27 @@ ReconciliationManager.save = function(f) {
   });
 };
 
+ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
+   var service = ReconciliationManager.getServiceFromUrl(url);
+   if (service == null) {
+      ReconciliationManager.registerStandardService(url, function(idx) {
+          ReconciliationManager.save(function() {
+              f(ReconciliationManager.standardServices[idx]);
+          });
+      });
+   } else {
+      f(service);
+   }  
+};
+
+ReconciliationManager.ensureDefaultServicePresent = function() {
+   var lang = $.i18n('core-recon/wd-recon-lang');
+   var url = "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api";
+   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { });
+   return url;
+};
+
 (function() {
-  ReconciliationManager.customServices.push({
-    "name" : $.i18n._('core-recon')["fb-recon"],
-    "ui" : { "handler" : "ReconFreebaseQueryPanel" }
-  });
 
   $.ajax({
     async: false,
@@ -151,15 +155,11 @@ ReconciliationManager.save = function(f) {
       name: "reconciliation.standardServices" 
     }),
     success: function(data) {
-      if (data.value && data.value != "null") {
+      if (data.value && data.value != "null" && data.value != "[]") {
         ReconciliationManager.standardServices = JSON.parse(data.value);
         ReconciliationManager._rebuildMap();
       } else {
-      // FIXME: Standard recon service needs to be replaced
-//        ReconciliationManager.registerStandardService(
-//            "http://reconcile.freebaseapps.com/reconcile"
-//            "http://standard-reconcile.freebaseapps.com/reconcile"
-//            );
+        ReconciliationManager.ensureDefaultServicePresent();
       }
     },
     dataType: "json"

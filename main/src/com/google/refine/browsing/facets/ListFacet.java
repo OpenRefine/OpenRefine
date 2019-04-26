@@ -35,13 +35,13 @@ package com.google.refine.browsing.facets;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.stream.Collectors;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.browsing.FilteredRecords;
@@ -57,24 +57,93 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
 
 public class ListFacet implements Facet {
+    public static final String ERR_TOO_MANY_CHOICES = "Too many choices";
+    
+    /**
+     * Wrapper to respect the serialization format
+     */
+    public static class DecoratedValueWrapper {
+        @JsonProperty("v")
+        public final DecoratedValue value;
+        @JsonCreator
+        public DecoratedValueWrapper(
+                @JsonProperty("v") DecoratedValue value) {
+            this.value = value;
+        }
+    }
+    
     /*
      * Configuration
      */
-    protected String     _name;
-    protected String     _expression;
-    protected String     _columnName;
-    protected boolean    _invert;
+    public static class ListFacetConfig implements FacetConfig {
+        @JsonProperty("name")
+        public String     name;
+        @JsonProperty("expression")
+        public String     expression;
+        @JsonProperty("columnName")
+        public String     columnName;
+        @JsonProperty("invert")
+        public boolean    invert;
+        
+        // If true, then facet won't show the blank and error choices
+        @JsonProperty("omitBlank")
+        public boolean omitBlank;
+        @JsonProperty("omitError")
+        public boolean omitError;
+        
+        @JsonIgnore
+        public List<DecoratedValue> selection = new LinkedList<>();
+        @JsonProperty("selectBlank")
+        public boolean selectBlank;
+        @JsonProperty("selectError")
+        public boolean selectError;
+
+        @JsonProperty("selection")
+        public List<DecoratedValueWrapper> getWrappedSelection() {
+            return selection.stream()
+                    .map(e -> new DecoratedValueWrapper(e))
+                    .collect(Collectors.toList());
+        }
+        
+        @JsonProperty("selection")
+        public void setSelection(List<DecoratedValueWrapper> wrapped) {
+            selection = wrapped.stream()
+                    .map(e -> e.value)
+                    .collect(Collectors.toList());
+        }
+        
+        @Override
+        public Facet apply(Project project) {
+            ListFacet facet = new ListFacet();
+            facet.initializeFromConfig(this, project);
+            return facet;
+        }
+
+        @Override
+        public String getJsonType() {
+            return "list";
+        }
+    }
     
-    // If true, then facet won't show the blank and error choices
-    protected boolean _omitBlank;
-    protected boolean _omitError;
+    /**
+     * Wrapper class for choice counts and selection status for blank and error
+     */
+    public static class OtherChoice {
+        @JsonProperty("s")
+        boolean selected;
+        @JsonProperty("c")
+        int count;
+        public OtherChoice(
+                @JsonProperty("s") boolean selected,
+                @JsonProperty("c") int count) {
+            this.selected = selected;
+            this.count = count;
+        }
+    }
     
-    protected List<NominalFacetChoice> _selection = new LinkedList<NominalFacetChoice>();
-    protected boolean _selectBlank;
-    protected boolean _selectError;
+    ListFacetConfig _config = new ListFacetConfig();
     
     /*
      * Derived configuration
@@ -92,46 +161,70 @@ public class ListFacet implements Facet {
     
     public ListFacet() {
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("name"); writer.value(_name);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("columnName"); writer.value(_columnName);
-        writer.key("invert"); writer.value(_invert);
-        
-        if (_errorMessage != null) {
-            writer.key("error"); writer.value(_errorMessage);
-        } else if (_choices.size() > getLimit()) {
-            writer.key("error"); writer.value("Too many choices");
-            writer.key("choiceCount"); writer.value(_choices.size());
-        } else {
-            writer.key("choices"); writer.array();
-            for (NominalFacetChoice choice : _choices) {
-                choice.write(writer, options);
-            }
-            writer.endArray();
-            
-            if (!_omitBlank && (_selectBlank || _blankCount > 0)) {
-                writer.key("blankChoice");
-                writer.object();
-                writer.key("s"); writer.value(_selectBlank);
-                writer.key("c"); writer.value(_blankCount);
-                writer.endObject();
-            }
-            if (!_omitError && (_selectError || _errorCount > 0)) {
-                writer.key("errorChoice");
-                writer.object();
-                writer.key("s"); writer.value(_selectError);
-                writer.key("c"); writer.value(_errorCount);
-                writer.endObject();
-            }
+    
+    @JsonProperty("name")
+    public String getName() {
+        return _config.name;
+    }
+    
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _config.columnName;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _config.expression;
+    }
+    
+    @JsonProperty("invert")
+    public boolean getInvert() {
+        return _config.invert;
+    }
+    
+    @JsonProperty("error")
+    @JsonInclude(Include.NON_NULL)
+    public String getError() {
+        if (_errorMessage == null && _choices.size() > getLimit()) {
+            return ERR_TOO_MANY_CHOICES;
         }
-        
-        writer.endObject();
+        return _errorMessage;
+    }
+    
+    @JsonProperty("choiceCount")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getChoiceCount() {
+        if (_errorMessage == null && _choices.size() > getLimit()) {
+            return _choices.size();
+        }
+        return null;
+    }
+    
+    @JsonProperty("choices")
+    @JsonInclude(Include.NON_NULL)
+    public List<NominalFacetChoice> getChoices() {
+        if (getError() == null) {
+            return _choices;
+        }
+        return null;
+    }
+    
+    @JsonProperty("blankChoice")
+    @JsonInclude(Include.NON_NULL)
+    public OtherChoice getBlankChoice() {
+        if (getError() == null && !_config.omitBlank && (_config.selectBlank || _blankCount > 0)) {
+            return new OtherChoice(_config.selectBlank, _blankCount);
+        }
+        return null;
+    }
+    
+    @JsonProperty("errorChoice")
+    @JsonInclude(Include.NON_NULL)
+    public OtherChoice getErrorChoice() {
+        if (getError() == null && !_config.omitError && (_config.selectError || _errorCount > 0)) {
+            return new OtherChoice(_config.selectError, _errorCount);
+        }
+        return null;
     }
     
     protected int getLimit() {
@@ -150,54 +243,25 @@ public class ListFacet implements Facet {
         }
         return 2000;
     }
-
-    @Override
-    public void initializeFromJSON(Project project, JSONObject o) throws JSONException {
-        _name = o.getString("name");
-        _expression = o.getString("expression");
-        _columnName = o.getString("columnName");
-        _invert = o.has("invert") && o.getBoolean("invert");
         
-        if (_columnName.length() > 0) {
-            Column column = project.columnModel.getColumnByName(_columnName);
+    public void initializeFromConfig(ListFacetConfig config, Project project) {
+        _config = config;
+        if (_config.columnName.length() > 0) {
+            Column column = project.columnModel.getColumnByName(_config.columnName);
             if (column != null) {
                 _cellIndex = column.getCellIndex();
             } else {
-                _errorMessage = "No column named " + _columnName;
+                _errorMessage = "No column named " + _config.columnName;
             }
         } else {
             _cellIndex = -1;
         }
         
         try {
-            _eval = MetaParser.parse(_expression);
+            _eval = MetaParser.parse(_config.expression);
         } catch (ParsingException e) {
             _errorMessage = e.getMessage();
         }
-        
-        _selection.clear();
-        
-        JSONArray a = o.getJSONArray("selection");
-        int length = a.length();
-        
-        for (int i = 0; i < length; i++) {
-            JSONObject oc = a.getJSONObject(i);
-            JSONObject ocv = oc.getJSONObject("v");
-            
-            DecoratedValue decoratedValue = new DecoratedValue(
-                ocv.get("v"), ocv.getString("l"));
-            
-            NominalFacetChoice nominalFacetChoice = new NominalFacetChoice(decoratedValue);
-            nominalFacetChoice.selected = true;
-            
-            _selection.add(nominalFacetChoice);
-        }
-        
-        _omitBlank = JSONUtilities.getBoolean(o, "omitBlank", false);
-        _omitError = JSONUtilities.getBoolean(o, "omitError", false);
-        
-        _selectBlank = JSONUtilities.getBoolean(o, "selectBlank", false);
-        _selectError = JSONUtilities.getBoolean(o, "selectError", false);
     }
 
     @Override
@@ -205,23 +269,23 @@ public class ListFacet implements Facet {
         return 
             _eval == null || 
             _errorMessage != null ||
-            (_selection.size() == 0 && !_selectBlank && !_selectError) ? 
+            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? 
                 null :
                 new ExpressionEqualRowFilter(
                     _eval, 
-                    _columnName,
+                    _config.columnName,
                     _cellIndex, 
                     createMatches(), 
-                    _selectBlank, 
-                    _selectError,
-                    _invert);
+                    _config.selectBlank, 
+                    _config.selectError,
+                    _config.invert);
     }
     
     @Override
     public RecordFilter getRecordFilter(Project project) {
         RowFilter rowFilter = getRowFilter(project);
         return rowFilter == null ? null :
-            (_invert ?
+            (_config.invert ?
                     new AllRowsRecordFilter(rowFilter) :
                         new AnyRowRecordFilter(rowFilter));
     }
@@ -230,7 +294,7 @@ public class ListFacet implements Facet {
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (_eval != null && _errorMessage == null) {
             ExpressionNominalValueGrouper grouper = 
-                new ExpressionNominalValueGrouper(_eval, _columnName, _cellIndex);
+                new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
             
             filteredRows.accept(project, grouper);
             
@@ -242,7 +306,7 @@ public class ListFacet implements Facet {
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (_eval != null && _errorMessage == null) {
             ExpressionNominalValueGrouper grouper = 
-                new ExpressionNominalValueGrouper(_eval, _columnName, _cellIndex);
+                new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
             
             filteredRecords.accept(project, grouper);
             
@@ -254,8 +318,8 @@ public class ListFacet implements Facet {
         _choices.clear();
         _choices.addAll(grouper.choices.values());
         
-        for (NominalFacetChoice choice : _selection) {
-            String valueString = choice.decoratedValue.value.toString();
+        for (DecoratedValue decoratedValue : _config.selection) {
+            String valueString = decoratedValue.value.toString();
             
             if (grouper.choices.containsKey(valueString)) {
                 grouper.choices.get(valueString).selected = true;
@@ -270,7 +334,9 @@ public class ListFacet implements Facet {
                  *  won't be able to detect the "bicycle" choice, so we need to inject
                  *  that choice into the choice list ourselves.
                  */
+                NominalFacetChoice choice = new NominalFacetChoice(decoratedValue);
                 choice.count = 0;
+                choice.selected = true;
                 _choices.add(choice);
             }
         }
@@ -280,9 +346,9 @@ public class ListFacet implements Facet {
     }
     
     protected Object[] createMatches() {
-        Object[] a = new Object[_selection.size()];
+        Object[] a = new Object[_config.selection.size()];
         for (int i = 0; i < a.length; i++) {
-            a[i] = _selection.get(i).decoratedValue.value;
+            a[i] = _config.selection.get(i).value;
         }
         return a;
     }

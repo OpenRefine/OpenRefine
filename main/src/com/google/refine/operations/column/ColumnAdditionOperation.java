@@ -38,11 +38,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.Evaluable;
@@ -51,7 +50,6 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.history.Change;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -60,8 +58,6 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.TextTransformOperation;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;
@@ -71,25 +67,19 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _newColumnName;
     final protected int        _columnInsertIndex;
 
-    static public AbstractOperation reconstruct(Project project, JSONObject obj) throws Exception {
-        JSONObject engineConfig = obj.getJSONObject("engineConfig");
-        
-        return new ColumnAdditionOperation(
-            engineConfig,
-            obj.getString("baseColumnName"),
-            obj.getString("expression"),
-            TextTransformOperation.stringToOnError(obj.getString("onError")),
-            obj.getString("newColumnName"),
-            obj.getInt("columnInsertIndex")
-        );
-    }
-    
+    @JsonCreator
     public ColumnAdditionOperation(
-        JSONObject     engineConfig,
+        @JsonProperty("engineConfig")
+        EngineConfig   engineConfig,
+        @JsonProperty("baseColumnName")
         String         baseColumnName,
+        @JsonProperty("expression")
         String         expression,
+        @JsonProperty("onError")
         OnError        onError,
-        String         newColumnName, 
+        @JsonProperty("newColumnName")
+        String         newColumnName,
+        @JsonProperty("columnInsertIndex")
         int            columnInsertIndex 
     ) {
         super(engineConfig);
@@ -101,23 +91,32 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         _newColumnName = newColumnName;
         _columnInsertIndex = columnInsertIndex;
     }
-
-    @Override
-    public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        writer.key("op"); writer.value(OperationRegistry.s_opClassToName.get(this.getClass()));
-        writer.key("description"); writer.value(getBriefDescription(null));
-        writer.key("engineConfig"); writer.value(getEngineConfig());
-        writer.key("newColumnName"); writer.value(_newColumnName);
-        writer.key("columnInsertIndex"); writer.value(_columnInsertIndex);
-        writer.key("baseColumnName"); writer.value(_baseColumnName);
-        writer.key("expression"); writer.value(_expression);
-        writer.key("onError"); writer.value(TextTransformOperation.onErrorToString(_onError));
-        writer.endObject();
+    
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+        return _newColumnName;
+    }
+    
+    @JsonProperty("columnInsertIndex")
+    public int getColumnInsertIndex() {
+        return _columnInsertIndex;
+    }
+    
+    @JsonProperty("baseColumnName")
+    public String getBaseColumnName() {
+        return _baseColumnName;
+    }
+    
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _expression;
     }
 
+    @JsonProperty("onError")
+    public OnError getOnError() {
+        return _onError;
+    }
+    
     @Override
     protected String getBriefDescription(Project project) {
         return "Create column " + _newColumnName + 

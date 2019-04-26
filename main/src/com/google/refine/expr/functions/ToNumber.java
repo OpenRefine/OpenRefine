@@ -35,10 +35,8 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class ToNumber implements Function {
@@ -58,23 +56,30 @@ public class ToNumber implements Function {
                     try {
                         return Double.parseDouble(s);
                     } catch (NumberFormatException e) {
-                        return new EvalError("Cannot parse to number");
+                        return new EvalError("Unable to parse as number");
                     }
+                } else {
+                    return new EvalError("Unable to parse as number");
                 }
             }
+        } else {
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
         }
-        return null;
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns o converted to a number";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns o converted to a number");
-        writer.key("params"); writer.value("o");
-        writer.key("returns"); writer.value("number");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "o";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "number";
     }
 
 }

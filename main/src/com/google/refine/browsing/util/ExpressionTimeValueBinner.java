@@ -33,9 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
-import java.util.Calendar;
+import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Properties;
 
 import com.google.refine.browsing.RecordVisitor;
@@ -162,12 +161,8 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
         if (ExpressionUtils.isError(value)) {
             hasError = true;
         } else if (ExpressionUtils.isNonBlankData(value)) {
-            if (value instanceof Calendar) {
-                value = ((Calendar) value).getTime();
-            }
-            
-            if (value instanceof Date) {
-                long t = ((Date) value).getTime();
+            if (value instanceof OffsetDateTime) {
+                long t = ((OffsetDateTime) value).toInstant().toEpochMilli();
                 hasTime = true;
                     
                 int bin = (int) Math.floor((double) (t - _index.getMin()) / (double) _index.getStep());

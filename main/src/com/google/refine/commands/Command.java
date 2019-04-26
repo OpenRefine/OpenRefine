@@ -44,17 +44,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.Jsonizable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
@@ -115,19 +114,14 @@ public abstract class Command {
      * @return
      * @throws JSONException
      */
-    static protected JSONObject getEngineConfig(HttpServletRequest request)
-    throws JSONException {
+    static protected EngineConfig getEngineConfig(HttpServletRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
         
         String json = request.getParameter("engine");
-        try{
-            return (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
-        } catch (JSONException e){
-            logger.debug( json + " could not be parsed to JSON");
-            return null;
-        }
+        return (json == null) ? null :
+                   EngineConfig.reconstruct(json);
     }
 
     /**
@@ -149,9 +143,9 @@ public abstract class Command {
         }
 
         Engine engine = new Engine(project);
-        JSONObject o = getEngineConfig(request);
-        if (o != null) {
-            engine.initializeFromJSON(o);
+        EngineConfig c = getEngineConfig(request);
+        if (c != null) {
+            engine.initializeFromConfig(c);
         }
         return engine;
     }
@@ -220,20 +214,15 @@ public abstract class Command {
         }
         return def;
     }
-
-    static protected JSONObject getJsonParameter(HttpServletRequest request, String name) {
-        if (request == null) {
-            throw new IllegalArgumentException("parameter 'request' should not be null");
+    
+    protected static class HistoryEntryResponse {
+        @JsonProperty("code")
+        protected String getCode() { return "ok"; }
+        @JsonProperty("historyEntry")
+        protected HistoryEntry historyEntry;
+        protected HistoryEntryResponse(HistoryEntry entry) {
+            historyEntry = entry;
         }
-        String value = request.getParameter(name);
-        if (value != null) {
-            try {
-                return ParsingUtilities.evaluateJsonStringToObject(value);
-            } catch (JSONException e) {
-                logger.warn("error getting json parameter",e);
-            }
-        }
-        return null;
     }
 
     static protected void performProcessAndRespond(
@@ -242,23 +231,18 @@ public abstract class Command {
         Project project,
         Process process
     ) throws Exception {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
+
 
         HistoryEntry historyEntry = project.processManager.queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
-            JSONWriter writer = new JSONWriter(w);
-            Properties options = new Properties();
-
-            writer.object();
-            writer.key("code"); writer.value("ok");
-            writer.key("historyEntry"); historyEntry.write(writer, options);
-            writer.endObject();
+            ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
 
             w.flush();
             w.close();
         } else {
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             respond(response, "{ \"code\" : \"pending\" }");
         }
     }
@@ -279,36 +263,37 @@ public abstract class Command {
     }
 
     static protected void respond(HttpServletResponse response, String status, String message)
-        throws IOException, JSONException {
+        throws IOException {
 
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
-        writer.object();
-        writer.key("status"); writer.value(status);
-        writer.key("message"); writer.value(message);
-        writer.endObject();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("status", status);
+        writer.writeStringField("message", message);
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
         w.flush();
         w.close();
     }
 
-    static protected void respondJSON(HttpServletResponse response, Jsonizable o)
-        throws IOException, JSONException {
+    static protected void respondJSON(HttpServletResponse response, Object o)
+        throws IOException {
 
         respondJSON(response, o, new Properties());
     }
 
     static protected void respondJSON(
-            HttpServletResponse response, Jsonizable o, Properties options)
-            throws IOException, JSONException {
+            HttpServletResponse response, Object o, Properties options)
+            throws IOException {
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
         response.setHeader("Cache-Control", "no-cache");
 
         Writer w = response.getWriter();
-        JSONWriter writer = new JSONWriter(w);
+        ParsingUtilities.defaultWriter.writeValue(w, o);
 
-        o.write(writer, options);
         w.flush();
         w.close();
     }
@@ -322,25 +307,26 @@ public abstract class Command {
             throw new ServletException("Response object can't be null");
         }
 
-        try {
-            JSONObject o = new JSONObject();
-            o.put("code", "error");
-            o.put("message", e.getMessage());
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.flush();
-            sw.flush();
-
-            o.put("stack", sw.toString());
-
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            respond(response, o.toString());
-        } catch (JSONException e1) {
-            e.printStackTrace(response.getWriter());
-        }
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        pw.flush();
+        sw.flush();
+        
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        writer.writeStartObject();
+        writer.writeStringField("code", "error");   
+        writer.writeStringField("message", e.getMessage());
+        writer.writeStringField("stack", sw.toString());
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
     }
     
     protected void respondWithErrorPage(

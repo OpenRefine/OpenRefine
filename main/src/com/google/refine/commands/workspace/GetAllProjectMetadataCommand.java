@@ -35,47 +35,39 @@ package com.google.refine.commands.workspace;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.commands.Command;
 
 public class GetAllProjectMetadataCommand extends Command {
+    public static class AllProjectMetadata  {
+        @JsonProperty("projects")
+        protected Map<Long, ProjectMetadata> projects;
+        @JsonProperty("customMetadataColumns")
+        @JsonInclude(Include.NON_NULL)
+        @JsonRawValue
+        protected String customMetadataColumns;
+        
+        protected AllProjectMetadata(Map<Long, ProjectMetadata> map, String json) {
+            projects = map;
+            customMetadataColumns = json;
+        }
+    }
+    
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
-            
-            JSONWriter writer = new JSONWriter(response.getWriter());
-            Properties options = new Properties();
-            
-            writer.object();
-            writer.key("projects");
-                writer.object();
-                Map<Long, ProjectMetadata> m = ProjectManager.singleton.getAllProjectMetadata();
-                for (Entry<Long,ProjectMetadata> e : m.entrySet()) {
-                    ProjectMetadata pm = e.getValue();
-                    if (pm != null) {
-                        writer.key(e.getKey().toString());
-                        e.getValue().write(writer, options);
-                    }
-                }
-                writer.endObject();
-            writer.endObject();
-        } catch (JSONException e) {
-            respondException(response, e);
-        }
+        String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
+        respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
     }
 }

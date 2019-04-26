@@ -35,9 +35,6 @@ package com.google.refine.expr.functions.booleans;
 
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
@@ -58,13 +55,17 @@ public class Not implements Function {
     }
     
     @Override
-    public void write(JSONWriter writer, Properties options)
-        throws JSONException {
+    public String getDescription() {
+        return "Returns the opposite of b";
+    }
     
-        writer.object();
-        writer.key("description"); writer.value("Returns the opposite of b");
-        writer.key("params"); writer.value("boolean b");
-        writer.key("returns"); writer.value("boolean");
-        writer.endObject();
+    @Override
+    public String getParams() {
+        return "boolean b";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "boolean";
     }
 }

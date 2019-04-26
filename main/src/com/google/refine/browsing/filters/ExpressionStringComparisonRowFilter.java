@@ -36,12 +36,11 @@ package com.google.refine.browsing.filters;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -52,11 +51,13 @@ import com.google.refine.model.Row;
  */
 abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
     final protected Evaluable _evaluable;
+    final protected Boolean   _invert;
     final protected String    _columnName;
     final protected int       _cellIndex;
     
-    public ExpressionStringComparisonRowFilter(Evaluable evaluable, String columnName, int cellIndex) {
+    public ExpressionStringComparisonRowFilter(Evaluable evaluable, Boolean invert, String columnName, int cellIndex) {
         _evaluable = evaluable;
+        _invert = invert;
         _columnName = columnName;
         _cellIndex = cellIndex;
     }
@@ -67,44 +68,40 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
         
         Properties bindings = ExpressionUtils.createBindings(project);
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
-        
+        Boolean invert = _invert;
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;
                 for (Object v : a) {
                     if (checkValue(v instanceof String ? ((String) v) : v.toString())) {
-                        return true;
+                        return !invert;
                     }
                 }
             } else if (value instanceof Collection<?>) {
                 for (Object v : ExpressionUtils.toObjectCollection(value)) {
                     if (checkValue(v.toString())) {
-                        return true;
+                        return !invert;
                     }
                 }
-                return false;
-            } else if (value instanceof JSONArray) {
-                JSONArray a = (JSONArray) value;
-                int l = a.length();
+                return invert;
+            } else if (value instanceof ArrayNode) {
+                ArrayNode a = (ArrayNode) value;
+                int l = a.size();
                 
                 for (int i = 0; i < l; i++) {
-                    try {
-                        if (checkValue(a.get(i).toString())) {
-                            return true;
-                        }
-                    } catch (JSONException e) {
-                        // ignore
+                    if (checkValue(JsonValueConverter.convert(a.get(i)).toString())) {
+                        return !invert;
                     }
                 }
-                return false;
+                return invert;
             } else {
                 if (checkValue(value instanceof String ? ((String) value) : value.toString())) {
-                    return true;
+                    return !invert;
                 }
             }
         }
-        return false;
+        return invert;
     }
     
     abstract protected boolean checkValue(String s);

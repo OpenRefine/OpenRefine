@@ -45,13 +45,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.google.refine.Jsonizable;
 
-public class ColumnModel implements Jsonizable {
+public class ColumnModel  {
+    @JsonProperty("columns")
     final public List<Column>      columns = new LinkedList<Column>();
+    @JsonProperty("columnGroups")
     final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
     
     private int _maxCellIndex = -1;
@@ -70,6 +73,7 @@ public class ColumnModel implements Jsonizable {
         this._maxCellIndex = Math.max(this._maxCellIndex, maxCellIndex);
     }
 
+    @JsonIgnore
     synchronized public int getMaxCellIndex() {
         return _maxCellIndex;
     }
@@ -81,19 +85,12 @@ public class ColumnModel implements Jsonizable {
         return ++_maxCellIndex;
     }
     
-    synchronized public void removeCellIndex(int index) {
-        if (index > _maxCellIndex - 1)
-            return;
-        
-        columns.remove(index);
-        _maxCellIndex--;
-    }
-    
     synchronized public void setKeyColumnIndex(int keyColumnIndex) {
         // TODO: check validity of new cell index, e.g., it's not in any group
         this._keyColumnIndex = keyColumnIndex;
     }
 
+    @JsonIgnore
     synchronized public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
@@ -174,36 +171,27 @@ public class ColumnModel implements Jsonizable {
         return _cellIndexToColumn.get(cellIndex);
     }
     
+    @JsonIgnore
     synchronized public List<String> getColumnNames() {
         return _columnNames;
     }
-
-    @Override
-    synchronized public void write(JSONWriter writer, Properties options)
-            throws JSONException {
-        
-        writer.object();
-        
-        writer.key("columns");
-        writer.array();
-        for (Column column : columns) {
-            column.write(writer, options);
+    
+    @JsonProperty("keyCellIndex")
+    @JsonInclude(Include.NON_NULL)
+    public Integer getJsonKeyCellIndex() {
+        if(columns.size() > 0) {
+            return getKeyColumnIndex();
         }
-        writer.endArray();
-        
-        if (columns.size() > 0) {
-            writer.key("keyCellIndex"); writer.value(getKeyColumnIndex());
-            writer.key("keyColumnName"); writer.value(columns.get(_keyColumnIndex).getName());
+        return null;
+    }
+    
+    @JsonProperty("keyColumnName")
+    @JsonInclude(Include.NON_NULL)
+    public String getKeyColumnName() {
+        if(columns.size() > 0) {
+            return columns.get(_keyColumnIndex).getName();
         }
-        
-        writer.key("columnGroups");
-        writer.array();
-        for (ColumnGroup g : _rootColumnGroups) {
-            g.write(writer, options);
-        }
-        writer.endArray();
-        
-        writer.endObject();
+        return null;
     }
     
     synchronized public void save(Writer writer, Properties options) throws IOException {

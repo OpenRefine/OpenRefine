@@ -34,12 +34,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function TextSearchFacet(div, config, options) {
   this._div = div;
   this._config = config;
+  if (!("invert" in this._config)) {
+    this._config.invert = false;
+  }
+
   this._options = options;
 
   this._query = config.query || null;
   this._timerID = null;
 
   this._initializeUI();
+  this._update();
 }
 
 TextSearchFacet.reconstruct = function(div, uiState) {
@@ -70,6 +75,7 @@ TextSearchFacet.prototype.getJSON = function() {
       columnName: this._config.columnName,
       mode: this._config.mode,
       caseSensitive: this._config.caseSensitive,
+      invert: this._config.invert,
       query: this._query
   };
   return o;
@@ -82,41 +88,46 @@ TextSearchFacet.prototype.hasSelection = function() {
 TextSearchFacet.prototype._initializeUI = function() {
   var self = this;
   this._div.empty().show().html(
-      '<div class="facet-title">' + 
+      '<div class="facet-title" bind="facetTitle">' + 
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="'+$.i18n._('core-facets')["remove-facet"]+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+      '<td width="1%"><a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
       '<td>' +
-      '<span>' + this._config.name + '</span>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
+            '<span bind="titleSpan"></span>' +
       '</td>' +
       '</tr></table></div>' +
       '</div>' +
       '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
       '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
       '<tr>' +
-      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" /></td><td>'+$.i18n._('core-facets')["case-sensitive"]+'</td>' +
-      '<td width="1%"><input type="checkbox" bind="regexCheckbox" /></td><td>'+$.i18n._('core-facets')["regular-exp"]+'</td>' +
+      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox" /></td><td><label for="caseSensitiveCheckbox">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox" /></td><td><label for="regexCheckbox">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
       '</tr>' +
       '</table></div></div>'
   );
 
-  var elmts = DOM.bind(this._div);
+  this._elmts = DOM.bind(this._div);
 
+  this._elmts.titleSpan.text(this._config.name);
   if (this._config.caseSensitive) {
-    elmts.caseSensitiveCheckbox.attr("checked", "true");
+    this._elmts.caseSensitiveCheckbox.attr("checked", "true");
   }
-  if (this._config.mode == "regex") {
-    elmts.regexCheckbox.attr("checked", "true");
+  if (this._config.mode === "regex") {
+    this._elmts.regexCheckbox.attr("checked", "true");
   }
 
-  elmts.removeButton.click(function() { self._remove(); });
+  this._elmts.removeButton.click(function() { self._remove(); });
+  this._elmts.resetButton.click(function() { self._reset(); });
+  this._elmts.invertButton.click(function() { self._invert(); });
 
-  elmts.caseSensitiveCheckbox.bind("change", function() {
+  this._elmts.caseSensitiveCheckbox.bind("change", function() {
     self._config.caseSensitive = this.checked;
     if (self._query !== null && self._query.length > 0) {
       self._scheduleUpdate();
     }
   });
-  elmts.regexCheckbox.bind("change", function() {
+  this._elmts.regexCheckbox.bind("change", function() {
     self._config.mode = this.checked ? "regex" : "text";
     if (self._query !== null && self._query.length > 0) {
       self._scheduleUpdate();
@@ -124,10 +135,10 @@ TextSearchFacet.prototype._initializeUI = function() {
   });
 
   if (this._query) {
-    elmts.input[0].value = this._query;
+    this._elmts.input[0].value = this._query;
   }
   
-  elmts.input.bind("keyup change input",function(evt) {
+  this._elmts.input.bind("keyup change input",function(evt) {
     // Ignore non-character keyup changes
     if(evt.type === "keyup" && (this.value === self._query || this.value === '' && !self._query)) {
       return;
@@ -139,6 +150,7 @@ TextSearchFacet.prototype._initializeUI = function() {
 };
 
 TextSearchFacet.prototype.updateState = function(data) {
+  this._update();
 };
 
 TextSearchFacet.prototype.render = function() {
@@ -147,6 +159,19 @@ TextSearchFacet.prototype.render = function() {
 
 TextSearchFacet.prototype._reset = function() {
   this._query = null;
+  this._config.mode = "text";
+  this._config.caseSensitive = false;
+  this._elmts.input.val([]);
+  this._elmts.caseSensitiveCheckbox.prop("checked", false);
+  this._elmts.regexCheckbox.prop("checked", false);
+  this._config.invert = false;
+
+  this._updateRest();
+};
+
+TextSearchFacet.prototype._invert = function() {
+  this._config.invert = !this._config.invert;
+
   this._updateRest();
 };
 
@@ -156,6 +181,17 @@ TextSearchFacet.prototype._remove = function() {
   this._div = null;
   this._config = null;
   this._options = null;
+};
+
+TextSearchFacet.prototype._update = function () {
+  var invert = this._config.invert;
+  if (invert) {
+    this._elmts.facetTitle.addClass("facet-title-inverted");
+    this._elmts.invertButton.addClass("facet-mode-inverted");
+  } else {
+    this._elmts.facetTitle.removeClass("facet-title-inverted");
+    this._elmts.invertButton.removeClass("facet-mode-inverted");
+  }
 };
 
 TextSearchFacet.prototype._scheduleUpdate = function() {

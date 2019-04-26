@@ -43,19 +43,19 @@ ScatterplotDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/scatterplot-dialog.html"));
     this._elmts = DOM.bind(dialog);
     this._elmts.dialogHeader.text(
-    		$.i18n._('core-dialogs')["scatterplot-matrix"] + 
-            ((typeof this._column == "undefined") ? "" : " ("+$.i18n._('core-dialogs')["focusing-on"]+" '" + this._column + "')"));
+    		$.i18n('core-dialogs/scatterplot-matrix') + 
+            ((typeof this._column == "undefined") ? "" : " ("+$.i18n('core-dialogs/focusing-on')+" '" + this._column + "')"));
 
     this._elmts.closeButton.click(function() { self._dismiss(); });
-    this._elmts.or_dialog_linplot.attr("title", $.i18n._('core-dialogs')["linear-plot"]);
-    this._elmts.or_dialog_logplot.attr("title", $.i18n._('core-dialogs')["logarithmic-plot"]);
-    this._elmts.or_dialog_counter.attr("title", $.i18n._('core-dialogs')["rotated-counter-clock"]);
-    this._elmts.or_dialog_norot.attr("title", $.i18n._('core-dialogs')["no-rotation"]);
-    this._elmts.or_dialog_clock.attr("title", $.i18n._('core-dialogs')["rotated-clock"]);
-    this._elmts.or_dialog_smallDot.attr("title", $.i18n._('core-dialogs')["small-dot"]);
-    this._elmts.or_dialog_regularDot.attr("title", $.i18n._('core-dialogs')["regular-dot"]);
-    this._elmts.or_dialog_bigDot.attr("title", $.i18n._('core-dialogs')["big-dot"]);
-    this._elmts.closeButton.text($.i18n._('core-buttons')["close"]);
+    this._elmts.or_dialog_linplot.attr("title", $.i18n('core-dialogs/linear-plot'));
+    this._elmts.or_dialog_logplot.attr("title", $.i18n('core-dialogs/logarithmic-plot'));
+    this._elmts.or_dialog_counter.attr("title", $.i18n('core-dialogs/rotated-counter-clock'));
+    this._elmts.or_dialog_norot.attr("title", $.i18n('core-dialogs/no-rotation'));
+    this._elmts.or_dialog_clock.attr("title", $.i18n('core-dialogs/rotated-clock'));
+    this._elmts.or_dialog_smallDot.attr("title", $.i18n('core-dialogs/small-dot'));
+    this._elmts.or_dialog_regularDot.attr("title", $.i18n('core-dialogs/regular-dot'));
+    this._elmts.or_dialog_bigDot.attr("title", $.i18n('core-dialogs/big-dot'));
+    this._elmts.closeButton.text($.i18n('core-buttons/close'));
     
     this._elmts.plotSelector.buttonset().change(function() {
         self._plot_method = $(this).find("input:checked").val();
@@ -87,7 +87,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
     var self = this;
     
     var container = this._elmts.tableContainer.html(
-        '<div style="margin: 1em; font-size: 130%; color: #888; background-color: white;">'+$.i18n._('core-dialogs')["focusing-on"]+' <img src="images/small-spinner.gif"></div>'
+        '<div style="margin: 1em; font-size: 130%; color: #888; background-color: white;">'+$.i18n('core-dialogs/focusing-on')+' <img src="images/small-spinner.gif"></div>'
     );
 
     if (theProject.columnModel.columns.length > 0) {
@@ -96,7 +96,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
         };
         $.getJSON("command/core/get-columns-info?" + $.param(params),function(data) {
             if (data === null || typeof data.length == 'undefined') {
-                container.html($.i18n._('core-dialogs')["error-getColumnInfo"]);
+                container.html($.i18n('core-dialogs/error-getColumnInfo'));
                 return;
             }
                 
@@ -214,7 +214,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
         });
     } else {
         container.html(
-            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n._('core-dialogs')["no-column-dataset"]+ '</div></div>'
+            '<div style="margin: 2em;"><div style="font-size: 130%; color: #333;">'+$.i18n('core-dialogs/no-column-dataset')+ '</div></div>'
         );
     }
     

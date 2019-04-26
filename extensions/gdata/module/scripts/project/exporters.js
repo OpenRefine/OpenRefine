@@ -41,10 +41,11 @@ $.ajax({
 //		lang : lang
 	},
 	success : function(data) {
-		dictionary = data;
+		dictionary = data['dictionary'];
+                lang = data['lang'];
 	}
 });
-$.i18n.setDictionary(dictionary);
+$.i18n().load(dictionary, lang);
 // End internationalization
 
 (function() {
@@ -52,7 +53,7 @@ $.i18n.setDictionary(dictionary);
     var doUpload = function() {
       var name = window.prompt(prompt, theProject.metadata.name);
       if (name) {
-        var dismiss = DialogSystem.showBusy($.i18n._('gdata-exporter')["uploading"]);
+        var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
         $.post(
           "command/gdata/upload",
           {
@@ -68,7 +69,7 @@ $.i18n.setDictionary(dictionary);
             if (o.url) {
               window.open(o.url, '_blank');
             } else {
-                alert($.i18n._('gdata-exporter')["upload-error"] + o.message)
+                alert($.i18n('gdata-exporter/upload-error') + o.message)
             }
             onDone();
           },
@@ -86,16 +87,16 @@ $.i18n.setDictionary(dictionary);
   
   CustomTabularExporterDialog.uploadTargets.push({
     id: 'gdata/google-spreadsheet',
-    label: $.i18n._('gdata-exporter')["new-spreadsheet"],
+    label: $.i18n('gdata-exporter/new-spreadsheet'),
     handler: function(options, exportAllRows, onDone) {
-      handleUpload(options, exportAllRows, onDone, $.i18n._('gdata-exporter')["enter-spreadsheet"]);
+      handleUpload(options, exportAllRows, onDone, $.i18n('gdata-exporter/enter-spreadsheet'));
     }
   });
   CustomTabularExporterDialog.uploadTargets.push({
     id: 'gdata/fusion-table',
-    label: $.i18n._('gdata-exporter')["new-fusion"],
+    label: $.i18n('gdata-exporter/new-fusion'),
     handler: function(options, exportAllRows, onDone) {
-      handleUpload(options, exportAllRows, onDone, $.i18n._('gdata-exporter')["enter-fusion"]);
+      handleUpload(options, exportAllRows, onDone, $.i18n('gdata-exporter/enter-fusion'));
     }
   });
 })();

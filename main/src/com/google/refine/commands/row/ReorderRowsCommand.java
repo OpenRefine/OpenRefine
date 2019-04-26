@@ -33,32 +33,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.row;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowReorderOperation;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.sorting.SortingConfig;
 
 public class ReorderRowsCommand extends EngineDependentCommand {
     
     @Override
     protected AbstractOperation createOperation(Project project,
-            HttpServletRequest request, JSONObject engineConfig) throws Exception {
+            HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         String mode = request.getParameter("mode");
-        JSONObject sorting = null;
+        SortingConfig sorting = null;
 
         try{
             String json = request.getParameter("sorting");
 
-            sorting = (json == null) ? null : ParsingUtilities.evaluateJsonStringToObject(json);
-        } catch (JSONException e) {
+            sorting = (json == null) ? null : SortingConfig.reconstruct(json);
+        } catch (IOException e) {
             // ignore
         }
 
