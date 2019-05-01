@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -33,9 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.compress.utils.IOUtils;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
@@ -47,22 +52,40 @@ public class MD5 implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
-            String s = (o instanceof String) ? (String) o : o.toString();
-            return DigestUtils.md5Hex(s);
+            if (o instanceof String) {
+                return DigestUtils.md5Hex((String) o);
+            } else if (o instanceof Serializable) {
+                Serializable s = (Serializable)o;
+                ByteArrayOutputStream baos = null;
+                ObjectOutputStream oos = null;
+                try {
+                    baos = new ByteArrayOutputStream();
+                    oos = new ObjectOutputStream(baos);
+                    oos.writeObject(s);
+                    return DigestUtils.md5Hex(baos.toByteArray());
+                } catch(Exception e) {
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed.");
+                } finally {
+                    IOUtils.closeQuietly(oos);
+                    IOUtils.closeQuietly(baos);
+                }
+            } else {
+                return DigestUtils.md5Hex(o.toString());
+            }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an object");
     }
-    
+
     @Override
     public String getDescription() {
-        return "Returns the MD5 hash of s";
+        return "Returns the MD5 hash of o";
     }
-    
+
     @Override
     public String getParams() {
-        return "string s";
+        return "object o";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";
