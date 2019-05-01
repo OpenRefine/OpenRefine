@@ -28,8 +28,6 @@ package com.google.refine.tests.expr.functions.strings;
 
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import org.testng.Assert;
