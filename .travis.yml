@@ -1,9 +1,10 @@
 language: java
+dist: xenial
 jdk:
   - oraclejdk8
   - openjdk8
-  - oraclejdk9
-  - openjdk9
+  - oraclejdk11
+  - openjdk11
   
 addons:
   mariadb: '10.0'
