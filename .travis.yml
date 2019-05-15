@@ -29,7 +29,7 @@ before_install:
   - mvn process-resources
 
 script:
-  - mvn prepare-agent test
+  - mvn jacoco:prepare-agent test
 
 after_success:
   - mvn prepare-package -DskipTests=true
