@@ -120,7 +120,7 @@
                     <goal>report</goal>
                 </goals>
                 <configuration>
-                    <dataFile>${project.build.directory}/report/jacoco.exec</dataFile>
+                    <dataFile>${project.build.directory}/jacoco.exec</dataFile>
                     <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
                 </configuration>
             </execution>
@@ -130,8 +130,6 @@
                      <goal>merge</goal>
                 </goals>
                 <phase>prepare-package</phase>
-             </execution>
-        </executions>
                <configuration>
                      <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
                      <fileSets>
@@ -139,6 +137,7 @@
                             <directory>${project.build.directory}/report</directory>
                             <includes>
                                 <include>jacoco.exec</include>
+                                <include>jacoco-merged.exec</include>
                             </includes>
                         </fileSet>
                         <fileSet>
@@ -149,12 +148,22 @@
                         </fileSet>
                      </fileSets> 
                 </configuration>
-
+             </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
         <version>4.3.0</version>
+        <configuration>
+          <sourceDirectories>
+             <sourceDirectory>main/src</sourceDirectory>
+             <sourceDirectory>extensions/jython/src</sourceDirectory>
+             <sourceDirectory>extensions/wikidata/src</sourceDirectory>
+             <sourceDirectory>extensions/database/src</sourceDirectory>
+             <sourceDirectory>extensions/phonetic/src</sourceDirectory>
+          </sourceDirectories>
+        </configuration>
        </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
