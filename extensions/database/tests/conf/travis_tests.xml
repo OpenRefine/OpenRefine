@@ -21,11 +21,12 @@
     <parameter name = "mariaDbPassword" value=""/>
     <parameter name = "mariaDbTestTable" value="test_table"/>
 	<test name="DatabaseExtensionUnitTest">
-        <!-- Temporarily exclude MySQL from Travis tests until MySQL is working on Travis again. --> 
+        <!-- Temporarily exclude MySQL and MariaDB from Travis tests until MySQL is working on Travis again. --> 
         <!-- See https://github.com/OpenRefine/OpenRefine/issues/2043 -->
         <groups>
             <run>
                 <exclude name="requiresMySQL"/>
+                <exclude name="requiresMariaDB" />
             </run>
         </groups> 
 		<classes>
