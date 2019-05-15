@@ -29,11 +29,11 @@ before_install:
   - mvn process-resources
 
 script:
-  - ./refine test
+  - mvn prepare-agent test
 
 after_success:
   - mvn prepare-package -DskipTests=true
-  - mvn coveralls:report
+  - mvn jacoco:report coveralls:report
 
 cache:
   directories:
