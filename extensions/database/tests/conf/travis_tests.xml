@@ -21,6 +21,13 @@
     <parameter name = "mariaDbPassword" value=""/>
     <parameter name = "mariaDbTestTable" value="test_table"/>
 	<test name="DatabaseExtensionUnitTest">
+        <!-- Temporarily exclude MySQL from Travis tests until MySQL is working on Travis again. --> 
+        <!-- See https://github.com/OpenRefine/OpenRefine/issues/2043 -->
+        <groups>
+            <run>
+                <exclude name="requiresMySQL"/>
+            </run>
+        </groups> 
 		<classes>
 			<class name="com.google.refine.extension.database.DatabaseImportControllerTest"/>
 			<class name="com.google.refine.extension.database.DatabaseServiceTest"/>
