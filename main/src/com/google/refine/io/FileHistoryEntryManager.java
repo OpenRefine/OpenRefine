@@ -64,7 +64,11 @@ public class FileHistoryEntryManager implements HistoryEntryManager{
     @Override
     public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
         try {
-            ParsingUtilities.defaultWriter.writeValue(writer, historyEntry);
+        	if("save".equals(options.getProperty("mode"))) {
+        		ParsingUtilities.saveWriter.writeValue(writer, historyEntry);
+        	} else {
+        		ParsingUtilities.defaultWriter.writeValue(writer, historyEntry);
+        	}
         } catch (IOException e) {
             e.printStackTrace();
         }

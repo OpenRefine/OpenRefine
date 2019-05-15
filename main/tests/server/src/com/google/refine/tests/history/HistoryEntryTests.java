@@ -28,6 +28,8 @@ package com.google.refine.tests.history;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -40,6 +42,30 @@ import com.google.refine.tests.RefineTest;
 import com.google.refine.tests.util.TestUtils;
 
 public class HistoryEntryTests extends RefineTest {
+	
+    public static final String fullJson = "{"
+            + "\"id\":1533633623158,"
+            + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
+            + "\"time\":\"2018-08-07T09:06:37Z\","
+            + "\"operation\":{\"op\":\"core/column-addition\","
+            + "   \"description\":\"Create column uri at index 2 based on column country using expression grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
+            + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+            + "   \"newColumnName\":\"uri\","
+            + "   \"columnInsertIndex\":2,"
+            + "   \"baseColumnName\":\"country\","
+            + "   \"expression\":\"grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
+            + "   \"onError\":\"set-to-blank\"}"
+            + "}";
+    
+	public static final String unknownOperationJson = "{"
+            + "\"id\":1533633623158,"
+            + "\"description\":\"some mysterious operation\","
+            + "\"time\":\"2018-08-07T09:06:37Z\","
+            + "\"operation\":{\"op\":\"someextension/unknown-operation\","
+            + "   \"description\":\"some mysterious operation\","
+            + "   \"some_parameter\":234\n"
+		    + "}\n"
+            + "}";
     
     Project project;
     
@@ -63,26 +89,20 @@ public class HistoryEntryTests extends RefineTest {
     
     @Test
     public void serializeHistoryEntryWithOperation() throws Exception {
-        String json = "{"
-                + "\"id\":1533633623158,"
-                + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-                + "\"time\":\"2018-08-07T09:06:37Z\","
-                + "\"operation\":{\"op\":\"core/column-addition\","
-                + "   \"description\":\"Create column uri at index 2 based on column country using expression grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-                + "   \"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "   \"newColumnName\":\"uri\","
-                + "   \"columnInsertIndex\":2,"
-                + "   \"baseColumnName\":\"country\","
-                + "   \"expression\":\"grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
-                + "   \"onError\":\"set-to-blank\"}"
-                + "}";
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
                 + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
                 + "\"time\":\"2018-08-07T09:06:37Z\"}";
         
-        HistoryEntry historyEntry = HistoryEntry.load(project, json);
+        HistoryEntry historyEntry = HistoryEntry.load(project, fullJson);
         TestUtils.isSerializedTo(historyEntry, jsonSimple, false);
-        TestUtils.isSerializedTo(historyEntry, json, true);
+        TestUtils.isSerializedTo(historyEntry, fullJson, true);
+    }
+    
+    @Test
+    public void deserializeUnknownOperation() throws IOException {
+    	// Unknown operations are serialized back as they were parsed
+    	HistoryEntry entry = HistoryEntry.load(project, unknownOperationJson);
+    	TestUtils.isSerializedTo(entry, unknownOperationJson, true);
     }
 }
