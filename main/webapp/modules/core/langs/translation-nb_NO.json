@@ -408,5 +408,6 @@
     "core-buttons/preview": "Forhåndsvis",
     "core-buttons/download": "Last ned",
     "core-buttons/upload": "Last opp",
-    "core-buttons/apply": "Bruk"
+    "core-buttons/apply": "Bruk",
+    "core-index-parser/escape": "Utfør skiftesekvens for spesialtegn med \\"
 }
