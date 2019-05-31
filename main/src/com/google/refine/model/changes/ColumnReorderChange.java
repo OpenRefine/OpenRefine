@@ -42,16 +42,20 @@ import java.util.List;
 import java.util.Properties;
 
 import com.google.refine.history.Change;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 
 public class ColumnReorderChange extends ColumnChange {
     final protected List<String>    _columnNames;
     protected List<Column>          _oldColumns;
     protected List<Column>          _newColumns;
+    protected List<Column>          _removedColumns;
     protected List<ColumnGroup>     _oldColumnGroups;
+    protected CellAtRowCellIndex[]  _oldCells;
     
     public ColumnReorderChange(List<String> columnNames) {
         _columnNames = columnNames;
@@ -74,6 +78,43 @@ public class ColumnReorderChange extends ColumnChange {
                 _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
             }
             
+            if (_removedColumns == null) {
+            	_removedColumns = new ArrayList<Column>();
+	            for (String n : project.columnModel.getColumnNames()) {
+	            	Column oldColumn = project.columnModel.getColumnByName(n);
+	            	if(!_newColumns.contains(oldColumn)) {
+	            		_removedColumns.add(oldColumn);
+	            	}
+	            }
+            }
+
+            if (_oldCells == null) {
+	            _oldCells = new CellAtRowCellIndex[project.rows.size() * _removedColumns.size()];
+
+	            int count = 0;
+	            for (int i = 0; i < project.rows.size(); i++) {
+	                for (int j = 0; j < _removedColumns.size(); j++) {
+	            		int cellIndex = _removedColumns.get(j).getCellIndex();
+	            		Row row = project.rows.get(i);
+
+	            		Cell oldCell = null;
+	            		if (cellIndex < row.cells.size()) {
+	            			oldCell = row.cells.get(cellIndex);
+	            		}
+	            		_oldCells[count++] = new CellAtRowCellIndex(i, cellIndex,oldCell);
+	            	}
+	            }
+            }
+
+            //Clear cells on removed columns.
+            for (int i = 0; i < project.rows.size(); i++) {
+                for (int j = 0; j < _removedColumns.size(); j++) {
+            		int cellIndex = _removedColumns.get(j).getCellIndex();
+            		Row row = project.rows.get(i);
+            		row.setCell(cellIndex, null);
+            	}
+            }
+
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_newColumns);
             project.columnModel.columnGroups.clear();
@@ -90,6 +131,12 @@ public class ColumnReorderChange extends ColumnChange {
             
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
+
+
+            for (int i = 0; i < _oldCells.length; i++) {
+                Row row = project.rows.get(_oldCells[i].row);
+                row.setCell(_oldCells[i].cellIndex,_oldCells[i].cell);
+            }
 
             project.update();
         }
@@ -112,6 +159,17 @@ public class ColumnReorderChange extends ColumnChange {
             c.save(writer);
             writer.write('\n');
         }
+        writer.write("removedColumnCount="); writer.write(Integer.toString(_removedColumns.size())); writer.write('\n');
+        for (Column c : _removedColumns) {
+            c.save(writer);
+            writer.write('\n');
+        }
+        writer.write("oldCellCount="); writer.write(Integer.toString(_oldCells.length)); writer.write('\n');
+        for (CellAtRowCellIndex c : _oldCells) {
+            c.save(writer, options);
+            writer.write('\n');
+        }
+
         writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
@@ -120,6 +178,8 @@ public class ColumnReorderChange extends ColumnChange {
         List<String> columnNames = new ArrayList<String>();
         List<Column> oldColumns = new ArrayList<Column>();
         List<Column> newColumns = new ArrayList<Column>();
+        List<Column> removedColumns = new ArrayList<Column>();
+        CellAtRowCellIndex[] oldCells = new CellAtRowCellIndex[0];
         List<ColumnGroup> oldColumnGroups = null;
         
         String line;
@@ -151,6 +211,24 @@ public class ColumnReorderChange extends ColumnChange {
                         newColumns.add(Column.load(line));
                     }
                 }
+            } else if ("removedColumnCount".equals(field)) {
+                int count = Integer.parseInt(line.substring(equal + 1));
+                for (int i = 0; i < count; i++) {
+                    line = reader.readLine();
+                    if (line != null) {
+                    	removedColumns.add(Column.load(line));
+                    }
+                }
+            } else if ("oldCellCount".equals(field)) {
+                int oldCellCount = Integer.parseInt(line.substring(equal + 1));
+
+                oldCells = new CellAtRowCellIndex[oldCellCount];
+                for (int i = 0; i < oldCellCount; i++) {
+                    line = reader.readLine();
+                    if (line != null) {
+                        oldCells[i] = CellAtRowCellIndex.load(line, pool);
+                    }
+                }
             } else if ("oldColumnGroupCount".equals(field)) {
                 int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
                 
@@ -161,6 +239,8 @@ public class ColumnReorderChange extends ColumnChange {
         ColumnReorderChange change = new ColumnReorderChange(columnNames);
         change._oldColumns = oldColumns;
         change._newColumns = newColumns;
+        change._removedColumns = removedColumns;
+        change._oldCells = oldCells;
         change._oldColumnGroups = oldColumnGroups != null ?
                 oldColumnGroups : new LinkedList<ColumnGroup>();
         
