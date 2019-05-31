@@ -247,6 +247,7 @@
             <verbose>false</verbose>
             <generateGitPropertiesFile>true</generateGitPropertiesFile>
             <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+            <failOnNoGitDirectory>false</failOnNoGitDirectory>
             <format>json</format>
             <gitDescribe>
                 <skip>false</skip>
