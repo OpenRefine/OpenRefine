@@ -37,7 +37,7 @@ before_test:
     psql -U postgres test_db < extensions\database\tests\conf\travis-pgsql.sql
 
     copy extensions\database\tests\conf\appveyor_tests.xml extensions\database\tests\conf\tests.xml
-    copy packaging\travis_pom.xml packaging/pom.xml
+    copy packaging\travis_pom.xml packaging\pom.xml
 - cmd: |-
     mvn process-resources
     mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
