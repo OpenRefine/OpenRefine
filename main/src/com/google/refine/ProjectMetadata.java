@@ -114,7 +114,7 @@ public class ProjectMetadata {
     private ArrayNode _userMetadata = ParsingUtilities.mapper.createArrayNode();
     
     @JsonProperty("customMetadata")
-    private Map<String, Serializable>   _customMetadata = new HashMap<String, Serializable>();
+    private Map<String, Object>   _customMetadata = new HashMap<>();
     @JsonProperty("preferences")
     @JsonView(JsonViews.SaveMode.class)
     private PreferenceStore             _preferenceStore = new PreferenceStore();
@@ -247,7 +247,7 @@ public class ProjectMetadata {
 
     @JsonIgnore
     public Serializable getCustomMetadata(String key) {
-        return _customMetadata.get(key);
+        return (Serializable)_customMetadata.get(key);
     }
 
     public void setCustomMetadata(String key, Serializable value) {
