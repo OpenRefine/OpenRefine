@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions.strings;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,43 +58,38 @@ public class Diff implements Function {
                             String unit = ((String) o3).toLowerCase();
                             OffsetDateTime c1 = (OffsetDateTime)o1;
                             OffsetDateTime c2 = (OffsetDateTime)o2;
-
-                            long delta = getNano(c1) - getNano(c2);
-                            if ("nanos".equals(unit)) {
-                                return delta;
+                            try {
+                                if ("nanos".equals(unit)) {
+                                    return ChronoUnit.NANOS.between(c2, c1);
+                                }
+                                if ("milliseconds".equals(unit)) {
+                                    return ChronoUnit.MILLIS.between(c2, c1);
+                                }
+                                if ("seconds".equals(unit)) {
+                                    return ChronoUnit.SECONDS.between(c2, c1);
+                                }
+                                if ("minutes".equals(unit)) {
+                                    return ChronoUnit.MINUTES.between(c2, c1);
+                                }
+                                if ("hours".equals(unit)) {
+                                    return ChronoUnit.HOURS.between(c2, c1);
+                                }
+                                if ("days".equals(unit)) {
+                                    return ChronoUnit.DAYS.between(c2, c1);
+                                }
+                                if ("weeks".equals(unit)) {
+                                    return ChronoUnit.WEEKS.between(c2, c1);
+                                }
+                                if ("months".equals(unit)) {
+                                    return ChronoUnit.MONTHS.between(c2, c1);
+                                }
+                                if ("years".equals(unit)) {
+                                    return ChronoUnit.YEARS.between(c2, c1);
+                                }
+                                return new EvalError("Unknown time unit " + unit);
+                            } catch (ArithmeticException arithmeticException) {
+                                    return new EvalError("Number of " + unit + " between given dates causes long overflow.");
                             }
-                            
-                            delta /= 1000;
-                            if ("milliseconds".equals(unit)) {
-                                return delta;
-                            }
-                            
-                            delta /= 1000000;
-                            if ("seconds".equals(unit)) {
-                                return delta;
-                            }
-                            delta /= 60;
-                            if ("minutes".equals(unit)) {
-                                return delta;
-                            }
-                            delta /= 60;
-                            if ("hours".equals(unit)) {
-                                return delta;
-                            }
-                            long days = delta / 24;
-                            if ("days".equals(unit)) {
-                                return days;
-                            }
-                            if ("weeks".equals(unit)) {
-                                return days / 7;
-                            }
-                            if ("months".equals(unit)) {
-                                return days / 30;
-                            }
-                            if ("years".equals(unit)) {
-                                return days / 365;
-                            }
-                            return new EvalError("Unknown time unit " + unit);
                         } 
                     }
                 }
@@ -103,7 +99,7 @@ public class Diff implements Function {
     
     @Override
     public String getDescription() {
-    	return "For strings, returns the portion where they differ. For dates, it returns the difference in given time units";
+        return "For strings, returns the portion where they differ. For dates, it returns the difference in given time units";
     }
     
     @Override
@@ -114,9 +110,5 @@ public class Diff implements Function {
     @Override
     public String getReturns() {
         return "string for strings, number for dates";
-    }
-    
-    private long getNano(OffsetDateTime odt) {
-        return odt.toEpochSecond() * 1000000000l + odt.toInstant().getNano();
     }
 }
