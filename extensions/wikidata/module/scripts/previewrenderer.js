@@ -224,8 +224,9 @@ EditRenderer._renderValue = function(json, container) {
     EditRenderer._renderEntity(json.datavalue, container);
   } else {
     var jsonValue = JSON.stringify(json.datavalue);
-    if (jsonValue in EditRenderer.renderedValueCache) {
-        $('<span>'+EditRenderer.renderedValueCache[jsonValue]+'</span>').appendTo(container);
+    var fullJsonValue = JSON.stringify(json);
+    if (fullJsonValue in EditRenderer.renderedValueCache) {
+        $('<span>'+EditRenderer.renderedValueCache[fullJsonValue]+'</span>').appendTo(container);
     } else {
         var params = {
             action: 'wbformatvalue',
@@ -244,7 +245,7 @@ EditRenderer._renderValue = function(json, container) {
             params,
             function (data) {
                 if('result' in data) {
-                    EditRenderer.renderedValueCache[jsonValue] = data.result;
+                    EditRenderer.renderedValueCache[fullJsonValue] = data.result;
                     $('<span>'+data.result+'</span>').appendTo(container);
                 }
             },
