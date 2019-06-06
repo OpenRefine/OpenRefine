@@ -363,11 +363,13 @@ public class FileProjectManager extends ProjectManager  {
 
         boolean found = false;
 
-        try {
-        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
-            found = true;
-        } catch(IOException e) {
-        	logger.warn(e.toString());
+        if (file.exists() || file.canRead()) {
+	        try {
+	        	ParsingUtilities.mapper.readerForUpdating(this).readValue(file);
+	            found = true;
+	        } catch(IOException e) {
+	        	logger.warn(e.toString());
+	        }
         }
 
         return found;
