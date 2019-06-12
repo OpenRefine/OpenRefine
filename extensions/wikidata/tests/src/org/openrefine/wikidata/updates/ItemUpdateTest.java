@@ -132,7 +132,7 @@ public class ItemUpdateTest {
     public void testGroupBySubject() {
         ItemUpdate updateA = new ItemUpdateBuilder(newSubject).addStatement(statement1).build();
         ItemUpdate updateB = new ItemUpdateBuilder(sameNewSubject).addStatement(statement2).build();
-        ItemUpdate updateC = new ItemUpdateBuilder(existingSubject).addLabel(label).build();
+        ItemUpdate updateC = new ItemUpdateBuilder(existingSubject).addLabel(label, true).build();
         ItemUpdate updateD = new ItemUpdateBuilder(matchedSubject).build();
         Map<EntityIdValue, ItemUpdate> grouped = ItemUpdate
                 .groupBySubject(Arrays.asList(updateA, updateB, updateC, updateD));
@@ -148,12 +148,12 @@ public class ItemUpdateTest {
     public void testNormalizeTerms() {
         MonolingualTextValue aliasEn = Datamodel.makeMonolingualTextValue("alias", "en");
         MonolingualTextValue aliasFr = Datamodel.makeMonolingualTextValue("coucou", "fr");
-        ItemUpdate updateA = new ItemUpdateBuilder(newSubject).addLabel(label).addAlias(aliasEn).addAlias(aliasFr)
+        ItemUpdate updateA = new ItemUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn).addAlias(aliasFr)
                 .build();
         assertFalse(updateA.isNull());
         ItemUpdate normalized = updateA.normalizeLabelsAndAliases();
-        ItemUpdate expectedUpdate = new ItemUpdateBuilder(newSubject).addLabel(label).addAlias(aliasEn)
-                .addLabel(aliasFr).build();
+        ItemUpdate expectedUpdate = new ItemUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn)
+                .addLabel(aliasFr, true).build();
         assertEquals(expectedUpdate, normalized);
     }
     
@@ -161,9 +161,87 @@ public class ItemUpdateTest {
     public void testMergeLabels() {
     	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2).build();
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
+    }
+    
+    @Test
+    public void testMergeLabelsIfNew() {
+    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(label1), merged.getLabelsIfNew());
+        assertEquals(Collections.emptySet(), merged.getLabels());
+    }
+    
+    @Test
+    public void testMergeLabelsIfNewOverriding() {
+    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, true).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, false).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(label1), merged.getLabels());
+        assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
+    }
+    
+    @Test
+    public void testMergeLabelsIfNewOverriding2() {
+    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addLabel(label1, false).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addLabel(label2, true).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(label2), merged.getLabels());
+        assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
+    }
+    
+    @Test
+    public void testMergeDescriptionsIfNew() {
+    	MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
+        MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(description1), merged.getDescriptionsIfNew());
+        assertEquals(Collections.emptySet(), merged.getDescriptions());
+    }
+    
+    @Test
+    public void testMergeDescriptionsIfNewOverriding() {
+    	MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
+        MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, true).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, false).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(description1), merged.getDescriptions());
+        assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
+    }
+    
+    @Test
+    public void testMergeDescriptionsIfNewOverriding2() {
+    	MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
+        MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
+        ItemUpdate update1 = new ItemUpdateBuilder(existingSubject).addDescription(description1, false).build();
+        ItemUpdate update2 = new ItemUpdateBuilder(existingSubject).addDescription(description2, true).build();
+        ItemUpdate merged = update1.merge(update2);
+        assertEquals(Collections.singleton(description2), merged.getDescriptions());
+        assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
+    }
+    
+    @Test
+    public void testConstructOverridingLabels() {
+    	MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
+        MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
+        ItemUpdate update = new ItemUpdateBuilder(existingSubject)
+        		.addLabel(label1, false)
+        		.addLabel(label2, true)
+        		.build();
+        assertEquals(Collections.singleton(label2), update.getLabels());
+        assertEquals(Collections.emptySet(), update.getLabelsIfNew());
     }
 }

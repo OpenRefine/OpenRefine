@@ -98,8 +98,12 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * @param update
      */
     protected void splitUpdate(ItemUpdate update) {
-        ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId()).addLabels(update.getLabels())
-                .addDescriptions(update.getDescriptions()).addAliases(update.getAliases())
+        ItemUpdateBuilder pointerFreeBuilder = new ItemUpdateBuilder(update.getItemId())
+        		.addLabels(update.getLabels(), true)
+        		.addLabels(update.getLabelsIfNew(), false)
+                .addDescriptions(update.getDescriptions(), true)
+                .addDescriptions(update.getDescriptionsIfNew(), false)
+                .addAliases(update.getAliases())
                 .deleteStatements(update.getDeletedStatements());
         ItemUpdateBuilder pointerFullBuilder = new ItemUpdateBuilder(update.getItemId());
 

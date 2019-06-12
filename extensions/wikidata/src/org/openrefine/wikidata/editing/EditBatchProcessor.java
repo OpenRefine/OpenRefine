@@ -142,8 +142,15 @@ public class EditBatchProcessor {
             } else {
                 // Existing item
                 ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
-                editor.updateTermsStatements(currentDocument, update.getLabels().stream().collect(Collectors.toList()),
-                        update.getDescriptions().stream().collect(Collectors.toList()),
+                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
+                labels.addAll(update.getLabelsIfNew().stream()
+                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
+                List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
+                descriptions.addAll(update.getDescriptionsIfNew().stream()
+                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode())).collect(Collectors.toList()));
+                editor.updateTermsStatements(currentDocument,
+                		labels,
+                        descriptions,
                         update.getAliases().stream().collect(Collectors.toList()),
                         new ArrayList<MonolingualTextValue>(),
                         update.getAddedStatements().stream().collect(Collectors.toList()),

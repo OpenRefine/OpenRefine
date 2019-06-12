@@ -120,7 +120,7 @@ public class EditBatchProcessorTest extends RefineTest {
         List<ItemIdValue> qids = ids.stream().map(e -> Datamodel.makeWikidataItemIdValue(e))
                 .collect(Collectors.toList());
         List<ItemUpdate> batch = qids.stream()
-                .map(qid -> new ItemUpdateBuilder(qid).addDescription(description).build())
+                .map(qid -> new ItemUpdateBuilder(qid).addDescription(description, true).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
