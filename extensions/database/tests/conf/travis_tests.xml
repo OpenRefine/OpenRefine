@@ -25,8 +25,6 @@
         <!-- See https://github.com/OpenRefine/OpenRefine/issues/2043 -->
         <groups>
             <run>
-                <exclude name="requiresMySQL"/>
-                <exclude name="requiresMariaDB" />
             </run>
         </groups> 
 		<classes>
