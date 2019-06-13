@@ -8,7 +8,7 @@ jdk:
   - openjdk12
   
 addons:
-  mariadb: '10.0'
+  mariadb: '10.3'
   
 services:
   - mysql
