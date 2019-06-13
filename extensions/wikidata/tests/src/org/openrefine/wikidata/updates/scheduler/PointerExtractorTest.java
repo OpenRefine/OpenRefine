@@ -66,7 +66,6 @@ public class PointerExtractorTest {
 
     @Test
     public void testExtractDatavalues() {
-        assertEmpty(Datamodel.makeDatatypeIdValue("string"));
         assertEmpty(Datamodel.makeGlobeCoordinatesValue(1.34, 2.354, 0.1, GlobeCoordinatesValue.GLOBE_EARTH));
         assertEmpty(Datamodel.makeStringValue("est"));
         assertEmpty(Datamodel.makeMonolingualTextValue("srtu", "en"));

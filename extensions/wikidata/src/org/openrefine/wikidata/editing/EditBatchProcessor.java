@@ -211,7 +211,10 @@ public class EditBatchProcessor {
             } catch (MediaWikiApiErrorException e) {
                 e.printStackTrace();
                 Thread.sleep(5000);
-            }
+            } catch (IOException e) {
+				e.printStackTrace();
+				Thread.sleep(5000);
+			}
             retries--;
         }
         if (currentDocs == null) {
