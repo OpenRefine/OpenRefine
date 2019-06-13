@@ -428,11 +428,13 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
  **************************/
 
 SchemaAlignmentDialog._addNameDesc = function(item, json) {
-  var type = 'ALIAS';
+  var term_type = 'ALIAS';
   var value = null;
+  var override = false;
   if (json) {
-     type = json.name_type;
+     term_type = json.name_type.replace('_IF_NEW', '');
      value = json.value;
+     override = json.name_type.indexOf('_IF_NEW') == -1; 
   } 
 
   var container = item.find('.wbs-namedesc-container').first();
@@ -441,28 +443,17 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   var type_input = $('<select></select>').appendTo(type_container);
   $('<option></option>')
   .attr('value', 'LABEL')
-  .text($.i18n('wikidata-schema/label-override'))
-  .appendTo(type_input);
-  $('<option></option>')
-  .attr('value', 'LABEL_IF_NEW')
-  .text($.i18n('wikidata-schema/label-if-new'))
+  .text($.i18n('wikidata-schema/label'))
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'DESCRIPTION')
-  .text($.i18n('wikidata-schema/description-override'))
-  .appendTo(type_input);
-  $('<option></option>')
-  .attr('value', 'DESCRIPTION_IF_NEW')
-  .text($.i18n('wikidata-schema/description-if-new'))
+  .text($.i18n('wikidata-schema/description'))
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'ALIAS')
   .text($.i18n('wikidata-schema/alias'))
   .appendTo(type_input);
-  type_input.val(type);
-  type_input.on('change', function(e) {
-    SchemaAlignmentDialog._hasChanged();
-  });
+  type_input.val(term_type);
 
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(namedesc);
   SchemaAlignmentDialog._makeDeleteButton().click(function(e) {
@@ -475,10 +466,37 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
   SchemaAlignmentDialog._initField(value_container, "monolingualtext", value); 
 
+  var override_container = $('<div></div>').addClass('wbs-namedesc-override').appendTo(namedesc);
+  var label = $('<label></label>').appendTo(override_container);
+  var checkbox = $('<input></input>')
+       .attr('type', 'checkbox')
+       .prop('checked', override)
+       .appendTo(label);
+  var span = $('<span></span>').text($.i18n('wikidata-schema/override-term')).appendTo(label);
+  checkbox.on('change', function(e) {
+    SchemaAlignmentDialog._hasChanged();
+  });
+  type_input.on('change', function(e) {
+    var checkbox_visible = type_input.val() !== 'ALIAS';
+    if (checkbox_visible) {
+       override_container.show();
+    } else {
+       override_container.hide();
+    }
+    SchemaAlignmentDialog._hasChanged();
+  });
+
 }
 
 SchemaAlignmentDialog._nameDescToJSON = function (namedesc) {
-  var type = namedesc.find('select').first().val();
+  var term_type = namedesc.find('select').first().val();
+  var type = term_type;
+  if (term_type !== 'ALIAS') {
+      var override = namedesc.find('input[type=checkbox]').first().is(':checked');
+      if (!override) {
+         type = term_type + '_IF_NEW';
+      }
+  }
   var value = namedesc.find('.wbs-namedesc-value').first().data("jsonValue");
   return {
     type: "wbnamedescexpr",    
