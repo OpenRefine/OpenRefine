@@ -441,11 +441,19 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   var type_input = $('<select></select>').appendTo(type_container);
   $('<option></option>')
   .attr('value', 'LABEL')
-  .text($.i18n('wikidata-schema/label'))
+  .text($.i18n('wikidata-schema/label-override'))
+  .appendTo(type_input);
+  $('<option></option>')
+  .attr('value', 'LABEL_IF_NEW')
+  .text($.i18n('wikidata-schema/label-if-new'))
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'DESCRIPTION')
-  .text($.i18n('wikidata-schema/description'))
+  .text($.i18n('wikidata-schema/description-override'))
+  .appendTo(type_input);
+  $('<option></option>')
+  .attr('value', 'DESCRIPTION_IF_NEW')
+  .text($.i18n('wikidata-schema/description-if-new'))
   .appendTo(type_input);
   $('<option></option>')
   .attr('value', 'ALIAS')

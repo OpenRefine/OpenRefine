@@ -209,6 +209,7 @@ public class ItemUpdateTest {
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singleton(description1), merged.getDescriptionsIfNew());
         assertEquals(Collections.emptySet(), merged.getDescriptions());
+        assertFalse(merged.isEmpty());
     }
     
     @Test

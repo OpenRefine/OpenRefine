@@ -242,8 +242,13 @@ public class ItemUpdate {
      */
     @JsonIgnore
     public boolean isEmpty() {
-        return (addedStatements.isEmpty() && deletedStatements.isEmpty() && labels.isEmpty() && descriptions.isEmpty()
-                && aliases.isEmpty());
+        return (addedStatements.isEmpty() &&
+        		deletedStatements.isEmpty() &&
+        		labels.isEmpty() &&
+        		descriptions.isEmpty() &&
+        		aliases.isEmpty() &&
+        		labelsIfNew.isEmpty() &&
+        		descriptionsIfNew.isEmpty());
     }
 
     /**
