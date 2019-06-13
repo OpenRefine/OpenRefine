@@ -5,12 +5,13 @@ jdk:
   - openjdk9
   - oraclejdk11
   - openjdk11
+  - openjdk12
   
 addons:
   mariadb: '10.0'
   
 services:
-  # - mysql
+  - mysql
   - postgresql 
 
 env:
