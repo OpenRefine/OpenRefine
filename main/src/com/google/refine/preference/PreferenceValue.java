@@ -26,8 +26,8 @@
  ******************************************************************************/
 package com.google.refine.preference;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Interface to be extended by all objects stored 
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(
         use=JsonTypeInfo.Id.CLASS,
-        include=JsonTypeInfo.As.PROPERTY,
+        include=JsonTypeInfo.As.EXISTING_PROPERTY,
         property="class")
 public interface PreferenceValue {
 	

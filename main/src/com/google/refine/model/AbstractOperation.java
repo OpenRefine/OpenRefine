@@ -35,6 +35,7 @@ package com.google.refine.model;
 
 import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
@@ -72,7 +73,7 @@ abstract public class AbstractOperation  {
         throw new UnsupportedOperationException();
     }
     
-    @JsonProperty("op")
+    @JsonIgnore // the operation id is already added as "op" by the JsonTypeInfo annotation
     public String getOperationId() {
         return OperationRegistry.s_opClassToName.get(this.getClass());
     }
