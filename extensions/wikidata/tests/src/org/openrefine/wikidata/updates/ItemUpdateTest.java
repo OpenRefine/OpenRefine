@@ -28,6 +28,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,6 +48,8 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
+import com.google.refine.tests.util.TestUtils;
 
 public class ItemUpdateTest {
 
@@ -109,6 +112,13 @@ public class ItemUpdateTest {
         assertFalse(update.isNull());
         assertEquals(Arrays.asList(statement1, statement2), update.getAddedStatements());
         assertEquals(statementGroups, update.getAddedStatementGroups().stream().collect(Collectors.toSet()));
+    }
+    
+    @Test
+    public void testSerializeStatements() throws IOException {
+    	ItemUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
+                .build();
+    	TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"));
     }
 
     @Test
