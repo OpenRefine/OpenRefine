@@ -91,6 +91,11 @@ public class EditBatchProcessor {
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
         // have a bot flag, and this is generally wanted if they have one.
+
+        // edit at 60 edits/min by default. If Wikidata is overloaded
+        // it will slow us down via the maxlag mechanism.
+        editor.setAverageTimePerEdit(1000);
+
         this.library = library;
         this.summary = summary;
         this.batchSize = batchSize;
