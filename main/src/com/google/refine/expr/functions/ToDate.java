@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -61,6 +62,7 @@ public class ToDate implements Function {
     public Object call(Properties bindings, Object[] args) {
         String o1;
         Boolean month_first = null;
+        Boolean unix = false;
         List<String> formats =  new ArrayList<String>();  
         OffsetDateTime date = null;
         
@@ -76,6 +78,8 @@ public class ToDate implements Function {
                 o1 =  ((Long) arg0).toString(); // treat integers as years
             } else if (arg0 instanceof String && arg0.toString().trim().length() > 0) {
                 o1 = (String) arg0;
+            } else if (arg0 instanceof Integer) {
+                o1 =  ((Long)((Integer) arg0).longValue()).toString();
             } else {
                 // ignore cell values that aren't Date, Calendar, Long or String 
                 return new EvalError("Unable to parse as date");
@@ -88,7 +92,12 @@ public class ToDate implements Function {
             if(args[1] instanceof Boolean) {
                 month_first = (Boolean) args[1];
             } else if (args[1] instanceof String) {
-                formats.add(StringUtils.trim((String) args[1]));
+                if(args[1].equals("unix")) {
+                    date = parse(o1);
+                    unix = true;
+                } else {
+                    formats.add(StringUtils.trim((String) args[1]));
+                }
             } else {
                 return new EvalError("Invalid argument");
             }
@@ -101,7 +110,7 @@ public class ToDate implements Function {
             }
             if(month_first != null) {
                 date = parse(o1,month_first,formats);
-            } else {
+            } else if(!unix) {
                 date = parse(o1,formats);
             }
             
@@ -187,15 +196,26 @@ public class ToDate implements Function {
             return null;
         }
     }
+
+    /**
+     * Function for parsing OffsetDateTime from unix time format (seconds since 1 January 1970 00:00:00 UTC)
+     */
+    private OffsetDateTime parse(String o1)
+    {
+        Long seconds = Long.parseLong(o1);
+        Instant instant = Instant.ofEpochSecond(seconds);
+        OffsetDateTime date = instant.atOffset(ZoneOffset.UTC);
+        return date;
+    }
     
     @Override
     public String getDescription() {
-        return "Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html";
+        return "Returns o converted to a date object, you can hint if the day or the month is listed first, use unix time (with \"unix\" flag) or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html";
     }
     
     @Override
     public String getParams() {
-        return "o, boolean month_first / format1, format2, ... (all optional)";
+        return "o / integer unix_seconds (only with unix flag), boolean month_first / \"unix\" / format1, format2, ... (all optional) ";
     }
     
     @Override
