@@ -719,5 +719,10 @@
     "core-recon/add-std-srv": "標準サービスを追加",
     "core-views/blank-rows": "空白行",
     "core-views/non-blank-values": "カラムの非空白値",
-    "core-views/non-blank-records": "カラムの非空白レコード"
+    "core-views/non-blank-records": "カラムの非空白レコード",
+    "core-index/tags": "タグ:",
+    "core-index/title": "タイトル:",
+    "core-index/license": "ライセンス:",
+    "core-index/homepage": "ホームページ:",
+    "core-index/image": "写真:"
 }
