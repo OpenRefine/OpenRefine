@@ -54,7 +54,7 @@
     "core-index-import/creating-proj": "Oppretter prosjekt…",
     "core-index-import/import": "Importer?",
     "core-index-import/name": "Navn",
-    "core-index-import/mime-type": "MIME-type",
+    "core-index-import/mime-type": "Media type",
     "core-index-import/format": "Format",
     "core-index-import/size": "Størrelse",
     "core-index-import/warning-select": "Velg minst én fil.",
