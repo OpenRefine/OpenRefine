@@ -60,7 +60,7 @@
     "core-index-import/creating-proj": "Creating project …",
     "core-index-import/import": "Import?",
     "core-index-import/name": "Name",
-    "core-index-import/mime-type": "Mime-type",
+    "core-index-import/mime-type": "Media type",
     "core-index-import/format": "Format",
     "core-index-import/size": "Size",
     "core-index-import/warning-select": "Please select at least one file.",
