@@ -102,11 +102,23 @@ public class ExpressionUtils {
     static public boolean isError(Object o) {
         return o instanceof EvalError;
     }
-    /*
-    static public boolean isBlank(Object o) {
-        return o == null || (o instanceof String && ((String) o).length() == 0);
-    }
-    */
+    
+    static public boolean isNumber(Object v) {
+         return v != null && (v instanceof Number);
+     }		
+
+    static public boolean isBoolean(Object v) {
+         return v != null && v instanceof Boolean;
+     }
+
+    static public boolean isDateTime(Object v) {		
+         return v != null && v instanceof OffsetDateTime;		
+     }
+     
+     static public boolean isString(Object v) {		
+          return v != null && v instanceof String;		
+      }
+    
     static public boolean isNonBlankData(Object o) {
         return
             o != null &&
