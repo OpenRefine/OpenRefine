@@ -48,6 +48,7 @@ import com.google.refine.model.Project;
         property="type")
 @JsonSubTypes({
     @Type(value = ListFacet.ListFacetConfig.class, name = "list"),
+    @Type(value = TextListFacet.TextListFacetConfig.class, name = "textlist"),
     @Type(value = RangeFacet.RangeFacetConfig.class, name = "range"),
     @Type(value = TimeRangeFacet.TimeRangeFacetConfig.class, name = "timerange"),
     @Type(value = TextSearchFacet.TextSearchFacetConfig.class, name = "text"),
