@@ -276,6 +276,10 @@ public class ListFacet implements Facet {
                     _config.columnName,
                     _cellIndex, 
                     createMatches(), 
+                    false,
+                    false,
+                    false,
+                    false,
                     _config.selectBlank, 
                     _config.selectError,
                     _config.invert);

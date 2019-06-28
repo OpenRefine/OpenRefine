@@ -77,12 +77,20 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
      * Computed results
      */
     final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<Object, IndexedNominalFacetChoice>();
+    public int stringCount = 0;
+    public int numericCount = 0;
+    public int datetimeCount = 0;
+    public int booleanCount = 0;
     public int blankCount = 0;
     public int errorCount = 0;
 
     /*
      * Scratch pad variables
      */
+    protected boolean hasString;
+    protected boolean hasNumeric;
+    protected boolean hasDateTime;
+    protected boolean hasBoolean;
     protected boolean hasBlank;
     protected boolean hasError;
 
@@ -104,13 +112,28 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
     @Override
     public boolean visit(Project project, int rowIndex, Row row) {
+        hasString = false;
+        hasNumeric = false;
+        hasDateTime = false;
+        hasBoolean = false;
         hasError = false;
         hasBlank = false;
 
         Properties bindings = ExpressionUtils.createBindings(project);
 
         visitRow(project, rowIndex, row, bindings, rowIndex);
-
+        if (hasString) {
+            stringCount++;
+        }
+        if (hasNumeric) {
+            numericCount++;
+        }
+        if (hasDateTime) {
+            datetimeCount++;
+        }
+        if (hasBoolean) {
+            booleanCount++;
+        }
         if (hasError) {
             errorCount++;
         }
@@ -123,6 +146,10 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
     @Override
     public boolean visit(Project project, Record record) {
+        hasString = false;
+        hasNumeric = false;
+        hasDateTime = false;
+        hasBoolean = false;
         hasError = false;
         hasBlank = false;
 
@@ -133,6 +160,18 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
             visitRow(project, r, row, bindings, record.recordIndex);
         }
 
+        if (hasString) {
+            stringCount++;
+        }
+        if (hasNumeric) {
+            numericCount++;
+        }
+        if (hasDateTime) {
+            datetimeCount++;
+        }
+        if (hasBoolean) {
+            booleanCount++;
+        }
         if (hasError) {
             errorCount++;
         }

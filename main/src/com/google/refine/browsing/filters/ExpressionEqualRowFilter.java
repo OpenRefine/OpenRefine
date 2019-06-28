@@ -59,6 +59,10 @@ public class ExpressionEqualRowFilter implements RowFilter {
                                                 // for expression such as "row.starred".
     
     final protected Object[]        _matches;
+    final protected boolean         _selectString;
+    final protected boolean         _selectNumeric;
+    final protected boolean         _selectDateTime;
+    final protected boolean         _selectBoolean;
     final protected boolean         _selectBlank;
     final protected boolean         _selectError;
     final protected boolean         _invert;
@@ -68,6 +72,10 @@ public class ExpressionEqualRowFilter implements RowFilter {
         String columnName,
         int cellIndex, 
         Object[] matches, 
+        boolean selectString,
+        boolean selectNumeric,
+        boolean selectDateTime,
+        boolean selectBoolean,
         boolean selectBlank, 
         boolean selectError,
         boolean invert
@@ -76,6 +84,10 @@ public class ExpressionEqualRowFilter implements RowFilter {
         _columnName = columnName;
         _cellIndex = cellIndex;
         _matches = matches;
+        _selectString = selectString;
+        _selectNumeric = selectNumeric;
+        _selectDateTime = selectDateTime;
+        _selectBoolean = selectBoolean;
         _selectBlank = selectBlank;
         _selectError = selectError;
         _invert = invert;
