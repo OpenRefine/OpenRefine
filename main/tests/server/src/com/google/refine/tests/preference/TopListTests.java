@@ -27,11 +27,13 @@
 package com.google.refine.tests.preference;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.refine.preference.PreferenceValue;
 import com.google.refine.preference.TopList;
 import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.ParsingUtilities;
@@ -50,8 +52,12 @@ public class TopListTests {
                 + "   \"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\""
                 + "]}";
+        PreferenceValue prefValue = ParsingUtilities.mapper.readValue(json, PreferenceValue.class);
         TestUtils.isSerializedTo(
-                ParsingUtilities.mapper.readValue(json, TopList.class),
+                prefValue,
                 json);
+        
+        String mapJson = "{\"key\":"+json+"}";
+        TestUtils.isSerializedTo(Collections.singletonMap("key",prefValue), mapJson);
     }
 }

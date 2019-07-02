@@ -35,8 +35,11 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import com.fasterxml.jackson.core.JsonFactory.Feature;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -50,7 +53,11 @@ public class TestUtils {
     
     static ObjectMapper mapper = new ObjectMapper();
     static {
-        mapper = mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+        mapper = mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+        // Reject duplicate fields because the previous implementation with org.json
+        // does not accept them. It is also cleaner and more compact.
+        mapper = mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+        mapper = mapper.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
     }
 
     /**

@@ -26,7 +26,7 @@
  ******************************************************************************/
 package com.google.refine.browsing.facets;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -63,6 +63,6 @@ public interface FacetConfig  {
     /**
      * The facet type as stored in json.
      */
-    @JsonProperty("type")
+    @JsonIgnore // already included by @JsonTypeInfo
     public String getJsonType();
 }
