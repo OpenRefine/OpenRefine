@@ -43,6 +43,6 @@ public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
     }
 
     public void scrutinizeLabel(MonolingualTextValue text) {
-        scrutinize(new ItemUpdateBuilder(TestingData.existingId).addLabel(text).build());
+        scrutinize(new ItemUpdateBuilder(TestingData.existingId).addLabel(text, true).build());
     }
 }

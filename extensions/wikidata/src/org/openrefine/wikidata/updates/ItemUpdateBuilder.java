@@ -45,7 +45,9 @@ public class ItemUpdateBuilder {
     private List<Statement> addedStatements;
     private Set<Statement> deletedStatements;
     private Set<MonolingualTextValue> labels;
+    private Set<MonolingualTextValue> labelsIfNew;
     private Set<MonolingualTextValue> descriptions;
+    private Set<MonolingualTextValue> descriptionsIfNew;
     private Set<MonolingualTextValue> aliases;
     private boolean built;
 
@@ -62,7 +64,9 @@ public class ItemUpdateBuilder {
         this.addedStatements = new ArrayList<>();
         this.deletedStatements = new HashSet<Statement>();
         this.labels = new HashSet<MonolingualTextValue>();
+        this.labelsIfNew = new HashSet<MonolingualTextValue>();
         this.descriptions = new HashSet<MonolingualTextValue>();
+        this.descriptionsIfNew = new HashSet<MonolingualTextValue>();
         this.aliases = new HashSet<MonolingualTextValue>();
         this.built = false;
     }
@@ -118,54 +122,74 @@ public class ItemUpdateBuilder {
     }
 
     /**
-     * Adds a label to the item. It will override any existing label in this
-     * language.
+     * Adds a label to the item.
      * 
      * @param label
      *            the label to add
+     * @param override
+     *            whether the label should be added even if there is already a label in that language
      */
-    public ItemUpdateBuilder addLabel(MonolingualTextValue label) {
+    public ItemUpdateBuilder addLabel(MonolingualTextValue label, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
-        labels.add(label);
+        if (override) {
+        	labels.add(label);
+        } else {
+        	labelsIfNew.add(label);
+        }
         return this;
     }
 
     /**
-     * Adds a list of labels to the item. It will override any existing label in
-     * each language.
+     * Adds a list of labels to the item.
      * 
      * @param labels
      *            the labels to add
+     * @param override
+     *            whether the label should be added even if there is already a label in that language
      */
-    public ItemUpdateBuilder addLabels(Set<MonolingualTextValue> labels) {
+    public ItemUpdateBuilder addLabels(Set<MonolingualTextValue> labels, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
-        this.labels.addAll(labels);
+        if (override) {
+        	this.labels.addAll(labels);
+        } else {
+        	labelsIfNew.addAll(labels);
+        }
         return this;
     }
 
     /**
-     * Adds a description to the item. It will override any existing description in
-     * this language.
+     * Adds a description to the item.
      * 
      * @param description
      *            the description to add
+     * @param override
+     *            whether the description should be added even if there is already a description in that language
      */
-    public ItemUpdateBuilder addDescription(MonolingualTextValue description) {
+    public ItemUpdateBuilder addDescription(MonolingualTextValue description, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
-        descriptions.add(description);
+        if (override) {
+        	descriptions.add(description);
+        } else {
+        	descriptionsIfNew.add(description);
+        }
         return this;
     }
 
     /**
-     * Adds a list of descriptions to the item. It will override any existing
-     * description in each language.
+     * Adds a list of descriptions to the item.
      * 
      * @param descriptions
      *            the descriptions to add
+     * @param override
+     *            whether the description should be added even if there is already a description in that language
      */
-    public ItemUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions) {
+    public ItemUpdateBuilder addDescriptions(Set<MonolingualTextValue> descriptions, boolean override) {
         Validate.isTrue(!built, "ItemUpdate has already been built");
-        this.descriptions.addAll(descriptions);
+        if (override) {
+        	this.descriptions.addAll(descriptions);
+        } else {
+        	descriptionsIfNew.addAll(descriptions);
+        }
         return this;
     }
 
@@ -202,7 +226,7 @@ public class ItemUpdateBuilder {
      */
     public ItemUpdate build() {
         built = true;
-        return new ItemUpdate(qid, addedStatements, deletedStatements, labels, descriptions, aliases);
+        return new ItemUpdate(qid, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
     }
 
 }

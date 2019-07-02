@@ -65,7 +65,11 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
     protected void splitUpdate(ItemUpdate update)
             throws ImpossibleSchedulingException {
         ItemUpdateBuilder remainingUpdateBuilder = new ItemUpdateBuilder(update.getItemId())
-                .addLabels(update.getLabels()).addDescriptions(update.getDescriptions()).addAliases(update.getAliases())
+                .addLabels(update.getLabels(), true)
+                .addLabels(update.getLabelsIfNew(), false)
+                .addDescriptions(update.getDescriptions(), true)
+                .addDescriptions(update.getDescriptionsIfNew(), false)
+                .addAliases(update.getAliases())
                 .deleteStatements(update.getDeletedStatements());
         Map<ItemIdValue, ItemUpdateBuilder> referencingUpdates = new HashMap<>();
 

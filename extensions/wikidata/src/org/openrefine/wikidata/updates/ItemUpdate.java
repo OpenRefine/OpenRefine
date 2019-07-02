@@ -61,7 +61,9 @@ public class ItemUpdate {
     private final List<Statement> addedStatements;
     private final Set<Statement> deletedStatements;
     private final Map<String, MonolingualTextValue> labels;
+    private final Map<String, MonolingualTextValue> labelsIfNew;
     private final Map<String, MonolingualTextValue> descriptions;
+    private final Map<String, MonolingualTextValue> descriptionsIfNew;
     private final Map<String, List<MonolingualTextValue>> aliases;
 
     /**
@@ -76,9 +78,13 @@ public class ItemUpdate {
      * @param deletedStatements
      *            the statements to remove from the item
      * @param labels
-     *            the labels to add on the item
+     *            the labels to add on the item, overriding any existing one in that language
+     * @param labelsIfNew
+     *            the labels to add on the item, only if no label for that language exists
      * @param descriptions
-     *            the descriptions to add on the item
+     *            the descriptions to add on the item, overriding any existing one in that language
+     * @param descriptionsIfNew
+     *            the descriptions to add on the item, only if no description for that language exists
      * @param aliases
      *            the aliases to add on the item. In theory their order should
      *            matter but in practice people rarely rely on the order of aliases
@@ -89,7 +95,9 @@ public class ItemUpdate {
             @JsonProperty("addedStatements") List<Statement> addedStatements,
             @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
             @JsonProperty("labels") Set<MonolingualTextValue> labels,
+            @JsonProperty("labelsIfNew") Set<MonolingualTextValue> labelsIfNew,
             @JsonProperty("descriptions") Set<MonolingualTextValue> descriptions,
+            @JsonProperty("descriptionsIfNew") Set<MonolingualTextValue> descriptionsIfNew,
             @JsonProperty("addedAliases") Set<MonolingualTextValue> aliases) {
         Validate.notNull(qid);
         this.qid = qid;
@@ -101,8 +109,12 @@ public class ItemUpdate {
             deletedStatements = Collections.emptySet();
         }
         this.deletedStatements = deletedStatements;
-        this.labels = constructTermMap(labels != null ? labels : Collections.emptyList());
-        this.descriptions = constructTermMap(descriptions != null ? descriptions : Collections.emptyList());
+        this.labels = new HashMap<>();
+        this.labelsIfNew = new HashMap<>();
+        mergeSingleTermMaps(this.labels, this.labelsIfNew, labels, labelsIfNew);
+        this.descriptions = new HashMap<>();
+        this.descriptionsIfNew = new HashMap<>();
+        mergeSingleTermMaps(this.descriptions, this.descriptionsIfNew, descriptions, descriptionsIfNew);
         this.aliases = constructTermListMap(aliases != null ? aliases : Collections.emptyList());
     }
     
@@ -119,7 +131,13 @@ public class ItemUpdate {
      * @param deletedStatements
      *      the statements to delete
      * @param labels
-     *      the labels to add
+     *      the labels to add on the item, overriding any existing one in that language   
+     * @param labelsIfNew
+     *            the labels to add on the item, only if no label for that language exists
+     * @param descriptions
+     *            the descriptions to add on the item, overriding any existing one in that language
+     * @param descriptionsIfNew
+     *            the descriptions to add on the item, only if no description for that language exists
      * @param descriptions
      *      the descriptions to add
      * @param aliases
@@ -130,13 +148,17 @@ public class ItemUpdate {
     		List<Statement> addedStatements,
     		Set<Statement> deletedStatements,
     		Map<String, MonolingualTextValue> labels,
+    		Map<String, MonolingualTextValue> labelsIfNew,
     		Map<String, MonolingualTextValue> descriptions,
+    		Map<String, MonolingualTextValue> descriptionsIfNew,
     		Map<String, List<MonolingualTextValue>> aliases) {
     	this.qid = qid;
     	this.addedStatements = addedStatements;
     	this.deletedStatements = deletedStatements;
     	this.labels = labels;
+    	this.labelsIfNew = labelsIfNew;
     	this.descriptions = descriptions;
+    	this.descriptionsIfNew = descriptionsIfNew;
     	this.aliases = aliases;
     }
 
@@ -168,19 +190,35 @@ public class ItemUpdate {
     }
 
     /**
-     * @return the list of updated labels
+     * @return the list of updated labels, overriding existing ones
      */
     @JsonProperty("labels")
     public Set<MonolingualTextValue> getLabels() {
         return labels.values().stream().collect(Collectors.toSet());
     }
+    
+    /**
+     * @return the list of updated labels, only added if new
+     */
+    @JsonProperty("labelsIfNew")
+    public Set<MonolingualTextValue> getLabelsIfNew() {
+        return labelsIfNew.values().stream().collect(Collectors.toSet());
+    }
 
     /**
-     * @return the list of updated descriptions
+     * @return the list of updated descriptions, overriding existing ones
      */
     @JsonProperty("descriptions")
     public Set<MonolingualTextValue> getDescriptions() {
         return descriptions.values().stream().collect(Collectors.toSet());
+    }
+    
+    /**
+     * @return the list of updated descriptions, only added if new
+     */
+    @JsonProperty("descriptionsIfNew")
+    public Set<MonolingualTextValue> getDescriptionsIfNew() {
+        return descriptionsIfNew.values().stream().collect(Collectors.toSet());
     }
 
     /**
@@ -204,8 +242,13 @@ public class ItemUpdate {
      */
     @JsonIgnore
     public boolean isEmpty() {
-        return (addedStatements.isEmpty() && deletedStatements.isEmpty() && labels.isEmpty() && descriptions.isEmpty()
-                && aliases.isEmpty());
+        return (addedStatements.isEmpty() &&
+        		deletedStatements.isEmpty() &&
+        		labels.isEmpty() &&
+        		descriptions.isEmpty() &&
+        		aliases.isEmpty() &&
+        		labelsIfNew.isEmpty() &&
+        		descriptionsIfNew.isEmpty());
     }
 
     /**
@@ -228,13 +271,11 @@ public class ItemUpdate {
         Set<Statement> newDeletedStatements = new HashSet<>(deletedStatements);
         newDeletedStatements.addAll(other.getDeletedStatements());
         Map<String,MonolingualTextValue> newLabels = new HashMap<>(labels);
-        for(MonolingualTextValue otherLabel : other.getLabels()) {
-        	newLabels.put(otherLabel.getLanguageCode(), otherLabel);
-        }
+        Map<String,MonolingualTextValue> newLabelsIfNew = new HashMap<>(labelsIfNew);
+        mergeSingleTermMaps(newLabels, newLabelsIfNew, other.getLabels(), other.getLabelsIfNew());
         Map<String,MonolingualTextValue> newDescriptions = new HashMap<>(descriptions);
-        for(MonolingualTextValue otherDescription : other.getDescriptions()) {
-        	newDescriptions.put(otherDescription.getLanguageCode(), otherDescription);
-        }
+        Map<String,MonolingualTextValue> newDescriptionsIfNew = new HashMap<>(descriptionsIfNew);
+        mergeSingleTermMaps(newDescriptions, newDescriptionsIfNew, other.getDescriptions(), other.getDescriptionsIfNew());
         Map<String,List<MonolingualTextValue>> newAliases = new HashMap<>(aliases);
         for(MonolingualTextValue alias : other.getAliases()) {
         	List<MonolingualTextValue> aliases = newAliases.get(alias.getLanguageCode());
@@ -246,8 +287,8 @@ public class ItemUpdate {
         		aliases.add(alias);
         	}
         }
-        return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newDescriptions, newAliases);
-    }
+        return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
+    }    
 
     /**
      * Group added statements in StatementGroups: useful if the item is new.
@@ -309,16 +350,20 @@ public class ItemUpdate {
     public ItemUpdate normalizeLabelsAndAliases() {
         // Ensure that we are only adding aliases with labels
         Set<MonolingualTextValue> filteredAliases = new HashSet<>();
-        Map<String, MonolingualTextValue> newLabels = new HashMap<>(labels);
+        Map<String, MonolingualTextValue> newLabels = new HashMap<>(labelsIfNew);
+        newLabels.putAll(labels);
         for (MonolingualTextValue alias : getAliases()) {
-            if (!labels.containsKey(alias.getLanguageCode())) {
+            if (!newLabels.containsKey(alias.getLanguageCode())) {
                 newLabels.put(alias.getLanguageCode(), alias);
             } else {
                 filteredAliases.add(alias);
             }
         }
+        Map<String, MonolingualTextValue> newDescriptions = new HashMap<>(descriptionsIfNew);
+        newDescriptions.putAll(descriptions);
         return new ItemUpdate(qid, addedStatements, deletedStatements,
-        		newLabels, descriptions, constructTermListMap(filteredAliases));
+        		newLabels, Collections.emptyMap(), newDescriptions, Collections.emptyMap(),
+        		constructTermListMap(filteredAliases));
     }
 
     @Override
@@ -372,9 +417,35 @@ public class ItemUpdate {
         return builder.toString();
     }
     
-    protected Map<String,MonolingualTextValue> constructTermMap(Collection<MonolingualTextValue> mltvs) {
-    	return mltvs.stream()
-    			.collect(Collectors.toMap(MonolingualTextValue::getLanguageCode, Function.identity()));
+    /**
+     * Helper function to merge dictionaries of terms to override or provide.
+     * @param currentTerms
+     * 		current map of terms to override
+     * @param currentTermsIfNew
+     *      current map of terms to provide if not already there
+     * @param newTerms
+     *      new terms to override
+     * @param newTermsIfNew
+     *      new terms to provide if not already there
+     */
+    private static void mergeSingleTermMaps(
+    		Map<String,MonolingualTextValue> currentTerms,
+    		Map<String,MonolingualTextValue> currentTermsIfNew,
+    		Set<MonolingualTextValue> newTerms,
+    		Set<MonolingualTextValue> newTermsIfNew) {
+    	for(MonolingualTextValue otherLabel : newTerms) {
+        	String languageCode = otherLabel.getLanguageCode();
+        	currentTerms.put(languageCode, otherLabel);
+        	if (currentTermsIfNew.containsKey(languageCode)) {
+        		currentTermsIfNew.remove(languageCode);
+        	}
+        }
+        for(MonolingualTextValue otherLabel : newTermsIfNew) {
+        	String languageCode = otherLabel.getLanguageCode();
+        	if (!currentTermsIfNew.containsKey(languageCode) && !currentTerms.containsKey(languageCode)) {
+        		currentTermsIfNew.put(languageCode, otherLabel);
+        	}
+        }
     }
 
     protected Map<String, List<MonolingualTextValue>> constructTermListMap(Collection<MonolingualTextValue> mltvs) {

@@ -73,15 +73,15 @@ public class ReconEntityRewriterTest {
         ItemUpdate update = new ItemUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"))
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"))
+                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         ItemUpdate rewritten = rewriter.rewrite(update);
         ItemUpdate expected = new ItemUpdateBuilder(subject)
                 .addStatement(TestingData.generateStatement(subject, newlyCreated))
                 .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"))
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"))
+                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
         assertEquals(expected, rewritten);
     }

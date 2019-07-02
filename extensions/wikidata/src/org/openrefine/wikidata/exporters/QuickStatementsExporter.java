@@ -131,7 +131,9 @@ public class QuickStatementsExporter implements WriterExporter {
         }
 
         translateNameDescr(qid, item.getLabels(), "L", item.getItemId(), writer);
+        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getItemId(), writer);
         translateNameDescr(qid, item.getDescriptions(), "D", item.getItemId(), writer);
+        translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getItemId(), writer);
         translateNameDescr(qid, item.getAliases(), "A", item.getItemId(), writer);
 
         for (Statement s : item.getAddedStatements()) {
