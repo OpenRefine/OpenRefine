@@ -567,7 +567,7 @@ public class StandardReconConfig extends ReconConfig {
      * 	    the cell value to compare the reconciliation data to
      */
     public void computeFeatures(Recon recon, String text) {
-        if (recon.candidates != null && !recon.candidates.isEmpty()) {
+        if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
             ReconCandidate candidate = recon.candidates.get(0);
             
             recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
