@@ -409,5 +409,11 @@
     "core-buttons/download": "Last ned",
     "core-buttons/upload": "Last opp",
     "core-buttons/apply": "Bruk",
-    "core-index-parser/escape": "Utfør skiftesekvens for spesialtegn med \\"
+    "core-index-parser/escape": "Utfør skiftesekvens for spesialtegn med \\",
+    "core-dialogs/export-to-google-drive": "Eksporter til Google Drive",
+    "core-index/tags": "Etiketter:",
+    "core-index/title": "Tittel:",
+    "core-index/license": "Lisens:",
+    "core-index/homepage": "Hjemmeside:",
+    "core-index/image": "Bilde:"
 }
