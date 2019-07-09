@@ -345,4 +345,15 @@ public class StandardReconConfigTests extends RefineTest {
     	stub.computeFeatures(recon, "my string");
     	assertNotNull(recon.features);
     }
+    
+    /**
+     * Should not happen, but added for extra safety
+     */
+    @Test
+    public void testComputeFeaturesNullText() {
+    	StandardReconConfigStub stub = new StandardReconConfigStub();
+    	Recon recon = stub.createNewRecon(2384738L);
+    	stub.computeFeatures(recon, null);
+    	assertNotNull(recon.features);
+    }
 }
