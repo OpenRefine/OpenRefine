@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "プロジェクト作成中…",
     "core-index-import/comma-separated": "カンマ区切りの数値",
     "core-index-import/error": "エラー:",
-    "core-index-import/locate": "プロジェクトファイルを選択する (.tarか.tar.gz):",
+    "core-index-import/locate": "プロジェクトファイルを選択する (.tarか.tar.gzか.zip):",
     "core-index-import/downloading-data": "データをダウンロード中…",
     "core-index-import/parse-as": "データの解析形式",
     "core-index-import/unknown-err": "不明なエラー",
