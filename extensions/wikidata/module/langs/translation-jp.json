@@ -160,5 +160,10 @@
     "import-wikibase-schema/import": "インポート",
     "wikidata-schema/copy-reference": "コピー",
     "wikidata-schema/paste-reference": "参照貼り付け",
-    "wikidata-schema/reference-copied": "コピー済み"
+    "wikidata-schema/reference-copied": "コピー済み",
+    "wikidata-schema/label-if-new": "ラベル（上書き不可）",
+    "wikidata-schema/label-override": "ラベル（存在すれば上書き）",
+    "wikidata-schema/description-if-new": "説明（上書き不可）",
+    "wikidata-schema/description-override": "説明（存在すれば上書き）",
+    "wikidata-schema/override-term": "存在すれば上書き"
 }
