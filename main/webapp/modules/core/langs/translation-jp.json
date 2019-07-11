@@ -83,7 +83,7 @@
     "core-index-import/parsing-options": "解析オプションの設定",
     "core-index-import/data-package": "データパッケージ（JSON URL）",
     "core-index-import/char-encoding": "文字コード",
-    "core-index-import/mime-type": "MIME type",
+    "core-index-import/mime-type": "Media type",
     "core-index-import/creating-proj": "プロジェクト作成中…",
     "core-index-import/comma-separated": "カンマ区切りの数値",
     "core-index-import/error": "エラー:",
