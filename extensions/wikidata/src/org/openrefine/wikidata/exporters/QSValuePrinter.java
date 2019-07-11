@@ -31,6 +31,7 @@ import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
@@ -49,12 +50,6 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
  *
  */
 public class QSValuePrinter implements ValueVisitor<String> {
-
-    @Override
-    public String visit(DatatypeIdValue value) {
-        // impossible case (this is actually a bug in WDTK, DatatypeIdValue should not subclass Value)
-        throw new IllegalArgumentException();
-    }
 
     @Override
     public String visit(EntityIdValue value) {
@@ -76,12 +71,10 @@ public class QSValuePrinter implements ValueVisitor<String> {
 
     @Override
     public String visit(QuantityValue value) {
-        String unitPrefix = "http://www.wikidata.org/entity/Q";
-        String unitIri = value.getUnit();
+        ItemIdValue unit = value.getUnitItemId();
         String unitRepresentation = "", boundsRepresentation = "";
-        if (!unitIri.isEmpty()) {
-            if (!unitIri.startsWith(unitPrefix)) return null; // QuickStatements only accepts Qids as units
-            unitRepresentation = "U" + unitIri.substring(unitPrefix.length());
+        if (unit != null) {
+            unitRepresentation = "U" + unit.getId().substring(1);
         }
         if (value.getLowerBound() != null) {
             // bounds are always null at the same time so we know they are both not null

@@ -123,11 +123,6 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(DatatypeIdValue value) {
-        return null;
-    }
-
-    @Override
     public Set<ReconItemIdValue> visit(EntityIdValue value) {
         if (ReconItemIdValue.class.isInstance(value)) {
             ReconItemIdValue recon = (ReconItemIdValue) value;

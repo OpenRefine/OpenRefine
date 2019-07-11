@@ -36,6 +36,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.utils.StatementGroupJson;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -176,7 +178,7 @@ public class ItemUpdate {
      * 
      * @return the list of all added statements
      */
-    @JsonProperty("addedStatements")
+    @JsonIgnore // exposed as statement groups below
     public List<Statement> getAddedStatements() {
         return addedStatements;
     }
@@ -295,6 +297,7 @@ public class ItemUpdate {
      * 
      * @return a grouped version of getAddedStatements()
      */
+    @JsonIgnore
     public List<StatementGroup> getAddedStatementGroups() {
         Map<PropertyIdValue, List<Statement>> map = new HashMap<>();
         for (Statement statement : getAddedStatements()) {
@@ -306,9 +309,21 @@ public class ItemUpdate {
         }
         List<StatementGroup> result = new ArrayList<>();
         for (Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
+        	// We have to do this rather than use Datamodel in order to preserve the
+        	// custom entity id values which can link to new items.
             result.add(new StatementGroupImpl(entry.getValue()));
         }
         return result;
+    }
+    
+    /**
+     * Json serialization for preview of item updates. Because StatementGroup
+     * is not designed for serialization (so its format is not specified by WDTK),
+     * we add a wrapper on top to specify it.
+     */
+    @JsonProperty("addedStatementGroups")
+    public List<StatementGroupJson> getAddedStatementGroupsJson() {
+    	return this.getAddedStatementGroups().stream().map(s -> new StatementGroupJson(s)).collect(Collectors.toList());
     }
 
     /**
@@ -339,6 +354,7 @@ public class ItemUpdate {
     /**
      * Is this update about a new item?
      */
+    @JsonProperty("new")
     public boolean isNew() {
         return EntityIdValue.SITE_LOCAL.equals(getItemId().getSiteIri());
     }
