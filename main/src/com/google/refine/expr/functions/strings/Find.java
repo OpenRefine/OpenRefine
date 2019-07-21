@@ -46,7 +46,15 @@ public class Find implements Function {
             Object s = args[0];
             Object p = args[1];
             
-            if (s != null && p != null && (p instanceof String || p instanceof Pattern)) {
+            if (s != null && p != null && p instanceof String) {
+                int fromIndex = 0;
+                while ((fromIndex = s.toString().indexOf(p.toString(), fromIndex)) != -1 ){
+                    allMatches.add(p.toString());
+                    fromIndex++;
+                }
+            }
+            
+            if (s != null && p != null && p instanceof Pattern) {
                 
                 Pattern pattern = (p instanceof String) ? Pattern.compile((String) p) : (Pattern) p;
 
