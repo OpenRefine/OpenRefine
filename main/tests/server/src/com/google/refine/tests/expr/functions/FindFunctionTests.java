@@ -27,6 +27,7 @@
 package com.google.refine.tests.expr.functions;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -82,8 +83,8 @@ public class FindFunctionTests extends RefineTest {
     }
     
     @Test
-    public void findFunctionFindAllTest2() throws Exception {
-        String[] matches = (String[]) invoke("find", "hello 123456 goodbye.", "\\d{6}|hello");
+    public void findFunctionFindRegexTest() throws Exception {
+        String[] matches = (String[]) invoke("find", "hello 123456 goodbye.", Pattern.compile("\\d{6}|hello"));
         Assert.assertEquals(matches[0], "hello");
         Assert.assertEquals(matches[1], "123456");
     }
