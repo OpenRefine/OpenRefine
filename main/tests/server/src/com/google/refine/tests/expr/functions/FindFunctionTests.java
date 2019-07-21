@@ -76,6 +76,12 @@ public class FindFunctionTests extends RefineTest {
     }
     
     @Test
+    public void findFunctionFindLiteralTest() throws Exception {
+        String[] matches = (String[]) invoke("find", "This is a test string for testing find.", ".test");
+        Assert.assertEquals(matches.length, 0);
+    }
+    
+    @Test
     public void findFunctionFindAllTest2() throws Exception {
         String[] matches = (String[]) invoke("find", "hello 123456 goodbye.", "\\d{6}|hello");
         Assert.assertEquals(matches[0], "hello");
