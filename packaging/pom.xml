@@ -112,6 +112,7 @@
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
               <jre>
+                <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>1.8.0</minVersion>
                 <jdkPreference>preferJre</jdkPreference>
                 <initialHeapSize>512</initialHeapSize>
