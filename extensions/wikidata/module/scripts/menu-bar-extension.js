@@ -51,7 +51,7 @@ WikibaseExporterMenuBar.exportTo = function(format) {
     $(form).css("display", "none")
         .attr("method", "post")
         .attr("action", "command/core/export-rows/"+targetUrl)
-        .attr("target", "gridworks-export");
+        .attr("target", "gridworks-export-"+format);
     $('<input />')
         .attr("name", "engine")
         .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
