@@ -208,9 +208,6 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
         },
         {   name: "record",
             description: $.i18n('core-dialogs/record-fields')
-        },
-        {   name: "recon",
-            description: $.i18n('core-dialogs/recon-fields')
         }
     ];
     for (var i = 0; i < vars.length; i++) {

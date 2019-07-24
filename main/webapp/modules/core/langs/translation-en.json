@@ -218,7 +218,6 @@
     "core-dialogs/cells-of-row": "The cells of the current row. This is a shortcut for 'row.cells'. A particular cell can be retrieved with 'cells.<column name>' if the <column name> is a single word, or with 'cells[\"<column name>\"] otherwise.",
     "core-dialogs/row-index": "The current row's index. This is a shortcut for 'row.index'.",
 	"core-dialogs/record-fields": "one or more rows grouped together to form a record; object has more fields, details at https://github.com/OpenRefine/OpenRefine/wiki/Variables#record",
-    "core-dialogs/recon-fields": "recon object of a cell returned from a reconciliation service; object has more fields, details at https://github.com/OpenRefine/OpenRefine/wiki/Variables#recon",
     "core-dialogs/returns": "returns",
     "core-dialogs/from": "From",
     "core-dialogs/expression": "Expression",
