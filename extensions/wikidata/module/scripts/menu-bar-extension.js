@@ -33,7 +33,7 @@ ExporterManager.MenuItems.push(
 ExporterManager.MenuItems.push(
         {               
             id:"exportWikibaseSchema",
-            label: $.i18n('wikidata-extension/export-schema'),
+            label: $.i18n('wikidata-extension/export-wikidata-schema'),
             click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
         }
 );
