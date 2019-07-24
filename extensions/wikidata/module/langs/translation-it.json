@@ -68,6 +68,7 @@
     "perform-wikidata-edits/edit-summary-placeholder": "qualche parola per descrivere le tue modifiche",
     "wikidata-extension/import-wikidata-schema": "Importa schema",
     "wikidata-extension/export-schema": "Esporta schema",
+    "wikidata-extension/export-wikidata-schema": "Esporta schema Wikidata",
     "perform-wikidata-edits/perform-edits": "Carica modifiche",
     "perform-wikidata-edits/cancel": "Annulla",
     "perform-wikidata-edits/analyzing-edits": "Analisi delle modifiche apportate…",

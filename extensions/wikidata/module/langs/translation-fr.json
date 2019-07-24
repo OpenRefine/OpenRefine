@@ -149,6 +149,7 @@
     "warnings-messages/invalid-entity-type/body": "Les utilisations de {property_entity} sur des éléments tels que {example_entity} sont invalides.",
     "wikidata-extension/import-wikidata-schema": "Importer un schéma",
     "wikidata-extension/export-schema": "Exporter le schéma",
+    "wikidata-extension/export-wikidata-schema": "Exporter le schéma Wikidata",
     "import-wikibase-schema/dialog-header": "Importer un schéma Wikidata",
     "import-wikibase-schema/file-label": "A partir du fichier JSON : ",
     "import-wikibase-schema/schema-label": "Ou à partir d'un texte JSON :",

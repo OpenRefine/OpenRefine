@@ -6,6 +6,7 @@
     "wikidata-extension/perform-edits-on-wikidata": "Upload edits to Wikidata",
     "wikidata-extension/export-to-qs": "Export to QuickStatements",
     "wikidata-extension/export-schema": "Export schema",
+    "wikidata-extension/export-wikidata-schema": "Export Wikidata schema",
     "wikidata-extension/quickstatements-export-name": "QuickStatements",
     "wikidata-schema/dialog-header": "Align to Wikidata",
     "wikidata-schema/dialog-explanation": "The Wikidata schema below specifies how your tabular data will be transformed into Wikidata edits. You can drag and drop the column names below in most input boxes: for each row, edits will be generated with the values in these columns.",
