@@ -205,6 +205,9 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
         },
         {   name: "rowIndex",
             description: $.i18n('core-dialogs/row-index')
+        },
+        {   name: "record",
+            description: $.i18n('core-dialogs/record-fields')
         }
     ];
     for (var i = 0; i < vars.length; i++) {
