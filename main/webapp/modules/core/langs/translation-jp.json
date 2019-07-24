@@ -724,5 +724,6 @@
     "core-index/title": "タイトル:",
     "core-index/license": "ライセンス:",
     "core-index/homepage": "ホームページ:",
-    "core-index/image": "写真:"
+    "core-index/image": "写真:",
+    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、https://github.com/OpenRefine/OpenRefine/wiki/Variables#record"
 }
