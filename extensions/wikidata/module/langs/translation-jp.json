@@ -165,5 +165,6 @@
     "wikidata-schema/label-override": "ラベル（存在すれば上書き）",
     "wikidata-schema/description-if-new": "説明（上書き不可）",
     "wikidata-schema/description-override": "説明（存在すれば上書き）",
-    "wikidata-schema/override-term": "存在すれば上書き"
+    "wikidata-schema/override-term": "存在すれば上書き",
+    "wikidata-extension/export-wikidata-schema": "Wikidataスキーマのエクスポート"
 }
