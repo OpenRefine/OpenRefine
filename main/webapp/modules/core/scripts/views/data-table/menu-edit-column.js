@@ -33,6 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var columnIndex = Refine.columnNameToColumnIndex(column.name);
+  var doTextTransform = function(columnName, expression, onError, repeat, repeatCount) {
+	    Refine.postCoreProcess(
+	      "text-transform",
+	      {
+	        columnName: columnName,
+	        onError: onError,
+	        repeat: repeat,
+	        repeatCount: repeatCount
+	      },
+	      { expression: expression },
+	      { cellsChanged: true }
+	    );
+	  };
+	  
   var doAddColumn = function() {
     var frame = $(
         DOM.loadHTML("core", "scripts/views/data-table/add-column-dialog.html")
@@ -320,14 +334,204 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       );
       dismiss();
     });
+  }; 
+  
+  var doJoinColumns = function() {
+    var self = this;
+    self.onError = "keep-original" ;
+    self.repeat = false ;
+    self.repeatCount = "";
+    /*
+     * Close the dialog window
+     */
+    var dismiss = function() {
+       DialogSystem.dismissUntil(self.level - 1);
+     };
+     /*
+     * Join the columns according to user input
+     */
+    var transform = function() {
+      // get options
+      self.deleteJoinedColumns = self.elmts.delete_joined_columnsInput[0].checked;
+      self.writeOrCopy = $("input[name='write-or-copy']:checked")[0].value;
+      self.newColumnName = self.elmts.new_column_nameInput[0].value;
+      self.manageNulls = $("input[name='manage-nulls']:checked")[0].value;
+      self.nullSubstitute = self.elmts.null_substituteInput[0].value;
+      self.fieldSeparator = self.elmts.field_separatorInput[0].value;
+      // correct options if they are not consistent
+      if (self.newColumnName != "") {
+        self.writeOrCopy ="copy-to-new-column";
+        } else
+        {
+          self.writeOrCopy ="write-active-column";
+        };
+      if (self.nullSubstitute != "") {
+          self.manageNulls ="replace-nulls";
+      };
+      // build GREL expression
+      var columnsToJoin = [];
+      self.elmts.column_join_columnPicker
+        .find('.column-join-column input[type="checkbox"]:checked')
+        .each(function() {
+            columnsToJoin.push (this.closest ('.column-join-column').getAttribute('column'));
+         });
+      self.expression = columnsToJoin.map (function (colName) {
+        if (self.manageNulls == "skip-nulls") {
+          return "cells['"+colName+"'].value";
+        }
+        else {
+          return "coalesce(cells['"+colName+"'].value, '"+self.nullSubstitute+ "')";
+        }
+      }).join (',');
+      self.expression = 'join ([' + self.expression + '],"' + self.fieldSeparator + '")';
+      // apply expression to active column or new column
+      if (self.writeOrCopy =="copy-to-new-column") {
+        Refine.postCoreProcess(
+          "add-column", 
+          {
+          baseColumnName: column.name,  
+          newColumnName: self.newColumnName, 
+          columnInsertIndex: columnIndex + 1,
+          onError: self.onError
+          },
+          { expression: self.expression },
+          { modelsChanged: true }
+        );
+      } 
+      else {
+        doTextTransform(column.name, self.expression, self.onError, self.repeat, self.repeatCount);
+      }
+      // delete joined columns
+    if (self.deleteJoinedColumns) {
+      // do not delete the active cell if it contains the result
+      if (self.writeOrCopy !="copy-to-new-column") {
+        columnsToJoin = columnsToJoin.filter(function(item) {
+          return item !== column.name
+      });
+      }
+      columnsToJoin.forEach (function (columnName) {
+        // FIXME ERREUR dans Refine.postProcess (project.js l. 359) : 
+         // Index: 5, Size: 5
+        // Index: 6, Size: 5
+        // No column named e
+        Refine.postCoreProcess(
+          "remove-column", 
+          {
+            columnName: columnName
+          },
+          null,
+          { modelsChanged: true }
+        );
+    });
+    }
+    };
+    // core of doJoinColumn
+    self.dialog = $(DOM.loadHTML("core","scripts/views/data-table/column-join.html"));
+    self.elmts = DOM.bind(self.dialog);
+    self.level = DialogSystem.showDialog(self.dialog);
+    self.elmts.dialogHeader.text($.i18n('core-views/column-join'));
+    self.elmts.or_views_column_join_before_column_picker.text($.i18n('core-views/column-join-before-column-picker'));
+    self.elmts.or_views_column_join_before_options.text($.i18n('core-views/column-join-before-options'));
+    self.elmts.or_views_column_join_replace_nulls.text($.i18n('core-views/column-join-replace-nulls'));
+    self.elmts.or_views_column_join_replace_nulls_advice.text($.i18n('core-views/column-join-replace-nulls-advice'));
+    self.elmts.or_views_column_join_skip_nulls.text($.i18n('core-views/column-join-skip-nulls'));
+    self.elmts.or_views_column_join_skip_nulls_advice.text($.i18n('core-views/column-join-skip-nulls-advice'));
+    self.elmts.or_views_column_join_write_active_column.text($.i18n('core-views/column-join-write-active-column'));
+    self.elmts.or_views_column_join_copy_to_new_column.text($.i18n('core-views/column-join-copy-to-new-column'));
+    self.elmts.or_views_column_join_delete_joined_columns.text($.i18n('core-views/column-join-delete-joined-columns'));
+    self.elmts.or_views_column_join_field_separator.text($.i18n('core-views/column-join-field-separator'));
+    self.elmts.or_views_column_join_field_separator_advice.text($.i18n('core-views/column-join-field-separator-advice'));
+    self.elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
+    self.elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
+    self.elmts.okButton.html($.i18n('core-buttons/ok'));
+    self.elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+    /*
+     * Populate column list.
+     */
+    for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+      var col = theProject.columnModel.columns[i];
+      var colName = col.name;
+      var div = $('<div>').
+        addClass("column-join-column")
+        .attr("column", colName)
+        .appendTo(this.elmts.column_join_columnPicker);
+      $('<input>').
+        attr('type', 'checkbox')
+        .prop('checked',(i == columnIndex) ? true : false)
+        .appendTo(div);
+      $('<span>')
+        .text(colName)
+        .appendTo(div);
+    }
+    // Move the active column on the top of the list
+    if (columnIndex > 0) {
+      activeColumn = self.elmts.column_join_columnPicker
+        .find('.column-join-column')
+        .eq(columnIndex);
+      activeColumn.parent().prepend(activeColumn);
+     }
+    // Make the list sortable
+    self.elmts.column_join_columnPicker.sortable({});
+   /*
+    * Hook up event handlers.
+    */
+    self.elmts.column_join_columnPicker
+      .find('.column-join-column')
+      .click(function() {
+        self.elmts.column_join_columnPicker
+        .find('.column-join-column')
+        .removeClass('selected');
+        $(this).addClass('selected');
+      });
+    self.elmts.selectAllButton
+      .click(function() {
+        self.elmts.column_join_columnPicker
+        .find('input[type="checkbox"]')
+        .prop('checked',true);
+       });
+    self.elmts.deselectAllButton
+      .click(function() {
+        self.elmts.column_join_columnPicker
+        .find('input[type="checkbox"]')
+        .prop('checked',false);
+      });
+    self.elmts.okButton.click(function() {
+      transform();
+      dismiss();
+    });
+    self.elmts.cancelButton.click(function() {
+      dismiss();
+    });
+    self.elmts.new_column_nameInput.change(function() {
+      if (self.elmts.new_column_nameInput[0].value != "") {
+        self.elmts.copy_to_new_columnInput.prop('checked',true);
+      } else
+        {
+        self.elmts.write_active_columnInput.prop('checked',true);
+        };
+    });
+    self.elmts.null_substituteInput.change(function() {
+        self.elmts.replace_nullsInput.prop('checked',true);
+    });
+     
+    
+    
   };
 
+/*
+ * Create global menu
+ */
   MenuSystem.appendTo(menu, [ "core/edit-column" ], [
       {
         id: "core/split-column",
         label: $.i18n('core-views/split-into-col')+"...",
         click: doSplitColumn
       },
+      {
+        id: "core/join-column",
+        label: $.i18n('core-views/join-col')+"...",
+          click : doJoinColumns
+        },
       {},
       {
         id: "core/add-column",
@@ -369,7 +573,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       {
         id: "core/move-column-to-left",
         label: $.i18n('core-views/move-to-left'),
-        click: function() { doMoveColumnBy(-1); }
+        click: function() { doMoveColumnBy(-1);}
       },
       {
         id: "core/move-column-to-right",
