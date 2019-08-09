@@ -35,6 +35,10 @@
           </div>
           </div>
           <div class="option">
+            <input type="checkbox" bind ="dont_escapeInput" name="dont-escape" id="$dont-escapeInput" />
+            <label for="$dont-escape" bind="or_views_column_join_dont_escape"></label>
+          </div>
+          <div class="option">
           <div>
             <input type="radio" bind ="write_selected_columnInput" name="write-or-copy" value="write-selected-column" id="$write-selected-column" checked />
             <label for="$write-selected-column" bind="or_views_column_join_write_selected_column"></label>
@@ -48,7 +52,7 @@
           <div class="option">
             <input type="checkbox" bind ="delete_joined_columnsInput" name="delete-joined-columns" id="$delete-joined-columns" />
             <label for="$delete-joined-columns" bind="or_views_column_join_delete_joined_columns"></label>
-           </div>
+          </div>
          </div>
        </div>
      </div>
