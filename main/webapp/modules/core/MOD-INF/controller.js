@@ -516,6 +516,7 @@ function init() {
       "styles/widgets/slider-widget.less",
 
       "styles/views/data-table-view.less",
+      "styles/views/column-join.less",
 
       "styles/dialogs/expression-preview-dialog.less",
       "styles/dialogs/clustering-dialog.less",
