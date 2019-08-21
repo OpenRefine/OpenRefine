@@ -637,7 +637,7 @@
     "core-views/starred-rows": "Stern Zeilen",
     "core-views/extend-not-reconciled": "Diese Operation ist nur in abgeglichenen Spalten verfügbar.",
     "core-views/by-sep": "durch Trennzeichen",
-    "core-views/custom-facets": "Kundenspezifische Facetten",
+    "core-views/custom-facets": "Nutzerdefinierte Facetten",
     "core-views/numbers": "Zahlen",
     "core-views/store-err": "Speicherfehler",
     "core-views/facet-error": "Facette von Fehlern",
