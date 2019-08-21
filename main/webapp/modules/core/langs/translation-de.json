@@ -221,7 +221,7 @@
     "core-dialogs/out-empty-row": "Leere Zeilen ausgeben (d.h. alle Zellen null)",
     "core-dialogs/from": "Von",
     "core-dialogs/export-to-local": "Exportieren nach lokal",
-    "core-dialogs/drag-column": "Ziehen Sie Spalten, um sie neu zu anzuordnen",
+    "core-dialogs/drag-column": "Ziehen Sie Spalten, um sie neu anzuordnen",
     "core-dialogs/custom": "Benutzerdefiniert",
     "core-dialogs/returns": "Rückgabe",
     "core-dialogs/preview": "Vorschau",
