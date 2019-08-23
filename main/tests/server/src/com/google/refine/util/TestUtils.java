@@ -26,8 +26,8 @@
  ******************************************************************************/
 package com.google.refine.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,6 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import com.fasterxml.jackson.core.JsonFactory.Feature;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +45,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.refine.util.ParsingUtilities;
 
 
 public class TestUtils {
@@ -86,7 +84,7 @@ public class TestUtils {
             if (!jsonA.equals(jsonB)) {
                 jsonDiff(expected, actual);
             }
-            assertEquals(jsonA, jsonB);
+            assertTrue(jsonA.equals(jsonB));
         } catch(Exception e) {
             fail("\""+expected+"\" and \""+actual+"\" are not equal as JSON strings.");
         }

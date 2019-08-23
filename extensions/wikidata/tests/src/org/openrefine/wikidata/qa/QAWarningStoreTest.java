@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.BeforeMethod;

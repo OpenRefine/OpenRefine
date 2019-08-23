@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
 

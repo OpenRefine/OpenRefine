@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

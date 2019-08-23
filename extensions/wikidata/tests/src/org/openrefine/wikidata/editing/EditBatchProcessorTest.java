@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

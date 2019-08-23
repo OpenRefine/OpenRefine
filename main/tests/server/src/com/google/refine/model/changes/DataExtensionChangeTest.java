@@ -26,7 +26,7 @@
  ******************************************************************************/
 package com.google.refine.model.changes;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;

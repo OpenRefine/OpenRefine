@@ -26,7 +26,7 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Properties;
@@ -36,7 +36,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.strings.SmartSplit;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
@@ -66,7 +65,7 @@ public class SmartSplitTests {
         String testString = "teststring1,teststring2,teststring3,teststring4";
         String[] expected = { "teststring1", "teststring2", "teststring3", "teststring4" };
         String[] actual = (String[]) invoke("smartSplit", testString);
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -74,7 +73,7 @@ public class SmartSplitTests {
         String testString = "teststring1	teststring2	teststring3	teststring4";
         String[] expected = { "teststring1", "teststring2", "teststring3", "teststring4" };
         String[] actual = (String[]) invoke("smartSplit", testString);
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -82,7 +81,7 @@ public class SmartSplitTests {
         String testString = "teststring1#teststring2#teststring3#teststring4";
         String[] expected = { "teststring1", "teststring2", "teststring3", "teststring4" };
         String[] actual = (String[]) invoke("smartSplit", testString, '#');
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, actual);
     }
     
     @Test
@@ -90,7 +89,7 @@ public class SmartSplitTests {
         String testString = "teststring1 teststring2 teststring3 teststring4";
         String[] expected = { "teststring1", "teststring2", "teststring3", "teststring4" };
         String[] actual = (String[]) invoke("smartSplit", testString, ' ');
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, actual);
     }
     
     @Test
@@ -98,7 +97,7 @@ public class SmartSplitTests {
         String testString = "teststring1#@$teststring2#@$teststring3#@$teststring4";
         String[] expected = { "teststring1", "teststring2", "teststring3", "teststring4" };
         String[] actual = (String[]) invoke("smartSplit", testString, "#@$");
-        assertArrayEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     /**
