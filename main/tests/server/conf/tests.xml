@@ -34,7 +34,7 @@
       </run>
     </groups>
     <packages>
-      <package name="com.google.refine.tests.*"/>
+      <package name="com.google.refine.*"/>
     </packages>
   </test>
 </suite>
