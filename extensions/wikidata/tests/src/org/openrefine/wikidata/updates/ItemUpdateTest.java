@@ -49,7 +49,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.TestUtils;
 
 public class ItemUpdateTest {
 

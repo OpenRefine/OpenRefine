@@ -31,8 +31,8 @@ import org.testng.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
 
 public class JacksonSerializationTest {
 

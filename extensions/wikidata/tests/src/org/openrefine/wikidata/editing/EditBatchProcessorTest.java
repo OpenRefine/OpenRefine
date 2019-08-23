@@ -51,7 +51,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.google.refine.tests.RefineTest;
+import com.google.refine.RefineTest;
 
 public class EditBatchProcessorTest extends RefineTest {
 

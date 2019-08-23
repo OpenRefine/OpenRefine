@@ -37,9 +37,9 @@ import org.openrefine.wikidata.testing.TestingData;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
+import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
 
 public abstract class CommandTest extends RefineTest {
 

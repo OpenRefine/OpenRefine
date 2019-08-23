@@ -35,14 +35,14 @@ import java.util.Properties;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.RefineTest;
 import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+import com.google.refine.util.TestUtils;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 

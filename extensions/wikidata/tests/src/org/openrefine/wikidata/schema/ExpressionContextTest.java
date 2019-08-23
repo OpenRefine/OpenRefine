@@ -29,8 +29,8 @@ import static org.junit.Assert.assertNull;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
 
 public class ExpressionContextTest extends RefineTest {
 

@@ -47,11 +47,11 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
+import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.TestUtils;
 
 public class WikibaseSchemaTest extends RefineTest {
 
