@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package com.google.refine.browsing.facets;
+package com.google.refine.browsing;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

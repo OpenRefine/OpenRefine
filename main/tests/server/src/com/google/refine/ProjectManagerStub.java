@@ -44,7 +44,7 @@ import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
 
 /**
- * Stub used to make protected methods public for testing
+ * Stub used to avoid saves and stub HistoryEntryManager
  *
  */
 public class ProjectManagerStub extends ProjectManager {

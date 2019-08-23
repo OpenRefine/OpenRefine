@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
  
-package com.google.refine.expr.functions;
+package com.google.refine.grel;
 
 import java.io.IOException;
 import java.util.Properties;
