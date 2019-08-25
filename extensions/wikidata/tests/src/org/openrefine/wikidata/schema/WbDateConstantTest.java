@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import java.util.Calendar;
+
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -85,6 +87,17 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
                 TimeValue.CM_JULIAN_PRO), julianMonth);
         evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianDay);
+    }
+    
+    @Test
+    public void testToday() {
+    	Calendar calendar = Calendar.getInstance();
+    	TimeValue expectedDate = Datamodel.makeTimeValue(
+    			calendar.get(Calendar.YEAR),
+    			(byte)calendar.get(Calendar.MONTH),
+    			(byte)calendar.get(Calendar.DAY_OF_MONTH),
+    			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
+    	evaluatesTo(expectedDate, new WbDateConstant("TODAY"));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

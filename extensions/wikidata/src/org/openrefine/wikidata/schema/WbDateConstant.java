@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -106,9 +105,22 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         int precision = 0; // default precision (will be overridden if successfully parsed)
         int maxLength = 0; // the maximum length parsed
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
+        
+        String trimmedDatestamp = datestamp.trim();
+        
+        if("TODAY".equals(trimmedDatestamp)) {
+	        Calendar calendar = Calendar.getInstance();
+	    	TimeValue todaysDate = Datamodel.makeTimeValue(
+	    			calendar.get(Calendar.YEAR),
+	    			(byte)calendar.get(Calendar.MONTH),
+	    			(byte)calendar.get(Calendar.DAY_OF_MONTH),
+	    			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
+	    	return todaysDate;
+        }
+        
+    	
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
-            String trimmedDatestamp = datestamp.trim();
             Date date = entry.getKey().parse(trimmedDatestamp, position);
             
             if (date == null) {
