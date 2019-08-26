@@ -725,5 +725,18 @@
     "core-index/license": "ライセンス:",
     "core-index/homepage": "ホームページ:",
     "core-index/image": "写真:",
-    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、https://github.com/OpenRefine/OpenRefine/wiki/Variables#record"
+    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、https://github.com/OpenRefine/OpenRefine/wiki/Variables#record",
+    "core-views/join-col": "カラムの結合",
+    "core-views/column-join": "カラムの結合",
+    "core-views/column-join-before-column-picker": "結合するカラムの選択",
+    "core-views/column-join-before-options": "オプション",
+    "core-views/column-join-field-separator": "区切り文字:",
+    "core-views/column-join-field-separator-advice": "区切り文字を入力してください（指定しないと直接結合されます）。",
+    "core-views/column-join-replace-nulls": "nullを置換...",
+    "core-views/column-join-skip-nulls": "nullをスキップ。",
+    "core-views/column-join-replace-nulls-advice": "置換文字を入力してください（指定しないと空白で置換されます）。",
+    "core-views/column-join-write-selected-column": "結果を選択したカラムに書き込む。",
+    "core-views/column-join-copy-to-new-column": "結果を書き込むカラムの名前...",
+    "core-views/column-join-delete-joined-columns": "結合したカラムの削除。",
+    "core-views/column-join-dont-escape": "区切りや置換の文字は、改行なら\\n, タブは\\t, \\nなら\\\\n, \\t なら\\\\tです。"
 }
