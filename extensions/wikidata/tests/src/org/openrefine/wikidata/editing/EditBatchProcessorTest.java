@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -51,7 +51,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.google.refine.tests.RefineTest;
+import com.google.refine.RefineTest;
 
 public class EditBatchProcessorTest extends RefineTest {
 

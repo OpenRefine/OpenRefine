@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.exporters;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
 

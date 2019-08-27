@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
@@ -33,11 +33,11 @@ import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.RefineTest;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.recon.StandardReconConfig;
-import com.google.refine.tests.RefineTest;
 
 public class NewItemLibraryTest extends RefineTest {
 

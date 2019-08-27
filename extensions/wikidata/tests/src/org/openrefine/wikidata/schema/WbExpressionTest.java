@@ -32,12 +32,12 @@ import org.openrefine.wikidata.testing.TestingData;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
+import com.google.refine.RefineTest;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
 
 public class WbExpressionTest<T> extends RefineTest {
 
