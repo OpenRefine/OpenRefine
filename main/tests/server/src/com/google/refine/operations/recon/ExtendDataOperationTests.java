@@ -33,16 +33,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -50,6 +60,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -63,13 +74,12 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ExtendDataOperation;
+import com.google.refine.process.LongRunningProcessStub;
 import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-
+@PrepareForTest(ReconciledDataExtensionJob.class)
 public class ExtendDataOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}}";
@@ -113,6 +123,8 @@ public class ExtendDataOperationTests extends RefineTest {
             "       \"status\" : \"pending\"\n" + 
             "     }";
     
+    private Map<JsonNode, String> mockedResponses = new HashMap<>();
+    
     static public class ReconciledDataExtensionJobStub extends ReconciledDataExtensionJob {
         public ReconciledDataExtensionJobStub(DataExtensionConfig obj, String endpoint) {
             super(obj, endpoint);
@@ -136,6 +148,7 @@ public class ExtendDataOperationTests extends RefineTest {
     Properties options;
     EngineConfig engine_config;
     Engine engine;
+
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
@@ -209,11 +222,43 @@ public class ExtendDataOperationTests extends RefineTest {
 
     /**
      * Test to fetch simple strings
+     * @throws Exception 
      */
+    
+    @BeforeMethod
+    public void mockHttpCalls() throws Exception {
+    	mockStatic(ReconciledDataExtensionJob.class);
+    	PowerMockito.spy(ReconciledDataExtensionJob.class);
+    	Answer<InputStream> mockedResponse = new Answer<InputStream>() {
+			@Override
+			public InputStream answer(InvocationOnMock invocation) throws Throwable {
+				return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
+			}
+    	};
+    	PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "performQuery", anyString(), anyString());
+    }
+    
+    @AfterMethod
+    public void cleanupHttpMocks() {
+    	mockedResponses.clear();
+    }
 
     @Test
     public void testFetchStrings() throws Exception {
+  
         DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
+        
+        mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P297\"}]}",
+      		  "{"
+  			+ "\"rows\": {"
+  			+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
+  			+ "    \"Q863\": {\"P297\": [{\"str\": \"TJ\"}]},"
+  			+ "    \"Q30\": {\"P297\": [{\"str\": \"US\"}]},"
+  			+ "    \"Q17\": {\"P297\": [{\"str\": \"JP\"}]}"
+  			+ "},"
+  			+ "\"meta\": ["
+  			+ "   {\"name\": \"ISO 3166-1 alpha-2 code\", \"id\": \"P297\"}"
+  			+ "]}");
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
@@ -222,17 +267,8 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+        process.run();
 
         // Inspect rows
         Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
@@ -253,6 +289,18 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
         
+        mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}",
+        		"{"
+        		+ "\"rows\": {"
+        		+ "    \"Q794\": {\"P38\": [{\"float\": 1}]},"
+        		+ "    \"Q863\": {\"P38\": [{\"float\": 2}]},"
+        		+ "    \"Q30\": {\"P38\": [{\"float\": 1}]},"
+        		+ "    \"Q17\": {\"P38\": [{\"float\": 1}]}"
+        		+ "},"
+        		+ "\"meta\": ["
+        		+ "    {\"settings\": {\"count\": \"on\", \"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+        		+ "]}");
+        
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
                 RECON_SERVICE,
@@ -260,17 +308,9 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
+        
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+        process.run();
 
         // Test to be updated as countries change currencies!
         Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
@@ -288,6 +328,16 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
         
+        mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"rank\":\"best\"}}]}",
+        		"{\"rows\":{"
+        		+ "   \"Q794\": {\"P38\": [{\"name\": \"Iranian rial\", \"id\": \"Q188608\"}]},"
+        		+ "   \"Q863\": {\"P38\": [{\"name\": \"Tajikistani somoni\", \"id\": \"Q199886\"}]},"
+        		+ "   \"Q30\": {\"P38\": [{\"name\": \"United States dollar\", \"id\": \"Q4917\"}]},"
+        		+ "   \"Q17\": {\"P38\": [{\"name\": \"Japanese yen\", \"id\": \"Q8146\"}]}"
+        		+ "}, \"meta\": ["
+        		+ "     {\"settings\": {\"rank\": \"best\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+        		+ "]}");
+        
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
                 RECON_SERVICE,
@@ -295,17 +345,8 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning());
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+        process.run();
 
         /*
           * Tajikistan has one "preferred" currency and one "normal" one
@@ -329,6 +370,17 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
         
+        mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"rank\":\"any\"}}]}",
+    			"{\"rows\": {"
+    			+ "   \"Q794\": {\"P38\": [{\"name\": \"Iranian rial\", \"id\": \"Q188608\"}]},"
+    			+ "   \"Q863\": {\"P38\": [{\"name\": \"Tajikistani somoni\", \"id\": \"Q199886\"}, {\"name\": \"Tajikistani ruble\", \"id\": \"Q2423956\"}]},"
+    			+ "   \"Q30\": {\"P38\": [{\"name\": \"United States dollar\", \"id\": \"Q4917\"}]},"
+    			+ "   \"Q17\": {\"P38\": [{\"name\": \"Japanese yen\", \"id\": \"Q8146\"}]}"
+    			+ "},"
+    			+ "\"meta\": ["
+    			+ "    {\"settings\": {\"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+    			+ "]}");
+        
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
                 "country",
                 RECON_SERVICE,
@@ -336,17 +388,8 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+        process.run();
 
         /*
           * Tajikistan has one "preferred" currency and one "normal" one
@@ -361,5 +404,17 @@ public class ExtendDataOperationTests extends RefineTest {
         // Make sure all the values are reconciled
         Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 5);
     }
+    
+    private void mockHttpCall(String query, String response) throws IOException {
+    	mockedResponses.put(ParsingUtilities.mapper.readTree(query), response);
+    }
      
+    InputStream fakeHttpCall(String endpoint, String query) throws IOException {
+    	JsonNode parsedQuery = ParsingUtilities.mapper.readTree(query);
+    	if (mockedResponses.containsKey(parsedQuery)) {
+    		return IOUtils.toInputStream(mockedResponses.get(parsedQuery));
+    	} else {
+    		throw new IllegalArgumentException("HTTP call not mocked for query: "+query);
+    	}
+    }
 }
