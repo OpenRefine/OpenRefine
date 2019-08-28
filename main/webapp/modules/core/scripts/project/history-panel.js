@@ -257,9 +257,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
 
   var level = DialogSystem.showDialog(frame);
     
-    function setFocusToTextBox() {
-      document.getElementById("filterInput").focus();
-    }
+  elmts.getElementById("filterInput").focus();
 
   elmts.textarea[0].select();
 };
