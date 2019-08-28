@@ -22,6 +22,7 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
+    <surefire.version>2.22.2</surefire.version>
     <surefireArgs></surefireArgs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -90,7 +91,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>${surefire.version}</version>
         <configuration>
           <argLine>${surefireArgs}</argLine>
           <suiteXmlFiles>

@@ -51,6 +51,10 @@ test_script:
 
     refine test
 
+on_failure:
+- cmd: |-
+    dir
+
 cache:
   - C:\Users\appveyor\.m2
 
