@@ -277,6 +277,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+    
+    elmts.separatorInput.focus().select();
 
     elmts.cancelButton.click(dismiss);
     elmts.okButton.click(function() {
