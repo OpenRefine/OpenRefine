@@ -256,8 +256,6 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   });
 
   var level = DialogSystem.showDialog(frame);
-    
-  elmts.getElementById("filterInput").focus();
 
   elmts.textarea[0].select();
 };
