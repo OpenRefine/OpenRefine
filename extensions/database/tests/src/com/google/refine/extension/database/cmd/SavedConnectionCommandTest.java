@@ -1,6 +1,9 @@
 package com.google.refine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,8 +157,11 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         SUT.doPost(request, response);
         
         String result = sw.getBuffer().toString().trim();
- 
+        assertNotNull(result);
+        assertFalse(result.isEmpty(), "Valid response Message expected!");
+        
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
+        System.out.println("json:" + json);
         
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
@@ -229,7 +235,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         Assert.assertEquals(savedConnections.size(), 1);
         
         ObjectNode sc = (ObjectNode)savedConnections.get(0);
-        System.out.println("sc" + sc);
+        //System.out.println("sc" + sc);
         String newDbHost = sc.get("databaseHost").asText();
         Assert.assertEquals(newDbHost, newHost);
     }
@@ -288,5 +294,44 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Added to check XSS invalid tokens
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Test
+    public void testDoPostInvalidConnectionName() throws IOException, ServletException {
+        
+    	when(request.getParameter("connectionName")).thenReturn("<img></img>");
+        when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
+        when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
+        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
+        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
+        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
+        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+       
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        
+        when(response.getWriter()).thenReturn(pw);
+       
+        SUT.doPost(request, response);
+        
+        String result = sw.getBuffer().toString().trim();
+        assertNotNull(result);
+        assertFalse(result.isEmpty(), "Valid response Message expected!");
+        
+        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
+        System.out.println("json:" + json);
+        
+        ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
+        Assert.assertNotNull(savedConnections);
+        
+        int len = savedConnections.size();
+        
+        Assert.assertEquals(len, 1);
+    }
+
 
 }

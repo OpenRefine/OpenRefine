@@ -127,11 +127,11 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
  this._elmts.saveConnectionButton.click(function(evt) {
       
        if(self._validateNewConnectionForm() == true){
-               var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
+            var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
             if (connectionNameInput.length === 0) {
                 window.alert($.i18n('database-source/alert-connection-name'));   
             } else{
-                    self._saveConnection(self._getConnectionInfo());
+                self._saveConnection(self._getConnectionInfo());
             }
              
        }
@@ -431,6 +431,9 @@ Refine.DatabaseSourceUI.prototype._getConnectionInfo = function() {
          var self = this;
         var jdbcConnectionInfo = {};
          jdbcConnectionInfo.connectionName = $.trim(self._elmts.connectionNameInput[0].value);
+         
+        // window.alert('input:' + jdbcConnectionInfo.connectionName + ' output:' + self._removeScriptTag(jdbcConnectionInfo.connectionName) );
+         
          jdbcConnectionInfo.databaseType = $.trim(self._elmts.databaseTypeSelect[0].value);
          jdbcConnectionInfo.databaseServer = $.trim(self._elmts.databaseHostInput[0].value);
          jdbcConnectionInfo.databasePort = $.trim(self._elmts.databasePortInput[0].value);
@@ -441,6 +444,18 @@ Refine.DatabaseSourceUI.prototype._getConnectionInfo = function() {
          return jdbcConnectionInfo;
     
 }
+
+Refine.DatabaseSourceUI.prototype._removeScriptTag = function(input) {
+	var div = document.createElement('div');
+    div.innerHTML = s;
+    var scripts = div.getElementsByTagName('script');
+    var i = scripts.length;
+    while (i--) {
+      scripts[i].parentNode.removeChild(scripts[i]);
+    }
+    return div.innerHTML;
+};
+
 
 Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
     
@@ -454,21 +469,45 @@ Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
         var initialDatabaseInput = $.trim(self._elmts.initialDatabaseInput[0].value);
         var initialSchemaInput = $.trim(self._elmts.initialSchemaInput[0].value);
         
-        if (databaseHostInput.length === 0) {
+        var alphaNumRE = /^[a-zA-Z0-9._-]*$/;
+        var numRE = /^[0-9]*$/;
+        
+        var alphaNumConnNameTestResult = alphaNumRE.test(connectionNameInput);
+        var databaseHostTestResult = alphaNumRE.test(databaseHostInput);
+        var databasePortTestResult = numRE.test(databasePortInput);
+        var databaseUserTestResult = alphaNumRE.test(databaseUserInput);
+        
+        if(alphaNumConnNameTestResult == false){
+        	window.alert($.i18n('database-source/alert-conn-name-invalid-character'));
+        	return false;
+        }else if(connectionNameInput.contains("<script>") || connectionNameInput.contains("<img>")){
+        	window.alert($.i18n('database-source/alert-conn-name-invalid-character'));
+        	return false;
+        }else if (databaseHostInput.length === 0) {
             window.alert($.i18n('database-source/alert-server'));
             return false;
+        }else if(databaseHostInput.contains("<script>") || databaseHostInput.contains("<img>")){
+        	window.alert($.i18n('database-source/alert-db-host-invalid-character'));
+        	return false;
         }else if(databasePortInput.length === 0){
-                window.alert($.i18n('database-source/alert-port'));
-                return false;
+            window.alert($.i18n('database-source/alert-port'));
+            return false;
         }else if(databaseUserInput.length === 0){
-                window.alert($.i18n('database-source/alert-user'));
-                return false;
+            window.alert($.i18n('database-source/alert-user'));
+            return false;
+        }else if(databaseUserInput.contains("<script>") || databaseUserInput.contains("<img>")){
+        	window.alert($.i18n('database-source/alert-db-user-invalid-character'));
+        	return false;
         }else if(initialDatabaseInput.length === 0){
-                window.alert($.i18n('database-source/alert-initial-database'));
-                return false;
+            window.alert($.i18n('database-source/alert-initial-database'));
+            return false;
+        }else if(databasePortTestResult == false){
+        	window.alert($.i18n('database-source/alert-db-port-invalid-character'));
+        	return false;
+        	
         }
         else{
-                return true;
+            return true;
 
         }    
     
