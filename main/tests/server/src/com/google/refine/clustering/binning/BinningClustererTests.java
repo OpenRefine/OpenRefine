@@ -26,7 +26,10 @@
  ******************************************************************************/
 package com.google.refine.clustering.binning;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.testng.annotations.Test;
 
@@ -82,5 +85,17 @@ public class BinningClustererTests extends RefineTest {
         BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
         TestUtils.isSerializedTo(clusterer, clustererJson);
+    }
+    
+    @Test
+    public void testNoLonelyClusters() throws JsonParseException, JsonMappingException, IOException {
+    	Project project = createCSVProject("column\n"
+                + "c\n"
+                + "ĉ\n"
+                + "d\n");
+    	BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
+    	BinningClusterer clusterer = config.apply(project);
+        clusterer.computeClusters(new Engine(project));
+        assertEquals(clusterer.getJsonRepresentation().size(), 1);
     }
 }
