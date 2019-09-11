@@ -34,7 +34,7 @@ Refine.SetLanguageUI = function(elmt) {
 			async : false,
 			data : {
 			  name : "userLang",
-				value : $("#langDD option:selected").val()
+				value : JSON.stringify($("#langDD option:selected").val())
 			},
 			success : function(data) {
 				alert($.i18n('core-index-lang/page-reload'));
