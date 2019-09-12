@@ -172,7 +172,7 @@
     "core-dialogs/remove": "削除",
     "core-dialogs/method": "方法&nbsp;",
     "core-dialogs/merge": "マージしますか?",
-    "core-dialogs/cluster-descr": "この機能は、同じものの別の名前かもしれないセルのグループを探すのに役立ちます。たとえば、\"New York\" と \"new york\" は非常に似た概念ですが表記の違いがあります。また、 \"Gödel\" と \"Godel\" は多分同じ人を示します。",
+    "core-dialogs/cluster-descr": "この機能は、同じものの別の名前かもしれないセルのグループを探すのに役立ちます。たとえば、\"New York\" と \"new york\" は非常に似た概念ですが表記の違いがあります。また、 \"Gödel\" と \"Godel/Goedel\" は多分同じ人を示します。",
     "clustering-keyers/cologne-phonetic": "cologne-phonetic",
     "core-dialogs/found": "結果",
     "core-dialogs/starred": "星付き",
