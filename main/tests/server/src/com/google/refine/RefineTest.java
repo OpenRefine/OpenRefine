@@ -195,7 +195,7 @@ public class RefineTest extends PowerMockTestCase {
      * @param guessValueType
      * @param ignoreQuotes
      */
-    private void prepareImportOptions(ObjectNode options,
+    public static void prepareImportOptions(ObjectNode options,
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
             
