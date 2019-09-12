@@ -58,6 +58,25 @@ public class ScatterplotDrawCommandTests {
     		+ "\"color\":\"ff6a00\""
     		+ "}";
     
+    
+    public static String configJsonWithNone = "{"
+    		+ "\"name\":\"b (x) vs. y (y)\","
+    		+ "\"cx\":\"b\","
+    		+ "\"cy\":\"y\","
+    		+ "\"l\":150,"
+    		+ "\"ex\":\"value\","
+    		+ "\"ey\":\"value\","
+    		+ "\"dot\":1.4,"
+    		+ "\"dim_x\":\"lin\","
+    		+ "\"dim_y\":\"lin\","
+    		+ "\"r\":\"none\","
+    		+ "\"type\":\"scatterplot\","
+    		+ "\"from_x\":0,"
+    		+ "\"to_x\":0,"
+    		+ "\"from_y\":0,"
+    		+ "\"to_y\":0,"
+    		+ "\"color\":\"ff6a00\"}";
+    
     @Test
     public void testParseConfig() throws JsonParseException, JsonMappingException, IOException {
     	GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJson, GetScatterplotCommand.PlotterConfig.class);
@@ -65,6 +84,12 @@ public class ScatterplotDrawCommandTests {
     	Assert.assertEquals("b", config.columnName_y);
     	Assert.assertEquals(ScatterplotFacet.LOG, config.dim_x);
     	Assert.assertEquals(ScatterplotFacet.LIN, config.dim_y);
+    }
+    
+    @Test
+    public void testParseConfigWithNone() throws JsonParseException, JsonMappingException, IOException {
+    	GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithNone, GetScatterplotCommand.PlotterConfig.class);
+    	Assert.assertEquals(0, config.rotation);
     }
 	
 }

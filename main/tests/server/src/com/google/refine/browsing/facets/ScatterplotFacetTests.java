@@ -26,6 +26,9 @@
  ******************************************************************************/
 package com.google.refine.browsing.facets;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.testng.annotations.Test;
@@ -34,6 +37,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import com.google.refine.model.Cell;
@@ -102,7 +106,11 @@ public class ScatterplotFacetTests extends RefineTest {
         
         ScatterplotFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
-        
         TestUtils.isSerializedTo(facet, facetJson);
+        
+        RowFilter filter = facet.getRowFilter(project);
+        assertTrue(filter.filterRow(project, 0, project.rows.get(0)));
+        assertFalse(filter.filterRow(project, 1, project.rows.get(1)));
+        assertTrue(filter.filterRow(project, 3, project.rows.get(3)));
     }
 }

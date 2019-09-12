@@ -104,7 +104,7 @@ public class ScatterplotFacet implements Facet {
         protected int rotation;
     
         @JsonIgnore
-        protected double l;
+        protected double l = 1.;
         @JsonProperty(DOT)
         protected double dot;
     

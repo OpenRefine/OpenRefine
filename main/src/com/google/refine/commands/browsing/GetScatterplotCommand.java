@@ -140,6 +140,16 @@ public class GetScatterplotCommand extends Command {
         public void setDimY(String dim) {
         	dim_y = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
         }
+        
+        // rotation can be set to "none" (a JSON string) in which case it should be ignored
+        @JsonProperty(ScatterplotFacet.ROTATION)
+        public void setRotation(Object rotation) {
+        	try {
+        		this.rotation = Integer.parseInt(rotation.toString());
+        	} catch(NumberFormatException e) {
+        		;
+        	}
+        }
     }
     
     public void draw(OutputStream output, Project project, Engine engine, PlotterConfig o) throws IOException {
