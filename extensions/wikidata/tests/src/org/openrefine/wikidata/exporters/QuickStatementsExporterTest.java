@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
@@ -48,7 +49,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 
-public class QuickStatementsExporterTest extends RefineTest {
+public class QuickStatementsExporterTest extends WikidataRefineTest {
 
     private QuickStatementsExporter exporter = new QuickStatementsExporter();
     private ItemIdValue newIdA = TestingData.newIdA;

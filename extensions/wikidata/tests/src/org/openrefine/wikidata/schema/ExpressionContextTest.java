@@ -26,13 +26,13 @@ package org.openrefine.wikidata.schema;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 
-public class ExpressionContextTest extends RefineTest {
+public class ExpressionContextTest extends WikidataRefineTest {
 
     Project project = null;
 
