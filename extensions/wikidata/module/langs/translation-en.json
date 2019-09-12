@@ -154,5 +154,7 @@
     "warnings-messages/no-unit-provided/title": "Unit missing for {property_entity}",
     "warnings-messages/no-unit-provided/body": "Values such as <span class=\"wb-issue-preformat\">{example_value}</span> on {example_item_entity} are expected to have units.",
     "warnings-messages/invalid-entity-type/title": "{property_entity} used on items",
-    "warnings-messages/invalid-entity-type/body": "Uses of {property_entity} on items such as {example_entity} are invalid."
+    "warnings-messages/invalid-entity-type/body": "Uses of {property_entity} on items such as {example_entity} are invalid.",
+    "warnings-messages/early-gregorian-date/title": "Early dates in the Gregorian calendar",
+    "warnings-messages/early-gregorian-date/body": "Dates earlier than October 1582 (such as in year {example_year}) are unlikely to be expressed using the Gregorian calendar. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">manual</a> to specify the appropriate calendar for your dates."
 }

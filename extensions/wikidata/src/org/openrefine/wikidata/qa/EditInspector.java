@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.openrefine.wikidata.qa.scrutinizers.CalendarScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer;
@@ -79,6 +80,7 @@ public class EditInspector {
         register(new QuantityScrutinizer());
         register(new RestrictedValuesScrutinizer());
         register(new EntityTypeScrutinizer());
+        register(new CalendarScrutinizer());
     }
 
     /**
