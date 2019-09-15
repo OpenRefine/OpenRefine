@@ -161,7 +161,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         assertFalse(result.isEmpty(), "Valid response Message expected!");
         
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-        System.out.println("json:" + json);
+       // System.out.println("json:" + json);
         
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
@@ -235,7 +235,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         Assert.assertEquals(savedConnections.size(), 1);
         
         ObjectNode sc = (ObjectNode)savedConnections.get(0);
-        //System.out.println("sc" + sc);
         String newDbHost = sc.get("databaseHost").asText();
         Assert.assertEquals(newDbHost, newHost);
     }
@@ -323,7 +322,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         assertFalse(result.isEmpty(), "Valid response Message expected!");
         
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-        System.out.println("json:" + json);
+        //System.out.println("json:" + json);
         
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
@@ -333,5 +332,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         Assert.assertEquals(len, 1);
     }
 
+    
+    
 
 }

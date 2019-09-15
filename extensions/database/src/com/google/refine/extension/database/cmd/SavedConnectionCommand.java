@@ -133,35 +133,22 @@ public class SavedConnectionCommand extends DatabaseCommand {
             
             writer.writeStartObject();
             
-            String sanitizedConnName = Encode.forHtml(savedConnection.getConnectionName());
-      
-//            writer.writeStringField("connectionName", savedConnection.getConnectionName());
-            writer.writeStringField("connectionName", sanitizedConnName);
-            
+       
+            writer.writeStringField("connectionName", savedConnection.getConnectionName());
             writer.writeStringField("databaseType", savedConnection.getDatabaseType());
-
-            String sanitizedHost = Encode.forHtml(savedConnection.getDatabaseHost());
-//            writer.writeStringField("databaseHost", savedConnection.getDatabaseHost());
-            writer.writeStringField("databaseHost", sanitizedHost);
-
+            writer.writeStringField("databaseHost", savedConnection.getDatabaseHost());
             writer.writeNumberField("databasePort", savedConnection.getDatabasePort());
-
-            String sanitizedDbName = Encode.forHtml(savedConnection.getDatabaseName());
-//            writer.writeStringField("databaseName", savedConnection.getDatabaseName());
-            writer.writeStringField("databaseName", sanitizedDbName);
+            writer.writeStringField("databaseName", savedConnection.getDatabaseName());
+       
             
             String dbPasswd = savedConnection.getDatabasePassword();
             if(dbPasswd != null && !dbPasswd.isEmpty()) {
                 dbPasswd = DatabaseUtils.decrypt(savedConnection.getDatabasePassword());
             }
             writer.writeStringField("databasePassword", dbPasswd);
+            writer.writeStringField("databaseSchema", savedConnection.getDatabaseSchema());        
+            writer.writeStringField("databaseUser", savedConnection.getDatabaseUser());
 
-            writer.writeStringField("databaseSchema", savedConnection.getDatabaseSchema());
-            String sanitizedDbUser = Encode.forHtml(savedConnection.getDatabaseUser());
-//            writer.writeStringField("databaseUser", savedConnection.getDatabaseUser());
-            writer.writeStringField("databaseUser", sanitizedDbUser);
-            
-            logger.info("Input DB User:{}, SanitizedDbUser:{}", savedConnection.getDatabaseUser(), sanitizedDbUser);
 
             writer.writeEndObject();
             writer.writeEndArray();
