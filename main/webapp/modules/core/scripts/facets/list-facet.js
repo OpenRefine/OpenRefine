@@ -725,7 +725,7 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
         "command/core/set-preference",
         {
           name : "ui.browsing.listFacet.limit",
-          value : n
+          value : JSON.stringify(n)
         },
         function(o) {
           if (o.code === "ok") {
