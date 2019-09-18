@@ -26,6 +26,8 @@
  ******************************************************************************/
 package com.google.refine.clustering.knn;
 
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.testng.annotations.Test;
@@ -71,5 +73,17 @@ public class kNNClustererTests extends RefineTest {
         clusterer.computeClusters(new Engine(project));
         
         TestUtils.isSerializedTo(clusterer, clustererJson);
+    }
+    
+    @Test
+    public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
+    	Project project = createCSVProject("column\n"
+                + "foo\n"
+                + "bar\n");
+    	kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
+    	kNNClusterer clusterer = config.apply(project);
+    	clusterer.computeClusters(new Engine(project));
+    	
+    	assertTrue(clusterer.getJsonRepresentation().isEmpty());
     }
 }
