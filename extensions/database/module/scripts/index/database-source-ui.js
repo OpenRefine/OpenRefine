@@ -241,12 +241,15 @@ Refine.DatabaseSourceUI.prototype._editConnection = function(connectionInfo) {
         success: function(settings) {
              if(settings){
               $( "#menuListUl" ).empty();
+              var menuList = $('#menuListUl');
               var items = [];
               $.each(settings.savedConnections,function(index,savedConnection){
 
-                 items.push('<li class="pure-menu-item sc-list"><a href="#" class="pure-menu-link context-menu-one">'
-                    + '<span class="context-menu-text" >' + savedConnection.connectionName + '</span>'
-                    + '<span class="sc-context-more-vert pull-right"> </span></a></li>');
+                 var li = $('<li class="pure-menu-item sc-list"></li>').appendTo(menuList);
+                 var a = $('<a href="#" class="pure-menu-link context-menu-one"></a>').appendTo(li);
+                 $('<span class="context-menu-text"></span>').text(savedConnection.connectionName)
+                      .appendTo(a);
+                 $('<span class="sc-context-more-vert pull-right"> </span>').appendTo(a);
                })
               
               $( "#menuListUl" ).append(items.join(''));

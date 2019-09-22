@@ -1,8 +1,9 @@
 package com.google.refine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -281,8 +283,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
 
             SUT.doDelete(request, response);
             
-           // String result = sw.getBuffer().toString().trim();
-          
             ObjectNode json = ParsingUtilities.mapper.createObjectNode();
             
             Assert.assertNotNull(json);
@@ -317,19 +317,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
        
         SUT.doPost(request, response);
         
-        String result = sw.getBuffer().toString().trim();
-        assertNotNull(result);
-        assertFalse(result.isEmpty(), "Valid response Message expected!");
-        
-        ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-        //System.out.println("json:" + json);
-        
-        ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
-        Assert.assertNotNull(savedConnections);
-        
-        int len = savedConnections.size();
-        
-        Assert.assertEquals(len, 1);
+        verify(response, times(1)).sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Invalid. Expecting [a-zA-Z0-9._-]");
     }
 
     
