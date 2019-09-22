@@ -715,5 +715,10 @@
     "core-recon/add-std-srv": "Standard-Service hinzufügen",
     "core-views/blank-rows": "Leere Zeilen",
     "core-views/non-blank-values": "Nicht-leere Werte pro Spalte",
-    "core-views/non-blank-records": "Nicht-leere Datensätze pro Spalte"
+    "core-views/non-blank-records": "Nicht-leere Datensätze pro Spalte",
+    "core-index/tags": "Tags:",
+    "core-index/title": "Titel:",
+    "core-index/license": "Lizenz:",
+    "core-index/homepage": "Homepage:",
+    "core-index/image": "Bild:"
 }
