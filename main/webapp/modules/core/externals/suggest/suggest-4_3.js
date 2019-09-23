@@ -280,7 +280,6 @@
       $(window)
         .unbind("resize.suggest", this.onresize)
         .unbind("scroll.suggest", this.onresize);
-      this.input.removeData("data.suggest");
     },
 
     invalidate_position: function() {
