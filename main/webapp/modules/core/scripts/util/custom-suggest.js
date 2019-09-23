@@ -91,13 +91,6 @@ var CustomSuggest = {};
   var originalSuggestP = $.suggest.suggestP;
   $.suggest.suggestP = function(input, options) {
     originalSuggestP.call(this, input, options);
-
-    if ("ac_param" in options) {
-      var ac_param = options.ac_param;
-      if ("schema" in ac_param) {
-        this.options.ac_param.schema = ac_param.schema;
-      }
-    }
   };
   $.suggest.suggestP.prototype = originalSuggestP.prototype;
 
@@ -109,7 +102,6 @@ var CustomSuggest = {};
         {},
         $.suggest.suggest.defaults, {
           scoring: "schema",
-          type: "/type/property",
           css: { pane: "fbs-pane fbs-pane-property" }
         }
       )
