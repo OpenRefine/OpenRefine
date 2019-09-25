@@ -1,0 +1,21 @@
+{
+    "snac-extension/menu-label": "SNAC",
+    "snac-extension/manage-api-key": "Manage SNAC API key",
+    "snac-extension/perform-edits-on-snac": "Upload edits to SNAC",
+    "snac-extension/export-to-json": "Export to SNAC-Compliant JSON",
+    "snac-schema/dialog-header": "Align to SNAC",
+    "snac-schema/dialog-explanation": "The SNAC schema below specifies how your tabular data will be transformed into SNAC Constellations. You can drag and drop the column names below in most input boxes: for each row, edits will be generated with the values in these columns.",
+    "snac-schema/preview-explanation": "This tab shows the first edits (out of {nb_edits}) that will be made once you upload the changes to SNAC. You can use facets to inspect the edits on particular items.",
+    "snac-schema/datatype-not-supported-yet": "This datatype is not supported yet, sorry.",
+    "snac-schema/invalid-schema-warning-issues": "Your schema is incomplete, fix it to see the issues.",
+    "snac-schema/invalid-schema-warning-preview": "Your schema is incomplete, fix it to see the preview.",
+    "snac-schema/discard-button": "Discard changes",
+    "snac-schema/save-button": "Save schema",
+    "snac-schema/close-button": "Close",
+    "snac-account/dialog-header": "SNAC API Key",
+    "snac-account/explain-key": "Entering your API key from <a href=\"https://snaccooperative.org\" target=\"_blank\">SNAC</a> lets you upload edits directly from OpenRefine into SNAC.  <b>Note: your API key will be stored in clear text in OpenRefine preferences.</b>",
+    "snac-account/key-label": "API Key:",
+    "snac-account/key-placeholder": "Enter your SNAC API Key",
+    "snac-account/close": "Close",
+    "snac-account/log-in": "Save Key"
+}
