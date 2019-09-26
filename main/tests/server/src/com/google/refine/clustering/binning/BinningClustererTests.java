@@ -29,7 +29,6 @@ package com.google.refine.clustering.binning;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.testng.annotations.Test;
 
@@ -86,16 +85,37 @@ public class BinningClustererTests extends RefineTest {
         clusterer.computeClusters(new Engine(project));
         TestUtils.isSerializedTo(clusterer, clustererJson);
     }
-    
+
     @Test
-    public void testNoLonelyClusters() throws JsonParseException, JsonMappingException, IOException {
-    	Project project = createCSVProject("column\n"
+    public void testNoLonelyClusters_oneClusterOneSingleValue() throws JsonParseException, JsonMappingException, IOException {
+        assertEquals(clusterer("column\n"
                 + "c\n"
                 + "ĉ\n"
-                + "d\n");
-    	BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
-    	BinningClusterer clusterer = config.apply(project);
+                + "d\n").getJsonRepresentation().size(), 1);
+    }
+
+    @Test
+    public void testNoLonelyClusters_identicalMultipleValues() throws JsonParseException, JsonMappingException, IOException {
+        assertEquals(clusterer("column\n"
+                + "c\n"
+                + "c\n"
+                + "d\n"
+                + "d\n").getJsonRepresentation().size(), 2);
+    }
+
+    @Test
+    public void testNoLonelyClusters_threeSingleValues() throws JsonParseException, JsonMappingException, IOException {
+        assertEquals(clusterer("column\n"
+                + "a\n"
+                + "b\n"
+                + "c\n").getJsonRepresentation().size(), 0);
+    }
+
+    private BinningClusterer clusterer(String data) throws IOException, JsonParseException, JsonMappingException {
+        Project project = createCSVProject(data);
+        BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
+        BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
-        assertEquals(clusterer.getJsonRepresentation().size(), 1);
+        return clusterer;
     }
 }

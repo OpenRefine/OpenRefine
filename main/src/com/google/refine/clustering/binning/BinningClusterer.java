@@ -242,7 +242,7 @@ public class BinningClusterer extends Clusterer {
     public List<List<ClusteredEntry>> getJsonRepresentation() {
         EntriesComparator c = new EntriesComparator();
         return _clusters.stream()
-        		.filter(m -> m.size() > 1)
+                .filter(m -> !(m.size() == 1 && m.values().iterator().next() == 1))
                 .map(m -> m.entrySet().stream()
                         .sorted(c)
                         .map(e -> new ClusteredEntry(e.getKey(), e.getValue()))
