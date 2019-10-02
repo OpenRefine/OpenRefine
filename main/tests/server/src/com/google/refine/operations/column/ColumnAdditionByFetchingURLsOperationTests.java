@@ -179,7 +179,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
         if (ref_val.startsWith("HTTP error"))
             return;
-        Assert.assertTrue(ref_val != "apple"); // just to make sure I picked the right column
+        Assert.assertFalse(ref_val.equals("apple")); // just to make sure I picked the right column
         for (int i = 1; i < 4; i++) {
             System.out.println("value:" + project.rows.get(i).getCellValue(1));
             // all random values should be equal due to caching
