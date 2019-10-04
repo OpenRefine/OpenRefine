@@ -283,9 +283,11 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
       var cell = row[c];
       if (cell !== null) {
         if ($.isPlainObject(cell)) {
-          $('<a>').attr("href",
-                this._serviceMetadata.identifierSpace + cell.id
-                ).attr("target", "_blank").text(cell.name).appendTo(td);
+          var service = self._serviceMetadata;
+          var href = (service.view && service.view.url) ?
+            encodeURI(service.view.url.replace("{{id}}", cell.id)) :
+            service.identifierSpace + cell.id;
+          $('<a>').attr("href", href).attr("target", "_blank").text(cell.name).appendTo(td);
         } else {
           $('<span>').text(cell).appendTo(td);
         }
