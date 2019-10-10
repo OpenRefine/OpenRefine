@@ -246,7 +246,7 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
     suggestOptions.key = null;
     suggestOptions.query_param_name = "prefix";
     if (type) {
-      suggestOptions.ac_param = { schema: typeof type == "string" ? type : type.id };
+      suggestOptions.type = typeof type == "string" ? type : type.id;
     }
     inputs.suggestP(suggestOptions);
   }
