@@ -52,9 +52,7 @@ public class WrappedCell implements HasFields {
     
     @Override
     public ArrayList<String> getFields() {
-        ArrayList<String> fields = new ArrayList<String>();
-        fields.add("cell");
-        return fields;
+        return cell.getFields();
     }
     
     @Override
