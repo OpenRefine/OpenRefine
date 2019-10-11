@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
@@ -65,6 +66,14 @@ public class Cell implements HasFields {
     public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
+    }
+    
+    @Override
+    public ArrayList<String> getFields() {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.add("value");
+        fields.add("recon");
+        return fields;
     }
     
     @Override
