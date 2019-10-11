@@ -34,13 +34,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.util.Properties;
+import java.util.ArrayList;
 
 /**
  * Interface for objects that have named fields, which can be retrieved using the 
  * dot notation or the bracket notation, e.g., cells.Country, cells["Type of Disaster"].
  */
 public interface HasFields {
+    /* Get a list of the field names that can be used by getField */
+    default ArrayList<String> getFields() {
+      ArrayList<String> fields = new ArrayList<String>();
+      return fields;
+    }
+    /* Get the value of a field by providing the field name */
     public Object getField(String name, Properties bindings);
-    
+    /* Check if a field contains an object that has fields of its own */
     public boolean fieldAlsoHasFields(String name);
 }

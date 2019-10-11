@@ -43,6 +43,7 @@ import com.google.refine.expr.functions.Coalesce;
 import com.google.refine.expr.functions.Cross;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.expr.functions.Get;
+import com.google.refine.expr.functions.GetFields;
 import com.google.refine.expr.functions.HasField;
 import com.google.refine.expr.functions.Jsonize;
 import com.google.refine.expr.functions.Length;
@@ -212,6 +213,7 @@ public class ControlFunctionRegistry {
 
         registerFunction("hasField", new HasField());
         registerFunction("get", new Get());
+        registerFunction("getFields", new GetFields());
         registerFunction("slice", new Slice());
         registerFunction("substring", new Slice());
         registerFunction("replace", new Replace());
