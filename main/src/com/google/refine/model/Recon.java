@@ -237,6 +237,30 @@ public class Recon implements HasFields {
     }
     
     @Override
+    public ArrayList<String> getFields() {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.add("id");
+        fields.add("best");
+        fields.add("candidates");
+        fields.add("judgement");
+        fields.add("judgment");
+        fields.add("judgmentAction");
+        fields.add("judgementAction");
+        fields.add("judgementHistoryEntry");
+        fields.add("judgmentHistoryEntry");
+        fields.add("judgementBatchSize");
+        fields.add("judgmentBatchSize");
+        fields.add("matched");
+        fields.add("new");
+        fields.add("match");
+        fields.add("matchRank");
+        fields.add("features");
+        fields.add("identifierSpace");
+        fields.add("schemaSpace");
+        return fields;
+    }
+    
+    @Override
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
             return id;
@@ -283,6 +307,13 @@ public class Recon implements HasFields {
     }
     
     public class Features implements HasFields {
+        
+        @Override
+        public ArrayList<String> getFields() {
+            ArrayList<String> fields = new ArrayList<String>(s_featureMap.keySet());
+            return fields;
+        }
+        
         @Override
         public Object getField(String name, Properties bindings) {
             int index = s_featureMap.containsKey(name) ? s_featureMap.get(name) : -1;

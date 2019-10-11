@@ -90,6 +90,15 @@ public class Row implements HasFields {
     }
     
     @Override
+    public ArrayList<String> getFields() {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.add("flagged");
+        fields.add("starred");
+        fields.add("cells");
+        return fields;
+    }
+    
+    @Override
     public Object getField(String name, Properties bindings) {
         if (FLAGGED.equals(name)) {
             return flagged;

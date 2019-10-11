@@ -1,5 +1,6 @@
 package com.google.refine.jython;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.testng.Assert;
@@ -13,6 +14,13 @@ import com.google.refine.model.Row;
 public class JythonAttributeTest {
     
     class MyFieldObject implements HasFields {
+        
+        @Override
+        public ArrayList<String> getFields() {
+            ArrayList<String> fields = new ArrayList<String>();
+            fields.add("sunshine");
+            return fields;
+        }
 
         @Override
         public Object getField(String name, Properties bindings) {

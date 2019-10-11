@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import com.google.refine.model.Cell;
@@ -47,6 +48,12 @@ public class CellTuple implements HasFields {
     public CellTuple(Project project, Row row) {
         this.project = project;
         this.row = row;
+    }
+    
+    @Override
+    public ArrayList<String> getFields() {
+        ArrayList<String> fields = new ArrayList<String>(project.columnModel.getColumnNames());
+        return fields;
     }
     
     @Override

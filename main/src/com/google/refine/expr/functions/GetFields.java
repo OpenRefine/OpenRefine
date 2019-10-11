@@ -40,6 +40,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.HasFields;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -49,7 +50,9 @@ public class GetFields implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            if (v instanceof ObjectNode){
+            if (v instanceof HasFields) {
+                return ((HasFields) v).getFields();
+            } else if (v instanceof ObjectNode){
                 ObjectNode o = (ObjectNode)v;
                 Iterator<String> fieldNames = o.fieldNames();
                 ArrayList<String> fields = new ArrayList<String>();

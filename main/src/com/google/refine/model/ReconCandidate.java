@@ -71,6 +71,16 @@ public class ReconCandidate implements HasFields {
     }
     
     @Override
+    public ArrayList<String> getFields() {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.add("id");
+        fields.add("name");
+        fields.add("type");
+        fields.add("score");
+        return fields;
+    }
+    
+    @Override
     public Object getField(String name, Properties bindings) {
         if ("id".equals(name)) {
             return id;

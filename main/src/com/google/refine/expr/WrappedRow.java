@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import com.google.refine.model.Cell;
@@ -50,6 +51,16 @@ public class WrappedRow implements HasFields {
         this.project = project;
         this.rowIndex = rowIndex;
         this.row = row;
+    }
+    
+    @Override
+    public ArrayList<String> getFields() {
+        ArrayList<String> fields = new ArrayList<String>();
+        fields.add("cell");
+        fields.add("index");
+        fields.add("record");
+        fields.add("columnNames");
+        return fields;
     }
     
     @Override
@@ -82,6 +93,16 @@ public class WrappedRow implements HasFields {
         protected WrappedRecord(Record record) {
             _record = record;
         }
+        
+        @Override
+        public ArrayList<String> getFields() {
+            ArrayList<String> fields = new ArrayList<String>();
+            fields.add("index");
+            fields.add("fromRowIndex");
+            fields.add("toRowIndex");
+            fields.add("rowCount");
+            return fields;
+        }
 
         @Override
         public Object getField(String name, Properties bindings) {
@@ -110,6 +131,12 @@ public class WrappedRow implements HasFields {
         
         protected RecordCells(Record record) {
             _record = record;
+        }
+        
+        @Override
+        public ArrayList<String> getFields() {
+            ArrayList<String> fields = new ArrayList<String>(project.columnModel.getColumnNames());
+            return fields;
         }
         
         @Override
