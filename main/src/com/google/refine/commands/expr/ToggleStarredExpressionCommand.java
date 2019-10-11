@@ -40,6 +40,11 @@ public class ToggleStarredExpressionCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
+    	
         String expression = request.getParameter("expression");
 
         TopList starredExpressions = ((TopList) ProjectManager.singleton.getPreferenceStore().get(

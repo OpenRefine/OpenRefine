@@ -388,22 +388,18 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
 
   Refine.setAjaxInProgress();
 
-  // Get a CSRF token first
-  $.get(
-    "command/core/get-csrf-token",
-    {},
-    function(response) {
+  Refine.wrapCSRF(
+    function(token) {
 
         // Add it to the body and submit it as a POST request
-        body['csrf_token'] = response['token'];
+        body['csrf_token'] = token;
         $.post(
             "command/" + moduleName + "/" + command + "?" + $.param(params),
             body,
             onDone,
             "json"
         );
-    },
-    "json"
+    }
   );
 
   window.setTimeout(function() {
@@ -411,6 +407,19 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
       dismissBusy = DialogSystem.showBusy();
     }
   }, 500);
+};
+
+// Requests a CSRF token and calls the supplied callback
+// with the token
+Refine.wrapCSRF = function(onCSRF) {
+   $.get(
+      "command/core/get-csrf-token",
+      {},
+      function(response) {
+         onCSRF(response['token']);
+      },
+      "json"
+   );
 };
 
 Refine.setAjaxInProgress = function() {

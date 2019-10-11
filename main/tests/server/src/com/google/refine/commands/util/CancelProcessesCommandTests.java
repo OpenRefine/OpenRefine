@@ -56,6 +56,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.RefineTest;
+import com.google.refine.commands.Command;
 import com.google.refine.commands.history.CancelProcessesCommand;
 import com.google.refine.model.Project;
 import com.google.refine.process.ProcessManager;
@@ -159,6 +160,7 @@ public class CancelProcessesCommandTests extends RefineTest {
 
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
         try {
@@ -197,6 +199,7 @@ public class CancelProcessesCommandTests extends RefineTest {
      public void doPostThrowsIfCommand_getProjectReturnsNull(){
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong()))
             .thenReturn(null);
         try {
@@ -225,6 +228,7 @@ public class CancelProcessesCommandTests extends RefineTest {
 
         // mock dependencies
             when(request.getParameter("project")).thenReturn(PROJECT_ID);
+            when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
             when(projMan.getProject(anyLong())).thenReturn(proj);
             when(proj.getProcessManager()).thenReturn(processMan);
             try {

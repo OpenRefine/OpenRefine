@@ -157,13 +157,15 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     
     s = this._getLanguage() + ":" + s;
     if (commit) {
-        $.post(
-            "command/core/log-expression?" + $.param({ project: theProject.id }),
-            { expression: s },
-            function(data) {
-            },
-            "json"
-        );
+        Refine.wrapCSRF(function(token) {
+            $.post(
+                "command/core/log-expression?" + $.param({ project: theProject.id }),
+                { expression: s, csrf_token: token },
+                function(data) {
+                },
+                "json"
+            );
+        });
     }
     
     return s;
@@ -284,16 +286,21 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                 .addClass(entry.starred ? "data-table-star-on" : "data-table-star-off")
                 .appendTo(tr.insertCell(0))
                 .click(function() {
-                    $.post(
-                        "command/core/toggle-starred-expression",
-                        { expression: entry.code },
-                        function(data) {
-                            entry.starred = !entry.starred;
-                            renderEntry(self,tr,entry);
-                            self._renderStarredExpressionsTab();
-                        },
-                        "json"
-                    );
+                    Refine.wrapCSRF(function(token) {
+                        $.post(
+                            "command/core/toggle-starred-expression",
+                            {
+                              expression: entry.code,
+                              csrf_token: token
+                            },
+                            function(data) {
+                                entry.starred = !entry.starred;
+                                renderEntry(self,tr,entry);
+                                self._renderStarredExpressionsTab();
+                            },
+                            "json"
+                        );
+                    });
                 });
         
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/reuse')+'</a>').appendTo(tr.insertCell(1)).click(function() {
@@ -348,15 +355,17 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         var o = Scripting.parse(entry.code);
         
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/remove')+'</a>').appendTo(tr.insertCell(0)).click(function() {
-            $.post(
-                "command/core/toggle-starred-expression",
-                { expression: entry.code, returnList: true },
-                function(data) {
-                    self._renderStarredExpressions(data);
-                    self._renderExpressionHistoryTab();
-                },
-                "json"
-            );
+            Refine.wrapCSRF(function(token) {
+                $.post(
+                    "command/core/toggle-starred-expression",
+                    { expression: entry.code, returnList: true, csrf_token: token },
+                    function(data) {
+                        self._renderStarredExpressions(data);
+                        self._renderExpressionHistoryTab();
+                    },
+                    "json"
+                );
+            });
         });
         
         $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {

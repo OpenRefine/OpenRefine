@@ -66,6 +66,10 @@ public class GetImportingJobStatusCommand extends Command {
         }
     }
     
+    /**
+     * This command uses POST but does not actually modify any state so
+     * it is not CSRF-protected.
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

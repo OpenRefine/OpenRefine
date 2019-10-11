@@ -124,15 +124,17 @@ ProcessPanel.prototype.undo = function() {
 
 ProcessPanel.prototype._cancelAll = function() {
   var self = this;
-  $.post(
-      "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
-      null,
-      function(o) {
-        self._data = null;
-        self._runOnDones();
-      },
-      "json"
-  );
+  Refine.wrapCSRF(function(token) {
+    $.post(
+        "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
+        { csrf_token: token },
+        function(o) {
+            self._data = null;
+            self._runOnDones();
+        },
+        "json"
+    );
+  });
 };
 
 ProcessPanel.prototype._render = function(newData) {
