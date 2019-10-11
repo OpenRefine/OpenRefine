@@ -56,6 +56,10 @@ public class ImportingControllerCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!checkCSRF(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         ImportingController controller = getController(request);
         if (controller != null) {
@@ -91,5 +95,15 @@ public class ImportingControllerCommand extends Command {
             return ImportingManager.controllers.get(name);
         }
         return null;
+    }
+    
+    /**
+     * Checks the validity of a CSRF token, without reading the whole POST body.
+     * See above for details.
+     */
+    private boolean checkCSRF(HttpServletRequest request) {
+    	Properties options = ParsingUtilities.parseUrlParameters(request);
+        String token = options.getProperty("csrf_token");
+        return token != null && csrfFactory.validToken(token);
     }
 }

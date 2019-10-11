@@ -388,18 +388,11 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
 
   Refine.setAjaxInProgress();
 
-  Refine.wrapCSRF(
-    function(token) {
-
-        // Add it to the body and submit it as a POST request
-        body['csrf_token'] = token;
-        $.post(
-            "command/" + moduleName + "/" + command + "?" + $.param(params),
-            body,
-            onDone,
-            "json"
-        );
-    }
+  Refine.postCSRF(
+    "command/" + moduleName + "/" + command + "?" + $.param(params),
+    body,
+    onDone,
+    "json"
   );
 
   window.setTimeout(function() {
@@ -420,6 +413,17 @@ Refine.wrapCSRF = function(onCSRF) {
       },
       "json"
    );
+};
+
+// Performs a POST request where an additional CSRF token
+// is supplied in the POST data. The arguments match those
+// of $.post().
+Refine.postCSRF = function(url, data, success, dataType) {
+   Refine.wrapCSRF(function(token) {
+      var fullData = data || {};
+      data['csrf_token'] = token;
+      $.post(url, fulldata, success, dataType);
+   });
 };
 
 Refine.setAjaxInProgress = function() {
