@@ -66,6 +66,8 @@ import com.google.refine.util.ParsingUtilities;
 public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
+    
+    final static CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
 
     protected RefineServlet servlet;
     
