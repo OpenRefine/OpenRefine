@@ -388,10 +388,21 @@ Refine.postProcess = function(moduleName, command, params, body, updateOptions, 
 
   Refine.setAjaxInProgress();
 
-  $.post(
-    "command/" + moduleName + "/" + command + "?" + $.param(params),
-    body,
-    onDone,
+  // Get a CSRF token first
+  $.get(
+    "command/core/get-csrf-token",
+    {},
+    function(response) {
+
+        // Add it to the body and submit it as a POST request
+        body['csrf_token'] = response['token'];
+        $.post(
+            "command/" + moduleName + "/" + command + "?" + $.param(params),
+            body,
+            onDone,
+            "json"
+        );
+    },
     "json"
   );
 

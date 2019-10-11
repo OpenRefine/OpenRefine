@@ -54,6 +54,7 @@ function registerCommands() {
   var RS = Packages.com.google.refine.RefineServlet;
 
   RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
+  RS.registerCommand(module, "get-csrf-token", new Packages.com.google.refine.commands.GetCSRFTokenCommand());
 
   RS.registerCommand(module, "get-importing-configuration", new Packages.com.google.refine.commands.importing.GetImportingConfigurationCommand());
   RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());

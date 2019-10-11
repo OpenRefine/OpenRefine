@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -67,7 +69,7 @@ public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
     
-    final static CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
+    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
 
     protected RefineServlet servlet;
     
@@ -217,6 +219,27 @@ public abstract class Command {
         return def;
     }
     
+    /**
+     * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request,
+     * and checking that it is valid.
+     *
+     * @param request
+     * @return
+     * @throws ServletException
+     */
+    protected boolean hasValidCSRFToken(HttpServletRequest request) throws ServletException {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        try {
+            String token = request.getParameter("csrf_token");
+            return token != null && csrfFactory.validToken(token);
+        } catch (Exception e) {
+            // ignore
+        }
+        throw new ServletException("Can't find CSRF token: missing or bad URL parameter");
+    }
+    
     protected static class HistoryEntryResponse {
         @JsonProperty("code")
         protected String getCode() { return "ok"; }
@@ -298,6 +321,13 @@ public abstract class Command {
 
         w.flush();
         w.close();
+    }
+    
+    static protected void respondCSRFError(HttpServletResponse response) throws IOException {
+    	Map<String, String> responseJSON = new HashMap<>();
+    	responseJSON.put("code", "error");
+    	responseJSON.put("message", "Missing or invalid csrf_token parameter");
+    	respondJSON(response, responseJSON);
     }
 
     static protected void respondException(HttpServletResponse response, Exception e)
