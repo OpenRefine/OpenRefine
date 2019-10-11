@@ -37,6 +37,8 @@ var Refine = {
   actionAreas: []
 };
 
+// Requests a CSRF token and calls the supplied callback
+// with the token
 Refine.wrapCSRF = function(onCSRF) {
    $.get(
       "command/core/get-csrf-token",
@@ -48,14 +50,16 @@ Refine.wrapCSRF = function(onCSRF) {
    );
 };
 
+// Performs a POST request where an additional CSRF token
+// is supplied in the POST data. The arguments match those
+// of $.post().
 Refine.postCSRF = function(url, data, success, dataType) {
    Refine.wrapCSRF(function(token) {
       var fullData = data || {};
-      data['csrf_token'] = token;
-      $.post(url, fulldata, success, dataType);
+      fullData['csrf_token'] = token;
+      $.post(url, fullData, success, dataType);
    });
 };
-
 
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";

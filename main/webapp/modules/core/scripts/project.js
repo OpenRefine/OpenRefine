@@ -421,8 +421,8 @@ Refine.wrapCSRF = function(onCSRF) {
 Refine.postCSRF = function(url, data, success, dataType) {
    Refine.wrapCSRF(function(token) {
       var fullData = data || {};
-      data['csrf_token'] = token;
-      $.post(url, fulldata, success, dataType);
+      fullData['csrf_token'] = token;
+      $.post(url, fullData, success, dataType);
    });
 };
 

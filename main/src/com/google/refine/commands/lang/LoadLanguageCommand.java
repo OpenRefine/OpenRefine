@@ -62,11 +62,16 @@ public class LoadLanguageCommand extends Command {
             throws ServletException, IOException {
         doPost(request, response);
     }
+    
+    /**
+     * POST is supported but does not actually change any state so we do
+     * not add CSRF protection to it. This ensures existing extensions will not
+     * have to be updated to add a CSRF token to their requests (2019-11-10)
+     */
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String modname = request.getParameter("module");
         if (modname == null) {
             modname = "core";
