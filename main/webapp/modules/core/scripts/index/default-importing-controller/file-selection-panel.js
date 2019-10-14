@@ -332,12 +332,12 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
     $.post(
         "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
-        "jobID": this._jobID,
+        "jobID": self._jobID,
         "subCommand": "update-file-selection",
         "csrf_token": token
         }),
         {
-        "fileSelection" : JSON.stringify(this._job.config.fileSelection)
+        "fileSelection" : JSON.stringify(self._job.config.fileSelection)
         },
         function(data) {
         dismissBusy();
@@ -348,7 +348,7 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
             self._createProjectUI.showImportJobError((data.message) ? ($.i18n('core-index-import/error')+ ' ' + data.message) : $.i18n('core-index-import/unknown-err'));
         } else {
             // Different files might be selected. We start over again.
-            delete this._parserOptions;
+            delete self._parserOptions;
 
             self._job = data.job;
             self._showParsingPanel(true);

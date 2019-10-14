@@ -200,7 +200,7 @@ ProcessPanel.prototype._render = function(newData) {
     } else {
       if (window.confirm($.i18n('core-project/last-op-er')+':\n' + messages +
             '\n\n'+$.i18n('core-project/continue-remaining')+'?')) {
-        $.post(
+        Refine.postCSRF(
           "command/core/apply-operations?" + $.param({ project: theProject.id }), 
           { operations: '[]' },
           function(o) {},

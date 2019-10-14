@@ -317,7 +317,7 @@ public abstract class Command {
         w.close();
     }
 
-    static protected void respondJSON(HttpServletResponse response, Object o)
+    public static void respondJSON(HttpServletResponse response, Object o)
         throws IOException {
 
         respondJSON(response, o, new Properties());

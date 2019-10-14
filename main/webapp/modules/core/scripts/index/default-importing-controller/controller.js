@@ -251,7 +251,7 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
   var result = {};
 
   $.post(
-    "command/core/get-models?" + $.param({ "importingJobID" : this._jobID }),
+    "command/core/get-models?" + $.param({ "importingJobID" : self._jobID }),
     null,
     function(data) {
       for (var n in data) {

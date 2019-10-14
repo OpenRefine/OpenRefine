@@ -35,7 +35,7 @@ Refine.ImportProjectUI = function(elmt) {
   elmt.html(DOM.loadHTML("core", "scripts/index/import-project-ui.html"));
 
   Refine.wrapCSRF(function(token) {
-     elem.attr('action', "command/core/import-project?" + $.param({ csrf_token: token});
+     elmt.attr('action', "command/core/import-project?" + $.param({ csrf_token: token}));
   });
   
   this._elmt = elmt;

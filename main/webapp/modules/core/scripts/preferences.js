@@ -33,6 +33,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var preferenceUIs = [];
 
+var Refine = {
+};
+
+// Requests a CSRF token and calls the supplied callback
+// with the token
+Refine.wrapCSRF = function(onCSRF) {
+   $.get(
+      "command/core/get-csrf-token",
+      {},
+      function(response) {
+         onCSRF(response['token']);
+      },
+      "json"
+   );
+};
+
+// Performs a POST request where an additional CSRF token
+// is supplied in the POST data. The arguments match those
+// of $.post().
+Refine.postCSRF = function(url, data, success, dataType, failCallback) {
+   return Refine.wrapCSRF(function(token) {
+      var fullData = data || {};
+      fullData['csrf_token'] = token;
+      var req = $.post(url, fullData, success, dataType);
+      if (failCallback !== undefined) {
+         req.fail(failCallback);
+      }
+   });
+};
+
+
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";
 $.ajax({

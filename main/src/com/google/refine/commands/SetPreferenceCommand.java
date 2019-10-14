@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +68,7 @@ public class SetPreferenceCommand extends Command {
             
             ps.put(prefName, PreferenceStore.loadObject(o));
             
-            respond(response, "{ \"code\" : \"ok\" }");
+            respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);
         }
