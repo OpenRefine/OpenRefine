@@ -240,6 +240,21 @@ public abstract class Command {
         throw new ServletException("Can't find CSRF token: missing or bad URL parameter");
     }
     
+    
+    /**
+     * Checks the validity of a CSRF token, without reading the whole POST body.
+     * Useful when we need to control how the POST body is read (for instance if it
+     * contains files).
+     */
+    protected boolean hasValidCSRFTokenAsGET(HttpServletRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+    	Properties options = ParsingUtilities.parseUrlParameters(request);
+        String token = options.getProperty("csrf_token");
+        return token != null && csrfFactory.validToken(token);
+    }
+    
     protected static class HistoryEntryResponse {
         @JsonProperty("code")
         protected String getCode() { return "ok"; }

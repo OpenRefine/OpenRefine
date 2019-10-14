@@ -216,20 +216,19 @@ Refine._renameProject = function() {
     return;
   }
 
-  $.ajax({
-    type: "POST",
-    url: "command/core/rename-project",
-    data: { "project" : theProject.id, "name" : name },
-    dataType: "json",
-    success: function (data) {
+  Refine.postCSRF(
+    "command/core/rename-project",
+    { "project" : theProject.id, "name" : name },
+    function (data) {
       if (data && typeof data.code != "undefined" && data.code == "ok") {
         theProject.metadata.name = name;
         Refine.setTitle();
       } else {
         alert($.i18n('core-index/error-rename')+" " + data.message);
       }
-    }
-  });
+    },
+    "json"
+  );
 };
 
 /*

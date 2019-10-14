@@ -53,11 +53,14 @@ Refine.wrapCSRF = function(onCSRF) {
 // Performs a POST request where an additional CSRF token
 // is supplied in the POST data. The arguments match those
 // of $.post().
-Refine.postCSRF = function(url, data, success, dataType) {
-   Refine.wrapCSRF(function(token) {
+Refine.postCSRF = function(url, data, success, dataType, failCallback) {
+   return Refine.wrapCSRF(function(token) {
       var fullData = data || {};
       fullData['csrf_token'] = token;
-      $.post(url, fullData, success, dataType);
+      var req = $.post(url, fullData, success, dataType);
+      if (failCallback !== undefined) {
+         req.fail(failCallback);
+      }
    });
 };
 

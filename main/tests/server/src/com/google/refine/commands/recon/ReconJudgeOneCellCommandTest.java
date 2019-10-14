@@ -82,6 +82,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         response = mock(HttpServletResponse.class);
         
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         
         writer = mock(PrintWriter.class);
         try {

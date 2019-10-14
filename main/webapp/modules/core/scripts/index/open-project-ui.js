@@ -221,18 +221,17 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .html("<img src='images/close.png' />")
       .click(function() {
         if (window.confirm($.i18n('core-index-open/del-body') + project.name + "\"?")) {
-          $.ajax({
-            type: "POST",
-            url: "command/core/delete-project",
-            data: { "project" : project.id },
-            dataType: "json",
-            success: function (data) {
+          Refine.postCSRF(
+            "command/core/delete-project",
+            { "project" : project.id },
+            function (data) {
               if (data && typeof data.code != 'undefined' && data.code == "ok") {
                 Refine.TagsManager.allProjectTags = [];
                 self._buildTagsAndFetchProjects();
               }
-            }
-          });
+            },
+            "json"
+          );
         }
         return false;
       }).appendTo(

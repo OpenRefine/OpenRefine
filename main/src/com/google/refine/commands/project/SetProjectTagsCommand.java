@@ -43,6 +43,11 @@ public class SetProjectTagsCommand extends Command {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+  	  if(!hasValidCSRFToken(request)) {
+  		 respondCSRFError(response);
+		 return;
+  	  }
+  	
 	  response.setHeader("Content-Type", "application/json");
 
 	  Project project;
