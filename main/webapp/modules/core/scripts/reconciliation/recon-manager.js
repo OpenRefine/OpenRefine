@@ -113,17 +113,22 @@ ReconciliationManager.unregisterService = function(service, f) {
 };
 
 ReconciliationManager.save = function(f) {
-  $.ajax({
-    async: false,
-    type: "POST",
-    url: "command/core/set-preference?" + $.param({ 
-      name: "reconciliation.standardServices" 
-    }),
-    data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
-    success: function(data) {
-      if (f) { f(); }
-    },
-    dataType: "json"
+  Refine.wrapCSRF(function(token) {
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: "command/core/set-preference?" + $.param({ 
+        name: "reconciliation.standardServices" 
+        }),
+        data: {
+          "value" : JSON.stringify(ReconciliationManager.standardServices), 
+          csrf_token: token
+        },
+        success: function(data) {
+        if (f) { f(); }
+        },
+        dataType: "json"
+    });
   });
 };
 

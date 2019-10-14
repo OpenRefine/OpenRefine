@@ -78,7 +78,7 @@ function PreferenceUI(tr, key, value) {
       }
       $(td1).text(newValue);
       
-      $.post(
+      Refine.postCSRF(
         "command/core/set-preference",
         {
           name : key,
@@ -96,7 +96,7 @@ function PreferenceUI(tr, key, value) {
 
   $('<button class="button">').text($.i18n('core-index/delete')).appendTo(td2).click(function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
-      $.post(
+      Refine.postCSRF(
         "command/core/set-preference",
         {
           name : key
@@ -154,7 +154,7 @@ function populatePreferences(prefs) {
             value = deDupUserMetaData(value);
         }
         
-        $.post(
+        Refine.postCSRF(
           "command/core/set-preference",
           {
             name : key,

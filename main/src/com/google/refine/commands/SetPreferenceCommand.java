@@ -49,6 +49,10 @@ public class SetPreferenceCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         PreferenceStore ps = project != null ? 
