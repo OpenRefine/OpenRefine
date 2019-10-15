@@ -187,7 +187,7 @@ Refine.DefaultImportingController.prototype._ensureFormatParserUIHasInitializati
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "core/default-importing-controller",
-            "jobID": this._jobID,
+            "jobID": self._jobID,
             "subCommand": "initialize-parser-ui",
             "format": format,
             "csrf_token": token
@@ -219,12 +219,12 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
     $.post(
         "command/core/importing-controller?" + $.param({
         "controller": "core/default-importing-controller",
-        "jobID": this._jobID,
+        "jobID": self._jobID,
         "subCommand": "update-format-and-options",
         "csrf_token": token
         }),
         {
-        "format" : this._format,
+        "format" : self._format,
         "options" : JSON.stringify(options)
         },
         function(o) {
@@ -297,12 +297,12 @@ Refine.DefaultImportingController.prototype._createProject = function() {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "core/default-importing-controller",
-            "jobID": this._jobID,
+            "jobID": self._jobID,
             "subCommand": "create-project",
             "csrf_token": token
         }),
         {
-            "format" : this._format,
+            "format" : self._format,
             "options" : JSON.stringify(options)
         },
         function(o) {

@@ -37,6 +37,26 @@ var Refine = {
   actionAreas: []
 };
 
+Refine.wrapCSRF = function(onCSRF) {
+   $.get(
+      "command/core/get-csrf-token",
+      {},
+      function(response) {
+         onCSRF(response['token']);
+      },
+      "json"
+   );
+};
+
+Refine.postCSRF = function(url, data, success, dataType) {
+   Refine.wrapCSRF(function(token) {
+      var fullData = data || {};
+      data['csrf_token'] = token;
+      $.post(url, fulldata, success, dataType);
+   });
+};
+
+
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";
 $.ajax({
