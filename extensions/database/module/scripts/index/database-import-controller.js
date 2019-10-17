@@ -255,7 +255,7 @@ Refine.DatabaseImportController.prototype._updatePreview = function() {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",
-            "jobID": this._jobID,
+            "jobID": self._jobID,
             "subCommand": "parse-preview",
             "csrf_token": token
         }),
@@ -339,7 +339,7 @@ Refine.DatabaseImportController.prototype._createProject = function() {
         $.post(
         "command/core/importing-controller?" + $.param({
             "controller": "database/database-import-controller",
-            "jobID": this._jobID,
+            "jobID": self._jobID,
             "subCommand": "create-project",
             "csrf_token": token
         }),

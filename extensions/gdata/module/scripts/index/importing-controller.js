@@ -322,12 +322,12 @@ Refine.GDataImportingController.prototype._updatePreview = function() {
     $.post(
         "command/core/importing-controller?" + $.param({
         "controller": "gdata/gdata-importing-controller",
-        "jobID": this._jobID,
+        "jobID": self._jobID,
         "subCommand": "parse-preview",
         "csrf_token": token
         }),
         {
-        "options" : JSON.stringify(this.getOptions())
+        "options" : JSON.stringify(self.getOptions())
         },
         function(result) {
         if (result.status == "ok") {
@@ -395,7 +395,7 @@ Refine.GDataImportingController.prototype._createProject = function() {
     $.post(
         "command/core/importing-controller?" + $.param({
         "controller": "gdata/gdata-importing-controller",
-        "jobID": this._jobID,
+        "jobID": self._jobID,
         "subCommand": "create-project",
         "csrf_token": token
         }),
