@@ -56,7 +56,11 @@ Refine.wrapCSRF = function(onCSRF) {
 Refine.postCSRF = function(url, data, success, dataType, failCallback) {
    return Refine.wrapCSRF(function(token) {
       var fullData = data || {};
-      fullData['csrf_token'] = token;
+      if (typeof fulldata == 'string') {
+         fullData = fullData + $.param({csrf_token: token});
+      } else {
+         fullData['csrf_token'] = token;
+      }
       var req = $.post(url, fullData, success, dataType);
       if (failCallback !== undefined) {
          req.fail(failCallback);

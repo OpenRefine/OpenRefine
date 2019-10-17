@@ -420,7 +420,11 @@ Refine.wrapCSRF = function(onCSRF) {
 Refine.postCSRF = function(url, data, success, dataType) {
    Refine.wrapCSRF(function(token) {
       var fullData = data || {};
-      fullData['csrf_token'] = token;
+      if (typeof fulldata == 'string') {
+         fullData = fullData + $.param({csrf_token: token});
+      } else {
+         fullData['csrf_token'] = token;
+      }
       $.post(url, fullData, success, dataType);
    });
 };

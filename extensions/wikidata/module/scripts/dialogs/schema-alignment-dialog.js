@@ -1283,7 +1283,7 @@ SchemaAlignmentDialog.preview = function() {
     $('.invalid-schema-warning').show();
     return;
   }
-  $.post(
+  Refine.postCSRF(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
