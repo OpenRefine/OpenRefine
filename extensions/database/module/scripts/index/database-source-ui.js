@@ -268,7 +268,7 @@ Refine.DatabaseSourceUI.prototype._executeQuery = function(jdbcQueryInfo) {
     
     var dismiss = DialogSystem.showBusy($.i18n('database-import/checking'));
    
-    $.post(
+    Refine.postCSRF(
       "command/database/test-query",
       jdbcQueryInfo,
       function(jdbcConnectionResult) {
@@ -277,8 +277,8 @@ Refine.DatabaseSourceUI.prototype._executeQuery = function(jdbcQueryInfo) {
           self._controller.startImportingDocument(jdbcQueryInfo);
               
       },
-      "json"
-    ).fail(function( jqXhr, textStatus, errorThrown ){
+      "json",
+      function( jqXhr, textStatus, errorThrown ){
        
         dismiss();
         alert( textStatus + ':' + errorThrown );
@@ -288,7 +288,7 @@ Refine.DatabaseSourceUI.prototype._executeQuery = function(jdbcQueryInfo) {
 
 Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo) {	
     var self = this;
-    $.post(
+    Refine.postCSRF(
       "command/database/saved-connection",
       jdbcConnectionInfo,
       function(settings) {
@@ -307,8 +307,8 @@ Refine.DatabaseSourceUI.prototype._saveConnection = function(jdbcConnectionInfo)
           }
     
       },
-      "json"
-    ).fail(function( jqXhr, textStatus, errorThrown ){
+      "json",
+      function( jqXhr, textStatus, errorThrown ){
         alert( textStatus + ':' + errorThrown );
     });
 
@@ -346,7 +346,7 @@ Refine.DatabaseSourceUI.prototype._loadSavedConnections = function() {
 Refine.DatabaseSourceUI.prototype._testDatabaseConnect = function(jdbcConnectionInfo) {
     
     var self = this;
-    $.post(
+    Refine.postCSRF(
       "command/database/test-connect",
       jdbcConnectionInfo,
       function(jdbcConnectionResult) {
@@ -357,8 +357,8 @@ Refine.DatabaseSourceUI.prototype._testDatabaseConnect = function(jdbcConnection
           }
               
       },
-      "json"
-    ).fail(function( jqXhr, textStatus, errorThrown ){
+      "json",
+      function( jqXhr, textStatus, errorThrown ){
         alert( textStatus + ':' + errorThrown );
     });
 };
@@ -366,7 +366,7 @@ Refine.DatabaseSourceUI.prototype._testDatabaseConnect = function(jdbcConnection
 Refine.DatabaseSourceUI.prototype._connect = function(jdbcConnectionInfo) {
     
     var self = this;
-    $.post(
+    Refine.postCSRF(
       "command/database/connect",
       jdbcConnectionInfo,
       function(databaseInfo) {
@@ -398,8 +398,8 @@ Refine.DatabaseSourceUI.prototype._connect = function(jdbcConnectionInfo) {
           }
               
       },
-      "json"
-    ).fail(function( jqXhr, textStatus, errorThrown ){
+      "json",
+      function( jqXhr, textStatus, errorThrown ){
         alert( textStatus + ':' + errorThrown );
     });
 
