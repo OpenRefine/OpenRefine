@@ -190,7 +190,7 @@ ExporterManager.handlers.exportProject = function() {
       var name = window.prompt(prompt, theProject.metadata.name);
       if (name) {
         var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
-        $.post(
+        Refine.postCSRF(
           "command/gdata/upload",
           {
             "project" : theProject.id,

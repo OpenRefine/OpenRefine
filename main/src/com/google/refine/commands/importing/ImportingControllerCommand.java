@@ -56,9 +56,15 @@ public class ImportingControllerCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFTokenAsGET(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         ImportingController controller = getController(request);
         if (controller != null) {
+        	response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             controller.doPost(request, response);
         } else {
             HttpUtilities.respond(response, "error", "No such import controller");
@@ -71,6 +77,8 @@ public class ImportingControllerCommand extends Command {
 
         ImportingController controller = getController(request);
         if (controller != null) {
+        	response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Type", "application/json");
             controller.doPost(request, response);
         } else {
             HttpUtilities.respond(response, "error", "No such import controller");

@@ -44,7 +44,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = DialogSystem.showBusy();
 
-  $.post(
+  Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
       columnName: this._column.name,
@@ -74,7 +74,8 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
 
       dismissBusy();
       f();
-    }
+    },
+    "json"
   );
 };
 

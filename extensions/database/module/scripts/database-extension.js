@@ -69,7 +69,7 @@ DatabaseExtension.handleConnectClicked = function(connectionName) {
                      databaseConfig.initialDatabase = savedConfig.databaseName;
                      databaseConfig.initialSchema = savedConfig.databaseSchema;
                     
-                        $.post(
+                        Refine.postCSRF(
                                 "command/database/connect",
                                  databaseConfig,
                                  
@@ -101,10 +101,10 @@ DatabaseExtension.handleConnectClicked = function(connectionName) {
                                     }
                                         
                                 },
-                                "json"
-                      ).fail(function( jqXhr, textStatus, errorThrown ){
-                       alert( textStatus + ':' + errorThrown );
-                   });
+                                "json",
+                                function( jqXhr, textStatus, errorThrown ){
+                                    alert( textStatus + ':' + errorThrown );
+                     });
                    
                  }
                      

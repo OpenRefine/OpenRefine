@@ -35,7 +35,9 @@ import javax.servlet.ServletException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.commands.Command;
 import com.google.refine.commands.expr.ToggleStarredExpressionCommand;
+import com.google.refine.util.TestUtils;
 
 public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBase {
     
@@ -70,7 +72,14 @@ public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBa
                 "     }";
         when(request.getParameter("expression")).thenReturn("grel:facetCount(value, 'value', 'Column 1')");
         when(request.getParameter("returnList")).thenReturn("yes");
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         command.doPost(request, response);
         assertResponseJsonIs(json);
     }
+    
+	@Test
+	public void testCSRFProtection() throws ServletException, IOException {
+		command.doPost(request, response);
+		TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+	}
 }

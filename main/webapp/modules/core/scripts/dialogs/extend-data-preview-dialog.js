@@ -185,7 +185,7 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
     this._elmts.previewContainer.empty();
   } else {
     // otherwise, refresh the preview
-    $.post(
+    Refine.postCSRF(
         "command/core/preview-extend-data?" + $.param(params),
         {
         rowIndices: JSON.stringify(this._rowIndices),
@@ -194,10 +194,10 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
         function(data) {
         self._renderPreview(data);
         },
-        "json"
-    ).fail(function(data) {
-        alert($.i18n('core-views/internal-err'));
-    });
+        "json",
+        function(data) {
+           alert($.i18n('core-views/internal-err'));
+        });
   }
 };
 

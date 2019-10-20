@@ -41,6 +41,11 @@ public class LoginCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
+    	
         String username = request.getParameter("wb-username");
         String password = request.getParameter("wb-password");
         String remember = request.getParameter("remember-credentials");

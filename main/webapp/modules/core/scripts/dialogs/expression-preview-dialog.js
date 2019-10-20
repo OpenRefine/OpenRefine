@@ -157,7 +157,7 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     
     s = this._getLanguage() + ":" + s;
     if (commit) {
-        $.post(
+        Refine.postCSRF(
             "command/core/log-expression?" + $.param({ project: theProject.id }),
             { expression: s },
             function(data) {
@@ -284,9 +284,11 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                 .addClass(entry.starred ? "data-table-star-on" : "data-table-star-off")
                 .appendTo(tr.insertCell(0))
                 .click(function() {
-                    $.post(
+                    Refine.postCSRF(
                         "command/core/toggle-starred-expression",
-                        { expression: entry.code },
+                        {
+                            expression: entry.code
+                        },
                         function(data) {
                             entry.starred = !entry.starred;
                             renderEntry(self,tr,entry);
@@ -348,7 +350,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         var o = Scripting.parse(entry.code);
         
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/remove')+'</a>').appendTo(tr.insertCell(0)).click(function() {
-            $.post(
+            Refine.postCSRF(
                 "command/core/toggle-starred-expression",
                 { expression: entry.code, returnList: true },
                 function(data) {

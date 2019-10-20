@@ -721,7 +721,7 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
 
     if (!isNaN(n)) {
       var self = this;
-      $.post(
+      Refine.postCSRF(
         "command/core/set-preference",
         {
           name : "ui.browsing.listFacet.limit",

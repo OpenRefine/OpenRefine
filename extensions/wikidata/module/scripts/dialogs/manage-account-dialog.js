@@ -56,7 +56,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
 
   elmts.loginButton.click(function() {
     frame.hide();
-    $.post(
+    Refine.postCSRF(
        "command/wikidata/login",
        elmts.loginForm.serialize(),
        function(data) {
@@ -71,7 +71,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   });
 
   elmts.logoutButton.click(function() {
-    $.post(
+    Refine.postCSRF(
        "command/wikidata/login",
        "logout=true",
        function(data) {

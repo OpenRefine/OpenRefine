@@ -48,7 +48,11 @@ public class LogExpressionCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
+    	
         try {
             String expression = request.getParameter("expression");
             

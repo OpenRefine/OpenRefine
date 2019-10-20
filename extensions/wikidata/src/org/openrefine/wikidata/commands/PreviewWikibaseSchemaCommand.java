@@ -45,6 +45,13 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
 public class PreviewWikibaseSchemaCommand extends Command {
+	
+	/**
+	 * This command uses POST but is left CSRF-unprotected since it does not
+	 * incur a side effect or state change in the backend.
+	 * The reason why it uses POST is to make sure large schemas and engines
+	 * can be passed as parameters.
+	 */
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)

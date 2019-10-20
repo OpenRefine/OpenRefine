@@ -43,6 +43,10 @@ public class UploadCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
         
         String token = TokenCookie.getToken(request);
         if (token == null) {

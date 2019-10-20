@@ -228,6 +228,10 @@ public class SavedConnectionCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
        
         if(logger.isDebugEnabled()) {
             logger.debug("doPost Connection: {}", request.getParameter("connectionName"));

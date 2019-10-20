@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
+import com.google.refine.commands.Command;
 import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
@@ -125,6 +126,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         
@@ -150,6 +152,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
        
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -187,6 +190,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
        
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -227,6 +231,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
       
         SUT.doPut(request, response);
         
@@ -309,6 +314,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
        
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -320,7 +326,18 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         verify(response, times(1)).sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Invalid. Expecting [a-zA-Z0-9._-]");
     }
 
-    
+    @Test
+    public void testCsrfProtection() throws ServletException, IOException {
+    	StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        when(response.getWriter()).thenReturn(pw);
+        
+        SUT.doPost(request, response);
+    	Assert.assertEquals(
+    			ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", ObjectNode.class),
+    			ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
+    }
     
 
 }

@@ -58,6 +58,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
+import com.google.refine.commands.Command;
 import com.google.refine.commands.project.SetProjectMetadataCommand;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -101,6 +102,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getMetadata()).thenReturn(metadata);
         

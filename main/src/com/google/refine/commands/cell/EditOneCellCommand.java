@@ -84,6 +84,10 @@ public class EditOneCellCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         try {
             request.setCharacterEncoding("UTF-8");
