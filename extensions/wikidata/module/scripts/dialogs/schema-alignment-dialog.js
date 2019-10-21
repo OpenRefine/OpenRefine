@@ -985,7 +985,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
 
-    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d)?)?$/);
+    SchemaAlignmentDialog.setupStringInputValidation(input, /^((\d{4}(-[0-1]\d(-[0-3]\d)?)?)|TODAY)$/);
    } else if (mode === "globe-coordinate") {
      input.attr("placeholder", "lat,lon");
      var propagateValue = function(val) {

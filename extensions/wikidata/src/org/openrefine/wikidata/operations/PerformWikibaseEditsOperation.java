@@ -175,7 +175,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // make sure they can be told apart.
             String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
             String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 9)));
+                    (Long.toHexString(token).substring(0, 10)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
