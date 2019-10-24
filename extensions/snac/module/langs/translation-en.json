@@ -1,6 +1,7 @@
 {
     "snac-extension/menu-label": "SNAC",
     "snac-extension/manage-api-key": "Manage SNAC API key",
+	"snac-extension/edit-snac-schema": "Edit SNAC schema",
     "snac-extension/perform-edits-on-snac": "Upload edits to SNAC",
     "snac-extension/export-to-json": "Export to SNAC-Compliant JSON",
     "snac-schema/dialog-header": "Align to SNAC",
@@ -11,6 +12,8 @@
     "snac-schema/invalid-schema-warning-preview": "Your schema is incomplete, fix it to see the preview.",
     "snac-schema/discard-button": "Discard changes",
     "snac-schema/save-button": "Save schema",
+	"snac-schema/save-schema-alt": "Save the schema to OpenRefine. The changes will not be uploaded to SNAC yet.",
+    "snac-schema/discard-schema-changes-alt": "Discard the changes made to the schema.",
     "snac-schema/close-button": "Close",
     "snac-account/dialog-header": "SNAC API Key",
     "snac-account/explain-key": "Entering your API key from <a href=\"https://snaccooperative.org\" target=\"_blank\">SNAC</a> lets you upload edits directly from OpenRefine into SNAC.  <b>Note: your API key will be stored in clear text in OpenRefine preferences.</b>",

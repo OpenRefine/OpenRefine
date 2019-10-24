@@ -89,6 +89,11 @@ $(function(){
             "id":"reconcilesnac",
                 "label": $.i18n('snac-extension/menu-label'),
                 "submenu" : [
+					{
+                        id: "snac/edit-schema",
+                        label: $.i18n('snac-extension/edit-snac-schema'),
+                        click: function() { SchemaAlignmentDialog.launch(false); }
+                    },
                     {
                         id:"snac/api-key",
                         label: $.i18n('snac-extension/manage-api-key'),
