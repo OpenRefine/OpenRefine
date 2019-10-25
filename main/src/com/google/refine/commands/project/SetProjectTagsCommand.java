@@ -81,7 +81,7 @@ public class SetProjectTagsCommand extends Command {
 	    tag = tag.trim();
 	
 	    if (!tag.isEmpty()) {
-	      if (allProjectTags!= null) {
+	      if (allProjectTags != null) {
 	        if (allProjectTags.containsKey(tag)) {
 	          allProjectTags.put(tag, allProjectTags.get(tag) + 1);
 	        } else {
