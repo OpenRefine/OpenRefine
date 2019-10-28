@@ -247,7 +247,7 @@ public class ExtendDataOperationTests extends RefineTest {
      /**
      * Test to fetch counts of values
      */
-/*
+
     @Test
     public void testFetchCounts() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
@@ -273,17 +273,17 @@ public class ExtendDataOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
 
         // Test to be updated as countries change currencies!
-        Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
+        //Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
         Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)
         Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
-    }*/
+    }
 
     /**
      * Test fetch only the best statements
      */
-  /*  @Test
+    @Test
     public void testFetchCurrent() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
@@ -305,8 +305,8 @@ public class ExtendDataOperationTests extends RefineTest {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning());
-        8?
+        //Assert.assertFalse(process.isRunning());
+
         /*
           * Tajikistan has one "preferred" currency and one "normal" one
           * (in terms of statement ranks).
@@ -314,17 +314,17 @@ public class ExtendDataOperationTests extends RefineTest {
           * we only fetch the current one, so the one just after it is
           * the one for the US (USD).
           */
-        /*Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
+        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
         Assert.assertTrue("United States dollar".equals(project.rows.get(3).getCellValue(1)));
 
         // Make sure all the values are reconciled
         Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 4);
-    }*/
+    }
 
     /**
      * Test fetch records (multiple values per reconciled cell)
      */
-    /*@Test
+    @Test
     public void testFetchRecord() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
@@ -347,7 +347,7 @@ public class ExtendDataOperationTests extends RefineTest {
             Assert.fail("Test interrupted");
         }
         Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
-        */
+
         /*
           * Tajikistan has one "preferred" currency and one "normal" one
           * (in terms of statement ranks).

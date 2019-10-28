@@ -24,8 +24,7 @@
         <module>gdata</module>
         <module>pc-axis</module>
         <module>phonetic</module>
-		<module>snac</module>
-        <!-- Add new extensions here -->
+				<!--<module>snac</module>-->
   </modules>
 
   <build>
@@ -61,4 +60,3 @@
      </plugins>
    </build>
 </project>
-
