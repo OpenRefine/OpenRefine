@@ -1,5 +1,7 @@
 # OpenRefine
 
+test
+
 [![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/OpenRefine/OpenRefine.svg?branch=master)](https://travis-ci.org/OpenRefine/OpenRefine) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=coveralls)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=coveralls) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget)
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
