@@ -5,18 +5,18 @@ jdk:
   - openjdk9
   - oraclejdk11
   - openjdk11
-  
+
 addons:
   mariadb: '10.0'
-  
+
 services:
   # - mysql
-  - postgresql 
+  - postgresql
 
 env:
   # encrypted Codacy key, see https://docs.travis-ci.com/user/encryption-keys/
   - secure: "VmS4He99YlI6rdmw8Q25OZ9kUp11sRbt0W1QMBvA5lzNSmhN1Q1KtaMj9AGwpCZWcyGWri4AQxEmloARxACxQHXRmNE7ro2DESGw46RAocBAf+RfBxYTifIyUGu5TnSCQhz56SkgpyWpedZAZWyah9ZxgUMfet4KXFUfeiUgYQA="
-  
+
 before_install:
   # create test database for mysql, mariadb and postgresql
   # mysql is currently disabled: https://github.com/OpenRefine/OpenRefine/issues/2043
@@ -38,4 +38,3 @@ after_success:
 cache:
   directories:
   - $HOME/.m2
-
