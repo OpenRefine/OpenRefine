@@ -55,8 +55,11 @@ public class SNACConnector {
     }
 
     public String getKey() {
-        logger.error("Returning key data" + getStoredKeyData().get("apikey").asText());
-        return getStoredKeyData().get("apikey").asText();
+		if (getStoredKeyData() != null){
+			logger.error("Returning key data" + getStoredKeyData().get("apikey").asText());
+			return getStoredKeyData().get("apikey").asText();
+		}
+		else{return null;}
     }
 
     private void restoreSavedKey() {
