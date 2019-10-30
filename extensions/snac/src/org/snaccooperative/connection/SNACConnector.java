@@ -11,6 +11,10 @@ import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 /**
  */
 
@@ -32,11 +36,31 @@ public class SNACConnector {
         prefStore = ProjectManager.singleton.getPreferenceStore();
         restoreSavedKey();
     }
-
+    
     public void saveKey(String apikey) {
+        if (apikey == "") {
+            final JFrame myFrame = new JFrame();
+            JButton button = new JButton();
+            button.setText("Nothing entered! Key was set to \"null\". Click to exit.");
+            myFrame.add(button);
+            //parent.pack();
+            button.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    myFrame.dispose();
+                } 
+            });
+            apikey = null;
+            myFrame.setSize(450,200);
+            myFrame.setLocationRelativeTo(null);
+            myFrame.setVisible(true);
+            myFrame.setAlwaysOnTop(true);
+        }
+
         logger.error("Trying to save key " + apikey);
         ArrayNode array = ParsingUtilities.mapper.createArrayNode();
         ObjectNode obj = ParsingUtilities.mapper.createObjectNode();
+
         obj.put("apikey", apikey);
         array.add(obj);
         prefStore.put(PREFERENCE_STORE_KEY, array);
@@ -55,17 +79,15 @@ public class SNACConnector {
     }
 
     public String getKey() {
-		    if (getStoredKeyData() != null){
-			      logger.error("Returning key data " + getStoredKeyData().get("apikey").asText());
-			      return getStoredKeyData().get("apikey").asText();
-		    }
-		    else{
-          return null;
+        if (getStoredKeyData() != null){
+                logger.error("Returning key data " + getStoredKeyData().get("apikey").asText());
+                return getStoredKeyData().get("apikey").asText();
+        }else{
+            return null;
         }
     }
 
     private void restoreSavedKey() {
         ObjectNode keys = getStoredKeyData();
-
     }
 }
