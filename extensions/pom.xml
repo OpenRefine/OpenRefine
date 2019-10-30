@@ -24,6 +24,7 @@
         <module>gdata</module>
         <module>pc-axis</module>
         <module>phonetic</module>
+				<!--Once built with snac module uncommented, it isn't needed anymore.-->
 				<!--<module>snac</module>-->
   </modules>
 
