@@ -25,7 +25,7 @@ ExporterManager.MenuItems.push(
             click: function() { /*PerformEditsDialog.checkAndLaunch();*/ }
         });
 ExporterManager.MenuItems.push(
-        {               
+        {
             id:"exportSNACJson",
             label: $.i18n('snac-extension/export-to-json'),
             click: function() { /*WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements");*/ }
@@ -69,7 +69,7 @@ WikibaseExporterMenuBar.exportTo = function(format) {
 
 WikibaseExporterMenuBar.checkSchemaAndExport = function(format) {
   var onSaved = function(callback) {
-     WikibaseExporterMenuBar.exportTo(format); 
+     WikibaseExporterMenuBar.exportTo(format);
   };
   if (!SchemaAlignmentDialog.isSetUp()) {
      SchemaAlignmentDialog.launch(null);
@@ -83,7 +83,7 @@ WikibaseExporterMenuBar.checkSchemaAndExport = function(format) {
 
 //extend the column header menu
 $(function(){
-    
+
     ExtensionBar.MenuItems.push(
         {
             "id":"reconcilesnac",
@@ -105,7 +105,7 @@ $(function(){
                         label: $.i18n('snac-extension/perform-edits-on-snac'),
                         click: function() { /*PerformEditsDialog.checkAndLaunch();*/ }
                     },
-                    {               
+                    {
                         id:"snac/export-qs",
                         label: $.i18n('snac-extension/export-to-json'),
                         click: function() { /*WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements");*/ }
@@ -115,4 +115,3 @@ $(function(){
         }
     );
 });
-
