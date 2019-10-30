@@ -83,7 +83,6 @@ WikibaseExporterMenuBar.checkSchemaAndExport = function(format) {
 
 //extend the column header menu
 $(function(){
-
     ExtensionBar.MenuItems.push(
         {
             "id":"reconcilesnac",
