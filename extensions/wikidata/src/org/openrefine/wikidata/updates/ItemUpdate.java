@@ -407,12 +407,20 @@ public class ItemUpdate {
         builder.append("<Update on ");
         builder.append(qid);
         if (!labels.isEmpty()) {
-            builder.append("\n  Labels: ");
+            builder.append("\n  Labels (override): ");
             builder.append(labels);
         }
+        if (!labelsIfNew.isEmpty()) {
+            builder.append("\n  Labels (if new): ");
+            builder.append(labelsIfNew);
+        }
         if (!descriptions.isEmpty()) {
-            builder.append("\n  Descriptions: ");
+            builder.append("\n  Descriptions (override): ");
             builder.append(descriptions);
+        }
+        if (!descriptionsIfNew.isEmpty()) {
+            builder.append("\n  Descriptions (if new): ");
+            builder.append(descriptionsIfNew);
         }
         if (!aliases.isEmpty()) {
             builder.append("\n  Aliases: ");

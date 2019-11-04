@@ -83,6 +83,19 @@ public class ReconEntityRewriterTest {
                 .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        assertEquals(expected, rewritten);
+        assertEquals(rewritten, expected);
+    }
+    
+    @Test
+    public void testRewriteCreation() {
+        library.setQid(4567L, "Q1234");
+        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdB)
+                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+        ItemUpdate rewritten = rewriter.rewrite(update);
+        ItemUpdate expected = new ItemUpdateBuilder(newlyCreated)
+                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+        assertEquals(rewritten, expected);
     }
 }
