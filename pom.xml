@@ -162,6 +162,7 @@
              <sourceDirectory>extensions/wikidata/src</sourceDirectory>
              <sourceDirectory>extensions/database/src</sourceDirectory>
              <sourceDirectory>extensions/phonetic/src</sourceDirectory>
+             <sourceDirectory>extensions/snac/src</sourceDirectory>
           </sourceDirectories>
         </configuration>
        </plugin>

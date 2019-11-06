@@ -42,14 +42,14 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 
-public abstract class CommandTest extends RefineTest {
+public class CommandTest {
 
-    protected Project project = null;
-    protected HttpServletRequest request = null;
-    protected HttpServletResponse response = null;
-    protected StringWriter writer = null;
+    //protected Project project = null;
+    //protected HttpServletRequest request = null;
+    //protected HttpServletResponse response = null;
+    //protected StringWriter writer = null;
 
-    protected Command command = null;
+    //protected Command command = null;
 
     @Test
     public void testNum() {
