@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
@@ -128,7 +129,12 @@ public class EditBatchProcessor {
 
         // Rewrite mentions to new items
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getItemId());
-        update = rewriter.rewrite(update);
+        try {
+        	update = rewriter.rewrite(update);
+        } catch (NewItemNotCreatedYetException e) {
+        	logger.warn("Failed to rewrite update on entity "+update.getItemId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
+        	return;
+        }
 
         try {
             // New item
