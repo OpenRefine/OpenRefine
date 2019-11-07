@@ -58,7 +58,7 @@ public class LoadLanguageCommandTests extends CommandTestBase {
 		
 		JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
 		assertTrue(response.has("dictionary"));
-		ssertEquals(response.get("lang").asText(), "foobar");
+		assertEquals(response.get("lang").asText(), "foobar");
 	}
 		
 	
