@@ -59,10 +59,7 @@ function init() {
         "scripts/menu-bar-extension.js",
         "scripts/dialogs/manage-key-dialog.js",
         "scripts/dialogs/schema-alignment-dialog.js",
-<<<<<<< HEAD
         "scripts/dialogs/import-schema-dialog.js",
-=======
->>>>>>> capstone-master
       /*  "scripts/warningsrenderer.js",
         "scripts/langsuggest.js",
         "scripts/bettersuggest.js",

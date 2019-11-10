@@ -107,14 +107,8 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
    */
   var schemaTab = $(DOM.loadHTML("snac", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
-<<<<<<< HEAD
-
-  schemaElmts.dialogExplanation.text($.i18n('snac-schema/dialog-explanation'));
-  this._plusButton($.i18n('wikidata-schema/add-item-button'), schemaElmts.addItemButton);
-=======
   schemaElmts.dialogExplanation.text($.i18n('snac-schema/dialog-explanation'));
   this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
->>>>>>> capstone-master
   schemaElmts.addItemButton.click(function(e) {
     self._addItem();
     SNACSchemaAlignmentDialog._hasChanged();
@@ -154,11 +148,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var previewTab = $(DOM.loadHTML("snac", "scripts/preview-tab.html")).appendTo(this._previewPanel);
   var previewElmts = this._previewElmts = DOM.bind(previewTab);
   SNACSchemaAlignmentDialog.updateNbEdits(0);
-<<<<<<< HEAD
-  previewElmts.invalidSchemaWarningPreview.text($.i18n('wikidata-schema/invalid-schema-warning-preview'));
-=======
   previewElmts.invalidSchemaWarningPreview.text($.i18n('snac-schema/invalid-schema-warning-preview'));
->>>>>>> capstone-master
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
@@ -220,11 +210,7 @@ SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
 }
 
 SNACSchemaAlignmentDialog.isSetUp = function() {
-<<<<<<< HEAD
-  return $('#wikidata-schema-panel').length !== 0;
-=======
   return $('#snac-schema-panel').length !== 0;
->>>>>>> capstone-master
 }
 
 SNACSchemaAlignmentDialog.launch = function(onDone) {
@@ -234,11 +220,7 @@ SNACSchemaAlignmentDialog.launch = function(onDone) {
   if (!SNACSchemaAlignmentDialog.isSetUp()) {
      SNACSchemaAlignmentDialog.setUpTabs();
   }
-<<<<<<< HEAD
-  SNACSchemaAlignmentDialog.switchTab('#wikidata-schema-panel');
-=======
   SNACSchemaAlignmentDialog.switchTab('#snac-schema-panel');
->>>>>>> capstone-master
 
   // this._createDialog();
 }
@@ -246,11 +228,7 @@ SNACSchemaAlignmentDialog.launch = function(onDone) {
 
 var beforeUnload = function(e) {
   if (SNACSchemaAlignmentDialog.isSetUp() && SNACSchemaAlignmentDialog._hasUnsavedChanges === true) {
-<<<<<<< HEAD
-     return (e = $.i18n('wikidata-schema/unsaved-warning'));
-=======
      return (e = $.i18n('snac-schema/unsaved-warning'));
->>>>>>> capstone-master
   }
 };
 
@@ -316,12 +294,8 @@ SNACSchemaAlignmentDialog._changesCleared = function() {
         .addClass('disabled');
 }
 
-<<<<<<< HEAD
 //format cells for columns
 SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled, org) {
-=======
-SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
->>>>>>> capstone-master
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
   if (reconciled) {
     cell.addClass('wbs-reconciled-column');
@@ -394,11 +368,7 @@ SNACSchemaAlignmentDialog._addItem = function(json) {
      e.preventDefault();
   }).appendTo(termToolbar);
   SNACSchemaAlignmentDialog._plusButton(
-<<<<<<< HEAD
-         $.i18n('wikidata-schema/add-term'), addNamedescButton);
-=======
          $.i18n('snac-schema/add-term'), addNamedescButton);
->>>>>>> capstone-master
 
   // Clear the float
   $('<div></div>').attr('style', 'clear: right').appendTo(right);
@@ -417,11 +387,7 @@ SNACSchemaAlignmentDialog._addItem = function(json) {
   }).appendTo(statementToolbar);
 
   SNACSchemaAlignmentDialog._plusButton(
-<<<<<<< HEAD
-         $.i18n('wikidata-schema/add-statement'), addStatementButton);
-=======
          $.i18n('snac-schema/add-statement'), addStatementButton);
->>>>>>> capstone-master
 
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
@@ -547,11 +513,7 @@ SNACSchemaAlignmentDialog._addStatementGroup = function(item, json) {
      SNACSchemaAlignmentDialog._addStatement(statementContainer, datatype, null);
      e.preventDefault();
   }).appendTo(toolbar).hide();
-<<<<<<< HEAD
-  SNACSchemaAlignmentDialog._plusButton($.i18n('wikidata-schema/add-value'), addValueButton);
-=======
   SNACSchemaAlignmentDialog._plusButton($.i18n('snac-schema/add-value'), addValueButton);
->>>>>>> capstone-master
   var removeButton = SNACSchemaAlignmentDialog._makeDeleteButton()
         .addClass('wbs-remove-statement-group')
         .appendTo(toolbar)
@@ -633,11 +595,7 @@ SNACSchemaAlignmentDialog._addStatement = function(container, datatype, json) {
         SNACSchemaAlignmentDialog._addQualifier(qualifierContainer, null);
         e.preventDefault();
     }).appendTo(toolbar2);
-<<<<<<< HEAD
-    SNACSchemaAlignmentDialog._plusButton($.i18n('wikidata-schema/add-qualifier'), addQualifierButton);
-=======
     SNACSchemaAlignmentDialog._plusButton($.i18n('snac-schema/add-qualifier'), addQualifierButton);
->>>>>>> capstone-master
 
     if (qualifiers) {
        for (var i = 0; i != qualifiers.length; i++) {
@@ -668,11 +626,7 @@ SNACSchemaAlignmentDialog._addStatement = function(container, datatype, json) {
         SNACSchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
         e.preventDefault();
     }).appendTo(toolbar3);
-<<<<<<< HEAD
-    SNACSchemaAlignmentDialog._plusButton($.i18n('wikidata-schema/add-reference'), addReferenceButton);
-=======
     SNACSchemaAlignmentDialog._plusButton($.i18n('snac-schema/add-reference'), addReferenceButton);
->>>>>>> capstone-master
 
     var pasteToolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(referencesToggleContainer);
     var referencePaste = $('<span></span>')
@@ -806,11 +760,7 @@ SNACSchemaAlignmentDialog._addReference = function(container, json) {
         .appendTo(referenceCopy)
         .click(function(e) {
      if (SNACSchemaAlignmentDialog._copyReference(reference)) {
-<<<<<<< HEAD
-       $(this).text($.i18n('wikidata-schema/reference-copied'))
-=======
        $(this).text($.i18n('snac-schema/reference-copied'))
->>>>>>> capstone-master
               .parent().addClass('wbs-copied-reference');
        container.parent().parent().find('.wbs-paste-reference').hide();
      }
@@ -831,11 +781,7 @@ SNACSchemaAlignmentDialog._addReference = function(container, json) {
       SNACSchemaAlignmentDialog._addQualifier(qualifierContainer, null);
       e.preventDefault();
   }).appendTo(toolbar2);
-<<<<<<< HEAD
-  SNACSchemaAlignmentDialog._plusButton($.i18n('wikidata-schema/add-reference-snak'), addSnakButton);
-=======
   SNACSchemaAlignmentDialog._plusButton($.i18n('snac-schema/add-reference-snak'), addSnakButton);
->>>>>>> capstone-master
 
   if (snaks) {
      for (var i = 0; i != snaks.length; i++) {
@@ -1125,15 +1071,6 @@ SNACSchemaAlignmentDialog._initField = function(inputContainer, mode, initialVal
       changedCallback();
     });
     if (mode === "amount") {
-<<<<<<< HEAD
-        input.attr("placeholder", $.i18n('wikidata-schema/amount'));
-        SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^[\-+]?\d+(\.\d*)?(E[\-+]\d+)?$/);
-    } else if (mode === "url") {
-        input.attr("placeholder", $.i18n('wikidata-schema/full-url'));
-        SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^https?:\/\/.+$/);
-    } else if (mode === "tabular-data") {
-        input.attr("placeholder", $.i18n('wikidata-schema/tabular-data-with-prefix'));
-=======
         input.attr("placeholder", $.i18n('snac-schema/amount'));
         SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^[\-+]?\d+(\.\d*)?(E[\-+]\d+)?$/);
     } else if (mode === "url") {
@@ -1141,18 +1078,13 @@ SNACSchemaAlignmentDialog._initField = function(inputContainer, mode, initialVal
         SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^https?:\/\/.+$/);
     } else if (mode === "tabular-data") {
         input.attr("placeholder", $.i18n('snac-schema/tabular-data-with-prefix'));
->>>>>>> capstone-master
         SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^Data:.+$/);
     } else if (mode === "commonsMedia") {
         input.attr("placeholder", $.i18n('snac-schema/commons-media'));
     } else if (mode === "math") {
         input.attr("placeholder", $.i18n('snac-schema/math-expression'));
     } else if (mode === "geo-shape") {
-<<<<<<< HEAD
-        input.attr("placeholder", $.i18n('wikidata-schema/geoshape-with-prefix'));
-=======
         input.attr("placeholder", $.i18n('snac-schema/geoshape-with-prefix'));
->>>>>>> capstone-master
         SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^Data:.+$/);
     } else {
         SNACSchemaAlignmentDialog.setupStringInputValidation(input, /^.+$/);
@@ -1178,11 +1110,7 @@ SNACSchemaAlignmentDialog._initField = function(inputContainer, mode, initialVal
     column.text("");
     column.append($('<div></div>').addClass('wbs-restricted-column-name').text(origText));
     var deleteButton = SNACSchemaAlignmentDialog._makeDeleteButton(true).appendTo(column);
-<<<<<<< HEAD
-    deleteButton.attr('alt', $.i18n('wikidata-schema/remove-column'));
-=======
     deleteButton.attr('alt', $.i18n('snac-schema/remove-column'));
->>>>>>> capstone-master
     deleteButton.click(function (e) {
         columnDiv.remove();
         input.show();
@@ -1384,11 +1312,7 @@ Refine.registerUpdateFunction(function(options) {
  *************************/
 
 SNACSchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
-<<<<<<< HEAD
-   var mainDiv = $('#wikidata-issues-panel');
-=======
    var mainDiv = $('#snac-issues-panel');
->>>>>>> capstone-master
    var countsElem = this.issuesTabCount;
 
    // clear everything
