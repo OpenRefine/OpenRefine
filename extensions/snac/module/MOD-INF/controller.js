@@ -59,7 +59,8 @@ function init() {
         "scripts/menu-bar-extension.js",
         "scripts/dialogs/manage-key-dialog.js",
         "scripts/dialogs/schema-alignment-dialog.js",
-      /*  "scripts/warningsrenderer.js",
+        "scripts/warningsrenderer.js",
+        /*
         "scripts/langsuggest.js",
         "scripts/bettersuggest.js",
         "scripts/previewrenderer.js",
