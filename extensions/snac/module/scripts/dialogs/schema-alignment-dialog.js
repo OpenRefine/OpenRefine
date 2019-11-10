@@ -163,6 +163,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 SNACSchemaAlignmentDialog.updateColumns = function() {
   var columns = theProject.columnModel.columns;
   this._columnArea = $(".schema-alignment-dialog-columns-area");
+  this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
 
   /*var cell = SNACSchemaAlignmentDialog._createDraggableColumn("title",
@@ -177,7 +178,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      this._columnArea.append(cell);
   }
 
- /* $('.wbs-reconciled-column').draggable({
+  $('.wbs-reconciled-column').draggable({
      helper: "clone",
      cursor: "crosshair",
      snap: ".wbs-item-input input, .wbs-target-input input",
@@ -188,7 +189,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      cursor: "crosshair",
      snap: ".wbs-target-input input",
      zIndex: 100,
-  });*/
+  });
 }
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
@@ -296,13 +297,14 @@ SNACSchemaAlignmentDialog._changesCleared = function() {
 }
 
 //format cells for columns
-SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
+SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled, org) {
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
   if (reconciled) {
     cell.addClass('wbs-reconciled-column');
   } else {
     cell.addClass('wbs-unreconciled-column');
   }
+  // cell.addClass(org);
 
  // cell.addClass(columnType);
   return cell;
