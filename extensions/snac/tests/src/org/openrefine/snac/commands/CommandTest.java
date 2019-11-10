@@ -83,6 +83,16 @@ public class CommandTest {
       Assert.assertTrue(result.contains("name_entry"));
     }
 
+    @Test
+    public void TestReadResource() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": \"7149468\",\"position\": \"middle\"}", "UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("dataType\": \"Resource\""));
+    }
+
   /*  @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
         project = createCSVProject(TestingData.inceptionWithNewCsv);

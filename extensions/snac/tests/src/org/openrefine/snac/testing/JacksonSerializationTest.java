@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.testing;
+package org.openrefine.snac.testing;
 
 import static org.junit.Assert.assertEquals;
 
