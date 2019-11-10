@@ -66,6 +66,5 @@ public class SNACConnector {
 
     private void restoreSavedKey() {
         ObjectNode keys = getStoredKeyData();
-
     }
 }
