@@ -169,9 +169,10 @@ public class EditBatchProcessor {
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way
-            e.printStackTrace();
+            logger.warn("MediaWiki error while editing [" + e.getErrorCode()
+            + "]: " + e.getErrorMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("IO error while editing: " + e.getMessage());
         }
 
         batchCursor++;
@@ -209,22 +210,29 @@ public class EditBatchProcessor {
         // Get the current documents for this batch of updates
         logger.info("Requesting documents");
         currentDocs = null;
-        int retries = 3;
+        int retries = 5;
+        int backoff = 2;
+        int sleepTime = 5000;
         // TODO: remove currentDocs.isEmpty() once https://github.com/Wikidata/Wikidata-Toolkit/issues/402 is solved
         while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
             try {
                 currentDocs = fetcher.getEntityDocuments(qidsToFetch);
             } catch (MediaWikiApiErrorException e) {
-                e.printStackTrace();
-                Thread.sleep(5000);
+                logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
+                                                + "]: " + e.getErrorMessage());
             } catch (IOException e) {
-				e.printStackTrace();
-				Thread.sleep(5000);
+                logger.warn("IO error while fetching documents to edit: " + e.getMessage());
 			}
             retries--;
+            sleepTime *= backoff;
+            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
+                logger.warn("Retrying in " + sleepTime + " ms");
+                Thread.sleep(sleepTime);
+            }
         }
         if (currentDocs == null) {
-            throw new InterruptedException("Fetching current documents failed.");
+            logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
+            globalCursor = scheduled.size();
         }
         batchCursor = 0;
     }
