@@ -78,8 +78,11 @@
   border-left: 0;
   border-right: 0;
   padding: 5px;
-  max-height: 100px;
   overflow-y: auto;
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+
 }
 
 .wbs-draggable-column {
