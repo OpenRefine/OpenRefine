@@ -83,7 +83,6 @@ WikibaseExporterMenuBar.checkSchemaAndExport = function(format) {
 
 //extend the column header menu
 $(function(){
-
     ExtensionBar.MenuItems.push(
         {
             "id":"reconcilesnac",
@@ -92,7 +91,7 @@ $(function(){
 					{
                         id: "snac/edit-schema",
                         label: $.i18n('snac-extension/edit-snac-schema'),
-                        click: function() { SchemaAlignmentDialog.launch(false); }
+                        click: function() { SNACSchemaAlignmentDialog.launch(false); }
                     },
                     {
                         id:"snac/api-key",

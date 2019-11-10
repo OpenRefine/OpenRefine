@@ -12,7 +12,7 @@ function init() {
     RefineServlet.registerClassMapping(
             "org.openrefine.wikidata.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange",
             "org.openrefine.wikidata.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange");
-    
+
     RefineServlet.cacheClass(Packages.org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange);
     RefineServlet.cacheClass(Packages.org.openrefine.wikidata.operations.PerformWikibaseEditsOperation$PerformWikibaseEditsChange);
 */
@@ -22,7 +22,7 @@ function init() {
 /*    Packages.com.google.refine.model.Project.registerOverlayModel(
         "wikibaseSchema",
         Packages.org.openrefine.wikidata.schema.WikibaseSchema);
-  */  
+  */
     /*
      *  Operations
      */
@@ -37,7 +37,7 @@ function init() {
     var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
     var QSExporter = Packages.org.openrefine.wikidata.exporters.QuickStatementsExporter;
     var SchemaExporter = Packages.org.openrefine.wikidata.exporters.SchemaExporter;
-    
+
     //ExporterRegistry.registerExporter("quickstatements", new QSExporter());
     //ExporterRegistry.registerExporter("wikibase-schema", new SchemaExporter());
 
@@ -48,7 +48,7 @@ function init() {
     //RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
     //RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
     RefineServlet.registerCommand(module, "apikey", new SNACLoginCommand());
-     
+
     /*
      * Resources
      */
@@ -58,6 +58,7 @@ function init() {
       [
         "scripts/menu-bar-extension.js",
         "scripts/dialogs/manage-key-dialog.js",
+        "scripts/dialogs/schema-alignment-dialog.js",
       /*  "scripts/warningsrenderer.js",
         "scripts/langsuggest.js",
         "scripts/bettersuggest.js",
@@ -73,10 +74,10 @@ function init() {
       module,
       [
         "styles/dialogs/manage-key-dialog.less",
+        "styles/dialogs/schema-alignment-dialog.css",
         /*"styles/dialogs/schema-alignment-dialog.css",
         "styles/dialogs/import-schema-dialog.less",
         "styles/dialogs/perform-edits.less",*/
       ]);
-   
-}
 
+}
