@@ -41,7 +41,7 @@ public class SNACConnector {
         if (apikey == "") {
             final JFrame myFrame = new JFrame();
             JButton button = new JButton();
-            button.setText("Nothing entered! Key was set to \"null\". Click to exit.");
+            button.setText("Key cleared! Click to exit.");
             myFrame.add(button);
             //parent.pack();
             button.addActionListener(new java.awt.event.ActionListener() {
@@ -50,7 +50,6 @@ public class SNACConnector {
                     myFrame.dispose();
                 } 
             });
-            apikey = null;
             myFrame.setSize(450,200);
             myFrame.setLocationRelativeTo(null);
             myFrame.setVisible(true);
