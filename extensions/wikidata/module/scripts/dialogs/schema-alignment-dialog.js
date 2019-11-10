@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -40,7 +40,7 @@ SchemaAlignment._cleanName = function(s) {
 var SchemaAlignmentDialog = {};
 
 /**
- * Installs the tabs in the UI the first time the Wikidata 
+ * Installs the tabs in the UI the first time the Wikidata
  * extension is called.
  */
 SchemaAlignmentDialog.setUpTabs = function() {
@@ -62,7 +62,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
   this._previewPanel = $('<div id="wikidata-preview-panel"></div>')
         .addClass('main-view-panel-tab')
         .appendTo(this._rightPanel);
-  
+
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
         .attr('href', '#wikidata-schema-panel')
@@ -96,7 +96,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('wikidata-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
- 
+
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SchemaAlignmentDialog.switchTab(targetTab);
@@ -166,7 +166,7 @@ SchemaAlignmentDialog.updateColumns = function() {
   for (var i = 0; i < columns.length; i++) {
      var column = columns[i];
      var reconConfig = column.reconConfig;
-     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name, 
+     var cell = SchemaAlignmentDialog._createDraggableColumn(column.name,
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
   }
@@ -257,7 +257,7 @@ SchemaAlignmentDialog._save = function(onDone) {
     {},
     { schema: JSON.stringify(schema) },
     {},
-    {   
+    {
       onDone: function() {
         theProject.overlayModels.wikibaseSchema = schema;
 
@@ -379,13 +379,13 @@ SchemaAlignmentDialog._addItem = function(json) {
 
   SchemaAlignmentDialog._plusButton(
          $.i18n('wikidata-schema/add-statement'), addStatementButton);
-   
+
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
         SchemaAlignmentDialog._addStatementGroup(item, statementGroups[i]);
      }
   }
-  
+
   if (nameDescs) {
      for(var i = 0; i != nameDescs.length; i++) {
         SchemaAlignmentDialog._addNameDesc(item, nameDescs[i]);
@@ -417,7 +417,7 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
         nameDescLst.length === nameDescsDom.length) {
       return {subject: subjectJSON,
             statementGroups: statementGroupLst,
-            nameDescs: nameDescLst}; 
+            nameDescs: nameDescLst};
     } else {
       return null;
     }
@@ -433,7 +433,7 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   if (json) {
      type = json.name_type;
      value = json.value;
-  } 
+  }
 
   var container = item.find('.wbs-namedesc-container').first();
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
@@ -465,7 +465,7 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
 
   var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
-  SchemaAlignmentDialog._initField(value_container, "monolingualtext", value); 
+  SchemaAlignmentDialog._initField(value_container, "monolingualtext", value);
 
 }
 
@@ -473,12 +473,12 @@ SchemaAlignmentDialog._nameDescToJSON = function (namedesc) {
   var type = namedesc.find('select').first().val();
   var value = namedesc.find('.wbs-namedesc-value').first().data("jsonValue");
   return {
-    type: "wbnamedescexpr",    
+    type: "wbnamedescexpr",
     name_type: type,
     value: value,
   };
 }
-  
+
 
 /********************
  * STATEMENT GROUPS *
@@ -524,7 +524,7 @@ SchemaAlignmentDialog._addStatementGroup = function(item, json) {
   } else {
      inputContainer.find('input').focus();
   }
-     
+
 }
 
 SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
@@ -534,7 +534,7 @@ SchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
        var statementJSON = SchemaAlignmentDialog._statementToJSON($(this));
        if (statementJSON !== null) {
           lst.push(statementJSON);
-       } 
+       }
     });
     var inputContainer = statementGroup.find(".wbs-prop-input").first();
     var propertyJSON = SchemaAlignmentDialog._inputContainerToJSON(inputContainer);
@@ -559,11 +559,11 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
     references = json.references;
     value = json.value;
   }
- 
+
   var statement = $('<div></div>').addClass('wbs-statement');
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignmentDialog._initField(inputContainer, datatype, value);
-  
+
   // If we are in a mainsnak...
   // (see https://www.mediawiki.org/wiki/Wikibase/DataModel#Snaks)
   if (container.parents('.wbs-statement').length == 0) {
@@ -633,7 +633,7 @@ SchemaAlignmentDialog._addStatement = function(container, datatype, json) {
         .appendTo(referencePaste)
         .click(function(e) {
         if (SchemaAlignmentDialog._copiedReference !== null) {
-           SchemaAlignmentDialog._addReference(referenceContainer, SchemaAlignmentDialog._copiedReference); 
+           SchemaAlignmentDialog._addReference(referenceContainer, SchemaAlignmentDialog._copiedReference);
            SchemaAlignmentDialog._updateReferencesNumber(referenceContainer);
            referencePaste.hide();
            SchemaAlignmentDialog._hasChanged();
@@ -885,7 +885,7 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
      if (initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
         input.addClass('wbs-validated-input');
-     } 
+     }
      inputContainer.data("jsonValue", initialValue);
   }
 
@@ -893,7 +893,7 @@ SchemaAlignmentDialog._initPropertyField = function(inputContainer, targetContai
 
 SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, changedCallback) {
   var input = $('<input></input>').appendTo(inputContainer);
- 
+
   if (! changedCallback) {
     changedCallback = SchemaAlignmentDialog._hasChanged;
   }
@@ -1029,14 +1029,14 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
      .addClass('wbs-quantity-container')
      .width('40%')
      .appendTo(inputContainer);
-   
+
      var amountValue = null;
      var unitValue = null;
      if (initialValue) {
         amountValue = initialValue.amount;
         unitValue = initialValue.unit;
      }
- 
+
      var propagateValue = function() {
         inputContainer.data("jsonValue", {
            type: "wbquantityexpr",
@@ -1045,7 +1045,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
         });
         changedCallback();
      }
-     
+
      SchemaAlignmentDialog._initField(inputContainerAmount, "amount", amountValue, propagateValue);
      SchemaAlignmentDialog._initField(inputContainerUnit, "unit", unitValue, propagateValue);
 
@@ -1125,8 +1125,8 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       wbVariableType = null; // not droppable directly
   } else if (mode === "language") {
       wbVariableType = "wblanguagevariable";
-  } 
-      
+  }
+
   if (wbVariableType) {
     inputContainer.droppable({
         accept: acceptClass,
@@ -1138,7 +1138,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
             columnName: ui.draggable.text(),
         });
         changedCallback();
-        return true; 
+        return true;
     }).on("dropactivate", function(evt, ui) {
         input.addClass("wbs-accepting-input");
     }).on("dropdeactivate", function(evt, ui) {
@@ -1314,7 +1314,7 @@ SchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
    for (var i = 0; i != warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
-   }   
+   }
 
    // update the counts
    if (totalCount) {
@@ -1322,4 +1322,3 @@ SchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
         countsElem.show();
    }
 }
-

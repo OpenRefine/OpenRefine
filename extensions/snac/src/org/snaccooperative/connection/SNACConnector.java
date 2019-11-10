@@ -15,7 +15,7 @@ import com.google.refine.util.ParsingUtilities;
  */
 
 public class SNACConnector {
-    
+
     final static Logger logger = LoggerFactory.getLogger("snac_connection");
 
     public static final String PREFERENCE_STORE_KEY = "snac_apikey";
@@ -55,15 +55,16 @@ public class SNACConnector {
     }
 
     public String getKey() {
-		if (getStoredKeyData() != null){
-			logger.error("Returning key data" + getStoredKeyData().get("apikey").asText());
-			return getStoredKeyData().get("apikey").asText();
-		}
-		else{return null;}
+		    if (getStoredKeyData() != null){
+			      logger.error("Returning key data " + getStoredKeyData().get("apikey").asText());
+			      return getStoredKeyData().get("apikey").asText();
+		    }
+		    else{
+          return null;
+        }
     }
 
     private void restoreSavedKey() {
         ObjectNode keys = getStoredKeyData();
-
     }
 }
