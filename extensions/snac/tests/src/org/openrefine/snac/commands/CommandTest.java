@@ -42,19 +42,45 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 
+import org.apache.http.*;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import java.io.IOException;
+
 public class CommandTest {
 
-    //protected Project project = null;
-    //protected HttpServletRequest request = null;
-    //protected HttpServletResponse response = null;
-    //protected StringWriter writer = null;
-
-    //protected Command command = null;
+    @Test
+    public void testRecentlyPublished() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\":\"recently_published\"}", "UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      //System.out.println(result);
+      Assert.assertTrue(result.contains("success"));
+    }
 
     @Test
-    public void testNum() {
-      String a="";
-      Assert.assertEquals(a, "");
+    public void testTermSearch() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"vocabulary\",\"query_string\": \"person\",\"type\": \"entity_type\",\"entity_type\": null}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("700"));
+    }
+
+    @Test
+    public void testBrowsing() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"browse\",\"term\": \"Washington\",\"position\": \"middle\"}", "UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("name_entry"));
     }
 
   /*  @BeforeMethod(alwaysRun = true)
