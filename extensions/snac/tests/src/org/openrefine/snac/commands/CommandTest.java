@@ -163,6 +163,10 @@ public class CommandTest {
       Assert.assertTrue(result.contains("Constellation"));
     }
 
+    /*
+    * Test API calls for shared_resources
+    */
+  
    @Test
     public void testSharedResources() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -173,6 +177,10 @@ public class CommandTest {
       Assert.assertTrue(result.contains("7960925"));
     }
 
+    /*
+    * Test API calls for read_vocabulary
+    */
+  
     @Test
     public void testReadVocabulary() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -183,6 +191,10 @@ public class CommandTest {
       Assert.assertTrue(result.contains("person"));
     }
 
+    /*
+    * Test API calls for get_holdings
+    */
+  
     @Test
     public void testGetHoldings() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -192,11 +204,21 @@ public class CommandTest {
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("7677119"));
     }
+  
+    /*
+    * Test API calls for elastic
+    */
 
-     
-
-
-
+    @Test
+    public void testElastic() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"elastic\",\"query\": { \"simple_query_string\": { \"query\": \"poets\", \"default_operator\": \"and\"}}, \"size\": 2, \"from\":0}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("\"result\": \"success\""));
+      Assert.assertTrue(!result.contains("total\": 0,"));
+    }
   /*  @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
         project = createCSVProject(TestingData.inceptionWithNewCsv);
