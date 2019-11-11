@@ -145,5 +145,8 @@
     "warnings-messages/no-unit-provided/title": "Enhet saknas för {property_entity}",
     "warnings-messages/no-unit-provided/body": "Värden som <span class = \"wb-issue-preformat\">{example_value}</span> på {example_item_entity} förväntas ha enhet.",
     "warnings-messages/invalid-entity-type/title": "{property_entity} används i objekt",
-    "warnings-messages/invalid-entity-type/body": "Användning av {property_entity} i objekt som {example_entity} är icke giltigt."
+    "warnings-messages/invalid-entity-type/body": "Användning av {property_entity} i objekt som {example_entity} är icke giltigt.",
+    "wikidata-schema/copy-reference": "kopiera",
+    "wikidata-schema/paste-reference": "klistra referens",
+    "wikidata-extension/export-wikidata-schema": "Exportera Wikidata-schema"
 }
