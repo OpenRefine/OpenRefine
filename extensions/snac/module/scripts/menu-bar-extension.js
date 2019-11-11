@@ -97,7 +97,9 @@ $(function(){
                     {
                         id:"snac/api-key",
                         label: $.i18n('snac-extension/manage-api-key'),
-                        click: function() { ManageKeysDialog.launch(null, function(success) {}); }
+                        click: function() { 
+                            ManageKeysDialog.launch(null, function(success) {}); 
+                        }
                     },
                     {},
                     {
