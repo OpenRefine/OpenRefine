@@ -50,6 +50,9 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
               if (data.apikey) {
                   dismiss();
                   callback(data.apikey);
+              } else {
+                dismiss();
+                callback(null);
               }
           });
   });

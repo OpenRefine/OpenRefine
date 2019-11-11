@@ -3,12 +3,12 @@ dist: xenial
 jdk:
   - openjdk8
   - openjdk9
-  - oraclejdk11
+#  - oraclejdk11
   - openjdk11
 
 branches:
   only:
-    - capstone-testing
+  - capstone-testing
 
 addons:
   mariadb: '10.0'
