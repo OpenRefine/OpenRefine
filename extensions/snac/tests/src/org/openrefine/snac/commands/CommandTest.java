@@ -100,7 +100,7 @@ public class CommandTest {
     */
 
     @Test
-    public void testExistantReadResource() throws Exception{
+    public void testReadConstellation() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
       HttpPost post = new HttpPost("http://api.snaccooperative.org");
       post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": 7149468}","UTF-8"));
@@ -162,6 +162,40 @@ public class CommandTest {
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("Constellation"));
     }
+
+   @Test
+    public void testSharedResources() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"shared_resources\",\"icid1\": 29260863 ,\"icid2\": 50307952}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("7960925"));
+    }
+
+    @Test
+    public void testReadVocabulary() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read_vocabulary\",\"term_id\": 700}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("person"));
+    }
+
+    @Test
+    public void testGetHoldings() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"get_holdings\",\"constellationid\": 76778184}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("7677119"));
+    }
+
+     
+
+
 
   /*  @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
