@@ -161,7 +161,15 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 SNACSchemaAlignmentDialog.updateColumns = function() {
   var columns = theProject.columnModel.columns;
   this._columnArea = $(".schema-alignment-dialog-columns-area");
+  this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
+  this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
+  this._refcolumnArea.addClass("snac-tab");
+  //this._refcolumnArea.empty();
+  /*var cell = SNACSchemaAlignmentDialog._createDraggableColumn("title",
+    reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats, "csv");
+  var cell = $("<div></div>").addClass('wbs-draggable-column').addClass('wbs-title').text("CSV Columns");*/
+
   for (var i = 0; i < columns.length; i++) {
      var column = columns[i];
      var reconConfig = column.reconConfig;
@@ -169,6 +177,14 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
   }
+
+  /*for (var i = 0; i < columns.length; i++) {
+     var column = columns[i];
+     var reconConfig = column.reconConfig;
+     var cell = SNACSchemaAlignmentDialog._createDraggableColumn("RE",
+        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
+     this._refcolumnArea.append(cell);
+  }*/
 
   $('.wbs-reconciled-column').draggable({
      helper: "clone",
@@ -299,13 +315,17 @@ SNACSchemaAlignmentDialog._changesCleared = function() {
         .addClass('disabled');
 }
 
-SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
+//format cells for columns
+SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled, org) {
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
   if (reconciled) {
     cell.addClass('wbs-reconciled-column');
   } else {
     cell.addClass('wbs-unreconciled-column');
   }
+  // cell.addClass(org);
+
+ // cell.addClass(columnType);
   return cell;
 }
 

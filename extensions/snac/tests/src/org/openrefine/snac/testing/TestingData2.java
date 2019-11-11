@@ -22,11 +22,19 @@
  * SOFTWARE.
  ******************************************************************************/
 package org.openrefine.snac.testing;
-/*import java.io.IOException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
+import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import com.google.refine.tests.RefineTest;
+
+/*
 import org.openrefine.wikidata.schema.WbLanguageConstant;
 import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
@@ -38,13 +46,15 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-
+*/
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 
 public class TestingData2 {
+
+    public static final String[] column_values = {"col1", "col2", "col3"};
 
     public static final String inceptionCsv = "subject,inception,reference\n"
             + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,";
@@ -57,6 +67,14 @@ public class TestingData2 {
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "CREATE\n" + "LAST\tP571\t+2016-01-01T00:00:00Z/9"
             + "\tS854\t\"http://new-uni.com/\"" + "\tS813\t+2018-02-28T00:00:00Z/11\n";
 
+    // public class ApiKeyTest extends RefineTest {
+    //     @Test
+    //     public void testNoCredentials() throws ServletException, IOException {
+    //         command.doPost(request, response);
+    //         assertEquals("null", writer.toString());
+    //     }
+    // }
+/*
     public static ItemIdValue newIdA = makeNewItemIdValue(1234L, "new item A");
     public static ItemIdValue newIdB = makeNewItemIdValue(4567L, "new item B");
     public static ItemIdValue matchedId = makeMatchedItemIdValue("Q89", "eist");
@@ -139,5 +157,5 @@ public class TestingData2 {
         project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
         project.rows.get(2).cells.set(0, TestingData.makeNewItemCell(1234L, "new uni"));
     }
-
-}*/
+*/
+}
