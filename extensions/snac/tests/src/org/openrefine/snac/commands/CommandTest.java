@@ -163,6 +163,21 @@ public class CommandTest {
       Assert.assertTrue(result.contains("Constellation"));
     }
 
+    /*
+    * Test API calls for elastic
+    */
+
+    @Test
+    public void testElastic() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"elastic\",\"query\": { \"simple_query_string\": { \"query\": \"poets\", \"default_operator\": \"and\"}}, \"size\": 2, \"from\":0}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("\"result\": \"success\""));
+      Assert.assertTrue(!result.contains("total\": 0,"));
+    }
+
   /*  @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
         project = createCSVProject(TestingData.inceptionWithNewCsv);
