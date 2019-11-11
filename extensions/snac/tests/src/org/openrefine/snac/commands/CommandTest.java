@@ -33,7 +33,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.openrefine.snac.testing.TestingData2;
+import org.openrefine.snac.testing.TestingData2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
@@ -50,7 +50,14 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
-public class CommandTest {
+public class CommandTest extends RefineTest{
+
+    protected Project project = null;
+    protected HttpServletRequest request = null;
+    protected HttpServletResponse response = null;
+    protected StringWriter writer = null;
+    protected Command command = null;
+
 
     @Test
     public void testRecentlyPublished() throws Exception{
@@ -82,11 +89,11 @@ public class CommandTest {
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("name_entry"));
     }
-
-  /*  @BeforeMethod(alwaysRun = true)
+/*
+    @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
-        project = createCSVProject(TestingData.inceptionWithNewCsv);
-        TestingData.reconcileInceptionCells(project);
+        project = createCSVProject(TestingData2.inceptionWithNewCsv);
+        TestingData2.reconcileInceptionCells(project);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();
@@ -100,5 +107,11 @@ public class CommandTest {
             Assert.fail();
         }
     }*/
+
+    @Test
+    public void testProjectColumns() throws Exception{
+      project = createProjectWithColumns("test_columns", TestingData2.column_values);
+      Assert.assertEquals(project.columnModel.getColumnNames().size(), 0);
+    }
 
 }
