@@ -85,6 +85,22 @@
   max-height: none;
 }
 
+.schema-alignment-dialog-columns-area--ref.snac-tab{
+  border: 1px solid #bcf;
+  border-left: 0;
+  border-right: 0;
+  padding: 5px;
+  overflow-y: auto;
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  max-height: none;
+}
+
+.snac-columns-container{
+  display: flex;
+}
+
 .wbs-draggable-column {
     border: 1px solid #aaa;
     padding: 2px;
