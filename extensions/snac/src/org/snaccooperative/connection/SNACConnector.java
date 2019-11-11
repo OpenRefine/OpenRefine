@@ -78,9 +78,11 @@ public class SNACConnector {
     }
 
     public String getKey() {
+        String visible;
         if (getStoredKeyData() != null){
                 logger.error("Returning key data " + getStoredKeyData().get("apikey").asText());
-                return getStoredKeyData().get("apikey").asText();
+                visible = getStoredKeyData().get("apikey").asText();
+                return visible;
         }else{
             return null;
         }

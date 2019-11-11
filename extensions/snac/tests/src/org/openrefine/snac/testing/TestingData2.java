@@ -27,6 +27,13 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
+import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import com.google.refine.tests.RefineTest;
+
 /*
 import org.openrefine.wikidata.schema.WbLanguageConstant;
 import org.openrefine.wikidata.schema.WbMonolingualExpr;
@@ -59,6 +66,14 @@ public class TestingData2 {
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "Q865528\tP571\t+1965-01-01T00:00:00Z/9"
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "CREATE\n" + "LAST\tP571\t+2016-01-01T00:00:00Z/9"
             + "\tS854\t\"http://new-uni.com/\"" + "\tS813\t+2018-02-28T00:00:00Z/11\n";
+
+    // public class ApiKeyTest extends RefineTest {
+    //     @Test
+    //     public void testNoCredentials() throws ServletException, IOException {
+    //         command.doPost(request, response);
+    //         assertEquals("null", writer.toString());
+    //     }
+    // }
 /*
     public static ItemIdValue newIdA = makeNewItemIdValue(1234L, "new item A");
     public static ItemIdValue newIdB = makeNewItemIdValue(4567L, "new item B");

@@ -15,6 +15,7 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
   var self = this;
   var frame = $(DOM.loadHTML("snac", "scripts/dialogs/manage-key-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
+  
   ManageKeysDialog.firstLaunch = false;
 
   this._elmts.dialogHeader.text($.i18n('snac-account/dialog-header'));
@@ -23,13 +24,33 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
   this._elmts.keyInput.attr("placeholder", $.i18n('snac-account/key-placeholder'));
   this._elmts.cancelButton.text($.i18n('snac-account/close'));
   this._elmts.loginButton.text($.i18n('snac-account/log-in'));
+  let checked = 1;
+  var checkedOrNah = document.getElementById("myCheck");
 
-  if (apikey != null) {
-      elmts.keyInput.val(apikey);
-  } else if (saved_apikey != null) {
-      elmts.keyInput.val(saved_apikey);
+  valueChange = function(item){
+      checkedOrNah = document.getElementById("myCheck");
+      if (checkedOrNah.checked == true) {
+        checked = 1;
+        // document.getElementById("myCheck").checked = true;
+        // console.log(checked);
+      } else if (checkedOrNah.checked == false) {
+          if (checked == null) {
+              localStorage.removeItem('mycheckedvalue');
+          } 
+        checked = 0;
+      }
   }
-
+  if (apikey != null) {
+    elmts.keyInput.val(apikey);
+    } else if (saved_apikey != null) {
+      console.log(localStorage.getItem("mycheckedvalue"));
+      if (localStorage.getItem("mycheckedvalue") == 1) {
+        elmts.keyInput.val(saved_apikey);
+      } 
+      else if (localStorage.getItem("mycheckedvalue") == 0){
+        elmts.keyInput.val(null);
+      }
+    }
   this._level = DialogSystem.showDialog(frame);
 
   var dismiss = function() {
@@ -38,7 +59,9 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
 
   frame.find('.cancel-button').click(function() {
      dismiss();
+    //  console.log(checked);
      callback(null);
+    // callback(apikey);
   });
 
   elmts.loginButton.click(function() {
@@ -48,13 +71,14 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
           elmts.apiKeyForm.serialize(),
           function(data) {
               if (data.apikey) {
-                  dismiss();
-                  callback(data.apikey);
+                dismiss();
+                callback(data.apikey);
               } else {
                 dismiss();
                 callback(null);
               }
           });
+          localStorage.setItem('mycheckedvalue', checked);
+          console.log(checked);
   });
-
 };
