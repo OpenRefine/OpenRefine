@@ -36,19 +36,19 @@ import javax.servlet.http.HttpServletResponse;
 //import org.openrefine.snac.testing.TestingData2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+// import org.testng.annotations.BeforeMethod;
 
-import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
+// import com.google.refine.commands.Command;
+// import com.google.refine.model.Project;
+// import com.google.refine.tests.RefineTest;
 
 import org.apache.http.*;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.client.methods.HttpGet;
+// import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import java.io.IOException;
+// import java.io.IOException;
 
 public class CommandTest {
 
@@ -113,6 +113,37 @@ public class CommandTest {
       Assert.assertTrue(result.contains("7677119"));
     }
 */
+
+    @Test
+    public void testSearchConcepts() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": \"16715425\"}","UTF-8"));
+      //post.setEntity(new StringEntity("{\"command\": \"browse\",\"term\": \"Washington\",\"position\": \"middle\"}", "UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("500"));
+    }
+
+    @Test
+    public void testReadResource() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": 7149468}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("resource"));
+    }
+
+    @Test
+    public void testConstellationHistory() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"constellation_history\",\"constellationid\": 76813079}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("Constellation"));
+    }
 
   /*  @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
