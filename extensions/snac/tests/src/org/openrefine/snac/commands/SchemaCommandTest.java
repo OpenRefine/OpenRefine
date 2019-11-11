@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.commands;
+package org.openrefine.snac.commands;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import com.google.refine.util.ParsingUtilities;
 
 public abstract class SchemaCommandTest extends CommandTest {
-
+/*
     @Test
     public void testNoSchema()
             throws ServletException, IOException {
@@ -51,5 +51,5 @@ public abstract class SchemaCommandTest extends CommandTest {
         command.doPost(request, response);
 
         assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
-    }
+    }*/
 }

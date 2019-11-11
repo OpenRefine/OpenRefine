@@ -100,7 +100,7 @@ public class CommandTest {
     */
 
     @Test
-    public void testExistantReadResource() throws Exception{
+    public void testReadConstellation() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
       HttpPost post = new HttpPost("http://api.snaccooperative.org");
       post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": 7149468}","UTF-8"));
@@ -164,6 +164,48 @@ public class CommandTest {
     }
 
     /*
+    * Test API calls for shared_resources
+    */
+  
+   @Test
+    public void testSharedResources() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"shared_resources\",\"icid1\": 29260863 ,\"icid2\": 50307952}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("7960925"));
+    }
+
+    /*
+    * Test API calls for read_vocabulary
+    */
+  
+    @Test
+    public void testReadVocabulary() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read_vocabulary\",\"term_id\": 700}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("person"));
+    }
+
+    /*
+    * Test API calls for get_holdings
+    */
+  
+    @Test
+    public void testGetHoldings() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"get_holdings\",\"constellationid\": 76778184}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("7677119"));
+    }
+  
+    /*
     * Test API calls for elastic
     */
 
@@ -177,7 +219,6 @@ public class CommandTest {
       Assert.assertTrue(result.contains("\"result\": \"success\""));
       Assert.assertTrue(!result.contains("total\": 0,"));
     }
-
   /*  @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
         project = createCSVProject(TestingData.inceptionWithNewCsv);
