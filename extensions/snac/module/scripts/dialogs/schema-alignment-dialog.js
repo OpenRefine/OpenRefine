@@ -184,6 +184,17 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   });
 }
 
+SNACSchemaAlignmentDialog.switchbuttons = function() {
+  if(document.getElementById('resourcebutton').checked) {
+    // print text
+  }
+  else if(document.getElementById('constellationbutton').checked) {
+    // print text
+  }
+}
+
+
+
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();
   $('.main-view-panel-tab-header').removeClass('active');
