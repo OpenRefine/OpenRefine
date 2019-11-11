@@ -200,14 +200,14 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   });
 }
 
-SNACSchemaAlignmentDialog.switchbuttons = function() {
-  if(document.getElementById('resourcebutton').checked) {
-    // print text
-  }
-  else if(document.getElementById('constellationbutton').checked) {
-    // print text
-  }
-}
+// SNACSchemaAlignmentDialog.switchbuttons = function() {
+//   if (document.getElementById('resourcebutton').checked) {
+//     // print text
+//   }
+//   else if (document.getElementById('constellationbutton').checked) {
+//     // print text
+//   }
+// }
 
 
 

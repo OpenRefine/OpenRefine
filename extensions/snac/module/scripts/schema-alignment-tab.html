@@ -20,13 +20,34 @@
             <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">Note</div>
         </div>
         </div>
+
     </div>
         <!-- Adding radio buttons to switch back and forth between resource and constellation  -->
         <div id="radio-buttons">
-        <input type="radio" name="button" value="resource" id="resourcebutton"> Resource
-        <input type="radio" name="button" value="constellation" id="constellationbutton"> Constellation<br>
-        <!-- <p> TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING </p> -->
-        </div>
+            <input type="radio" name="button" value="resource" id="resourcebutton" onclick="function1()"> Resource
+            <input type="radio" name="button" value="constellation" id="constellationbutton" onclick="function2()"> Constellation<br>
+            <p id="resourcetext" style="visibility: hidden"> !!! RESOURCES !!! </p>
+            <p id="constellationtext" style="visibility: hidden"> !!! CONSTELLATION !!! </p>
+             
+            <script>
+                function function1() {
+                    document.getElementById("resourcetext").style.visibility = "visible";
+                    document.getElementById("constellationtext").style.visibility = "hidden";
+                    alert("This is the RESOURCE page");
+                }
+                function function2() {
+                    document.getElementById("resourcetext").style.visibility = "hidden";
+                    document.getElementById("constellationtext").style.visibility = "visible";
+                    alert("This is the CONSTELLATION page");
+                }
+            </script>    
+
+        <script>
+
+        </script>
+
+    </div>
+
     <div class="schema-alignment-dialog-canvas" bind="canvas">
         <div class="schema-alignment-dialog-statements-area" bind="statementsArea">
                 <div id="schema-alignment-statements-container">
