@@ -52,6 +52,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class CommandTest {
 
+    /*
+    * Test API calls for recently_published
+    */
+
     @Test
     public void testRecentlyPublished() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -63,6 +67,10 @@ public class CommandTest {
       Assert.assertTrue(result.contains("success"));
     }
 
+    /*
+    * Test API calls for vocabulary
+    */
+
     @Test
     public void testTermSearch() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -72,6 +80,10 @@ public class CommandTest {
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("700"));
     }
+
+    /*
+    * Test API calls for browse
+    */
 
     @Test
     public void testBrowsing() throws Exception{
@@ -83,8 +95,51 @@ public class CommandTest {
       Assert.assertTrue(result.contains("name_entry"));
     }
 
+    /*
+    * Test API calls for read_resource
+    */
+
     @Test
     public void testReadConstellation() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": 7149468}","UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("resource"));
+    }
+
+    @Test
+    public void TestNonexistantReadResource() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": \"100000000\"}", "UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(!result.contains("dataType\": \"Resource\""));
+    }
+
+    /*
+    * Test API calls for resource_search
+    */
+
+    @Test
+    public void TestResourceSearch() throws Exception{
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
+      post.setEntity(new StringEntity("{\"command\": \"resource_search\",\"term\": \"Papers\"}", "UTF-8"));
+      HttpResponse response = client.execute(post);
+      String result = EntityUtils.toString(response.getEntity());
+      Assert.assertTrue(result.contains("total\": ")); // we got a result
+      Assert.assertTrue(!result.contains("total\": 0,")); // There were resources found
+    }
+  
+    /*
+    * Test API calls for read
+    */
+  
+    @Test
+    public void testSearchConcepts() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
       HttpPost post = new HttpPost("http://api.snaccooperative.org");
       post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": \"16715425\"}","UTF-8"));
@@ -94,16 +149,10 @@ public class CommandTest {
       Assert.assertTrue(result.contains("500"));
     }
 
-    @Test
-    public void testReadResource() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": 7149468}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("resource"));
-    }
-
+    /*
+    * Test API calls for constellation_history
+    */
+  
     @Test
     public void testConstellationHistory() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
