@@ -26,18 +26,20 @@
         <div id="radio-buttons">
             <input type="radio" name="button" value="resource" id="resourcebutton" onclick="function1()"> Resource
             <input type="radio" name="button" value="constellation" id="constellationbutton" onclick="function2()"> Constellation<br>
-            <p id="resourcetext" style="visibility: hidden"> !!! RESOURCES !!! </p>
-            <p id="constellationtext" style="visibility: hidden"> !!! CONSTELLATION !!! </p>
+            <p id="resourcetext">  </p>
+            <!-- <p id="constellationtext" style="visibility: hidden"> !!! CONSTELLATION !!! </p> -->
              
             <script>
                 function function1() {
-                    document.getElementById("resourcetext").style.visibility = "visible";
-                    document.getElementById("constellationtext").style.visibility = "hidden";
+                    // document.getElementById("resourcetext").style.visibility = "visible";
+                    // document.getElementById("constellationtext").style.visibility = "hidden";
+                    document.getElementById("resourcetext").textContent="!!! RESOURCE !!!";
                     alert("This is the RESOURCE page");
                 }
                 function function2() {
-                    document.getElementById("resourcetext").style.visibility = "hidden";
-                    document.getElementById("constellationtext").style.visibility = "visible";
+                    // document.getElementById("resourcetext").style.visibility = "hidden";
+                    // document.getElementById("constellationtext").style.visibility = "visible";
+                    document.getElementById("resourcetext").textContent="!!! CONSTELLATION !!!";
                     alert("This is the CONSTELLATION page");
                 }
             </script>    
