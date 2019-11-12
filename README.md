@@ -1,6 +1,6 @@
 # OpenRefine
 
-[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.com/snac-cooperative/OpenRefine.svg?branch=capstone-testing)](https://travis-ci.org/snac-cooperative/OpenRefine)
+[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.com/snac-cooperative/OpenRefine.svg?branch=capstone-testing)](https://travis-ci.com/snac-cooperative/OpenRefine)
 
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
