@@ -270,4 +270,25 @@ public class CommandTest extends RefineTest{
       Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
     }
 
+    @Test
+    public void testProjectColumns() throws Exception{
+      project = createCSVProject(TestingData2.inceptionWithNewCsv);
+      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
+      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    }
+
+    @Test
+    public void testProjectColumns() throws Exception{
+      project = createCSVProject(TestingData2.inceptionWithNewCsv);
+      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
+      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    }
+
+    @Test
+    public void testProjectColumns() throws Exception{
+      project = createCSVProject(TestingData2.inceptionWithNewCsv);
+      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
+      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    }
+
 }
