@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+
 /**
  */
 
@@ -39,21 +40,15 @@ public class SNACConnector {
     
     public void saveKey(String apikey) {
         if (apikey == "") {
-            final JFrame myFrame = new JFrame();
-            JButton button = new JButton();
-            button.setText("Key cleared! Click to exit.");
-            myFrame.add(button);
-            //parent.pack();
-            button.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    myFrame.dispose();
-                } 
-            });
-            myFrame.setSize(450,200);
-            myFrame.setLocationRelativeTo(null);
-            myFrame.setVisible(true);
-            myFrame.setAlwaysOnTop(true);
+            // final JFrame myFrame = new JFrame();
+            // JOptionPane.showMessageDialog(null, "Key cleared!");
+            // myFrame.setSize(450,200);
+            // myFrame.setLocationRelativeTo(null);
+            // myFrame.setVisible(true);
+            // myFrame.setAlwaysOnTop(true);
+            JFrame jf = new JFrame();
+            jf.setAlwaysOnTop(true);
+            JOptionPane.showMessageDialog(null, "Key cleared!");
         }
 
         logger.error("Trying to save key " + apikey);
