@@ -58,6 +58,9 @@ public class CommandTest extends RefineTest{
     protected StringWriter writer = null;
     protected Command command = null;
 
+    /*
+    * Test API calls for recently published
+    */
 
     @Test
     public void testRecentlyPublished() throws Exception{
@@ -70,6 +73,10 @@ public class CommandTest extends RefineTest{
       Assert.assertTrue(result.contains("success"));
     }
 
+    /*
+    * Test API calls for term search
+    */
+
     @Test
     public void testTermSearch() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -79,6 +86,10 @@ public class CommandTest extends RefineTest{
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("700"));
     }
+
+    /*
+    * Test API calls for browsing
+    */
 
     @Test
     public void testBrowsing() throws Exception{
@@ -270,25 +281,42 @@ public class CommandTest extends RefineTest{
       Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
     }
 
+    /*
+    * Test API calls for existence of constellation
+    */
     @Test
-    public void testProjectColumns() throws Exception{
-      project = createCSVProject(TestingData2.inceptionWithNewCsv);
-      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
-      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    public void testConstellationExists() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": 16715425}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("success"));
     }
 
     @Test
-    public void testProjectColumns() throws Exception{
-      project = createCSVProject(TestingData2.inceptionWithNewCsv);
-      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
-      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    public void testConstellationDNE() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": 16715429}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("Input Error"));
     }
 
+    /*
+    * Test API calls for download 
+    */
     @Test
-    public void testProjectColumns() throws Exception{
-      project = createCSVProject(TestingData2.inceptionWithNewCsv);
-      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
-      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    public void testConstellationDownload() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"download_constellation\",\"constellationid\": 16715425, \"type\": \"eac-cpf\"}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("text/xml"));
     }
+
+    
 
 }
