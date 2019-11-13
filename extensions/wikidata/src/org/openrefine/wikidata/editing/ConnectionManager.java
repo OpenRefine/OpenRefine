@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -56,7 +57,7 @@ public class ConnectionManager {
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
 
     private PreferenceStore prefStore;
-    private ApiConnection connection;
+    private BasicApiConnection connection;
 
     private static final ConnectionManager instance = new ConnectionManager();
 
@@ -80,7 +81,7 @@ public class ConnectionManager {
             prefStore.put(PREFERENCE_STORE_KEY, array);
         }
 
-        connection = ApiConnection.getWikidataApiConnection();
+        connection = BasicApiConnection.getWikidataApiConnection();
         try {
             connection.login(username, password);
         } catch (LoginFailedException e) {

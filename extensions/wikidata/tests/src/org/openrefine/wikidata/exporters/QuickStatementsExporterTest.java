@@ -45,7 +45,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 

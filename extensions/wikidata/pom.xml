@@ -82,6 +82,113 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+            <execution>
+                <id>install-wdtk-util</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/wdtk-util-0.11.0-SNAPSHOT.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.wikidata.wdtk</groupId>
+                    <artifactId>wdtk-util</artifactId>
+                    <version>0.11.0-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>false</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-wdtk-util-src</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local-src/wdtk-util-0.11.0-SNAPSHOT-sources.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.wikidata.wdtk</groupId>
+                    <artifactId>wdtk-util</artifactId>
+                    <version>0.11.0-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>false</generatePom>
+                    <classifier>sources</classifier>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-wdtk-datamodel</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/wdtk-datamodel-0.11.0-SNAPSHOT.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.wikidata.wdtk</groupId>
+                    <artifactId>wdtk-datamodel</artifactId>
+                    <version>0.11.0-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>false</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-wdtk-datamodel-src</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local-src/wdtk-datamodel-0.11.0-SNAPSHOT-sources.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.wikidata.wdtk</groupId>
+                    <artifactId>wdtk-datamodel</artifactId>
+                    <version>0.11.0-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>false</generatePom>
+                    <classifier>sources</classifier>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-wdtk-wikibaseapi</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/wdtk-wikibaseapi-0.11.0-SNAPSHOT.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.wikidata.wdtk</groupId>
+                    <artifactId>wdtk-wikibaseapi</artifactId>
+                    <version>0.11.0-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>false</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-wdtk-wikibaseapi-src</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local-src/wdtk-wikibaseapi-0.11.0-SNAPSHOT-sources.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>org.wikidata.wdtk</groupId>
+                    <artifactId>wdtk-wikibaseapi</artifactId>
+                    <version>0.11.0-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>false</generatePom>
+                    <classifier>sources</classifier>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.1.1</version>
         <executions>
@@ -128,12 +235,12 @@
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
-      <version>0.10.0</version>
+      <version>0.11.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
-      <version>0.10.0</version>
+      <version>0.11.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

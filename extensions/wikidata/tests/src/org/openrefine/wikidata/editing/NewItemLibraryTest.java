@@ -34,7 +34,6 @@ import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;

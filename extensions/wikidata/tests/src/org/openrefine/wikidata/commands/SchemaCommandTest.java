@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import static org.testng.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 

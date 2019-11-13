@@ -1,10 +1,8 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
