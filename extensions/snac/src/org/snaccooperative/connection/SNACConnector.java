@@ -48,7 +48,7 @@ public class SNACConnector {
             // myFrame.setAlwaysOnTop(true);
             JFrame jf = new JFrame();
             jf.setAlwaysOnTop(true);
-            JOptionPane.showMessageDialog(null, "Key cleared!");
+            JOptionPane.showMessageDialog(jf, "Key cleared!");
         }
 
         logger.error("Trying to save key " + apikey);
