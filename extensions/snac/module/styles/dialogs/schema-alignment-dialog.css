@@ -6,7 +6,7 @@
   position: initial;
 }
 
-#wikidata-schema-panel, #wikidata-issues-panel, #wikidata-preview-panel {
+#snac-schema-panel, #snac-issues-panel, #snac-preview-panel {
   display: block;
   overflow: hidden;
   height: 100%;
@@ -73,14 +73,32 @@
   font-weight: normal;
 }
 
-.schema-alignment-dialog-columns-area {
+.schema-alignment-dialog-columns-area.snac-tab{
   border: 1px solid #bcf;
   border-left: 0;
   border-right: 0;
   padding: 5px;
   overflow-y: auto;
-  max-height: 100px;
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  max-height: none;
+}
 
+.schema-alignment-dialog-columns-area--ref.snac-tab{
+  border: 1px solid #bcf;
+  border-left: 0;
+  border-right: 0;
+  padding: 5px;
+  overflow-y: auto;
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  max-height: none;
+}
+
+.snac-columns-container{
+  display: flex;
 }
 
 .wbs-draggable-column {
@@ -411,7 +429,7 @@
 
 .wbs-reference .wbs-statement {
     background-color: #eaf3ff;
-} 
+}
 
 .wbs-namedesc-header, .wbs-statements-header {
    font-size: 1.2em;
@@ -462,7 +480,7 @@
 
 /*** Warnings rendering ****/
 
-#wikidata-issues-panel table {
+#snac-issues-panel table {
   width: 100%;
 }
 
@@ -479,7 +497,7 @@ tr.wb-warning:nth-of-type(odd) {
   background-color: #f2f2f2;
 }
 
-.wb-warning-count span, 
+.wb-warning-count span,
 .schema-alignment-total-warning-count {
   color: white;
   background-color: #777;
