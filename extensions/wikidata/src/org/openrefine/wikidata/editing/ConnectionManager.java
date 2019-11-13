@@ -55,6 +55,8 @@ public class ConnectionManager {
     final static Logger logger = LoggerFactory.getLogger("connection_mananger");
 
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
+    public static final int CONNECT_TIMEOUT = 5000;
+    public static final int READ_TIMEOUT = 10000;
 
     private PreferenceStore prefStore;
     private BasicApiConnection connection;
@@ -65,12 +67,26 @@ public class ConnectionManager {
         return instance;
     }
 
+    /**
+     * Creates a connection manager, which attempts to restore any
+     * previous connection (from the preferences).
+     */
     private ConnectionManager() {
         prefStore = ProjectManager.singleton.getPreferenceStore();
         connection = null;
         restoreSavedConnection();
     }
 
+    /**
+     * Logs in to the Wikibase instance, using login/password
+     * 
+     * @param username
+     *      the username to log in with
+     * @param password
+     *      the password to log in with
+     * @param rememberCredentials
+     *      whether to store these credentials in the preferences (unencrypted!)
+     */
     public void login(String username, String password, boolean rememberCredentials) {
         if (rememberCredentials) {
             ArrayNode array = ParsingUtilities.mapper.createArrayNode();
@@ -81,7 +97,7 @@ public class ConnectionManager {
             prefStore.put(PREFERENCE_STORE_KEY, array);
         }
 
-        connection = BasicApiConnection.getWikidataApiConnection();
+        connection = createNewConnection();
         try {
             connection.login(username, password);
         } catch (LoginFailedException e) {
@@ -89,10 +105,13 @@ public class ConnectionManager {
         }
     }
 
+    /**
+     * Restore any previously saved connection, from the preferences.
+     */
     public void restoreSavedConnection() {
         ObjectNode savedCredentials = getStoredCredentials();
         if (savedCredentials != null) {
-            connection = ApiConnection.getWikidataApiConnection();
+            connection = createNewConnection();
             try {
                 connection.login(savedCredentials.get("username").asText(), savedCredentials.get("password").asText());
             } catch (LoginFailedException e) {
@@ -135,5 +154,17 @@ public class ConnectionManager {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Creates a fresh connection object with our
+     * prefered settings.
+     * @return
+     */
+    protected BasicApiConnection createNewConnection() {
+        BasicApiConnection conn = BasicApiConnection.getWikidataApiConnection();
+        conn.setConnectTimeout(CONNECT_TIMEOUT);
+        conn.setReadTimeout(READ_TIMEOUT);
+        return conn;
     }
 }
