@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -134,7 +135,7 @@ public class ConnectionManager {
             try {
                 connection.logout();
                 connection = null;
-            } catch (IOException e) {
+            } catch (IOException | MediaWikiApiErrorException e) {
                 logger.error(e.getMessage());
             }
         }
