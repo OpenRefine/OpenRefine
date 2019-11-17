@@ -135,6 +135,11 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SNACSchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
 
+   /**
+   * Init the dropdowns area
+   */
+  // this.addDropdowns();
+
   /**
    * Init the issues tab
    */
@@ -142,6 +147,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
   issuesElmts.invalidSchemaWarningIssues.text($.i18n('snac-schema/invalid-schema-warning-issues'));
 
+  
   /**
    * Init the preview tab
    */
@@ -163,6 +169,10 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   this._columnArea = $(".schema-alignment-dialog-columns-area");
   this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
+
+  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+  this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+  this._dropdownArea.addClass("snac-tab");
   this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
   this._refcolumnArea.addClass("snac-tab");
   //this._refcolumnArea.empty();
@@ -176,6 +186,25 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      var cell = SNACSchemaAlignmentDialog._createDraggableColumn(column.name,
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
+
+     var selectList = $("<select></select>").addClass('selectColumn');
+     this._dropdownArea.append(selectList);
+
+     var defaultoption = document.createElement("option");
+      defaultoption.setAttribute("value", "");
+      defaultoption.text = "Select an Option";
+      defaultoption.classList.add("dropdown-default");
+      selectList.append(defaultoption);
+
+     //Create and append the options
+     for (var j = 0; j < SNACcolumns.length; j++) {
+        var option = document.createElement("option");
+        option.setAttribute("value", SNACcolumns[j]);
+        option.text = SNACcolumns[j];
+        option.classList.add("dropdown-option");
+
+        selectList.append(option);
+     }
   }
 
   /*for (var i = 0; i < columns.length; i++) {
@@ -199,6 +228,27 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      zIndex: 100,
   });
 }
+
+// SNACSchemaAlignmentDialog.addDropdowns = function() {
+//   var columns = theProject.columnModel.columns;
+//   var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+//   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+//   this._dropdownArea.addClass("snac-tab");
+
+//   for (var i = 0; i < columns.length; i++) {
+//     //Create and append select list
+//     var selectList = document.createElement("select");
+//     selectList.setAttribute("id", "mySelect");
+//     this._dropdownArea.appendChild(selectList);
+
+//     //Create and append the options
+//     for (var j = 0; j < SNACcolumns.length; j++) {
+//         var option = document.createElement("option");
+//         option.setAttribute("value", SNACcolumns[j]);
+//         option.text = SNACcolumns[j];
+//         selectList.append(option);
+//   }
+// }
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();

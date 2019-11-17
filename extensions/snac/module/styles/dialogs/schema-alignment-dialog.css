@@ -73,8 +73,11 @@
   font-weight: normal;
 }
 
+.ref-table-header{
+  background-color: #9bcaf2;
+}
+
 .schema-alignment-dialog-columns-area.snac-tab{
-  border: 1px solid #bcf;
   border-left: 0;
   border-right: 0;
   padding: 5px;
@@ -83,10 +86,16 @@
   width: 150px;
   flex-direction: column;
   max-height: none;
+  margin-right: 10%;
+  margin-left: 1%;
+}
+
+.schema-alignment-dialog-dropdown-area{
+  display: flex;
+  flex-direction: column;
 }
 
 .schema-alignment-dialog-columns-area--ref.snac-tab{
-  border: 1px solid #bcf;
   border-left: 0;
   border-right: 0;
   padding: 5px;
@@ -95,6 +104,7 @@
   width: 150px;
   flex-direction: column;
   max-height: none;
+  margin-left: 10%;
 }
 
 .snac-columns-container{
