@@ -190,12 +190,19 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      var selectList = $("<select></select>").addClass('selectColumn');
      this._dropdownArea.append(selectList);
 
+     var defaultoption = document.createElement("option");
+      defaultoption.setAttribute("value", "");
+      defaultoption.text = "Select an Option";
+      defaultoption.classList.add("dropdown-default");
+      selectList.append(defaultoption);
+
      //Create and append the options
      for (var j = 0; j < SNACcolumns.length; j++) {
-        // var option = $("<option></option>").addClass('selectOption');
         var option = document.createElement("option");
         option.setAttribute("value", SNACcolumns[j]);
         option.text = SNACcolumns[j];
+        option.classList.add("dropdown-option");
+
         selectList.append(option);
      }
   }

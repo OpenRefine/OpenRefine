@@ -90,6 +90,11 @@
   margin-left: 1%;
 }
 
+.schema-alignment-dialog-dropdown-area{
+  display: flex;
+  flex-direction: column;
+}
+
 .schema-alignment-dialog-columns-area--ref.snac-tab{
   border-left: 0;
   border-right: 0;
