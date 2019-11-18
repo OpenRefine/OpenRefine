@@ -35,11 +35,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.ProjectManager;
@@ -86,32 +89,34 @@ public class LoadLanguageCommand extends Command {
         }
         
         // Default language is English
-        langs = Arrays.copyOf(langs, langs.length+1);
-        langs[langs.length-1] = "en";
+        if (langs.length == 0 || langs[langs.length-1] != "en" ) {
+            langs = Arrays.copyOf(langs, langs.length+1);
+            langs[langs.length-1] = "en";
+        }
 
-        ObjectNode json = null;
-        boolean loaded = false;
-        for (String lang : langs) {
-            if (lang == null) continue;
-            json = loadLanguage(this.servlet, modname, lang);
+        ObjectNode translations = null;
+        for (int i = langs.length-1; i >= 0; i--) {
+            if (langs[i] == null) continue;
+            ObjectNode json = loadLanguage(this.servlet, modname, langs[i]);
             if (json != null) {
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("application/json");
-                try {
-                    ObjectNode node = ParsingUtilities.mapper.createObjectNode();
-                    node.put("dictionary", json);
-                    node.put("lang", new TextNode(lang));
-                	ParsingUtilities.mapper.writeValue(response.getWriter(), node);
-                } catch (IOException e) {
-                    logger.error("Error writing language labels to response stream");
+                if (translations == null) {
+                    translations = json;
+                } else {
+                    translations = mergeLanguages(json, translations);
                 }
-                response.getWriter().flush();
-                response.getWriter().close();
-                loaded = true;
-                break;
             }
         }
-        if (!loaded) {
+         
+        if (translations != null) {
+            try {
+                ObjectNode node = ParsingUtilities.mapper.createObjectNode();
+                node.put("dictionary", translations);
+                node.put("lang", new TextNode(langs[0]));
+            	respondJSON(response, node);
+            } catch (IOException e) {
+                logger.error("Error writing language labels to response stream");
+            }
+        } else {
         	logger.error("Failed to load any language files");
         }
     }
@@ -129,5 +134,30 @@ public class LoadLanguageCommand extends Command {
             logger.error("JSON error reading/writing language file: " + langFile, e);
         }
         return null;
+    }
+    
+    /**
+     * Perform a language fallback, server-side
+     * @param preferred
+     *      the JSON translation for the preferred language
+     * @param fallback
+     *      the JSON translation for the fallback language
+     * @return
+     *      a JSON object where values are from the preferred
+     *      language if available, and the fallback language otherwise
+     */
+    static ObjectNode mergeLanguages(ObjectNode preferred, ObjectNode fallback) {
+        ObjectNode results = ParsingUtilities.mapper.createObjectNode();
+        Iterator<Entry<String, JsonNode>> iterator = fallback.fields();
+        while(iterator.hasNext()) {
+            Entry<String,JsonNode> entry = iterator.next();
+            String code = entry.getKey();
+            JsonNode value = preferred.get(code);
+            if (value == null) {;
+                value = entry.getValue();
+            }
+            results.put(code, value);  
+        }
+        return results;
     }
 }
