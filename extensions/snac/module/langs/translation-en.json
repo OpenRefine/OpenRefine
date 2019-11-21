@@ -18,8 +18,6 @@
     "snac-schema/discard-schema-changes-alt": "Discard the changes made to the schema.",
     "snac-schema/close-button": "Close",
 
-    "snac-preview/new-id": "new item",
-
     "snac-schema/warnings-tab-header": "Issues",
     "snac-schema/edits-preview-tab-header": "Preview",
     "snac-schema/statements-header": "Statements",

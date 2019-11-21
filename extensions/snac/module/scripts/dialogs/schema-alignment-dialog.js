@@ -1257,7 +1257,7 @@ SNACSchemaAlignmentDialog.preview = function() {
     return;
   }
   $.post(
-    "command/snac/preview-snac-schema?" + $.param({ project: theProject.id }),
+    "command/snac/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
       self.issueSpinner.hide();
