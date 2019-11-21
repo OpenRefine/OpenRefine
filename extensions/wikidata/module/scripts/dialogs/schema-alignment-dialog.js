@@ -65,11 +65,14 @@ SchemaAlignmentDialog.setUpTabs = function() {
 
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-wiki')
+        
         .attr('href', '#wikidata-schema-panel')
         .text($.i18n('wikidata-schema/schema-tab-header'))
         .appendTo(this._toolPanel);
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-wiki')
         .attr('href', '#wikidata-issues-panel')
         .text($.i18n('wikidata-schema/warnings-tab-header')+' ')
         .appendTo(this._toolPanel);
@@ -83,6 +86,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
         .appendTo(issuesButton);
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-wiki')
         .attr('href', '#wikidata-preview-panel')
         .text($.i18n('wikidata-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel);
@@ -96,6 +100,9 @@ SchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('wikidata-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
+
+  $('.main-view-panel-tabs-wiki').hide();
+  
 
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
@@ -215,6 +222,10 @@ SchemaAlignmentDialog.launch = function(onDone) {
   if (!SchemaAlignmentDialog.isSetUp()) {
      SchemaAlignmentDialog.setUpTabs();
   }
+
+  $('.main-view-panel-tabs-wiki').show();
+  $('.main-view-panel-tabs-snac').hide();
+
   SchemaAlignmentDialog.switchTab('#wikidata-schema-panel');
 
   // this._createDialog();
