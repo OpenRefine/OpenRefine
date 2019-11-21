@@ -33,28 +33,31 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.openrefine.snac.testing.TestingData2;
+import org.openrefine.snac.testing.TestingData2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-// import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeMethod;
 
-// import com.google.refine.commands.Command;
-// import com.google.refine.model.Project;
-// import com.google.refine.tests.RefineTest;
+import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import com.google.refine.tests.RefineTest;
 
 import org.apache.http.*;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
-// import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-// import java.io.IOException;
+import java.io.IOException;
 
-public class CommandTest {
+public class CommandTest extends RefineTest{
 
-    /*
-    * Test API calls for recently_published
-    */
+    protected Project project = null;
+    protected HttpServletRequest request = null;
+    protected HttpServletResponse response = null;
+    protected StringWriter writer = null;
+    protected Command command = null;
+
 
     @Test
     public void testRecentlyPublished() throws Exception{
@@ -67,10 +70,6 @@ public class CommandTest {
       Assert.assertTrue(result.contains("success"));
     }
 
-    /*
-    * Test API calls for vocabulary
-    */
-
     @Test
     public void testTermSearch() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -80,10 +79,6 @@ public class CommandTest {
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("700"));
     }
-
-    /*
-    * Test API calls for browse
-    */
 
     @Test
     public void testBrowsing() throws Exception{
@@ -133,11 +128,11 @@ public class CommandTest {
       Assert.assertTrue(result.contains("total\": ")); // we got a result
       Assert.assertTrue(!result.contains("total\": 0,")); // There were resources found
     }
-  
+
     /*
     * Test API calls for read
     */
-  
+
     @Test
     public void testSearchConcepts() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -152,7 +147,7 @@ public class CommandTest {
     /*
     * Test API calls for constellation_history
     */
-  
+
     @Test
     public void testConstellationHistory() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -166,7 +161,7 @@ public class CommandTest {
     /*
     * Test API calls for shared_resources
     */
-  
+
    @Test
     public void testSharedResources() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -180,7 +175,7 @@ public class CommandTest {
     /*
     * Test API calls for read_vocabulary
     */
-  
+
     @Test
     public void testReadVocabulary() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -194,7 +189,7 @@ public class CommandTest {
     /*
     * Test API calls for get_holdings
     */
-  
+
     @Test
     public void testGetHoldings() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -204,7 +199,7 @@ public class CommandTest {
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("7677119"));
     }
-  
+
     /*
     * Test API calls for elastic
     */
@@ -219,10 +214,41 @@ public class CommandTest {
       Assert.assertTrue(result.contains("\"result\": \"success\""));
       Assert.assertTrue(!result.contains("total\": 0,"));
     }
-  /*  @BeforeMethod(alwaysRun = true)
+
+    @Test
+    public void testRead1() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"search\",\"term\": \"Mozart\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("23271282"));
+    }
+
+    @Test
+    public void testRead2() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"search\",\"term\": \"Mendelssohn\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("47916702"));
+    }
+
+    @Test
+    public void testRead3() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"search\",\"term\": \"Dvorak\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("40081682"));
+    }
+/*
+    @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
-        project = createCSVProject(TestingData.inceptionWithNewCsv);
-        TestingData.reconcileInceptionCells(project);
+        project = createCSVProject(TestingData2.inceptionWithNewCsv);
+        TestingData2.reconcileInceptionCells(project);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();
@@ -236,5 +262,12 @@ public class CommandTest {
             Assert.fail();
         }
     }*/
+
+    @Test
+    public void testProjectColumns() throws Exception{
+      project = createCSVProject(TestingData2.inceptionWithNewCsv);
+      //project = createProjectWithColumns("test_columns", TestingData2.column_values);
+      Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
+    }
 
 }

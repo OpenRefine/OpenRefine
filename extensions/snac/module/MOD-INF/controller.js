@@ -60,7 +60,7 @@ function init() {
         "scripts/dialogs/manage-key-dialog.js",
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",
-      /*  "scripts/warningsrenderer.js",r
+      /*  "scripts/warningsrenderer.js",
         "scripts/langsuggest.js",
         "scripts/bettersuggest.js",
         "scripts/previewrenderer.js",
