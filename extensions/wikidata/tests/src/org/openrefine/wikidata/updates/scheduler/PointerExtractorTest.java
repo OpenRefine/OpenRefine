@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 public class PointerExtractorTest {
@@ -73,6 +75,7 @@ public class PointerExtractorTest {
         assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("898")));
         assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("7.87"), "http://www.wikidata.org/entity/Q34"));
         assertEmpty(Datamodel.makeTimeValue(1898, (byte) 2, (byte) 3, TimeValue.CM_GREGORIAN_PRO));
+        assertEmpty(mock(UnsupportedValue.class));
     }
 
     @Test

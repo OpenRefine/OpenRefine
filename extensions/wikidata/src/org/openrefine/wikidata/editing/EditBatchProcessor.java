@@ -59,6 +59,7 @@ public class EditBatchProcessor {
     private NewItemLibrary library;
     private List<ItemUpdate> scheduled;
     private String summary;
+    private List<String> tags;
 
     private List<ItemUpdate> remainingUpdates;
     private List<ItemUpdate> currentBatch;
@@ -82,12 +83,14 @@ public class EditBatchProcessor {
      *            the library to use to keep track of new item creation
      * @param summary
      *            the summary to append to all edits
+     * @param tags
+     *            the list of tags to apply to all edits
      * @param batchSize
      *            the number of items that should be retrieved in one go from the
      *            API
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<ItemUpdate> updates,
-            NewItemLibrary library, String summary, int batchSize) {
+            NewItemLibrary library, String summary, List<String> tags, int batchSize) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
@@ -99,6 +102,7 @@ public class EditBatchProcessor {
 
         this.library = library;
         this.summary = summary;
+        this.tags = tags;
         this.batchSize = batchSize;
 
         // Schedule the edit batch
@@ -133,6 +137,7 @@ public class EditBatchProcessor {
         	update = rewriter.rewrite(update);
         } catch (NewItemNotCreatedYetException e) {
         	logger.warn("Failed to rewrite update on entity "+update.getItemId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
+        	batchCursor++;
         	return;
         }
 
@@ -148,8 +153,8 @@ public class EditBatchProcessor {
                         update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),
                         Collections.emptyMap());
 
-                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary);
-                library.setQid(newCell.getReconInternalId(), createdDoc.getItemId().getId());
+                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
+                library.setQid(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
             } else {
                 // Existing item
                 ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
@@ -165,7 +170,8 @@ public class EditBatchProcessor {
                         update.getAliases().stream().collect(Collectors.toList()),
                         new ArrayList<MonolingualTextValue>(),
                         update.getAddedStatements().stream().collect(Collectors.toList()),
-                        update.getDeletedStatements().stream().collect(Collectors.toList()), summary);
+                        update.getDeletedStatements().stream().collect(Collectors.toList()),
+                        summary, tags);
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way

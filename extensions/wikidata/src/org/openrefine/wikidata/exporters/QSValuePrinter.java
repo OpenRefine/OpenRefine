@@ -28,7 +28,6 @@ import java.util.Locale;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
-import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -36,6 +35,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
@@ -95,5 +95,11 @@ public class QSValuePrinter implements ValueVisitor<String> {
     public String visit(TimeValue value) {
         return String.format("+%04d-%02d-%02dT%02d:%02d:%02dZ/%d", value.getYear(), value.getMonth(), value.getDay(),
                 value.getHour(), value.getMinute(), value.getSecond(), value.getPrecision());
+    }
+
+    @Override
+    public String visit(UnsupportedValue value) {
+            // we know this cannot happen, since UnsupportedValues cannot be generated in OpenRefine
+            return "<UNSUPPORTED>";
     }
 }

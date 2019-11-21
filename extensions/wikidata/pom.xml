@@ -128,12 +128,17 @@
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
-      <version>0.10.0</version>
+      <version>0.11.0</version>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
-      <version>0.10.0</version>
+      <version>0.11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.wikidata.wdtk</groupId>
+      <artifactId>wdtk-util</artifactId>
+      <version>0.11.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

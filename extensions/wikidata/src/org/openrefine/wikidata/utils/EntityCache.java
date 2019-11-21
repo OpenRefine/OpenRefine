@@ -29,6 +29,7 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
@@ -44,7 +45,7 @@ public class EntityCache {
     private WikibaseDataFetcher _fetcher;
 
     private EntityCache() {
-        ApiConnection connection = ApiConnection.getWikidataApiConnection();
+        ApiConnection connection = BasicApiConnection.getWikidataApiConnection();
         _fetcher = new WikibaseDataFetcher(connection, Datamodel.SITE_WIKIDATA);
 
         _cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
