@@ -78,8 +78,9 @@
   border-left: 0;
   border-right: 0;
   padding: 5px;
-  max-height: 100px;
   overflow-y: auto;
+  max-height: 100px;
+
 }
 
 .wbs-draggable-column {

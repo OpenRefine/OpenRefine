@@ -65,11 +65,14 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-schema-panel')
         .text($.i18n('snac-schema/schema-tab-header'))
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-issues-panel')
         .text($.i18n('snac-schema/warnings-tab-header')+' ')
         .appendTo(this._toolPanel);
@@ -83,6 +86,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .appendTo(issuesButton);
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel);
@@ -96,6 +100,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('snac-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
+  
+  
+  $('.main-view-panel-tabs-snac').hide();
+    
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SNACSchemaAlignmentDialog.switchTab(targetTab);
@@ -161,7 +169,15 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 SNACSchemaAlignmentDialog.updateColumns = function() {
   var columns = theProject.columnModel.columns;
   this._columnArea = $(".schema-alignment-dialog-columns-area");
+  this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
+  this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
+  this._refcolumnArea.addClass("snac-tab");
+  //this._refcolumnArea.empty();
+  /*var cell = SNACSchemaAlignmentDialog._createDraggableColumn("title",
+    reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats, "csv");
+  var cell = $("<div></div>").addClass('wbs-draggable-column').addClass('wbs-title').text("CSV Columns");*/
+
   for (var i = 0; i < columns.length; i++) {
      var column = columns[i];
      var reconConfig = column.reconConfig;
@@ -169,6 +185,14 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
   }
+
+  /*for (var i = 0; i < columns.length; i++) {
+     var column = columns[i];
+     var reconConfig = column.reconConfig;
+     var cell = SNACSchemaAlignmentDialog._createDraggableColumn("RE",
+        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
+     this._refcolumnArea.append(cell);
+  }*/
 
   $('.wbs-reconciled-column').draggable({
      helper: "clone",
@@ -183,6 +207,17 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      zIndex: 100,
   });
 }
+
+// SNACSchemaAlignmentDialog.switchbuttons = function() {
+//   if (document.getElementById('resourcebutton').checked) {
+//     // print text
+//   }
+//   else if (document.getElementById('constellationbutton').checked) {
+//     // print text
+//   }
+// }
+
+
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();
@@ -211,9 +246,14 @@ SNACSchemaAlignmentDialog.launch = function(onDone) {
   this._onDone = onDone;
   this._hasUnsavedChanges = false;
 
+
   if (!SNACSchemaAlignmentDialog.isSetUp()) {
      SNACSchemaAlignmentDialog.setUpTabs();
   }
+
+  $('.main-view-panel-tabs-snac').show();
+  $('.main-view-panel-tabs-wiki').hide();
+
   SNACSchemaAlignmentDialog.switchTab('#snac-schema-panel');
 
   // this._createDialog();
@@ -288,13 +328,17 @@ SNACSchemaAlignmentDialog._changesCleared = function() {
         .addClass('disabled');
 }
 
-SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled) {
+//format cells for columns
+SNACSchemaAlignmentDialog._createDraggableColumn = function(name, reconciled, org) {
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
   if (reconciled) {
     cell.addClass('wbs-reconciled-column');
   } else {
     cell.addClass('wbs-unreconciled-column');
   }
+  // cell.addClass(org);
+
+ // cell.addClass(columnType);
   return cell;
 }
 
