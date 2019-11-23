@@ -147,7 +147,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
   issuesElmts.invalidSchemaWarningIssues.text($.i18n('snac-schema/invalid-schema-warning-issues'));
 
-  
+
   /**
    * Init the preview tab
    */
@@ -316,6 +316,23 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
     alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
   }
 
+  var columns = theProject.columnModel.columns;
+  var dropDownValues = document.getElementsByClassName('selectColumn');
+  for (var i = 0; i != dropDownValues.length; i++){
+    console.log(columns[i].name + " : " + dropDownValues[i].value);
+    //console.log(dropDownValues[i].value);
+  }
+
+  // Insert duplicate and empty required field checks here
+
+  $.post(
+      "command/snac/resource",
+      dropDownValues,
+      function(data, status) {
+          console.log("Resource status: " + status);
+      });
+
+/*
   Refine.postProcess(
     "snac",
     "save-wikibase-schema",
@@ -335,7 +352,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
         alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
       },
     }
-  );
+  );*/
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {
