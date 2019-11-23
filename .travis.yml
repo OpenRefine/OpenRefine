@@ -9,6 +9,7 @@ jdk:
 branches:
   only:
   - capstone-testing
+  - capstone-master
 
 addons:
   mariadb: '10.0'

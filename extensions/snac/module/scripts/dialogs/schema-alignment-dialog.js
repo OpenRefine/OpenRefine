@@ -65,11 +65,14 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-schema-panel')
         .text($.i18n('snac-schema/schema-tab-header'))
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-issues-panel')
         .text($.i18n('snac-schema/warnings-tab-header')+' ')
         .appendTo(this._toolPanel);
@@ -83,6 +86,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .appendTo(issuesButton);
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel);
@@ -96,6 +100,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('snac-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
+  
+  
+  $('.main-view-panel-tabs-snac').hide();
+    
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SNACSchemaAlignmentDialog.switchTab(targetTab);
@@ -228,26 +236,16 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   });
 }
 
-// SNACSchemaAlignmentDialog.addDropdowns = function() {
-//   var columns = theProject.columnModel.columns;
-//   var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
-//   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
-//   this._dropdownArea.addClass("snac-tab");
-
-//   for (var i = 0; i < columns.length; i++) {
-//     //Create and append select list
-//     var selectList = document.createElement("select");
-//     selectList.setAttribute("id", "mySelect");
-//     this._dropdownArea.appendChild(selectList);
-
-//     //Create and append the options
-//     for (var j = 0; j < SNACcolumns.length; j++) {
-//         var option = document.createElement("option");
-//         option.setAttribute("value", SNACcolumns[j]);
-//         option.text = SNACcolumns[j];
-//         selectList.append(option);
+// SNACSchemaAlignmentDialog.switchbuttons = function() {
+//   if (document.getElementById('resourcebutton').checked) {
+//     // print text
+//   }
+//   else if (document.getElementById('constellationbutton').checked) {
+//     // print text
 //   }
 // }
+
+
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();
@@ -276,9 +274,14 @@ SNACSchemaAlignmentDialog.launch = function(onDone) {
   this._onDone = onDone;
   this._hasUnsavedChanges = false;
 
+
   if (!SNACSchemaAlignmentDialog.isSetUp()) {
      SNACSchemaAlignmentDialog.setUpTabs();
   }
+
+  $('.main-view-panel-tabs-snac').show();
+  $('.main-view-panel-tabs-wiki').hide();
+
   SNACSchemaAlignmentDialog.switchTab('#snac-schema-panel');
 
   // this._createDialog();
