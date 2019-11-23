@@ -116,12 +116,12 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var schemaTab = $(DOM.loadHTML("snac", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.dialogExplanation.text($.i18n('snac-schema/dialog-explanation'));
-  this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
-  schemaElmts.addItemButton.click(function(e) {
-    self._addItem();
-    SNACSchemaAlignmentDialog._hasChanged();
-    e.preventDefault();
-  });
+  // this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
+  // schemaElmts.addItemButton.click(function(e) {
+  //   self._addItem();
+  //   SNACSchemaAlignmentDialog._hasChanged();
+  //   e.preventDefault();
+  // });
   schemaElmts.saveButton
         .text($.i18n('snac-schema/save-button'))
         .attr('title', $.i18n('snac-schema/save-schema-alt'))
