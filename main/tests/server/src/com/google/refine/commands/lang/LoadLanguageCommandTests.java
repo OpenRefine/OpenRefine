@@ -58,9 +58,20 @@ public class LoadLanguageCommandTests extends CommandTestBase {
 		
 		JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
 		assertTrue(response.has("dictionary"));
-		assertEquals(response.get("lang").asText(), "foobar");
+		assertEquals(response.get("lang").asText(), "en");
 	}
-		
+	
+	@Test
+	public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
+	    when(request.getParameter("module")).thenReturn("core");
+	    when(request.getParameter("lang")).thenReturn("");
+	    
+	    command.doPost(request, response);
+	    
+	    JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertEquals(response.get("lang").asText(), "en");
+	}
 	
 	@Test
 	public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
