@@ -202,7 +202,6 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
         option.setAttribute("value", SNACcolumns[j]);
         option.text = SNACcolumns[j];
         option.classList.add("dropdown-option");
-
         selectList.append(option);
      }
   }
