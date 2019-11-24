@@ -58,6 +58,7 @@ function init() {
       [
         "scripts/menu-bar-extension.js",
         "scripts/dialogs/manage-key-dialog.js",
+        "scripts/dialogs/manage-upload-dialog.js",
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",
       /*  "scripts/warningsrenderer.js",
@@ -73,6 +74,7 @@ function init() {
       module,
       [
         "styles/dialogs/manage-key-dialog.less",
+        "styles/dialogs/manage-upload-dialog.less",
         "styles/dialogs/schema-alignment-dialog.css",
         /*"styles/dialogs/schema-alignment-dialog.css",
         "styles/dialogs/import-schema-dialog.less",
