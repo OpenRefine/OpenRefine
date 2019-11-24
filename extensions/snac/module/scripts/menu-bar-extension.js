@@ -100,11 +100,12 @@ $(function(){
                             ManageKeysDialog.launch(null, function(success) {}); 
                         }
                     },
-                    {},
                     {
                         id:"snac/perform-edits",
                         label: $.i18n('snac-extension/perform-edits-on-snac'),
-                        click: function() { /*PerformEditsDialog.checkAndLaunch();*/ }
+                        click: function() { /*PerformEditsDialog.checkAndLaunch();*/ 
+                            ManageUploadDialog.launch(null, function(success) {}); 
+                        }
                     },
                     {
                         id:"snac/export-qs",
