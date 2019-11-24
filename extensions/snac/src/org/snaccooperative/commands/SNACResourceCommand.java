@@ -2,6 +2,7 @@ package org.snaccooperative.commands;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,11 +14,18 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 
-public class SNACLoginCommand extends Command {
-
+public class SNACResourceCommand extends Command {
+    private String attribute;
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //HashMap<String, String> attribute = new HashMap<>();
+        String temp = request.getParameter("dict");
+        if (temp != null){
+          attribute = temp;
+        }
+        System.out.println(temp);
+        System.out.println(attribute);
         // String apikey = request.getParameter("snackey");
         // SNACConnector manager = SNACConnector.getInstance();
         // if (apikey != null) {
@@ -32,7 +40,7 @@ public class SNACLoginCommand extends Command {
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
 
         writer.writeStartObject();
-        writer.writeStringField("resource", "Hmm test");
+        writer.writeStringField("resource", attribute);
         writer.writeEndObject();
         writer.flush();
         writer.close();
