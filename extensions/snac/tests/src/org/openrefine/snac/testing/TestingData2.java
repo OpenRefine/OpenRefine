@@ -54,8 +54,6 @@ import com.google.refine.model.ReconCandidate;
 
 public class TestingData2 {
 
-    public static final String[] column_values = {"col1", "col2", "col3"};
-
     public static final String inceptionCsv = "subject,inception,reference\n"
             + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,";
     public static final String inceptionWithNewCsv = "subject,inception,reference\n"

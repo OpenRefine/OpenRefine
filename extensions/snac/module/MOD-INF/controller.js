@@ -46,7 +46,7 @@ function init() {
      */
     //RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
     //RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
-    //RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
+    RefineServlet.registerCommand(module, "resource", new SNACResourceCommand());
     RefineServlet.registerCommand(module, "apikey", new SNACLoginCommand());
 
     /*
