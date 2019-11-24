@@ -1,0 +1,67 @@
+var ManageUploadDialog = {};
+
+ManageUploadDialog.firstLogin = true;
+
+ManageUploadDialog.launch = function(apikey, callback) {
+   $.get(
+      "command/snac/apikey",
+       function(data) {
+        ManageUploadDialog.display(apikey, data.apikey, callback);
+          //callback(data.username);
+   });
+};
+
+ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
+  var self = this;
+  var frame = $(DOM.loadHTML("snac", "scripts/dialogs/manage-upload-dialog.html"));
+  var elmts = this._elmts = DOM.bind(frame);
+  
+  ManageUploadDialog.firstLaunch = false;
+
+  this._elmts.dialogHeader.text($.i18n('snac-upload/dialog-header'));
+  this._elmts.explainUpload.html($.i18n('snac-upload/explain-key'));
+  this._elmts.keyLabel.text($.i18n('snac-upload/key-label'));
+  //this._elmts.keyInput.text(saved_apikey);
+  // this._elmts.keyInput.text($.i18n('snac-upload/key-placeholder'));
+  //this._elmts.keyInput.attr("placeholder", $.i18n('snac-upload/key-placeholder'));
+  this._elmts.cancelButton.text($.i18n('snac-upload/close'));
+  this._elmts.uploadButton.text($.i18n('snac-upload/upload'));
+
+  if (apikey != null) {
+    this._elmts.keyInput.text(apikey);
+    // elmts.keyInput.val(apikey);
+    } else if (saved_apikey != null) {
+      this._elmts.keyInput.text(saved_apikey);
+      // elmts.keyInput.val(saved_apikey);
+    }
+  this._level = DialogSystem.showDialog(frame);
+
+  var dismiss = function() {
+    DialogSystem.dismissUntil(self._level - 1);
+  };
+
+  frame.find('.cancel-button').click(function() {
+     dismiss();
+    //  console.log(checked);
+     callback(null);
+    // callback(apikey);
+  });
+
+  elmts.upload.click(function() {
+      frame.hide();
+      $.post(
+          "command/snac/apikey",
+          elmts.apiKeyForm.serialize(),
+          function(data) {
+              if (data.apikey) {
+                alert(data.apikey);
+                dismiss();
+                callback(data.apikey);
+              } else {
+                alert(data.apikey);
+                dismiss();
+                callback(null);
+              }
+          });
+  });
+};
