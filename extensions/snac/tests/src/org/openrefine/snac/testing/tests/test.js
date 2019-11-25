@@ -37,57 +37,38 @@ const puppeteer = require("puppeteer");
   
 
           await page.goto(`http://127.0.0.1:3333/`);
-        //   var content = await page.content();
-        //   var jsonData = await page.evaluate(() => {
-        //     var allData = JSON.parse(document.querySelector("body").innerText);
-        //     var busId = allData['businessId'];
-        //     var jsonData = {};
-        //     jsonData['businessids'] = allData['businessId'];
-        //     jsonData['siteId'] = allData['siteId'];
-        //     var template = allData['soyTemplateName'];
-        //     if (template.includes('search')){
-        //       jsonData['searchId'] = allData['searchId'];
-        //     }
-        //     if (template.includes('directory')){
-        //       var crumbs = allData['crumbNames'];
-        //       var path = "";
-        //       for (var i=1; i < crumbs.length; i++){
-        //         if(i!=1)
-        //         {
-        //           path.concat("/");
-        //         }
-        //         path.concat(crumbs[i]);
-        //       }
-        //       jsonData['directoryPath'] = path;
-        //       jsonData['directoryId'] = allData['directoryId'];
-        //     }
-        //     if (template.includes('locationEntity')){
-        //       jsonData['pageSetId'] = allData['entitypagesetId'];
-        //       jsonData['ids'] = allData['profile']['meta']['yextId'];
-        //     }
-        //     return jsonData;
-        //   });
 
-        //   await page.goto(`${url}`);
+          console.log("hi");
+          var content = await page.content();
 
-        //   await page.exposeFunction('CalcEventNameForElement', (name, referrer, url) => {
-        //     let type = null;
-        //     let trackDetails = null;
-        //     let srcEl = null;
-        //     var data = {};
-        //     Object.assign(data, jsonData);
-        //     data['pagesReferrer'] = referrer;
-        //     data['pageurl'] = url;
-        //     var url = Analytics.trackEvent(name, data);
-        //     return url;
-        //   });
+        //   var projectURL = "";
 
+          var projectURL = await page.evaluate(() => {
+            let elements = $('.action-area-tab').toArray();
+            $(elements[1]).click(); 
+            console.log("asdfa");
+
+            let openProj = document.querySelectorAll('.project-name');
+            // console.log(openProj);
+            // console.log(openProj[0]);
+            // console.log(openProj[0].href);
+
+             return openProj[0].href;
+
+            // console.log("open");
+        });
+
+        await console.log(projectURL);
+
+        await page.goto(`${projectURL}`);
+
+
+
+        
         //   await page.evaluate(async () => {
 
         //     let names = [];
 
-        //     var pagesReferrer = window.document.referrer;
-        //     var pageurl = window.location.pathname;
 
         //     function SearchElementForSelector(el, s) {
         //       while (el && (el.tagName && !el.matches(s))) {
