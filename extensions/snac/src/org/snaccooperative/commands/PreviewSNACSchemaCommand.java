@@ -11,39 +11,21 @@ import org.snaccooperative.connection.SNACConnector;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
+import com.google.refine.commands.*;
 import com.google.refine.util.ParsingUtilities;
 
-//import org.snaccooperative.datamodel.Constellation;
-
-//import org.snaccooperative.datamodel.Resource;
-// import org.snaccooperative.data.SNACDate;
-import org.snaccooperative.data.Constellation; 
+import org.snaccooperative.data.EntityId;
 
 public class PreviewSNACSchemaCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String apikey = request.getParameter("snackey");
-        SNACConnector manager = SNACConnector.getInstance();
-        if (apikey != null) {
-            manager.saveKey(apikey);
-        } else if ("true".equals(request.getParameter("logout"))) {
-            manager.removeKey();
-        }
+        EntityId testEntityId = new EntityId();
+        String uri = "12345";
+        testEntityId.setURI(uri);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
-
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-
-        writer.writeStartObject();
-        writer.writeStringField("apikey", manager.getKey());
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
     }
 
     @Override
