@@ -59,12 +59,55 @@ public class CommandTest extends RefineTest{
     protected StringWriter writer = null;
     protected Command command = null;
 
-    @Test
-    public void testGson() throws Exception{
-      Gson bruh = new Gson();
-      String a="";
-      Assert.assertTrue(a.equals(""));
-    }
+        @Test
+        public void testGson() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 1760004979705}";
+          Project proj = test.fromJson(a,Project.class);
+          Assert.assertNotNull(proj);
+        }
+
+        @Test
+        public void testGsonFields() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}";
+          Project proj = test.fromJson(a,Project.class);
+          Assert.assertTrue(proj.id==420);
+        }
+
+        @Test
+        public void testGsonEquivalence() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}";
+          Project proj = test.fromJson(a,Project.class);
+          Project abc = new Project();
+          Assert.assertFalse(abc.id==proj.id);
+        }
+
+        @Test
+        public void testGsonFailure() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}}";
+          try{
+            Project proj = test.fromJson(a,Project.class);
+            Assert.assertTrue(a.equals("{\"id\": 420}"));
+          }catch(Exception e){
+              Assert.assertTrue(a.equals("{\"id\": 420}}"));
+          }
+        }
+
+        @Test
+        public void testGsonInvalid() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": \"\"}";
+          try{
+            Project proj = test.fromJson(a,Project.class);
+            Assert.assertTrue(a.equals("{\"id\": 1}"));
+          }catch(Exception e){
+              Assert.assertTrue(a.equals("{\"id\": \"\"}"));
+          }
+        }
+
 
     /*
     * Test API calls for recently published
