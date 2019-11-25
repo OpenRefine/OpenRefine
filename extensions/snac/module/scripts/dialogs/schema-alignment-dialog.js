@@ -155,7 +155,6 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
   issuesElmts.invalidSchemaWarningIssues.text($.i18n('snac-schema/invalid-schema-warning-issues'));
 
-  
   /**
    * Init the preview tab
    */
@@ -210,6 +209,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
         option.setAttribute("value", SNACcolumns[j]);
         option.text = SNACcolumns[j];
         option.classList.add("dropdown-option");
+
         selectList.append(option);
      }
   }
@@ -245,7 +245,26 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
 //   }
 // }
 
+// SNACSchemaAlignmentDialog.addDropdowns = function() {
+//   var columns = theProject.columnModel.columns;
+//   var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+//   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+//   this._dropdownArea.addClass("snac-tab");
 
+//   for (var i = 0; i < columns.length; i++) {
+//     //Create and append select list
+//     var selectList = document.createElement("select");
+//     selectList.setAttribute("id", "mySelect");
+//     this._dropdownArea.appendChild(selectList);
+
+//     //Create and append the options
+//     for (var j = 0; j < SNACcolumns.length; j++) {
+//         var option = document.createElement("option");
+//         option.setAttribute("value", SNACcolumns[j]);
+//         option.text = SNACcolumns[j];
+//         selectList.append(option);
+//   }
+// }
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();
@@ -318,6 +337,23 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
     alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
   }
 
+  var columns = theProject.columnModel.columns;
+  var dropDownValues = document.getElementsByClassName('selectColumn');
+  for (var i = 0; i != dropDownValues.length; i++){
+    console.log(columns[i].name + " : " + dropDownValues[i].value);
+    //console.log(dropDownValues[i].value);
+  }
+
+  // Insert duplicate and empty required field checks here
+
+  $.post(
+      "command/snac/resource",
+      dropDownValues,
+      function(data, status) {
+          console.log("Resource status: " + status);
+      });
+
+/*
   Refine.postProcess(
     "snac",
     "save-wikibase-schema",
@@ -337,7 +373,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
         alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
       },
     }
-  );
+  );*/
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {
