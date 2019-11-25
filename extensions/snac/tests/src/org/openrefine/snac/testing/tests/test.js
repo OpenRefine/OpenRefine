@@ -6,6 +6,10 @@
 
 // note: must be running ./refine first
 
+// extensions/snac/tests/src/org/openrefine/snac/testing/tests
+
+// node extensions/snac/tests/src/org/openrefine/snac/testing/tests/test.js
+
 // other useful examples: https://developers.google.com/web/tools/puppeteer/examples
 
 const puppeteer = require("puppeteer");
@@ -56,157 +60,34 @@ const puppeteer = require("puppeteer");
              return openProj[0].href;
 
             // console.log("open");
-        });
+          });
 
         await console.log(projectURL);
 
         await page.goto(`${projectURL}`);
 
+        await page.evaluate( () => {
+          // let elements = document.getElementById( 'extension-bar-menu-container' );
+          let button = document.getElementById('extension-bar-menu-container');
+          // $(button[0]).click(); 
+          console.log(button.childNodes.length);
+        });
+        // await page.evaluate(() => {
+        //   console.log("peepeepoopoo")
+        //   let elements = $('#extension-bar-menu-container').toArray();
+        //   let button = elements[0].children.get;
+        //   // $(button[0]).click(); 
+        //   // console.log(button);
+        //   console.log(button);
+        //   // console.log(elements[0].children);
+        //   // console.log(elements[0].childNodes[0]);
 
 
-        
-        //   await page.evaluate(async () => {
+        // });
 
-        //     let names = [];
+        // const selectElem = await page.$('div[name="menu-container"]');
+        // await selectElem.type('Upload edits to SNAC');
 
-
-        //     function SearchElementForSelector(el, s) {
-        //       while (el && (el.tagName && !el.matches(s))) {
-        //         el = el.parentNode;
-        //       }
-
-        //       if (el && el.tagName && el.matches(s)) {
-        //         return el;
-        //       }
-        //       return null;
-        //     }
-
-        //     function GetParams(url) {
-        //       let queries = {};
-        //       let parts = url.split('?');
-        //       if (parts.length == 2) {
-        //         parts[1].split('&').forEach((pair)=>{
-        //           let params = pair.split('=');
-        //           queries[params[0]] = params[1];
-        //         });
-        //       }
-        //       return queries;
-        //     }
-        //     function CheckAnchorQueries(anchor) {
-        //       if (anchor && anchor.href) {
-        //         let eName = GetParams(anchor.href)['ya-track'];
-        //         if (eName) {
-        //           return eName;
-        //         }
-        //       }
-        //       return false;
-        //     }
-        //     let SelectorTracking = {};
-
-        //     var events = document.querySelectorAll('button, a, input');
-
-        //     events.forEach(function(element){
-        //       try {
-        //         let type = null;
-        //         let trackDetails = null;
-        //         let srcEl = null;
-
-        //         for (const selector in SelectorTracking) {
-        //           if (!element.matches(selector)) continue;
-        //           trackDetails = SelectorTracking[selector];
-        //         }
-
-        //         if (!trackDetails) {
-        //           let potentialYaTrackedEl = SearchElementForSelector(element, '[data-ya-track]');
-        //           if (potentialYaTrackedEl) {
-        //             srcEl = potentialYaTrackedEl;
-        //             trackDetails = (potentialYaTrackedEl.dataset ? potentialYaTrackedEl.dataset.yaTrack : potentialYaTrackedEl.getAttribute('data-ya-track'));
-        //           }
-        //         }
-
-        //         let preventDefaultEvent = SearchElementForSelector(element, '[data-ya-prevent-default]');
-
-        //         let vectorMap = SearchElementForSelector(element, '.VectorMap-link');
-
-        //         if (!preventDefaultEvent && !trackDetails && !vectorMap) {
-        //           let anchor = SearchElementForSelector(element, 'a');
-        //           if (anchor) {
-        //             srcEl = anchor;
-        //             let anchorQuery = CheckAnchorQueries(anchor);
-        //             if (anchorQuery) trackDetails = anchorQuery;
-        //             if (!anchorQuery && !trackDetails) {
-        //               type = 'link';
-        //             }
-        //           }
-        //         }
-
-        //         if (!preventDefaultEvent && !trackDetails && !type && !vectorMap) {
-        //           let button = SearchElementForSelector(element, 'button');
-        //           if (button) {
-        //             srcEl = button;
-        //             type = 'button';
-        //           }
-        //         }
-
-        //         if (!preventDefaultEvent && !trackDetails && !type && !vectorMap) {
-        //           let input = SearchElementForSelector(element, 'input');
-        //           if (input && input.type != 'hidden') {
-        //             srcEl = input;
-        //             type = 'input';
-        //           }
-        //         }
-
-        //         let dataYaTrack = type || trackDetails;
-        //         let name = null;
-
-        //         if(dataYaTrack)
-        //         {
-        //           let scopeAncestors = [];
-        //           while (element && element.tagName) {
-        //             if (element.matches('[data-ya-scope]')) {
-        //               scopeAncestors.push(element);
-        //             }
-        //             element = element.parentNode;
-        //           }
-
-        //           let tags = [srcEl].concat(scopeAncestors);
-        //             for (const [hierarchyIdx, hierarchyElement] of tags.entries()) {
-        //               let tagVal = (hierarchyIdx == 0) ? dataYaTrack : (hierarchyElement.dataset ? hierarchyElement.dataset.yaScope : hierarchyElement.getAttribute('data-ya-scope'))
-        //               if (tagVal.indexOf('#') > -1) {
-        //                 let attributeName = hierarchyIdx == 0 ? 'data-ya-track': 'data-ya-scope';
-        //                 let ancestor = (hierarchyIdx + 1 < tags.length) ? tags[hierarchyIdx + 1]: document;
-        //                 let siblings = Array.from(ancestor.querySelectorAll(`[${attributeName}='${tagVal}']`));
-        //                 for (const [siblingIdx, sibling] of siblings.entries()) {
-        //                   if (hierarchyElement == sibling) {
-        //                     tagVal = tagVal.replace('#', siblingIdx + 1);
-        //                     break;
-        //                   }
-        //                 }
-        //               }
-        //               tags[hierarchyIdx] = tagVal;
-        //             }
-        //             let name = tags.reverse().join('_');
-        //             names.push(name);
-        //         }
-        //       } catch (err){
-        //         console.log(err);
-        //       }
-        //       });
-        //       names.forEach(function(name){
-        //         var url = window.CalcEventNameForElement(name, pagesReferrer, pageurl);
-        //         url.then(data => {
-        //           const px = document.createElement("img");
-        //           px.src = data;
-        //           px.style.width = '0';
-        //           px.style.height = '0';
-        //           px.style.position = 'absolute';
-        //           px.alt = '';
-        //           document.body.appendChild(px);
-        //           return px;
-        //         });
-        //       });
-
-        //   });
           await page.waitFor(100000);
           await browser.close();
           console.log("Browser Closed");
