@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.gson.Gson;
 
 import org.apache.http.*;
 import org.apache.http.util.EntityUtils;
@@ -69,6 +70,55 @@ public class CommandTest extends RefineTest{
       testEntity.setURI("12345");
       Assert.assertEquals(testEntity.getURI(), "12345");
     }
+
+        @Test
+        public void testGson() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 1760004979705}";
+          Project proj = test.fromJson(a,Project.class);
+          Assert.assertNotNull(proj);
+        }
+
+        @Test
+        public void testGsonFields() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}";
+          Project proj = test.fromJson(a,Project.class);
+          Assert.assertTrue(proj.id==420);
+        }
+
+        @Test
+        public void testGsonEquivalence() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}";
+          Project proj = test.fromJson(a,Project.class);
+          Project abc = new Project();
+          Assert.assertFalse(abc.id==proj.id);
+        }
+
+        @Test
+        public void testGsonFailure() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}}";
+          try{
+            Project proj = test.fromJson(a,Project.class);
+            Assert.assertTrue(a.equals("{\"id\": 420}"));
+          }catch(Exception e){
+              Assert.assertTrue(a.equals("{\"id\": 420}}"));
+          }
+        }
+
+        @Test
+        public void testGsonInvalid() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": \"\"}";
+          try{
+            Project proj = test.fromJson(a,Project.class);
+            Assert.assertTrue(a.equals("{\"id\": 1}"));
+          }catch(Exception e){
+              Assert.assertTrue(a.equals("{\"id\": \"\"}"));
+          }
+        }
 
     @Test
     public void testEntityIdID() throws Exception{
@@ -99,6 +149,7 @@ public class CommandTest extends RefineTest{
       testEntity.setText("123");
       Assert.assertEquals(testEntity.toString(), "EntityID: 123");
     }
+
     /*
     * Test API calls for recently published
     */
@@ -345,7 +396,7 @@ public class CommandTest extends RefineTest{
     }
 
     /*
-    * Test API calls for download 
+    * Test API calls for download
     */
     @Test
     public void testConstellationDownload() throws Exception{
@@ -357,6 +408,6 @@ public class CommandTest extends RefineTest{
         Assert.assertFalse(result.contains("text/xml"));
     }
 
-    
+
 
 }

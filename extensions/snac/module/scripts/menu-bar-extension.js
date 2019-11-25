@@ -31,10 +31,9 @@ ExporterManager.MenuItems.push(
             click: function() { /*WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements");*/ }
         });
 
-/*
-WikibaseExporterMenuBar = {};
+SNACExporterMenuBar = {};
 
-WikibaseExporterMenuBar.exportTo = function(format) {
+SNACExporterMenuBar.exportTo = function(format) {
     var targetUrl = null;
     if (format ==="quickstatements") {
         targetUrl = "statements.txt";
@@ -67,19 +66,18 @@ WikibaseExporterMenuBar.exportTo = function(format) {
     document.body.removeChild(form);
 };
 
-WikibaseExporterMenuBar.checkSchemaAndExport = function(format) {
+SNACExporterMenuBar.checkSchemaAndExport = function(format) {
   var onSaved = function(callback) {
-     WikibaseExporterMenuBar.exportTo(format);
+     SNACExporterMenuBar.exportTo(format);
   };
-  if (!SchemaAlignmentDialog.isSetUp()) {
-     SchemaAlignmentDialog.launch(null);
-  } else if (SchemaAlignmentDialog._hasUnsavedChanges) {
-     SchemaAlignmentDialog._save(onSaved);
+  if (!SNACSchemaAlignmentDialog.isSetUp()) {
+     SNACSchemaAlignmentDialog.launch(null);
+  } else if (SNACSchemaAlignmentDialog._hasUnsavedChanges) {
+     SNACSchemaAlignmentDialog._save(onSaved);
   } else {
      onSaved();
   }
 }
-*/
 
 //extend the column header menu
 $(function(){
@@ -96,8 +94,8 @@ $(function(){
                     {
                         id:"snac/api-key",
                         label: $.i18n('snac-extension/manage-api-key'),
-                        click: function() { 
-                            ManageKeysDialog.launch(null, function(success) {}); 
+                        click: function() {
+                            ManageKeysDialog.launch(null, function(success) {});
                         }
                     },
                     {
@@ -108,9 +106,9 @@ $(function(){
                         }
                     },
                     {
-                        id:"snac/export-qs",
+                        id:"snac/export-schema",
                         label: $.i18n('snac-extension/export-to-json'),
-                        click: function() { /*WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements");*/ }
+                        click: function() { SNACExporterMenuBar.checkSchemaAndExport("schema"); }
                     },
 
                 ]
