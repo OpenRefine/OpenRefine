@@ -125,13 +125,13 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   schemaElmts.saveButton
         .text($.i18n('snac-schema/save-button'))
         .attr('title', $.i18n('snac-schema/save-schema-alt'))
-        .prop('disabled', true)
+        .prop('disabled', false)
         .addClass('disabled')
         .click(function() { SNACSchemaAlignmentDialog._save(); });
   schemaElmts.discardButton
         .text($.i18n('snac-schema/discard-button'))
         .attr('title', $.i18n('snac-schema/discard-schema-changes-alt'))
-        .prop('disabled', true)
+        .prop('disabled', false)
         .addClass('disabled')
         .click(function() { SNACSchemaAlignmentDialog._discardChanges(); });
 
@@ -317,17 +317,22 @@ var beforeUnload = function(e) {
 $(window).bind('beforeunload', beforeUnload);
 
 SNACSchemaAlignmentDialog._reset = function(schema) {
-  this._originalSchema = schema || { itemDocuments: [] };
-  this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
-  this._copiedReference = null;
-
-  $('#schema-alignment-statements-container').empty();
-
-  if (this._schema && this._schema.itemDocuments) {
-    for(var i = 0; i != this._schema.itemDocuments.length; i++) {
-      this._addItem(this._schema.itemDocuments[i]);
-    }
-  }
+  // this._originalSchema = schema || { itemDocuments: [] };
+  // this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
+  // this._copiedReference = null;
+  //
+  // $('#schema-alignment-statements-container').empty();
+  //
+  // if (this._schema && this._schema.itemDocuments) {
+  //   for(var i = 0; i != this._schema.itemDocuments.length; i++) {
+  //     this._addItem(this._schema.itemDocuments[i]);
+  //   }
+  // }
+  $.get(
+      "command/snac/resource",
+      function(data) {
+         console.log("Resource status: " + data.resource);
+      });
 };
 
 SNACSchemaAlignmentDialog._save = function(onDone) {
