@@ -51,7 +51,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
 import org.snaccooperative.data.EntityId;
-import org.snaccooperative.data.Term;
 
 public class CommandTest extends RefineTest{
 
@@ -62,9 +61,7 @@ public class CommandTest extends RefineTest{
     protected Command command = null;
     protected EntityId entityId = null;
 
-    /*
-    * Test API calls for recently published
-    */
+    /*Test EntityID and various fields from SNAC datamodel */
 
     @Test
     public void testEntityIdURI() throws Exception{
@@ -102,7 +99,9 @@ public class CommandTest extends RefineTest{
       testEntity.setText("123");
       Assert.assertEquals(testEntity.toString(), "EntityID: 123");
     }
-
+    /*
+    * Test API calls for recently published
+    */
     @Test
     public void testRecentlyPublished() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
