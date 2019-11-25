@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 
-public class SNACLoginCommand extends Command {
+public class SNACResourceCommand extends Command {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
