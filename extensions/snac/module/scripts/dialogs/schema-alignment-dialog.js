@@ -347,28 +347,21 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
   var dropDownValues = document.getElementsByClassName('selectColumn');
   var dict = {};
   for (var i = 0; i != dropDownValues.length; i++){
-    console.log(columns[i].name + " : " + dropDownValues[i].value);
-    //console.log(dropDownValues[i].value);
-    dict[columns[i].name] = dropDownValues[i].value;
-  }
+      console.log(columns[i].name + " : " + dropDownValues[i].value);
+      //console.log(dropDownValues[i].value);
+      dict[columns[i].name] = dropDownValues[i].value;
+    }
 
-  // Insert duplicate and empty required field checks here
-  $.post(
-      "command/snac/resource",
-      {
-        "dict": JSON.stringify(dict),
-        "project": JSON.stringify(theProject)
-      },
-      function(data, status) {
-         console.log("Resource status: " + data.resource);
-      });
-/*
-      $.ajax({
-  url: '/command/snac/resource',
-  type: 'POST',
-  data: {"dict": JSON.stringify(dict), "project": theProject},
-  processData: false
-});*/
+    // Insert duplicate and empty required field checks here
+    $.post(
+        "command/snac/resource",
+        {
+          "dict": JSON.stringify(dict),
+          "project": JSON.stringify(theProject)
+        },
+        function(data, status) {
+           console.log("Resource status: " + data.resource);
+        });
 /*
   Refine.postProcess(
     "snac",

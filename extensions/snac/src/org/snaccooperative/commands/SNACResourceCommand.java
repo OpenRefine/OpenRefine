@@ -15,6 +15,8 @@ import org.snaccooperative.connection.SNACConnector;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
+import com.google.gson.Gson;
+import com.google.refine.model.Project;
 
 public class SNACResourceCommand extends Command {
     private String attribute;
@@ -26,10 +28,11 @@ public class SNACResourceCommand extends Command {
         if (temp != null){
           attribute = temp;
         }
-        Gson g = new Gson();
-        String jsonString = request.getParameter("project");
-        Project p = g.fromJson(jsonString, Project.class);
-        System.out.println(p);
+        String resource = request.getParameter("project");
+        resource = resource.replaceAll("\"\\{\\}\"","\\{\\}");
+        Gson bruh = new Gson();
+        Project reee = bruh.fromJson(resource,Project.class);
+        System.out.println(reee);
         System.out.println(temp);
         System.out.println(attribute);
         // String apikey = request.getParameter("snackey");
