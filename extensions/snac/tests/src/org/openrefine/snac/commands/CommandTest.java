@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.snac.commands;
+package org.snaccooperative.commands;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,10 +39,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
 import com.google.gson.Gson;
+import com.google.refine.util.ParsingUtilities;
 
 import org.apache.http.*;
 import org.apache.http.util.EntityUtils;
@@ -63,6 +67,64 @@ public class CommandTest extends RefineTest{
     protected EntityId entityId = null;
 
     /*Test EntityID and various fields from SNAC datamodel */
+
+    @BeforeMethod
+    public void SetUp() {
+        command = new SNACResourceCommand();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+
+        when(request.getParameter("dict")).thenReturn("{\"col1\":\"snaccol1\", \"col2\":\"snaccol2\", \"col3\":\"snaccol3\"}");
+
+        try {
+            when(response.getWriter()).thenReturn(printWriter);
+        } catch (IOException e1) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testResourceGlobalOne() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertTrue(response_str.contains("col1"));
+    }
+
+    @Test
+    public void testResourceGlobalFalseFive() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertFalse(response_str.contains("col5"));
+    }
+
+
+    @Test
+    public void testResourceGlobalTwo() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertTrue(response_str.contains("col2"));
+    }
+
+    @Test
+    public void testResourceGlobalThree() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertTrue(response_str.contains("col3"));
+    }
+
+    @Test
+    public void testResourceGlobalFalseFour() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertFalse(response_str.contains("col4"));
+    }
 
     @Test
     public void testEntityIdURI() throws Exception{
@@ -407,7 +469,6 @@ public class CommandTest extends RefineTest{
         String result = EntityUtils.toString(response.getEntity());
         Assert.assertFalse(result.contains("text/xml"));
     }
-
 
 
 }
