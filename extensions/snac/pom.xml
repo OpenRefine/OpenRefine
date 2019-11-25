@@ -76,6 +76,29 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+          <execution>
+            <id>install-snaccooperative-datamodel</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <file>${basedir}/lib-local/datamodel-1.0.jar</file>
+              <repositoryLayout>default</repositoryLayout>
+              <groupId>org.snaccooperative.data</groupId>
+              <artifactId>snaccooperative-data</artifactId>
+              <version>1.0</version>
+              <packaging>jar</packaging>
+              <generatePom>true</generatePom>
+            </configuration>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -103,6 +126,12 @@
 		    <artifactId>gson</artifactId>
 		    <version>2.8.5</version>
 		</dependency>
+    <dependency>
+      <groupId>org.snaccooperative.data</groupId>
+      <artifactId>snaccooperative-data</artifactId>
+      <version>1.0</version>
+    </dependency>
+
     <!-- testing dependencies -->
 
     <dependency>
