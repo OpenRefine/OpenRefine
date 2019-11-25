@@ -50,6 +50,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.data.EntityId;
+
 public class CommandTest extends RefineTest{
 
     protected Project project = null;
@@ -57,11 +59,49 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
+    protected EntityId entityId = null;
 
+    /*Test EntityID and various fields from SNAC datamodel */
+
+    @Test
+    public void testEntityIdURI() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setURI("12345");
+      Assert.assertEquals(testEntity.getURI(), "12345");
+    }
+
+    @Test
+    public void testEntityIdID() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setID(123);
+      Assert.assertEquals(testEntity.getID(), 123);
+    }
+
+    @Test
+    public void testEntityIdText() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("I like pizza");
+      Assert.assertEquals(testEntity.getText(), "I like pizza");
+    }
+
+    @Test
+    public void testEntityIdEquals() throws Exception{
+      EntityId testEntity1 = new EntityId();
+      testEntity1.setID(123);
+      EntityId testEntity2 = new EntityId();
+      testEntity2.setID(456);
+      Assert.assertFalse(testEntity1.equals(testEntity2));
+    }
+
+    @Test
+    public void testEntityToString() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("123");
+      Assert.assertEquals(testEntity.toString(), "EntityID: 123");
+    }
     /*
     * Test API calls for recently published
     */
-
     @Test
     public void testRecentlyPublished() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
