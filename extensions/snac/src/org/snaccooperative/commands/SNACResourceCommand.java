@@ -20,6 +20,7 @@ import com.google.refine.model.Project;
 
 public class SNACResourceCommand extends Command {
     private String attribute;
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
