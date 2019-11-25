@@ -73,20 +73,11 @@
   font-weight: normal;
 }
 
-.schema-alignment-dialog-columns-area.snac-tab{
-  border: 1px solid #bcf;
-  border-left: 0;
-  border-right: 0;
-  padding: 5px;
-  overflow-y: auto;
-  display: flex;
-  width: 150px;
-  flex-direction: column;
-  max-height: none;
+.ref-table-header{
+  background-color: #9bcaf2;
 }
 
-.schema-alignment-dialog-columns-area--ref.snac-tab{
-  border: 1px solid #bcf;
+.schema-alignment-dialog-columns-area.snac-tab{
   border-left: 0;
   border-right: 0;
   padding: 5px;
@@ -95,6 +86,34 @@
   width: 150px;
   flex-direction: column;
   max-height: none;
+  margin-left: 1%;
+}
+
+.schema-alignment-dialog-dropdown-area{
+  display: flex;
+  flex-direction: column;
+}
+
+.selectColumn{
+  height: 20px;
+  margin-top: 5px;
+}
+
+.selectColumn:first-of-type{
+  margin-top: 9px;
+}
+
+
+.schema-alignment-dialog-columns-area--ref.snac-tab{
+  border-left: 0;
+  border-right: 0;
+  padding: 5px;
+  overflow-y: auto;
+  display: flex;
+  width: 150px;
+  flex-direction: column;
+  max-height: none;
+  margin-left: 10%;
 }
 
 .snac-columns-container{

@@ -46,7 +46,7 @@ function init() {
      */
     //RefineServlet.registerCommand(module, "save-wikibase-schema", new SaveWikibaseSchemaCommand());
     //RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
-    //RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
+    RefineServlet.registerCommand(module, "resource", new SNACResourceCommand());
     RefineServlet.registerCommand(module, "apikey", new SNACLoginCommand());
 
     /*
@@ -58,6 +58,7 @@ function init() {
       [
         "scripts/menu-bar-extension.js",
         "scripts/dialogs/manage-key-dialog.js",
+        "scripts/dialogs/manage-upload-dialog.js",
         "scripts/dialogs/schema-alignment-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",
       /*  "scripts/warningsrenderer.js",
@@ -73,6 +74,7 @@ function init() {
       module,
       [
         "styles/dialogs/manage-key-dialog.less",
+        "styles/dialogs/manage-upload-dialog.less",
         "styles/dialogs/schema-alignment-dialog.css",
         /*"styles/dialogs/schema-alignment-dialog.css",
         "styles/dialogs/import-schema-dialog.less",
