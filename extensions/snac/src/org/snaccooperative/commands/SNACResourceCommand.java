@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 
+import com.google.refine.model.Project;
+import com.google.gson.Gson;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,10 @@ public class SNACResourceCommand extends Command {
         if (temp != null){
           attribute = temp;
         }
+        Gson g = new Gson();
+        String jsonString = request.getParameter("project");
+        Project p = g.fromJson(jsonString, Project.class);
+        System.out.println(p);
         System.out.println(temp);
         System.out.println(attribute);
         // String apikey = request.getParameter("snackey");

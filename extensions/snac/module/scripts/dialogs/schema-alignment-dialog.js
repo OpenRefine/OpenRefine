@@ -100,10 +100,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('snac-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
-  
-  
+
+
   $('.main-view-panel-tabs-snac').hide();
-    
+
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SNACSchemaAlignmentDialog.switchTab(targetTab);
@@ -353,16 +353,22 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
   }
 
   // Insert duplicate and empty required field checks here
-
   $.post(
       "command/snac/resource",
       {
-        "dict": JSON.stringify(dict)
+        "dict": JSON.stringify(dict),
+        "project": JSON.stringify(theProject)
       },
       function(data, status) {
          console.log("Resource status: " + data.resource);
       });
-
+/*
+      $.ajax({
+  url: '/command/snac/resource',
+  type: 'POST',
+  data: {"dict": JSON.stringify(dict), "project": theProject},
+  processData: false
+});*/
 /*
   Refine.postProcess(
     "snac",
