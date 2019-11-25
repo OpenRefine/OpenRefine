@@ -100,10 +100,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('snac-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
-  
-  
+
+
   $('.main-view-panel-tabs-snac').hide();
-    
+
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SNACSchemaAlignmentDialog.switchTab(targetTab);
@@ -340,20 +340,23 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
 
   var columns = theProject.columnModel.columns;
   var dropDownValues = document.getElementsByClassName('selectColumn');
+  var dict = {};
   for (var i = 0; i != dropDownValues.length; i++){
-    console.log(columns[i].name + " : " + dropDownValues[i].value);
-    //console.log(dropDownValues[i].value);
-  }
+      console.log(columns[i].name + " : " + dropDownValues[i].value);
+      //console.log(dropDownValues[i].value);
+      dict[columns[i].name] = dropDownValues[i].value;
+    }
 
-  // Insert duplicate and empty required field checks here
-
-  $.post(
-      "command/snac/resource",
-      dropDownValues,
-      function(data, status) {
-          console.log("Resource status: " + status);
-      });
-
+    // Insert duplicate and empty required field checks here
+    $.post(
+        "command/snac/resource",
+        {
+          "dict": JSON.stringify(dict),
+          "project": JSON.stringify(theProject)
+        },
+        function(data, status) {
+           console.log("Resource status: " + data.resource);
+        });
 /*
   Refine.postProcess(
     "snac",

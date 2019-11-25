@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.gson.Gson;
 
 import org.apache.http.*;
 import org.apache.http.util.EntityUtils;
@@ -57,6 +58,13 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
+
+    @Test
+    public void testGson() throws Exception{
+      Gson bruh = new Gson();
+      String a="";
+      Assert.assertTrue(a.equals(""));
+    }
 
     /*
     * Test API calls for recently published
@@ -305,7 +313,7 @@ public class CommandTest extends RefineTest{
     }
 
     /*
-    * Test API calls for download 
+    * Test API calls for download
     */
     @Test
     public void testConstellationDownload() throws Exception{
@@ -317,6 +325,6 @@ public class CommandTest extends RefineTest{
         Assert.assertFalse(result.contains("text/xml"));
     }
 
-    
+
 
 }
