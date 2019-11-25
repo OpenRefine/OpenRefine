@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2d1181ce-8fd4-409d-8dcc-3a493e072d68" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/extensions/snac/module/scripts/dialogs/schema-alignment-dialog.js" beforeDir="false" afterPath="$PROJECT_DIR$/extensions/snac/module/scripts/dialogs/schema-alignment-dialog.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extensions/snac/src/org/snaccooperative/commands/SNACResourceCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/extensions/snac/src/org/snaccooperative/commands/SNACResourceCommand.java" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/extensions/snac/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/snac/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/gdata/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/gdata/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/jython/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/jython/target/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <ignored path="$PROJECT_DIR$/packaging/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/pc-axis/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/pc-axis/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/phonetic/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/phonetic/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/database/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/database/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/wikidata/module/MOD-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/extensions/wikidata/target/" />
+    <ignored path="$PROJECT_DIR$/extensions/target/" />
+    <ignored path="$PROJECT_DIR$/main/webapp/WEB-INF/classes/" />
+    <ignored path="$PROJECT_DIR$/main/target/" />
+    <ignored path="$PROJECT_DIR$/server/classes/" />
+    <ignored path="$PROJECT_DIR$/server/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/extensions/snac/tests/src/org/openrefine/snac/commands/CommandTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="346">
+              <caret line="54" column="37" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/extensions/snac/module/scripts/connector.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="207">
+              <caret line="66" column="45" selection-start-line="66" selection-start-column="45" selection-end-line="66" selection-end-column="45" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2457#2458#0" expanded="true" />
+                <element signature="e#2500#2501#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="XSLT Stylesheet" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/extensions/snac/module/scripts/john-test-snac-api.html" />
+        <option value="$PROJECT_DIR$/extensions/snac/module/scripts/john-test-snac-api.js" />
+        <option value="$PROJECT_DIR$/extensions/snac/module/scripts/john-test-snac-api.java" />
+        <option value="$PROJECT_DIR$/extensions/snac/module/scripts/thing.java" />
+        <option value="$PROJECT_DIR$/extensions/snac/tests/src/org/openrefine/snac/commands/CommandTest.java" />
+        <option value="$PROJECT_DIR$/extensions/snac/module/scripts/connector.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="721" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="module" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="module" type="462c0819:PsiDirectoryNode" />
+              <item name="scripts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="openrefine" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpenRefine" type="462c0819:PsiDirectoryNode" />
+              <item name="extensions" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="snac" type="462c0819:PsiDirectoryNode" />
+              <item name="commands" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1574659799064" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="CommandTest.testRecentlyPublished" type="TestNG">
+      <module name="snac" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.openrefine.snac.commands.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.openrefine.snac.commands" />
+      <option name="MAIN_CLASS_NAME" value="org.openrefine.snac.commands.CommandTest" />
+      <option name="METHOD_NAME" value="testRecentlyPublished" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2d1181ce-8fd4-409d-8dcc-3a493e072d68" name="Default Changelist" comment="" />
+      <created>1574636524402</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1574636524402</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-2" y="23" width="1280" height="721" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30048466" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Capture Tool" order="5" />
+      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info active="true" anchor="bottom" id="Messages" order="10" visible="true" weight="0.3290938" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/extensions/snac/module/scripts/issues-tab.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extensions/snac/module/scripts/schema-alignment-tab.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/src/com/google/util/logging/IndentingLayout.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="36" column="23" selection-start-line="36" selection-start-column="23" selection-end-line="36" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extensions/snac/module/scripts/connector.class" />
+    <entry file="file://$PROJECT_DIR$/extensions/snac/module/scripts/thing.java" />
+    <entry file="file://$PROJECT_DIR$/extensions/snac/tests/src/org/openrefine/snac/commands/CommandTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="346">
+          <caret line="54" column="37" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/tests/server/src/com/google/refine/tests/importers/ExcelImporterTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="63" column="34" selection-start-line="63" selection-start-column="34" selection-end-line="63" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extensions/snac/module/scripts/connector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="66" column="45" selection-start-line="66" selection-start-column="45" selection-end-line="66" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2457#2458#0" expanded="true" />
+            <element signature="e#2500#2501#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

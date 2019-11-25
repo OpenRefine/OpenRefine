@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="server" scope="PROVIDED" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty:6.1.22" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty-util:6.1.22" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.codeberry.jdatapath:jdatapath:alpha2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: edu.mit.simile:butterfly:1.0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mozilla:rhino:1.7.10" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-log4j12:1.7.18" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: log4j:log4j:1.2.17" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.7.18" level="project" />
+  </component>
+</module>

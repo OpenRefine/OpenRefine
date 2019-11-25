@@ -349,7 +349,9 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
 
   $.post(
       "command/snac/resource",
-      dropDownValues,
+      {
+        "data": "random"
+      },
       function(data, status) {
           console.log("Resource status: " + status);
       });

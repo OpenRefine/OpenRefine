@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="database" />
+        <module name="gdata" />
+        <module name="jython" />
+        <module name="main" />
+        <module name="packaging" />
+        <module name="pc-axis" />
+        <module name="phonetic" />
+        <module name="server" />
+        <module name="snac" />
+        <module name="wikidata" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="database" target="1.8" />
+      <module name="extensions" target="1.8" />
+      <module name="gdata" target="1.8" />
+      <module name="jython" target="1.8" />
+      <module name="main" target="1.8" />
+      <module name="openrefine" target="1.8" />
+      <module name="packaging" target="1.8" />
+      <module name="pc-axis" target="1.8" />
+      <module name="phonetic" target="1.8" />
+      <module name="server" target="1.8" />
+      <module name="snac" target="1.8" />
+      <module name="wikidata" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

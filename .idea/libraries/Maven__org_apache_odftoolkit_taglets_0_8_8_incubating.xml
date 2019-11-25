@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.odftoolkit:taglets:0.8.8-incubating">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/odftoolkit/taglets/0.8.8-incubating/taglets-0.8.8-incubating.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/odftoolkit/taglets/0.8.8-incubating/taglets-0.8.8-incubating-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/odftoolkit/taglets/0.8.8-incubating/taglets-0.8.8-incubating-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

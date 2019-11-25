@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.jsonld-java:jsonld-java:0.11.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/jsonld-java/jsonld-java/0.11.1/jsonld-java-0.11.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/jsonld-java/jsonld-java/0.11.1/jsonld-java-0.11.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/jsonld-java/jsonld-java/0.11.1/jsonld-java-0.11.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

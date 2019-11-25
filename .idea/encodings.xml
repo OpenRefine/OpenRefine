@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/database" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/gdata" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/jython" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/pc-axis" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/phonetic" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/snac" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/extensions/wikidata" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/main" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/packaging" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/server" charset="UTF-8" />
+  </component>
+</project>

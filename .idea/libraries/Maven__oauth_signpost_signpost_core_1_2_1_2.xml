@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: oauth.signpost:signpost-core:1.2.1.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/oauth/signpost/signpost-core/1.2.1.2/signpost-core-1.2.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/oauth/signpost/signpost-core/1.2.1.2/signpost-core-1.2.1.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/oauth/signpost/signpost-core/1.2.1.2/signpost-core-1.2.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

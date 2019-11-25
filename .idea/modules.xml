@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/extensions/database/database.iml" filepath="$PROJECT_DIR$/extensions/database/database.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/extensions.iml" filepath="$PROJECT_DIR$/extensions/extensions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/gdata/gdata.iml" filepath="$PROJECT_DIR$/extensions/gdata/gdata.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/jython/jython.iml" filepath="$PROJECT_DIR$/extensions/jython/jython.iml" />
+      <module fileurl="file://$PROJECT_DIR$/main/main.iml" filepath="$PROJECT_DIR$/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openrefine.iml" filepath="$PROJECT_DIR$/openrefine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packaging/packaging.iml" filepath="$PROJECT_DIR$/packaging/packaging.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/pc-axis/pc-axis.iml" filepath="$PROJECT_DIR$/extensions/pc-axis/pc-axis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/phonetic/phonetic.iml" filepath="$PROJECT_DIR$/extensions/phonetic/phonetic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/server/server.iml" filepath="$PROJECT_DIR$/server/server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/snac/snac.iml" filepath="$PROJECT_DIR$/extensions/snac/snac.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extensions/wikidata/wikidata.iml" filepath="$PROJECT_DIR$/extensions/wikidata/wikidata.iml" />
+    </modules>
+  </component>
+</project>

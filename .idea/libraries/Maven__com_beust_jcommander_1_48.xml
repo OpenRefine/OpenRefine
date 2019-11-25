@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.beust:jcommander:1.48">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.48/jcommander-1.48.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.48/jcommander-1.48-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/beust/jcommander/1.48/jcommander-1.48-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "xmlhttprequest": {
+      "version": "1.8.0",
+      "resolved": "https://registry.npmjs.org/xmlhttprequest/-/xmlhttprequest-1.8.0.tgz",
+      "integrity": "sha1-Z/4HXFwk/vOfnWX197f+dRcZaPw="
+    }
+  }
+}
