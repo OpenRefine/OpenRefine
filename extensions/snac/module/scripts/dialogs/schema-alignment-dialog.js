@@ -351,13 +351,13 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
       //console.log(dropDownValues[i].value);
       dict[columns[i].name] = dropDownValues[i].value;
     }
-
+    console.log(theProject.rowModel.rows.length);
     // Insert duplicate and empty required field checks here
     $.post(
         "command/snac/resource",
         {
           "dict": JSON.stringify(dict),
-          "project": JSON.stringify(theProject)
+          "project": JSON.stringify(theProject.id)
         },
         function(data, status) {
            console.log("Resource status: " + data.resource);
