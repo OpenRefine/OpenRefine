@@ -95,10 +95,12 @@ public class LoadLanguageCommand extends Command {
         }
 
         ObjectNode translations = null;
+        String bestLang = null;
         for (int i = langs.length-1; i >= 0; i--) {
             if (langs[i] == null) continue;
             ObjectNode json = loadLanguage(this.servlet, modname, langs[i]);
             if (json != null) {
+                bestLang = langs[i];
                 if (translations == null) {
                     translations = json;
                 } else {
@@ -111,7 +113,7 @@ public class LoadLanguageCommand extends Command {
             try {
                 ObjectNode node = ParsingUtilities.mapper.createObjectNode();
                 node.put("dictionary", translations);
-                node.put("lang", new TextNode(langs[0]));
+                node.put("lang", new TextNode(bestLang));
             	respondJSON(response, node);
             } catch (IOException e) {
                 logger.error("Error writing language labels to response stream");
