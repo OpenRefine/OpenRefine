@@ -17,11 +17,14 @@ import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.model.Project;
 
+import org.snaccooperative.data.Resource;
+
 
 public class SNACResourceCreator {
     private static HashMap<String, String> match_attributes = new HashMap<String, String>();
     private static Project theProject = new Project();
     private static final SNACResourceCreator instance = new SNACResourceCreator();
+    private static Resource r = new Resource();
 
     public static SNACResourceCreator getInstance() {
         return instance;
