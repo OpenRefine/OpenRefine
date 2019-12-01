@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
 import com.google.gson.Gson;
 import com.google.refine.util.ParsingUtilities;
@@ -55,6 +56,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.exporters.SNACResourceCreator;
+
 public class CommandTest extends RefineTest{
 
     protected Project project = null;
@@ -62,9 +65,11 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
+    protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
 
     @BeforeMethod
     public void SetUp() {
+        // Setup for Post Request
         command = new SNACResourceCommand();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -78,7 +83,19 @@ public class CommandTest extends RefineTest{
         } catch (IOException e1) {
             Assert.fail();
         }
+
+        // Setup for SNACResourceCreator
+
     }
+
+    @Test
+    public void testResourceEquivalent1() throws Exception{
+      project = createCSVProject(TestingData2.resourceCsv);
+      // jsonFromFile of Resource json from file
+      // Check against createResource of first row in project
+      // Use Resource.toJSON(rowResource)
+    }
+
 
     @Test
     public void testResourceGlobalOne() throws Exception{

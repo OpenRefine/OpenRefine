@@ -25,12 +25,13 @@ public class SNACResourceCommand extends Command {
         String dict = request.getParameter("dict");
         SNACResourceCreator manager = SNACResourceCreator.getInstance();
         if (dict != null){
-            manager.updateColumnMatches(dict);
+            Project p = getProject(request);
+            manager.setUp(p, dict);
         }
 
-        Project p = getProject(request);
-        SNACResourceCreator.setProject(p);
-        List<Row> rows = p.rows;
+        // Project p = getProject(request);
+        // SNACResourceCreator.setProject(p);
+        // List<Row> rows = p.rows;
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");

@@ -345,44 +345,55 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
 
   var columns = theProject.columnModel.columns;
   var dropDownValues = document.getElementsByClassName('selectColumn');
-  var dict = {};
-  for (var i = 0; i != dropDownValues.length; i++){
-      console.log(columns[i].name + " : " + dropDownValues[i].value);
-      //console.log(dropDownValues[i].value);
-      dict[columns[i].name] = dropDownValues[i].value;
-    }
-    console.log(theProject.rowModel.rows.length);
-    // Insert duplicate and empty required field checks here
-    $.post(
-        "command/snac/resource",
-        {
-          "dict": JSON.stringify(dict),
-          "project": JSON.stringify(theProject.id)
-        },
-        function(data, status) {
-           console.log("Resource status: " + data.resource);
-        });
-/*
-  Refine.postProcess(
-    "snac",
-    "save-wikibase-schema",
-    {},
-    { schema: JSON.stringify(schema) },
-    {},
-    {
-      onDone: function() {
-        theProject.overlayModels.wikibaseSchema = schema;
+  var array_ddv = [];
+  for (var j = 0; j < dropDownValues.length; j++){
+    array_ddv.push(dropDownValues[j].value);
+  }
 
-        $('.invalid-schema-warning').hide();
-        self._changesCleared();
+  // Empty required field check
+  var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
+  var empty_required = false;
+  for (var x = 0; x < required_fields.length; x++){
+      if (!(array_ddv.includes(required_fields[x]))){
+          empty_required = true;
+          console.log("Required Field found empty: " + required_fields[x]);
+          break;
+      }
+  }
 
-        if (onDone) onDone();
-      },
-      onError: function(e) {
-        alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
-      },
-    }
-  );*/
+  // Duplicate field check
+  var dup_dict = {}
+  var dup_bool = false;
+  for (var y = 0; y < array_ddv.length; y++){
+      if (array_ddv[y] == ""){continue;}
+      if (!(array_ddv[y] in dup_dict)){
+        dup_dict[array_ddv[y]] = 1;
+      }
+      else{
+        dup_bool = true;
+        console.log("Duplicate values found: " + array_ddv[y]);
+        break;
+      }
+  }
+
+  if (!dup_bool && !empty_required){
+      var dict = {};
+      for (var i = 0; i != dropDownValues.length; i++){
+          dict[columns[i].name] = dropDownValues[i].value;
+        }
+        $.post(
+            "command/snac/resource",
+            {
+              "dict": JSON.stringify(dict),
+              "project": JSON.stringify(theProject.id)
+            },
+            function(data, status) {
+               console.log("Resource status: " + data.resource);
+            });
+  } else {
+    console.log("Duplicate fields or empty required fields found");
+    // Create an error message here on the actual OpenRefine
+  }
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {
