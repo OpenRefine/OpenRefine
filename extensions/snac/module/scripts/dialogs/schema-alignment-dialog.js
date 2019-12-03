@@ -100,10 +100,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('snac-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
-  
-  
+
+
   $('.main-view-panel-tabs-snac').hide();
-    
+
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SNACSchemaAlignmentDialog.switchTab(targetTab);
@@ -125,13 +125,13 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   schemaElmts.saveButton
         .text($.i18n('snac-schema/save-button'))
         .attr('title', $.i18n('snac-schema/save-schema-alt'))
-        .prop('disabled', true)
+        .prop('disabled', false)
         .addClass('disabled')
         .click(function() { SNACSchemaAlignmentDialog._save(); });
   schemaElmts.discardButton
         .text($.i18n('snac-schema/discard-button'))
         .attr('title', $.i18n('snac-schema/discard-schema-changes-alt'))
-        .prop('disabled', true)
+        .prop('disabled', false)
         .addClass('disabled')
         .click(function() { SNACSchemaAlignmentDialog._discardChanges(); });
 
@@ -143,12 +143,18 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SNACSchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
 
+   /**
+   * Init the dropdowns area
+   */
+  // this.addDropdowns();
+
   /**
    * Init the issues tab
    */
   var issuesTab = $(DOM.loadHTML("snac", "scripts/issues-tab.html")).appendTo(this._issuesPanel);
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
   issuesElmts.invalidSchemaWarningIssues.text($.i18n('snac-schema/invalid-schema-warning-issues'));
+
 
   /**
    * Init the preview tab
@@ -171,6 +177,10 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   this._columnArea = $(".schema-alignment-dialog-columns-area");
   this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
+
+  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+  this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+  this._dropdownArea.addClass("snac-tab");
   this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
   this._refcolumnArea.addClass("snac-tab");
   //this._refcolumnArea.empty();
@@ -184,6 +194,25 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      var cell = SNACSchemaAlignmentDialog._createDraggableColumn(column.name,
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
+
+     var selectList = $("<select></select>").addClass('selectColumn');
+     this._dropdownArea.append(selectList);
+
+     var defaultoption = document.createElement("option");
+      defaultoption.setAttribute("value", "");
+      defaultoption.text = "Select an Option";
+      defaultoption.classList.add("dropdown-default");
+      selectList.append(defaultoption);
+
+     //Create and append the options
+     for (var j = 0; j < SNACcolumns.length; j++) {
+        var option = document.createElement("option");
+        option.setAttribute("value", SNACcolumns[j]);
+        option.text = SNACcolumns[j];
+        option.classList.add("dropdown-option");
+
+        selectList.append(option);
+     }
   }
 
   /*for (var i = 0; i < columns.length; i++) {
@@ -217,7 +246,26 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
 //   }
 // }
 
+// SNACSchemaAlignmentDialog.addDropdowns = function() {
+//   var columns = theProject.columnModel.columns;
+//   var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+//   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+//   this._dropdownArea.addClass("snac-tab");
 
+//   for (var i = 0; i < columns.length; i++) {
+//     //Create and append select list
+//     var selectList = document.createElement("select");
+//     selectList.setAttribute("id", "mySelect");
+//     this._dropdownArea.appendChild(selectList);
+
+//     //Create and append the options
+//     for (var j = 0; j < SNACcolumns.length; j++) {
+//         var option = document.createElement("option");
+//         option.setAttribute("value", SNACcolumns[j]);
+//         option.text = SNACcolumns[j];
+//         selectList.append(option);
+//   }
+// }
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();
@@ -269,17 +317,22 @@ var beforeUnload = function(e) {
 $(window).bind('beforeunload', beforeUnload);
 
 SNACSchemaAlignmentDialog._reset = function(schema) {
-  this._originalSchema = schema || { itemDocuments: [] };
-  this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
-  this._copiedReference = null;
-
-  $('#schema-alignment-statements-container').empty();
-
-  if (this._schema && this._schema.itemDocuments) {
-    for(var i = 0; i != this._schema.itemDocuments.length; i++) {
-      this._addItem(this._schema.itemDocuments[i]);
-    }
-  }
+  // this._originalSchema = schema || { itemDocuments: [] };
+  // this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
+  // this._copiedReference = null;
+  //
+  // $('#schema-alignment-statements-container').empty();
+  //
+  // if (this._schema && this._schema.itemDocuments) {
+  //   for(var i = 0; i != this._schema.itemDocuments.length; i++) {
+  //     this._addItem(this._schema.itemDocuments[i]);
+  //   }
+  // }
+  $.get(
+      "command/snac/resource",
+      function(data) {
+         console.log("Resource status: " + data.resource);
+      });
 };
 
 SNACSchemaAlignmentDialog._save = function(onDone) {
@@ -290,26 +343,57 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
     alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
   }
 
-  Refine.postProcess(
-    "snac",
-    "save-wikibase-schema",
-    {},
-    { schema: JSON.stringify(schema) },
-    {},
-    {
-      onDone: function() {
-        theProject.overlayModels.wikibaseSchema = schema;
+  var columns = theProject.columnModel.columns;
+  var dropDownValues = document.getElementsByClassName('selectColumn');
+  var array_ddv = [];
+  for (var j = 0; j < dropDownValues.length; j++){
+    array_ddv.push(dropDownValues[j].value);
+  }
 
-        $('.invalid-schema-warning').hide();
-        self._changesCleared();
+  // Empty required field check
+  var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
+  var empty_required = false;
+  for (var x = 0; x < required_fields.length; x++){
+      if (!(array_ddv.includes(required_fields[x]))){
+          empty_required = true;
+          console.log("Required Field found empty: " + required_fields[x]);
+          break;
+      }
+  }
 
-        if (onDone) onDone();
-      },
-      onError: function(e) {
-        alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
-      },
-    }
-  );
+  // Duplicate field check
+  var dup_dict = {}
+  var dup_bool = false;
+  for (var y = 0; y < array_ddv.length; y++){
+      if (array_ddv[y] == ""){continue;}
+      if (!(array_ddv[y] in dup_dict)){
+        dup_dict[array_ddv[y]] = 1;
+      }
+      else{
+        dup_bool = true;
+        console.log("Duplicate values found: " + array_ddv[y]);
+        break;
+      }
+  }
+
+  if (!dup_bool && !empty_required){
+      var dict = {};
+      for (var i = 0; i != dropDownValues.length; i++){
+          dict[columns[i].name] = dropDownValues[i].value;
+        }
+        $.post(
+            "command/snac/resource",
+            {
+              "dict": JSON.stringify(dict),
+              "project": JSON.stringify(theProject.id)
+            },
+            function(data, status) {
+               console.log("Resource status: " + data.resource);
+            });
+  } else {
+    console.log("Duplicate fields or empty required fields found");
+    // Create an error message here on the actual OpenRefine
+  }
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {

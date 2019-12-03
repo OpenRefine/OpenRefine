@@ -54,7 +54,9 @@ import com.google.refine.model.ReconCandidate;
 
 public class TestingData2 {
 
-    public static final String[] column_values = {"col1", "col2", "col3"};
+    public static final String resourceCsv = "title,type,holding repository snac id,link\n"
+            + "Title1, 696, 1234567, http://row1test.com\n"
+            + "Title2, 696, 1234568, http://row2test.com";
 
     public static final String inceptionCsv = "subject,inception,reference\n"
             + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,";
@@ -67,6 +69,12 @@ public class TestingData2 {
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "CREATE\n" + "LAST\tP571\t+2016-01-01T00:00:00Z/9"
             + "\tS854\t\"http://new-uni.com/\"" + "\tS813\t+2018-02-28T00:00:00Z/11\n";
 
+    public static String jsonFromFile(String filename)
+            throws IOException {
+        InputStream f = TestingData2.class.getClassLoader().getResourceAsStream(filename);
+        String decoded = IOUtils.toString(f);
+        return decoded.trim();
+    }
     // public class ApiKeyTest extends RefineTest {
     //     @Test
     //     public void testNoCredentials() throws ServletException, IOException {
@@ -143,13 +151,6 @@ public class TestingData2 {
 
     public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
         return generateStatement(from, pid, to);
-    }
-
-    public static String jsonFromFile(String filename)
-            throws IOException {
-        InputStream f = TestingData.class.getClassLoader().getResourceAsStream(filename);
-        String decoded = IOUtils.toString(f);
-        return decoded.trim();
     }
 
     public static void reconcileInceptionCells(Project project) {
