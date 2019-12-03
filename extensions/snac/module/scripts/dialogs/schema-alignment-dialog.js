@@ -352,11 +352,14 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
 
   // Empty required field check
   var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
+  // For printing to issues tab
+  var error_fields = [];
   var empty_required = false;
   for (var x = 0; x < required_fields.length; x++){
       if (!(array_ddv.includes(required_fields[x]))){
           empty_required = true;
           console.log("Required Field found empty: " + required_fields[x]);
+          error_fields.push("Required Field found empty: " + required_fields[x]);
           break;
       }
   }
@@ -1385,26 +1388,27 @@ SNACSchemaAlignmentDialog.preview = function() {
     return;
   }
   $.post(
-    "command/snac/preview-wikibase-schema?" + $.param({ project: theProject.id }),
+    "command/snac/preview-snac-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
       self.issueSpinner.hide();
       self.previewSpinner.hide();
-      if ("edits_preview" in data) {
-        var previewContainer = self._previewPanes[0];
-        EditRenderer.renderEdits(data.edits_preview, previewContainer);
-        self.updateNbEdits(data["edit_count"]);
-      }
+      // if ("edits_preview" in data) {
+      //   var previewContainer = self._previewPanes[0];
+      //   EditRenderer.renderEdits(data.edits_preview, previewContainer);
+      //   self.updateNbEdits(data["edit_count"]);
+      // }
+      //if (error_fields.length != 0)
+      console.log("There are errors adsjfs;lk");
+      // if (data.warnings) {
+      //     self._updateWarnings(data.warnings, data.nb_warnings);
+      // } else {
+      //     self._updateWarnings([], 0);
+      // }
 
-      if (data.warnings) {
-          self._updateWarnings(data.warnings, data.nb_warnings);
-      } else {
-          self._updateWarnings([], 0);
-      }
-
-      if ("code" in data && data.code === "error") {
-         $('.invalid-schema-warning').show();
-      }
+      // if ("code" in data && data.code === "error") {
+      //    $('.invalid-schema-warning').show();
+      // }
     },
     "json"
   );
