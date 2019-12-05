@@ -5,8 +5,9 @@
         <div style="clear: right"></div>
 
         <!-- Adding radio buttons to switch back and forth between resource and constellation  -->
-        <div id="radio-buttons">
-            <input type="radio" name="button" value="resource" id="resourcebutton" onclick="function1()"> Resource
+        <div id="radio-buttons" style="padding-left: 20px;">
+            <p>Uploading: </p>
+            <input type="radio" name="button" value="resource" id="resourcebutton" onclick="function1()"> Resource<br>
             <input type="radio" name="button" value="constellation" id="constellationbutton" onclick="function2()"> Constellation<br>
 
             <!-- This will be replaced with actual resource and constellation contents -->
@@ -19,13 +20,13 @@
                     // document.getElementById("resourcetext").style.visibility = "visible";
                     // document.getElementById("constellationtext").style.visibility = "hidden";
                     document.getElementById("textholder").textContent="!!! RESOURCE !!!";
-                    alert("This is the RESOURCE page");
+                    // alert("This is the RESOURCE page");
                 }
                 function function2() {
                     // document.getElementById("resourcetext").style.visibility = "hidden";
                     // document.getElementById("constellationtext").style.visibility = "visible";
                     document.getElementById("textholder").textContent="!!! CONSTELLATION !!!";
-                    alert("This is the CONSTELLATION page");
+                    // alert("This is the CONSTELLATION page");
                 }
             </script>    
 
