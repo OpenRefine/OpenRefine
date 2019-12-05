@@ -77,7 +77,7 @@
   background-color: #9bcaf2;
 }
 
-.schema-alignment-dialog-columns-area.snac-tab{
+.schema-alignment-dialog-columns-area-resource.snac-tab, .schema-alignment-dialog-columns-area-constellation.snac-tab{
   border-left: 0;
   border-right: 0;
   padding: 5px;
@@ -89,7 +89,7 @@
   margin-left: 1%;
 }
 
-.schema-alignment-dialog-dropdown-area{
+.schema-alignment-dialog-dropdown-area-resource, .schema-alignment-dialog-dropdown-area-constellation{
   display: flex;
   flex-direction: column;
 }
@@ -104,7 +104,7 @@
 }
 
 
-.schema-alignment-dialog-columns-area--ref.snac-tab{
+.schema-alignment-dialog-columns-area-resource--ref.snac-tab, .schema-alignment-dialog-columns-area-constellation--ref.snac-tab{
   border-left: 0;
   border-right: 0;
   padding: 5px;
