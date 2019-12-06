@@ -7,7 +7,7 @@
             <!-- Adding radio buttons to switch back and forth between resource and constellation  -->
             <div id="radio-buttons" style="padding-left: 20px;">
                 <p>Uploading: </p>
-                <input type="radio" name="button" value="resource" id="resourcebutton" onclick="function1()"> Resource<br>
+                <input type="radio" name="button" value="resource" id="resourcebutton" checked="checked" onclick="function1()"> Resource<br>
                 <input type="radio" name="button" value="constellation" id="constellationbutton" onclick="function2()"> Constellation<br>
     
                 <!-- This will be replaced with actual resource and constellation contents -->
@@ -17,17 +17,25 @@
                 <!-- Javascript to replace the text in-place -->
                 <script>
                     function function1() {
-                        // document.getElementById("resourcetext").style.visibility = "visible";
-                        // document.getElementById("constellationtext").style.visibility = "hidden";
-                        document.getElementById("textholder").textContent="!!! RESOURCE !!!";
+                        // document.getElementById("textholder").textContent="!!! RESOURCE !!!";
                         // alert("This is the RESOURCE page");
+                        $('.schema-alignment-dialog-columns-area-constellation').hide();
+                        $('.schema-alignment-dialog-dropdown-area-constellation').hide();
+                        $('.schema-alignment-dialog-columns-area-constellation--ref').hide();
+                        $('.schema-alignment-dialog-columns-area-resource').show();
+                        $('.schema-alignment-dialog-dropdown-area-resource').show();
+                        $('.schema-alignment-dialog-columns-area-resource--ref').show();
                         
                     }
                     function function2() {
-                        // document.getElementById("resourcetext").style.visibility = "hidden";
-                        // document.getElementById("constellationtext").style.visibility = "visible";
-                        document.getElementById("textholder").textContent="!!! CONSTELLATION !!!";
+                        // document.getElementById("textholder").textContent="!!! CONSTELLATION !!!";
                         // alert("This is the CONSTELLATION page");
+                        $('.schema-alignment-dialog-columns-area-resource').hide();
+                        $('.schema-alignment-dialog-dropdown-area-resource').hide();
+                        $('.schema-alignment-dialog-columns-area-resource--ref').hide();
+                        $('.schema-alignment-dialog-columns-area-constellation').show();
+                        $('.schema-alignment-dialog-dropdown-area-constellation').show();
+                        $('.schema-alignment-dialog-columns-area-constellation--ref').show();
                     }
                 </script>    
     
@@ -35,7 +43,7 @@
     
             <div class="snac-columns-container">      
             
-                <div class="schema-alignment-dialog-columns-area-resource" bind="columnsArea">
+                <div class="schema-alignment-dialog-columns-area-resource" style="margin-left: 18px;" bind="columnsArea">
                 </div>
     
                 <div class="schema-alignment-dialog-dropdown-area-resource" bind="dropdownsArea" id="dropdownArea">
