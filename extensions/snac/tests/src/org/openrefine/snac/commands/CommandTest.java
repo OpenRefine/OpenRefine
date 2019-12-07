@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.snac.commands;
+package org.snaccooperative.commands;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,9 +39,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.tests.RefineTest;
+import com.google.gson.Gson;
+import com.google.refine.util.ParsingUtilities;
 
 import org.apache.http.*;
 import org.apache.http.util.EntityUtils;
@@ -50,6 +55,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.data.EntityId;
+
 public class CommandTest extends RefineTest{
 
     protected Project project = null;
@@ -57,8 +64,157 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
+    protected EntityId entityId = null;
+
+    /*Test EntityID and various fields from SNAC datamodel */
+
+    @BeforeMethod
+    public void SetUp() {
+        command = new SNACResourceCommand();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+
+        when(request.getParameter("dict")).thenReturn("{\"col1\":\"snaccol1\", \"col2\":\"snaccol2\", \"col3\":\"snaccol3\"}");
+
+        try {
+            when(response.getWriter()).thenReturn(printWriter);
+        } catch (IOException e1) {
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testResourceGlobalOne() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertTrue(response_str.contains("col1"));
+    }
+
+    @Test
+    public void testResourceGlobalFalseFive() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertFalse(response_str.contains("col5"));
+    }
 
 
+    @Test
+    public void testResourceGlobalTwo() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertTrue(response_str.contains("col2"));
+    }
+
+    @Test
+    public void testResourceGlobalThree() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertTrue(response_str.contains("col3"));
+    }
+
+    @Test
+    public void testResourceGlobalFalseFour() throws Exception{
+      command.doPost(request, response);
+      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      String response_str = response.get("resource").textValue();
+      Assert.assertFalse(response_str.contains("col4"));
+    }
+
+    @Test
+    public void testEntityIdURI() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setURI("12345");
+      Assert.assertEquals(testEntity.getURI(), "12345");
+    }
+
+        @Test
+        public void testGson() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 1760004979705}";
+          Project proj = test.fromJson(a,Project.class);
+          Assert.assertNotNull(proj);
+        }
+
+        @Test
+        public void testGsonFields() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}";
+          Project proj = test.fromJson(a,Project.class);
+          Assert.assertTrue(proj.id==420);
+        }
+
+        @Test
+        public void testGsonEquivalence() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}";
+          Project proj = test.fromJson(a,Project.class);
+          Project abc = new Project();
+          Assert.assertFalse(abc.id==proj.id);
+        }
+
+        @Test
+        public void testGsonFailure() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": 420}}";
+          try{
+            Project proj = test.fromJson(a,Project.class);
+            Assert.assertTrue(a.equals("{\"id\": 420}"));
+          }catch(Exception e){
+              Assert.assertTrue(a.equals("{\"id\": 420}}"));
+          }
+        }
+
+        @Test
+        public void testGsonInvalid() throws Exception{
+          Gson test=new Gson();
+          String a="{\"id\": \"\"}";
+          try{
+            Project proj = test.fromJson(a,Project.class);
+            Assert.assertTrue(a.equals("{\"id\": 1}"));
+          }catch(Exception e){
+              Assert.assertTrue(a.equals("{\"id\": \"\"}"));
+          }
+        }
+
+    @Test
+    public void testEntityIdID() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setID(123);
+      Assert.assertEquals(testEntity.getID(), 123);
+    }
+
+    @Test
+    public void testEntityIdText() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("I like pizza");
+      Assert.assertEquals(testEntity.getText(), "I like pizza");
+    }
+
+    @Test
+    public void testEntityIdEquals() throws Exception{
+      EntityId testEntity1 = new EntityId();
+      testEntity1.setID(123);
+      EntityId testEntity2 = new EntityId();
+      testEntity2.setID(456);
+      Assert.assertFalse(testEntity1.equals(testEntity2));
+    }
+
+    @Test
+    public void testEntityToString() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("123");
+      Assert.assertEquals(testEntity.toString(), "EntityID: 123");
+    }
+
+    /*
+    * Test API calls for recently published
+    */
     @Test
     public void testRecentlyPublished() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -70,6 +226,10 @@ public class CommandTest extends RefineTest{
       Assert.assertTrue(result.contains("success"));
     }
 
+    /*
+    * Test API calls for term search
+    */
+
     @Test
     public void testTermSearch() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
@@ -79,6 +239,10 @@ public class CommandTest extends RefineTest{
       String result = EntityUtils.toString(response.getEntity());
       Assert.assertTrue(result.contains("700"));
     }
+
+    /*
+    * Test API calls for browsing
+    */
 
     @Test
     public void testBrowsing() throws Exception{
@@ -269,5 +433,42 @@ public class CommandTest extends RefineTest{
       //project = createProjectWithColumns("test_columns", TestingData2.column_values);
       Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
     }
+
+    /*
+    * Test API calls for existence of constellation
+    */
+    @Test
+    public void testConstellationExists() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": 16715425}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("success"));
+    }
+
+    @Test
+    public void testConstellationDNE() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": 16715429}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("Input Error"));
+    }
+
+    /*
+    * Test API calls for download
+    */
+    @Test
+    public void testConstellationDownload() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"download_constellation\",\"constellationid\": 16715425, \"type\": \"eac-cpf\"}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("text/xml"));
+    }
+
 
 }

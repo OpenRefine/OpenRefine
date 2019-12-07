@@ -65,11 +65,14 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-schema-panel')
         .text($.i18n('snac-schema/schema-tab-header'))
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-issues-panel')
         .text($.i18n('snac-schema/warnings-tab-header')+' ')
         .appendTo(this._toolPanel);
@@ -83,6 +86,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .appendTo(issuesButton);
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
+        .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel);
@@ -96,6 +100,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('title', $.i18n('snac-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
+
+
+  $('.main-view-panel-tabs-snac').hide();
+
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SNACSchemaAlignmentDialog.switchTab(targetTab);
@@ -108,22 +116,22 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var schemaTab = $(DOM.loadHTML("snac", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.dialogExplanation.text($.i18n('snac-schema/dialog-explanation'));
-  this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
-  schemaElmts.addItemButton.click(function(e) {
-    self._addItem();
-    SNACSchemaAlignmentDialog._hasChanged();
-    e.preventDefault();
-  });
+  // this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
+  // schemaElmts.addItemButton.click(function(e) {
+  //   self._addItem();
+  //   SNACSchemaAlignmentDialog._hasChanged();
+  //   e.preventDefault();
+  // });
   schemaElmts.saveButton
         .text($.i18n('snac-schema/save-button'))
         .attr('title', $.i18n('snac-schema/save-schema-alt'))
-        .prop('disabled', true)
+        .prop('disabled', false)
         .addClass('disabled')
         .click(function() { SNACSchemaAlignmentDialog._save(); });
   schemaElmts.discardButton
         .text($.i18n('snac-schema/discard-button'))
         .attr('title', $.i18n('snac-schema/discard-schema-changes-alt'))
-        .prop('disabled', true)
+        .prop('disabled', false)
         .addClass('disabled')
         .click(function() { SNACSchemaAlignmentDialog._discardChanges(); });
 
@@ -134,6 +142,11 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SNACSchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
+
+   /**
+   * Init the dropdowns area
+   */
+  // this.addDropdowns();
 
   /**
    * Init the issues tab
@@ -163,6 +176,10 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   this._columnArea = $(".schema-alignment-dialog-columns-area");
   this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
+
+  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+  this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+  this._dropdownArea.addClass("snac-tab");
   this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
   this._refcolumnArea.addClass("snac-tab");
   //this._refcolumnArea.empty();
@@ -176,6 +193,25 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      var cell = SNACSchemaAlignmentDialog._createDraggableColumn(column.name,
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._columnArea.append(cell);
+
+     var selectList = $("<select></select>").addClass('selectColumn');
+     this._dropdownArea.append(selectList);
+
+     var defaultoption = document.createElement("option");
+      defaultoption.setAttribute("value", "");
+      defaultoption.text = "Select an Option";
+      defaultoption.classList.add("dropdown-default");
+      selectList.append(defaultoption);
+
+     //Create and append the options
+     for (var j = 0; j < SNACcolumns.length; j++) {
+        var option = document.createElement("option");
+        option.setAttribute("value", SNACcolumns[j]);
+        option.text = SNACcolumns[j];
+        option.classList.add("dropdown-option");
+
+        selectList.append(option);
+     }
   }
 
   /*for (var i = 0; i < columns.length; i++) {
@@ -199,6 +235,36 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
      zIndex: 100,
   });
 }
+
+// SNACSchemaAlignmentDialog.switchbuttons = function() {
+//   if (document.getElementById('resourcebutton').checked) {
+//     // print text
+//   }
+//   else if (document.getElementById('constellationbutton').checked) {
+//     // print text
+//   }
+// }
+
+// SNACSchemaAlignmentDialog.addDropdowns = function() {
+//   var columns = theProject.columnModel.columns;
+//   var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+//   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+//   this._dropdownArea.addClass("snac-tab");
+
+//   for (var i = 0; i < columns.length; i++) {
+//     //Create and append select list
+//     var selectList = document.createElement("select");
+//     selectList.setAttribute("id", "mySelect");
+//     this._dropdownArea.appendChild(selectList);
+
+//     //Create and append the options
+//     for (var j = 0; j < SNACcolumns.length; j++) {
+//         var option = document.createElement("option");
+//         option.setAttribute("value", SNACcolumns[j]);
+//         option.text = SNACcolumns[j];
+//         selectList.append(option);
+//   }
+// }
 
 SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab').hide();
@@ -227,9 +293,14 @@ SNACSchemaAlignmentDialog.launch = function(onDone) {
   this._onDone = onDone;
   this._hasUnsavedChanges = false;
 
+
   if (!SNACSchemaAlignmentDialog.isSetUp()) {
      SNACSchemaAlignmentDialog.setUpTabs();
   }
+
+  $('.main-view-panel-tabs-snac').show();
+  $('.main-view-panel-tabs-wiki').hide();
+
   SNACSchemaAlignmentDialog.switchTab('#snac-schema-panel');
 
   // this._createDialog();
@@ -245,17 +316,22 @@ var beforeUnload = function(e) {
 $(window).bind('beforeunload', beforeUnload);
 
 SNACSchemaAlignmentDialog._reset = function(schema) {
-  this._originalSchema = schema || { itemDocuments: [] };
-  this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
-  this._copiedReference = null;
-
-  $('#schema-alignment-statements-container').empty();
-
-  if (this._schema && this._schema.itemDocuments) {
-    for(var i = 0; i != this._schema.itemDocuments.length; i++) {
-      this._addItem(this._schema.itemDocuments[i]);
-    }
-  }
+  // this._originalSchema = schema || { itemDocuments: [] };
+  // this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
+  // this._copiedReference = null;
+  //
+  // $('#schema-alignment-statements-container').empty();
+  //
+  // if (this._schema && this._schema.itemDocuments) {
+  //   for(var i = 0; i != this._schema.itemDocuments.length; i++) {
+  //     this._addItem(this._schema.itemDocuments[i]);
+  //   }
+  // }
+  $.get(
+      "command/snac/resource",
+      function(data) {
+         console.log("Resource status: " + data.resource);
+      });
 };
 
 SNACSchemaAlignmentDialog._save = function(onDone) {
@@ -266,6 +342,26 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
     alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
   }
 
+  var columns = theProject.columnModel.columns;
+  var dropDownValues = document.getElementsByClassName('selectColumn');
+  var dict = {};
+  for (var i = 0; i != dropDownValues.length; i++){
+      console.log(columns[i].name + " : " + dropDownValues[i].value);
+      //console.log(dropDownValues[i].value);
+      dict[columns[i].name] = dropDownValues[i].value;
+    }
+
+    // Insert duplicate and empty required field checks here
+    $.post(
+        "command/snac/resource",
+        {
+          "dict": JSON.stringify(dict),
+          "project": JSON.stringify(theProject)
+        },
+        function(data, status) {
+           console.log("Resource status: " + data.resource);
+        });
+/*
   Refine.postProcess(
     "snac",
     "save-wikibase-schema",
@@ -285,7 +381,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
         alert($.i18n('snac-schema/incomplete-schema-could-not-be-saved'));
       },
     }
-  );
+  );*/
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {

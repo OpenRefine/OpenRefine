@@ -1,0 +1,15 @@
+JarIndex-Version: 1.0
+
+objenesis-2.1.jar
+META-INF
+org
+org/objenesis
+org/objenesis/instantiator
+org/objenesis/instantiator/android
+org/objenesis/instantiator/basic
+org/objenesis/instantiator/gcj
+org/objenesis/instantiator/jrockit
+org/objenesis/instantiator/perc
+org/objenesis/instantiator/sun
+org/objenesis/strategy
+
