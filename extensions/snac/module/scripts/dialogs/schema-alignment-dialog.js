@@ -662,7 +662,7 @@ SNACSchemaAlignmentDialog._statementGroupToJSON = function (statementGroup) {
     var lst = new Array();
     var domStatements = statementGroup.find('.wbs-statement-container').first().children('.wbs-statement');
     domStatements.each(function () {
-       var statementJSON = SNACSchemaAlignmentDReialog._statementToJSON($(this));
+       var statementJSON = SNACSchemaAlignmentDialog._statementToJSON($(this));
        if (statementJSON !== null) {
           lst.push(statementJSON);
        }
