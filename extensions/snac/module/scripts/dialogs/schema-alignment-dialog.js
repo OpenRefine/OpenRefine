@@ -75,7 +75,8 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-issues-panel')
         .text($.i18n('snac-schema/warnings-tab-header')+' ')
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+        .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.issuesTabCount = $('<span></span>')
         .addClass('schema-alignment-total-warning-count')
         .appendTo(issuesButton)
@@ -89,7 +90,8 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+        .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.previewSpinner = $('<img />')
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
@@ -116,12 +118,12 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var schemaTab = $(DOM.loadHTML("snac", "scripts/schema-alignment-tab.html")).appendTo(this._schemaPanel);
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.dialogExplanation.text($.i18n('snac-schema/dialog-explanation'));
-  this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
-  schemaElmts.addItemButton.click(function(e) {
-    self._addItem();
-    SNACSchemaAlignmentDialog._hasChanged();
-    e.preventDefault();
-  });
+  // this._plusButton($.i18n('snac-schema/add-item-button'), schemaElmts.addItemButton);
+  // schemaElmts.addItemButton.click(function(e) {
+  //   self._addItem();
+  //   SNACSchemaAlignmentDialog._hasChanged();
+  //   e.preventDefault();
+  // });
   schemaElmts.saveButton
         .text($.i18n('snac-schema/save-button'))
         .attr('title', $.i18n('snac-schema/save-schema-alt'))
@@ -154,7 +156,6 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   var issuesTab = $(DOM.loadHTML("snac", "scripts/issues-tab.html")).appendTo(this._issuesPanel);
   var issuesElmts = this._issuesElmts = DOM.bind(issuesTab);
   issuesElmts.invalidSchemaWarningIssues.text($.i18n('snac-schema/invalid-schema-warning-issues'));
-
 
   /**
    * Init the preview tab
