@@ -30,6 +30,7 @@ public class SNACPreviewSchemaCommand extends Command  {
         // catch (Exception e){
         //     respondException(response, e);
         // }
+        //doGet(request,response);
         
     }
 
