@@ -38,7 +38,6 @@ SchemaAlignment._cleanName = function(s) {
 };
 
 var SNACSchemaAlignmentDialog = {};
-var error_fields = [];
 
 /**
  * Installs the tabs in the UI the first time the snac
@@ -336,6 +335,13 @@ SNACSchemaAlignmentDialog._reset = function(schema) {
          console.log("Resource status: " + data.resource);
       });
 };
+
+/*************************
+ * CHECK FOR ERRORS & SAVE *
+ *************************/
+
+// Will be used for save & issues
+var error_fields = [];
 
 SNACSchemaAlignmentDialog._save = function(onDone) {
   var self = this;
@@ -1359,6 +1365,7 @@ SNACSchemaAlignmentDialog.getJSON = function() {
   }
 };
 
+// Update everything when schema has changed
 SNACSchemaAlignmentDialog._hasChanged = function() {
   SNACSchemaAlignmentDialog._hasUnsavedChanges = true;
   SNACSchemaAlignmentDialog.issues();
@@ -1381,6 +1388,10 @@ SNACSchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
       $.i18n('snac-schema/preview-explanation').replace('{nb_edits}',nb_edits));
 }
 
+/*************************
+ *  ISSUES TAB RENDERING *
+ *************************/
+
 SNACSchemaAlignmentDialog.issues = function() {
    this.issueSpinner.show();
    var schema = this.getJSON();
@@ -1391,14 +1402,16 @@ SNACSchemaAlignmentDialog.issues = function() {
    this.issueSpinner.hide();
    $('.invalid-schema-warning').hide();
    if(error_fields.length != 0){
-      console.log("There are errors adsjfs;lk");
       this._updateWarnings(error_fields, error_fields.length);
       error_fields = [];
    } else {
-      console.log("no errors wow");
       this._updateWarnings([],0);
    }
 }
+
+/*************************
+ * PREVIEW TAB RENDERING *
+ *************************/
 
 SNACSchemaAlignmentDialog.preview = function() {
   var self = this;
@@ -1453,7 +1466,7 @@ SNACSchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
    mainDiv.empty();
    countsElem.hide();
 
-   // Add all warnings
+   // Add any warnings
    var table = $('<table></table>').appendTo(mainDiv);
    for (const warning of warnings) {
       var tr = $('<tr></tr>').addClass('wb-warning');
@@ -1472,7 +1485,7 @@ SNACSchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
       tr.appendTo(table);
    }
 
-   // update the counts
+   // update the warning counts
    if (totalCount) {
         countsElem.text(totalCount);
         countsElem.show();
