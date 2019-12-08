@@ -75,7 +75,8 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-issues-panel')
         .text($.i18n('snac-schema/warnings-tab-header')+' ')
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+        .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.issuesTabCount = $('<span></span>')
         .addClass('schema-alignment-total-warning-count')
         .appendTo(issuesButton)
@@ -89,7 +90,8 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .addClass('main-view-panel-tabs-snac')
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
-        .appendTo(this._toolPanel);
+        .appendTo(this._toolPanel)
+        .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.previewSpinner = $('<img />')
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
@@ -1384,7 +1386,7 @@ SNACSchemaAlignmentDialog.preview = function() {
     return;
   }
   $.post(
-    "command/snac/preview-wikibase-schema?" + $.param({ project: theProject.id }),
+    "command/snac/preview-snac-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
       self.issueSpinner.hide();
