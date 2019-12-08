@@ -40,7 +40,7 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
     DialogSystem.dismissUntil(self._level - 1);
   };
 
-  frame.find('.cancel-button').click(function() {
+  frame.find('.cancel-btn').click(function() {
      dismiss();
     //  console.log(checked);
      callback(null);
