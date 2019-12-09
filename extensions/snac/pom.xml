@@ -93,11 +93,8 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
-<<<<<<< HEAD
-			<plugin>
-=======
+
       <plugin>
->>>>>>> capstone-master
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
         <version>2.5.2</version>
