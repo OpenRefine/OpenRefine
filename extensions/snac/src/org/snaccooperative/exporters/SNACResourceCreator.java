@@ -270,22 +270,20 @@ public class SNACResourceCreator {
     * Helps determine whether a given ISO language exists on the SNAC database
     *
     * @param lang (ISO language code)
+    * @return lang_term or null (ISO language code found in API Request)
     */
     public String detectLanguage(String lang){
         // Insert API request calls for lang (if exists: insert into language dict, if not: return None)
         try{
           DefaultHttpClient client = new DefaultHttpClient();
-          HttpPost post = new HttpPost("https://snac-dev.iath.virginia.edu/api/");
+          HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
           String query = "{\"command\": \"vocabulary\",\"query_string\": \"" + lang + "\",\"type\": \"language_code\",\"entity_type\": null}";
-          System.out.println(query);
           post.setEntity(new StringEntity(query,"UTF-8"));
           HttpResponse response = client.execute(post);
           String result = EntityUtils.toString(response.getEntity());
           JSONParser jp = new JSONParser();
           JSONArray json_result = (JSONArray)((JSONObject)jp.parse(result)).get("results");
           if (json_result.size() <= 0){
-            System.out.println("LANGUAGE NOT FOUND BLAH");
-            System.out.println(result);
             return null;
           }
           else{
@@ -299,11 +297,9 @@ public class SNACResourceCreator {
           }
         }
         catch(IOException e){
-          System.out.println("IO NOT FOUND BLAH " + e);
           return null;
         }
         catch(ParseException e){
-          System.out.println("PARSE NOT FOUND BLAH " + e);
           return null;
         }
     }
@@ -332,7 +328,7 @@ public class SNACResourceCreator {
     * @param none
     * @return String (String converted JSONObject of Resource Array)
     */
-    public void exportResourcesJSON(){
+    public String exportResourcesJSON(){
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
         JSONParser jp = new JSONParser();
@@ -345,14 +341,11 @@ public class SNACResourceCreator {
           }
         }
         jo.put("resources", ja);
-        System.out.println(jo.toString());
+        // System.out.println(jo.toString());
+        return jo.toString();
     }
 
     public void pt4de(){
 
-    }
-
-    public static void main(String[] args) {
-        System.out.println("Hello");
     }
 }

@@ -167,7 +167,7 @@ public class CommandTest extends RefineTest{
     @Test
     public void testTermSearch() throws Exception{
       DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("https://snac-dev.iath.virginia.edu/api/");
+      HttpPost post = new HttpPost("http://api.snaccooperative.org");
       post.setEntity(new StringEntity("{\"command\": \"vocabulary\",\"query_string\": \"person\",\"type\": \"entity_type\",\"entity_type\": null}","UTF-8"));
       HttpResponse response = client.execute(post);
       String result = EntityUtils.toString(response.getEntity());
