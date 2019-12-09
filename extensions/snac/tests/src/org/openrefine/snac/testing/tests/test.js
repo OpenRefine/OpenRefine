@@ -6,25 +6,14 @@
 
 // note: must be running ./refine first
 
+/* 
+cd extensions/snac/tests/src/org/openrefine/snac/testing/tests
+or
+node extensions/snac/tests/src/org/openrefine/snac/testing/tests/test.js
+*/
 // other useful examples: https://developers.google.com/web/tools/puppeteer/examples
 
 const puppeteer = require("puppeteer");
-// const chalk = require ("chalk");
-
-//colors for console logs
-// const error = chalk.bold.red;
-// const success = chalk.keyword("green");
-
-// const username = 'test';
-// const password = 'test';
-
-// const readline = require('readline');
-// const rl = readline.createInterface({
-//   input: process.stdin,
-//   output: process.stdout
-// });
-
-
 
   (async () => {
     try {
@@ -55,18 +44,12 @@ const puppeteer = require("puppeteer");
 
       // UNIT TEST: The first project can be reached
       var projectURL = await page.evaluate(() => {
-        let elements = $('.action-area-tab').toArray();
-        $(elements[1]).click(); 
-        //console.log("asdfa");
-
-        let openProj = document.querySelectorAll('.project-name');
-
-        return openProj[0].href;
+        let elements = $('.action-area-tab').toArray()[1];
+        $(elements).click(); 
+        return document.querySelectorAll('.project-name')[0].href;
       });
-
-      //await console.log(projectURL);
-
       await page.goto(`${projectURL}`);
+
       var content = await page.content();
       await page.waitFor(1000);
       
@@ -75,6 +58,14 @@ const puppeteer = require("puppeteer");
       } else {
         console.log('TEST FAILED: Project page is reached')
       }
+
+      
+      // var text = await page.evaluate(button => button.innerText, uploadButton);
+      // console.log(text);
+      // uploadButton.click();
+      // let upload = document.getElementsByClassName('menu-item')[2];
+      // $(upload).click();
+      // console.log(upload);
 
       /*************************************
        *      EXTENSION REACH TESTING      *
@@ -101,15 +92,55 @@ const puppeteer = require("puppeteer");
       }
       await page.waitFor(1000);
       
+      // UNIT TEST: API Key Upload Option Exists
+      var uploadAPIKeyOptionExistTest = false;
+      var menuHandler = await page.$$('.menu-container > .menu-item');
+      for (const menuOption of menuHandler){
+        var text = await page.evaluate(option => option.innerText, menuOption);
+        if(text == 'Upload edits to SNAC'){
+          menuOption.click();
+          uploadAPIKeyOptionExistTest = true;
+          break;
+        }
+      }
+      if(uploadAPIKeyOptionExistTest){
+        console.log("TEST PASSED: 'Upload edits to SNAC' option exists in SNAC extension dropdown.");
+      } else {
+        console.log("TEST FAILED: 'Upload edits to SNAC' option exists in SNAC extension dropdown.");
+      }
+      await page.waitFor(1000);
+
+      // UNIT TEST: API Key Upload Verification Appears
+      var uploadAPIKeyVerificationTest = false;
+      const uploadAPIHandler = await page.$('.snac-upload-management-area > .snac-upload-form > table > tbody > tr > td');
+      var text = await page.evaluate(option => option.innerText, uploadAPIHandler);
+      if (text == 'Your API key is:'){
+        console.log('TEST PASSED: API Key Upload Verification');
+      } else {
+        console.log('TEST PASSED: API Key Upload Verification');
+      }
+      var uploadButton = await page.$('.cancel-btn');
+      uploadButton.click();
+      await page.waitFor(1000);
+      
+      // SETUP
+      const extensionButtons = await page.$$('#body > #right-panel > #tool-panel > #extension-bar > #extension-bar-menu-container > a');
+      for (const button of extensionButtons){
+        var text = await page.evaluate(button => button.innerText, button);
+        if(text == 'SNAC'){
+          button.click();
+          break;
+        }
+      }
+      await page.waitFor(1000);
 
       // UNIT TEST: 'Edit SNAC schema' will take you to the SNAC extension frontend
       var editSchmeaOptionExistTest = false;
-
-      const menuHandler = await page.$$('.menu-container > .menu-item');
+      
+      menuHandler = await page.$$('.menu-container > .menu-item');
       for (const menuOption of menuHandler){
         var text = await page.evaluate(option => option.innerText, menuOption);
         if(text == 'Edit SNAC schema'){
-          // Access the snac chema edit tabs
           menuOption.click();
           editSchmeaOptionExistTest = true;
           break;
@@ -152,154 +183,6 @@ const puppeteer = require("puppeteer");
       } else {
         console.log("TEST FAILED: 4 errors appear on the issues tab when no edits were made to schema.");
       }
-      await page.waitFor(1000);
-
-      // const html = await page.evaluate(button => button.innerHTML, extensionButtons[0]);
-      // console.log(html);
-      // const extensionButtons = await extensionElement.$('')
-      
-      //   await page.evaluate(async () => {
-
-      //     let names = [];
-
-
-      //     function SearchElementForSelector(el, s) {
-      //       while (el && (el.tagName && !el.matches(s))) {
-      //         el = el.parentNode;
-      //       }
-
-      //       if (el && el.tagName && el.matches(s)) {
-      //         return el;
-      //       }
-      //       return null;
-      //     }
-
-      //     function GetParams(url) {
-      //       let queries = {};
-      //       let parts = url.split('?');
-      //       if (parts.length == 2) {
-      //         parts[1].split('&').forEach((pair)=>{
-      //           let params = pair.split('=');
-      //           queries[params[0]] = params[1];
-      //         });
-      //       }
-      //       return queries;
-      //     }
-      //     function CheckAnchorQueries(anchor) {
-      //       if (anchor && anchor.href) {
-      //         let eName = GetParams(anchor.href)['ya-track'];
-      //         if (eName) {
-      //           return eName;
-      //         }
-      //       }
-      //       return false;
-      //     }
-      //     let SelectorTracking = {};
-
-      //     var events = document.querySelectorAll('button, a, input');
-
-      //     events.forEach(function(element){
-      //       try {
-      //         let type = null;
-      //         let trackDetails = null;
-      //         let srcEl = null;
-
-      //         for (const selector in SelectorTracking) {
-      //           if (!element.matches(selector)) continue;
-      //           trackDetails = SelectorTracking[selector];
-      //         }
-
-      //         if (!trackDetails) {
-      //           let potentialYaTrackedEl = SearchElementForSelector(element, '[data-ya-track]');
-      //           if (potentialYaTrackedEl) {
-      //             srcEl = potentialYaTrackedEl;
-      //             trackDetails = (potentialYaTrackedEl.dataset ? potentialYaTrackedEl.dataset.yaTrack : potentialYaTrackedEl.getAttribute('data-ya-track'));
-      //           }
-      //         }
-
-      //         let preventDefaultEvent = SearchElementForSelector(element, '[data-ya-prevent-default]');
-
-      //         let vectorMap = SearchElementForSelector(element, '.VectorMap-link');
-
-      //         if (!preventDefaultEvent && !trackDetails && !vectorMap) {
-      //           let anchor = SearchElementForSelector(element, 'a');
-      //           if (anchor) {
-      //             srcEl = anchor;
-      //             let anchorQuery = CheckAnchorQueries(anchor);
-      //             if (anchorQuery) trackDetails = anchorQuery;
-      //             if (!anchorQuery && !trackDetails) {
-      //               type = 'link';
-      //             }
-      //           }
-      //         }
-
-      //         if (!preventDefaultEvent && !trackDetails && !type && !vectorMap) {
-      //           let button = SearchElementForSelector(element, 'button');
-      //           if (button) {
-      //             srcEl = button;
-      //             type = 'button';
-      //           }
-      //         }
-
-      //         if (!preventDefaultEvent && !trackDetails && !type && !vectorMap) {
-      //           let input = SearchElementForSelector(element, 'input');
-      //           if (input && input.type != 'hidden') {
-      //             srcEl = input;
-      //             type = 'input';
-      //           }
-      //         }
-
-      //         let dataYaTrack = type || trackDetails;
-      //         let name = null;
-
-      //         if(dataYaTrack)
-      //         {
-      //           let scopeAncestors = [];
-      //           while (element && element.tagName) {
-      //             if (element.matches('[data-ya-scope]')) {
-      //               scopeAncestors.push(element);
-      //             }
-      //             element = element.parentNode;
-      //           }
-
-      //           let tags = [srcEl].concat(scopeAncestors);
-      //             for (const [hierarchyIdx, hierarchyElement] of tags.entries()) {
-      //               let tagVal = (hierarchyIdx == 0) ? dataYaTrack : (hierarchyElement.dataset ? hierarchyElement.dataset.yaScope : hierarchyElement.getAttribute('data-ya-scope'))
-      //               if (tagVal.indexOf('#') > -1) {
-      //                 let attributeName = hierarchyIdx == 0 ? 'data-ya-track': 'data-ya-scope';
-      //                 let ancestor = (hierarchyIdx + 1 < tags.length) ? tags[hierarchyIdx + 1]: document;
-      //                 let siblings = Array.from(ancestor.querySelectorAll(`[${attributeName}='${tagVal}']`));
-      //                 for (const [siblingIdx, sibling] of siblings.entries()) {
-      //                   if (hierarchyElement == sibling) {
-      //                     tagVal = tagVal.replace('#', siblingIdx + 1);
-      //                     break;
-      //                   }
-      //                 }
-      //               }
-      //               tags[hierarchyIdx] = tagVal;
-      //             }
-      //             let name = tags.reverse().join('_');
-      //             names.push(name);
-      //         }
-      //       } catch (err){
-      //         console.log(err);
-      //       }
-      //       });
-      //       names.forEach(function(name){
-      //         var url = window.CalcEventNameForElement(name, pagesReferrer, pageurl);
-      //         url.then(data => {
-      //           const px = document.createElement("img");
-      //           px.src = data;
-      //           px.style.width = '0';
-      //           px.style.height = '0';
-      //           px.style.position = 'absolute';
-      //           px.alt = '';
-      //           document.body.appendChild(px);
-      //           return px;
-      //         });
-      //       });
-
-      //   });
 
       await page.waitFor(10000);
       await browser.close();
@@ -310,4 +193,3 @@ const puppeteer = require("puppeteer");
         console.log("Error: Browser Closed");
     }
   })();
- 

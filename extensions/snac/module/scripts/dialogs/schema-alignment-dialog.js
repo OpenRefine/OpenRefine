@@ -91,7 +91,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel)
-        .click(function() { SNACSchemaAlignmentDialog._save(); });
+       // .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.previewSpinner = $('<img />')
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
@@ -142,6 +142,13 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
   // Init the column area
   this.updateColumns();
 
+  // $('.schema-alignment-dialog-columns-area-resource').hide();
+  // $('.schema-alignment-dialog-dropdown-area-resource').hide();
+  // $('.schema-alignment-dialog-columns-area-resource--ref').hide();
+  $('.schema-alignment-dialog-columns-area-constellation').hide();
+  $('.schema-alignment-dialog-dropdown-area-constellation').hide();
+  $('.schema-alignment-dialog-columns-area-constellation--ref').hide();
+
   var url = ReconciliationManager.ensureDefaultServicePresent();
   SNACSchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
 
@@ -175,14 +182,14 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
 
 SNACSchemaAlignmentDialog.updateColumns = function() {
   var columns = theProject.columnModel.columns;
-  this._columnArea = $(".schema-alignment-dialog-columns-area");
+  this._columnArea = $(".schema-alignment-dialog-columns-area-resource");
   this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
 
-  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID"];
   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
   this._dropdownArea.addClass("snac-tab");
-  this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
+  this._refcolumnArea = $(".schema-alignment-dialog-columns-area-resource--ref");
   this._refcolumnArea.addClass("snac-tab");
   //this._refcolumnArea.empty();
   /*var cell = SNACSchemaAlignmentDialog._createDraggableColumn("title",
@@ -223,6 +230,66 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
      this._refcolumnArea.append(cell);
   }*/
+
+
+
+
+
+
+  var columns = theProject.columnModel.columns;
+  this._columnArea = $(".schema-alignment-dialog-columns-area-constellation");
+  this._columnArea.addClass("snac-tab");
+  this._columnArea.empty();
+
+  var SNACcolumns = ["ID", "Entity Type", "Name Entry", "Surename", "Forename", "Exist Dates", "BiogHist", "Place", "Occupation", "Related Constellation IDs", "Related Resource IDs"];
+  this._dropdownArea = $(".schema-alignment-dialog-dropdown-area-constellation");
+  this._dropdownArea.addClass("snac-tab");
+  this._refcolumnArea = $(".schema-alignment-dialog-columns-area-constellation--ref");
+  this._refcolumnArea.addClass("snac-tab");
+  //this._refcolumnArea.empty();
+  /*var cell = SNACSchemaAlignmentDialog._createDraggableColumn("title",
+    reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats, "csv");
+  var cell = $("<div></div>").addClass('wbs-draggable-column').addClass('wbs-title').text("CSV Columns");*/
+
+  for (var i = 0; i < 11; i++) {
+    //  var column = columns[i];
+    //  var reconConfig = column.reconConfig;
+    //  var cell = SNACSchemaAlignmentDialog._createDraggableColumn(column.name,
+    //     reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
+    //  this._columnArea.append(cell);
+
+     var selectList = $("<select></select>").addClass('selectColumn');
+     this._dropdownArea.append(selectList);
+
+     var defaultoption = document.createElement("option");
+      defaultoption.setAttribute("value", "");
+      defaultoption.text = "Select an Option";
+      defaultoption.classList.add("dropdown-default");
+      selectList.append(defaultoption);
+
+     //Create and append the options
+     for (var j = 0; j < SNACcolumns.length; j++) {
+        var option = document.createElement("option");
+        option.setAttribute("value", SNACcolumns[j]);
+        option.text = SNACcolumns[j];
+        option.classList.add("dropdown-option");
+
+        selectList.append(option);
+     }
+  }
+
+  /*for (var i = 0; i < columns.length; i++) {
+     var column = columns[i];
+     var reconConfig = column.reconConfig;
+     var cell = SNACSchemaAlignmentDialog._createDraggableColumn("RE",
+        reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
+     this._refcolumnArea.append(cell);
+  }*/
+
+
+
+
+
 
   $('.wbs-reconciled-column').draggable({
      helper: "clone",
@@ -274,6 +341,7 @@ SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab-header[href="'+targetTab+'"]').addClass('active');
   $(targetTab).show();
   resizeAll();
+  SNACSchemaAlignmentDialog.preview();
   var panelHeight = this._viewPanel.height();
   this._schemaPanel.height(panelHeight);
   this._issuesPanel.height(panelHeight);
@@ -332,7 +400,8 @@ SNACSchemaAlignmentDialog._reset = function(schema) {
   $.get(
       "command/snac/resource",
       function(data) {
-         console.log("Resource status: " + data.resource);
+        console.log("command/snac/resource");
+         //console.log("Resource status: " + data.resource);
       });
 };
 
@@ -358,9 +427,11 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
     array_ddv.push(dropDownValues[j].value);
   }
 
+
+
   // Empty required field check (for issues tab)
   var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
-  
+  // For printing to issues tab
   var empty_required = false;
   for (var x = 0; x < required_fields.length; x++){
       if (!(array_ddv.includes(required_fields[x]))){
@@ -409,6 +480,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
   }
 
   SNACSchemaAlignmentDialog._hasChanged();
+
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {
@@ -1385,7 +1457,7 @@ SNACSchemaAlignmentDialog._hasChanged = function() {
 
 SNACSchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
    this._previewElmts.previewExplanation.text(
-      $.i18n('snac-schema/preview-explanation').replace('{nb_edits}',nb_edits));
+      nb_edits);
 }
 
 /*************************
@@ -1420,22 +1492,20 @@ SNACSchemaAlignmentDialog.preview = function() {
   this.updateNbEdits(0);
   this.previewSpinner.show();
   var schema = this.getJSON();
-  $.post(
-    "command/snac/preview-snac-schema?" + $.param({ project: theProject.id }),
-    { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+  if (schema === null) {
+    $('.invalid-schema-warning').show();
+    return;
+  }
+  $.get(
+    "command/snac/preview-snac-schema", 
     function(data) {
+      //self.issueSpinner.hide();
       self.previewSpinner.hide();
-      // if ("edits_preview" in data) {
-      //   var previewContainer = self._previewPanes[0];
-      //   EditRenderer.renderEdits(data.edits_preview, previewContainer);
-      //   self.updateNbEdits(data["edit_count"]);
-      // }
-      // if ("code" in data && data.code === "error") {
-      //    $('.invalid-schema-warning').show();
-      // }
-    },
-    "json"
-  );
+
+      var list = data.SNAC_preview.split('\n');
+
+      self.updateNbEdits(data.SNAC_preview);
+    });
 };
 
 Refine.registerUpdateFunction(function(options) {

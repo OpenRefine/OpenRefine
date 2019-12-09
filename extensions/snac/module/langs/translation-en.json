@@ -55,7 +55,8 @@
 
 
     "snac-account/dialog-header": "SNAC API Key",
-    "snac-account/explain-key": "Entering your API key from <a href=\"https://snaccooperative.org\" target=\"_blank\">SNAC</a> lets you upload edits directly from OpenRefine into SNAC.  <b>Note: your API key will be stored in clear text in OpenRefine preferences.</b>",
+    "snac-account/explain-key": "Entering your API key from <a href=\"https://snaccooperative.org\" target=\"_blank\">SNAC</a> lets you upload edits directly from OpenRefine into SNAC.",
+    "snac-account/explain-key2": "<b>Note: your API key will be stored in clear text in OpenRefine preferences.</b>",
     "snac-account/key-label": "API Key:",
     "snac-account/key-placeholder": "Enter your SNAC API Key",
     "snac-account/close": "Close",
