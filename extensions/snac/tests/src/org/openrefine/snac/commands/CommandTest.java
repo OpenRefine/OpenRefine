@@ -202,12 +202,12 @@ public class CommandTest extends RefineTest{
       Assert.assertFalse(response_str.contains("col4"));
     }
 
-    @Test
-    public void testGson() throws Exception{
-      Gson bruh = new Gson();
-      String a="";
-      Assert.assertTrue(a.equals(""));
-    }
+//     @Test
+//     public void testGson() throws Exception{
+//       Gson bruh = new Gson();
+//       String a="";
+//       Assert.assertTrue(a.equals(""));
+//     }
     @Test
     public void testResourceUpload() throws Exception{
       upload.doPost(request, response);
