@@ -518,7 +518,7 @@ public class CommandTest extends RefineTest{
     public void testStringToJSONDownload1() throws Exception{
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\r\n    \"command\": \"search\",\r\n    \"term\": \"Washington\",\r\n    \"count\": 10,\r\n    \"start\": 0,\r\n    \"entity_type\": \"person\"\r\n}","UTF-8"));
+        post.setEntity(new StringEntity("{\"command\": \"search\", \"term\": \"Washington\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
         HttpResponse response = client.execute(post);
         String result = EntityUtils.toString(response.getEntity());
         Assert.assertTrue(result.contains("2164"));
