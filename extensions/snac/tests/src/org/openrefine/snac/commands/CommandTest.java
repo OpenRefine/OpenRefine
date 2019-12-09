@@ -70,7 +70,6 @@ public class CommandTest extends RefineTest{
     protected Command command = null;
     protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
     protected EntityId entityId = null;
-    protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
 
     /*Test EntityID and various fields from SNAC datamodel */
 
