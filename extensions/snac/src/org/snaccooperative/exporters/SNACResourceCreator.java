@@ -348,7 +348,7 @@ public class SNACResourceCreator {
 
     }
 
-
+    /*
     * Helps determine whether a given ISO language exists on the SNAC database
     *
     * @param lang (ISO language code)
