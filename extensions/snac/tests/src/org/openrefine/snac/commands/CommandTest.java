@@ -56,6 +56,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.exporters.SNACResourceCreator;
 import org.snaccooperative.data.EntityId;
 
 import org.snaccooperative.exporters.SNACResourceCreator;
@@ -67,8 +68,8 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
-    protected EntityId entityId = null;
     protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
+    protected EntityId entityId = null;
 
     /*Test EntityID and various fields from SNAC datamodel */
 

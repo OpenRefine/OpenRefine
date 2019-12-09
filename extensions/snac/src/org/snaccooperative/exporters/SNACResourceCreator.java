@@ -29,6 +29,13 @@ import org.snaccooperative.data.Term;
 import org.snaccooperative.data.Constellation;
 import org.snaccooperative.data.Language;
 
+import org.apache.http.*;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 
 /*
 Required Fields:
@@ -89,7 +96,8 @@ public class SNACResourceCreator {
     private static List<String> csv_headers = new LinkedList<String>();
 
     // Internal Resource IDs that isn't part of the Resource data model
-    public static List<Integer> resource_ids = new LinkedList<Integer>();
+    private static List<Integer> resource_ids = new LinkedList<Integer>();
+    private static HashMap<String, String[]> language_code = new HashMap<String, String[]>();
 
     public static SNACResourceCreator getInstance() {
         return instance;
@@ -149,7 +157,7 @@ public class SNACResourceCreator {
               case "id":
                   try{
                       resource_ids.add(Integer.parseInt(temp_val));
-                      System.out.println("ID: " + temp_val);
+                      // System.out.println("ID: " + temp_val);
                       break;
                   }
                   catch (NumberFormatException e){
@@ -157,27 +165,31 @@ public class SNACResourceCreator {
                   }
               case "type":
                   try{
-                      int type_id = Integer.parseInt(temp_val);
                       Term t = new Term();
                       t.setType("document_type");
-                      t.setID(type_id);
                       String term;
-                      switch(type_id){
-                          case 696:
-                              term = "ArchivalResource";
-                              break;
-                          case 697:
-                              term = "BibliographicResource";
-                              break;
-                          case 400479:
-                              term = "DigitalArchivalResource";
-                              break;
-                          default:
-                              term = "";
+                      int type_id;
+                      if (temp_val == "696" || temp_val == "ArchivalResource"){
+                        type_id = 696;
+                        t.setID(type_id);
+                        term = "ArchivalResource";
+                        break;
+                      } else if (temp_val == "697" || temp_val == "BibliographicResource"){
+                        type_id = 697;
+                        t.setID(type_id);
+                        term = "BibliographicResource";
+                        break;
+                      } else if (temp_val == "400479" || temp_val == "DigitalArchivalResource"){
+                        type_id = 400479;
+                        t.setID(type_id);
+                        term = "DigitalArchivalResource";
+                        break;
+                      } else {
+                        term = "";
                       }
                       t.setTerm(term);
                       res.setDocumentType(t);
-                      System.out.println("Type: " + temp_val);
+                      // System.out.println("Type: " + temp_val);
                       break;
                   }
                   catch (NumberFormatException e){
@@ -186,49 +198,111 @@ public class SNACResourceCreator {
                   }
               case "title":
                   res.setTitle(temp_val);
-                  System.out.println("Title: " + temp_val);
+                  // System.out.println("Title: " + temp_val);
                   break;
               case "display entry":
                   res.setDisplayEntry(temp_val);
-                  System.out.println("Display Entry: " + temp_val);
+                  // System.out.println("Display Entry: " + temp_val);
                   break;
               case "link":
                   res.setLink(temp_val);
-                  System.out.println("Link: " + temp_val);
+                  // System.out.println("Link: " + temp_val);
                   break;
               case "abstract":
                   res.setAbstract(temp_val);
-                  System.out.println("Abstract: " + temp_val);
+                  // System.out.println("Abstract: " + temp_val);
                   break;
               case "extent":
                   res.setExtent(temp_val);
-                  System.out.println("Extent: " + temp_val);
+                  // System.out.println("Extent: " + temp_val);
                   break;
               case "date":
                   res.setDate(temp_val);
-                  System.out.println("Date: " + temp_val);
+                  // System.out.println("Date: " + temp_val);
                   break;
-              // case "language":
-              //     Language lang = new Language();
-              //     Term t = new Term();
-              //     t.setType(temp_val);
-              //     lang.setLanguage();
-              //     r.addLanguage(lang);
-              //     System.out.println("Language: " + temp_val);
-              //     break;
+              case "language":
+                  // Call language detecting function if not in dictionary of languages (cache)
+                  temp_val = temp_val.toLowerCase();
+                  String lang_term;
+                  if (!language_code.containsKey(temp_val)){
+                    lang_term = detectLanguage(temp_val);
+                    if (lang_term == null){
+                      break;
+                    }
+                  } else{
+                    lang_term = temp_val;
+                  }
+                  String[] val_array = language_code.get(lang_term);
+
+                  Language lang = new Language();
+                  Term t = new Term();
+                  t.setType("language_code");
+                  try{
+                    t.setID(Integer.parseInt(val_array[0]));
+                  } catch (NumberFormatException e){
+                    break;
+                  }
+                  t.setDescription(val_array[1]);
+                  t.setTerm(lang_term);
+
+                  lang.setLanguage(t);
+                  res.addLanguage(lang);
+                  // System.out.println("Language: " + lang_term);
+                  break;
               case "holding repository snac id":
                   Constellation cons = new Constellation();
-                  // Insert ID into cons (WORK IN PROGRESS)
+                  try {
+                    cons.setID(Integer.parseInt(temp_val));
+                  } catch(NumberFormatException e){
+                    break;
+                  }
                   res.setRepository(cons);
-                  System.out.println("HRSID: " + temp_val);
+                  // System.out.println("HRSID: " + temp_val);
                   break;
-              case "note":
-                  System.out.println("Note: " + temp_val);
+              // case "note":
+              //     System.out.println("Note: " + temp_val);
               default:
                   continue;
             }
         }
         return res;
+    }
+    /**
+    * Helps determine whether a given ISO language exists on the SNAC database
+    *
+    * @param lang (ISO language code)
+    * @return lang_term or null (ISO language code found in API Request)
+    */
+    public String detectLanguage(String lang){
+        // Insert API request calls for lang (if exists: insert into language dict, if not: return None)
+        try{
+          DefaultHttpClient client = new DefaultHttpClient();
+          HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
+          String query = "{\"command\": \"vocabulary\",\"query_string\": \"" + lang + "\",\"type\": \"language_code\",\"entity_type\": null}";
+          post.setEntity(new StringEntity(query,"UTF-8"));
+          HttpResponse response = client.execute(post);
+          String result = EntityUtils.toString(response.getEntity());
+          JSONParser jp = new JSONParser();
+          JSONArray json_result = (JSONArray)((JSONObject)jp.parse(result)).get("results");
+          if (json_result.size() <= 0){
+            return null;
+          }
+          else{
+            JSONObject json_val = (JSONObject)json_result.get(0);
+            String lang_id = (String)json_val.get("id");
+            String lang_desc = (String)json_val.get("description");
+            String lang_term = (String)json_val.get("term");
+            String[] lang_val = {lang_id, lang_desc};
+            language_code.put(lang_term, lang_val);
+            return lang_term;
+          }
+        }
+        catch(IOException e){
+          return null;
+        }
+        catch(ParseException e){
+          return null;
+        }
     }
 
     /**
@@ -255,7 +329,7 @@ public class SNACResourceCreator {
     * @param none
     * @return String (String converted JSONObject of Resource Array)
     */
-    public void exportResourcesJSON(){
+    public String exportResourcesJSON(){
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
         JSONParser jp = new JSONParser();
@@ -268,14 +342,11 @@ public class SNACResourceCreator {
           }
         }
         jo.put("resources", ja);
-        System.out.println(jo.toString());
+        // System.out.println(jo.toString());
+        return jo.toString();
     }
 
     public void pt4de(){
 
-    }
-
-    public static void main(String[] args) {
-        System.out.println("Hello");
     }
 }

@@ -179,7 +179,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
 
-  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID"];
   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
   this._dropdownArea.addClass("snac-tab");
   this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
