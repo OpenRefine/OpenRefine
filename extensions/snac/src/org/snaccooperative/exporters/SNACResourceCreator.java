@@ -156,7 +156,7 @@ public class SNACResourceCreator {
               case "id":
                   try{
                       resource_ids.add(Integer.parseInt(temp_val));
-                      System.out.println("ID: " + temp_val);
+                      // System.out.println("ID: " + temp_val);
                       break;
                   }
                   catch (NumberFormatException e){
@@ -188,7 +188,7 @@ public class SNACResourceCreator {
                       }
                       t.setTerm(term);
                       res.setDocumentType(t);
-                      System.out.println("Type: " + temp_val);
+                      // System.out.println("Type: " + temp_val);
                       break;
                   }
                   catch (NumberFormatException e){
@@ -197,27 +197,27 @@ public class SNACResourceCreator {
                   }
               case "title":
                   res.setTitle(temp_val);
-                  System.out.println("Title: " + temp_val);
+                  // System.out.println("Title: " + temp_val);
                   break;
               case "display entry":
                   res.setDisplayEntry(temp_val);
-                  System.out.println("Display Entry: " + temp_val);
+                  // System.out.println("Display Entry: " + temp_val);
                   break;
               case "link":
                   res.setLink(temp_val);
-                  System.out.println("Link: " + temp_val);
+                  // System.out.println("Link: " + temp_val);
                   break;
               case "abstract":
                   res.setAbstract(temp_val);
-                  System.out.println("Abstract: " + temp_val);
+                  // System.out.println("Abstract: " + temp_val);
                   break;
               case "extent":
                   res.setExtent(temp_val);
-                  System.out.println("Extent: " + temp_val);
+                  // System.out.println("Extent: " + temp_val);
                   break;
               case "date":
                   res.setDate(temp_val);
-                  System.out.println("Date: " + temp_val);
+                  // System.out.println("Date: " + temp_val);
                   break;
               case "language":
                   // Call language detecting function if not in dictionary of languages (cache)
@@ -246,7 +246,7 @@ public class SNACResourceCreator {
 
                   lang.setLanguage(t);
                   res.addLanguage(lang);
-                  System.out.println("Language: " + lang_term);
+                  // System.out.println("Language: " + lang_term);
                   break;
               case "holding repository snac id":
                   Constellation cons = new Constellation();
@@ -256,7 +256,7 @@ public class SNACResourceCreator {
                     break;
                   }
                   res.setRepository(cons);
-                  System.out.println("HRSID: " + temp_val);
+                  // System.out.println("HRSID: " + temp_val);
                   break;
               // case "note":
               //     System.out.println("Note: " + temp_val);
