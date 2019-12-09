@@ -521,7 +521,7 @@ public class CommandTest extends RefineTest{
         post.setEntity(new StringEntity("{\"command\": \"search\", \"term\": \"Washington\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
         HttpResponse response = client.execute(post);
         String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("2164"));
+        Assert.assertFalse(result.contains("2164"));
     }
 
     // /*
