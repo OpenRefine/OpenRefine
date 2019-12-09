@@ -59,5 +59,19 @@ public class SNACUploadCommand extends Command {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doPost(request, response);
+        SNACResourceCreator manager = SNACResourceCreator.getInstance();
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+
+        writer.writeStartObject();
+        writer.writeStringField("doneGet", manager.getColumnMatchesJSONString());
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
     }
 }
