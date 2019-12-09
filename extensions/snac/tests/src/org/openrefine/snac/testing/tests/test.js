@@ -14,46 +14,182 @@ node extensions/snac/tests/src/org/openrefine/snac/testing/tests/test.js
 // other useful examples: https://developers.google.com/web/tools/puppeteer/examples
 
 const puppeteer = require("puppeteer");
-(async () => {
-  try {
-    var browser = await puppeteer.launch({
-      headless: false,
-      defaultViewport: null,
-      devtools: true
-    });
 
-    //Testing ApiKey upload verification
-    var page = (await browser.pages())[0];
-    //await page.goto(`http://127.0.0.1:3333/project?project=1963572809934`);
-    await page.goto(`http://127.0.0.1:3333/`);
+  (async () => {
+    try {
+      var browser = await puppeteer.launch({
+        headless: false,
+        devtools: true
+      });
+      var page = await browser.newPage();
+      // For future tests, issues and preview can be easily accessed with this size
+      await page.setViewport({
+        width: 900,
+        height: 1000,
+      });
+  
+      /******************************************
+       *        OPENREFINE REACH TESTING        *
+       * (can we reach a project on openrefine) *
+       ******************************************/ 
 
-    var projectURL = await page.evaluate(() => {
-      let elements = $('.action-area-tab').toArray()[1];
-      $(elements).click(); 
-      return document.querySelectorAll('.project-name')[0].href;
-    });
-    await console.log(projectURL);
-    await page.goto(`${projectURL}`);
-    await page.waitForSelector('#extension-bar-menu-container');
+      // UNIT TEST: OpenRefine homepage can be reached
+      await page.goto(`http://127.0.0.1:3333/`);
+      var content = await page.content();
+      if (content != null){
+        console.log('TEST PASSED: OpenRefine homepage is reached')
+      } else {
+        console.log('TEST FAILED: OpenRefine homepage is reached')
+      }
 
-    await page.evaluate(() => {
-      let snac_button = $('#extension-bar-menu-container').toArray()[0].childNodes[0];
-      $(snac_button).click();
-      let upload = document.getElementsByClassName('menu-item')[2];
-      $(upload).click();
-      console.log(upload);
-    });
+      // UNIT TEST: The first project can be reached
+      var projectURL = await page.evaluate(() => {
+        let elements = $('.action-area-tab').toArray()[1];
+        $(elements).click(); 
+        return document.querySelectorAll('.project-name')[0].href;
+      });
+      await page.goto(`${projectURL}`);
+
+      var content = await page.content();
+      await page.waitFor(1000);
+      
+      if (content != null){
+        console.log('TEST PASSED: Project page is reached')
+      } else {
+        console.log('TEST FAILED: Project page is reached')
+      }
 
       
-    // const selectElem = await page.$('div[name="menu-container"]');
-    // await selectElem.type('Upload edits to SNAC');
+      // var text = await page.evaluate(button => button.innerText, uploadButton);
+      // console.log(text);
+      // uploadButton.click();
+      // let upload = document.getElementsByClassName('menu-item')[2];
+      // $(upload).click();
+      // console.log(upload);
 
-    await page.waitFor(100000);
-    await browser.close();
-    console.log("Browser Closed");
-  } catch (err) {
-    console.log(err);
-    await browser.close();
-    console.log("Error: Browser Closed");
-  }
+      /*************************************
+       *      EXTENSION REACH TESTING      *
+       * (can we reach our extension code) *
+       *************************************/ 
+
+      // UNIT TEST: SNAC extension dropdown button exists on main page
+      var extensionDropDownExistTest = false;
+
+      const extensionButton = await page.$('#body > #right-panel > #tool-panel > #extension-bar > #extension-bar-menu-container');
+      const listOfExtensions = await extensionButton.$$('a');
+      for (const button of listOfExtensions){
+          var text = await page.evaluate(button => button.innerText, button);
+          if(text == 'SNAC'){
+            button.click();
+            extensionDropDownExistTest = true;
+            break;
+          }
+      }
+      if(extensionDropDownExistTest){
+        console.log("TEST PASSED: SNAC Extension button exists.");
+      } else {
+        console.log("TEST FAILED: SNAC Extension button exists.");
+      }
+      await page.waitFor(1000);
+      
+      // UNIT TEST: API Key Upload Option Exists
+      var uploadAPIKeyOptionExistTest = false;
+      var menuHandler = await page.$$('.menu-container > .menu-item');
+      for (const menuOption of menuHandler){
+        var text = await page.evaluate(option => option.innerText, menuOption);
+        if(text == 'Upload edits to SNAC'){
+          menuOption.click();
+          uploadAPIKeyOptionExistTest = true;
+          break;
+        }
+      }
+      if(uploadAPIKeyOptionExistTest){
+        console.log("TEST PASSED: 'Upload edits to SNAC' option exists in SNAC extension dropdown.");
+      } else {
+        console.log("TEST FAILED: 'Upload edits to SNAC' option exists in SNAC extension dropdown.");
+      }
+      await page.waitFor(1000);
+
+      // UNIT TEST: API Key Upload Verification Appears
+      var uploadAPIKeyVerificationTest = false;
+      const uploadAPIHandler = await page.$('.snac-upload-management-area > .snac-upload-form > table > tbody > tr > td');
+      var text = await page.evaluate(option => option.innerText, uploadAPIHandler);
+      if (text == 'Your API key is:'){
+        console.log('TEST PASSED: API Key Upload Verification');
+      } else {
+        console.log('TEST PASSED: API Key Upload Verification');
+      }
+      var uploadButton = await page.$('.cancel-btn');
+      uploadButton.click();
+      await page.waitFor(1000);
+      
+      // SETUP
+      const extensionButtons = await page.$$('#body > #right-panel > #tool-panel > #extension-bar > #extension-bar-menu-container > a');
+      for (const button of extensionButtons){
+        var text = await page.evaluate(button => button.innerText, button);
+        if(text == 'SNAC'){
+          button.click();
+          break;
+        }
+      }
+      await page.waitFor(1000);
+
+      // UNIT TEST: 'Edit SNAC schema' will take you to the SNAC extension frontend
+      var editSchmeaOptionExistTest = false;
+      
+      menuHandler = await page.$$('.menu-container > .menu-item');
+      for (const menuOption of menuHandler){
+        var text = await page.evaluate(option => option.innerText, menuOption);
+        if(text == 'Edit SNAC schema'){
+          menuOption.click();
+          editSchmeaOptionExistTest = true;
+          break;
+        }
+      }
+      if(editSchmeaOptionExistTest){
+        console.log("TEST PASSED: 'Edit SNAC schema' option exists in SNAC extension dropdown.");
+      } else {
+        console.log("TEST FAILED: 'Edit SNAC schema' option exists in SNAC extension dropdown.");
+      }
+      await page.waitFor(1000);
+
+      /********************** 
+       * ISSUES TAB TESTING *
+       **********************/ 
+
+      // UNIT TEST: Issues tab exists
+      var issuesExistTest = false;
+    
+      const tabHandlers = await page.$$('.main-view-panel-tabs-snac');
+      for (const tab of tabHandlers){
+        var text = await page.evaluate(tab => tab.innerText, tab);
+        if (text == 'Issues '){
+          tab.click();
+          issuesExistTest = true;
+          break;
+        }
+      }
+      if(issuesExistTest){
+        console.log("TEST PASSED: Issues tab appears after clicking 'Edit SNAC schema'.");
+      } else {
+        console.log("TEST FAILED: Issues tab appears after clicking Edit SNAC schema.");
+      }
+      await page.waitFor(1000);
+
+      // UNIT TEST: Number of issues are 4 (for the number of missing fields)
+      const issuesResults = await page.$$('#snac-issues-panel > table > tbody > .wb-warning');
+      if(issuesResults.length == 4){
+        console.log("TEST PASSED: 4 errors appear on the issues tab when no edits were made to schema.");
+      } else {
+        console.log("TEST FAILED: 4 errors appear on the issues tab when no edits were made to schema.");
+      }
+
+      await page.waitFor(10000);
+      await browser.close();
+      console.log("Browser Closed");
+    } catch (err) {
+        console.log(err);
+        await browser.close();
+        console.log("Error: Browser Closed");
+    }
   })();
