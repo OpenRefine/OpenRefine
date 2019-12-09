@@ -20,6 +20,7 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
 
   this._elmts.dialogHeader.text($.i18n('snac-account/dialog-header'));
   this._elmts.explainKey.html($.i18n('snac-account/explain-key'));
+  this._elmts.explainKey2.html($.i18n('snac-account/explain-key2'));
   this._elmts.keyLabel.text($.i18n('snac-account/key-label'));
   this._elmts.keyInput.attr("placeholder", $.i18n('snac-account/key-placeholder'));
   this._elmts.cancelButton.text($.i18n('snac-account/close'));
