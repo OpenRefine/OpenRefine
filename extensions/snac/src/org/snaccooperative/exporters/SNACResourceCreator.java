@@ -287,7 +287,7 @@ public class SNACResourceCreator {
         samplePreview += "Inserting " + resources.size() + " new Resources into SNAC." + "\n";
         Resource firstResource = resources.get(0);
 
-        /*first preview resource*/ 
+        /*first preview resource*/
         samplePreview+= "ID: " + firstResource.getID() + "\n";
         samplePreview+="Document Type: " + firstResource.getDocumentType().getTerm() + "\n";
         samplePreview+="Title: " + firstResource.getTitle() + "\n";
@@ -342,7 +342,7 @@ public class SNACResourceCreator {
           samplePreview+= secondResourceLanguages;
           samplePreview+="Repository ID (work in progress): " + Integer.toString(secondResource.getRepository().getID()) + "\n";
         }
-        
+
       }
       return samplePreview;
 
@@ -426,20 +426,21 @@ public class SNACResourceCreator {
         }
         jo.put("resources", ja);
         return jo.toString();
-        
+
     }
 
     public void uploadResources(String apiKey) {
-    //    String apiKey = "NmZjMTY3Yjc4ZjgxZGRmMzM5YTI0YzZhMDVhMGJhNjE3MTU2ZTg5Mw";
+
     try{
         String opIns = ",\n\"operation\":\"insert\"\n},\"apikey\":\"" + apiKey +"\"";
         List<Resource> new_list_resources = new LinkedList<Resource>();
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
+        System.out.println("Querying SNAC...");
         for(Resource temp_res : resources){
             String rtj = Resource.toJSON(temp_res);
               String api_query = "{\"command\": \"insert_resource\",\n \"resource\":" + rtj.substring(0,rtj.length()-1) + opIns + "}";
-              System.out.println("\n\n" + api_query + "\n\n");
+              //System.out.println("\n\n" + api_query + "\n\n");
               StringEntity casted_api = new StringEntity(api_query,"UTF-8");
               post.setEntity(casted_api);
               HttpResponse response = client.execute(post);
