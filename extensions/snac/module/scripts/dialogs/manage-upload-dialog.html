@@ -18,6 +18,14 @@
                 </tr>
               </table>
             </form>
+            <br>
+            <p class="upload-choice" bind="uploadChoice"></p>
+            <div class="upload-destination">
+              <input type="radio" name="uploadOption" class="dev" checked/>Development Site
+              <br>
+              <input type="radio" name="uploadOption" class="prod"/>Production Site
+              <br>
+            </div>
             <div class="snac-upload-buttons">
                 <button class="button-snac cancel-btn" bind="cancelButton"></button>
                 <button class="button-snac submit-btn" bind="uploadButton"></button>

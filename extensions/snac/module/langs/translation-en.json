@@ -66,6 +66,7 @@
     "snac-upload/explain-key": "Your API key from <a href=\"https://snaccooperative.org\" target=\"_blank\">SNAC</a> lets you upload edits directly from OpenRefine into SNAC.",
     "snac-upload/key-label": "Your API key is:",
     "snac-upload/key-placeholder": "This your SNAC API Key",
+    "snac-upload/upload-choice": "Upload to:",
     "snac-upload/close": "Close",
     "snac-upload/upload": "Upload Using Key"
 }
