@@ -1,4 +1,4 @@
-<div class="dialog-frame snac" style="width: 600px;">
+<div class="dialog-frame snac" style="width: 600px">
   <div class="dialog-header snac" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody">
     <a href="https://snaccooperative.org" target="_blank">
@@ -11,9 +11,9 @@
             <form bind="apiKeyForm" class="snac-upload-form" method="post">
               <table>
                 <tr>
-                  <td><label for="snackey" bind="keyLabel"></label></td>
+                  <label class="the-key-label" for="snackey" bind="keyLabel"></label>
                   <td>
-                      &nbsp;<label for="snackey" bind="keyInput" style="color: red; font-weight: bold" ></label>
+                    <label class="the-key"for="snackey" bind="keyInput" ></label>
                   </td>
                 </tr>
               </table>

@@ -44,7 +44,7 @@ const puppeteer = require("puppeteer");
       console.log(upload);
     });
 
-    await expect(apikey).toMatch('newkey')
+    // await expect(apikey).toMatch('newkey')
       
     // const selectElem = await page.$('div[name="menu-container"]');
     // await selectElem.type('Upload edits to SNAC');
