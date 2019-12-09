@@ -76,26 +76,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   cursor: pointer;
 }
 
-.submit-button {
+.dialog-frame.snac {
+  border-radius: 12px;
+  border: 4px solid #3a5774;
+  color: black;
+  padding: 6px 12px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: move;
+}
+
+.dialog-header.snac {
+  text-align: center;
+  margin-top: -6px;
+  margin-left: -12px;
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 8px 8px 0px 0px;
+  color: #3a5774;
+}
+
+.submit-btn {
+  font-size: 16px;
   background-color: white; 
   color: black; 
   border: 2px solid #4CAF50;
 }
 
-.submit-button:hover {
+.submit-btn:hover {
   background-color: #4CAF50;
   color: white;
   border: 2px solid #4CAF50;
 }
 
-.cancel-button {
+.cancel-btn {
+  font-size: 16px;
   background-color: white; 
   color: black; 
-  border: 2px solid #008CBA;
+  // border: 2px solid #008CBA;
+  border: 2px solid #3a5774;
 }
 
-.cancel-button:hover {
-  background-color: #008CBA;
+.cancel-btn:hover {
+  background-color: #3a5774;
   color: white;
-  border: 2px solid #008CBA;
+  border: 2px solid #3a5774;
 }

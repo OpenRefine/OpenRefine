@@ -6,6 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 
+import org.apache.http.*;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +22,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.apache.http.entity.StringEntity;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,13 +36,6 @@ import org.snaccooperative.data.Resource;
 import org.snaccooperative.data.Term;
 import org.snaccooperative.data.Constellation;
 import org.snaccooperative.data.Language;
-
-import org.apache.http.*;
-import org.apache.http.util.EntityUtils;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 
 /*
@@ -96,6 +97,7 @@ public class SNACResourceCreator {
     public static List<String> csv_headers = new LinkedList<String>();
 
     // Internal Resource IDs that isn't part of the Resource data model
+
     private static List<Integer> resource_ids = new LinkedList<Integer>();
     private static HashMap<String, String[]> language_code = new HashMap<String, String[]>();
 
@@ -156,6 +158,7 @@ public class SNACResourceCreator {
             switch(snac_header){
               case "id":
                   try{
+                      res.setID(Integer.parseInt(temp_val));
                       resource_ids.add(Integer.parseInt(temp_val));
                       // System.out.println("ID: " + temp_val);
                       break;
@@ -267,7 +270,85 @@ public class SNACResourceCreator {
         }
         return res;
     }
+
     /**
+
+    * Converts 2 Resources into format for Preview Tab
+    *
+    * @param none
+    * @return String
+    */
+    public String obtainPreview(){
+      String samplePreview = "";
+      if (resources.size() == 0){
+        samplePreview += "There are no Resources to preview.";
+      }
+      else{
+        samplePreview += "Inserting " + resources.size() + " new Resources into SNAC." + "\n";
+        Resource firstResource = resources.get(0);
+
+        /*first preview resource*/ 
+        samplePreview+= "ID: " + firstResource.getID() + "\n";
+        samplePreview+="Document Type: " + firstResource.getDocumentType().getTerm() + "\n";
+        samplePreview+="Title: " + firstResource.getTitle() + "\n";
+        samplePreview+="Display Entry: " + firstResource.getDisplayEntry() + "\n";
+        samplePreview+="Link: " + firstResource.getLink() + "\n";
+        samplePreview+="Abstract: " + firstResource.getAbstract() + "\n";
+        samplePreview+="Extent: " + firstResource.getExtent() +  "\n";
+        samplePreview+="Date: " + firstResource.getDate() + "\n";
+        List<Language> languageList = firstResource.getLanguages();
+        String firstResourceLanguages = "Language(s): ";
+        if(languageList.size() == 0){
+          firstResourceLanguages = "Language(s): " + "\n" ;
+        }
+        for(int i=0; i<languageList.size();i++){
+          if(languageList.size() == 0){
+            break;
+          }
+          if(i != languageList.size()-1){
+            firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() +", ";
+          }
+          else{
+            firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() + "\n";
+          }
+        }
+        samplePreview+= firstResourceLanguages;
+        samplePreview+="Repository ID (work in progress): "+ Integer.toString(firstResource.getRepository().getID()) + "\n";
+
+        /*second preview resource*/
+        if(resources.size() > 1){
+          Resource secondResource = resources.get(1);
+          samplePreview+="ID: " + secondResource.getID()+ "\n";
+          samplePreview+="Document Type: " + secondResource.getDocumentType().getTerm() + "\n";
+          samplePreview+="Title: " + secondResource.getTitle() + "\n";
+          samplePreview+="Display Entry: " + secondResource.getDisplayEntry() + "\n";
+          samplePreview+="Link: " + secondResource.getLink() + "\n";
+          samplePreview+="Abstract: " + secondResource.getAbstract() + "\n";
+          samplePreview+="Extent: " + secondResource.getExtent() +  "\n";
+          samplePreview+="Date: " + secondResource.getDate() + "\n";
+          List<Language> languageList2 = secondResource.getLanguages();
+          String secondResourceLanguages = "Language(s): ";
+          if(languageList2.size() == 0){
+            secondResourceLanguages = "Language(s): " + "\n" ;
+          }
+          for(int i=0; i<languageList2.size();i++){
+            if(i != languageList2.size()-1){
+              secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() +", ";
+            }
+            else{
+              secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() + "\n";
+            }
+          }
+          samplePreview+= secondResourceLanguages;
+          samplePreview+="Repository ID (work in progress): " + Integer.toString(secondResource.getRepository().getID()) + "\n";
+        }
+        
+      }
+      return samplePreview;
+
+    }
+
+    /*
     * Helps determine whether a given ISO language exists on the SNAC database
     *
     * @param lang (ISO language code)
@@ -305,6 +386,7 @@ public class SNACResourceCreator {
         }
     }
 
+
     /**
     * Converts Project rows to Resources and store into Resources array
     *
@@ -329,6 +411,7 @@ public class SNACResourceCreator {
     * @param none
     * @return String (String converted JSONObject of Resource Array)
     */
+
     public String exportResourcesJSON(){
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
@@ -342,11 +425,57 @@ public class SNACResourceCreator {
           }
         }
         jo.put("resources", ja);
-        // System.out.println(jo.toString());
         return jo.toString();
+        
     }
 
-    public void pt4de(){
+    public void uploadResources(String apiKey) {
+    //    String apiKey = "NmZjMTY3Yjc4ZjgxZGRmMzM5YTI0YzZhMDVhMGJhNjE3MTU2ZTg5Mw";
+    try{
+        String opIns = ",\n\"operation\":\"insert\"\n},\"apikey\":\"" + apiKey +"\"";
+        List<Resource> new_list_resources = new LinkedList<Resource>();
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
+        for(Resource temp_res : resources){
+            String rtj = Resource.toJSON(temp_res);
+              String api_query = "{\"command\": \"insert_resource\",\n \"resource\":" + rtj.substring(0,rtj.length()-1) + opIns + "}";
+              System.out.println("\n\n" + api_query + "\n\n");
+              StringEntity casted_api = new StringEntity(api_query,"UTF-8");
+              post.setEntity(casted_api);
+              HttpResponse response = client.execute(post);
+              String result = EntityUtils.toString(response.getEntity());
+              //System.out.println("RESULT:" + result);
+              new_list_resources.add(insertID(result,temp_res));
+          }
+          resources = new_list_resources;
+          System.out.println("Uploading Attempt Complete");
+        }catch(IOException e){
+          System.out.println(e);
+        }
+    }
+
+    public Resource insertID(String result, Resource res){
+        JSONParser jp = new JSONParser();
+        try{
+            JSONObject jsonobj = (JSONObject)jp.parse(result);
+            int new_id = Integer.parseInt((((JSONObject)jsonobj.get("resource")).get("id")).toString());
+            if(new_id!=0){
+              resource_ids.add(new_id);
+              res.setID(new_id);
+              return res;
+            }
+            else{
+              resource_ids.add(null);
+            }
+        }
+        catch (ParseException e){
+            System.out.println(e);
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Hello");
 
     }
 }

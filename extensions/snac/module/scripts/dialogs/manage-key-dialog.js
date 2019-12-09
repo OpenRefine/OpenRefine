@@ -28,6 +28,33 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
   let checked = 1;
   var checkedOrNah = document.getElementById("myCheck");
 
+  $(document).mouseup(function(e) {
+    console.log(e.target);
+    if (e.target.id=="snackey") {
+      console.log("IN");
+      $(document).keypress(function(e) { 
+        if (e.keyCode == 13) {
+          $('.submit-btn').click();
+          console.log("SUBMITTED");
+        }
+      });
+    } else {
+      console.log("OUT");
+      $(document).keypress(function(e) { 
+        if (e.keyCode == 13) {
+          e.preventDefault();
+        }
+      });
+    }
+  });
+
+  $(document).keyup(function(e) {
+    if (e.keyCode === 27) {
+      $('.cancel-btn').click();   // esc
+      console.log("ESCAPED");
+    }
+  });
+
   valueChange = function(item){
       checkedOrNah = document.getElementById("myCheck");
       if (checkedOrNah.checked == true) {
@@ -58,7 +85,7 @@ ManageKeysDialog.display = function(apikey, saved_apikey, callback) {
     DialogSystem.dismissUntil(self._level - 1);
   };
 
-  frame.find('.cancel-button').click(function() {
+  frame.find('.cancel-btn').click(function() {
      dismiss();
     //  console.log(checked);
      callback(null);
