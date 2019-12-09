@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.snaccooperative.commands;
+package org.openrefine.snac.commands;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.io.File;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,8 +58,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.commands.SNACResourceCommand;
 import org.snaccooperative.exporters.SNACResourceCreator;
 import org.snaccooperative.data.EntityId;
+import org.snaccooperative.data.Resource;
 
 public class CommandTest extends RefineTest{
 
@@ -72,71 +76,89 @@ public class CommandTest extends RefineTest{
     @BeforeMethod
     public void SetUp() {
         // Setup for Post Request
+        manager.csv_headers = new LinkedList<String>(){{add("title"); add("link"); add("abstract");}};
+        HashMap<String, String> hash_map = new HashMap<String, String>();
+        hash_map.put("title", "title");
+        hash_map.put("link", "link");
+        hash_map.put("abstract", "abstract");
+
+        manager.match_attributes = hash_map;
+
+        project = createCSVProject(TestingData2.resourceCsv);
+
         command = new SNACResourceCommand();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
 
-        when(request.getParameter("dict")).thenReturn("{\"col1\":\"snaccol1\", \"col2\":\"snaccol2\", \"col3\":\"snaccol3\"}");
+        // when(request.getParameter("dict")).thenReturn("{\"col1\":\"snaccol1\", \"col2\":\"snaccol2\", \"col3\":\"snaccol3\"}");
+        // when(request.getParameter("project")).thenReturn("" + project.id + "");
 
         try {
             when(response.getWriter()).thenReturn(printWriter);
         } catch (IOException e1) {
             Assert.fail();
         }
-
-        // Setup for SNACResourceCreator
-
     }
 
     @Test
     public void testResourceEquivalent1() throws Exception{
-      project = createCSVProject(TestingData2.resourceCsv);
-      // jsonFromFile of Resource json from file
-      // Check against createResource of first row in project
-      // Use Resource.toJSON(rowResource)
+      Resource fromDataRes = manager.createResource(project.rows.get(0));
+      String fromData = Resource.toJSON(fromDataRes);
+      Assert.assertTrue(fromData.contains("Title1"));
     }
 
+    @Test
+    public void testResourceEquivalent2() throws Exception{
+      Resource fromDataRes = manager.createResource(project.rows.get(0));
+      String fromData = Resource.toJSON(fromDataRes);
+      Assert.assertTrue(fromData.contains("abstract_example1"));
+    }
 
     @Test
     public void testResourceGlobalOne() throws Exception{
-      command.doPost(request, response);
-      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
-      String response_str = response.get("resource").textValue();
-      Assert.assertTrue(response_str.contains("col1"));
+      // command.doPost(request, response);
+      // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      // String response_str = response.get("resource").textValue();
+      String response_str = manager.getColumnMatchesJSONString();
+      Assert.assertTrue(response_str.contains("title"));
     }
 
     @Test
     public void testResourceGlobalFalseFive() throws Exception{
-      command.doPost(request, response);
-      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
-      String response_str = response.get("resource").textValue();
+      // command.doPost(request, response);
+      // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      // String response_str = response.get("resource").textValue();
+      String response_str = manager.getColumnMatchesJSONString();
       Assert.assertFalse(response_str.contains("col5"));
     }
 
 
     @Test
     public void testResourceGlobalTwo() throws Exception{
-      command.doPost(request, response);
-      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
-      String response_str = response.get("resource").textValue();
-      Assert.assertTrue(response_str.contains("col2"));
+      // command.doPost(request, response);
+      // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      // String response_str = response.get("resource").textValue();
+      String response_str = manager.getColumnMatchesJSONString();
+      Assert.assertTrue(response_str.contains("abstract"));
     }
 
     @Test
     public void testResourceGlobalThree() throws Exception{
-      command.doPost(request, response);
-      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
-      String response_str = response.get("resource").textValue();
-      Assert.assertTrue(response_str.contains("col3"));
+      // command.doPost(request, response);
+      // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      // String response_str = response.get("resource").textValue();
+      String response_str = manager.getColumnMatchesJSONString();
+      Assert.assertTrue(response_str.contains("link"));
     }
 
     @Test
     public void testResourceGlobalFalseFour() throws Exception{
-      command.doPost(request, response);
-      ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
-      String response_str = response.get("resource").textValue();
+      // command.doPost(request, response);
+      // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+      // String response_str = response.get("resource").textValue();
+      String response_str = manager.getColumnMatchesJSONString();
       Assert.assertFalse(response_str.contains("col4"));
     }
 

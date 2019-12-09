@@ -54,9 +54,9 @@ import com.google.refine.model.ReconCandidate;
 
 public class TestingData2 {
 
-    public static final String resourceCsv = "title,type,holding repository snac id,link\n"
-            + "Title1, 696, 1234567, http://row1test.com\n"
-            + "Title2, 696, 1234568, http://row2test.com";
+    public static final String resourceCsv = "title,link,abstract\n"
+            + "Title1,http://row1test.com,abstract_example1\n"
+            + "Title2,http://row2test.com,abstract_example2";
 
     public static final String inceptionCsv = "subject,inception,reference\n"
             + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,";
