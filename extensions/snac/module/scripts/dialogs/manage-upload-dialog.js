@@ -15,7 +15,7 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
   var self = this;
   var frame = $(DOM.loadHTML("snac", "scripts/dialogs/manage-upload-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
-  
+
   ManageUploadDialog.firstLaunch = false;
 
   this._elmts.dialogHeader.text($.i18n('snac-upload/dialog-header'));
@@ -47,10 +47,11 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
     // callback(apikey);
   });
 
-  elmts.upload.click(function() {
+  elmts.uploadButton.click(function() {
+      console.log(elmts.apiKeyForm.serialize());
       frame.hide();
       $.post(
-          "command/snac/apikey",
+          "command/snac/upload",
           elmts.apiKeyForm.serialize(),
           function(data) {
               if (data.apikey) {

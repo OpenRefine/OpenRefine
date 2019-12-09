@@ -356,7 +356,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
         "command/snac/resource",
         {
           "dict": JSON.stringify(dict),
-          "project": JSON.stringify(theProject)
+          "project": JSON.stringify(theProject.id)
         },
         function(data, status) {
            console.log("Resource status: " + data.resource);

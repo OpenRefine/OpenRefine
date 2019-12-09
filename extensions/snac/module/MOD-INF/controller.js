@@ -48,6 +48,7 @@ function init() {
     //RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "resource", new SNACResourceCommand());
     RefineServlet.registerCommand(module, "apikey", new SNACLoginCommand());
+    RefineServlet.registerCommand(module, "upload", new SNACUploadCommand());
 
     /*
      * Resources
