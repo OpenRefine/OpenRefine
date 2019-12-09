@@ -56,6 +56,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.exporters.SNACResourceCreator;
 import org.snaccooperative.data.EntityId;
 
 import org.snaccooperative.exporters.SNACResourceCreator;
@@ -67,8 +68,8 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
-    protected EntityId entityId = null;
     protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
+    protected EntityId entityId = null;
 
     /*Test EntityID and various fields from SNAC datamodel */
 
@@ -442,6 +443,56 @@ public class CommandTest extends RefineTest{
         HttpResponse response = client.execute(post);
         String result = EntityUtils.toString(response.getEntity());
         Assert.assertFalse(result.contains("text/xml"));
+    }
+
+    @Test
+    public void testSearchTerm1() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 700}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("success"));
+    }
+
+    @Test
+    public void testSearchTerm2() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 600}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("'term': 'Edward'"));
+    }
+
+    @Test
+    public void testSearchTerm3() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 500}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("success"));
+    }
+
+    @Test
+    public void testReadVocab1() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read_vocabulary\"}, \"term_id\": 700}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("success"));
+    }
+
+    @Test
+    public void testReadResource() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read_resource\"}, \"resourceid\": 7149468}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("abstract: This collection contains business papers, political papers, and family papers. "));
     }
 
 
