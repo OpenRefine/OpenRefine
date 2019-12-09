@@ -425,6 +425,8 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
     array_ddv.push(dropDownValues[j].value);
   }
 
+
+
   // Empty required field check (for issues tab)
   var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
   
@@ -476,6 +478,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
   }
 
   SNACSchemaAlignmentDialog._hasChanged();
+
 };
 
 SNACSchemaAlignmentDialog._discardChanges = function() {
