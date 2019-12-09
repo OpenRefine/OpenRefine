@@ -59,6 +59,8 @@ import java.io.IOException;
 import org.snaccooperative.exporters.SNACResourceCreator;
 import org.snaccooperative.data.EntityId;
 
+import org.snaccooperative.exporters.SNACResourceCreator;
+
 public class CommandTest extends RefineTest{
 
     protected Project project = null;
@@ -68,7 +70,46 @@ public class CommandTest extends RefineTest{
     protected Command command = null;
     protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
     protected EntityId entityId = null;
+    protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
 
+    /*Test EntityID and various fields from SNAC datamodel */
+
+    @Test
+    public void testEntityIdURI() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setURI("12345");
+      Assert.assertEquals(testEntity.getURI(), "12345");
+    }
+
+    @Test
+    public void testEntityIdID() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setID(123);
+      Assert.assertEquals(testEntity.getID(), 123);
+    }
+
+    @Test
+    public void testEntityIdText() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("I like pizza");
+      Assert.assertEquals(testEntity.getText(), "I like pizza");
+    }
+
+    @Test
+    public void testEntityIdEquals() throws Exception{
+      EntityId testEntity1 = new EntityId();
+      testEntity1.setID(123);
+      EntityId testEntity2 = new EntityId();
+      testEntity2.setID(456);
+      Assert.assertFalse(testEntity1.equals(testEntity2));
+    }
+
+    @Test
+    public void testEntityToString() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("123");
+      Assert.assertEquals(testEntity.toString(), "EntityID: 123");
+    }
     @BeforeMethod
     public void SetUp() {
         // Setup for Post Request
@@ -141,89 +182,10 @@ public class CommandTest extends RefineTest{
     }
 
     @Test
-    public void testEntityIdURI() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setURI("12345");
-      Assert.assertEquals(testEntity.getURI(), "12345");
-    }
-
-        @Test
-        public void testGson() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 1760004979705}";
-          Project proj = test.fromJson(a,Project.class);
-          Assert.assertNotNull(proj);
-        }
-
-        @Test
-        public void testGsonFields() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 420}";
-          Project proj = test.fromJson(a,Project.class);
-          Assert.assertTrue(proj.id==420);
-        }
-
-        @Test
-        public void testGsonEquivalence() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 420}";
-          Project proj = test.fromJson(a,Project.class);
-          Project abc = new Project();
-          Assert.assertFalse(abc.id==proj.id);
-        }
-
-        @Test
-        public void testGsonFailure() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 420}}";
-          try{
-            Project proj = test.fromJson(a,Project.class);
-            Assert.assertTrue(a.equals("{\"id\": 420}"));
-          }catch(Exception e){
-              Assert.assertTrue(a.equals("{\"id\": 420}}"));
-          }
-        }
-
-        @Test
-        public void testGsonInvalid() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": \"\"}";
-          try{
-            Project proj = test.fromJson(a,Project.class);
-            Assert.assertTrue(a.equals("{\"id\": 1}"));
-          }catch(Exception e){
-              Assert.assertTrue(a.equals("{\"id\": \"\"}"));
-          }
-        }
-
-    @Test
-    public void testEntityIdID() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setID(123);
-      Assert.assertEquals(testEntity.getID(), 123);
-    }
-
-    @Test
-    public void testEntityIdText() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setText("I like pizza");
-      Assert.assertEquals(testEntity.getText(), "I like pizza");
-    }
-
-    @Test
-    public void testEntityIdEquals() throws Exception{
-      EntityId testEntity1 = new EntityId();
-      testEntity1.setID(123);
-      EntityId testEntity2 = new EntityId();
-      testEntity2.setID(456);
-      Assert.assertFalse(testEntity1.equals(testEntity2));
-    }
-
-    @Test
-    public void testEntityToString() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setText("123");
-      Assert.assertEquals(testEntity.toString(), "EntityID: 123");
+    public void testGson() throws Exception{
+      Gson bruh = new Gson();
+      String a="";
+      Assert.assertTrue(a.equals(""));
     }
 
     /*

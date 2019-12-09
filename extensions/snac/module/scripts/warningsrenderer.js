@@ -1,6 +1,6 @@
 var WarningsRenderer = {};
 
-// renders a Wikibase entity into a link
+// renders a SNAC entity into a link
 WarningsRenderer._renderEntity = function(entity) {
   if (!entity.id && entity.value) {
       entity.id = entity.value.id;
