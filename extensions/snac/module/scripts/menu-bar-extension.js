@@ -79,6 +79,23 @@ SNACExporterMenuBar.checkSchemaAndExport = function(format) {
   }
 }
 
+SNACExporterMenuBar.stringToJSONDownload = function(){
+	$.get(
+			"command/snac/resource",
+			function(data) {
+				let dataStr = JSON.stringify(JSON.parse(data.resource), 0 , 4);
+		    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+				var date = new Date();
+		    let exportFileDefaultName = date.toISOString().substr(0,10) + '-SNAC-resources.json';
+
+		    let linkElement = document.createElement('a');
+		    linkElement.setAttribute('href', dataUri);
+		    linkElement.setAttribute('download', exportFileDefaultName);
+		    linkElement.click();
+			});
+}
+
 //extend the column header menu
 $(function(){
     ExtensionBar.MenuItems.push(
@@ -101,14 +118,14 @@ $(function(){
                     {
                         id:"snac/perform-edits",
                         label: $.i18n('snac-extension/perform-edits-on-snac'),
-                        click: function() { /*PerformEditsDialog.checkAndLaunch();*/ 
-                            ManageUploadDialog.launch(null, function(success) {}); 
+                        click: function() { /*PerformEditsDialog.checkAndLaunch();*/
+                            ManageUploadDialog.launch(null, function(success) {});
                         }
                     },
                     {
                         id:"snac/export-schema",
                         label: $.i18n('snac-extension/export-to-json'),
-                        click: function() { SNACExporterMenuBar.checkSchemaAndExport("schema"); }
+                        click: function() { SNACExporterMenuBar.stringToJSONDownload(); }
                     },
 
                 ]

@@ -30,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-
+/* 
 .button, a.button { 
   background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3));
   background: -moz-linear-gradient(top,  #f9f9f9,  #e3e3e3);
@@ -41,4 +41,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9));
   background: -moz-linear-gradient(top,  #e3e3e3,  #f9f9f9);
   filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#e3e3e3', endColorstr='#f9f9f9');
-  }
+  } */

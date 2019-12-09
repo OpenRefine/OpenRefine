@@ -136,7 +136,7 @@ public class ExtendDataOperationTests extends RefineTest {
     Properties options;
     EngineConfig engine_config;
     Engine engine;
-
+/*
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         OperationRegistry.registerOperation(getCoreModule(), "extend-reconciled-data", ExtendDataOperation.class);
@@ -160,206 +160,206 @@ public class ExtendDataOperationTests extends RefineTest {
         row = new Row(2);
         row.setCell(0, reconciledCell("United States of America", "Q30"));
         project.rows.add(row);
-    }
+    }*/
 
-    @Test
-    public void serializeExtendDataOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
-    }
-
-    @Test
-    public void serializeExtendDataProcess() throws Exception {
-        Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
-                .createProcess(project, new Properties());
-        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
-    }
-
-    @Test
-    public void serializeDataExtensionConfig() throws IOException {
-        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
-    }
-
-    @Test
-    public void testFormulateQuery() throws IOException {
-        DataExtensionConfig config = DataExtensionConfig.reconstruct(dataExtensionConfigJson);
-        Set<String> ids = Collections.singleton("Q2");
-        String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
-        ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint");
-        TestUtils.assertEqualAsJson(json, stub.formulateQueryStub(ids, config));
-    }
-
-
-    @AfterMethod
-    public void TearDown() {
-        project = null;
-        options = null;
-        engine = null;
-    }
-
-    static public Cell reconciledCell(String name, String id) {
-       ReconCandidate r = new ReconCandidate(id, name, new String[0], 100);
-       List<ReconCandidate> candidates = new ArrayList<ReconCandidate>();
-       candidates.add(r);
-       Recon rec = new Recon(0, RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE);
-       rec.service = RECON_SERVICE;
-       rec.candidates = candidates;
-       rec.match = r;
-       return new Cell(name, rec);
-    }
-
-    /**
-     * Test to fetch simple strings
-     */
-
-    @Test
-    public void testFetchStrings() throws Exception {
-        DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
-
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
-
-        // Inspect rows
-        Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
-        Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
-        Assert.assertTrue("TJ".equals(project.rows.get(2).getCellValue(1)), "Bad country code for Tajikistan.");
-        Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
-
-        // Make sure we did not create any recon stats for that column (no reconciled value)
-        Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
-    }
-
-     /**
-     * Test to fetch counts of values
-     */
-
-    @Test
-    public void testFetchCounts() throws Exception {
-        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
-                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
-
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
-
-        // Test to be updated as countries change currencies!
-        //Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
-        Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
-
-        // Make sure we did not create any recon stats for that column (no reconciled value)
-        Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
-    }
-
-    /**
-     * Test fetch only the best statements
-     */
-    @Test
-    public void testFetchCurrent() throws Exception {
-        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
-                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
-
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        //Assert.assertFalse(process.isRunning());
-
-        /*
-          * Tajikistan has one "preferred" currency and one "normal" one
-          * (in terms of statement ranks).
-          * But thanks to our setting in the extension configuration,
-          * we only fetch the current one, so the one just after it is
-          * the one for the US (USD).
-          */
-        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
-        Assert.assertTrue("United States dollar".equals(project.rows.get(3).getCellValue(1)));
-
-        // Make sure all the values are reconciled
-        Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 4);
-    }
-
-    /**
-     * Test fetch records (multiple values per reconciled cell)
-     */
-    @Test
-    public void testFetchRecord() throws Exception {
-        DataExtensionConfig extension = DataExtensionConfig.reconstruct(
-                "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
-
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            // This is 10 seconds because for some reason running this test on Travis takes longer.
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
-
-        /*
-          * Tajikistan has one "preferred" currency and one "normal" one
-          * (in terms of statement ranks).
-          * The second currency is fetched as well, which creates a record
-          * (the cell to the left of it is left blank).
-          */
-        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)), "Bad currency name for Tajikistan");
-        Assert.assertTrue("Tajikistani ruble".equals(project.rows.get(3).getCellValue(1)), "Bad currency name for Tajikistan");
-        Assert.assertTrue(null == project.rows.get(3).getCellValue(0));
-
-        // Make sure all the values are reconciled
-        Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 5);
-    }
+    // @Test
+    // public void serializeExtendDataOperation() throws Exception {
+    //     TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
+    // }
+    //
+    // @Test
+    // public void serializeExtendDataProcess() throws Exception {
+    //     Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
+    //             .createProcess(project, new Properties());
+    //     TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
+    // }
+    //
+    // @Test
+    // public void serializeDataExtensionConfig() throws IOException {
+    //     TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
+    // }
+    //
+    // @Test
+    // public void testFormulateQuery() throws IOException {
+    //     DataExtensionConfig config = DataExtensionConfig.reconstruct(dataExtensionConfigJson);
+    //     Set<String> ids = Collections.singleton("Q2");
+    //     String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
+    //     ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint");
+    //     TestUtils.assertEqualAsJson(json, stub.formulateQueryStub(ids, config));
+    // }
+    //
+    //
+    // @AfterMethod
+    // public void TearDown() {
+    //     project = null;
+    //     options = null;
+    //     engine = null;
+    // }
+    //
+    // static public Cell reconciledCell(String name, String id) {
+    //    ReconCandidate r = new ReconCandidate(id, name, new String[0], 100);
+    //    List<ReconCandidate> candidates = new ArrayList<ReconCandidate>();
+    //    candidates.add(r);
+    //    Recon rec = new Recon(0, RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE);
+    //    rec.service = RECON_SERVICE;
+    //    rec.candidates = candidates;
+    //    rec.match = r;
+    //    return new Cell(name, rec);
+    // }
+    //
+    // /**
+    //  * Test to fetch simple strings
+    //  */
+    //
+    // @Test
+    // public void testFetchStrings() throws Exception {
+    //     DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
+    //
+    //     EngineDependentOperation op = new ExtendDataOperation(engine_config,
+    //             "country",
+    //             RECON_SERVICE,
+    //             RECON_IDENTIFIER_SPACE,
+    //             RECON_SCHEMA_SPACE,
+    //             extension,
+    //             1);
+    //     ProcessManager pm = project.getProcessManager();
+    //     Process process = op.createProcess(project, options);
+    //     process.startPerforming(pm);
+    //     Assert.assertTrue(process.isRunning());
+    //     try {
+    //         // This is 10 seconds because for some reason running this test on Travis takes longer.
+    //         Thread.sleep(10000);
+    //     } catch (InterruptedException e) {
+    //         Assert.fail("Test interrupted");
+    //     }
+    //     Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
+    //
+    //     // Inspect rows
+    //     Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
+    //     Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
+    //     Assert.assertTrue("TJ".equals(project.rows.get(2).getCellValue(1)), "Bad country code for Tajikistan.");
+    //     Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
+    //
+    //     // Make sure we did not create any recon stats for that column (no reconciled value)
+    //     Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
+    // }
+    //
+    //  /**
+    //  * Test to fetch counts of values
+    //  */
+    //
+    // @Test
+    // public void testFetchCounts() throws Exception {
+    //     DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+    //             "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
+    //
+    //     EngineDependentOperation op = new ExtendDataOperation(engine_config,
+    //             "country",
+    //             RECON_SERVICE,
+    //             RECON_IDENTIFIER_SPACE,
+    //             RECON_SCHEMA_SPACE,
+    //             extension,
+    //             1);
+    //     ProcessManager pm = project.getProcessManager();
+    //     Process process = op.createProcess(project, options);
+    //     process.startPerforming(pm);
+    //     Assert.assertTrue(process.isRunning());
+    //     try {
+    //         // This is 10 seconds because for some reason running this test on Travis takes longer.
+    //         Thread.sleep(10000);
+    //     } catch (InterruptedException e) {
+    //         Assert.fail("Test interrupted");
+    //     }
+    //     Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
+    //
+    //     // Test to be updated as countries change currencies!
+    //     //Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
+    //     Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
+    //
+    //     // Make sure we did not create any recon stats for that column (no reconciled value)
+    //     Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
+    // }
+    //
+    // /**
+    //  * Test fetch only the best statements
+    //  */
+    // @Test
+    // public void testFetchCurrent() throws Exception {
+    //     DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+    //             "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
+    //
+    //     EngineDependentOperation op = new ExtendDataOperation(engine_config,
+    //             "country",
+    //             RECON_SERVICE,
+    //             RECON_IDENTIFIER_SPACE,
+    //             RECON_SCHEMA_SPACE,
+    //             extension,
+    //             1);
+    //     ProcessManager pm = project.getProcessManager();
+    //     Process process = op.createProcess(project, options);
+    //     process.startPerforming(pm);
+    //     Assert.assertTrue(process.isRunning());
+    //     try {
+    //         // This is 10 seconds because for some reason running this test on Travis takes longer.
+    //         Thread.sleep(10000);
+    //     } catch (InterruptedException e) {
+    //         Assert.fail("Test interrupted");
+    //     }
+    //     //Assert.assertFalse(process.isRunning());
+    //
+    //     /*
+    //       * Tajikistan has one "preferred" currency and one "normal" one
+    //       * (in terms of statement ranks).
+    //       * But thanks to our setting in the extension configuration,
+    //       * we only fetch the current one, so the one just after it is
+    //       * the one for the US (USD).
+    //       */
+    //     Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
+    //     Assert.assertTrue("United States dollar".equals(project.rows.get(3).getCellValue(1)));
+    //
+    //     // Make sure all the values are reconciled
+    //     Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 4);
+    // }
+    //
+    // /**
+    //  * Test fetch records (multiple values per reconciled cell)
+    //  */
+    // @Test
+    // public void testFetchRecord() throws Exception {
+    //     DataExtensionConfig extension = DataExtensionConfig.reconstruct(
+    //             "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
+    //
+    //     EngineDependentOperation op = new ExtendDataOperation(engine_config,
+    //             "country",
+    //             RECON_SERVICE,
+    //             RECON_IDENTIFIER_SPACE,
+    //             RECON_SCHEMA_SPACE,
+    //             extension,
+    //             1);
+    //     ProcessManager pm = project.getProcessManager();
+    //     Process process = op.createProcess(project, options);
+    //     process.startPerforming(pm);
+    //     Assert.assertTrue(process.isRunning());
+    //     try {
+    //         // This is 10 seconds because for some reason running this test on Travis takes longer.
+    //         Thread.sleep(10000);
+    //     } catch (InterruptedException e) {
+    //         Assert.fail("Test interrupted");
+    //     }
+    //     Assert.assertFalse(process.isRunning(), "The data extension process took longer than expected.");
+    //
+    //     /*
+    //       * Tajikistan has one "preferred" currency and one "normal" one
+    //       * (in terms of statement ranks).
+    //       * The second currency is fetched as well, which creates a record
+    //       * (the cell to the left of it is left blank).
+    //       */
+    //     Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)), "Bad currency name for Tajikistan");
+    //     Assert.assertTrue("Tajikistani ruble".equals(project.rows.get(3).getCellValue(1)), "Bad currency name for Tajikistan");
+    //     Assert.assertTrue(null == project.rows.get(3).getCellValue(0));
+    //
+    //     // Make sure all the values are reconciled
+    //     Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 5);
+    // }
 
 }
