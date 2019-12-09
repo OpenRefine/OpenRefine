@@ -1427,51 +1427,14 @@ SNACSchemaAlignmentDialog.preview = function() {
     return;
   }
   $.get(
-    "command/snac/preview-snac-schema", //+ $.param({ project: theProject.id }),
+    "command/snac/preview-snac-schema", 
     function(data) {
       //self.issueSpinner.hide();
       self.previewSpinner.hide();
 
       var list = data.SNAC_preview.split('\n');
-      console.log("Size of list " + list.length);
 
-      
-      // var table = $('<p></p>').appendTo('panel-explanation');
-      for (var i = 0; i != list.length; i++) {
-        var line = document.getElementById('#table-elements-id');
-        
-        line.innerHTML = "<tr>" + String(list[i]) + "</tr>";
-         //var rendered = WarningsRenderer._renderWarning(list[i]);
-         //rendered.appendTo(table);
-        //   list[i] = $('<td></td>')
-        //  .addClass('panel-explanation')
-        //  .appendTo(table);
-        // table.append(list[i]);
-         //list[i].appendTo(bodyTd);
-         console.log("List " + list[i]);
-         self.updateNbEdits(line[i]);
-      }
-      //self.updateNbEdits(data.SNAC_preview);
-
-      console.log(line);
-      // self.updateNbEdits(line);
-
-      // if ("edits_preview" in data) {
-      //   var previewContainer = self._previewPanes[0];
-      //   EditRenderer.renderEdits(data.edits_preview, previewContainer);
-      //   self.updateNbEdits(data["edit_count"]);
-      // }
-      //if (error_fields.length != 0)
-      
-      // if (data.warnings) {
-      //     self._updateWarnings(data.warnings, data.nb_warnings);
-      // } else {
-      //     self._updateWarnings([], 0);
-      // }
-      // if ("code" in data && data.code === "error") {
-      //    $('.invalid-schema-warning').show();
-      // }
-    
+      self.updateNbEdits(data.SNAC_preview);
     });
 };
 
