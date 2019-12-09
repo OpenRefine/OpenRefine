@@ -179,7 +179,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   this._columnArea.addClass("snac-tab");
   this._columnArea.empty();
 
-  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note"];
+  var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID"];
   this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
   this._dropdownArea.addClass("snac-tab");
   this._refcolumnArea = $(".schema-alignment-dialog-columns-area--ref");
@@ -1429,50 +1429,51 @@ SNACSchemaAlignmentDialog.preview = function() {
   $.get(
     "command/snac/preview-snac-schema", //+ $.param({ project: theProject.id }),
     function(data) {
-      //self.issueSpinner.hide();
       self.previewSpinner.hide();
 
-      var list = data.SNAC_preview.split('\n');
-      console.log("Size of list " + list.length);
+      var list = []; //Empty Array
+      var line = data.SNAC_preview.split('\n'); //Split the preview string into lines
+      var building = line[0] + "<br>"; //First element in preview string (should be "Inserting 500 new Resources into SNAC.")
+      line.shift(); //remove that first element ("Inserting 500 new Resources into SNAC.")
 
-      
-      // var table = $('<p></p>').appendTo('panel-explanation');
-      for (var i = 0; i != list.length; i++) {
-        var line = document.getElementById('#table-elements-id');
-        
-        line.innerHTML = "<tr>" + String(list[i]) + "</tr>";
-         //var rendered = WarningsRenderer._renderWarning(list[i]);
-         //rendered.appendTo(table);
-        //   list[i] = $('<td></td>')
-        //  .addClass('panel-explanation')
-        //  .appendTo(table);
-        // table.append(list[i]);
-         //list[i].appendTo(bodyTd);
-         console.log("List " + list[i]);
-         self.updateNbEdits(line[i]);
+      //Remove any empty strings
+      line = line.filter(function(str) {
+         return /\S/.test(str);
+      });
+
+      //Fill the list array with each line in HTML list form
+      for(var i = 0; i<line.length; i++) {
+         list[i] = "<li>" + line[i] + "</li>";
       }
-      //self.updateNbEdits(data.SNAC_preview);
 
-      console.log(line);
-      // self.updateNbEdits(line);
+      //Find the max length of items in the list[] array
+      var max = list.reduce((r,s) => r > s.length ? r : s.length, 0);
 
-      // if ("edits_preview" in data) {
-      //   var previewContainer = self._previewPanes[0];
-      //   EditRenderer.renderEdits(data.edits_preview, previewContainer);
-      //   self.updateNbEdits(data["edit_count"]);
-      // }
-      //if (error_fields.length != 0)
-      
-      // if (data.warnings) {
-      //     self._updateWarnings(data.warnings, data.nb_warnings);
-      // } else {
-      //     self._updateWarnings([], 0);
-      // }
-      // if ("code" in data && data.code === "error") {
-      //    $('.invalid-schema-warning').show();
-      // }
-    
-    });
+      //Construct a divder string of "-" to be the size of the longest element in list[]
+      var divider = "";
+      for(var i=9; i<max/2; i++) {
+         divider += "—";
+      }
+
+      //Insert that divider at every 11 position to split each resource (of 10 bullets)
+      var pos = 0, interval = 11;
+      while (pos < list.length) {
+         list.splice(pos, 0, divider);
+         pos += interval;
+      }
+
+      //Build the string for the HTML list items
+      for(var i = 0; i<list.length; i++) {
+         building += list[i];
+      }
+
+      //Update the string into the preview tab
+      self.updateNbEdits(data.SNAC_preview);
+
+      //Get the HTML id element of where the list should be added
+      var element = document.getElementById("preview-here");
+      element.innerHTML = building; //Replace the empty HTML area with the list
+   });
 };
 
 Refine.registerUpdateFunction(function(options) {
