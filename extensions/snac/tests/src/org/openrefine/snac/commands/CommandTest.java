@@ -495,5 +495,29 @@ public class CommandTest extends RefineTest{
         Assert.assertFalse(result.contains("abstract: This collection contains business papers, political papers, and family papers. "));
     }
 
+    /*
+    * Test the converting of a string into a JSOn for download
+    */
+    @Test
+    public void testStringToJSONDownload1() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\r\n    \"command\": \"search\",\r\n    \"term\": \"Washington\",\r\n    \"count\": 10,\r\n    \"start\": 0,\r\n    \"entity_type\": \"person\"\r\n}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("2164"));
+    }
 
+    // /*
+    // * Test the converting of a string into a JSON for download
+    // */
+    @Test
+    public void testStringToJSONDownload2() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("success"));
+    }
 }
