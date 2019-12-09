@@ -92,6 +92,7 @@
 .schema-alignment-dialog-dropdown-area-resource, .schema-alignment-dialog-dropdown-area-constellation{
   display: flex;
   flex-direction: column;
+  width: 200px;
 }
 
 .selectColumn{
@@ -117,6 +118,7 @@
 }
 
 .snac-columns-container{
+  height: 350px;
   display: flex;
 }
 
