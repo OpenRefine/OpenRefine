@@ -3,17 +3,17 @@
             <div class="schema-alignment-save"><button class="button button-primary" bind="saveButton"></button><button class="button button-primary" bind="discardButton"></button></div>
             <p class="panel-explanation" bind="dialogExplanation"></p>
             <div style="clear: right"></div>
-    
+
             <!-- Adding radio buttons to switch back and forth between resource and constellation  -->
             <div id="radio-buttons" style="padding-left: 20px;">
                 <p>Uploading: </p>
                 <input type="radio" name="button" value="resource" id="resourcebutton" checked="checked" onclick="function1()"> Resource<br>
                 <input type="radio" name="button" value="constellation" id="constellationbutton" onclick="function2()"> Constellation<br>
-    
+
                 <!-- This will be replaced with actual resource and constellation contents -->
                 <h2 id="textholder">  </h2>
-                
-                    
+
+
                 <!-- Javascript to replace the text in-place -->
                 <script>
                     function function1() {
@@ -25,7 +25,7 @@
                         $('.schema-alignment-dialog-columns-area-resource').show();
                         $('.schema-alignment-dialog-dropdown-area-resource').show();
                         $('.schema-alignment-dialog-columns-area-resource--ref').show();
-                        
+
                     }
                     function function2() {
                         // document.getElementById("textholder").textContent="!!! CONSTELLATION !!!";
@@ -37,18 +37,18 @@
                         $('.schema-alignment-dialog-dropdown-area-constellation').show();
                         $('.schema-alignment-dialog-columns-area-constellation--ref').show();
                     }
-                </script>    
-    
+                </script>
+
             </div>
-    
-            <div class="snac-columns-container">      
-            
+
+            <div class="snac-columns-container">
+
                 <div class="schema-alignment-dialog-columns-area-resource" style="margin-left: 18px;" bind="columnsArea">
                 </div>
-    
+
                 <div class="schema-alignment-dialog-dropdown-area-resource" bind="dropdownsArea" id="dropdownArea">
                 </div>
-    
+
                 <div class="schema-alignment-dialog-columns-area-resource--ref" bind="refcolumnsArea">
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable ref-table-header">SNAC Types</div>
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">ID</div>
@@ -79,10 +79,10 @@
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">Related Constellation IDs</div>
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">Related Resource IDs</div>
                 </div>
-    
+
                 <div class="schema-alignment-dialog-dropdown-area-constellation" bind="dropdownsArea" id="dropdownArea">
                 </div>
-    
+
                 <div class="schema-alignment-dialog-columns-area-constellation--ref" bind="refcolumnsArea">
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">ID</div>
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">Entity Type</div>
@@ -96,12 +96,12 @@
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">Related Constellation IDs</div>
                     <div class="wbs-draggable-column wbs-unreconciled-column ui-draggable">Related Resource IDs</div>
                 </div>
-                
+
             </div>
-    
+
         </div>
-            
-    
+
+
         <div class="schema-alignment-dialog-canvas" bind="canvas">
             <div class="schema-alignment-dialog-statements-area" bind="statementsArea">
                     <div id="schema-alignment-statements-container">
@@ -110,4 +110,3 @@
             </div>
         </div>
     </div>
-    

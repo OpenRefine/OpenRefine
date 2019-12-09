@@ -187,7 +187,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
   this._columnArea.empty();
 
   var SNACcolumns = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID"];
-  this._dropdownArea = $(".schema-alignment-dialog-dropdown-area");
+  this._dropdownArea = $(".schema-alignment-dialog-dropdown-area-resource");
   this._dropdownArea.addClass("snac-tab");
   this._refcolumnArea = $(".schema-alignment-dialog-columns-area-resource--ref");
   this._refcolumnArea.addClass("snac-tab");
@@ -258,7 +258,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
     //     reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
     //  this._columnArea.append(cell);
 
-     var selectList = $("<select></select>").addClass('selectColumn');
+     var selectList = $("<select></select>").addClass('selectColumnConst');
      this._dropdownArea.append(selectList);
 
      var defaultoption = document.createElement("option");
@@ -465,7 +465,10 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
   // Save resource
   if (!dup_bool && !empty_required){
       var dict = {};
+      var columns = theProject.columnModel.columns;
+      console.log(array_ddv);
       for (var i = 0; i != dropDownValues.length; i++){
+        console.log(columns[i].name);
           dict[columns[i].name] = dropDownValues[i].value;
         }
         $.post(
