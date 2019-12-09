@@ -347,7 +347,8 @@ public class SNACResourceCreator {
           }
         }
         jo.put("resources", ja);
-        System.out.println(jo.toString());
+        return jo.toString();
+        
     }
 
     public void uploadResources(String apiKey) {
