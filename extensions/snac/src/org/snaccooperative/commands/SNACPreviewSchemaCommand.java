@@ -11,7 +11,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 // import com.google.refine.commands.Command;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
-//import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.ParsingUtilities;
+
+import org.snaccooperative.exporters.SNACResourceCreator;
 
 //import com.google.refine.model.Project;
 //import com.google.refine.browsing.Engine;
@@ -24,19 +26,32 @@ public class SNACPreviewSchemaCommand extends Command  {
         // try{
             //Project project = getProject(request);
             //Engine engine = getEngine(request,project);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Content-Type", "application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
         // }
         // catch (Exception e){
         //     respondException(response, e);
         // }
-        //doGet(request,response);
+        doGet(request,response);
         
     }
 
-    // @Override
-    // public void doGet(HttpServletRequest request, HttpServletResponse response)
-    //         throws ServletException, IOException {
-    //     doPost(request, response);
-    // }
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        SNACResourceCreator manager = SNACResourceCreator.getInstance();
+        String previewString = manager.obtainPreview();
+        Writer w = response.getWriter();
+        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        writer.writeStartObject();
+        writer.writeStringField("SNAC_preview", previewString);
+        writer.writeEndObject();
+        writer.flush();
+        writer.close();
+        w.flush();
+        w.close();
+        
+    }
 }

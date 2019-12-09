@@ -91,7 +91,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel)
-        .click(function() { SNACSchemaAlignmentDialog._save(); });
+       // .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.previewSpinner = $('<img />')
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
@@ -274,6 +274,7 @@ SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab-header[href="'+targetTab+'"]').addClass('active');
   $(targetTab).show();
   resizeAll();
+  SNACSchemaAlignmentDialog.preview();
   var panelHeight = this._viewPanel.height();
   this._schemaPanel.height(panelHeight);
   this._issuesPanel.height(panelHeight);
@@ -332,10 +333,12 @@ SNACSchemaAlignmentDialog._reset = function(schema) {
   $.get(
       "command/snac/resource",
       function(data) {
-         console.log("Resource status: " + data.resource);
+        console.log("command/snac/resource");
+         //console.log("Resource status: " + data.resource);
       });
 };
 
+var error_fields = [];
 SNACSchemaAlignmentDialog._save = function(onDone) {
   var self = this;
   var schema = this.getJSON();
@@ -354,7 +357,6 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
   // Empty required field check
   var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
   // For printing to issues tab
-  var error_fields = [];
   var empty_required = false;
   for (var x = 0; x < required_fields.length; x++){
       if (!(array_ddv.includes(required_fields[x]))){
@@ -1372,7 +1374,7 @@ SNACSchemaAlignmentDialog._hasChanged = function() {
 
 SNACSchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
    this._previewElmts.previewExplanation.text(
-      $.i18n('snac-schema/preview-explanation').replace('{nb_edits}',nb_edits));
+      nb_edits);
 }
 
 SNACSchemaAlignmentDialog.preview = function() {
@@ -1388,31 +1390,53 @@ SNACSchemaAlignmentDialog.preview = function() {
     $('.invalid-schema-warning').show();
     return;
   }
-  $.post(
-    "command/snac/preview-snac-schema?" + $.param({ project: theProject.id }),
-    { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+  $.get(
+    "command/snac/preview-snac-schema", //+ $.param({ project: theProject.id }),
     function(data) {
-      self.issueSpinner.hide();
+      //self.issueSpinner.hide();
       self.previewSpinner.hide();
+
+      var list = data.SNAC_preview.split('\n');
+      console.log("Size of list " + list.length);
+
+      
+      // var table = $('<p></p>').appendTo('panel-explanation');
+      for (var i = 0; i != list.length; i++) {
+        var line = document.getElementById('#table-elements-id');
+        
+        line.innerHTML = "<tr>" + String(list[i]) + "</tr>";
+         //var rendered = WarningsRenderer._renderWarning(list[i]);
+         //rendered.appendTo(table);
+        //   list[i] = $('<td></td>')
+        //  .addClass('panel-explanation')
+        //  .appendTo(table);
+        // table.append(list[i]);
+         //list[i].appendTo(bodyTd);
+         console.log("List " + list[i]);
+         self.updateNbEdits(line[i]);
+      }
+      //self.updateNbEdits(data.SNAC_preview);
+
+      console.log(line);
+      // self.updateNbEdits(line);
+
       // if ("edits_preview" in data) {
       //   var previewContainer = self._previewPanes[0];
       //   EditRenderer.renderEdits(data.edits_preview, previewContainer);
       //   self.updateNbEdits(data["edit_count"]);
       // }
       //if (error_fields.length != 0)
-      console.log("There are errors adsjfs;lk");
+      
       // if (data.warnings) {
       //     self._updateWarnings(data.warnings, data.nb_warnings);
       // } else {
       //     self._updateWarnings([], 0);
       // }
-
       // if ("code" in data && data.code === "error") {
       //    $('.invalid-schema-warning').show();
       // }
-    },
-    "json"
-  );
+    
+    });
 };
 
 Refine.registerUpdateFunction(function(options) {
