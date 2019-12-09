@@ -90,11 +90,11 @@ Constellation Object
 */
 
 public class SNACResourceCreator {
-    private static HashMap<String, String> match_attributes = new HashMap<String, String>();
+    public static HashMap<String, String> match_attributes = new HashMap<String, String>();
     private static Project theProject = new Project();
     private static final SNACResourceCreator instance = new SNACResourceCreator();
     private static List<Resource> resources = new LinkedList<Resource>();
-    private static List<String> csv_headers = new LinkedList<String>();
+    public static List<String> csv_headers = new LinkedList<String>();
 
     // Internal Resource IDs that isn't part of the Resource data model
 
