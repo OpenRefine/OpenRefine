@@ -446,7 +446,13 @@
     		<artifactId>json-simple</artifactId>
     		<version>1.1.1</version>
 		</dependency>
-	
+
+		<!-- https://mvnrepository.com/artifact/net.sf.flexjson/flexjson -->
+		<dependency>
+		    <groupId>net.sf.flexjson</groupId>
+		    <artifactId>flexjson</artifactId>
+		    <version>2.0</version>
+		</dependency>
     <!-- test dependencies -->
 
     <dependency>

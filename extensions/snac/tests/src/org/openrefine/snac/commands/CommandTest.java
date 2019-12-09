@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.tests.RefineTest;
 import com.google.gson.Gson;
 import com.google.refine.util.ParsingUtilities;
@@ -55,7 +56,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 
+import org.snaccooperative.exporters.SNACResourceCreator;
 import org.snaccooperative.data.EntityId;
+
+import org.snaccooperative.exporters.SNACResourceCreator;
 
 public class CommandTest extends RefineTest{
 
@@ -64,12 +68,50 @@ public class CommandTest extends RefineTest{
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
+    protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
     protected EntityId entityId = null;
 
     /*Test EntityID and various fields from SNAC datamodel */
 
+    @Test
+    public void testEntityIdURI() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setURI("12345");
+      Assert.assertEquals(testEntity.getURI(), "12345");
+    }
+
+    @Test
+    public void testEntityIdID() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setID(123);
+      Assert.assertEquals(testEntity.getID(), 123);
+    }
+
+    @Test
+    public void testEntityIdText() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("I like pizza");
+      Assert.assertEquals(testEntity.getText(), "I like pizza");
+    }
+
+    @Test
+    public void testEntityIdEquals() throws Exception{
+      EntityId testEntity1 = new EntityId();
+      testEntity1.setID(123);
+      EntityId testEntity2 = new EntityId();
+      testEntity2.setID(456);
+      Assert.assertFalse(testEntity1.equals(testEntity2));
+    }
+
+    @Test
+    public void testEntityToString() throws Exception{
+      EntityId testEntity = new EntityId();
+      testEntity.setText("123");
+      Assert.assertEquals(testEntity.toString(), "EntityID: 123");
+    }
     @BeforeMethod
     public void SetUp() {
+        // Setup for Post Request
         command = new SNACResourceCommand();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -83,7 +125,19 @@ public class CommandTest extends RefineTest{
         } catch (IOException e1) {
             Assert.fail();
         }
+
+        // Setup for SNACResourceCreator
+
     }
+
+    @Test
+    public void testResourceEquivalent1() throws Exception{
+      project = createCSVProject(TestingData2.resourceCsv);
+      // jsonFromFile of Resource json from file
+      // Check against createResource of first row in project
+      // Use Resource.toJSON(rowResource)
+    }
+
 
     @Test
     public void testResourceGlobalOne() throws Exception{
@@ -127,89 +181,10 @@ public class CommandTest extends RefineTest{
     }
 
     @Test
-    public void testEntityIdURI() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setURI("12345");
-      Assert.assertEquals(testEntity.getURI(), "12345");
-    }
-
-        @Test
-        public void testGson() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 1760004979705}";
-          Project proj = test.fromJson(a,Project.class);
-          Assert.assertNotNull(proj);
-        }
-
-        @Test
-        public void testGsonFields() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 420}";
-          Project proj = test.fromJson(a,Project.class);
-          Assert.assertTrue(proj.id==420);
-        }
-
-        @Test
-        public void testGsonEquivalence() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 420}";
-          Project proj = test.fromJson(a,Project.class);
-          Project abc = new Project();
-          Assert.assertFalse(abc.id==proj.id);
-        }
-
-        @Test
-        public void testGsonFailure() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": 420}}";
-          try{
-            Project proj = test.fromJson(a,Project.class);
-            Assert.assertTrue(a.equals("{\"id\": 420}"));
-          }catch(Exception e){
-              Assert.assertTrue(a.equals("{\"id\": 420}}"));
-          }
-        }
-
-        @Test
-        public void testGsonInvalid() throws Exception{
-          Gson test=new Gson();
-          String a="{\"id\": \"\"}";
-          try{
-            Project proj = test.fromJson(a,Project.class);
-            Assert.assertTrue(a.equals("{\"id\": 1}"));
-          }catch(Exception e){
-              Assert.assertTrue(a.equals("{\"id\": \"\"}"));
-          }
-        }
-
-    @Test
-    public void testEntityIdID() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setID(123);
-      Assert.assertEquals(testEntity.getID(), 123);
-    }
-
-    @Test
-    public void testEntityIdText() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setText("I like pizza");
-      Assert.assertEquals(testEntity.getText(), "I like pizza");
-    }
-
-    @Test
-    public void testEntityIdEquals() throws Exception{
-      EntityId testEntity1 = new EntityId();
-      testEntity1.setID(123);
-      EntityId testEntity2 = new EntityId();
-      testEntity2.setID(456);
-      Assert.assertFalse(testEntity1.equals(testEntity2));
-    }
-
-    @Test
-    public void testEntityToString() throws Exception{
-      EntityId testEntity = new EntityId();
-      testEntity.setText("123");
-      Assert.assertEquals(testEntity.toString(), "EntityID: 123");
+    public void testGson() throws Exception{
+      Gson bruh = new Gson();
+      String a="";
+      Assert.assertTrue(a.equals(""));
     }
 
     /*
@@ -468,6 +443,56 @@ public class CommandTest extends RefineTest{
         HttpResponse response = client.execute(post);
         String result = EntityUtils.toString(response.getEntity());
         Assert.assertFalse(result.contains("text/xml"));
+    }
+
+    @Test
+    public void testSearchTerm1() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 700}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("success"));
+    }
+
+    @Test
+    public void testSearchTerm2() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 600}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("'term': 'Edward'"));
+    }
+
+    @Test
+    public void testSearchTerm3() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 500}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("success"));
+    }
+
+    @Test
+    public void testReadVocab1() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read_vocabulary\"}, \"term_id\": 700}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertTrue(result.contains("success"));
+    }
+
+    @Test
+    public void testReadResource() throws Exception{
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://api.snaccooperative.org");
+        post.setEntity(new StringEntity("{\"command\": \"read_resource\"}, \"resourceid\": 7149468}","UTF-8"));
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        Assert.assertFalse(result.contains("abstract: This collection contains business papers, political papers, and family papers. "));
     }
 
 
