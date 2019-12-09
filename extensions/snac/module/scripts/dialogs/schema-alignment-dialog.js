@@ -1497,7 +1497,7 @@ SNACSchemaAlignmentDialog.preview = function() {
     return;
   }
   $.get(
-    "command/snac/preview-snac-schema", 
+    "command/snac/preview-snac-schema",
     function(data) {
       //self.issueSpinner.hide();
       self.previewSpinner.hide();
