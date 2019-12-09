@@ -158,6 +158,7 @@ public class SNACResourceCreator {
             switch(snac_header){
               case "id":
                   try{
+                      res.setID(Integer.parseInt(temp_val));
                       resource_ids.add(Integer.parseInt(temp_val));
                       // System.out.println("ID: " + temp_val);
                       break;
@@ -271,6 +272,83 @@ public class SNACResourceCreator {
     }
 
     /**
+
+    * Converts 2 Resources into format for Preview Tab
+    *
+    * @param none
+    * @return String
+    */
+    public String obtainPreview(){
+      String samplePreview = "";
+      if (resources.size() == 0){
+        samplePreview += "There are no Resources to preview.";
+      }
+      else{
+        samplePreview += "Inserting " + resources.size() + " new Resources into SNAC." + "\n";
+        Resource firstResource = resources.get(0);
+
+        /*first preview resource*/ 
+        samplePreview+= "ID: " + firstResource.getID() + "\n";
+        samplePreview+="Document Type: " + firstResource.getDocumentType().getTerm() + "\n";
+        samplePreview+="Title: " + firstResource.getTitle() + "\n";
+        samplePreview+="Display Entry: " + firstResource.getDisplayEntry() + "\n";
+        samplePreview+="Link: " + firstResource.getLink() + "\n";
+        samplePreview+="Abstract: " + firstResource.getAbstract() + "\n";
+        samplePreview+="Extent: " + firstResource.getExtent() +  "\n";
+        samplePreview+="Date: " + firstResource.getDate() + "\n";
+        List<Language> languageList = firstResource.getLanguages();
+        String firstResourceLanguages = "Language(s): ";
+        if(languageList.size() == 0){
+          firstResourceLanguages = "Language(s): " + "\n" ;
+        }
+        for(int i=0; i<languageList.size();i++){
+          if(languageList.size() == 0){
+            break;
+          }
+          if(i != languageList.size()-1){
+            firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() +", ";
+          }
+          else{
+            firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() + "\n";
+          }
+        }
+        samplePreview+= firstResourceLanguages;
+        samplePreview+="Repository ID (work in progress): "+ Integer.toString(firstResource.getRepository().getID()) + "\n";
+
+        /*second preview resource*/
+        if(resources.size() > 1){
+          Resource secondResource = resources.get(1);
+          samplePreview+="ID: " + secondResource.getID()+ "\n";
+          samplePreview+="Document Type: " + secondResource.getDocumentType().getTerm() + "\n";
+          samplePreview+="Title: " + secondResource.getTitle() + "\n";
+          samplePreview+="Display Entry: " + secondResource.getDisplayEntry() + "\n";
+          samplePreview+="Link: " + secondResource.getLink() + "\n";
+          samplePreview+="Abstract: " + secondResource.getAbstract() + "\n";
+          samplePreview+="Extent: " + secondResource.getExtent() +  "\n";
+          samplePreview+="Date: " + secondResource.getDate() + "\n";
+          List<Language> languageList2 = secondResource.getLanguages();
+          String secondResourceLanguages = "Language(s): ";
+          if(languageList2.size() == 0){
+            secondResourceLanguages = "Language(s): " + "\n" ;
+          }
+          for(int i=0; i<languageList2.size();i++){
+            if(i != languageList2.size()-1){
+              secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() +", ";
+            }
+            else{
+              secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() + "\n";
+            }
+          }
+          samplePreview+= secondResourceLanguages;
+          samplePreview+="Repository ID (work in progress): " + Integer.toString(secondResource.getRepository().getID()) + "\n";
+        }
+        
+      }
+      return samplePreview;
+
+    }
+
+    /*
     * Helps determine whether a given ISO language exists on the SNAC database
     *
     * @param lang (ISO language code)

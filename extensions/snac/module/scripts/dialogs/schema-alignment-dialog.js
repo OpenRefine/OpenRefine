@@ -91,7 +91,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
         .attr('href', '#snac-preview-panel')
         .text($.i18n('snac-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel)
-        .click(function() { SNACSchemaAlignmentDialog._save(); });
+       // .click(function() { SNACSchemaAlignmentDialog._save(); });
   this.previewSpinner = $('<img />')
         .attr('src', 'images/large-spinner.gif')
         .attr('width', '16px')
@@ -341,6 +341,7 @@ SNACSchemaAlignmentDialog.switchTab = function(targetTab) {
   $('.main-view-panel-tab-header[href="'+targetTab+'"]').addClass('active');
   $(targetTab).show();
   resizeAll();
+  SNACSchemaAlignmentDialog.preview();
   var panelHeight = this._viewPanel.height();
   this._schemaPanel.height(panelHeight);
   this._issuesPanel.height(panelHeight);
@@ -399,7 +400,8 @@ SNACSchemaAlignmentDialog._reset = function(schema) {
   $.get(
       "command/snac/resource",
       function(data) {
-         console.log("Resource status: " + data.resource);
+        console.log("command/snac/resource");
+         //console.log("Resource status: " + data.resource);
       });
 };
 
@@ -429,7 +431,7 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
 
   // Empty required field check (for issues tab)
   var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
-  
+  // For printing to issues tab
   var empty_required = false;
   for (var x = 0; x < required_fields.length; x++){
       if (!(array_ddv.includes(required_fields[x]))){
@@ -1455,7 +1457,7 @@ SNACSchemaAlignmentDialog._hasChanged = function() {
 
 SNACSchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
    this._previewElmts.previewExplanation.text(
-      $.i18n('snac-schema/preview-explanation').replace('{nb_edits}',nb_edits));
+      nb_edits);
 }
 
 /*************************
@@ -1490,22 +1492,20 @@ SNACSchemaAlignmentDialog.preview = function() {
   this.updateNbEdits(0);
   this.previewSpinner.show();
   var schema = this.getJSON();
-  $.post(
-    "command/snac/preview-snac-schema?" + $.param({ project: theProject.id }),
-    { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
+  if (schema === null) {
+    $('.invalid-schema-warning').show();
+    return;
+  }
+  $.get(
+    "command/snac/preview-snac-schema", 
     function(data) {
+      //self.issueSpinner.hide();
       self.previewSpinner.hide();
-      // if ("edits_preview" in data) {
-      //   var previewContainer = self._previewPanes[0];
-      //   EditRenderer.renderEdits(data.edits_preview, previewContainer);
-      //   self.updateNbEdits(data["edit_count"]);
-      // }
-      // if ("code" in data && data.code === "error") {
-      //    $('.invalid-schema-warning').show();
-      // }
-    },
-    "json"
-  );
+
+      var list = data.SNAC_preview.split('\n');
+
+      self.updateNbEdits(data.SNAC_preview);
+    });
 };
 
 Refine.registerUpdateFunction(function(options) {
