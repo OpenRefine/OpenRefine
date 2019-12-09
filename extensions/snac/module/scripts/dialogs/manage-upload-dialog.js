@@ -21,9 +21,7 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
   this._elmts.dialogHeader.text($.i18n('snac-upload/dialog-header'));
   this._elmts.explainUpload.html($.i18n('snac-upload/explain-key'));
   this._elmts.keyLabel.text($.i18n('snac-upload/key-label'));
-  //this._elmts.keyInput.text(saved_apikey);
-  // this._elmts.keyInput.text($.i18n('snac-upload/key-placeholder'));
-  //this._elmts.keyInput.attr("placeholder", $.i18n('snac-upload/key-placeholder'));
+  this._elmts.uploadChoice.text($.i18n('snac-upload/upload-choice'));
   this._elmts.cancelButton.text($.i18n('snac-upload/close'));
   this._elmts.uploadButton.text($.i18n('snac-upload/upload'));
 
