@@ -39,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -209,7 +210,7 @@ public class OdsImporter extends TabularImportingParserBase {
         } else if ("float".equals(cellType)) {
             value = cell.getDoubleValue();
         } else if ("date".equals(cellType)) {
-            value = cell.getDateValue();
+            value = cell.getStringValue();
         } else if ("currency".equals(cellType)) {
             value = cell.getCurrencyValue();
         } else if ("percentage".equals(cellType)) {
