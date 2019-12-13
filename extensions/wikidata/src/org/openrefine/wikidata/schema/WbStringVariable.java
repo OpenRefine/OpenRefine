@@ -59,7 +59,7 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
         if (!cell.value.toString().isEmpty()) {
         	String stringValue = cell.value.toString();
         	if (cell.value instanceof Double && ((Double)cell.value) % 1 == 0) {
-        		stringValue = Integer.toString(((Double)cell.value).intValue());
+        		stringValue = Long.toString(((Double)cell.value).longValue());
         	}
             return Datamodel.makeStringValue(stringValue.trim());
         }
