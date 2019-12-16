@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.expr.Evaluable;
@@ -57,4 +59,14 @@ public class LiteralExpr implements Evaluable {
     public String toString() {
         return _value instanceof String ? new TextNode((String) _value).toString() : _value.toString();
     }
+    
+    @Override
+    public boolean equals(Object other) {
+    	return (other instanceof Evaluable) && toString().equals(other.toString());
+    }
+
+	@Override
+	public Set<String> getColumnDependencies(String baseColumn) {
+		return Collections.emptySet();
+	}
 }

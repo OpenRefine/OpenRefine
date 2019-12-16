@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.refine.expr.Evaluable;
 
@@ -60,4 +62,19 @@ public class VariableExpr implements Evaluable {
     public String getName() {
         return _name;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+    	return (other instanceof Evaluable) && toString().equals(other.toString());
+    }
+
+	@Override
+	public Set<String> getColumnDependencies(String baseColumn) {
+		if("value".equals(_name) || "cell".equals(_name) || "recon".equals(_name)) {
+			return Collections.singleton(baseColumn);
+		} else if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
+			return null;
+		}
+		return Collections.emptySet();
+	}
 }

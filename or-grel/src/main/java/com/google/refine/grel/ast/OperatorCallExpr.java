@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -160,4 +162,18 @@ public class OperatorCallExpr implements Evaluable {
     private boolean isIntegral(Object n) {
         return n instanceof Long || n instanceof Integer;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+    	return (other instanceof Evaluable) && toString().equals(other.toString());
+    }
+
+	@Override
+	public Set<String> getColumnDependencies(String baseColumn) {
+		Set<String> dependencies = new HashSet<>();
+		for (Evaluable ev : _args) {
+			dependencies.addAll(ev.getColumnDependencies(baseColumn));
+		}
+		return dependencies;
+	}
 }

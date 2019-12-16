@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.python.core.Py;
 import org.python.core.PyException;
@@ -174,4 +175,11 @@ public class JythonEvaluable implements Evaluable {
             return po;
         }
     }
+
+	@Override
+	public Set<String> getColumnDependencies(String baseColumn) {
+		// TODO
+		// potentially analyze the AST to isolate which columns are used
+		return null;
+	}
 }

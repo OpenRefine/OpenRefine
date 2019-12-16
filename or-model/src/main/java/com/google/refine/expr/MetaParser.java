@@ -109,6 +109,15 @@ abstract public class MetaParser {
                                 return new EvalError(e.getMessage());
                             }
                         }
+
+						@Override
+						public Set<String> getColumnDependencies(String baseColumn) {
+							// TODO
+							// Parse the clojure source with the Clojure parser
+							// analyze the AST and extract dependencies
+							// return them here.
+							return null;
+						}
                     }.init(fn);
                 } catch (Exception e) {
                     throw new ParsingException(e.getMessage());
