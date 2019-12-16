@@ -146,7 +146,7 @@ public class SqlCreateBuilder {
         StringBuffer sql = new StringBuffer();
 
         boolean includeDrop = JSONUtilities.getBoolean(options, "includeDropStatement", false);
-        boolean addIfExist = options == null ? false : JSONUtilities.getBoolean(options, "includeIfExistWithDropStatement", true);
+        boolean addIfExist = JSONUtilities.getBoolean(options, "includeIfExistWithDropStatement", true);
         if (includeDrop) {
             if(addIfExist) {
                 sql.append("DROP TABLE IF EXISTS " + table + ";\n");
