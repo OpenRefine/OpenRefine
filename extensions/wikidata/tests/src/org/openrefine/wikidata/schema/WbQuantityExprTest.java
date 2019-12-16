@@ -46,6 +46,12 @@ public class WbQuantityExprTest extends WbExpressionTest<QuantityValue> {
         setRow("4.00");
         evaluatesTo(Datamodel.makeQuantityValue(new BigDecimal("4.00"), null, null, "1"), exprWithoutUnit);
     }
+    
+    @Test
+    public void testOverflow() {
+    	setRow(14341937500d);
+    	evaluatesTo(Datamodel.makeQuantityValue(new BigDecimal("14341937500"), null, null, "1"), exprWithoutUnit);
+    }
 
     @Test
     public void testInvalidAmountWithoutUnit() {
