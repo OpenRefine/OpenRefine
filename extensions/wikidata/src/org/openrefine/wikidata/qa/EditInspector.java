@@ -46,6 +46,7 @@ import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
 import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
+import org.openrefine.wikidata.utils.EntityCache;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
@@ -62,7 +63,7 @@ public class EditInspector {
 
     public EditInspector(QAWarningStore warningStore) {
         this.scrutinizers = new HashMap<>();
-        this.fetcher = new WikidataConstraintFetcher();
+        this.fetcher = new WikidataConstraintFetcher(EntityCache.getEntityCache());
         this.warningStore = warningStore;
 
         // Register all known scrutinizers here

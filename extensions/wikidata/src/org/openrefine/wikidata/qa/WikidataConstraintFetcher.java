@@ -102,6 +102,12 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
     public static String TYPE_CONSTRAINT_QID = "Q21503250";
 
+    protected EntityCache entityCache;
+    
+    public WikidataConstraintFetcher(EntityCache cache) {
+        entityCache = cache;
+    }
+
     @Override
     public String getFormatRegex(PropertyIdValue pid) {
         List<SnakGroup> specs = getSingleConstraint(pid, FORMAT_CONSTRAINT_QID);
@@ -304,7 +310,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      * @return the list of constraint statements
      */
     protected List<Statement> getConstraintStatements(PropertyIdValue pid) {
-        PropertyDocument doc = (PropertyDocument) EntityCache.getEntityDocument(pid);
+        PropertyDocument doc = (PropertyDocument) entityCache.get(pid);
         StatementGroup group = doc.findStatementGroup(WIKIDATA_CONSTRAINT_PID);
         if (group != null) {
             return group.getStatements().stream()
