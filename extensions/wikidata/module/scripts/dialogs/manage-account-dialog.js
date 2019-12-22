@@ -17,7 +17,6 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   var self = this;
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/manage-account-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
-  var isOpen = true;
   ManageAccountDialog.firstLaunch = false;
 
   this._elmts.dialogHeader.text($.i18n('wikidata-account/dialog-header'));
@@ -38,7 +37,6 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
 
   var dismiss = function() {
     DialogSystem.dismissUntil(self._level - 1);
-    isOpen = false;
   };
 
   if (logged_in_username != null) {
@@ -56,10 +54,8 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
      callback(null);
   });
 
-  var Login = (function() {
-    return function() {
+  elmts.loginForm.submit(function(e) {
       frame.hide();
-      isOpen = false;
       Refine.postCSRF(
         "command/wikidata/login",
         elmts.loginForm.serialize(),
@@ -70,25 +66,12 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
           }
           else {
               frame.show();
-              isOpen = true;
               elmts.invalidCredentials.text("Invalid credentials.");
           }
       });
-    };
-  })();
-
-
-  elmts.loginButton.click(function() {
-    Login();
-  });
-
- 	document.addEventListener('keydown', function(event) {
-        if(isOpen == true){
-          if (event.keyCode == 13) {
-            Login();
-          }
-        }
-  });
+      e.preventDefault();
+    }
+  );
 
   elmts.logoutButton.click(function() {
     Refine.postCSRF(
