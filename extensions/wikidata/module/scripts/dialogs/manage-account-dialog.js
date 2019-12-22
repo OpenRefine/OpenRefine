@@ -59,6 +59,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   var Login = (function() {
     return function() {
       frame.hide();
+      isOpen = false;
       Refine.postCSRF(
         "command/wikidata/login",
         elmts.loginForm.serialize(),
@@ -84,7 +85,6 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
  	document.addEventListener('keydown', function(event) {
         if(isOpen == true){
           if (event.keyCode == 13) {
-            isOpen = false;
             Login();
           }
         }
