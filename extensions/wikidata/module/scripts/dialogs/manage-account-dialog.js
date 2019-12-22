@@ -17,6 +17,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   var self = this;
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/manage-account-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
+  var isOpen = true;
   ManageAccountDialog.firstLaunch = false;
 
   this._elmts.dialogHeader.text($.i18n('wikidata-account/dialog-header'));
@@ -37,6 +38,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
 
   var dismiss = function() {
     DialogSystem.dismissUntil(self._level - 1);
+    isOpen = false;
   };
 
   if (logged_in_username != null) {
@@ -48,26 +50,44 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   elmts.loggedInUsername
      .text(logged_in_username)
      .attr('href', 'https://www.wikidata.org/wiki/User:'+logged_in_username);
-  
+
   frame.find('.cancel-button').click(function() {
      dismiss();
      callback(null);
   });
 
+  var Login = (function() {
+    return function() {
+      frame.hide();
+      isOpen = false;
+      Refine.postCSRF(
+        "command/wikidata/login",
+        elmts.loginForm.serialize(),
+        function(data) {
+          if (data.logged_in) {
+            dismiss();
+            callback(data.username);
+          }
+          else {
+              frame.show();
+              isOpen = true;
+              elmts.invalidCredentials.text("Invalid credentials.");
+          }
+      });
+    };
+  })();
+
+
   elmts.loginButton.click(function() {
-    frame.hide();
-    Refine.postCSRF(
-       "command/wikidata/login",
-       elmts.loginForm.serialize(),
-       function(data) {
-         if (data.logged_in) {
-           dismiss();
-           callback(data.username);
-         } else {
-            frame.show();
-            elmts.invalidCredentials.text("Invalid credentials.");
-         }
-       });
+    Login();
+  });
+
+ 	document.addEventListener('keydown', function(event) {
+        if(isOpen == true){
+          if (event.keyCode == 13) {
+            Login();
+          }
+        }
   });
 
   elmts.logoutButton.click(function() {
@@ -79,7 +99,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
            dismiss();
            callback(null);
          }
-    }); 
+    });
   });
 };
 
@@ -95,7 +115,7 @@ ManageAccountDialog.isLoggedIn = function(callback) {
           ManageAccountDialog.firstLogin = false;
           callback(data.username);
    });
-}; 
+};
 
 ManageAccountDialog.ensureLoggedIn = function(callback) {
     ManageAccountDialog.isLoggedIn(function(logged_in_username) {
