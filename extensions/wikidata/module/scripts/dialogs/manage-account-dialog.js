@@ -48,27 +48,30 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   elmts.loggedInUsername
      .text(logged_in_username)
      .attr('href', 'https://www.wikidata.org/wiki/User:'+logged_in_username);
-  
+
   frame.find('.cancel-button').click(function() {
      dismiss();
      callback(null);
   });
 
-  elmts.loginButton.click(function() {
-    frame.hide();
-    Refine.postCSRF(
-       "command/wikidata/login",
-       elmts.loginForm.serialize(),
-       function(data) {
-         if (data.logged_in) {
-           dismiss();
-           callback(data.username);
-         } else {
-            frame.show();
-            elmts.invalidCredentials.text("Invalid credentials.");
-         }
-       });
-  });
+  elmts.loginForm.submit(function(e) {
+      frame.hide();
+      Refine.postCSRF(
+        "command/wikidata/login",
+        elmts.loginForm.serialize(),
+        function(data) {
+          if (data.logged_in) {
+            dismiss();
+            callback(data.username);
+          }
+          else {
+              frame.show();
+              elmts.invalidCredentials.text("Invalid credentials.");
+          }
+      });
+      e.preventDefault();
+    }
+  );
 
   elmts.logoutButton.click(function() {
     Refine.postCSRF(
@@ -79,7 +82,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
            dismiss();
            callback(null);
          }
-    }); 
+    });
   });
 };
 
@@ -95,7 +98,7 @@ ManageAccountDialog.isLoggedIn = function(callback) {
           ManageAccountDialog.firstLogin = false;
           callback(data.username);
    });
-}; 
+};
 
 ManageAccountDialog.ensureLoggedIn = function(callback) {
     ManageAccountDialog.isLoggedIn(function(logged_in_username) {
