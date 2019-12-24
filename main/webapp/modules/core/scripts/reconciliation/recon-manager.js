@@ -68,15 +68,12 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
   }
 
-  $.ajax(
-    url,
-    { "dataType" : "jsonp",
-    "timeout":10000
-     }
-  )
-  .success(function(data, textStatus, jqXHR) {
+  var registerService = function(data, mode) {
     data.url = url;
-    data.ui = { "handler" : "ReconStandardServicePanel" };
+    data.ui = {
+      "handler" : "ReconStandardServicePanel",
+      "access" : mode
+    };
 
     index = ReconciliationManager.customServices.length + 
     ReconciliationManager.standardServices.length;
@@ -91,12 +88,35 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     if (f) {
       f(index);
     }
+  };
+
+  // First, try with CORS (default "json" dataType)
+  $.ajax(
+    url,
+    { "dataType" : "json",
+    "timeout":5000
+     }
+  )
+  .success(function(data, textStatus, jqXHR) {
+    registerService(data, "json");
   })
   .error(function(jqXHR, textStatus, errorThrown) {
-    if (!silent) {
-      dismissBusy(); 
-      alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
-    }
+    // If it fails, try with JSONP
+    $.ajax(
+        url,
+        { "dataType" : "jsonp",
+           "timeout": 5000
+        }
+    )
+    .success(function(data, textStatus, jqXHR) {
+      registerService(data, "jsonp");
+    })
+    .error(function(jqXHR, textStatus, errorThrown) {
+        if (!silent) {
+          dismissBusy(); 
+          alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+        }
+    });
   });
 };
 

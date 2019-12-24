@@ -85,6 +85,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     if (service && service.suggest && service.suggest.entity) {
        suggestOptions = $.extend({}, service.suggest.entity);
        suggestOptions.query_param_name = "prefix";
+
+       // CORS / JSONP support
+       if (service.ui && service.ui.access) {
+          suggestOptions.access = service.ui.access;
+       }
+
        if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
           suggestOptions.formatter_url = service.view.url;
        }
