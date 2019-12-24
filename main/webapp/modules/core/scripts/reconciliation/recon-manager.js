@@ -62,8 +62,11 @@ ReconciliationManager.registerService = function(service) {
   return ReconciliationManager.customServices.length - 1;
 };
 
-ReconciliationManager.registerStandardService = function(url, f) {
-  var dismissBusy = DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+ReconciliationManager.registerStandardService = function(url, f, silent) {
+  var dismissBusy = function() {};
+  if (!silent) {
+    dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+  }
 
   $.ajax(
     url,
@@ -90,8 +93,10 @@ ReconciliationManager.registerStandardService = function(url, f) {
     }
   })
   .error(function(jqXHR, textStatus, errorThrown) {
-    dismissBusy(); 
-    alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+    if (!silent) {
+      dismissBusy(); 
+      alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+    }
   });
 };
 
@@ -132,14 +137,14 @@ ReconciliationManager.save = function(f) {
   });
 };
 
-ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
+ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f, silent) {
    var service = ReconciliationManager.getServiceFromUrl(url);
    if (service == null) {
       ReconciliationManager.registerStandardService(url, function(idx) {
           ReconciliationManager.save(function() {
               f(ReconciliationManager.standardServices[idx]);
           });
-      });
+      }, silent);
    } else {
       f(service);
    }  
@@ -148,7 +153,7 @@ ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
 ReconciliationManager.ensureDefaultServicePresent = function() {
    var lang = $.i18n('core-recon/wd-recon-lang');
    var url = "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api";
-   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { });
+   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { }, true);
    return url;
 };
 
