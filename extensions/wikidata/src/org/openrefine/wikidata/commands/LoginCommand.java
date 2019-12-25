@@ -45,7 +45,11 @@ public class LoginCommand extends Command {
     		respondCSRFError(response);
     		return;
     	}
-    	
+    	respond(request, response);
+    }
+    
+    protected void respond(HttpServletRequest request, HttpServletResponse response)
+    	throws ServletException, IOException {
         String username = request.getParameter("wb-username");
         String password = request.getParameter("wb-password");
         String remember = request.getParameter("remember-credentials");
@@ -74,6 +78,6 @@ public class LoginCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request, response);
+        respond(request, response);
     }
 }

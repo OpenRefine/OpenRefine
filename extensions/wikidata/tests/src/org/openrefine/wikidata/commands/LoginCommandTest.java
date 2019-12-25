@@ -34,4 +34,10 @@ public class LoginCommandTest extends CommandTest {
     	command.doPost(request, response);
     	TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
+    
+    @Test
+    public void testGetNotCsrfProtected() throws ServletException, IOException {
+    	command.doGet(request, response);
+    	TestUtils.assertEqualAsJson("{\"logged_in\":false,\"username\":null}", writer.toString());
+    }
 }
