@@ -95,7 +95,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         pm.setName("KeyValueColumnize test");
         ProjectManager.singleton.registerProject(project, pm);
         options = mock(ObjectNode.class);
-        OperationRegistry.registerOperation(getCoreModule(), "key-value-columnize", KeyValueColumnizeOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "key-value-columnize", KeyValueColumnizeOperation.class);
 
 	ImportingManager.initialize(servlet);
         job = ImportingManager.createJob();

@@ -43,7 +43,7 @@ public class ColumnTests {
     public void serializeColumn() throws Exception {
         ButterflyModule core = mock(ButterflyModule.class);
         when(core.getName()).thenReturn("core");
-        ReconConfig.registerReconConfig(core, "standard-service", StandardReconConfig.class);
+        ReconConfig.registerReconConfig(core.getName(), "standard-service", StandardReconConfig.class);
         String json = "{\"cellIndex\":4,"
                 + "\"originalName\":\"name\","
                 + "\"name\":\"organization_name\","

@@ -55,7 +55,7 @@ public class FillDownTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "fill-down", FillDownOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "fill-down", FillDownOperation.class);
     }
     
     @BeforeMethod

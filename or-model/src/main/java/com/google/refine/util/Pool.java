@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.RefineServlet;
+import com.google.refine.RefineModel;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 
@@ -99,7 +99,7 @@ public class Pool  {
     }
     
     public void save(Writer writer) throws IOException {
-        writer.write(RefineServlet.VERSION); writer.write('\n');
+        writer.write(RefineModel.VERSION); writer.write('\n');
         
         Collection<Recon> recons2 = recons.values();
         writer.write("reconCount=" + recons2.size()); writer.write('\n');

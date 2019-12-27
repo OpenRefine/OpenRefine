@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
     }
     
     @Test

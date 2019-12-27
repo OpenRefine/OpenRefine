@@ -47,7 +47,7 @@ public class MassOperationTests extends RefineTest {
     
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule(), "mass-edit", MassEditOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "mass-edit", MassEditOperation.class);
     }
     
     @Test

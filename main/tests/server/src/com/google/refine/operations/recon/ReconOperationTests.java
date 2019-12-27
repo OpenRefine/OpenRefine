@@ -93,8 +93,8 @@ public class ReconOperationTests extends RefineTest {
 
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
-        ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon", ReconOperation.class);
+        ReconConfig.registerReconConfig(getCoreModule().getName(), "standard-service", StandardReconConfig.class);
     }
     
     @Test

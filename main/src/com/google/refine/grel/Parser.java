@@ -37,7 +37,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.LanguageSpecificParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.expr.functions.arrays.ArgsToArray;
 import com.google.refine.grel.Scanner.NumberToken;
@@ -52,6 +54,17 @@ import com.google.refine.grel.ast.OperatorCallExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
+	static {
+	    MetaParser.registerLanguageParser("grel", "General Refine Expression Language (GREL)", new LanguageSpecificParser() {
+	        
+	        @Override
+	        public Evaluable parse(String s) throws ParsingException {
+	        	Parser parser = new Parser(s);
+	            return parser.getExpression();
+	        }
+	    }, "value");
+	}
+	
     protected Scanner   _scanner;
     protected Token     _token;
     protected Evaluable _root;

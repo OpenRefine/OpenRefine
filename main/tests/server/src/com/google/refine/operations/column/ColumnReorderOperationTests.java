@@ -49,7 +49,7 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule(), "column-reorder", ColumnReorderOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "column-reorder", ColumnReorderOperation.class);
     }
 
     @BeforeMethod

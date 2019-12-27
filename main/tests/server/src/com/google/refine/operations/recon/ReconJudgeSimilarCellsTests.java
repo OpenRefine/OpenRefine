@@ -60,7 +60,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule(), "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
     }
     
     @Test

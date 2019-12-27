@@ -98,7 +98,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule(), "column-addition-by-fetching-urls", ColumnAdditionByFetchingURLsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "column-addition-by-fetching-urls", ColumnAdditionByFetchingURLsOperation.class);
     }
 
     // dependencies

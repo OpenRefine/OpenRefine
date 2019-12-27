@@ -54,7 +54,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineServlet;
+import com.google.refine.RefineModel;
 import com.google.refine.history.History;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
@@ -153,7 +153,7 @@ public class Project {
     }
 
     protected void saveToWriter(Writer writer, Properties options) throws IOException {
-        writer.write(RefineServlet.VERSION); writer.write('\n');
+        writer.write(RefineModel.VERSION); writer.write('\n');
         
         writer.write("columnModel=\n"); columnModel.save(writer, options);
         writer.write("history=\n"); history.save(writer, options);
