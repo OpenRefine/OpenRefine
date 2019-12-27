@@ -29,13 +29,14 @@ package com.google.refine.expr.functions;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.FacetCount;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class FacetCountTests {
     @Test
     public void serializeFacetCount() {
         String json = "{\"description\":\"Returns the facet count corresponding to the given choice value\",\"params\":\"choiceValue, string facetExpression, string columnName\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new FacetCount(), json);
+        TestUtils.isSerializedTo(new FacetCount(), json, ParsingUtilities.defaultWriter);
     }
 }
 

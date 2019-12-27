@@ -40,6 +40,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.strings.Trim;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -135,6 +136,6 @@ public class TrimTests extends RefineTest {
     @Test
     public void serializeTrim() {
         String json = "{\"description\":\"Returns copy of the string, with leading and trailing whitespace omitted.\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Trim(), json);
+        TestUtils.isSerializedTo(new Trim(), json, ParsingUtilities.defaultWriter);
     }
 }

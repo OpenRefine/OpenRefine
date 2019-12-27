@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconClearSimilarCellsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-clear-similar-cells", ReconClearSimilarCellsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-clear-similar-cells", ReconClearSimilarCellsOperation.class);
     }
     
     @Test
@@ -47,6 +47,6 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\","
                 + "\"similarValue\":\"some value\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

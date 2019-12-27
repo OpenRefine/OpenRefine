@@ -60,7 +60,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
     }
     
     @BeforeMethod
@@ -79,7 +79,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 + "\"mode\":\"separator\","
                 + "\"separator\":\":\","
                 + "\"regex\":false}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -90,7 +90,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
                 + "\"keyColumnName\":\"Key\","
                 + "\"mode\":\"lengths\","
                 + "\"fieldLengths\":[1,1]}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
     /**

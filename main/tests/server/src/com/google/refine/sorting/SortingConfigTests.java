@@ -31,6 +31,7 @@ import java.io.IOException;
 import org.testng.annotations.Test;
 
 import com.google.refine.sorting.SortingConfig;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class SortingConfigTests {
@@ -47,6 +48,6 @@ public class SortingConfigTests {
                 "        }\n" + 
                 "      ]\n" + 
                 "    }";
-        TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json);
+        TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json, ParsingUtilities.defaultWriter);
     }
 }

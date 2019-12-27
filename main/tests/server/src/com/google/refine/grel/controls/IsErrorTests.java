@@ -29,13 +29,14 @@ package com.google.refine.grel.controls;
 import org.testng.annotations.Test;
 
 import com.google.refine.grel.controls.IsError;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class IsErrorTests {
     @Test
     public void serializeIsError() {
         String json = "{\"description\":\"Returns whether o is an error\",\"params\":\"expression o\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new IsError(), json);
+        TestUtils.isSerializedTo(new IsError(), json, ParsingUtilities.defaultWriter);
     }
 }
 

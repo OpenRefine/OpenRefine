@@ -123,7 +123,7 @@ public class ListFacet implements Facet {
 
         @Override
         public String getJsonType() {
-            return "list";
+            return "core/list";
         }
     }
     

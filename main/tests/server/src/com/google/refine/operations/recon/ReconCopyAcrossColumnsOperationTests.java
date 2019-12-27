@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-copy-across-columns", ReconCopyAcrossColumnsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-copy-across-columns", ReconCopyAcrossColumnsOperation.class);
     }
     
     @Test
@@ -49,6 +49,6 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 + "\"toColumnNames\":[\"first\",\"second\"],"
                 + "\"judgments\":[\"matched\",\"new\"],"
                 + "\"applyToJudgedCells\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

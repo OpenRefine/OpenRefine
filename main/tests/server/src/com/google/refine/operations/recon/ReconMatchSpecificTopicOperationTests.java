@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
     }
     
     @Test
@@ -60,6 +60,6 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "    \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
                 "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

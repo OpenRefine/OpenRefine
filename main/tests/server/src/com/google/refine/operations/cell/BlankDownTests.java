@@ -56,7 +56,7 @@ public class BlankDownTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "blank-down", BlankDownOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "blank-down", BlankDownOperation.class);
     }
     
     @BeforeMethod
@@ -81,7 +81,7 @@ public class BlankDownTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\"}";
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
-        TestUtils.isSerializedTo(op, json);
+        TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
     }
     
     @Test

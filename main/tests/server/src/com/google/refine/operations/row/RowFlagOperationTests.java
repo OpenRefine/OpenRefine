@@ -38,7 +38,7 @@ import com.google.refine.util.TestUtils;
 public class RowFlagOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "row-flag", RowFlagOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "row-flag", RowFlagOperation.class);
     }
     
     @Test
@@ -48,6 +48,6 @@ public class RowFlagOperationTests extends RefineTest {
                 + "\"description\":\"Flag rows\","
                 + "\"flagged\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

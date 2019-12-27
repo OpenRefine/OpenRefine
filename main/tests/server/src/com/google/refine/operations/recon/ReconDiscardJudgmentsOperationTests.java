@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconDiscardJudgmentsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
     }
     
     @Test
@@ -52,6 +52,6 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
                 "    \"columnName\": \"researcher\",\n" + 
                 "    \"clearData\": true\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

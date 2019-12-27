@@ -47,6 +47,7 @@ import com.google.refine.grel.Function;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 /**
@@ -235,7 +236,7 @@ public class CrossTests extends RefineTest {
     @Test
     public void serializeCross() {
         String json = "{\"description\":\"join with another project by column\",\"params\":\"cell c or string value, string projectName, string columnName\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Cross(), json);
+        TestUtils.isSerializedTo(new Cross(), json, ParsingUtilities.defaultWriter);
     }
 }
 

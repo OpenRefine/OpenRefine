@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-mark-new-topics", ReconMarkNewTopicsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-mark-new-topics", ReconMarkNewTopicsOperation.class);
     }
     
     @Test
@@ -49,6 +49,6 @@ public class ReconMarkNewTopicsOperationTests extends RefineTest {
                 + "\"shareNewTopics\":true,"
                 + "\"description\":\"Mark to create new items for cells in column my column, one item for each group of similar cells\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMarkNewTopicsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMarkNewTopicsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

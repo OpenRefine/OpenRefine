@@ -93,19 +93,19 @@ public class ReconOperationTests extends RefineTest {
 
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
-        ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon", ReconOperation.class);
+        ReconConfig.registerReconConfig(getCoreModule().getName(), "standard-service", StandardReconConfig.class);
     }
     
     @Test
     public void serializeReconOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
         com.google.refine.process.Process process = op.createProcess(project, new Properties());
-        TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
+        TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
 }

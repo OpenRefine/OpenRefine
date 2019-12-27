@@ -50,7 +50,10 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.FacetConfigResolver;
+import com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class WikibaseSchemaTest extends WikidataRefineTest {
@@ -89,6 +92,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         project = this.createCSVProject(TestingData.inceptionCsv);
         project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1377", "University of Ljubljana"));
         project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
+        FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
     }
 
     @Test
@@ -96,7 +100,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/history_of_medicine.json");
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
-        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString());
+        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(), ParsingUtilities.defaultWriter);
     }
 
     @Test

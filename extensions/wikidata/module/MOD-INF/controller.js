@@ -27,9 +27,9 @@ function init() {
      *  Operations
      */
     Packages.com.google.refine.operations.OperationRegistry.registerOperation(
-        module, "save-wikibase-schema", Packages.org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation);
+        module.getName(), "save-wikibase-schema", Packages.org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation);
     Packages.com.google.refine.operations.OperationRegistry.registerOperation(
-        module, "perform-wikibase-edits", Packages.org.openrefine.wikidata.operations.PerformWikibaseEditsOperation);
+        module.getName(), "perform-wikibase-edits", Packages.org.openrefine.wikidata.operations.PerformWikibaseEditsOperation);
     
     /*
      *  Exporters

@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.strings;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.strings.Match;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class MatchTests {
     @Test
     public void serializeMatch() {
         String json = "{\"description\":\"Returns an array of the groups matching the given regular expression\",\"params\":\"regexp\",\"returns\":\"array of strings\"}";
-        TestUtils.isSerializedTo(new Match(), json);
+        TestUtils.isSerializedTo(new Match(), json, ParsingUtilities.defaultWriter);
     }
 }
 

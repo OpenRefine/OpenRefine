@@ -38,7 +38,7 @@ import com.google.refine.util.TestUtils;
 public class RowStarOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "row-star", RowStarOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "row-star", RowStarOperation.class);
     }
     
     @Test
@@ -48,6 +48,6 @@ public class RowStarOperationTests extends RefineTest {
                 + "\"description\":\"Star rows\","
                 + "\"starred\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowStarOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowStarOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

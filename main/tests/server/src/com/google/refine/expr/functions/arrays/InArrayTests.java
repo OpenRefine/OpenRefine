@@ -42,6 +42,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class InArrayTests extends RefineTest {
@@ -64,7 +65,7 @@ public class InArrayTests extends RefineTest {
     @Test
     public void serializeInArray() {
         String json = "{\"description\":\"Checks if array a contains string s\",\"params\":\"array a, string s\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new InArray(), json);
+        TestUtils.isSerializedTo(new InArray(), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

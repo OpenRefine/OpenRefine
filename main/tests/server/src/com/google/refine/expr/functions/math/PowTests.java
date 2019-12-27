@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Pow;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class PowTests {
     @Test
     public void serializePow() {
         String json = "{\"description\":\"Returns a^b\",\"params\":\"number a, number b\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Pow(), json);
+        TestUtils.isSerializedTo(new Pow(), json, ParsingUtilities.defaultWriter);
     }
 }
 

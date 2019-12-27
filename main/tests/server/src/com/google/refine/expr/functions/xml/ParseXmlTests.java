@@ -43,6 +43,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -101,7 +102,7 @@ public class ParseXmlTests extends RefineTest {
     @Test
     public void serializeParseXml() {
         String json = "{\"description\":\"Parses a string as XML\",\"params\":\"string s\",\"returns\":\"XML object\"}";
-        TestUtils.isSerializedTo(new ParseXml(), json);
+        TestUtils.isSerializedTo(new ParseXml(), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

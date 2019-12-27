@@ -47,7 +47,7 @@ public class MassOperationTests extends RefineTest {
     
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule(), "mass-edit", MassEditOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "mass-edit", MassEditOperation.class);
     }
     
     @Test
@@ -57,7 +57,7 @@ public class MassOperationTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\",\"expression\":\"value\","
                 + "\"edits\":[{\"fromBlank\":false,\"fromError\":false,\"from\":[\"String\"],\"to\":\"newString\"}]}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MassEditOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MassEditOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
     @Test

@@ -95,7 +95,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         pm.setName("KeyValueColumnize test");
         ProjectManager.singleton.registerProject(project, pm);
         options = mock(ObjectNode.class);
-        OperationRegistry.registerOperation(getCoreModule(), "key-value-columnize", KeyValueColumnizeOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "key-value-columnize", KeyValueColumnizeOperation.class);
 
 	ImportingManager.initialize(servlet);
         job = ImportingManager.createJob();
@@ -119,14 +119,14 @@ public class KeyValueColumnizeTests extends RefineTest {
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":null}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json, ParsingUtilities.defaultWriter);
 
         String jsonFull = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column with note column note column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":\"note column\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull, ParsingUtilities.defaultWriter);
     }
 
     /**

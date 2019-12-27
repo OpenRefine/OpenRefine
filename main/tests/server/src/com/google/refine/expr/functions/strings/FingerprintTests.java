@@ -44,6 +44,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.functions.strings.Fingerprint;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -116,7 +117,7 @@ public class FingerprintTests extends RefineTest {
     @Test
     public void serializeFingerprint() {
         String json = "{\"description\":\"Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Fingerprint(), json);
+        TestUtils.isSerializedTo(new Fingerprint(), json, ParsingUtilities.defaultWriter);
     }
 
 

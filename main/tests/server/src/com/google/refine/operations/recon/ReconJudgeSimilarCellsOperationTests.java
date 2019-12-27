@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
     }
     
     @Test
@@ -50,6 +50,6 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 + "\"judgment\":\"matched\","
                 + "\"match\":{\"id\":\"Q7884717\",\"name\":\"Unicef Indonesia\",\"score\":71.42857142857143,\"types\":[\"Q43229\"]},"
                 + "\"shareNewTopics\":false}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

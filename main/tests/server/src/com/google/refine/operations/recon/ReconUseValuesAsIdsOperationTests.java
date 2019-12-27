@@ -56,12 +56,12 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-use-values-as-identifiers", ReconUseValuesAsIdentifiersOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-use-values-as-identifiers", ReconUseValuesAsIdentifiersOperation.class);
     }
     
     @Test
     public void serializeReconUseValuesAsIdentifiersOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

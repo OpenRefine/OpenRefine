@@ -61,8 +61,8 @@ public class StandardReconConfigTests extends RefineTest {
     
     @BeforeMethod
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon", ReconOperation.class);
-        ReconConfig.registerReconConfig(getCoreModule(), "standard-service", StandardReconConfig.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon", ReconOperation.class);
+        ReconConfig.registerReconConfig(getCoreModule().getName(), "standard-service", StandardReconConfig.class);
     }
     
 
@@ -130,7 +130,7 @@ public class StandardReconConfigTests extends RefineTest {
                 "        \"limit\": 0\n" + 
                 " }";
         ReconConfig config = ReconConfig.reconstruct(json);
-        TestUtils.isSerializedTo(config, json);
+        TestUtils.isSerializedTo(config, json, ParsingUtilities.defaultWriter);
         
         // the "mode" only appears once in the serialization result
         String fullJson = ParsingUtilities.mapper.writeValueAsString(config);
@@ -218,7 +218,7 @@ public class StandardReconConfigTests extends RefineTest {
     			+ "\"propertyID\":\"P123\","
     			+ "\"propertyName\":\"Director\"}";
     	ColumnDetail cd = ParsingUtilities.mapper.readValue(uiJson, ColumnDetail.class);
-    	TestUtils.isSerializedTo(cd, backendJson);
+    	TestUtils.isSerializedTo(cd, backendJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

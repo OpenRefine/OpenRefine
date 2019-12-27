@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Sin;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class SinTests {
     @Test
     public void serializeSin() {
         String json = "{\"description\":\"Returns the trigonometric sine of an angle\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Sin(), json);
+        TestUtils.isSerializedTo(new Sin(), json, ParsingUtilities.defaultWriter);
     }
 }
 

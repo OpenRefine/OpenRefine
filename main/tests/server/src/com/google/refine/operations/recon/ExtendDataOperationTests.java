@@ -64,6 +64,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.FacetConfigResolver;
+import com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig;
+import com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -98,8 +101,8 @@ public class ExtendDataOperationTests extends RefineTest {
     private String operationJson = "{\"op\":\"core/extend-reconciled-data\","
             + "\"description\":\"Extend data at index 3 based on column organization_name\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
-            + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"range\",\"columnName\":\"organization_name\"},"
-            + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"timerange\",\"columnName\":\"start_year\"}"
+            + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"core/range\",\"columnName\":\"organization_name\"},"
+            + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"core/timerange\",\"columnName\":\"start_year\"}"
             + "]},"
             + "\"columnInsertIndex\":3,"
             + "\"baseColumnName\":\"organization_name\","
@@ -152,7 +155,9 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        OperationRegistry.registerOperation(getCoreModule(), "extend-reconciled-data", ExtendDataOperation.class);
+    	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
+    	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "extend-reconciled-data", ExtendDataOperation.class);
         project = createProjectWithColumns("DataExtensionTests", "country");
         
         options = mock(Properties.class);
@@ -177,19 +182,19 @@ public class ExtendDataOperationTests extends RefineTest {
     
     @Test
     public void serializeExtendDataOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeExtendDataProcess() throws Exception {
         Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
                 .createProcess(project, new Properties());
-        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
+        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()), ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeDataExtensionConfig() throws IOException {
-        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
+        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

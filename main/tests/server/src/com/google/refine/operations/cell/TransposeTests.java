@@ -49,7 +49,7 @@ public class TransposeTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule(), "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
     }
     
     @Test
@@ -58,7 +58,7 @@ public class TransposeTests extends RefineTest {
                 + "\"description\":\"Transpose every 3 cells in column start column into separate columns\","
                 + "\"columnName\":\"start column\","
                 + "\"rowCount\":3}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
 }

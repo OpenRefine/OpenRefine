@@ -45,6 +45,6 @@ public class BooleanCriterionTest {
                 "          \"blankPosition\": 2,\n" + 
                 "          \"reverse\": false\n" + 
                 "        }\n";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json, ParsingUtilities.defaultWriter);
     }
 }

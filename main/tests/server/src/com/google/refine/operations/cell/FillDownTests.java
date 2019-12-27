@@ -55,7 +55,7 @@ public class FillDownTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "fill-down", FillDownOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "fill-down", FillDownOperation.class);
     }
     
     @BeforeMethod
@@ -79,7 +79,7 @@ public class FillDownTests extends RefineTest {
                 + "\"description\":\"Fill down cells in column my key\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my key\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, FillDownOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

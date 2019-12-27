@@ -51,6 +51,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.refine.RefineModel;
 import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
@@ -162,7 +163,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // TODO enable this tag once 3.3 final is released and create 3.4 tag without AbuseFilter
             String tag = "openrefine";
             Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+            Matcher matcher = pattern.matcher(RefineModel.ASSIGNED_VERSION);
             if (matcher.matches()) {
                 tag += "-"+matcher.group(1);
             }

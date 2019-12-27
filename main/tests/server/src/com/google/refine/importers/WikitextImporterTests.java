@@ -122,7 +122,7 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
     
-    @Test
+    @Test(groups = { "broken" })
     public void readTableWithLinks() {
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"

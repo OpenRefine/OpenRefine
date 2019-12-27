@@ -65,13 +65,13 @@ public class BinningClustererTests extends RefineTest {
     @Test
     public void testSerializeBinningClustererConfig() throws JsonParseException, JsonMappingException, IOException {
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
-        TestUtils.isSerializedTo(config, configJson);
+        TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void testSerializeBinningClustererConfigWithNgrams() throws JsonParseException, JsonMappingException, IOException {
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configNgramJson, BinningClustererConfig.class);
-        TestUtils.isSerializedTo(config, configNgramJson);
+        TestUtils.isSerializedTo(config, configNgramJson, ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class BinningClustererTests extends RefineTest {
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
         BinningClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
-        TestUtils.isSerializedTo(clusterer, clustererJson);
+        TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

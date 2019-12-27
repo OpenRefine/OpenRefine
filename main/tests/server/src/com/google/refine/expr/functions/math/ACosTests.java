@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.ACos;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ACosTests {
     @Test
     public void serializeACos() {
         String json = "{\"description\":\"Returns the arc cosine of an angle, in the range 0 through PI\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new ACos(), json);
+        TestUtils.isSerializedTo(new ACos(), json, ParsingUtilities.defaultWriter);
     }
 }
 

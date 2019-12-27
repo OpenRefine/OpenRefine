@@ -39,7 +39,7 @@ public class ColumnMoveOperationTests extends RefineTest {
     
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule(), "column-move", ColumnMoveOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "column-move", ColumnMoveOperation.class);
     }
     
     @Test
@@ -48,6 +48,6 @@ public class ColumnMoveOperationTests extends RefineTest {
                 + "\"description\":\"Move column my column to position 3\","
                 + "\"columnName\":\"my column\","
                 + "\"index\":3}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

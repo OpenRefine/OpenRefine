@@ -40,6 +40,7 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnReorderOperation;
 import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -49,7 +50,7 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule(), "column-reorder", ColumnReorderOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "column-reorder", ColumnReorderOperation.class);
     }
 
     @BeforeMethod
@@ -64,8 +65,8 @@ public class ColumnReorderOperationTests extends RefineTest {
     public void serializeColumnReorderOperation() {
         AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b","c","a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
-                + "\"description\":\"Reorder columns\","
-                + "\"columnNames\":[\"b\",\"c\",\"a\"]}");
+		+ "\"description\":\"Reorder columns\","
+		+ "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
     }
 
     @Test

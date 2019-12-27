@@ -32,13 +32,14 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.DenormalizeOperation;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
 public class DenormalizeOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "denormalize", DenormalizeOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "denormalize", DenormalizeOperation.class);
     }
     
     @Test
@@ -46,6 +47,6 @@ public class DenormalizeOperationTests extends RefineTest {
         String json = "{"
                 + "\"op\":\"core/denormalize\","
                 + "\"description\":\"Denormalize\"}";
-        TestUtils.isSerializedTo(new DenormalizeOperation(), json);
+        TestUtils.isSerializedTo(new DenormalizeOperation(), json, ParsingUtilities.defaultWriter);
     }
 }

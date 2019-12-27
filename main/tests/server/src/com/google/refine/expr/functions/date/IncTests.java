@@ -43,6 +43,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.date.Inc;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -141,7 +142,7 @@ public class IncTests extends RefineTest {
     @Test
     public void serializeInc() {
         String json = "{\"description\":\"Returns a date changed by the given amount in the given unit of time\",\"params\":\"date d, number value, string unit (default to 'hour')\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new Inc(), json);
+        TestUtils.isSerializedTo(new Inc(), json, ParsingUtilities.defaultWriter);
     }
 
 }

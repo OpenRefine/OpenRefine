@@ -64,7 +64,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
     
     @BeforeMethod
@@ -84,7 +84,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"columnName\":\"value column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"separator\":\",\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
 

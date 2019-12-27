@@ -59,7 +59,7 @@ public class TextSearchFacetTests extends RefineTest {
     private TextSearchFacetConfig textfilterconfig;
     private TextSearchFacet textfilter;
     private RowFilter rowfilter;
-    private String sensitiveConfigJson = "{\"type\":\"text\","
+    private String sensitiveConfigJson = "{\"type\":\"core/text\","
             + "\"name\":\"Value\","
             + "\"columnName\":\"Value\","
             + "\"mode\":\"text\","
@@ -82,6 +82,7 @@ public class TextSearchFacetTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() throws IOException, ModelException {
+    	FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
         project = createCSVProject("TextSearchFacet",
              "Value\n"
             + "a\n"
@@ -110,7 +111,7 @@ public class TextSearchFacetTests extends RefineTest {
         //Mode: "text"
         //Case sensitive: False
         //Invert: False
-        String filter =     "{\"type\":\"text\","
+        String filter =     "{\"type\":\"core/text\","
                             + "\"name\":\"Value\","
                             + "\"columnName\":\"Value\","
                             + "\"mode\":\"text\","
@@ -136,7 +137,7 @@ public class TextSearchFacetTests extends RefineTest {
         //Mode: "text"
         //Case sensitive: False
         //Invert: True
-        String filter =     "{\"type\":\"text\","
+        String filter =     "{\"type\":\"core/text\","
                             + "\"name\":\"Value\","
                             + "\"columnName\":\"Value\","
                             + "\"mode\":\"text\","
@@ -162,7 +163,7 @@ public class TextSearchFacetTests extends RefineTest {
         //Mode: "regex"
         //Case sensitive: False
         //Invert: False
-        String filter =     "{\"type\":\"text\","
+        String filter =     "{\"type\":\"core/text\","
                             + "\"name\":\"Value\","
                             + "\"columnName\":\"Value\","
                             + "\"mode\":\"regex\","
@@ -196,14 +197,14 @@ public class TextSearchFacetTests extends RefineTest {
     @Test
     public void serializeTextSearchFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
-        TestUtils.isSerializedTo(config, sensitiveConfigJson);
+        TestUtils.isSerializedTo(config, sensitiveConfigJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TextSearchFacet facet = config.apply(project);
-        TestUtils.isSerializedTo(facet, sensitiveFacetJson);
+        TestUtils.isSerializedTo(facet, sensitiveFacetJson, ParsingUtilities.defaultWriter);
     }
 }
 

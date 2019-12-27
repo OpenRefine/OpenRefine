@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Fact;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class FactTests {
     @Test
     public void serializeFact() {
         String json = "{\"description\":\"Returns the factorial of a number\",\"params\":\"number i\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Fact(), json);
+        TestUtils.isSerializedTo(new Fact(), json, ParsingUtilities.defaultWriter);
     }
 }
 

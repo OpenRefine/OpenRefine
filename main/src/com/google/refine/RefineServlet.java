@@ -38,9 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,7 +61,6 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    static private String ASSIGNED_VERSION = "3.4-SNAPSHOT";
     
     static public String VERSION = "";
     static public String REVISION = "";
@@ -107,7 +104,7 @@ public class RefineServlet extends Butterfly {
         REVISION = getInitParameter("refine.revision");
         
         if (VERSION.equals("$VERSION")) {
-            VERSION = ASSIGNED_VERSION;
+            VERSION = RefineModel.ASSIGNED_VERSION;
         }
         if (REVISION.equals("$REVISION")) {
             ClassLoader classLoader = getClass().getClassLoader();
@@ -305,73 +302,20 @@ public class RefineServlet extends Butterfly {
     static public boolean registerCommand(ButterflyModule module, String commandName, Command commandObject) {
         return s_singleton.registerOneCommand(module, commandName, commandObject);
     }
-    
-    static private class ClassMapping {
-        final String from;
-        final String to;
-        
-        ClassMapping(String from, String to) {
-            this.from = from;
-            this.to = to;
-        }
-    }
-    
-    static final private List<ClassMapping> classMappings = new ArrayList<ClassMapping>();
-    
-    /**
-     * Add a mapping that determines how old class names can be updated to newer
-     * class names. Such updates are desirable as the Java code changes from version
-     * to version. If the "from" argument ends with *, then it's considered a prefix;
-     * otherwise, it's an exact string match.
-     * 
-     * @param from
-     * @param to
-     */
-    static public void registerClassMapping(String from, String to) {
-        classMappings.add(new ClassMapping(from, to.endsWith("*") ? to.substring(0, to.length() - 1) : to));
-    }
-    
-    static {
-        registerClassMapping("com.metaweb.*", "com.google.*");
-        registerClassMapping("com.google.gridworks.*", "com.google.refine.*");
-    }
-    
-    static final private Map<String, String> classMappingsCache  = new HashMap<String, String>();
-    static final private Map<String, Class<?>> classCache  = new HashMap<String, Class<?>>();
-    
-    // TODO(dfhuynh): Temporary solution until we figure out why cross butterfly module class resolution
-    // doesn't entirely work
+   
+
     static public void cacheClass(Class<?> klass) {
-        classCache.put(klass.getName(), klass);
+        RefineModel.cacheClass(klass);
     }
     
     static public Class<?> getClass(String className) throws ClassNotFoundException {
-        String toClassName = classMappingsCache.get(className);
-        if (toClassName == null) {
-            toClassName = className;
-            
-            for (ClassMapping m : classMappings) {
-                if (m.from.endsWith("*")) {
-                    if (toClassName.startsWith(m.from.substring(0, m.from.length() - 1))) {
-                        toClassName = m.to + toClassName.substring(m.from.length() - 1);
-                    }
-                } else {
-                    if (m.from.equals(toClassName)) {
-                        toClassName = m.to;
-                    }
-                }
-            }
-            
-            classMappingsCache.put(className, toClassName);
-        }
-        
-        Class<?> klass = classCache.get(toClassName);
-        if (klass == null) {
-            klass = Class.forName(toClassName);
-            classCache.put(toClassName, klass);
-        }
-        return klass;
+        return RefineModel.getClass(className);
     }
+    
+    static public void registerClassMapping(String from, String to) {
+        RefineModel.registerClassMapping(from, to);
+    }
+    
     
     static public void setUserAgent(URLConnection urlConnection) {
         if (urlConnection instanceof HttpURLConnection) {

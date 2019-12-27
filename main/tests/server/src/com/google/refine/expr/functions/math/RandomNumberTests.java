@@ -39,6 +39,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RandomNumberTests extends RefineTest {
@@ -57,7 +58,7 @@ public class RandomNumberTests extends RefineTest {
     @Test
     public void serializeRandomNumber() {
         String json = "{\"description\":\"Returns a pseudo-random integer between the lower and upper bound (inclusive)\",\"params\":\"number lower bound, number upper bound\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new RandomNumber(), json);
+        TestUtils.isSerializedTo(new RandomNumber(), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

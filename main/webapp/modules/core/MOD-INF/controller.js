@@ -158,40 +158,40 @@ function registerCommands() {
 function registerOperations() {
   var OR = Packages.com.google.refine.operations.OperationRegistry;
 
-  OR.registerOperation(module, "text-transform", Packages.com.google.refine.operations.cell.TextTransformOperation);
-  OR.registerOperation(module, "mass-edit", Packages.com.google.refine.operations.cell.MassEditOperation);
+  OR.registerOperation(module.getName(), "text-transform", Packages.com.google.refine.operations.cell.TextTransformOperation);
+  OR.registerOperation(module.getName(), "mass-edit", Packages.com.google.refine.operations.cell.MassEditOperation);
 
-  OR.registerOperation(module, "multivalued-cell-join", Packages.com.google.refine.operations.cell.MultiValuedCellJoinOperation);
-  OR.registerOperation(module, "multivalued-cell-split", Packages.com.google.refine.operations.cell.MultiValuedCellSplitOperation);
-  OR.registerOperation(module, "fill-down", Packages.com.google.refine.operations.cell.FillDownOperation);
-  OR.registerOperation(module, "blank-down", Packages.com.google.refine.operations.cell.BlankDownOperation);
-  OR.registerOperation(module, "transpose-columns-into-rows", Packages.com.google.refine.operations.cell.TransposeColumnsIntoRowsOperation);
-  OR.registerOperation(module, "transpose-rows-into-columns", Packages.com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation);
-  OR.registerOperation(module, "key-value-columnize", Packages.com.google.refine.operations.cell.KeyValueColumnizeOperation);
+  OR.registerOperation(module.getName(), "multivalued-cell-join", Packages.com.google.refine.operations.cell.MultiValuedCellJoinOperation);
+  OR.registerOperation(module.getName(), "multivalued-cell-split", Packages.com.google.refine.operations.cell.MultiValuedCellSplitOperation);
+  OR.registerOperation(module.getName(), "fill-down", Packages.com.google.refine.operations.cell.FillDownOperation);
+  OR.registerOperation(module.getName(), "blank-down", Packages.com.google.refine.operations.cell.BlankDownOperation);
+  OR.registerOperation(module.getName(), "transpose-columns-into-rows", Packages.com.google.refine.operations.cell.TransposeColumnsIntoRowsOperation);
+  OR.registerOperation(module.getName(), "transpose-rows-into-columns", Packages.com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation);
+  OR.registerOperation(module.getName(), "key-value-columnize", Packages.com.google.refine.operations.cell.KeyValueColumnizeOperation);
 
-  OR.registerOperation(module, "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
-  OR.registerOperation(module, "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
-  OR.registerOperation(module, "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
-  OR.registerOperation(module, "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
-  OR.registerOperation(module, "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
-  OR.registerOperation(module, "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
-  OR.registerOperation(module, "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
+  OR.registerOperation(module.getName(), "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
+  OR.registerOperation(module.getName(), "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
+  OR.registerOperation(module.getName(), "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
+  OR.registerOperation(module.getName(), "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
+  OR.registerOperation(module.getName(), "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
+  OR.registerOperation(module.getName(), "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
+  OR.registerOperation(module.getName(), "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
 
-  OR.registerOperation(module, "row-removal", Packages.com.google.refine.operations.row.RowRemovalOperation);
-  OR.registerOperation(module, "row-star", Packages.com.google.refine.operations.row.RowStarOperation);
-  OR.registerOperation(module, "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
-  OR.registerOperation(module, "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
+  OR.registerOperation(module.getName(), "row-removal", Packages.com.google.refine.operations.row.RowRemovalOperation);
+  OR.registerOperation(module.getName(), "row-star", Packages.com.google.refine.operations.row.RowStarOperation);
+  OR.registerOperation(module.getName(), "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
+  OR.registerOperation(module.getName(), "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
 
-  OR.registerOperation(module, "recon", Packages.com.google.refine.operations.recon.ReconOperation);
-  OR.registerOperation(module, "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
-  OR.registerOperation(module, "recon-match-best-candidates", Packages.com.google.refine.operations.recon.ReconMatchBestCandidatesOperation);
-  OR.registerOperation(module, "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
-  OR.registerOperation(module, "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
-  OR.registerOperation(module, "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
-  OR.registerOperation(module, "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
-  OR.registerOperation(module, "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
-  OR.registerOperation(module, "extend-reconciled-data", Packages.com.google.refine.operations.recon.ExtendDataOperation);
-  OR.registerOperation(module, "recon-use-values-as-identifiers", Packages.com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation);
+  OR.registerOperation(module.getName(), "recon", Packages.com.google.refine.operations.recon.ReconOperation);
+  OR.registerOperation(module.getName(), "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
+  OR.registerOperation(module.getName(), "recon-match-best-candidates", Packages.com.google.refine.operations.recon.ReconMatchBestCandidatesOperation);
+  OR.registerOperation(module.getName(), "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
+  OR.registerOperation(module.getName(), "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
+  OR.registerOperation(module.getName(), "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
+  OR.registerOperation(module.getName(), "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
+  OR.registerOperation(module.getName(), "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
+  OR.registerOperation(module.getName(), "extend-reconciled-data", Packages.com.google.refine.operations.recon.ExtendDataOperation);
+  OR.registerOperation(module.getName(), "recon-use-values-as-identifiers", Packages.com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation);
 }
 
 function registerImporting() {
@@ -314,12 +314,28 @@ function registerImporting() {
   );
 }
 
+function registerLanguages() {
+  var MP = Packages.com.google.refine.expr.MetaParser;
+  MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.com.google.refine.grel.Parser.grelParser, "value");
+}
+
+function registerFacets() {
+  var FCR = Packages.com.google.refine.browsing.facets.FacetConfigResolver;
+  FCR.registerFacetConfig("core", "list", Packages.com.google.refine.browsing.facets.ListFacet.ListFacetConfig);
+  FCR.registerFacetConfig("core", "range", Packages.com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig);
+  FCR.registerFacetConfig("core", "timerange", Packages.com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig);
+  FCR.registerFacetConfig("core", "text", Packages.com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig);
+  FCR.registerFacetConfig("core", "scatterplot", Packages.com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig);
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
 function init() {
   // Packages.java.lang.System.err.println("Initializing by script " + module);
 
+  registerLanguages();
+  registerFacets();
   registerCommands();
   registerOperations();
   registerImporting();
