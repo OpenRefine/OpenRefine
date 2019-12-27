@@ -40,8 +40,6 @@ import java.util.Map;
 
 import com.google.refine.model.AbstractOperation;
 
-import edu.mit.simile.butterfly.ButterflyModule;
-
 public abstract class OperationRegistry {
 
     static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass =
@@ -50,8 +48,8 @@ public abstract class OperationRegistry {
     static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName =
         new HashMap<Class<? extends AbstractOperation>, String>();
     
-    static public void registerOperation(ButterflyModule module, String name, Class<? extends AbstractOperation> klass) {
-        String key = module.getName() + "/" + name;
+    static public void registerOperation(String moduleName, String name, Class<? extends AbstractOperation> klass) {
+        String key = moduleName + "/" + name;
         
         s_opClassToName.put(klass, key);
         

@@ -25,7 +25,7 @@ public class FileHistoryEntryManagerTests extends RefineTest {
     @BeforeMethod
     public void setUp() {
         project = mock(Project.class);
-        OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "column-addition", ColumnAdditionOperation.class);
     }
     
 	@Test

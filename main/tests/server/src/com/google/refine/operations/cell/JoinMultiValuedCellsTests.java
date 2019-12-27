@@ -64,7 +64,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
     
     @BeforeMethod

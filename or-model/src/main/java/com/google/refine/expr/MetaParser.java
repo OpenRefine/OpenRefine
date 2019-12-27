@@ -41,7 +41,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.grel.Parser;
 
 import clojure.lang.IFn;
 import clojure.lang.RT;
@@ -70,13 +69,6 @@ abstract public class MetaParser {
 //    final static private Var CLOJURE_EVAL = RT.var("clojure.core", "eval");
     
     static {
-        registerLanguageParser("grel", "General Refine Expression Language (GREL)", new LanguageSpecificParser() {
-            
-            @Override
-            public Evaluable parse(String s) throws ParsingException {
-                return parseGREL(s);
-            }
-        }, "value");
         
         registerLanguageParser("clojure", "Clojure", new LanguageSpecificParser() {
             
@@ -169,13 +161,7 @@ abstract public class MetaParser {
         if (info != null) {
             return info.parser.parse(s.substring(colon + 1));
         } else {
-            return parseGREL(s);
+            throw new ParsingException("No parser found for language: "+language);
         }
-    }
-    
-    static protected Evaluable parseGREL(String s) throws ParsingException {
-        Parser parser = new Parser(s);
-        
-        return parser.getExpression();
-    }
+    }   
 }

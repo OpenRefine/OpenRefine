@@ -48,7 +48,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
-import com.google.refine.RefineServlet;
+import com.google.refine.RefineModel;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
 
@@ -98,7 +98,7 @@ public class History  {
     }
 
     static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
-        writer.write(RefineServlet.VERSION); writer.write('\n');
+        writer.write(RefineModel.VERSION); writer.write('\n');
         writer.write(change.getClass().getName()); writer.write('\n');
 
         change.save(writer, options);
@@ -106,7 +106,7 @@ public class History  {
 
     @SuppressWarnings("unchecked")
     static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
-        return (Class<? extends Change>) RefineServlet.getClass(className);
+        return (Class<? extends Change>) RefineModel.getClass(className);
     }
 
     protected long               _projectID;

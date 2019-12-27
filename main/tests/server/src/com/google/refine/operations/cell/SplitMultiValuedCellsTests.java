@@ -60,7 +60,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
     }
     
     @BeforeMethod

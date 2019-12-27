@@ -56,7 +56,7 @@ public class BlankDownTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "blank-down", BlankDownOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "blank-down", BlankDownOperation.class);
     }
     
     @BeforeMethod

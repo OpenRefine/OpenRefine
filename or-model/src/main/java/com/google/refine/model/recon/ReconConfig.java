@@ -52,8 +52,6 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
-import edu.mit.simile.butterfly.ButterflyModule;
-
 @JsonTypeInfo(
     use=JsonTypeInfo.Id.CUSTOM,
     include=JsonTypeInfo.As.PROPERTY,
@@ -68,8 +66,8 @@ abstract public class ReconConfig  {
     static final public Map<Class<? extends ReconConfig>, String> s_opClassToName =
         new HashMap<Class<? extends ReconConfig>, String>();
     
-    static public void registerReconConfig(ButterflyModule module, String name, Class<? extends ReconConfig> klass) {
-        String key = module.getName() + "/" + name;
+    static public void registerReconConfig(String moduleName, String name, Class<? extends ReconConfig> klass) {
+        String key = moduleName + "/" + name;
         
         s_opClassToName.put(klass, key);
         

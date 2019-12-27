@@ -71,7 +71,7 @@ public class HistoryEntryTests extends RefineTest {
     
     @BeforeTest
     public void register() {
-        OperationRegistry.registerOperation(getCoreModule(), "column-addition", ColumnAdditionOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "column-addition", ColumnAdditionOperation.class);
     }
     
     @BeforeMethod

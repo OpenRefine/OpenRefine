@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule(), "recon-copy-across-columns", ReconCopyAcrossColumnsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-copy-across-columns", ReconCopyAcrossColumnsOperation.class);
     }
     
     @Test

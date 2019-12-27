@@ -263,6 +263,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>or-model</artifactId>
+      <version>${project.version}</version>
+      <!-- <scope>provided</scope> -->
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
@@ -277,6 +283,11 @@
       <groupId>org.mozilla</groupId>
       <artifactId>rhino</artifactId>
       <version>1.7.10</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
