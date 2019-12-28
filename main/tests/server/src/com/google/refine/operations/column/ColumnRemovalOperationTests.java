@@ -48,6 +48,6 @@ public class ColumnRemovalOperationTests extends RefineTest {
         String json = "{\"op\":\"core/column-removal\","
                 + "\"description\":\"Remove column my column\","
                 + "\"columnName\":\"my column\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnRemovalOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

@@ -30,6 +30,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 import com.google.refine.browsing.EngineConfig;
 
@@ -62,13 +63,13 @@ public class EngineConfigTests {
     @Test
     public void serializeEngineConfig() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigJson);
-        TestUtils.isSerializedTo(ec, engineConfigJson);
+        TestUtils.isSerializedTo(ec, engineConfigJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeEngineConfigRecordMode() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
-        TestUtils.isSerializedTo(ec, engineConfigRecordModeJson);
+        TestUtils.isSerializedTo(ec, engineConfigRecordModeJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

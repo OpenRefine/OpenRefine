@@ -49,6 +49,6 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 + "\"toColumnNames\":[\"first\",\"second\"],"
                 + "\"judgments\":[\"matched\",\"new\"],"
                 + "\"applyToJudgedCells\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

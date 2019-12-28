@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.browsing.facets.NominalFacetChoice;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class NominalFacetChoiceTests {
@@ -40,10 +41,10 @@ public class NominalFacetChoiceTests {
         choice.count = 3;
         choice.selected = true;
         TestUtils.isSerializedTo(choice, "{"
-                + "\"v\":"
-                + "   {\"v\":\"some string\","
-                + "    \"l\":\"some string\"},"
-                + "\"c\":3,"
-                + "\"s\":true}");
+		+ "\"v\":"
+		+ "   {\"v\":\"some string\","
+		+ "    \"l\":\"some string\"},"
+		+ "\"c\":3,"
+		+ "\"s\":true}", ParsingUtilities.defaultWriter);
     }
 }

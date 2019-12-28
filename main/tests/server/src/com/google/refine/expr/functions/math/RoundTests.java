@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Round;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RoundTests {
     @Test
     public void serializeRound() {
         String json = "{\"description\":\"Returns n rounded\",\"params\":\"number n\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Round(), json);
+        TestUtils.isSerializedTo(new Round(), json, ParsingUtilities.defaultWriter);
     }
 }
 

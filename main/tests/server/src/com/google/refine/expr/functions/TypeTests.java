@@ -29,13 +29,14 @@ package com.google.refine.expr.functions;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.Type;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class TypeTests {
     @Test
     public void serializeType() {
         String json = "{\"description\":\"Returns the type of o\",\"params\":\"object o\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Type(), json);
+        TestUtils.isSerializedTo(new Type(), json, ParsingUtilities.defaultWriter);
     }
 }
 

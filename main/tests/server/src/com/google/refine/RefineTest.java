@@ -60,6 +60,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -103,6 +105,8 @@ public class RefineTest extends PowerMockTestCase {
             workspaceDir = null;
             e.printStackTrace();
         }
+        
+        MetaParser.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Parser.grelParser, "value");
         // This just keeps track of any failed test, for cleanupWorkspace
         testFailed = false;
     }

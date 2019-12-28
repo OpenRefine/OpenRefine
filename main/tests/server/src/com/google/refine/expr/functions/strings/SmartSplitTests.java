@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class SmartSplitTests {
@@ -120,7 +121,7 @@ public class SmartSplitTests {
     @Test
     public void serializeSmartSplit() {
         String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \\\"sep\\\" is not given.\",\"params\":\"string s, optional string sep\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new SmartSplit(), json);
+        TestUtils.isSerializedTo(new SmartSplit(), json, ParsingUtilities.defaultWriter);
     }
 
 }

@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Degrees;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class DegreesTests {
     @Test
     public void serializeDegrees() {
         String json = "{\"description\":\"Converts an angle from radians to degrees.\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Degrees(), json);
+        TestUtils.isSerializedTo(new Degrees(), json, ParsingUtilities.defaultWriter);
     }
 }
 

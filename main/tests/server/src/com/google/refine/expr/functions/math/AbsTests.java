@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Abs;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class AbsTests {
     @Test
     public void serializeAbs() {
         String json = "{\"description\":\"Returns the absolute value of a number\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Abs(), json);
+        TestUtils.isSerializedTo(new Abs(), json, ParsingUtilities.defaultWriter);
     }
 }
 

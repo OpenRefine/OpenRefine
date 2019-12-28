@@ -47,6 +47,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.Coalesce;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -105,7 +106,7 @@ public class CoalesceTests extends RefineTest {
     @Test
     public void serializeCoalesce() {
         String json = "{\"description\":\"Returns the first non-null from a series of values\",\"params\":\"two or more objects\",\"returns\":\"object or null\"}";
-        TestUtils.isSerializedTo(new Coalesce(), json);
+        TestUtils.isSerializedTo(new Coalesce(), json, ParsingUtilities.defaultWriter);
     }
     
 }

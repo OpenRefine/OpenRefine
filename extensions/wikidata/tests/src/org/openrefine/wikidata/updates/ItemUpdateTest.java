@@ -49,6 +49,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ItemUpdateTest {
@@ -128,7 +129,7 @@ public class ItemUpdateTest {
     public void testSerializeStatements() throws IOException {
     	ItemUpdate update = new ItemUpdateBuilder(existingSubject).addStatement(statement1).addStatement(statement2)
                 .build();
-    	TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"));
+    	TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"), ParsingUtilities.defaultWriter);
     }
 
     @Test

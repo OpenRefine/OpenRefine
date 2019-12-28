@@ -49,6 +49,6 @@ public class RowRemovalOperationTests extends RefineTest {
                 + "\"op\":\"core/row-removal\","
                 + "\"description\":\"Remove rows\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowRemovalOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowRemovalOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

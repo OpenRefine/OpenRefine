@@ -314,12 +314,18 @@ function registerImporting() {
   );
 }
 
+function registerLanguages() {
+  var MP = Packages.com.google.refine.expr.MetaParser;
+  MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.com.google.refine.grel.Parser.grelParser, "value");
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
 function init() {
   // Packages.java.lang.System.err.println("Initializing by script " + module);
 
+  registerLanguages();
   registerCommands();
   registerOperations();
   registerImporting();

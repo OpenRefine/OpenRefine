@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Multinomial;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class MultinomialTests {
     @Test
     public void serializeMultinomial() {
         String json = "{\"description\":\"Calculates the multinomial of a series of numbers\",\"params\":\"one or more numbers\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Multinomial(), json);
+        TestUtils.isSerializedTo(new Multinomial(), json, ParsingUtilities.defaultWriter);
     }
 }
 

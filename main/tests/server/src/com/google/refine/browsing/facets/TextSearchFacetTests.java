@@ -196,14 +196,14 @@ public class TextSearchFacetTests extends RefineTest {
     @Test
     public void serializeTextSearchFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
-        TestUtils.isSerializedTo(config, sensitiveConfigJson);
+        TestUtils.isSerializedTo(config, sensitiveConfigJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TextSearchFacet facet = config.apply(project);
-        TestUtils.isSerializedTo(facet, sensitiveFacetJson);
+        TestUtils.isSerializedTo(facet, sensitiveFacetJson, ParsingUtilities.defaultWriter);
     }
 }
 

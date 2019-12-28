@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Odd;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class OddTests {
     @Test
     public void serializeOdd() {
         String json = "{\"description\":\"Rounds the number up to the nearest even integer\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Odd(), json);
+        TestUtils.isSerializedTo(new Odd(), json, ParsingUtilities.defaultWriter);
     }
 }
 

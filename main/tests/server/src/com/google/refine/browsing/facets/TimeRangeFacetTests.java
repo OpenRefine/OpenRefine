@@ -81,7 +81,7 @@ public class TimeRangeFacetTests extends RefineTest {
     @Test
     public void serializeTimeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
-        TestUtils.isSerializedTo(config, configJson);
+        TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -99,6 +99,6 @@ public class TimeRangeFacetTests extends RefineTest {
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TimeRangeFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
-        TestUtils.isSerializedTo(facet, facetJson);
+        TestUtils.isSerializedTo(facet, facetJson, ParsingUtilities.defaultWriter);
     }
 }

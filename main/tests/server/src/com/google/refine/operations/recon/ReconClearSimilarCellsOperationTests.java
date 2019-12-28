@@ -47,6 +47,6 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\","
                 + "\"similarValue\":\"some value\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

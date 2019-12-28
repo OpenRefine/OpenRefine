@@ -50,6 +50,6 @@ public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
                 + "\"judgment\":\"matched\","
                 + "\"match\":{\"id\":\"Q7884717\",\"name\":\"Unicef Indonesia\",\"score\":71.42857142857143,\"types\":[\"Q43229\"]},"
                 + "\"shareNewTopics\":false}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

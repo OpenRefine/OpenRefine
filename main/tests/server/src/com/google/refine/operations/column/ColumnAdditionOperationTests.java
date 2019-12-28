@@ -50,6 +50,6 @@ public class ColumnAdditionOperationTests extends RefineTest {
                 + "    \"expression\":\"grel:value.parseJson()[\\\"employment-summary\\\"].join('###')\","
                 + "   \"onError\":\"set-to-blank\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

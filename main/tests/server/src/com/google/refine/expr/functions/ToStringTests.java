@@ -29,13 +29,14 @@ package com.google.refine.expr.functions;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.ToString;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ToStringTests {
     @Test
     public void serializeToString() {
         String json = "{\"description\":\"Returns o converted to a string\",\"params\":\"o, string format (optional)\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToString(), json);
+        TestUtils.isSerializedTo(new ToString(), json, ParsingUtilities.defaultWriter);
     }
 }
 

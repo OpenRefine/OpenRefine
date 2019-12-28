@@ -29,13 +29,14 @@ package com.google.refine.grel.controls;
 import org.testng.annotations.Test;
 
 import com.google.refine.grel.controls.IsNotNull;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class IsNotNullTests {
     @Test
     public void serializeIsNotNull() {
         String json = "{\"description\":\"Returns whether o is not null\",\"params\":\"expression o\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new IsNotNull(), json);
+        TestUtils.isSerializedTo(new IsNotNull(), json, ParsingUtilities.defaultWriter);
     }
 }
 

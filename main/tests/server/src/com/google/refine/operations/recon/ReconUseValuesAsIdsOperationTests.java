@@ -61,7 +61,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     
     @Test
     public void serializeReconUseValuesAsIdentifiersOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

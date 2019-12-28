@@ -78,7 +78,7 @@ public class RangeFacetTests extends RefineTest {
     @Test
     public void serializeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
-        TestUtils.isSerializedTo(config, configJson);
+        TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -95,6 +95,6 @@ public class RangeFacetTests extends RefineTest {
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
         RangeFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
-        TestUtils.isSerializedTo(facet, facetJson);
+        TestUtils.isSerializedTo(facet, facetJson, ParsingUtilities.defaultWriter);
     }
 }

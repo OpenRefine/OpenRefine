@@ -42,6 +42,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.functions.strings.Find;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 /**
@@ -94,7 +95,7 @@ public class FindTests extends RefineTest {
     @Test
     public void serializeFind() {
         String json = "{\"description\":\"Returns all the occurances of match given regular expression\",\"params\":\"string or regexp\",\"returns\":\"array of strings\"}";
-        TestUtils.isSerializedTo(new Find(), json);
+        TestUtils.isSerializedTo(new Find(), json, ParsingUtilities.defaultWriter);
     }
     
     /**

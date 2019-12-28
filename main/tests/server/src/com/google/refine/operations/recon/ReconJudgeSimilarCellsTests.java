@@ -72,7 +72,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"similarValue\":\"foo\","
                 + "\"judgment\":\"new\","
                 + "\"shareNewTopics\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -86,7 +86,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 + "\"match\":{\"id\":\"Q42\",\"name\":\"Douglas Adams\",\"types\":[\"Q5\"],\"score\":85},"
                 + "\"shareNewTopics\":false"
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

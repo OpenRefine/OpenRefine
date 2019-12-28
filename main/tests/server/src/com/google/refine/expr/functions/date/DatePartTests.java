@@ -44,6 +44,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.functions.date.DatePart;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -151,7 +152,7 @@ public class DatePartTests extends RefineTest {
     @Test
     public void serializeDatePart() {
         String json = "{\"description\":\"Returns part of a date\",\"params\":\"date d, string part\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new DatePart(), json);
+        TestUtils.isSerializedTo(new DatePart(), json, ParsingUtilities.defaultWriter);
     }
 
 }
