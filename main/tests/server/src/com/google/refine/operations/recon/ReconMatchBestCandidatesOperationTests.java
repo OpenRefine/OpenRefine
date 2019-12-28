@@ -51,6 +51,6 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "]},"
                 + "\"columnName\":\"organization_name\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

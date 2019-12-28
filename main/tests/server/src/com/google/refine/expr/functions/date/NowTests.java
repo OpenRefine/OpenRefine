@@ -41,6 +41,7 @@ import com.google.refine.RefineTest;
 import com.google.refine.expr.functions.date.Now;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -93,7 +94,7 @@ public class NowTests extends RefineTest {
     @Test
     public void serializeNow() {
         String json = "{\"description\":\"Returns the current time\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new Now(), json);
+        TestUtils.isSerializedTo(new Now(), json, ParsingUtilities.defaultWriter);
     }
     
 }

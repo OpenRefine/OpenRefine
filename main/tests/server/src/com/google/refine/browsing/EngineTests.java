@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 
@@ -40,6 +41,6 @@ public class EngineTests {
     public void serializeEngine() {
         Project project = mock(Project.class);
         Engine engine = new Engine(project);
-        TestUtils.isSerializedTo(engine, "{\"engine-mode\":\"row-based\",\"facets\":[]}");
+        TestUtils.isSerializedTo(engine, "{\"engine-mode\":\"row-based\",\"facets\":[]}", ParsingUtilities.defaultWriter);
     }
 }

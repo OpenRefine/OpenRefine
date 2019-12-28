@@ -107,7 +107,7 @@ public class RowReorderOperationTests extends RefineTest {
                 "      ]\n" + 
                 "    }\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
 }

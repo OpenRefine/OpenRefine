@@ -48,6 +48,6 @@ public class RowFlagOperationTests extends RefineTest {
                 + "\"description\":\"Flag rows\","
                 + "\"flagged\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowFlagOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

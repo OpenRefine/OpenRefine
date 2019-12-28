@@ -57,7 +57,7 @@ public class kNNClustererTests extends RefineTest {
     @Test
     public void serializekNNClustererConfig() throws JsonParseException, JsonMappingException, IOException {
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
-        TestUtils.isSerializedTo(config, configJson);
+        TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -72,7 +72,7 @@ public class kNNClustererTests extends RefineTest {
         kNNClusterer clusterer = config.apply(project);
         clusterer.computeClusters(new Engine(project));
         
-        TestUtils.isSerializedTo(clusterer, clustererJson);
+        TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

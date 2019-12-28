@@ -52,6 +52,6 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
                 "    \"columnName\": \"researcher\",\n" + 
                 "    \"clearData\": true\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

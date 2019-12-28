@@ -88,7 +88,7 @@ public class ListFacetTests extends RefineTest {
     @Test
     public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
-        TestUtils.isSerializedTo(facetConfig, jsonConfig);
+        TestUtils.isSerializedTo(facetConfig, jsonConfig, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -103,7 +103,7 @@ public class ListFacetTests extends RefineTest {
         Facet facet = facetConfig.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
         
-        TestUtils.isSerializedTo(facet, jsonFacet);
+        TestUtils.isSerializedTo(facet, jsonFacet, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -114,7 +114,7 @@ public class ListFacetTests extends RefineTest {
        
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
         Facet facet = facetConfig.apply(project);
-        TestUtils.isSerializedTo(facet, jsonFacetError);
+        TestUtils.isSerializedTo(facet, jsonFacetError, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -128,6 +128,6 @@ public class ListFacetTests extends RefineTest {
     	ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
     	Facet facet = facetConfig.apply(project);
     	facet.computeChoices(project, engine.getAllFilteredRows());
-    	TestUtils.isSerializedTo(facet, selectedEmptyChoiceFacet);
+    	TestUtils.isSerializedTo(facet, selectedEmptyChoiceFacet, ParsingUtilities.defaultWriter);
     }
 }

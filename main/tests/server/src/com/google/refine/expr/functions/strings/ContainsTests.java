@@ -29,6 +29,7 @@ package com.google.refine.expr.functions.strings;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.strings.Contains;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 import java.util.Properties;
@@ -108,7 +109,7 @@ public class ContainsTests extends RefineTest {
     @Test
     public void serializeContains() {
         String json = "{\"description\":\"Returns whether s contains frag\",\"params\":\"string s, string frag\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Contains(), json);
+        TestUtils.isSerializedTo(new Contains(), json, ParsingUtilities.defaultWriter);
     }
 }
 

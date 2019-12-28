@@ -151,10 +151,8 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>main</artifactId>
+      <artifactId>or-testing</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
-      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>

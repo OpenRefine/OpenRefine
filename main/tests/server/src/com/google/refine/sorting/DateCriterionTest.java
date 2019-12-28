@@ -45,6 +45,6 @@ public class DateCriterionTest {
                 "          \"blankPosition\": -1,\n" + 
                 "          \"reverse\": true\n" + 
                 "        }\n";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, Criterion.class), json, ParsingUtilities.defaultWriter);
     }
 }

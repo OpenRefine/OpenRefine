@@ -84,7 +84,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"columnName\":\"value column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"separator\":\",\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
 

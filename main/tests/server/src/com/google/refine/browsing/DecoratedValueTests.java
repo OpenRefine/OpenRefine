@@ -31,6 +31,7 @@ import java.time.OffsetDateTime;
 import org.testng.annotations.Test;
 
 import com.google.refine.browsing.DecoratedValue;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class DecoratedValueTests {
@@ -38,6 +39,6 @@ public class DecoratedValueTests {
     public void serializeDecoratedValue() {
         OffsetDateTime date = OffsetDateTime.parse("2017-03-04T12:56:32Z");
         DecoratedValue dv = new DecoratedValue(date, "[date 2017-03-04T12:56:32Z]");
-        TestUtils.isSerializedTo(dv, "{\"v\":\"2017-03-04T12:56:32Z\",\"l\":\"[date 2017-03-04T12:56:32Z]\"}");
+        TestUtils.isSerializedTo(dv, "{\"v\":\"2017-03-04T12:56:32Z\",\"l\":\"[date 2017-03-04T12:56:32Z]\"}", ParsingUtilities.defaultWriter);
     }
 }

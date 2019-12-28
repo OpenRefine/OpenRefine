@@ -48,6 +48,6 @@ public class RowStarOperationTests extends RefineTest {
                 + "\"description\":\"Star rows\","
                 + "\"starred\":true,"
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowStarOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowStarOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

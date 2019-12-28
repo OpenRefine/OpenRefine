@@ -40,6 +40,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.strings.Range;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 /**
@@ -351,7 +352,7 @@ public class RangeTests extends RefineTest {
     @Test
     public void serializeRange() {
         String json = "{\"description\":\"Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).\",\"params\":\"A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Range(), json);
+        TestUtils.isSerializedTo(new Range(), json, ParsingUtilities.defaultWriter);
     }
 
 }

@@ -51,6 +51,6 @@ public class ColumnRenameOperationTests extends RefineTest {
                 + "\"oldColumnName\":\"old name\","
                 + "\"newColumnName\":\"new name\"}";
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, AbstractOperation.class);
-        TestUtils.isSerializedTo(op, json);
+        TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
     }
 }

@@ -177,19 +177,19 @@ public class ExtendDataOperationTests extends RefineTest {
     
     @Test
     public void serializeExtendDataOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class), operationJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeExtendDataProcess() throws Exception {
         Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
                 .createProcess(project, new Properties());
-        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()));
+        TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()), ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeDataExtensionConfig() throws IOException {
-        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson);
+        TestUtils.isSerializedTo(DataExtensionConfig.reconstruct(dataExtensionConfigJson), dataExtensionConfigJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

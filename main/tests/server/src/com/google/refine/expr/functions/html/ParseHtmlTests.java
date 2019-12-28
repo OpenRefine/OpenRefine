@@ -42,6 +42,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.html.ParseHtml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class ParseHtmlTests extends RefineTest  {
@@ -94,7 +95,7 @@ public class ParseHtmlTests extends RefineTest  {
     @Test
     public void serializeParseHtml() {
         String json = "{\"description\":\"Parses a string as HTML\",\"params\":\"string s\",\"returns\":\"HTML object\"}";
-        TestUtils.isSerializedTo(new ParseHtml(), json);
+        TestUtils.isSerializedTo(new ParseHtml(), json, ParsingUtilities.defaultWriter);
     }
     
     @Test

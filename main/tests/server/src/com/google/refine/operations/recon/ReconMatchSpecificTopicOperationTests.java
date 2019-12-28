@@ -60,6 +60,6 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "    \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" + 
                 "    \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\"\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

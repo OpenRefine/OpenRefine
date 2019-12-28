@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Sum;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class SumTests {
     @Test
     public void serializeSum() {
         String json = "{\"description\":\"Sums numbers in array a\",\"params\":\"array a\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Sum(), json);
+        TestUtils.isSerializedTo(new Sum(), json, ParsingUtilities.defaultWriter);
     }
 }
 

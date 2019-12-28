@@ -58,7 +58,7 @@ public class ColumnSplitOperationTests extends RefineTest {
                 "    \"regex\": false,\n" + 
                 "    \"maxColumns\": 0\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -76,6 +76,6 @@ public class ColumnSplitOperationTests extends RefineTest {
                 "    \"mode\": \"lengths\",\n" + 
                 "    \"fieldLengths\": [1,1]\n" + 
                 "  }";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnSplitOperation.class), json, ParsingUtilities.defaultWriter);
     }
 }

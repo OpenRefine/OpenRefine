@@ -11,11 +11,9 @@ import org.testng.annotations.BeforeMethod;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectManagerStub;
+import org.openrefine.wikidata.testing.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
-import com.google.refine.RefineServletStub;
-import com.google.refine.RefineTest;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;

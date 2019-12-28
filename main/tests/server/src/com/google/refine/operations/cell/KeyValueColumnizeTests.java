@@ -119,14 +119,14 @@ public class KeyValueColumnizeTests extends RefineTest {
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":null}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, KeyValueColumnizeOperation.class), json, ParsingUtilities.defaultWriter);
 
         String jsonFull = "{\"op\":\"core/key-value-columnize\","
                 + "\"description\":\"Columnize by key column key column and value column value column with note column note column\","
                 + "\"keyColumnName\":\"key column\","
                 + "\"valueColumnName\":\"value column\","
                 + "\"noteColumnName\":\"note column\"}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(jsonFull, KeyValueColumnizeOperation.class), jsonFull, ParsingUtilities.defaultWriter);
     }
 
     /**

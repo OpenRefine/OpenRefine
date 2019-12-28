@@ -84,7 +84,7 @@ public class ScatterplotFacetTests extends RefineTest {
     @Test
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
-        TestUtils.isSerializedTo(config, configJson);
+        TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
     
     @Test
@@ -106,7 +106,7 @@ public class ScatterplotFacetTests extends RefineTest {
         
         ScatterplotFacet facet = config.apply(project);
         facet.computeChoices(project, engine.getAllFilteredRows());
-        TestUtils.isSerializedTo(facet, facetJson);
+        TestUtils.isSerializedTo(facet, facetJson, ParsingUtilities.defaultWriter);
         
         RowFilter filter = facet.getRowFilter(project);
         assertTrue(filter.filterRow(project, 0, project.rows.get(0)));

@@ -266,7 +266,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>or-model</artifactId>
       <version>${project.version}</version>
-      <!-- <scope>provided</scope> -->
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -459,6 +458,12 @@
     <!-- test dependencies -->
 
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>or-testing</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency> 
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>6.9.10</version>
@@ -487,6 +492,12 @@
       <version>${powermock.version}</version>
       <scope>test</scope>
      </dependency> 
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>or-testing</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
 

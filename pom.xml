@@ -13,6 +13,7 @@
 
   <modules>
         <module>or-model</module>
+        <module>or-testing</module>
         <module>main</module>
         <module>server</module>
         <module>extensions</module>

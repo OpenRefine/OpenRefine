@@ -29,13 +29,14 @@ package com.google.refine.expr.functions.math;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.functions.math.Combin;
+import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class CombinTests {
     @Test
     public void serializeCombin() {
         String json = "{\"description\":\"Returns the number of combinations for n elements as divided into k\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Combin(), json);
+        TestUtils.isSerializedTo(new Combin(), json, ParsingUtilities.defaultWriter);
     }
 }
 
