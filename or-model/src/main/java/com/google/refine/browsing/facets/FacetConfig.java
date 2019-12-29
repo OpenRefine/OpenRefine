@@ -27,9 +27,8 @@
 package com.google.refine.browsing.facets;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.google.refine.model.Project;
 
 
@@ -46,12 +45,7 @@ import com.google.refine.model.Project;
         use=JsonTypeInfo.Id.NAME,
         include=JsonTypeInfo.As.PROPERTY,
         property="type")
-@JsonSubTypes({
-    @Type(value = ListFacet.ListFacetConfig.class, name = "list"),
-    @Type(value = RangeFacet.RangeFacetConfig.class, name = "range"),
-    @Type(value = TimeRangeFacet.TimeRangeFacetConfig.class, name = "timerange"),
-    @Type(value = TextSearchFacet.TextSearchFacetConfig.class, name = "text"),
-    @Type(value = ScatterplotFacet.ScatterplotFacetConfig.class, name = "scatterplot") })
+@JsonTypeIdResolver(FacetConfigResolver.class)
 public interface FacetConfig  {   
     /**
      * Instantiates the given facet on a particular project.

@@ -28,13 +28,13 @@ package com.google.refine.browsing.facets;
 
 import java.io.IOException;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.facets.RangeFacet;
 import com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -51,7 +51,7 @@ public class RangeFacetTests extends RefineTest {
             "          \"name\": \"my column\",\n" + 
             "          \"from\": -30,\n" + 
             "          \"to\": 90,\n" + 
-            "          \"type\": \"range\",\n" + 
+            "          \"type\": \"core/range\",\n" + 
             "          \"columnName\": \"my column\"\n" + 
             "        }";
     
@@ -74,6 +74,11 @@ public class RangeFacetTests extends RefineTest {
             + "\"nonNumericCount\":1,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
+    
+    @BeforeTest
+    public void registerFacetConfig() {
+    	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
+    }
     
     @Test
     public void serializeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {

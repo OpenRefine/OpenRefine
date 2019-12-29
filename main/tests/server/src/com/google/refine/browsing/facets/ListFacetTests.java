@@ -28,6 +28,7 @@ package com.google.refine.browsing.facets;
 
 import java.io.IOException;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -43,7 +44,7 @@ import com.google.refine.util.TestUtils;
 public class ListFacetTests extends RefineTest {
     
     private static String jsonConfig = "{"
-            + "\"type\":\"list\","
+            + "\"type\":\"core/list\","
             + "\"name\":\"facet A\","
             + "\"columnName\":\"Column A\","
             + "\"expression\":\"value+\\\"bar\\\"\","
@@ -84,6 +85,11 @@ public class ListFacetTests extends RefineTest {
     		+ "    {\"v\":{\"v\":\"abar\",\"l\":\"abar\"},\"c\":1,\"s\":false},"
     		+ "    {\"v\":{\"v\":\"foobar\",\"l\":\"true\"},\"c\":0,\"s\":true}"
     		+ "]}";
+    
+    @BeforeTest
+    public void registerFacetConfig() {
+    	FacetConfigResolver.registerFacetConfig("core", "list", ListFacetConfig.class);
+    }
 
     @Test
     public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {

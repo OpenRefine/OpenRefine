@@ -27,12 +27,18 @@
 package com.google.refine.browsing;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 import com.google.refine.browsing.EngineConfig;
+import com.google.refine.browsing.facets.Facet;
+import com.google.refine.browsing.facets.FacetConfig;
+import com.google.refine.browsing.facets.FacetConfigResolver;
+import com.google.refine.model.Project;
 
 public class EngineConfigTests {
     
@@ -41,13 +47,8 @@ public class EngineConfigTests {
             + "      \"mode\": \"row-based\",\n"
             + "      \"facets\": [\n"
             + "        {\n"
-            + "          \"mode\": \"text\",\n"
-            + "          \"invert\": false,\n"
-            + "          \"caseSensitive\": false,\n"
-            + "          \"query\": \"www\",\n"
-            + "          \"name\": \"reference\",\n"
-            + "          \"type\": \"text\",\n"
-            + "          \"columnName\": \"reference\"\n"
+            + "          \"type\": \"core/my-facet\",\n"
+            + "          \"foo\": \"bar\"\n"
             + "        }\n"
             + "      ]\n"
             + "    }";
@@ -59,6 +60,30 @@ public class EngineConfigTests {
             + "}";
     
     public static String noFacetProvided = "{\"mode\":\"row-based\"}";
+    
+    protected static class MyFacetConfig implements FacetConfig {
+
+		@Override
+		public Facet apply(Project project) {
+			return null;
+		}
+
+		@Override
+		public String getJsonType() {
+			return "core/my-facet";
+		}
+		
+		@JsonProperty("foo")
+		public String getFoo() {
+			return "bar";
+		}
+    	
+    }
+    
+    @BeforeTest
+    public void registerFacet() {
+    	FacetConfigResolver.registerFacetConfig("core", "my-facet", MyFacetConfig.class);
+    }
     
     @Test
     public void serializeEngineConfig() {
