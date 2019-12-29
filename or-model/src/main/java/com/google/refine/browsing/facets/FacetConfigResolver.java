@@ -27,17 +27,25 @@
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.refine.model.recon.ReconConfig;
 
 public class FacetConfigResolver extends TypeIdResolverBase {
+	
+	static final public Map<String, Class<? extends FacetConfig>> s_nameToClass =
+	        new HashMap<String, Class<? extends FacetConfig>>();
     
     protected TypeFactory factory = TypeFactory.defaultInstance();
+    
+    public static void registerFacetConfig(String moduleName, String name, Class<? extends FacetConfig> klass) {
+    	s_nameToClass.put(moduleName + "/" + name, klass);
+    }
 
     @Override
     public Id getMechanism() {
@@ -46,16 +54,25 @@ public class FacetConfigResolver extends TypeIdResolverBase {
 
     @Override
     public String idFromValue(Object instance) {
-        return ((ReconConfig)instance).getMode();
+        return ((FacetConfig)instance).getJsonType();
     }
 
     @Override
     public String idFromValueAndType(Object instance, Class<?> type) {
-        return ReconConfig.s_opClassToName.get(type);
+        return ((FacetConfig)instance).getJsonType();
     }
     
     @Override
     public JavaType typeFromId(DatabindContext context, String id) throws IOException {
-        return factory.constructSimpleType(ReconConfig.getClassFromMode(id), new JavaType[0]);
+    	// backwards compatibility
+    	if (id.indexOf('/') == -1) {
+    		id = "core/"+id;
+    	}
+    	
+    	if (s_nameToClass.containsKey(id)) {
+    		return factory.constructSimpleType(s_nameToClass.get(id), new JavaType[0]);
+    	} else {
+    		throw new IOException("Unknown facet type: '"+id+"'");
+    	}
     }
 }

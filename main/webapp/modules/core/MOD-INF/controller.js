@@ -319,6 +319,15 @@ function registerLanguages() {
   MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.com.google.refine.grel.Parser.grelParser, "value");
 }
 
+function registerFacets() {
+  var FCR = Packages.com.google.refine.browsing.facets.FacetConfigResolver;
+  FCR.registerFacetConfig("core", "list", Packages.com.google.refine.browsing.facets.ListFacet.ListFacetConfig);
+  FCR.registerFacetConfig("core", "range", Packages.com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig);
+  FCR.registerFacetConfig("core", "timerange", Packages.com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig);
+  FCR.registerFacetConfig("core", "text", Packages.com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig);
+  FCR.registerFacetConfig("core", "scatterplot", Packages.com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig);
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -326,6 +335,7 @@ function init() {
   // Packages.java.lang.System.err.println("Initializing by script " + module);
 
   registerLanguages();
+  registerFacets();
   registerCommands();
   registerOperations();
   registerImporting();

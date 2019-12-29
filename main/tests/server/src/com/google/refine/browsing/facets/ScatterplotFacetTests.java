@@ -31,6 +31,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -38,7 +39,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.RowFilter;
-import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -52,7 +52,7 @@ public class ScatterplotFacetTests extends RefineTest {
             "          \"dot\": 1,\n" + 
             "          \"from_x\": 0.21333333333333335,\n" + 
             "          \"l\": 150,\n" + 
-            "          \"type\": \"scatterplot\",\n" + 
+            "          \"type\": \"core/scatterplot\",\n" + 
             "          \"from_y\": 0.26666666666666666,\n" + 
             "          \"dim_y\": \"lin\",\n" + 
             "          \"ex\": \"value\",\n" + 
@@ -80,6 +80,11 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"from_y\":0.26666666666666666,"
             + "\"to_y\":1"
             + "}";
+    
+    @BeforeTest
+    public void registerFacetConfig() {
+    	FacetConfigResolver.registerFacetConfig("core", "scatterplot", ScatterplotFacetConfig.class);
+    }
     
     @Test
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
