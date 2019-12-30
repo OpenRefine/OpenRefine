@@ -43,6 +43,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Properties;
 
@@ -155,6 +156,30 @@ public class XlsxExporterTests extends RefineTest {
             Assert.fail();
         }
     }
+    
+    @Test
+    public void exportXlsxStringWithURLs() throws IOException{
+        String url = "GET /primo-library/,http:%2F%2Fcatalogue.unice.fr HTTP/1.1";
+        createDateGrid(2, 2, url);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        
+        ByteArrayInputStream inStream = new ByteArrayInputStream( stream.toByteArray() );
+        try {
+            XSSFWorkbook wb = new XSSFWorkbook(inStream);
+            XSSFSheet ws = wb.getSheetAt(0);
+            XSSFRow row1 = ws.getRow(1);
+            XSSFCell cell0 = row1.getCell(0);
+            Assert.assertTrue(cell0.toString().contains("primo-library"));
+            wb.close();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+    }
 
     //helper methods
 
@@ -180,13 +205,13 @@ public class XlsxExporterTests extends RefineTest {
         }
     }
     
-    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now){
+    private void createDateGrid(int noOfRows, int noOfColumns, Serializable value){
         CreateColumns(noOfColumns);
 
         for(int i = 0; i < noOfRows; i++){
             Row row = new Row(noOfColumns);
             for(int j = 0; j < noOfColumns; j++){
-                row.cells.add(new Cell(now, null));
+                row.cells.add(new Cell(value, null));
             }
             project.rows.add(row);
         }
