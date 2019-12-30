@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -64,17 +65,19 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
+        OperationRegistry.registerOperation("core", "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
     
     @BeforeMethod
     public void createProject() {
-        project = createCSVProject(
-                "Key,Value\n"
-                + "Record_1,one\n"
-                + ",two\n"
-                + ",three\n"
-                + ",four\n");
+        project = createProject(
+        		new String[] {
+                "Key","Value"},
+        		new Serializable[] {
+                "Record_1","one",
+                null,"two",
+                null,"three",
+                null,"four"});
     }
     
     @Test

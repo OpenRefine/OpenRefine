@@ -38,7 +38,7 @@ import com.google.refine.util.TestUtils;
 public class ColumnSplitOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "column-split", ColumnSplitOperation.class);
+        OperationRegistry.registerOperation("core", "column-split", ColumnSplitOperation.class);
     }
     
     @Test

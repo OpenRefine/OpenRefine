@@ -44,10 +44,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.clustering.knn.DistanceFactory;
+import com.google.refine.clustering.knn.VicinoDistance;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.browsing.GetClusteringFunctionsAndDistancesCommand;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import edu.mit.simile.vicino.distances.LevenshteinDistance;
 
 
 public class GetClusteringFunctionsAndDistancesCommandTest {
@@ -68,6 +72,7 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        DistanceFactory.put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
     }
 	
     @Test

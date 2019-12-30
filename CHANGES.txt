@@ -1,3 +1,18 @@
+Breaking changes in 4.0 branch
+==============================
+
+* Registration of operations has changed: it expects a module name as first argument, not a module.
+  Extensions will need to update their controller.js script to add `.getName()` after the existing first argument when registering an operation;
+
+* Facet types are now extensible and their ids are therefore prefixed by
+  the Butterfly module name: for instance, the text facet in now called "core/text" instead of just "text".
+  This means that workflows generated with this new version will not be
+  interpretable on 3.x and before.
+
+* The `smartSplit` GREL function no longer accepts multi-character strings as separators.
+  This is due to the upgrade of OpenCSV to version 5.0.
+
+
 2.6 Release (TBD) - First release as OpenRefine - Maintenance release
 
 Features:

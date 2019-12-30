@@ -33,15 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.mit.simile.vicino.distances.BZip2Distance;
-import edu.mit.simile.vicino.distances.GZipDistance;
-import edu.mit.simile.vicino.distances.JaccardDistance;
-import edu.mit.simile.vicino.distances.JaroDistance;
-import edu.mit.simile.vicino.distances.JaroWinklerDistance;
-import edu.mit.simile.vicino.distances.JaroWinklerTFIDFDistance;
-import edu.mit.simile.vicino.distances.LevenshteinDistance;
-import edu.mit.simile.vicino.distances.PPMDistance;
-
 /**
  * Registry of distances for kNN clustering.
  * 
@@ -54,19 +45,7 @@ public class DistanceFactory {
 	private static List<String> _distanceNames = new LinkedList<>();
     
     static {
-        put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
-        put("ppm", new VicinoDistance(new PPMDistance()));
-        
-        // Distances not activated as they are not very useful:
-        // See https://github.com/OpenRefine/OpenRefine/pull/1906
-        /*
-        put("jaccard", new VicinoDistance(new JaccardDistance()));
-        put("jaro", new VicinoDistance(new JaroDistance()));
-        put("jaro-winkler", new VicinoDistance(new JaroWinklerDistance()));
-        put("jaro-winkler-tfidf", new VicinoDistance(new JaroWinklerTFIDFDistance()));
-        put("gzip", new VicinoDistance(new GZipDistance()));
-        put("bzip2", new VicinoDistance(new BZip2Distance()));
-        */
+
     }
     
     /**

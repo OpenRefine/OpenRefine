@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,10 +63,11 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
     
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject(
-                "reconciled column,unreconciled column\n"+
-                "a,b\n"+
-                "c,d\n");
+        project = createProject(
+                new String[] {"reconciled column","unreconciled column"},
+                new Serializable[] {
+                "a","b",
+                "c","d"});
         Column reconciled = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.recon.service/api",

@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
+        OperationRegistry.registerOperation("core", "recon-match-specific-topic-to-cells", ReconMatchSpecificTopicOperation.class);
     }
     
     @Test
