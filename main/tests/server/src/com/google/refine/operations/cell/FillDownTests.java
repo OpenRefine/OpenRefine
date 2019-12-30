@@ -26,6 +26,7 @@
  ******************************************************************************/
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -55,17 +56,18 @@ public class FillDownTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "fill-down", FillDownOperation.class);
+        OperationRegistry.registerOperation("core", "fill-down", FillDownOperation.class);
     }
     
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject(
-                "key,first,second\n"+
-                "a,b,c\n"+
-                ",d,\n"+
-                "e,f,\n"+
-                ",,h\n");
+        project = createProject(
+                new String[] {"key","first","second"},
+                new Serializable[] {
+                "a","b","c",
+                null,"d",null,
+                "e","f",null,
+                null,null,"h"});
     }
     
     @AfterMethod

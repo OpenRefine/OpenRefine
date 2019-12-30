@@ -27,6 +27,7 @@
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 import org.testng.annotations.BeforeTest;
@@ -37,6 +38,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.grel.Parser;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
@@ -81,6 +84,7 @@ public class TimeRangeFacetTests extends RefineTest {
     @BeforeTest
     public void registerFacetConfig() {
     	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
     
     @Test
@@ -91,11 +95,12 @@ public class TimeRangeFacetTests extends RefineTest {
     
     @Test
     public void serializeTimeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("my column\n"
-                + "placeholder\n"
-                + "nontime\n"
-                + "placeholder\n"
-                + "placeholder\n");
+        Project project = createProject(new String[] {"my column"},
+        		new Serializable[] {
+                "placeholder",
+                "nontime",
+                "placeholder",
+                "placeholder"});
         project.rows.get(0).cells.set(0, new Cell(OffsetDateTime.parse("2018-01-03T08:09:10Z"), null));
         project.rows.get(2).cells.set(0, new Cell(OffsetDateTime.parse("2008-01-03T03:04:05Z"), null));
         project.rows.get(3).cells.set(0, new Cell(OffsetDateTime.parse("2012-04-05T02:00:01Z"), null));

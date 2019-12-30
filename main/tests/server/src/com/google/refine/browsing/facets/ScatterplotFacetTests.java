@@ -30,6 +30,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -94,11 +95,12 @@ public class ScatterplotFacetTests extends RefineTest {
     
     @Test
     public void serializeScatterplotFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("my column,e\n"
-                + "89.2,89.2\n" + 
-                "-45.9,-45.9\n" + 
-                "blah,blah\n" + 
-                "0.4,0.4\n");
+        Project project = createProject(new String[] {"my column","e"},
+        		new Serializable[] {
+                89.2,89.2,
+                -45.9,-45.9,
+                "blah","blah",
+                0.4,0.4});
         Engine engine = new Engine(project);
         project.rows.get(0).cells.set(0, new Cell(89.2, null));
         project.rows.get(0).cells.set(1, new Cell(89.2, null));

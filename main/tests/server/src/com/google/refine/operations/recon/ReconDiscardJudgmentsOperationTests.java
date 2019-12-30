@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconDiscardJudgmentsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
+        OperationRegistry.registerOperation("core", "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
     }
     
     @Test

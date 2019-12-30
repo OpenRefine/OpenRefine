@@ -29,6 +29,7 @@ package com.google.refine.operations.recon;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.testng.annotations.BeforeSuite;
@@ -56,7 +57,7 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-use-values-as-identifiers", ReconUseValuesAsIdentifiersOperation.class);
+        OperationRegistry.registerOperation("core", "recon-use-values-as-identifiers", ReconUseValuesAsIdentifiersOperation.class);
     }
     
     @Test
@@ -66,10 +67,12 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
     
     @Test
     public void testUseValuesAsIds() throws Exception {
-        Project project = createCSVProject("ids,v\n"
-                + "Q343,hello\n"
-                + ",world\n"
-                + "http://test.org/entities/Q31,test");
+        Project project = createProject(
+        		new String[] {"ids","v"},
+                new Serializable [] {
+                "Q343","hello",
+               null,"world",
+               "http://test.org/entities/Q31","test"});
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
         op.createProcess(project, new Properties()).performImmediate();
         

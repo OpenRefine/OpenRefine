@@ -49,7 +49,7 @@ public class TransposeTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule().getName(), "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
+        OperationRegistry.registerOperation("core", "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
     }
     
     @Test

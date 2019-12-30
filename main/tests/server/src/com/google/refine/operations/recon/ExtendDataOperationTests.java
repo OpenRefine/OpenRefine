@@ -157,7 +157,7 @@ public class ExtendDataOperationTests extends RefineTest {
     public void SetUp() throws IOException, ModelException {
     	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
     	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
-        OperationRegistry.registerOperation(getCoreModule().getName(), "extend-reconciled-data", ExtendDataOperation.class);
+        OperationRegistry.registerOperation("core", "extend-reconciled-data", ExtendDataOperation.class);
         project = createProjectWithColumns("DataExtensionTests", "country");
         
         options = mock(Properties.class);

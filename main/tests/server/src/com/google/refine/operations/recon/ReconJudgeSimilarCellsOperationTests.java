@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
+        OperationRegistry.registerOperation("core", "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
     }
     
     @Test

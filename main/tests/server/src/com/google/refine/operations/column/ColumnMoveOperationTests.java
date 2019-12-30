@@ -39,7 +39,7 @@ public class ColumnMoveOperationTests extends RefineTest {
     
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "column-move", ColumnMoveOperation.class);
+        OperationRegistry.registerOperation("core", "column-move", ColumnMoveOperation.class);
     }
     
     @Test

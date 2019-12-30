@@ -37,6 +37,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +96,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         pm.setName("KeyValueColumnize test");
         ProjectManager.singleton.registerProject(project, pm);
         options = mock(ObjectNode.class);
-        OperationRegistry.registerOperation(getCoreModule().getName(), "key-value-columnize", KeyValueColumnizeOperation.class);
+        OperationRegistry.registerOperation("core", "key-value-columnize", KeyValueColumnizeOperation.class);
 
 	ImportingManager.initialize(servlet);
         job = ImportingManager.createJob();
@@ -135,15 +136,16 @@ public class KeyValueColumnizeTests extends RefineTest {
      */
     @Test
     public void testKeyValueColumnizeWithID() throws Exception {
-        Project project = createCSVProject(
-                "ID,Cat,Val\n"
-                + "1,a,1\n"
-                + "1,b,3\n"
-                + "2,b,4\n"
-                + "2,c,5\n"
-                + "3,a,2\n"
-                + "3,b,5\n"
-                + "3,d,3\n");
+        Project project = createProject(
+                new String[] {"ID","Cat","Val"},
+                new Serializable[] {
+                "1","a","1",
+                "1","b","3",
+                "2","b","4",
+                "2","c","5",
+                "3","a","2",
+                "3","b","5",
+                "3","d","3"});
 
         AbstractOperation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);

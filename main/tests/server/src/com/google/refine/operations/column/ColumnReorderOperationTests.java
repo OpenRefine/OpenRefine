@@ -26,6 +26,7 @@
  ******************************************************************************/
 package com.google.refine.operations.column;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -50,15 +51,17 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "column-reorder", ColumnReorderOperation.class);
+        OperationRegistry.registerOperation("core", "column-reorder", ColumnReorderOperation.class);
     }
 
     @BeforeMethod
     public void createProject() {
-        project = createCSVProject(
-                        "a,b,c\n"+
-                        "1|2,d,e\n"+
-                        "3,f,g\n");
+        project = createProject(
+        		new String[] {
+                "a","b","c"},
+        		new Serializable[] {
+                "1|2","d","e",
+                "3","f","g"});
     }
 
     @Test

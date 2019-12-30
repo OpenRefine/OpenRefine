@@ -149,7 +149,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-testing</artifactId>
+      <artifactId>or-util</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -37,7 +37,7 @@ import com.google.refine.util.TestUtils;
 public class ReconMarkNewTopicsOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-mark-new-topics", ReconMarkNewTopicsOperation.class);
+        OperationRegistry.registerOperation("core", "recon-mark-new-topics", ReconMarkNewTopicsOperation.class);
     }
     
     @Test
