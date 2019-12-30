@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import javax.servlet.ServletException;
@@ -58,7 +59,11 @@ public class GetRowsCommandTest extends RefineTest {
     public void setUp() {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        project = createCSVProject("a,b\nc,d\n,f");
+        project = createProject(new String[] {"a","b"},
+        		new Serializable[] {
+        		"c", "d",
+        		null, "f"
+        		});
         command = new GetRowsCommand();
         writer = new StringWriter();
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));

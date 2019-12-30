@@ -38,7 +38,7 @@ import com.google.refine.util.TestUtils;
 public class RowFlagOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "row-flag", RowFlagOperation.class);
+        OperationRegistry.registerOperation("core", "row-flag", RowFlagOperation.class);
     }
     
     @Test

@@ -27,6 +27,7 @@
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -88,11 +89,12 @@ public class RangeFacetTests extends RefineTest {
     
     @Test
     public void serializeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createCSVProject("my column\n"
-                + "89.2\n"
-                + "-45.9\n"
-                + "blah\n"
-                + "0.4\n");
+        Project project = createProject(new String[] {"my column"},
+        		new Serializable[] {
+                89.2,
+                -45.9,
+                "blah",
+                0.4});
         project.rows.get(0).cells.set(0, new Cell(89.2, null));
         project.rows.get(1).cells.set(0, new Cell(-45.9, null));
         project.rows.get(3).cells.set(0, new Cell(0.4, null));

@@ -40,7 +40,7 @@ public class ColumnRemovalOperationTests extends RefineTest {
     
     @BeforeSuite
     public void setUp() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "column-removal", ColumnRemovalOperation.class);
+        OperationRegistry.registerOperation("core", "column-removal", ColumnRemovalOperation.class);
     }
     
     @Test

@@ -328,6 +328,30 @@ function registerFacets() {
   FCR.registerFacetConfig("core", "scatterplot", Packages.com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig);
 }
 
+function registerDistances() {
+   var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
+   var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
+   DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
+   DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
+        
+   // Distances not activated as they are not very useful:
+   // See https://github.com/OpenRefine/OpenRefine/pull/1906
+   /*
+   DF.put("jaccard", new VicinoDistance(new JaccardDistance()));
+   DF.put("jaro", new VicinoDistance(new JaroDistance()));
+   DF.put("jaro-winkler", new VicinoDistance(new JaroWinklerDistance()));
+   DF.put("jaro-winkler-tfidf", new VicinoDistance(new JaroWinklerTFIDFDistance()));
+   DF.put("gzip", new VicinoDistance(new GZipDistance()));
+   DF.put("bzip2", new VicinoDistance(new BZip2Distance()));
+   */
+}
+
+function registerClusterers() {
+   var CCF = Packages.com.google.refine.clustering.ClustererConfigFactory;
+   CCF.register("knn", Packages.com.google.refine.clustering.knn.kNNClusterer);
+   // Binning clusterer: already registered by default.
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -339,6 +363,7 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerDistances();
 
   var RC = Packages.com.google.refine.model.recon.ReconConfig;
   RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);

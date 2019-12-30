@@ -229,6 +229,9 @@ public class kNNClusterer extends Clusterer {
     public void initializeFromConfig(Project project, kNNClustererConfig config) {
         super.initializeFromConfig(project, config);
         _distance = config.getDistance();
+        if (_distance == null) {
+        	throw new IllegalArgumentException("No distance provided for KNN clustering.");
+        }
         _params = config.getParameters();
     }
 

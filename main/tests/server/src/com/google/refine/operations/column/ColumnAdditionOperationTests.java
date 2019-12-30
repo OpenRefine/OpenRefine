@@ -39,7 +39,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "column-addition", ColumnAdditionOperation.class);
+        OperationRegistry.registerOperation("core", "column-addition", ColumnAdditionOperation.class);
     }
     
     @Test

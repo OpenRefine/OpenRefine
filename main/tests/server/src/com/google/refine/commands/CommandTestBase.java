@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.BeforeMethod;
 
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class CommandTestBase {
+public class CommandTestBase extends RefineTest {
 	protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;

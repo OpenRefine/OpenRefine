@@ -13,6 +13,8 @@
 
   <modules>
         <module>or-model</module>
+        <module>or-grel</module>
+        <module>or-util</module>
         <module>or-testing</module>
         <module>main</module>
         <module>server</module>

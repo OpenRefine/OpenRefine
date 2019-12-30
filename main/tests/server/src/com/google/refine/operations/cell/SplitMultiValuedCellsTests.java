@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.cell;
 
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -60,14 +61,15 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule().getName(), "multivalued-cell-split", MultiValuedCellSplitOperation.class);
+        OperationRegistry.registerOperation("core", "multivalued-cell-split", MultiValuedCellSplitOperation.class);
     }
     
     @BeforeMethod
     public void createProject() {
-        project = createCSVProject(
-                "Key,Value\n"
-              + "Record_1,one:two;three four\n");
+        project = createProject(
+                new String[] {"Key","Value"},
+                new Serializable[] {
+                "Record_1","one:two;three four"});
     }
     
     @Test

@@ -39,7 +39,7 @@ import com.google.refine.util.TestUtils;
 public class DenormalizeOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "denormalize", DenormalizeOperation.class);
+        OperationRegistry.registerOperation("core", "denormalize", DenormalizeOperation.class);
     }
     
     @Test

@@ -42,7 +42,7 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
     public void registerOperation() {
     	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
     	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
+        OperationRegistry.registerOperation("core", "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
     }
     
     @Test

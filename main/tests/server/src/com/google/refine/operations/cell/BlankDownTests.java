@@ -26,6 +26,7 @@
  ******************************************************************************/
 package com.google.refine.operations.cell;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -44,8 +45,6 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.BlankDownOperation;
-import com.google.refine.operations.cell.FillDownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -56,17 +55,18 @@ public class BlankDownTests extends RefineTest {
     
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "blank-down", BlankDownOperation.class);
+        OperationRegistry.registerOperation("core", "blank-down", BlankDownOperation.class);
     }
     
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject(
-                "key,first,second\n"+
-                "a,b,c\n"+
-                ",d,c\n"+
-                "e,f,c\n"+
-                ",,c\n");
+        project = createProject(
+                new String[] {"key","first","second"},
+                new Serializable[] {
+                "a","b","c",
+                null,"d","c",
+                "e","f","c",
+                null,null,"c"});
     }
     
     @AfterMethod

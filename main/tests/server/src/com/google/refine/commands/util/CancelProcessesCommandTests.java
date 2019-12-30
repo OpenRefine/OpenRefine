@@ -47,29 +47,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.ProjectManager;
-import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.history.CancelProcessesCommand;
 import com.google.refine.model.Project;
 import com.google.refine.process.ProcessManager;
 import com.google.refine.util.TestUtils;
 
-public class CancelProcessesCommandTests extends RefineTest {
+public class CancelProcessesCommandTests {
 
-    @Override
-    @BeforeTest
-    public void init() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
-    
     // System Under Test
     CancelProcessesCommand SUT = null;
 
@@ -105,7 +96,6 @@ public class CancelProcessesCommandTests extends RefineTest {
         SUT = null;
 
         projMan = null;
-        ProjectManager.singleton = null;
         proj = null;
         sw = null;
         request = null;

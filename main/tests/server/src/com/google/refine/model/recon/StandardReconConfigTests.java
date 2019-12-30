@@ -32,6 +32,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.slf4j.LoggerFactory;
@@ -61,8 +62,8 @@ public class StandardReconConfigTests extends RefineTest {
     
     @BeforeMethod
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "recon", ReconOperation.class);
-        ReconConfig.registerReconConfig(getCoreModule().getName(), "standard-service", StandardReconConfig.class);
+        OperationRegistry.registerOperation("core", "recon", ReconOperation.class);
+        ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
     }
     
 
@@ -170,8 +171,10 @@ public class StandardReconConfigTests extends RefineTest {
     
     @Test
     public void formulateQueryTest() throws IOException {
-    	Project project = createCSVProject("title,director\n"
-    			+ "mulholland drive,david lynch");
+    	Project project = createProject(
+    			new String[] {"title","director"},
+    			new Serializable[] {
+    			"mulholland drive","david lynch"});
     	
     	String config = " {\n" + 
                 "        \"mode\": \"standard-service\",\n" + 

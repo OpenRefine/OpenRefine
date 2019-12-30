@@ -40,7 +40,7 @@ import com.google.refine.util.TestUtils;
 public class RowRemovalOperationTests extends RefineTest {
     @BeforeSuite
     public void registerOperation() {
-        OperationRegistry.registerOperation(getCoreModule().getName(), "row-removal", RowRemovalOperation.class);
+        OperationRegistry.registerOperation("core", "row-removal", RowRemovalOperation.class);
     }
     
     @Test

@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import javax.servlet.ServletException;
@@ -64,7 +65,12 @@ public class PreviewExpressionCommandTests extends RefineTest {
             e.printStackTrace();
         }
         command = new PreviewExpressionCommand();
-        project = createCSVProject("a,b\nc,d\ne,f\ng,h");
+        project = createProject(new String[] {"a","b"},
+        		new Serializable[] {
+        		"c","d",
+        		"e","f",
+        		"g","h"
+        		});
     }
     
     @Test
