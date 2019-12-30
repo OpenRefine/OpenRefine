@@ -1258,7 +1258,7 @@
             xhr.getResponseHeader("X-Metaweb-TID"));
           }
         },
-        dataType: "jsonp",
+        dataType: o.access === undefined ? "jsonp" : o.access,
         cache: true
       };
 
@@ -1508,7 +1508,7 @@
             xhr.getResponseHeader("X-Metaweb-TID"));
           }
         },
-        dataType: "jsonp",
+        dataType: o.access === undefined ? "jsonp" : o.access,
         cache: true
       };
       if (o.flyout_lang) {
