@@ -112,6 +112,16 @@
       <artifactId>mockito-core</artifactId>
       <version>2.23.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-testng</artifactId>
+      <version>${powermock.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock.version}</version>
+    </dependency> 
   </dependencies>
 </project>
 
