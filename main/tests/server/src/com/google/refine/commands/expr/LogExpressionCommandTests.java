@@ -1,13 +1,6 @@
 package com.google.refine.commands.expr;
 
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectManagerStub;
-import com.google.refine.commands.Command;
-import com.google.refine.commands.CommandTestBase;
-import com.google.refine.preference.PreferenceStore;
-import com.google.refine.preference.TopList;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,6 +11,12 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.refine.ProjectManager;
+import com.google.refine.commands.Command;
+import com.google.refine.commands.CommandTestBase;
+import com.google.refine.preference.PreferenceStore;
+import com.google.refine.preference.TopList;
+
 public class LogExpressionCommandTests extends CommandTestBase {
 	
 	PreferenceStore prefStore;
@@ -25,9 +24,7 @@ public class LogExpressionCommandTests extends CommandTestBase {
 	@BeforeMethod
 	public void setUpCommand() {
 		command = new LogExpressionCommand();
-		ProjectManager.singleton = mock(ProjectManager.class);
-		prefStore = new PreferenceStore();
-		when(ProjectManager.singleton.getPreferenceStore()).thenReturn(prefStore);
+		prefStore = ProjectManager.singleton.getPreferenceStore();
 	}
 
 	@Override
