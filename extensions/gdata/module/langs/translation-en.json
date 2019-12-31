@@ -2,7 +2,7 @@
     "gdata-import/preparing": "Preparing …",
     "gdata-import/creating": "Creating project …",
     "gdata-import/title": "Public Documents",
-    "gdata-import/import-by-url": "Import a <em>public</em> Google Spreadsheet or Fusion Table by its URL:",
+    "gdata-import/import-by-url": "Import a <em>public</em> Google Spreadsheet by its URL:",
     "gdata-import/next->": "Next &raquo;",
     "gdata-import/auth-doc": "Authorized Documents",
     "gdata-import/please": "Please",
@@ -40,8 +40,6 @@
     "gdata-exporter/upload-success": "Project was uploaded successfully to Google Drive with Id ",
     "gdata-exporter/new-spreadsheet": "A new Google spreadsheet",
     "gdata-exporter/enter-spreadsheet": "Enter a name for the new Google spreadsheet",
-    "gdata-exporter/new-fusion": "A new Google Fusion table",
-    "gdata-exporter/enter-fusion": "Enter a name for the new Google Fusion table",
     "gdata-auth/authorize-label": "OpenRefine - Authorization",
     "gdata-auth/authorized-label": "Authorization process completed. Close this window and return to OpenRefine."
 }

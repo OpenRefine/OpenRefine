@@ -40,8 +40,6 @@
     "gdata-exporter/upload-success": "다음 Id로 Google Drive에 프로젝트가 성공적으로 업로드 되었습니다 ",
     "gdata-exporter/new-spreadsheet": "새로운 Google speadsheet",
     "gdata-exporter/enter-spreadsheet": "새로운 Google Spreadsheet 이름을 입력하세요",
-    "gdata-exporter/new-fusion": "새로운 Google Fusion 테이블",
-    "gdata-exporter/enter-fusion": "새로운 Google Fusion 테이블을 위한 이름을 입력하세요",
     "gdata-auth/authorize-label": "OpenRefine - 검증",
     "gdata-auth/authorized-label": "검증 프로세스 완료. 이 창을 닫고 OpenRefine으로 돌아가세요."
 }

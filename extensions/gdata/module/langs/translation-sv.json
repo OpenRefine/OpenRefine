@@ -40,8 +40,6 @@
     "gdata-exporter/upload-success": "Projektet laddades upp till Google Drive med ID ",
     "gdata-exporter/new-spreadsheet": "Ett nytt Google-kalkylblad",
     "gdata-exporter/enter-spreadsheet": "Ange ett namn för det nya Google-kalkylbladet",
-    "gdata-exporter/new-fusion": "En ny Google Fusion-tabell",
-    "gdata-exporter/enter-fusion": "Ange ett namn för den nya Google Fusion-tabellen",
     "gdata-auth/authorize-label": "OpenRefine - godkännande",
     "gdata-auth/authorized-label": "Godkännandeprocessen avslutad. Stäng det här fönstret och återgå till OpenRefine."
 }

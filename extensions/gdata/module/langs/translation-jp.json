@@ -39,8 +39,6 @@
     "gdata-exporter/upload-error": "アップロードでエラー : ",
     "gdata-exporter/new-spreadsheet": "新しいGoogle spreadsheet",
     "gdata-exporter/enter-spreadsheet": "新しいGoogle spreadsheetの題名を入力してください",
-    "gdata-exporter/new-fusion": "新しいFusion table",
-    "gdata-exporter/enter-fusion": "新しいFusion tableの題名を入力してください",
     "gdata-exporter/upload-success": "プロジェクトがGoogle Driveにアップロードされました ",
     "gdata-auth/authorize-label": "OpenRefine - 認証",
     "gdata-auth/authorized-label": "認証が完了しました。このウインドウを閉じてOpenRefineで作業できます."
