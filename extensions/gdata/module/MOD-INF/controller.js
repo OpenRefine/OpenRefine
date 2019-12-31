@@ -102,8 +102,7 @@ function process(path, request, response) {
     send(request, response, "authorize.vt", context);
   } else if (path == "authorized") {
     var context = {};
-    context.winname = request.getParameter("winname");
-    context.callback = request.getParameter("cb");
+    context.state = request.getParameter("state");
     
     (function() {
       var tokenAndExpiresInSeconds =  Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getTokenFromCode(module,request);
