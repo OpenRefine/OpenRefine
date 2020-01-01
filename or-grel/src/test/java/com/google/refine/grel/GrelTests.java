@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -201,6 +204,35 @@ public class GrelTests {
             } catch (ParsingException e) {
                 Assert.fail("Unexpected parse failure for cross function: " + test);                
             }
+    }
+    
+    @Test
+    public void testColumnDependencies() throws ParsingException {
+        // integration test for column dependency extraction
+        
+        String baseColumn = "base";
+        String tests[][] = {
+                { "value", "base" },
+                { "cell.recon.match.id", "base" },
+                { "value + 'a'", "base" },
+                { "\"constant\"", "" },
+                { "1", "" },
+                { "cells.foo", "foo" },
+                { "value + ' ' + cells.foo.value", "base,foo" },
+                { "parseHtml(value.trim())", "base" },
+                { "cells", null },
+                { "facetCount(value, 'value', 'col')", null },
+             // this could be analyzed too, but we will never reach completeness anyway!
+             // Moving to Truffle might help with partial evaluation down
+                { "get(cells, 'foo'+'bar')", null }, 
+        };
+        for (String[] test : tests) {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Set<String> expected = test[1] == null ? null :
+                    Arrays.asList(test[1].split(",")).stream()
+                    .filter(s -> !s.isEmpty()).collect(Collectors.toSet());
+            Assert.assertEquals(eval.getColumnDependencies(baseColumn), expected, "for expression: "+test[0]);
+        }
     }
     
     private void parseEval(Properties bindings, String[] test)

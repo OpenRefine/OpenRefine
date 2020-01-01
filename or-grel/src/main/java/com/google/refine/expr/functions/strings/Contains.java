@@ -33,16 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Contains implements Function {
+public class Contains extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 2) {
             Object s1 = args[0];
             Object s2 = args[1];

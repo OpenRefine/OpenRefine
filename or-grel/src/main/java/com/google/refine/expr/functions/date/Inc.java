@@ -36,16 +36,15 @@ package com.google.refine.expr.functions.date;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Inc implements Function {
+public class Inc extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 3 && 
                 args[0] != null && (args[0] instanceof OffsetDateTime) && 
                 args[1] != null && args[1] instanceof Number && 

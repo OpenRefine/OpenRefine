@@ -34,15 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions;
 
 import java.io.IOException;
-import java.util.Properties;
 
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 import com.google.refine.util.ParsingUtilities;
 
-public class Jsonize implements Function {
+public class Jsonize extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length >= 1) {
             try {
                 return ParsingUtilities.mapper.writeValueAsString(args[0]);

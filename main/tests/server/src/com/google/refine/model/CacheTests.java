@@ -48,6 +48,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;

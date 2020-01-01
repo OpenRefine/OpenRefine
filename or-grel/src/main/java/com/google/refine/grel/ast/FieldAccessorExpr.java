@@ -66,7 +66,7 @@ public class FieldAccessorExpr implements Evaluable {
         } else if (o == null) {
             return null;
         } else if (o instanceof HasFields) {
-            return ((HasFields) o).getField(_fieldName, bindings);
+            return ((HasFields) o).getField(_fieldName);
         } else if (o instanceof ObjectNode) {
         	JsonNode value = ((ObjectNode) o).get(_fieldName);
         	return JsonValueConverter.convert(value);

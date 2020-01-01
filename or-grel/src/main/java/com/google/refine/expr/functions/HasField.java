@@ -33,16 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.util.Properties;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.HasFields;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class HasField implements Function {
+public class HasField extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length > 1 && args.length <= 2) {
             Object v = args[0];
             Object f = args[1];
@@ -50,7 +48,7 @@ public class HasField implements Function {
             if (v != null && f != null && f instanceof String) {
                 String name = (String) f;
                 if (v instanceof HasFields) {
-                    return ((HasFields) v).getField(name, bindings) != null;
+                    return ((HasFields) v).getField(name) != null;
                 } else if (v instanceof ObjectNode) {
                     return ((ObjectNode) v).has(name);
                 }

@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-
 import com.google.refine.clustering.binning.ColognePhoneticKeyer;
 import com.google.refine.clustering.binning.DoubleMetaphoneKeyer;
 import com.google.refine.clustering.binning.Metaphone3Keyer;
@@ -42,9 +40,9 @@ import com.google.refine.clustering.binning.MetaphoneKeyer;
 import com.google.refine.clustering.binning.SoundexKeyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Phonetic implements Function {
+public class Phonetic extends PureFunction {
 
     // TODO: We could probably lazily initialize these when needed for efficiency
     static private Metaphone3Keyer metaphone3 = new Metaphone3Keyer();
@@ -54,7 +52,7 @@ public class Phonetic implements Function {
     static private ColognePhoneticKeyer cologne = new ColognePhoneticKeyer();
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         String str;
         if (args.length > 0 && args[0] != null) {
             Object o1 = args[0];

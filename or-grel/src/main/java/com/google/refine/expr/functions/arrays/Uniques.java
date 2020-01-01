@@ -35,20 +35,19 @@ package com.google.refine.expr.functions.arrays;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 import com.google.refine.util.JSONUtilities;
 
-public class Uniques implements Function {
+public class Uniques extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
             

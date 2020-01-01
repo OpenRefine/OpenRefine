@@ -33,14 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
+import com.google.refine.grel.PureFunction;
 
-import com.google.refine.grel.Function;
-
-public class UnicodeType implements Function {
+public class UnicodeType extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
             String s = (o instanceof String) ? (String) o : o.toString();

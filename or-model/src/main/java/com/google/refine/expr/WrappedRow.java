@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
-import java.util.Properties;
-
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -53,7 +51,7 @@ public class WrappedRow implements HasFields {
     }
     
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         if ("cells".equals(name)) {
             return new CellTuple(project, row);
         } else if ("index".equals(name)) {
@@ -67,7 +65,7 @@ public class WrappedRow implements HasFields {
             
             return project.columnModel.getColumnNames();
         } else {
-            return row.getField(name, bindings);
+            return row.getField(name);
         }
     }
 
@@ -84,7 +82,7 @@ public class WrappedRow implements HasFields {
         }
 
         @Override
-        public Object getField(String name, Properties bindings) {
+        public Object getField(String name) {
             if ("cells".equals(name)) {
                 return new RecordCells(_record);
             } else if ("index".equals(name)) {
@@ -113,7 +111,7 @@ public class WrappedRow implements HasFields {
         }
         
         @Override
-        public Object getField(String name, Properties bindings) {
+        public Object getField(String name) {
             Column column = project.columnModel.getColumnByName(name);
             if (column != null) {
                 int cellIndex = column.getCellIndex();

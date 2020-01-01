@@ -33,14 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.arrays;
 
-import java.util.Properties;
+import com.google.refine.grel.PureFunction;
 
-import com.google.refine.grel.Function;
-
-public class ArgsToArray implements Function {
+public class ArgsToArray extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         return args;
     }
 

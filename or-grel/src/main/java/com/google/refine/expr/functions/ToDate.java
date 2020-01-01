@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,13 +51,13 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 import com.google.refine.util.ParsingUtilities;
 
-public class ToDate implements Function {
+public class ToDate extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         String o1;
         Boolean month_first = null;
         List<String> formats =  new ArrayList<String>();  

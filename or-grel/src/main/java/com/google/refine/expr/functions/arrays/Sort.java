@@ -36,19 +36,18 @@ package com.google.refine.expr.functions.arrays;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 import com.google.refine.util.JSONUtilities;
 
-public class Sort implements Function {
+public class Sort extends PureFunction {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
             

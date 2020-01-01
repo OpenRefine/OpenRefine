@@ -35,7 +35,6 @@ package com.google.refine.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -71,7 +70,7 @@ public class ReconCandidate implements HasFields {
     }
     
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         if ("id".equals(name)) {
             return id;
         } else if ("name".equals(name)) {

@@ -35,14 +35,13 @@ package com.google.refine.expr.functions.date;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.Properties;
 
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Now implements Function {
+public class Now extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 0) {
             return OffsetDateTime.now(ZoneId.of("Z"));
         }

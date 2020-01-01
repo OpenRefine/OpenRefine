@@ -28,18 +28,17 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Find implements Function {
+public class Find extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         List<String> allMatches = new ArrayList<String>();
         
         if (args.length == 2) {

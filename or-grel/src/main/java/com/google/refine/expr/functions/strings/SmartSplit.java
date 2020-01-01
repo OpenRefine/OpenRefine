@@ -35,17 +35,15 @@ package com.google.refine.expr.functions.strings;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
-
+import com.google.refine.grel.PureFunction;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.enums.CSVReaderNullFieldIndicator;
 
-public class SmartSplit implements Function {
+public class SmartSplit extends PureFunction {
 
     static final protected CSVParser s_tabParser = buildParser('\t');
     
@@ -65,7 +63,7 @@ public class SmartSplit implements Function {
     }
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length >= 1 && args.length <= 2) {
             CSVParser parser = null;
             

@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
 /**
  * An abstract syntax tree node encapsulating a function call. The function's
@@ -49,8 +50,8 @@ import com.google.refine.grel.Function;
  * the result of the expression.
  */
 public class FunctionCallExpr implements Evaluable {
-    final protected Evaluable[] _args;
     final protected Function    _function;
+    final private Evaluable[] _args;
     
     public FunctionCallExpr(Evaluable[] args, Function f) {
         _args = args;
@@ -93,13 +94,21 @@ public class FunctionCallExpr implements Evaluable {
     	return (other instanceof Evaluable) && toString().equals(other.toString());
     }
     
-
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		Set<String> dependencies = new HashSet<>();
-		for (Evaluable ev : _args) {
-			dependencies.addAll(ev.getColumnDependencies(baseColumn));
-		}
-		return dependencies;
-	}
+    @Override
+    public final Set<String> getColumnDependencies(String baseColumn) {
+        if (_function instanceof PureFunction) {
+            Set<String> dependencies = new HashSet<>();
+            for (Evaluable ev : _args) {
+                Set<String> deps = ev.getColumnDependencies(baseColumn);
+                if (deps == null) {
+                    return null;
+                }
+                dependencies.addAll(deps);
+            }
+            return dependencies;
+        } else {
+            // Functions which are not pure might rely on arbitrary parts of the project
+            return null;
+        }
+    }
 }

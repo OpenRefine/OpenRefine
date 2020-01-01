@@ -35,17 +35,16 @@ package com.google.refine.expr.functions;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 import com.google.refine.util.StringUtils;
 
-public class ToString implements Function {
+public class ToString extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length >= 1) {
             Object o1 = args[0];
             if (args.length == 2 && args[1] instanceof String) {

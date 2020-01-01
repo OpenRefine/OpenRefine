@@ -33,23 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.html;
 
-import java.util.Properties;
-
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class InnerHtml implements Function {
+public class InnerHtml extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                return new InnerXml().call(bindings, args, "html");
+                return new InnerXml().call(args, "html");
             }else{
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
