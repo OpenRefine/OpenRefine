@@ -58,13 +58,9 @@ public class WrappedRow implements HasFields {
             return new CellTuple(project, row);
         } else if ("index".equals(name)) {
             return rowIndex;
-        } else if ("record".equals(name)) {
-            int rowIndex = (Integer) bindings.get("rowIndex");
-            
+        } else if ("record".equals(name)) {           
             return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
-        } else if ("columnNames".equals(name)) {
-            Project project = (Project) bindings.get("project");
-            
+        } else if ("columnNames".equals(name)) {           
             return project.columnModel.getColumnNames();
         } else {
             return row.getField(name, bindings);
