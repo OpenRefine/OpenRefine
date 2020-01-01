@@ -15,7 +15,7 @@ public class JythonAttributeTest {
     class MyFieldObject implements HasFields {
 
         @Override
-        public Object getField(String name, Properties bindings) {
+        public Object getField(String name) {
             if ("sunshine".equals(name)) {
                 return "hammock";
             }

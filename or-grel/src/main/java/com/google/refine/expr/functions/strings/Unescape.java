@@ -35,18 +35,17 @@ package com.google.refine.expr.functions.strings;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Unescape implements Function {
+public class Unescape extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 2) {
             Object o1 = args[0];
             Object o2 = args[1];

@@ -26,13 +26,12 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
 /**
  * Implements the logic behind the range function.
@@ -43,7 +42,7 @@ import com.google.refine.grel.Function;
  * and 0 becomes the range start. c is optional and represents the step (increment) 
  * for the generated sequence.
  */
-public class Range implements Function {
+public class Range extends PureFunction {
 
     private static final String SEPARATOR = ",";
 
@@ -56,7 +55,7 @@ public class Range implements Function {
     private static final Integer[] EMPTY_ARRAY = new Integer[0];
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
 
         if (args.length == 1) {
             return createRangeWithOneGivenArgument(args);

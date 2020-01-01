@@ -34,26 +34,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 import java.util.ArrayList;
-import java.util.Properties;
 
 public class HasFieldsListImpl extends ArrayList<HasFields> implements HasFieldsList {
     private static final long serialVersionUID = -8635194387420305802L;
 
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         int c = size();
         if (c > 0 && get(0) != null && get(0).fieldAlsoHasFields(name)) {
             HasFieldsListImpl l = new HasFieldsListImpl();
             for (int i = 0; i < size(); i++) {
                 HasFields o = this.get(i);
-                l.add(i, o == null ? null : (HasFields) o.getField(name, bindings));
+                l.add(i, o == null ? null : (HasFields) o.getField(name));
             }
             return l;
         } else {
             Object[] r = new Object[this.size()];
             for (int i = 0; i < r.length; i++) {
                 HasFields o = this.get(i);
-                r[i] = o == null ? null : o.getField(name, bindings);
+                r[i] = o == null ? null : o.getField(name);
             }
             return r;
         }

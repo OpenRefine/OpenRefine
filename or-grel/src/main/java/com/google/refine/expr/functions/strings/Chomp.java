@@ -33,16 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Chomp implements Function {
+public class Chomp extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 2) {
             Object o1 = args[0];
             Object o2 = args[1];

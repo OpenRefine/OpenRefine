@@ -169,14 +169,14 @@ public class RowTests {
     public void getFlaggedField() {
         Row row = new Row(5);
         row.flagged = true;
-        Assert.assertTrue((Boolean) row.getField("flagged", options));
+        Assert.assertTrue((Boolean) row.getField("flagged"));
     }
 
     @Test
     public void getStarredField() {
         Row row = new Row(5);
         row.starred = true;
-        Assert.assertTrue((Boolean) row.getField("starred", options));
+        Assert.assertTrue((Boolean) row.getField("starred"));
     }
 
 }

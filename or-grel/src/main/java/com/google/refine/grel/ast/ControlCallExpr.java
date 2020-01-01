@@ -33,9 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
@@ -44,12 +42,11 @@ import com.google.refine.grel.Control;
 /**
  * An abstract syntax tree node encapsulating a control call, such as "if".
  */
-public class ControlCallExpr implements Evaluable {
-    final protected Evaluable[] _args;
+public class ControlCallExpr extends PureArgumentsExpr {
     final protected Control     _control;
     
     public ControlCallExpr(Evaluable[] args, Control c) {
-        _args = args;
+        super(args);
         _control = c;
     }
                               
@@ -80,13 +77,4 @@ public class ControlCallExpr implements Evaluable {
     public boolean equals(Object other) {
     	return (other instanceof Evaluable) && toString().equals(other.toString());
     }
-
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		Set<String> dependencies = new HashSet<>();
-		for (Evaluable ev : _args) {
-			dependencies.addAll(ev.getColumnDependencies(baseColumn));
-		}
-		return dependencies;
-	}
 }

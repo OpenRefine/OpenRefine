@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions;
 
 import java.util.List;
-import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -42,12 +41,12 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.expr.util.JsonValueConverter;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Get implements Function {
+public class Get extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length > 1 && args.length <= 3) {
             Object v = args[0];
             Object from = args[1];
@@ -55,7 +54,7 @@ public class Get implements Function {
             
             if (v != null && from != null) {
                 if (v instanceof HasFields && from instanceof String) {
-                    return ((HasFields) v).getField((String) from, bindings);
+                    return ((HasFields) v).getField((String) from);
                 } else if (v instanceof ObjectNode && from instanceof String) {
                     return JsonValueConverter.convert(((ObjectNode) v).get((String) from));
                 } else {

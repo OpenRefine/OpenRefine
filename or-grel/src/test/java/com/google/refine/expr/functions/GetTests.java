@@ -28,7 +28,6 @@ package com.google.refine.expr.functions;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.Get;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 

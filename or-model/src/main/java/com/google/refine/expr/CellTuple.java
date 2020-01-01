@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
-import java.util.Properties;
-
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
@@ -50,7 +48,7 @@ public class CellTuple implements HasFields {
     }
     
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         Column column = project.columnModel.getColumnByName(name);
         if (column != null) {
             int cellIndex = column.getCellIndex();

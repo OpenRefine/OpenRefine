@@ -90,7 +90,7 @@ public class Row implements HasFields {
     }
     
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         if (FLAGGED.equals(name)) {
             return flagged;
         } else if (STARRED.equals(name)) {

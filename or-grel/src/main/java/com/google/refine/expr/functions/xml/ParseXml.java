@@ -33,23 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.xml;
 
-import java.util.Properties;
-
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class ParseXml implements Function {
+public class ParseXml extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
-        return call(bindings,args,"xml");
+    public Object call(Object[] args) {
+        return call(args,"xml");
     }
     
-    public Object call(Properties bindings, Object[] args, String mode) {
+    public Object call(Object[] args, String mode) {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof String) {

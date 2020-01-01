@@ -33,18 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.math;
 
-import java.util.Properties;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class RandomNumber implements Function {
+public class RandomNumber extends PureFunction {
     
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number
                 && args[1] != null && args[1] instanceof Number && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
             int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue()+1);

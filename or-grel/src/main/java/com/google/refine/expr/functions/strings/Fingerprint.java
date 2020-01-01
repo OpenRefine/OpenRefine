@@ -33,18 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-
 import com.google.refine.clustering.binning.FingerprintKeyer;
 import com.google.refine.clustering.binning.Keyer;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Fingerprint implements Function {
+public class Fingerprint extends PureFunction {
 
     static Keyer fingerprint = new FingerprintKeyer();
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {
             Object o = args[0];
             String s = (o instanceof String) ? (String) o : o.toString();

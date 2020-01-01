@@ -33,21 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.html;
 
-import java.util.Properties;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class ParseHtml implements Function {
+public class ParseHtml extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof String) {
-                return new ParseXml().call(bindings,args,"html");
+                return new ParseXml().call(args, "html");
             }
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");

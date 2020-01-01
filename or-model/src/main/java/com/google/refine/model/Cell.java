@@ -68,7 +68,7 @@ public class Cell implements HasFields {
     }
     
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         if ("value".equals(name)) {
             return value;
         } else if ("recon".equals(name)) {

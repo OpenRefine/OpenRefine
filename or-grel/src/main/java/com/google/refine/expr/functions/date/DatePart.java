@@ -40,17 +40,16 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class DatePart implements Function {
+public class DatePart extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 2 && 
                 args[0] != null && (args[0] instanceof Calendar || args[0] instanceof Date || args[0] instanceof OffsetDateTime) && 
                 args[1] != null && args[1] instanceof String) {

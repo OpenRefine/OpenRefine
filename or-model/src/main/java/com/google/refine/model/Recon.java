@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -237,7 +236,7 @@ public class Recon implements HasFields {
     }
     
     @Override
-    public Object getField(String name, Properties bindings) {
+    public Object getField(String name) {
         if ("id".equals(name)) {
             return id;
         } else if ("best".equals(name)) {
@@ -284,7 +283,7 @@ public class Recon implements HasFields {
     
     public class Features implements HasFields {
         @Override
-        public Object getField(String name, Properties bindings) {
+        public Object getField(String name) {
             int index = s_featureMap.containsKey(name) ? s_featureMap.get(name) : -1;
             return (index >= 0 && index < features.length) ? features[index] : null;
         }

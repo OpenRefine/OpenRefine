@@ -33,9 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
@@ -43,12 +41,11 @@ import com.google.refine.expr.ExpressionUtils;
 /**
  * An abstract syntax tree node encapsulating an operator call, such as "+".
  */
-public class OperatorCallExpr implements Evaluable {
-    final protected Evaluable[] _args;
+public class OperatorCallExpr extends PureArgumentsExpr {
     final protected String        _op;
 
     public OperatorCallExpr(Evaluable[] args, String op) {
-        _args = args;
+        super(args);
         _op = op;
     }
 
@@ -167,13 +164,5 @@ public class OperatorCallExpr implements Evaluable {
     public boolean equals(Object other) {
     	return (other instanceof Evaluable) && toString().equals(other.toString());
     }
-
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		Set<String> dependencies = new HashSet<>();
-		for (Evaluable ev : _args) {
-			dependencies.addAll(ev.getColumnDependencies(baseColumn));
-		}
-		return dependencies;
-	}
+    
 }

@@ -33,14 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.math;
 
-import java.util.Properties;
+import com.google.refine.grel.PureFunction;
 
-import com.google.refine.grel.Function;
-
-public class Pow implements Function {
+public class Pow extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {
             return Math.pow(
                 ((Number) args[0]).doubleValue(),

@@ -33,16 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-
 import com.google.common.base.CharMatcher;
 import com.google.refine.expr.EvalError;
-import com.google.refine.grel.Function;
+import com.google.refine.grel.PureFunction;
 
-public class Trim implements Function {
+public class Trim extends PureFunction {
 
     @Override
-    public Object call(Properties bindings, Object[] args) {
+    public Object call(Object[] args) {
         if (args.length == 1) {
             Object s1 = args[0];
             if (s1 != null && s1 instanceof String) {
