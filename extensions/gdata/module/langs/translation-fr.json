@@ -2,7 +2,7 @@
     "gdata-import/preparing": "Préparation...",
     "gdata-import/creating": "Création du projet...",
     "gdata-import/title": "Documents publics",
-    "gdata-import/import-by-url": "Importer un tableau <em>public</em> Google Spreadsheet ou Google Fusion par son URL :",
+    "gdata-import/import-by-url": "Importer un tableau <em>public</em> Google Spreadsheet par son URL :",
     "gdata-import/next->": "Suivant &raquo;",
     "gdata-import/auth-doc": "Documents autorisés",
     "gdata-import/please": "Merci",
@@ -39,8 +39,6 @@
     "gdata-exporter/upload-error": "Erreur de téléversement : ",
     "gdata-exporter/new-spreadsheet": "Un nouveau tableau Google Spreadsheet",
     "gdata-exporter/enter-spreadsheet": "Indiquer un nom pour le nouveau tableau Google Spreadsheet",
-    "gdata-exporter/new-fusion": "Une nouvelle table Google Fusion",
-    "gdata-exporter/enter-fusion": "Indiquer un nom pour la nouvelle table Google Fusion",
     "gdata-exporter/upload-success": "Le projet a été chargé avec succès dans Google Drive avec l'identifiant ",
     "gdata-auth/authorize-label": "OpenRefine - Autorisation",
     "gdata-auth/authorized-label": "Procédure d’autorisation terminée. Fermer cette fenêtre et revenir à OpenRefine."

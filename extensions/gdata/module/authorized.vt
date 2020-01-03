@@ -40,8 +40,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <span id="gdata-authorized"></span>
   
   <script>
-    var windowName = "$winname";
-    var callbackName = "$callback";
+    var state = JSON.parse(window.atob("$state"));
+    
+    var windowName = state.winname;
+    var callbackName = state.cb;
     
     var w = window.open("", windowName);
     var callback = w[callbackName];

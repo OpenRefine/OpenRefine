@@ -163,19 +163,14 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   var self = this;
   
   this._parsingPanel.unbind().empty().html(
-      DOM.loadHTML("gdata",
-        this._doc.type == 'table' ?
-          'scripts/index/gdata-fusion-tables-parsing-panel.html' :
-          'scripts/index/gdata-parsing-panel.html'));
+      DOM.loadHTML("gdata", 'scripts/index/gdata-parsing-panel.html'));
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);
   
-  if(this._doc.type != 'table'){
-	  this._parsingPanelElmts.gdata_worksheet.html($.i18n('gdata-parsing/worksheet')); 
-	  this._parsingPanelElmts.gdata_ignore_first.html($.i18n('gdata-parsing/ignore-first'));
-	  this._parsingPanelElmts.gdata_ignore.html($.i18n('gdata-parsing/ignore'));
-	  this._parsingPanelElmts.gdata_parse_next.html($.i18n('gdata-parsing/parse-next'));
-	  this._parsingPanelElmts.gdata_parse.html($.i18n('gdata-parsing/parse'));
-  }
+  this._parsingPanelElmts.gdata_worksheet.html($.i18n('gdata-parsing/worksheet')); 
+  this._parsingPanelElmts.gdata_ignore_first.html($.i18n('gdata-parsing/ignore-first'));
+  this._parsingPanelElmts.gdata_ignore.html($.i18n('gdata-parsing/ignore'));
+  this._parsingPanelElmts.gdata_parse_next.html($.i18n('gdata-parsing/parse-next'));
+  this._parsingPanelElmts.gdata_parse.html($.i18n('gdata-parsing/parse'));
   this._parsingPanelElmts.startOverButton.html($.i18n('gdata-parsing/start-over'));
   this._parsingPanelElmts.gdata_conf_pars.html($.i18n('gdata-parsing/conf-pars'));
   this._parsingPanelElmts.gdata_proj_name.html($.i18n('gdata-parsing/proj-name'));
