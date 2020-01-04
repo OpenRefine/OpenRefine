@@ -41,23 +41,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var html = "text/html";
 var encoding = "UTF-8";
 var version = "0.3";
-var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 
 /*
  * Function invoked to initialize the extension.
  */
 function init() {
-  var RS = Packages.com.google.refine.RefineServlet;
-  RS.registerCommand(module, "deauthorize", Packages.com.google.refine.extension.gdata.DeAuthorizeCommand());
-  RS.registerCommand(module, "upload", Packages.com.google.refine.extension.gdata.UploadCommand());
+  var RS = Packages.org.openrefine.RefineServlet;
+  RS.registerCommand(module, "deauthorize", Packages.org.openrefine.extension.gdata.DeAuthorizeCommand());
+  RS.registerCommand(module, "upload", Packages.org.openrefine.extension.gdata.UploadCommand());
 
   // Register importer and exporter
-  var IM = Packages.com.google.refine.importing.ImportingManager;
+  var IM = Packages.org.openrefine.importing.ImportingManager;
   
   IM.registerController(
     module,
     "gdata-importing-controller",
-    new Packages.com.google.refine.extension.gdata.GDataImportingController()
+    new Packages.org.openrefine.extension.gdata.GDataImportingController()
   );
   
   // Script files to inject into /index page
@@ -97,7 +97,7 @@ function process(path, request, response) {
   // Analyze path and handle this request yourself.
   if (path == "authorize") {
     var context = {};
-    context.authorizationUrl = Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getAuthorizationUrl(module, request);
+    context.authorizationUrl = Packages.org.openrefine.extension.gdata.GoogleAPIExtension.getAuthorizationUrl(module, request);
     
     send(request, response, "authorize.vt", context);
   } else if (path == "authorized") {
@@ -105,13 +105,13 @@ function process(path, request, response) {
     context.state = request.getParameter("state");
     
     (function() {
-      var tokenAndExpiresInSeconds =  Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getTokenFromCode(module,request);
+      var tokenAndExpiresInSeconds =  Packages.org.openrefine.extension.gdata.GoogleAPIExtension.getTokenFromCode(module,request);
       if (tokenAndExpiresInSeconds) {
         var tokenInfo = tokenAndExpiresInSeconds.split(",");
-        Packages.com.google.refine.extension.gdata.TokenCookie.setToken(request, response, tokenInfo[0], tokenInfo[1]);
+        Packages.org.openrefine.extension.gdata.TokenCookie.setToken(request, response, tokenInfo[0], tokenInfo[1]);
         return;
       }
-      Packages.com.google.refine.extension.gdata.TokenCookie.deleteToken(request, response);
+      Packages.org.openrefine.extension.gdata.TokenCookie.deleteToken(request, response);
     })();
     
     send(request, response, "authorized.vt", context);

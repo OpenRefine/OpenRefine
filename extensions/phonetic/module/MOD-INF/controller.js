@@ -33,18 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var html = "text/html";
 var encoding = "UTF-8";
-var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 
 /*
  * Function invoked to initialize the extension.
  */
 function init() {
   // Register new keyers
-  Packages.com.google.refine.clustering.binning.KeyerFactory.put("daitch-mokotoff", new Packages.org.openrefine.phonetic.keyers.DaitchMokotoffKeyer());
-  Packages.com.google.refine.clustering.binning.KeyerFactory.put("beider-morse", new Packages.org.openrefine.phonetic.keyers.BeiderMorseKeyer());
+  Packages.org.openrefine.clustering.binning.KeyerFactory.put("daitch-mokotoff", new Packages.org.openrefine.phonetic.keyers.DaitchMokotoffKeyer());
+  Packages.org.openrefine.clustering.binning.KeyerFactory.put("beider-morse", new Packages.org.openrefine.phonetic.keyers.BeiderMorseKeyer());
 
   // Similarly, we could register new distances like this:
-  // Packages.com.google.refine.clustering.knn.DistanceFactory.put("my-distance", new Packages.org.openrefine.mydistances.MyDistance());
+  // Packages.org.openrefine.clustering.knn.DistanceFactory.put("my-distance", new Packages.org.openrefine.mydistances.MyDistance());
 
     /*
      * Resources: just some javascript to load the localized strings

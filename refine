@@ -567,7 +567,7 @@ run() {
 
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
-    RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
+    RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "org.openrefine.Refine")
 
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
@@ -609,7 +609,7 @@ broker_run() {
     LIB_PATHS=`cat server/classpath.txt`
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
 
-    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS com.google.refine.Refine"
+    RUN_CMD="$JAVA -cp $CLASSPATH $OPTS org.openrefine.Refine"
 
     #echo "$RUN_CMD"
     #echo ""

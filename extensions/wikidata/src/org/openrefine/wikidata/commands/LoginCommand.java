@@ -30,11 +30,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.commands.Command;
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.editing.ConnectionManager;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.refine.commands.Command;
-import com.google.refine.util.ParsingUtilities;
 
 public class LoginCommand extends Command {
 

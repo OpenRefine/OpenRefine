@@ -30,10 +30,9 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.openrefine.commands.Command;
+import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.Test;
-
-import com.google.refine.commands.Command;
-import com.google.refine.util.ParsingUtilities;
 
 public abstract class SchemaCommandTest extends CommandTest {
 

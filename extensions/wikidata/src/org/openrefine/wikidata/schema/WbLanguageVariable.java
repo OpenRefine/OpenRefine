@@ -23,11 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.model.Cell;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.google.refine.model.Cell;
 
 /**
  * A language variable generates a language code from a cell. It checks its

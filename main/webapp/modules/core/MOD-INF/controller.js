@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var html = "text/html";
 var encoding = "UTF-8";
-var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 var bundle = true;
 
 var templatedFiles = {
@@ -51,151 +51,151 @@ var templatedFiles = {
 };
 
 function registerCommands() {
-  var RS = Packages.com.google.refine.RefineServlet;
+  var RS = Packages.org.openrefine.RefineServlet;
 
-  RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
-  RS.registerCommand(module, "get-csrf-token", new Packages.com.google.refine.commands.GetCSRFTokenCommand());
+  RS.registerCommand(module, "get-version", new Packages.org.openrefine.commands.GetVersionCommand());
+  RS.registerCommand(module, "get-csrf-token", new Packages.org.openrefine.commands.GetCSRFTokenCommand());
 
-  RS.registerCommand(module, "get-importing-configuration", new Packages.com.google.refine.commands.importing.GetImportingConfigurationCommand());
-  RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());
-  RS.registerCommand(module, "get-importing-job-status", new Packages.com.google.refine.commands.importing.GetImportingJobStatusCommand());
-  RS.registerCommand(module, "importing-controller", new Packages.com.google.refine.commands.importing.ImportingControllerCommand());
-  RS.registerCommand(module, "cancel-importing-job", new Packages.com.google.refine.commands.importing.CancelImportingJobCommand());
+  RS.registerCommand(module, "get-importing-configuration", new Packages.org.openrefine.commands.importing.GetImportingConfigurationCommand());
+  RS.registerCommand(module, "create-importing-job", new Packages.org.openrefine.commands.importing.CreateImportingJobCommand());
+  RS.registerCommand(module, "get-importing-job-status", new Packages.org.openrefine.commands.importing.GetImportingJobStatusCommand());
+  RS.registerCommand(module, "importing-controller", new Packages.org.openrefine.commands.importing.ImportingControllerCommand());
+  RS.registerCommand(module, "cancel-importing-job", new Packages.org.openrefine.commands.importing.CancelImportingJobCommand());
 
-  RS.registerCommand(module, "create-project-from-upload", new Packages.com.google.refine.commands.project.CreateProjectCommand());
-  RS.registerCommand(module, "import-project", new Packages.com.google.refine.commands.project.ImportProjectCommand());
-  RS.registerCommand(module, "export-project", new Packages.com.google.refine.commands.project.ExportProjectCommand());
-  RS.registerCommand(module, "export-rows", new Packages.com.google.refine.commands.project.ExportRowsCommand());
+  RS.registerCommand(module, "create-project-from-upload", new Packages.org.openrefine.commands.project.CreateProjectCommand());
+  RS.registerCommand(module, "import-project", new Packages.org.openrefine.commands.project.ImportProjectCommand());
+  RS.registerCommand(module, "export-project", new Packages.org.openrefine.commands.project.ExportProjectCommand());
+  RS.registerCommand(module, "export-rows", new Packages.org.openrefine.commands.project.ExportRowsCommand());
 
-  RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
-  RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
-  RS.registerCommand(module, "set-project-metadata", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
-  RS.registerCommand(module, "get-all-project-tags", new Packages.com.google.refine.commands.workspace.GetAllProjectTagsCommand());
-  RS.registerCommand(module, "set-project-tags", new Packages.com.google.refine.commands.project.SetProjectTagsCommand());
+  RS.registerCommand(module, "get-project-metadata", new Packages.org.openrefine.commands.project.GetProjectMetadataCommand());
+  RS.registerCommand(module, "get-all-project-metadata", new Packages.org.openrefine.commands.workspace.GetAllProjectMetadataCommand());
+  RS.registerCommand(module, "set-project-metadata", new Packages.org.openrefine.commands.project.SetProjectMetadataCommand());
+  RS.registerCommand(module, "get-all-project-tags", new Packages.org.openrefine.commands.workspace.GetAllProjectTagsCommand());
+  RS.registerCommand(module, "set-project-tags", new Packages.org.openrefine.commands.project.SetProjectTagsCommand());
 
-  RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
-  RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
-  RS.registerCommand(module, "set-project-metadata", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
+  RS.registerCommand(module, "delete-project", new Packages.org.openrefine.commands.project.DeleteProjectCommand());
+  RS.registerCommand(module, "rename-project", new Packages.org.openrefine.commands.project.RenameProjectCommand());
+  RS.registerCommand(module, "set-project-metadata", new Packages.org.openrefine.commands.project.SetProjectMetadataCommand());
 
-  RS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
-  RS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
-  RS.registerCommand(module, "get-processes", new Packages.com.google.refine.commands.history.GetProcessesCommand());
-  RS.registerCommand(module, "get-history", new Packages.com.google.refine.commands.history.GetHistoryCommand());
-  RS.registerCommand(module, "get-operations", new Packages.com.google.refine.commands.history.GetOperationsCommand());
-  RS.registerCommand(module, "get-columns-info", new Packages.com.google.refine.commands.column.GetColumnsInfoCommand());
-  RS.registerCommand(module, "get-scatterplot", new Packages.com.google.refine.commands.browsing.GetScatterplotCommand());
+  RS.registerCommand(module, "get-models", new Packages.org.openrefine.commands.project.GetModelsCommand());
+  RS.registerCommand(module, "get-rows", new Packages.org.openrefine.commands.row.GetRowsCommand());
+  RS.registerCommand(module, "get-processes", new Packages.org.openrefine.commands.history.GetProcessesCommand());
+  RS.registerCommand(module, "get-history", new Packages.org.openrefine.commands.history.GetHistoryCommand());
+  RS.registerCommand(module, "get-operations", new Packages.org.openrefine.commands.history.GetOperationsCommand());
+  RS.registerCommand(module, "get-columns-info", new Packages.org.openrefine.commands.column.GetColumnsInfoCommand());
+  RS.registerCommand(module, "get-scatterplot", new Packages.org.openrefine.commands.browsing.GetScatterplotCommand());
 
-  RS.registerCommand(module, "undo-redo", new Packages.com.google.refine.commands.history.UndoRedoCommand());
-  RS.registerCommand(module, "apply-operations", new Packages.com.google.refine.commands.history.ApplyOperationsCommand());
-  RS.registerCommand(module, "cancel-processes", new Packages.com.google.refine.commands.history.CancelProcessesCommand());
+  RS.registerCommand(module, "undo-redo", new Packages.org.openrefine.commands.history.UndoRedoCommand());
+  RS.registerCommand(module, "apply-operations", new Packages.org.openrefine.commands.history.ApplyOperationsCommand());
+  RS.registerCommand(module, "cancel-processes", new Packages.org.openrefine.commands.history.CancelProcessesCommand());
 
-  RS.registerCommand(module, "compute-facets", new Packages.com.google.refine.commands.browsing.ComputeFacetsCommand());
-  RS.registerCommand(module, "compute-clusters", new Packages.com.google.refine.commands.browsing.ComputeClustersCommand());
-  RS.registerCommand(module, "get-clustering-functions-and-distances", new Packages.com.google.refine.commands.browsing.GetClusteringFunctionsAndDistancesCommand());
+  RS.registerCommand(module, "compute-facets", new Packages.org.openrefine.commands.browsing.ComputeFacetsCommand());
+  RS.registerCommand(module, "compute-clusters", new Packages.org.openrefine.commands.browsing.ComputeClustersCommand());
+  RS.registerCommand(module, "get-clustering-functions-and-distances", new Packages.org.openrefine.commands.browsing.GetClusteringFunctionsAndDistancesCommand());
 
-  RS.registerCommand(module, "edit-one-cell", new Packages.com.google.refine.commands.cell.EditOneCellCommand());
-  RS.registerCommand(module, "text-transform", new Packages.com.google.refine.commands.cell.TextTransformCommand());
-  RS.registerCommand(module, "mass-edit", new Packages.com.google.refine.commands.cell.MassEditCommand());
-  RS.registerCommand(module, "join-multi-value-cells", new Packages.com.google.refine.commands.cell.JoinMultiValueCellsCommand());
-  RS.registerCommand(module, "split-multi-value-cells", new Packages.com.google.refine.commands.cell.SplitMultiValueCellsCommand());
-  RS.registerCommand(module, "fill-down", new Packages.com.google.refine.commands.cell.FillDownCommand());
-  RS.registerCommand(module, "blank-down", new Packages.com.google.refine.commands.cell.BlankDownCommand());
-  RS.registerCommand(module, "transpose-columns-into-rows", new Packages.com.google.refine.commands.cell.TransposeColumnsIntoRowsCommand());
-  RS.registerCommand(module, "transpose-rows-into-columns", new Packages.com.google.refine.commands.cell.TransposeRowsIntoColumnsCommand());
-  RS.registerCommand(module, "key-value-columnize", new Packages.com.google.refine.commands.cell.KeyValueColumnizeCommand());
+  RS.registerCommand(module, "edit-one-cell", new Packages.org.openrefine.commands.cell.EditOneCellCommand());
+  RS.registerCommand(module, "text-transform", new Packages.org.openrefine.commands.cell.TextTransformCommand());
+  RS.registerCommand(module, "mass-edit", new Packages.org.openrefine.commands.cell.MassEditCommand());
+  RS.registerCommand(module, "join-multi-value-cells", new Packages.org.openrefine.commands.cell.JoinMultiValueCellsCommand());
+  RS.registerCommand(module, "split-multi-value-cells", new Packages.org.openrefine.commands.cell.SplitMultiValueCellsCommand());
+  RS.registerCommand(module, "fill-down", new Packages.org.openrefine.commands.cell.FillDownCommand());
+  RS.registerCommand(module, "blank-down", new Packages.org.openrefine.commands.cell.BlankDownCommand());
+  RS.registerCommand(module, "transpose-columns-into-rows", new Packages.org.openrefine.commands.cell.TransposeColumnsIntoRowsCommand());
+  RS.registerCommand(module, "transpose-rows-into-columns", new Packages.org.openrefine.commands.cell.TransposeRowsIntoColumnsCommand());
+  RS.registerCommand(module, "key-value-columnize", new Packages.org.openrefine.commands.cell.KeyValueColumnizeCommand());
 
-  RS.registerCommand(module, "get-languages", Packages.com.google.refine.commands.lang.GetLanguagesCommand());
-  RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
+  RS.registerCommand(module, "get-languages", Packages.org.openrefine.commands.lang.GetLanguagesCommand());
+  RS.registerCommand(module, "load-language", Packages.org.openrefine.commands.lang.LoadLanguageCommand());
   
-  RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
-  RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
-  RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
-  RS.registerCommand(module, "rename-column", new Packages.com.google.refine.commands.column.RenameColumnCommand());
-  RS.registerCommand(module, "move-column", new Packages.com.google.refine.commands.column.MoveColumnCommand());
-  RS.registerCommand(module, "split-column", new Packages.com.google.refine.commands.column.SplitColumnCommand());
-  RS.registerCommand(module, "reorder-columns", new Packages.com.google.refine.commands.column.ReorderColumnsCommand());
+  RS.registerCommand(module, "add-column", new Packages.org.openrefine.commands.column.AddColumnCommand());
+  RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.org.openrefine.commands.column.AddColumnByFetchingURLsCommand());
+  RS.registerCommand(module, "remove-column", new Packages.org.openrefine.commands.column.RemoveColumnCommand());
+  RS.registerCommand(module, "rename-column", new Packages.org.openrefine.commands.column.RenameColumnCommand());
+  RS.registerCommand(module, "move-column", new Packages.org.openrefine.commands.column.MoveColumnCommand());
+  RS.registerCommand(module, "split-column", new Packages.org.openrefine.commands.column.SplitColumnCommand());
+  RS.registerCommand(module, "reorder-columns", new Packages.org.openrefine.commands.column.ReorderColumnsCommand());
 
-  RS.registerCommand(module, "denormalize", new Packages.com.google.refine.commands.row.DenormalizeCommand());
+  RS.registerCommand(module, "denormalize", new Packages.org.openrefine.commands.row.DenormalizeCommand());
 
-  RS.registerCommand(module, "reconcile", new Packages.com.google.refine.commands.recon.ReconcileCommand());
-  RS.registerCommand(module, "recon-match-best-candidates", new Packages.com.google.refine.commands.recon.ReconMatchBestCandidatesCommand());
-  RS.registerCommand(module, "recon-mark-new-topics", new Packages.com.google.refine.commands.recon.ReconMarkNewTopicsCommand());
-  RS.registerCommand(module, "recon-discard-judgments", new Packages.com.google.refine.commands.recon.ReconDiscardJudgmentsCommand());
-  RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.com.google.refine.commands.recon.ReconMatchSpecificTopicCommand());
-  RS.registerCommand(module, "recon-judge-one-cell", new Packages.com.google.refine.commands.recon.ReconJudgeOneCellCommand());
-  RS.registerCommand(module, "recon-judge-similar-cells", new Packages.com.google.refine.commands.recon.ReconJudgeSimilarCellsCommand());
-  RS.registerCommand(module, "recon-clear-one-cell", new Packages.com.google.refine.commands.recon.ReconClearOneCellCommand());
-  RS.registerCommand(module, "recon-clear-similar-cells", new Packages.com.google.refine.commands.recon.ReconClearSimilarCellsCommand());
-  RS.registerCommand(module, "recon-copy-across-columns", new Packages.com.google.refine.commands.recon.ReconCopyAcrossColumnsCommand());
-  RS.registerCommand(module, "recon-use-values-as-identifiers", new Packages.com.google.refine.commands.recon.ReconUseValuesAsIdentifiersCommand());
-  RS.registerCommand(module, "preview-extend-data", new Packages.com.google.refine.commands.recon.PreviewExtendDataCommand());
-  RS.registerCommand(module, "extend-data", new Packages.com.google.refine.commands.recon.ExtendDataCommand());
+  RS.registerCommand(module, "reconcile", new Packages.org.openrefine.commands.recon.ReconcileCommand());
+  RS.registerCommand(module, "recon-match-best-candidates", new Packages.org.openrefine.commands.recon.ReconMatchBestCandidatesCommand());
+  RS.registerCommand(module, "recon-mark-new-topics", new Packages.org.openrefine.commands.recon.ReconMarkNewTopicsCommand());
+  RS.registerCommand(module, "recon-discard-judgments", new Packages.org.openrefine.commands.recon.ReconDiscardJudgmentsCommand());
+  RS.registerCommand(module, "recon-match-specific-topic-to-cells", new Packages.org.openrefine.commands.recon.ReconMatchSpecificTopicCommand());
+  RS.registerCommand(module, "recon-judge-one-cell", new Packages.org.openrefine.commands.recon.ReconJudgeOneCellCommand());
+  RS.registerCommand(module, "recon-judge-similar-cells", new Packages.org.openrefine.commands.recon.ReconJudgeSimilarCellsCommand());
+  RS.registerCommand(module, "recon-clear-one-cell", new Packages.org.openrefine.commands.recon.ReconClearOneCellCommand());
+  RS.registerCommand(module, "recon-clear-similar-cells", new Packages.org.openrefine.commands.recon.ReconClearSimilarCellsCommand());
+  RS.registerCommand(module, "recon-copy-across-columns", new Packages.org.openrefine.commands.recon.ReconCopyAcrossColumnsCommand());
+  RS.registerCommand(module, "recon-use-values-as-identifiers", new Packages.org.openrefine.commands.recon.ReconUseValuesAsIdentifiersCommand());
+  RS.registerCommand(module, "preview-extend-data", new Packages.org.openrefine.commands.recon.PreviewExtendDataCommand());
+  RS.registerCommand(module, "extend-data", new Packages.org.openrefine.commands.recon.ExtendDataCommand());
 
-  RS.registerCommand(module, "guess-types-of-column", new Packages.com.google.refine.commands.recon.GuessTypesOfColumnCommand());
+  RS.registerCommand(module, "guess-types-of-column", new Packages.org.openrefine.commands.recon.GuessTypesOfColumnCommand());
 
-  RS.registerCommand(module, "annotate-one-row", new Packages.com.google.refine.commands.row.AnnotateOneRowCommand());
-  RS.registerCommand(module, "annotate-rows", new Packages.com.google.refine.commands.row.AnnotateRowsCommand());
-  RS.registerCommand(module, "remove-rows", new Packages.com.google.refine.commands.row.RemoveRowsCommand());
-  RS.registerCommand(module, "reorder-rows", new Packages.com.google.refine.commands.row.ReorderRowsCommand());
+  RS.registerCommand(module, "annotate-one-row", new Packages.org.openrefine.commands.row.AnnotateOneRowCommand());
+  RS.registerCommand(module, "annotate-rows", new Packages.org.openrefine.commands.row.AnnotateRowsCommand());
+  RS.registerCommand(module, "remove-rows", new Packages.org.openrefine.commands.row.RemoveRowsCommand());
+  RS.registerCommand(module, "reorder-rows", new Packages.org.openrefine.commands.row.ReorderRowsCommand());
 
-  RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
-  RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
-  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());     
-  RS.registerCommand(module, "toggle-starred-expression", new Packages.com.google.refine.commands.expr.ToggleStarredExpressionCommand());
-  RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
-  RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
+  RS.registerCommand(module, "get-expression-language-info", new Packages.org.openrefine.commands.expr.GetExpressionLanguageInfoCommand());
+  RS.registerCommand(module, "get-expression-history", new Packages.org.openrefine.commands.expr.GetExpressionHistoryCommand());
+  RS.registerCommand(module, "get-starred-expressions", new Packages.org.openrefine.commands.expr.GetStarredExpressionsCommand());     
+  RS.registerCommand(module, "toggle-starred-expression", new Packages.org.openrefine.commands.expr.ToggleStarredExpressionCommand());
+  RS.registerCommand(module, "log-expression", new Packages.org.openrefine.commands.expr.LogExpressionCommand());
+  RS.registerCommand(module, "preview-expression", new Packages.org.openrefine.commands.expr.PreviewExpressionCommand());
 
-  RS.registerCommand(module, "get-preference", new Packages.com.google.refine.commands.GetPreferenceCommand());
-  RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
-  RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
-  RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
+  RS.registerCommand(module, "get-preference", new Packages.org.openrefine.commands.GetPreferenceCommand());
+  RS.registerCommand(module, "get-all-preferences", new Packages.org.openrefine.commands.GetAllPreferencesCommand());
+  RS.registerCommand(module, "set-preference", new Packages.org.openrefine.commands.SetPreferenceCommand());
+  RS.registerCommand(module, "open-workspace-dir", new Packages.org.openrefine.commands.OpenWorkspaceDirCommand());
   
-  RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
-  RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
+  RS.registerCommand(module, "authorize", new Packages.org.openrefine.commands.auth.AuthorizeCommand());
+  RS.registerCommand(module, "deauthorize", new Packages.org.openrefine.commands.auth.DeAuthorizeCommand());
 
 }
 
 function registerOperations() {
-  var OR = Packages.com.google.refine.operations.OperationRegistry;
+  var OR = Packages.org.openrefine.operations.OperationRegistry;
 
-  OR.registerOperation(module.getName(), "text-transform", Packages.com.google.refine.operations.cell.TextTransformOperation);
-  OR.registerOperation(module.getName(), "mass-edit", Packages.com.google.refine.operations.cell.MassEditOperation);
+  OR.registerOperation(module.getName(), "text-transform", Packages.org.openrefine.operations.cell.TextTransformOperation);
+  OR.registerOperation(module.getName(), "mass-edit", Packages.org.openrefine.operations.cell.MassEditOperation);
 
-  OR.registerOperation(module.getName(), "multivalued-cell-join", Packages.com.google.refine.operations.cell.MultiValuedCellJoinOperation);
-  OR.registerOperation(module.getName(), "multivalued-cell-split", Packages.com.google.refine.operations.cell.MultiValuedCellSplitOperation);
-  OR.registerOperation(module.getName(), "fill-down", Packages.com.google.refine.operations.cell.FillDownOperation);
-  OR.registerOperation(module.getName(), "blank-down", Packages.com.google.refine.operations.cell.BlankDownOperation);
-  OR.registerOperation(module.getName(), "transpose-columns-into-rows", Packages.com.google.refine.operations.cell.TransposeColumnsIntoRowsOperation);
-  OR.registerOperation(module.getName(), "transpose-rows-into-columns", Packages.com.google.refine.operations.cell.TransposeRowsIntoColumnsOperation);
-  OR.registerOperation(module.getName(), "key-value-columnize", Packages.com.google.refine.operations.cell.KeyValueColumnizeOperation);
+  OR.registerOperation(module.getName(), "multivalued-cell-join", Packages.org.openrefine.operations.cell.MultiValuedCellJoinOperation);
+  OR.registerOperation(module.getName(), "multivalued-cell-split", Packages.org.openrefine.operations.cell.MultiValuedCellSplitOperation);
+  OR.registerOperation(module.getName(), "fill-down", Packages.org.openrefine.operations.cell.FillDownOperation);
+  OR.registerOperation(module.getName(), "blank-down", Packages.org.openrefine.operations.cell.BlankDownOperation);
+  OR.registerOperation(module.getName(), "transpose-columns-into-rows", Packages.org.openrefine.operations.cell.TransposeColumnsIntoRowsOperation);
+  OR.registerOperation(module.getName(), "transpose-rows-into-columns", Packages.org.openrefine.operations.cell.TransposeRowsIntoColumnsOperation);
+  OR.registerOperation(module.getName(), "key-value-columnize", Packages.org.openrefine.operations.cell.KeyValueColumnizeOperation);
 
-  OR.registerOperation(module.getName(), "column-addition", Packages.com.google.refine.operations.column.ColumnAdditionOperation);
-  OR.registerOperation(module.getName(), "column-removal", Packages.com.google.refine.operations.column.ColumnRemovalOperation);
-  OR.registerOperation(module.getName(), "column-rename", Packages.com.google.refine.operations.column.ColumnRenameOperation);
-  OR.registerOperation(module.getName(), "column-move", Packages.com.google.refine.operations.column.ColumnMoveOperation);
-  OR.registerOperation(module.getName(), "column-split", Packages.com.google.refine.operations.column.ColumnSplitOperation);
-  OR.registerOperation(module.getName(), "column-addition-by-fetching-urls", Packages.com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation);
-  OR.registerOperation(module.getName(), "column-reorder", Packages.com.google.refine.operations.column.ColumnReorderOperation);
+  OR.registerOperation(module.getName(), "column-addition", Packages.org.openrefine.operations.column.ColumnAdditionOperation);
+  OR.registerOperation(module.getName(), "column-removal", Packages.org.openrefine.operations.column.ColumnRemovalOperation);
+  OR.registerOperation(module.getName(), "column-rename", Packages.org.openrefine.operations.column.ColumnRenameOperation);
+  OR.registerOperation(module.getName(), "column-move", Packages.org.openrefine.operations.column.ColumnMoveOperation);
+  OR.registerOperation(module.getName(), "column-split", Packages.org.openrefine.operations.column.ColumnSplitOperation);
+  OR.registerOperation(module.getName(), "column-addition-by-fetching-urls", Packages.org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation);
+  OR.registerOperation(module.getName(), "column-reorder", Packages.org.openrefine.operations.column.ColumnReorderOperation);
 
-  OR.registerOperation(module.getName(), "row-removal", Packages.com.google.refine.operations.row.RowRemovalOperation);
-  OR.registerOperation(module.getName(), "row-star", Packages.com.google.refine.operations.row.RowStarOperation);
-  OR.registerOperation(module.getName(), "row-flag", Packages.com.google.refine.operations.row.RowFlagOperation);
-  OR.registerOperation(module.getName(), "row-reorder", Packages.com.google.refine.operations.row.RowReorderOperation);
+  OR.registerOperation(module.getName(), "row-removal", Packages.org.openrefine.operations.row.RowRemovalOperation);
+  OR.registerOperation(module.getName(), "row-star", Packages.org.openrefine.operations.row.RowStarOperation);
+  OR.registerOperation(module.getName(), "row-flag", Packages.org.openrefine.operations.row.RowFlagOperation);
+  OR.registerOperation(module.getName(), "row-reorder", Packages.org.openrefine.operations.row.RowReorderOperation);
 
-  OR.registerOperation(module.getName(), "recon", Packages.com.google.refine.operations.recon.ReconOperation);
-  OR.registerOperation(module.getName(), "recon-mark-new-topics", Packages.com.google.refine.operations.recon.ReconMarkNewTopicsOperation);
-  OR.registerOperation(module.getName(), "recon-match-best-candidates", Packages.com.google.refine.operations.recon.ReconMatchBestCandidatesOperation);
-  OR.registerOperation(module.getName(), "recon-discard-judgments", Packages.com.google.refine.operations.recon.ReconDiscardJudgmentsOperation);
-  OR.registerOperation(module.getName(), "recon-match-specific-topic-to-cells", Packages.com.google.refine.operations.recon.ReconMatchSpecificTopicOperation);
-  OR.registerOperation(module.getName(), "recon-judge-similar-cells", Packages.com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation);
-  OR.registerOperation(module.getName(), "recon-clear-similar-cells", Packages.com.google.refine.operations.recon.ReconClearSimilarCellsOperation);
-  OR.registerOperation(module.getName(), "recon-copy-across-columns", Packages.com.google.refine.operations.recon.ReconCopyAcrossColumnsOperation);
-  OR.registerOperation(module.getName(), "extend-reconciled-data", Packages.com.google.refine.operations.recon.ExtendDataOperation);
-  OR.registerOperation(module.getName(), "recon-use-values-as-identifiers", Packages.com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation);
+  OR.registerOperation(module.getName(), "recon", Packages.org.openrefine.operations.recon.ReconOperation);
+  OR.registerOperation(module.getName(), "recon-mark-new-topics", Packages.org.openrefine.operations.recon.ReconMarkNewTopicsOperation);
+  OR.registerOperation(module.getName(), "recon-match-best-candidates", Packages.org.openrefine.operations.recon.ReconMatchBestCandidatesOperation);
+  OR.registerOperation(module.getName(), "recon-discard-judgments", Packages.org.openrefine.operations.recon.ReconDiscardJudgmentsOperation);
+  OR.registerOperation(module.getName(), "recon-match-specific-topic-to-cells", Packages.org.openrefine.operations.recon.ReconMatchSpecificTopicOperation);
+  OR.registerOperation(module.getName(), "recon-judge-similar-cells", Packages.org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation);
+  OR.registerOperation(module.getName(), "recon-clear-similar-cells", Packages.org.openrefine.operations.recon.ReconClearSimilarCellsOperation);
+  OR.registerOperation(module.getName(), "recon-copy-across-columns", Packages.org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation);
+  OR.registerOperation(module.getName(), "extend-reconciled-data", Packages.org.openrefine.operations.recon.ExtendDataOperation);
+  OR.registerOperation(module.getName(), "recon-use-values-as-identifiers", Packages.org.openrefine.operations.recon.ReconUseValuesAsIdentifiersOperation);
 }
 
 function registerImporting() {
-  var IM = Packages.com.google.refine.importing.ImportingManager;
+  var IM = Packages.org.openrefine.importing.ImportingManager;
 
   /*
    *  Formats and their UI class names and parsers:
@@ -207,27 +207,27 @@ function registerImporting() {
 
   IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
   IM.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
-      new Packages.com.google.refine.importers.LineBasedImporter());
+      new Packages.org.openrefine.importers.LineBasedImporter());
   IM.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
-      new Packages.com.google.refine.importers.SeparatorBasedImporter());
+      new Packages.org.openrefine.importers.SeparatorBasedImporter());
   IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
-      new Packages.com.google.refine.importers.FixedWidthImporter());
+      new Packages.org.openrefine.importers.FixedWidthImporter());
 
   IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
-              new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
+              new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.NT));
   IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
-          new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
+          new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.N3));
   IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
-                  new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
-  IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
-  IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
+                  new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.TTL));
+  IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter());
+  IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter());
 
-  IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
-  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
-  IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
-  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
-  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
+  IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter());
+  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter());
+  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter());
+  IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter());
+  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter());
+  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter());
 
   IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
 
@@ -298,8 +298,8 @@ function registerImporting() {
    *  Format guessers: these take a format derived from extensions or mime-types,
    *  look at the actual files' content, and try to guess a better format.
    */
-  IM.registerFormatGuesser("text", new Packages.com.google.refine.importers.TextFormatGuesser());
-  IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.LineBasedFormatGuesser());
+  IM.registerFormatGuesser("text", new Packages.org.openrefine.importers.TextFormatGuesser());
+  IM.registerFormatGuesser("text/line-based", new Packages.org.openrefine.importers.LineBasedFormatGuesser());
 
   /*
    *  Controllers: these implement high-level UI flows for importing data. For example, the default
@@ -310,27 +310,27 @@ function registerImporting() {
   IM.registerController(
     module,
     "default-importing-controller",
-    new Packages.com.google.refine.importing.DefaultImportingController()
+    new Packages.org.openrefine.importing.DefaultImportingController()
   );
 }
 
 function registerLanguages() {
-  var MP = Packages.com.google.refine.expr.MetaParser;
-  MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.com.google.refine.grel.Parser.grelParser, "value");
+  var MP = Packages.org.openrefine.expr.MetaParser;
+  MP.registerLanguageParser("grel", "General Refine Expression Language (GREL)", Packages.org.openrefine.grel.Parser.grelParser, "value");
 }
 
 function registerFacets() {
-  var FCR = Packages.com.google.refine.browsing.facets.FacetConfigResolver;
-  FCR.registerFacetConfig("core", "list", Packages.com.google.refine.browsing.facets.ListFacet.ListFacetConfig);
-  FCR.registerFacetConfig("core", "range", Packages.com.google.refine.browsing.facets.RangeFacet.RangeFacetConfig);
-  FCR.registerFacetConfig("core", "timerange", Packages.com.google.refine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig);
-  FCR.registerFacetConfig("core", "text", Packages.com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig);
-  FCR.registerFacetConfig("core", "scatterplot", Packages.com.google.refine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig);
+  var FCR = Packages.org.openrefine.browsing.facets.FacetConfigResolver;
+  FCR.registerFacetConfig("core", "list", Packages.org.openrefine.browsing.facets.ListFacet.ListFacetConfig);
+  FCR.registerFacetConfig("core", "range", Packages.org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig);
+  FCR.registerFacetConfig("core", "timerange", Packages.org.openrefine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig);
+  FCR.registerFacetConfig("core", "text", Packages.org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig);
+  FCR.registerFacetConfig("core", "scatterplot", Packages.org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig);
 }
 
 function registerDistances() {
-   var DF = Packages.com.google.refine.clustering.knn.DistanceFactory;
-   var VicinoDistance = Packages.com.google.refine.clustering.knn.VicinoDistance;
+   var DF = Packages.org.openrefine.clustering.knn.DistanceFactory;
+   var VicinoDistance = Packages.org.openrefine.clustering.knn.VicinoDistance;
    DF.put("levenshtein", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.LevenshteinDistance()));
    DF.put("ppm", new VicinoDistance(new Packages.edu.mit.simile.vicino.distances.PPMDistance()));
         
@@ -347,8 +347,8 @@ function registerDistances() {
 }
 
 function registerClusterers() {
-   var CCF = Packages.com.google.refine.clustering.ClustererConfigFactory;
-   CCF.register("knn", Packages.com.google.refine.clustering.knn.kNNClusterer);
+   var CCF = Packages.org.openrefine.clustering.ClustererConfigFactory;
+   CCF.register("knn", Packages.org.openrefine.clustering.knn.kNNClusterer.kNNClustererConfig);
    // Binning clusterer: already registered by default.
 }
 
@@ -363,10 +363,11 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerClusterers();
   registerDistances();
 
-  var RC = Packages.com.google.refine.model.recon.ReconConfig;
-  RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
+  var RC = Packages.org.openrefine.model.recon.ReconConfig;
+  RC.registerReconConfig(module, "standard-service", Packages.org.openrefine.model.recon.StandardReconConfig);
 
   ClientSideResourceManager.addPaths(
     "index/scripts",

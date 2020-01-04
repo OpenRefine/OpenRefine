@@ -226,7 +226,7 @@
               <saveConfig>true</saveConfig>
               <icon>openrefine.ico</icon>
               <classPath>
-                <mainClass>com.google.refine.Refine</mainClass>
+                <mainClass>org.openrefine.Refine</mainClass>
                 <jarLocation>server/target/lib/</jarLocation>
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
@@ -272,7 +272,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <mainClass>com.google.refine.Refine</mainClass>
+          <mainClass>org.openrefine.Refine</mainClass>
           <bundleName>OpenRefine</bundleName>
           <buildDirectory>target/OpenRefine ${version}</buildDirectory>
           <iconFile>${icon.path}</iconFile>

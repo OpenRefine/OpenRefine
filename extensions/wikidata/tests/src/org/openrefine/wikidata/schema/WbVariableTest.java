@@ -25,10 +25,9 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 
+import org.openrefine.model.Cell;
+import org.openrefine.model.ModelException;
 import org.testng.annotations.BeforeMethod;
-
-import com.google.refine.model.Cell;
-import com.google.refine.model.ModelException;
 
 public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
 

@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.model.Project;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
@@ -44,9 +46,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.model.Project;
 
 public class QuickStatementsExporterTest extends WikidataRefineTest {
 

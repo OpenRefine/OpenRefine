@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.exporters.WriterExporter;
+import org.openrefine.model.Project;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
@@ -44,10 +47,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.WriterExporter;
-import com.google.refine.model.Project;
 
 public class QuickStatementsExporter implements WriterExporter {
 

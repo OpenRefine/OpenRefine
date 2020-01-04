@@ -36,6 +36,17 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.spi.LoggerRepository;
+import org.openrefine.RefineModel;
+import org.openrefine.RefineServlet;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.Change;
+import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.Project;
+import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.process.LongRunningProcess;
+import org.openrefine.process.Process;
+import org.openrefine.util.Pool;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -51,17 +62,6 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.refine.RefineModel;
-import com.google.refine.RefineServlet;
-import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.history.Change;
-import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.Project;
-import com.google.refine.operations.EngineDependentOperation;
-import com.google.refine.process.LongRunningProcess;
-import com.google.refine.process.Process;
-import com.google.refine.util.Pool;
 
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 

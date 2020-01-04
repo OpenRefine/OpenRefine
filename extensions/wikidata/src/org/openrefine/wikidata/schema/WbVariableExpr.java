@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.model.Cell;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.Cell;
 
 /**
  * A base class for expressions which draw their values from a particular

@@ -31,6 +31,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.FacetConfigResolver;
+import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
+import org.openrefine.model.Project;
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -47,14 +54,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.browsing.facets.FacetConfigResolver;
-import com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
-import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
 
 public class WikibaseSchemaTest extends WikidataRefineTest {
 
