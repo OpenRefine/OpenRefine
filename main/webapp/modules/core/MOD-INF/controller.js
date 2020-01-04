@@ -348,7 +348,7 @@ function registerDistances() {
 
 function registerClusterers() {
    var CCF = Packages.org.openrefine.clustering.ClustererConfigFactory;
-   CCF.register("knn", Packages.org.openrefine.clustering.knn.kNNClusterer);
+   CCF.register("knn", Packages.org.openrefine.clustering.knn.kNNClusterer.kNNClustererConfig);
    // Binning clusterer: already registered by default.
 }
 
@@ -363,6 +363,7 @@ function init() {
   registerCommands();
   registerOperations();
   registerImporting();
+  registerClusterers();
   registerDistances();
 
   var RC = Packages.org.openrefine.model.recon.ReconConfig;
