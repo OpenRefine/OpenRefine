@@ -37,11 +37,11 @@
 var html = "text/html";
 var encoding = "UTF-8";
 var version = "0.1";
-var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
+var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 
 var logger = Packages.org.slf4j.LoggerFactory.getLogger("database-extension"),
 File = Packages.java.io.File,
-refineServlet = Packages.com.google.refine.RefineServlet;
+refineServlet = Packages.org.openrefine.RefineServlet;
 
 /*
  * Register our custom commands.
@@ -49,12 +49,12 @@ refineServlet = Packages.com.google.refine.RefineServlet;
 function registerCommands() {
   
   logger.trace("Registering Database Extension Commands......");
-  var RS = Packages.com.google.refine.RefineServlet;
-  RS.registerCommand(module, "test-connect", Packages.com.google.refine.extension.database.cmd.TestConnectCommand());
-  RS.registerCommand(module, "connect", Packages.com.google.refine.extension.database.cmd.ConnectCommand());
-  RS.registerCommand(module, "saved-connection", Packages.com.google.refine.extension.database.cmd.SavedConnectionCommand());
-  RS.registerCommand(module, "execute-query", Packages.com.google.refine.extension.database.cmd.ExecuteQueryCommand());
-  RS.registerCommand(module, "test-query", Packages.com.google.refine.extension.database.cmd.TestQueryCommand());
+  var RS = Packages.org.openrefine.RefineServlet;
+  RS.registerCommand(module, "test-connect", Packages.org.openrefine.extension.database.cmd.TestConnectCommand());
+  RS.registerCommand(module, "connect", Packages.org.openrefine.extension.database.cmd.ConnectCommand());
+  RS.registerCommand(module, "saved-connection", Packages.org.openrefine.extension.database.cmd.SavedConnectionCommand());
+  RS.registerCommand(module, "execute-query", Packages.org.openrefine.extension.database.cmd.ExecuteQueryCommand());
+  RS.registerCommand(module, "test-query", Packages.org.openrefine.extension.database.cmd.TestQueryCommand());
   logger.trace("Database Extension Command Registration done!!");
 }
 
@@ -79,12 +79,12 @@ function init() {
  
 
   // Register importer and exporter
-  var IM = Packages.com.google.refine.importing.ImportingManager;
+  var IM = Packages.org.openrefine.importing.ImportingManager;
   
   IM.registerController(
     module,
     "database-import-controller",
-    new Packages.com.google.refine.extension.database.DatabaseImportController()
+    new Packages.org.openrefine.extension.database.DatabaseImportController()
   );
 
 

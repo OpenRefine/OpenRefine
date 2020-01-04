@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.model.Cell;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.google.refine.model.Cell;
 
 /**
  * A variable that returns a simple string value.

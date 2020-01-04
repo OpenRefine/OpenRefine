@@ -76,7 +76,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.3</version>
         <configuration>
-          <mainClass>com.google.refine.Refine</mainClass>
+          <mainClass>org.openrefine.Refine</mainClass>
           <commandlineArgs>-Drefine.headless=true -Drefine.autoreload=true -Dbutterfly.autoreload=true -Drefine.memory=1400M -Drefine.port=3333 -Drefine.host=127.0.0.1</commandlineArgs>
           <skip>false</skip>
         </configuration>

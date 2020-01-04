@@ -37,6 +37,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -48,9 +50,6 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
 
 public class ItemUpdateTest {
 

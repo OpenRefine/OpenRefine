@@ -28,17 +28,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.openrefine.model.Cell;
+import org.openrefine.model.Column;
+import org.openrefine.model.Project;
+import org.openrefine.model.Recon;
+import org.openrefine.model.ReconCandidate;
+import org.openrefine.model.ReconStats;
+import org.openrefine.model.Row;
+import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.StandardReconConfig;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.ReconStats;
-import com.google.refine.model.Row;
-import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.model.recon.StandardReconConfig;
 
 /**
  * This keeps track of the new items that we have created for each internal

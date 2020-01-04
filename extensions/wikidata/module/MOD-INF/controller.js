@@ -5,7 +5,7 @@ importPackage(org.openrefine.wikidata.commands);
  * Function invoked to initialize the extension.
  */
 function init() {
-    var RefineServlet = Packages.com.google.refine.RefineServlet;
+    var RefineServlet = Packages.org.openrefine.RefineServlet;
     RefineServlet.registerClassMapping(
             "org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange",
             "org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange");
@@ -19,22 +19,22 @@ function init() {
     /*
      *  Attach a Wikibase schema to each project.
      */
-    Packages.com.google.refine.model.Project.registerOverlayModel(
+    Packages.org.openrefine.model.Project.registerOverlayModel(
         "wikibaseSchema",
         Packages.org.openrefine.wikidata.schema.WikibaseSchema);
     
     /*
      *  Operations
      */
-    Packages.com.google.refine.operations.OperationRegistry.registerOperation(
+    Packages.org.openrefine.operations.OperationRegistry.registerOperation(
         module.getName(), "save-wikibase-schema", Packages.org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation);
-    Packages.com.google.refine.operations.OperationRegistry.registerOperation(
+    Packages.org.openrefine.operations.OperationRegistry.registerOperation(
         module.getName(), "perform-wikibase-edits", Packages.org.openrefine.wikidata.operations.PerformWikibaseEditsOperation);
     
     /*
      *  Exporters
      */
-    var ExporterRegistry = Packages.com.google.refine.exporters.ExporterRegistry;
+    var ExporterRegistry = Packages.org.openrefine.exporters.ExporterRegistry;
     var QSExporter = Packages.org.openrefine.wikidata.exporters.QuickStatementsExporter;
     var SchemaExporter = Packages.org.openrefine.wikidata.exporters.SchemaExporter;
     
