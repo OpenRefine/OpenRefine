@@ -23,12 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.openrefine.model.Cell;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-
-import com.google.refine.model.Cell;
 
 public class WbDateVariableTest extends WbVariableTest<TimeValue> {
 

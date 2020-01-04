@@ -28,16 +28,15 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
 
+import org.openrefine.model.Cell;
+import org.openrefine.model.Project;
+import org.openrefine.model.Recon;
+import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.recon.StandardReconConfig;
 
 public class NewItemLibraryTest extends WikidataRefineTest {
 

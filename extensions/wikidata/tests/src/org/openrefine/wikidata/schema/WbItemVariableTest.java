@@ -25,14 +25,13 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
 
+import org.openrefine.model.Cell;
+import org.openrefine.model.Recon;
+import org.openrefine.model.ReconCandidate;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 
 public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
 

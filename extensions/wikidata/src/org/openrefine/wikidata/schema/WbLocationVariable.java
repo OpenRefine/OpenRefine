@@ -25,12 +25,12 @@ package org.openrefine.wikidata.schema;
 
 import java.text.ParseException;
 
+import org.openrefine.model.Cell;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.google.refine.model.Cell;
 
 public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
 

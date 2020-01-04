@@ -3,7 +3,7 @@ package org.openrefine.wikidata.testing;
 import java.io.File;
 import java.io.IOException;
 
-import com.google.refine.RefineServlet;
+import org.openrefine.RefineServlet;
 
 public class RefineServletStub extends RefineServlet {
 	private static final long serialVersionUID = 1L;

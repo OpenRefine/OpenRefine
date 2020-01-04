@@ -5,8 +5,9 @@ import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.util.ParsingUtilities;
+
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.refine.util.ParsingUtilities;
 
 public class CommandUtilities {
     

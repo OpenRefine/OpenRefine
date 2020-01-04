@@ -31,12 +31,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.util.ParsingUtilities;
 
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
