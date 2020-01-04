@@ -92,11 +92,4 @@ $.i18n().load(dictionary, lang);
       handleUpload(options, exportAllRows, onDone, $.i18n('gdata-exporter/enter-spreadsheet'));
     }
   });
-  CustomTabularExporterDialog.uploadTargets.push({
-    id: 'gdata/fusion-table',
-    label: $.i18n('gdata-exporter/new-fusion'),
-    handler: function(options, exportAllRows, onDone) {
-      handleUpload(options, exportAllRows, onDone, $.i18n('gdata-exporter/enter-fusion'));
-    }
-  });
 })();

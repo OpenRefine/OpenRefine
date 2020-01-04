@@ -187,7 +187,7 @@ ExporterManager.handlers.exportProject = function() {
   
   // save to google drive
   var doExportToGoogleDrive = function() {
-      var name = window.prompt(prompt, theProject.metadata.name);
+      var name = window.prompt($.i18n('gdata-exporter/enter-filename'), theProject.metadata.name);
       if (name) {
         var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
         Refine.postCSRF(
@@ -201,7 +201,7 @@ ExporterManager.handlers.exportProject = function() {
             dismiss();
 
             if (o.url) {
-                alert($.i18n('gdata-exporter/upload-success') + o.url);
+                alert($.i18n('gdata-exporter/upload-success'));
             } else {
                 alert($.i18n('gdata-exporter/upload-error') + o.message)
             }
