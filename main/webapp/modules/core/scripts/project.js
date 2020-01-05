@@ -489,17 +489,6 @@ Refine.fetchRows = function(start, limit, onDone, sorting) {
       }
       theProject.rowModel = data;
 
-      // Un-pool objects
-      for (var r = 0; r < data.rows.length; r++) {
-        var row = data.rows[r];
-        for (var c = 0; c < row.cells.length; c++) {
-          var cell = row.cells[c];
-          if ((cell) && ("r" in cell)) {
-            cell.r = data.pool.recons[cell.r];
-          }
-        }
-      }
-
       if (onDone) {
         onDone();
       }

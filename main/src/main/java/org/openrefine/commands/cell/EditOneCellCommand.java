@@ -53,7 +53,6 @@ import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 public class EditOneCellCommand extends Command {
 
@@ -67,19 +66,14 @@ public class EditOneCellCommand extends Command {
         @JsonProperty("cell")
         @JsonInclude(Include.NON_NULL)
         protected Cell cell;
-        @JsonProperty("pool")
-        @JsonInclude(Include.NON_NULL)
-        protected Pool pool;
 
         protected EditResult(
                 String code,
                 HistoryEntry historyEntry,
-                Cell cell,
-                Pool pool) {
+                Cell cell) {
             this.code = code;
             this.historyEntry = historyEntry;
             this.cell = cell;
-            this.pool = pool;
         }
     }
 
@@ -131,11 +125,7 @@ public class EditOneCellCommand extends Command {
                  * If the operation has been done, return the new cell's data so the client side can update the cell's
                  * rendering right away.
                  */
-                Pool pool = new Pool();
-                if (process.newCell != null && process.newCell.recon != null) {
-                    pool.pool(process.newCell.recon);
-                }
-                respondJSON(response, new EditResult("ok", historyEntry, process.newCell, pool));
+                respondJSON(response, new EditResult("ok", historyEntry, process.newCell));
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");
             }

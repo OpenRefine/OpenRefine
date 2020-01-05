@@ -48,7 +48,6 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 public class MassReconChange implements Change {
 
@@ -108,15 +107,12 @@ public class MassReconChange implements Change {
         writer.write(Integer.toString(recons.size()));
         writer.write('\n');
         for (Recon recon : recons.values()) {
-            Pool pool = (Pool) options.get("pool");
-            pool.poolReconCandidates(recon);
-
             ParsingUtilities.saveWriter.writeValue(writer, recon);
             writer.write("\n");
         }
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         Map<Long, Recon> oldRecons = new HashMap<Long, Recon>();
         Map<Long, Recon> newRecons = new HashMap<Long, Recon>();
 
@@ -127,9 +123,9 @@ public class MassReconChange implements Change {
             String value = line.substring(equal + 1);
 
             if ("oldReconCount".equals(field)) {
-                loadRecons(reader, pool, oldRecons, value);
+                loadRecons(reader, oldRecons, value);
             } else if ("newReconCount".equals(field)) {
-                loadRecons(reader, pool, newRecons, value);
+                loadRecons(reader, newRecons, value);
             }
         }
 
@@ -138,7 +134,7 @@ public class MassReconChange implements Change {
         return change;
     }
 
-    static protected void loadRecons(LineNumberReader reader, Pool pool, Map<Long, Recon> recons, String countString) throws Exception {
+    static protected void loadRecons(LineNumberReader reader, Map<Long, Recon> recons, String countString) throws Exception {
         int count = Integer.parseInt(countString);
 
         for (int i = 0; i < count; i++) {

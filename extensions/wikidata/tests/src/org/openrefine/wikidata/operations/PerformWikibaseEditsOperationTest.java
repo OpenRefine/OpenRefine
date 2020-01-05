@@ -67,7 +67,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
             throws Exception {
         String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"}}\n" + "/ec/\n";
         LineNumberReader reader = makeReader(changeString);
-        Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader, pool);
+        Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader);
 
         project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(1234L, "my new item"));
 

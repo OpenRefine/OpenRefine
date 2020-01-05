@@ -47,7 +47,6 @@ import org.openrefine.model.Column;
 import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class ColumnRemovalChange extends ColumnChange {
 
@@ -152,7 +151,7 @@ public class ColumnRemovalChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         int oldColumnIndex = -1;
         Column oldColumn = null;
         CellAtRow[] oldCells = null;
@@ -174,7 +173,7 @@ public class ColumnRemovalChange extends ColumnChange {
                 for (int i = 0; i < oldCellCount; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldCells[i] = CellAtRow.load(line, pool);
+                        oldCells[i] = CellAtRow.load(line);
                     }
                 }
             } else if ("oldColumnGroupCount".equals(field)) {

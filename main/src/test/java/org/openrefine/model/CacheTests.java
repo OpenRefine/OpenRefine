@@ -49,10 +49,6 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.functions.FacetCount;
 import org.openrefine.grel.Function;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.row.RowRemovalOperation;
 

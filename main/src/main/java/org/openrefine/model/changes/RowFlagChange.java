@@ -41,7 +41,6 @@ import java.util.Properties;
 import org.openrefine.history.Change;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class RowFlagChange implements Change {
 
@@ -84,7 +83,7 @@ public class RowFlagChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public RowFlagChange load(LineNumberReader reader, Pool pool) throws Exception {
+    static public RowFlagChange load(LineNumberReader reader) throws Exception {
         int row = -1;
         boolean oldFlagged = false;
         boolean newFlagged = false;

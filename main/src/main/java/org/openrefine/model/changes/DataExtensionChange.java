@@ -57,7 +57,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.recon.DataExtensionReconConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 public class DataExtensionChange implements Change {
 
@@ -318,7 +317,7 @@ public class DataExtensionChange implements Change {
         writer.write('\n');
         for (ReconType type : _columnTypes) {
             if (type != null) {
-                ParsingUtilities.defaultWriter.writeValue(writer, type);
+                ParsingUtilities.saveWriter.writeValue(writer, type);
             }
             writer.write('\n');
         }
@@ -351,7 +350,7 @@ public class DataExtensionChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         String baseColumnName = null;
         String service = null;
         String identifierSpace = null;
@@ -453,7 +452,7 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line, pool));
+                        oldRows.add(Row.load(line));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -463,7 +462,7 @@ public class DataExtensionChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line, pool));
+                        newRows.add(Row.load(line));
                     }
                 }
             }

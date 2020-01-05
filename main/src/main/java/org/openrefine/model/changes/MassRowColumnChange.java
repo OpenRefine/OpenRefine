@@ -47,7 +47,6 @@ import org.openrefine.model.Column;
 import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class MassRowColumnChange implements Change {
 
@@ -140,7 +139,7 @@ public class MassRowColumnChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         List<Column> oldColumns = null;
         List<Column> newColumns = null;
         List<ColumnGroup> oldColumnGroups = null;
@@ -160,7 +159,7 @@ public class MassRowColumnChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line, pool));
+                        oldRows.add(Row.load(line));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -170,7 +169,7 @@ public class MassRowColumnChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line, pool));
+                        newRows.add(Row.load(line));
                     }
                 }
             } else if ("oldColumnCount".equals(field)) {

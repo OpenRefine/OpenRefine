@@ -43,7 +43,6 @@ import java.util.Properties;
 import org.openrefine.history.Change;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class RowReorderChange implements Change {
 
@@ -105,7 +104,7 @@ public class RowReorderChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         List<Integer> rowIndices = null;
 
         String line;

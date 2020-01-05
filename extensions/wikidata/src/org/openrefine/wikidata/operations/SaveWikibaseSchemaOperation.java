@@ -38,7 +38,6 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
@@ -108,7 +107,7 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
             writer.write("/ec/\n"); // end of change marker
         }
 
-        static public Change load(LineNumberReader reader, Pool pool)
+        static public Change load(LineNumberReader reader)
                 throws Exception {
             WikibaseSchema oldSchema = null;
             WikibaseSchema newSchema = null;

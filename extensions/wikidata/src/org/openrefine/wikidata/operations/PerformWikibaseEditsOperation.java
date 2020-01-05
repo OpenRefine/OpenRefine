@@ -54,7 +54,6 @@ import org.openrefine.model.Project;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
-import org.openrefine.util.Pool;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -121,7 +120,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             writer.write("/ec/\n"); // end of change
         }
 
-        static public Change load(LineNumberReader reader, Pool pool)
+        static public Change load(LineNumberReader reader)
                 throws Exception {
             NewItemLibrary library = new NewItemLibrary();
             String line = null;

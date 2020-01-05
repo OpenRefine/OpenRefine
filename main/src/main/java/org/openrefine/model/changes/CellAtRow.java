@@ -38,7 +38,6 @@ import java.io.Writer;
 import java.util.Properties;
 
 import org.openrefine.model.Cell;
-import org.openrefine.util.Pool;
 
 public class CellAtRow {
 
@@ -54,14 +53,14 @@ public class CellAtRow {
         writer.write(Integer.toString(row));
         writer.write(';');
         if (cell != null) {
-            cell.save(writer, options);
+            cell.save(writer);
         }
     }
 
-    static public CellAtRow load(String s, Pool pool) throws Exception {
+    static public CellAtRow load(String s) throws Exception {
         int semicolon = s.indexOf(';');
         int row = Integer.parseInt(s.substring(0, semicolon));
-        Cell cell = semicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(semicolon + 1), pool) : null;
+        Cell cell = semicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(semicolon + 1)) : null;
 
         return new CellAtRow(row, cell);
     }

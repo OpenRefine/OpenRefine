@@ -44,7 +44,6 @@ import org.openrefine.history.Change;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class MassCellChange implements Change {
 
@@ -144,7 +143,7 @@ public class MassCellChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         String commonColumnName = null;
         boolean updateRowContextDependencies = false;
         CellChange[] cellChanges = null;
@@ -163,7 +162,7 @@ public class MassCellChange implements Change {
 
                 cellChanges = new CellChange[cellChangeCount];
                 for (int i = 0; i < cellChangeCount; i++) {
-                    cellChanges[i] = CellChange.load(reader, pool);
+                    cellChanges[i] = CellChange.load(reader);
                 }
             }
         }

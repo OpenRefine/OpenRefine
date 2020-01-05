@@ -423,10 +423,6 @@ DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyPa
     { columnStatsChanged: columnStatsChanged },
     {
       onDone: function(o) {
-        if (o.cell.r) {
-          o.cell.r = o.pool.recons[o.cell.r];
-        }
-
         self._cell = o.cell;
         self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
         self._render();
@@ -608,10 +604,6 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
         {},
         {
           onDone: function(o) {
-            if (o.cell.r) {
-              o.cell.r = o.pool.recons[o.cell.r];
-            }
-
             self._cell = o.cell;
             self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
             self._render();

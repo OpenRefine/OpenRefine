@@ -40,7 +40,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openrefine.model.Cell;
-import org.openrefine.util.Pool;
 
 public class CellAtRowCellIndex {
 
@@ -61,11 +60,11 @@ public class CellAtRowCellIndex {
         writer.write(Integer.toString(cellIndex));
         writer.write(';');
         if (cell != null) {
-            cell.save(writer, options);
+            cell.save(writer);
         }
     }
 
-    static public CellAtRowCellIndex load(String s, Pool pool) throws Exception {
+    static public CellAtRowCellIndex load(String s) throws Exception {
 
         Matcher m = semicolonPattern.matcher(s);
 
@@ -76,7 +75,7 @@ public class CellAtRowCellIndex {
 
         int row = Integer.parseInt(s.substring(0, semicolon));
         int cellIndex = Integer.parseInt(s.substring(semicolon + 1, nextSemicolon));
-        Cell cell = nextSemicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(nextSemicolon + 1), pool)
+        Cell cell = nextSemicolon < s.length() - 1 ? Cell.loadStreaming(s.substring(nextSemicolon + 1))
                 : null;
 
         return new CellAtRowCellIndex(row, cellIndex, cell);

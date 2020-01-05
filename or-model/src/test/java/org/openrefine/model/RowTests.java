@@ -46,10 +46,8 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 import org.openrefine.util.TestUtils;
 
 public class RowTests {
@@ -127,20 +125,17 @@ public class RowTests {
                 + "\"m\":{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]},"
                 + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
                 + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"judgmentBatchSize\":1,\"matchRank\":0}";
-        Pool pool = mock(Pool.class);
-        Recon recon = Recon.loadStreaming(reconJson);
-        when(pool.getRecon("1533649346002675326")).thenReturn(recon);
 
         String json = "{\"flagged\":false,"
                 + "\"starred\":false,"
                 + "\"cells\":["
-                + "    {\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":\"1533649346002675326\"},"
+                + "    {\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":" + reconJson + "},"
                 + "    {\"v\":\"0000-0002-5022-0488\"},"
                 + "    null,"
                 + "    {\"v\":\"\"}"
                 + "]}";
-        Row row = Row.load(json, pool);
-        TestUtils.isSerializedTo(row, json, ParsingUtilities.defaultWriter);
+        Row row = Row.load(json);
+        TestUtils.isSerializedTo(row, json, ParsingUtilities.saveWriter);
     }
 
     @Test

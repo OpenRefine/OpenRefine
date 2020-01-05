@@ -36,7 +36,6 @@ package org.openrefine.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -48,7 +47,6 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 public class FileHistoryEntryManager implements HistoryEntryManager {
 
@@ -87,15 +85,8 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
     protected void loadChange(HistoryEntry historyEntry, File file) throws Exception {
         ZipFile zipFile = new ZipFile(file);
         try {
-            Pool pool = new Pool();
-            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
-            if (poolEntry != null) {
-                pool.load(new InputStreamReader(
-                        zipFile.getInputStream(poolEntry)));
-            } // else, it's a legacy project file
-
             historyEntry.setChange(History.readOneChange(
-                    zipFile.getInputStream(zipFile.getEntry("change.txt")), pool));
+                    zipFile.getInputStream(zipFile.getEntry("change.txt"))));
         } finally {
             zipFile.close();
         }
@@ -112,20 +103,11 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
     protected void saveChange(HistoryEntry historyEntry, File file) throws Exception {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
-            Pool pool = new Pool();
-
             out.putNextEntry(new ZipEntry("change.txt"));
             try {
-                History.writeOneChange(out, historyEntry.getChange(), pool);
+                History.writeOneChange(out, historyEntry.getChange());
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                out.closeEntry();
-            }
-
-            out.putNextEntry(new ZipEntry("pool.txt"));
-            try {
-                pool.save(out);
             } finally {
                 out.closeEntry();
             }

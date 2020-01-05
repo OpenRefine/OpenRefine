@@ -45,7 +45,6 @@ import org.openrefine.history.Change;
 import org.openrefine.model.Column;
 import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 
 public class ColumnMoveChange extends ColumnChange {
 
@@ -108,7 +107,7 @@ public class ColumnMoveChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         String columnName = null;
         int oldColumnIndex = -1;
         int newColumnIndex = -1;

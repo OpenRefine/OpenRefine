@@ -81,9 +81,6 @@ public class GetRowsCommandTest extends RefineTest {
                 "       \"filtered\" : 2,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"row-based\",\n" +
-                "       \"pool\" : {\n" +
-                "         \"recons\" : { }\n" +
-                "       },\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"c\"\n" +
@@ -116,9 +113,6 @@ public class GetRowsCommandTest extends RefineTest {
                 "       \"filtered\" : 1,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"record-based\",\n" +
-                "       \"pool\" : {\n" +
-                "         \"recons\" : { }\n" +
-                "       },\n" +
                 "       \"rows\" : [ {\n" +
                 "         \"cells\" : [ {\n" +
                 "           \"v\" : \"c\"\n" +

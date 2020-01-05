@@ -43,7 +43,6 @@ import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 
 public class CellChange implements Change {
 
@@ -88,20 +87,20 @@ public class CellChange implements Change {
 
         writer.write("old=");
         if (oldCell != null) {
-            oldCell.save(writer, options); // one liner
+            oldCell.save(writer); // one liner
         }
         writer.write('\n');
 
         writer.write("new=");
         if (newCell != null) {
-            newCell.save(writer, options); // one liner
+            newCell.save(writer); // one liner
         }
         writer.write('\n');
 
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public CellChange load(LineNumberReader reader, Pool pool) throws Exception {
+    static public CellChange load(LineNumberReader reader) throws Exception {
         int row = -1;
         int cellIndex = -1;
         Cell oldCell = null;
@@ -118,9 +117,9 @@ public class CellChange implements Change {
             } else if ("cell".equals(field)) {
                 cellIndex = Integer.parseInt(value);
             } else if ("new".equals(field) && value.length() > 0) {
-                newCell = Cell.loadStreaming(value, pool);
+                newCell = Cell.loadStreaming(value);
             } else if ("old".equals(field) && value.length() > 0) {
-                oldCell = Cell.loadStreaming(value, pool);
+                oldCell = Cell.loadStreaming(value);
             }
         }
 

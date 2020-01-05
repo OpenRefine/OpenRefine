@@ -47,7 +47,6 @@ import org.openrefine.model.Column;
 import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class ColumnReorderChange extends ColumnChange {
 
@@ -184,7 +183,7 @@ public class ColumnReorderChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         List<String> columnNames = new ArrayList<String>();
         List<Column> oldColumns = new ArrayList<Column>();
         List<Column> newColumns = new ArrayList<Column>();
@@ -236,7 +235,7 @@ public class ColumnReorderChange extends ColumnChange {
                 for (int i = 0; i < oldCellCount; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldCells[i] = CellAtRowCellIndex.load(line, pool);
+                        oldCells[i] = CellAtRowCellIndex.load(line);
                     }
                 }
             } else if ("oldColumnGroupCount".equals(field)) {

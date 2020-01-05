@@ -41,7 +41,6 @@ import java.util.Properties;
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
 import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 
 public class ColumnRenameChange extends ColumnChange {
 
@@ -82,7 +81,7 @@ public class ColumnRenameChange extends ColumnChange {
         writer.write("/ec/\n"); // end of change marker
     }
 
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         String oldColumnName = null;
         String newColumnName = null;
 

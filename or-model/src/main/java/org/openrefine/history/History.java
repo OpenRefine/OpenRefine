@@ -51,7 +51,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineModel;
 import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
@@ -61,39 +60,38 @@ import org.openrefine.util.Pool;
  */
 public class History {
 
-    static public Change readOneChange(InputStream in, Pool pool) throws Exception {
+    static public Change readOneChange(InputStream in) throws Exception {
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
         try {
-            return readOneChange(reader, pool);
+            return readOneChange(reader);
         } finally {
             reader.close();
         }
     }
 
-    static public Change readOneChange(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change readOneChange(LineNumberReader reader) throws Exception {
         /* String version = */ reader.readLine();
 
         String className = reader.readLine();
         Class<? extends Change> klass = getChangeClass(className);
 
-        Method load = klass.getMethod("load", LineNumberReader.class, Pool.class);
+        Method load = klass.getMethod("load", LineNumberReader.class);
 
-        return (Change) load.invoke(null, reader, pool);
+        return (Change) load.invoke(null, reader);
     }
 
-    static public void writeOneChange(OutputStream out, Change change, Pool pool) throws IOException {
+    static public void writeOneChange(OutputStream out, Change change) throws IOException {
         Writer writer = new OutputStreamWriter(out, "UTF-8");
         try {
-            History.writeOneChange(writer, change, pool);
+            History.writeOneChange(writer, change);
         } finally {
             writer.flush();
         }
     }
 
-    static public void writeOneChange(Writer writer, Change change, Pool pool) throws IOException {
+    static public void writeOneChange(Writer writer, Change change) throws IOException {
         Properties options = new Properties();
         options.setProperty("mode", "save");
-        options.put("pool", pool);
 
         writeOneChange(writer, change, options);
     }

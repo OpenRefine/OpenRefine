@@ -65,7 +65,7 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
         WikibaseSchema schema = WikibaseSchema.reconstruct(schemaJson);
 
         LineNumberReader reader = makeReader(changeString);
-        Change change = SaveWikibaseSchemaOperation.WikibaseSchemaChange.load(reader, pool);
+        Change change = SaveWikibaseSchemaOperation.WikibaseSchemaChange.load(reader);
 
         change.apply(project);
 
