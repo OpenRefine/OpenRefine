@@ -50,7 +50,6 @@ import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 public class ColumnSplitChange implements Change {
     final protected String              _columnName;
@@ -298,7 +297,7 @@ public class ColumnSplitChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         String                      columnName = null;
         List<String>                columnNames = null;
         List<Integer>               rowIndices = null;
@@ -380,7 +379,7 @@ public class ColumnSplitChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldRows.add(Row.load(line, pool));
+                        oldRows.add(Row.load(line));
                     }
                 }
             } else if ("newRowCount".equals(field)) {
@@ -390,7 +389,7 @@ public class ColumnSplitChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newRows.add(Row.load(line, pool));
+                        newRows.add(Row.load(line));
                     }
                 }
             } else if ("oldColumnGroupCount".equals(field)) {

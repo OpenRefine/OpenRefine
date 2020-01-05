@@ -42,7 +42,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,18 +89,9 @@ public class ProjectUtilities {
     protected static void saveToFile(Project project, File file) throws IOException  {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
         try {
-            Pool pool = new Pool();
-
             out.putNextEntry(new ZipEntry("data.txt"));
             try {
-                project.saveToOutputStream(out, pool);
-            } finally {
-                out.closeEntry();
-            }
-
-            out.putNextEntry(new ZipEntry("pool.txt"));
-            try {
-                pool.save(out);
+                project.saveToOutputStream(out);
             } finally {
                 out.closeEntry();
             }
@@ -147,16 +137,9 @@ public class ProjectUtilities {
     ) throws Exception {
         ZipFile zipFile = new ZipFile(file);
         try {
-            Pool pool = new Pool();
-            ZipEntry poolEntry = zipFile.getEntry("pool.txt");
-            if (poolEntry != null) {
-                pool.load(zipFile.getInputStream(poolEntry));
-            } // else, it's a legacy project file
-
             return Project.loadFromInputStream(
                     zipFile.getInputStream(zipFile.getEntry("data.txt")),
-                    id,
-                    pool
+                    id
             );
         } finally {
             zipFile.close();

@@ -38,8 +38,6 @@ import org.openrefine.RefineTest;
 import org.openrefine.history.Change;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.DataExtensionChange;
-import org.openrefine.util.Pool;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -64,30 +62,30 @@ public class DataExtensionChangeTest extends RefineTest {
                 new Serializable[] {"some item"});
     }
     
-    @Test
+    // we no longer read changes from 3.x
+    @Test(enabled=false)
     public void testApplyOldChange() throws Exception {
-        Pool pool = new Pool();
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream("changes/data_extension_2.8.txt");
         LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(in));
         // skip the header
         lineReader.readLine();
         lineReader.readLine();
-        Change change = DataExtensionChange.load(lineReader, pool);
+        Change change = DataExtensionChange.load(lineReader);
         change.apply(project);
         assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
     }
     
-    @Test
+    // we no longer read changes from 3.x
+    @Test(enabled=false)
     public void testApplyNewChange() throws Exception {
-        Pool pool = new Pool();
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream("changes/data_extension_3.0.txt");
         LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(in));
         // skip the header
         lineReader.readLine();
         lineReader.readLine();
-        Change change = DataExtensionChange.load(lineReader, pool);
+        Change change = DataExtensionChange.load(lineReader);
         change.apply(project);
         assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
     }

@@ -41,7 +41,6 @@ import java.util.Properties;
 import org.openrefine.history.Change;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class RowStarChange implements Change {
     final int rowIndex;
@@ -77,7 +76,7 @@ public class RowStarChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public RowStarChange load(LineNumberReader reader, Pool pool) throws Exception {
+    static public RowStarChange load(LineNumberReader reader) throws Exception {
         int row = -1;
         boolean oldStarred = false;
         boolean newStarred = false;

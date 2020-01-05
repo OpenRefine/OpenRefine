@@ -46,12 +46,11 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.Project;
-import org.openrefine.model.ReconStats;
 import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.ReconStats;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
-import org.openrefine.util.Pool;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -63,13 +62,10 @@ public class ReconClearOneCellCommand extends Command {
         protected HistoryEntry entry;
         @JsonProperty("cell")
         Cell cell;
-        @JsonProperty("pool")
-        Pool pool;
         
-        protected CellResponse(HistoryEntry historyEntry, Cell newCell, Pool newPool) {
+        protected CellResponse(HistoryEntry historyEntry, Cell newCell) {
            entry = historyEntry;
            cell = newCell;
-           pool = newPool;
         }
     }
     
@@ -100,13 +96,7 @@ public class ReconClearOneCellCommand extends Command {
                  * If the process is done, write back the cell's data so that the
                  * client side can update its UI right away.
                  */
-                Pool pool = new Pool();
-                
-                if(process.newCell != null && process.newCell.recon != null) {
-                    pool.pool(process.newCell.recon);
-                }
-
-                respondJSON(response, new CellResponse(historyEntry, process.newCell, pool));
+                respondJSON(response, new CellResponse(historyEntry, process.newCell));
             } else {
                 respond(response, "{ \"code\" : \"pending\" }");
             }

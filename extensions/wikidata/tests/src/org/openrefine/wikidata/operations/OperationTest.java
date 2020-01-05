@@ -34,7 +34,6 @@ import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.annotations.BeforeMethod;
@@ -43,12 +42,10 @@ import org.testng.annotations.Test;
 public abstract class OperationTest extends WikidataRefineTest {
 
     protected Project project = null;
-    protected Pool pool = null;
 
     @BeforeMethod
     public void setUp() {
         project = createCSVProject("a,b\nc,d");
-        pool = new Pool();
     }
 
     protected void registerOperation(String name, Class klass) {
