@@ -26,18 +26,13 @@
  ******************************************************************************/
 package org.openrefine.model;
 
-import java.time.format.DateTimeFormatter;
+import static org.testng.Assert.assertNull;
+
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
-import static org.testng.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.openrefine.model.Cell;
-import org.openrefine.model.Recon;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
@@ -53,64 +48,61 @@ public class CellTests {
             + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
             + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"judgmentBatchSize\":1,\"matchRank\":0}";
     
-    Pool pool = mock(Pool.class);
     Recon recon = null;
     
     @Test
     public void serializeCellWithRecon() throws Exception {
-        recon = Recon.loadStreaming(reconJson);
-        when(pool.getRecon("1533649346002675326")).thenReturn(recon);
-        String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":\"1533649346002675326\"}";
+        String json = "{\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":"+reconJson+"}";
         
-        Cell c = Cell.loadStreaming(json, pool);
-        TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
+        Cell c = Cell.loadStreaming(json);
+        TestUtils.isSerializedTo(c, json, ParsingUtilities.saveWriter);
     }
     
     @Test
     public void serializeCellWithString() throws Exception {
         String json = "{\"v\":\"0000-0002-5022-0488\"}";
-        Cell c = Cell.loadStreaming(json, pool);
+        Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeNullCell() throws Exception {
         String json = "null";
-        Cell c = Cell.loadStreaming(json, pool);
+        Cell c = Cell.loadStreaming(json);
         assertNull(c);
     }
     
     @Test
     public void serializeEmptyStringCell() throws Exception {
         String json = "{\"v\":\"\"}";
-        Cell c = Cell.loadStreaming(json, pool);
+        Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeErrorCell() throws Exception {
         String json = "{\"e\":\"HTTP 403\"}";
-        Cell c = Cell.loadStreaming(json, pool);
+        Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeDateCell() throws Exception {
         String json = "{\"v\":\"2018-03-04T08:09:10Z\",\"t\":\"date\"}";
-        TestUtils.isSerializedTo(Cell.loadStreaming(json, pool), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(Cell.loadStreaming(json), json, ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void serializeNumberCell() throws Exception {
         String json = "{\"v\": 1}";
-        Cell c = Cell.loadStreaming(json, pool);
+        Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
     
     @Test
     public void serializeBooleanCell() throws Exception {
         String json = "{\"v\": true}";
-        Cell c = Cell.loadStreaming(json, pool);
+        Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
     

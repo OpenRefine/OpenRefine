@@ -43,7 +43,6 @@ import java.util.Properties;
 import org.openrefine.history.Change;
 import org.openrefine.history.History;
 import org.openrefine.model.Project;
-import org.openrefine.util.Pool;
 
 import com.google.common.collect.Lists;
 
@@ -92,7 +91,7 @@ public class MassChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         boolean updateRowContextDependencies = false;
         List<Change> changes = null;
         
@@ -108,7 +107,7 @@ public class MassChange implements Change {
                 
                 changes = new ArrayList<Change>(changeCount);
                 for (int i = 0; i < changeCount; i++) {
-                    changes.add(History.readOneChange(reader, pool));
+                    changes.add(History.readOneChange(reader));
                 }
             }
         }

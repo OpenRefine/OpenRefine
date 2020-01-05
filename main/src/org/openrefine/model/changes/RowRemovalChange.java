@@ -44,7 +44,6 @@ import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.util.Pool;
 
 public class RowRemovalChange implements Change {
     final protected List<Integer> _rowIndices;
@@ -109,7 +108,7 @@ public class RowRemovalChange implements Change {
         writer.write("/ec/\n"); // end of change marker
     }
     
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         List<Integer> rowIndices = null;
         List<Row> rows = null;
         
@@ -135,7 +134,7 @@ public class RowRemovalChange implements Change {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        rows.add(Row.load(line, pool));
+                        rows.add(Row.load(line));
                     }
                 }
             }

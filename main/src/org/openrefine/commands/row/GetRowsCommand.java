@@ -43,15 +43,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.browsing.RowVisitor;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
-import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -59,7 +58,6 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.SortingRecordVisitor;
 import org.openrefine.sorting.SortingRowVisitor;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -97,18 +95,15 @@ public class GetRowsCommand extends Command {
         protected final int start;
         @JsonProperty("limit")
         protected final int limit;
-        @JsonProperty("pool")
-        protected final Pool pool;
         
         protected JsonResult(Mode mode, List<WrappedRow> rows, int filtered,
-                int totalCount, int start, int limit, Pool pool) {
+                int totalCount, int start, int limit) {
             this.mode = mode;
             this.rows = rows;
             this.filtered = filtered;
             this.totalCount = totalCount;
             this.start = start;
             this.limit = limit;
-            this.pool = pool;
         }
     }
     
@@ -151,12 +146,6 @@ public class GetRowsCommand extends Command {
             
             int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
             int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
-            
-            Pool pool = new Pool();
-            /* Properties options = new Properties();
-            options.put("project", project);
-            options.put("reconCandidateOmitTypes", true);
-            options.put("pool", pool); */
             
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
@@ -205,20 +194,11 @@ public class GetRowsCommand extends Command {
                 }
                 filteredRecords.accept(project, visitor);
             }
-            
-            // Pool all the recons occuring in the rows seen
-            for(WrappedRow wr : rwv.results) {
-                for(Cell c : wr.row.cells) {
-                    if(c != null && c.recon != null) {
-                        pool.pool(c.recon);
-                    }
-                }
-            }
-            
+
             JsonResult result = new JsonResult(engine.getMode(),
                     rwv.results, rwv.total,
                     engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                            start, limit, pool);
+                            start, limit);
             
             ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {

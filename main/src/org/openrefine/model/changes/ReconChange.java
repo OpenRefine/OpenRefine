@@ -49,7 +49,6 @@ import org.openrefine.model.Project;
 import org.openrefine.model.ReconStats;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 public class ReconChange extends MassCellChange {
     final protected ReconConfig _newReconConfig;
@@ -156,7 +155,7 @@ public class ReconChange extends MassCellChange {
         super.save(writer, options);
     }
     
-    static public Change load(LineNumberReader reader, Pool pool) throws Exception {
+    static public Change load(LineNumberReader reader) throws Exception {
         ReconConfig newReconConfig = null;
         ReconStats newReconStats = null;
         ReconConfig oldReconConfig = null;
@@ -195,7 +194,7 @@ public class ReconChange extends MassCellChange {
                 
                 cellChanges = new CellChange[cellChangeCount];
                 for (int i = 0; i < cellChangeCount; i++) {
-                    cellChanges[i] = CellChange.load(reader, pool);
+                    cellChanges[i] = CellChange.load(reader);
                 }
             }
         }

@@ -1,6 +1,16 @@
 Breaking changes in 4.0 branch
 ==============================
 
+Compatibility goal for project data:
+- this version will not be compatible with workspaces created with previous versions;
+- however, JSON histories made by previous versions *should* be understood by the new version.
+As a consequence, to migrate old projects, you will need to reimport the original data in 
+the 4.x instance, and apply the JSON history of the previous version to obtain an equivalent project.
+
+Compatibility goal for extensions: most interfaces will change. Migrating an extension to
+the new version will require very significant work. We are not expecting any extension to migrate
+and we will keep maintaining the 3.x branch.
+
 * Registration of operations has changed: it expects a module name as first argument, not a module.
   Extensions will need to update their controller.js script to add `.getName()` after the existing first argument when registering an operation;
 
@@ -11,6 +21,11 @@ Breaking changes in 4.0 branch
 
 * The `smartSplit` GREL function no longer accepts multi-character strings as separators.
   This is due to the upgrade of OpenCSV to version 5.0.
+
+* Recon pools have been removed, so the static method for change loading no longer expects
+  a Pool argument.
+
+* Projects created with previous versions cannot be loaded with this version.
 
 
 2.6 Release (TBD) - First release as OpenRefine - Maintenance release

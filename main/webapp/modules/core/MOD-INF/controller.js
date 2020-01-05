@@ -352,6 +352,11 @@ function registerClusterers() {
    // Binning clusterer: already registered by default.
 }
 
+function registerReconConfigs() {
+   var RC = Packages.org.openrefine.model.recon.ReconConfig;
+   RC.registerReconConfig("core", "standard-service", Packages.org.openrefine.model.recon.StandardReconConfig);
+}
+
 /*
  *  This optional function is invoked from the module's init() Java function.
  */
@@ -365,6 +370,7 @@ function init() {
   registerImporting();
   registerClusterers();
   registerDistances();
+  registerReconConfigs();
 
   var RC = Packages.org.openrefine.model.recon.ReconConfig;
   RC.registerReconConfig(module, "standard-service", Packages.org.openrefine.model.recon.StandardReconConfig);

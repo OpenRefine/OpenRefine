@@ -42,12 +42,10 @@ import java.util.Properties;
 import org.openrefine.expr.CellTuple;
 import org.openrefine.expr.HasFields;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.InjectableValues;
 
 /**
  * Class representing a single Row which contains a list of {@link Cell}s.  There may
@@ -187,22 +185,14 @@ public class Row implements HasFields {
         }
         try {
             ParsingUtilities.saveWriter.writeValue(writer, this);
-            Pool pool = (Pool)options.get("pool");
-            if(pool != null) {
-                for(Cell c : cells) {
-                    if (c != null && c.recon != null) {
-                        pool.pool(c.recon);
-                    }
-                }
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    static public Row load(String s, Pool pool) throws Exception {
+    static public Row load(String s) throws Exception {
         return s.length() == 0 ? null : 
-            loadStreaming(s, pool);
+            loadStreaming(s);
     }
     
     @JsonCreator
@@ -219,11 +209,8 @@ public class Row implements HasFields {
         return new Row(cells, flagged, starred);
     }
     
-    static public Row loadStreaming(String s, Pool pool) throws Exception {
-        InjectableValues injectableValues = new InjectableValues.Std()
-                .addValue("pool", pool);
-        return ParsingUtilities.mapper.setInjectableValues(injectableValues)
-                .readValue(s, Row.class);
+    static public Row loadStreaming(String s) throws Exception {
+        return ParsingUtilities.mapper.readValue(s, Row.class);
     }
     
     @Override

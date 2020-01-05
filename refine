@@ -527,7 +527,7 @@ run() {
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
             $MVN process-resources
-            $MVN compile test-compile
+            $MVN compile
             echo ""
         fi
     fi

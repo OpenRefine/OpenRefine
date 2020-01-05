@@ -26,7 +26,6 @@ package org.openrefine.wikidata.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -35,9 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.spi.LoggerRepository;
 import org.openrefine.RefineModel;
-import org.openrefine.RefineServlet;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.Change;
@@ -46,7 +43,6 @@ import org.openrefine.model.Project;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
-import org.openrefine.util.Pool;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -125,7 +121,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             writer.write("/ec/\n"); // end of change
         }
 
-        static public Change load(LineNumberReader reader, Pool pool)
+        static public Change load(LineNumberReader reader)
                 throws Exception {
             NewItemLibrary library = new NewItemLibrary();
             String line = null;

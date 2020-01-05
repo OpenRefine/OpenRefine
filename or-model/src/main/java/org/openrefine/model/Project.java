@@ -53,7 +53,6 @@ import org.openrefine.RefineModel;
 import org.openrefine.history.History;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.Pool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +122,7 @@ public class Project {
         return ProjectManager.singleton.getProjectMetadata(id);
     }
 
-    public void saveToOutputStream(OutputStream out, Pool pool) throws IOException {
+    public void saveToOutputStream(OutputStream out) throws IOException {
         for (OverlayModel overlayModel : overlayModels.values()) {
             try {
                 overlayModel.onBeforeSave(this);
@@ -136,7 +135,6 @@ public class Project {
         try {
             Properties options = new Properties();
             options.setProperty("mode", "save");
-            options.put("pool", pool);
 
             saveToWriter(writer, options);
         } finally {
@@ -173,14 +171,13 @@ public class Project {
         }
     }
     
-    static public Project loadFromInputStream(InputStream is, long id, Pool pool) throws Exception {
-        return loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), id, pool);
+    static public Project loadFromInputStream(InputStream is, long id) throws Exception {
+        return loadFromReader(new LineNumberReader(new InputStreamReader(is, "UTF-8")), id);
     }
     
     static private Project loadFromReader(
         LineNumberReader reader,
-        long id,
-        Pool pool
+        long id
     ) throws Exception {
         long start = System.currentTimeMillis();
         
@@ -215,7 +212,7 @@ public class Project {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        Row row = Row.load(line, pool);
+                        Row row = Row.load(line);
                         project.rows.add(row);
                         maxCellCount = Math.max(maxCellCount, row.cells.size());
                     }

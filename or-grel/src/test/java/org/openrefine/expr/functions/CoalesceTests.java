@@ -33,13 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions;
 
-import org.openrefine.expr.functions.Coalesce;
-import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import org.openrefine.expr.EvalError;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 
 public class CoalesceTests extends FunctionTestBase {
