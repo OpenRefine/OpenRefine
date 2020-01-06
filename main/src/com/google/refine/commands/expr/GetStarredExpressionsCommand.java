@@ -27,6 +27,7 @@
 package com.google.refine.commands.expr;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,8 @@ public class GetStarredExpressionsCommand extends Command {
     }
     
     public static ExpressionList getExpressionsList() {
-        List<String> starredExpressions = ((TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions")).getList();
+        TopList topList = (TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
+		List<String> starredExpressions = topList == null ? Collections.emptyList() : topList.getList();
         return new ExpressionList(starredExpressions.stream().map(e -> new Expression(e)).collect(Collectors.toList()));
     }
     

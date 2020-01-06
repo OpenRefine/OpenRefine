@@ -77,5 +77,17 @@ public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase 
         command.doGet(request, response);
         assertResponseJsonIs(json);
     }
+    
+    @Test
+    public void testUninitialized() throws ServletException, IOException {
+
+        initWorkspace("{}");
+        
+        String json = "{\n" + 
+                "       \"expressions\" : []\n" + 
+                "     }";
+        command.doGet(request, response);
+        assertResponseJsonIs(json);
+    }
 
 }

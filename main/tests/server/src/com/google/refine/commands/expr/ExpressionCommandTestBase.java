@@ -68,17 +68,22 @@ public class ExpressionCommandTestBase {
         String starred = starredExpressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
                 "\"list\":[]}" : starredExpressionsJson;
         String expressions = expressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}" : expressionsJson;
-        try {
+        String jsonData = "{\"projectIDs\":[]\n" + 
+                ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" + starred +
+                ",\"scripting.expressions\":"+expressions+"}}}";
+        initWorkspace(jsonData);
+    }
+
+	public void initWorkspace(String jsonData) {
+		try {
             File workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
-            FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" + 
-                    ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" + starred +
-                    ",\"scripting.expressions\":"+expressions+"}}}");
+			FileUtils.writeStringToFile(jsonPath, jsonData);
             FileProjectManager.initialize(workspaceDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+	}
     
     public void assertResponseJsonIs(String expectedJson)  {
         String actualJson = writer.toString();
