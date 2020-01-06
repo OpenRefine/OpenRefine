@@ -94,8 +94,8 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
     	Calendar calendar = Calendar.getInstance();
     	TimeValue expectedDate = Datamodel.makeTimeValue(
     			calendar.get(Calendar.YEAR),
-    			(byte)calendar.get(Calendar.MONTH),
-    			(byte)(calendar.get(Calendar.DAY_OF_MONTH)+1),
+    			(byte)(calendar.get(Calendar.MONTH)+1),
+    			(byte)calendar.get(Calendar.DAY_OF_MONTH),
     			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
     	evaluatesTo(expectedDate, new WbDateConstant("TODAY"));
     }
