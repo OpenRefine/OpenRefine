@@ -14,10 +14,6 @@
     <version>3.4-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <powermock.version>2.0.2</powermock.version>
-  </properties>
-
   <scm>
     <connection>scm:git:http://github.com/OpenRefine/OpenRefine</connection>
     <url>http://github.com/OpenRefine/OpenRefine</url>

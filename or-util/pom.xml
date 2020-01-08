@@ -14,11 +14,6 @@
     <version>3.4-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <powermock.version>2.0.2</powermock.version>
-  </properties>
-
-
   <!-- We need to create the .jar at compilation stage because
        other artifacts (such as "main") need to copy it to a
        subdirectory for Butterfly -->

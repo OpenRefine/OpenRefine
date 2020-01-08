@@ -18,7 +18,6 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <powermock.version>2.0.2</powermock.version>
   </properties>
 
   <scm>
