@@ -44,5 +44,9 @@
     "database-parsing/limit": "righe di dati",
     "database-parsing/store-row": "Salva righe vuote",
     "database-parsing/store-cell": "Salva celle vuote come null",
-    "database-source/form-validation-failure": "Nuova forma di connessione non valida!"
+    "database-source/form-validation-failure": "Nuova forma di connessione non valida!",
+    "database-source/alert-conn-name-invalid-character": "Errore di input del nome di connessione: carattere non valido nell'input. Sono consentiti solo i caratteri [a-zA-z-0-9._-]",
+    "database-source/alert-db-host-invalid-character": "Errore dell'host del database: carattere non valido nell'input. Sono consentiti solo caratteri alfanumerici",
+    "database-source/alert-db-user-invalid-character": "Errore utente del database: carattere non valido nell'input. Sono consentiti solo caratteri alfanumerici",
+    "database-source/alert-db-port-invalid-character": "Errore porta database: carattere non valido nell'input. Sono consentiti solo valori numerici."
 }
