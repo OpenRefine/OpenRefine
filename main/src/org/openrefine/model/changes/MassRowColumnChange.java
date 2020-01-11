@@ -37,14 +37,12 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
 import org.openrefine.model.Column;
-import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -53,7 +51,6 @@ public class MassRowColumnChange implements Change {
     final protected List<Row>       _newRows;
     protected List<Column>          _oldColumns;
     protected List<Row>             _oldRows;
-    protected List<ColumnGroup>     _oldColumnGroups;
     
     public MassRowColumnChange(List<Column> newColumns, List<Row> newRows) {
         _newColumns = newColumns;
@@ -63,9 +60,6 @@ public class MassRowColumnChange implements Change {
     @Override
     public void apply(Project project) {
         synchronized (project) {
-            if (_oldColumnGroups == null) {
-                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
-            }
             if (_oldColumns == null) {
                 _oldColumns = new ArrayList<Column>(project.columnModel.columns);
             }
@@ -75,7 +69,6 @@ public class MassRowColumnChange implements Change {
             
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_newColumns);
-            project.columnModel.columnGroups.clear();
             
             project.rows.clear();
             project.rows.addAll(_newRows);
@@ -91,9 +84,6 @@ public class MassRowColumnChange implements Change {
         synchronized (project) {
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_oldColumns);
-            
-            project.columnModel.columnGroups.clear();
-            project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
             project.rows.clear();
             project.rows.addAll(_oldRows);
@@ -126,14 +116,12 @@ public class MassRowColumnChange implements Change {
             row.save(writer, options);
             writer.write('\n');
         }
-        ColumnChange.writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
     
     static public Change load(LineNumberReader reader) throws Exception {
         List<Column> oldColumns = null;
         List<Column> newColumns = null;
-        List<ColumnGroup> oldColumnGroups = null;
 
         List<Row> oldRows = null;
         List<Row> newRows = null;
@@ -183,18 +171,13 @@ public class MassRowColumnChange implements Change {
                         newColumns.add(Column.load(line));
                     }
                 }
-            } else if ("oldColumnGroupCount".equals(field)) {
-                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
-                
-                oldColumnGroups = ColumnChange.readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
         
         MassRowColumnChange change = new MassRowColumnChange(newColumns, newRows);
         change._oldColumns = oldColumns;
         change._oldRows = oldRows;
-        change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+
         
         return change;
     }
