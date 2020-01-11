@@ -36,21 +36,16 @@ package org.openrefine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.Column;
-import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 
 public class ColumnMoveChange extends ColumnChange {
     final protected String  _columnName;
     final protected int     _newColumnIndex;
     protected int           _oldColumnIndex;
-    protected List<ColumnGroup> _oldColumnGroups;
     
     public ColumnMoveChange(String columnName, int index) {
         _columnName = columnName;
@@ -66,13 +61,9 @@ public class ColumnMoveChange extends ColumnChange {
                     || _newColumnIndex > project.columnModel.getMaxCellIndex()) {
                 throw new RuntimeException("Column index out of range");
             }
-            if (_oldColumnGroups == null) {
-                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
-            }
             
             Column column = project.columnModel.columns.remove(_oldColumnIndex);
             project.columnModel.columns.add(_newColumnIndex, column);
-            project.columnModel.columnGroups.clear();
             
             project.update();
         }
@@ -84,9 +75,6 @@ public class ColumnMoveChange extends ColumnChange {
             Column column = project.columnModel.columns.remove(_newColumnIndex);
             project.columnModel.columns.add(_oldColumnIndex, column);
             
-            project.columnModel.columnGroups.clear();
-            project.columnModel.columnGroups.addAll(_oldColumnGroups);
-            
             project.update();
         }
     }
@@ -96,7 +84,6 @@ public class ColumnMoveChange extends ColumnChange {
         writer.write("columnName="); writer.write(_columnName); writer.write('\n');
         writer.write("oldColumnIndex="); writer.write(Integer.toString(_oldColumnIndex)); writer.write('\n');
         writer.write("newColumnIndex="); writer.write(Integer.toString(_newColumnIndex)); writer.write('\n');
-        writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
     
@@ -104,7 +91,6 @@ public class ColumnMoveChange extends ColumnChange {
         String columnName = null;
         int oldColumnIndex = -1;
         int newColumnIndex = -1;
-        List<ColumnGroup> oldColumnGroups = null;
 
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -118,17 +104,11 @@ public class ColumnMoveChange extends ColumnChange {
                 newColumnIndex = Integer.parseInt(value);
             } else if ("columnName".equals(field)) {
                 columnName = value;
-            } else if ("oldColumnGroupCount".equals(field)) {
-                int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
-                
-                oldColumnGroups = readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
         
         ColumnMoveChange change = new ColumnMoveChange(columnName, newColumnIndex);
         change._oldColumnIndex = oldColumnIndex;
-        change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
         
         return change;
     }
