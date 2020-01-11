@@ -108,13 +108,6 @@ public abstract class TreeImportUtilities {
         for (ImportColumnGroup g : subgroups) {
             createColumnsFromImport(project, g);
         }
-
-        int endColumnIndex = project.columnModel.columns.size();
-        int span = endColumnIndex - startColumnIndex;
-        if (span > 1 && span < project.columnModel.columns.size()) {
-            // TODO: Only use "key column" if it's 100% populated?
-            project.columnModel.addColumnGroup(startColumnIndex, span, startColumnIndex);
-        }
     }
 
     @Deprecated

@@ -43,7 +43,6 @@ public class ColumnModelTests {
         model.addColumn(0, new Column(0, "a"), false);
         model.addColumn(1, new Column(1, "b"), false);
         String json = "{\n" +
-                "       \"columnGroups\" : [ ],\n" +
                 "       \"columns\" : [ {\n" +
                 "         \"cellIndex\" : 0,\n" +
                 "         \"constraints\" : \"{}\",\n" +
@@ -72,8 +71,7 @@ public class ColumnModelTests {
     @Test
     public void serializeColumnModelEmpty() {
         String json = "{"
-                + "\"columns\":[],"
-                + "\"columnGroups\":[]"
+                + "\"columns\":[]"
                 + "}";
         ColumnModel m = new ColumnModel();
         TestUtils.isSerializedTo(m, json, ParsingUtilities.defaultWriter);

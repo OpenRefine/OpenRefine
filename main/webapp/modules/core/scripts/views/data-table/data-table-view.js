@@ -214,7 +214,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var self = this;
 
   var columns = theProject.columnModel.columns;
-  var columnGroups = theProject.columnModel.columnGroups;
 
   /*------------------------------------------------------------
    *  Column Group Headers
@@ -242,57 +241,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       }
     }
   };
-
-  var renderColumnGroups = function(groups, keys) {
-    var nextLayer = [];
-
-    if (groups.length > 0) {
-      var tr = headerTable.insertRow(headerTable.rows.length);
-      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
-
-      for (var c = 0; c < columns.length; c++) {
-        var foundGroup = false;
-        var columnGroup;
-
-        for (var g = 0; g < groups.length; g++) {
-          columnGroup = groups[g];
-          if (columnGroup.startColumnIndex == c) {
-            foundGroup = true;
-            break;
-          }
-        }
-
-        var td = tr.insertCell(tr.cells.length);
-        if (foundGroup) {
-          td.setAttribute("colspan", columnGroup.columnSpan);
-          td.style.background = "#FF6A00";
-
-          if (columnGroup.keyColumnIndex >= 0) {
-            keys.push(columnGroup.keyColumnIndex);
-          }
-
-          c += (columnGroup.columnSpan - 1);
-
-          if ("subgroups" in columnGroup) {
-            nextLayer = nextLayer.concat(columnGroup.subgroups);
-          }
-        }
-      }
-    }
-
-    renderColumnKeys(keys);
-
-    if (nextLayer.length > 0) {
-      renderColumnGroups(nextLayer, []);
-    }
-  };
-
-  if (columnGroups.length > 0) {
-    renderColumnGroups(
-        columnGroups, 
-        [ theProject.columnModel.keyCellIndex ]
-    );
-  }    
 
   /*------------------------------------------------------------
    *  Column Headers with Menus

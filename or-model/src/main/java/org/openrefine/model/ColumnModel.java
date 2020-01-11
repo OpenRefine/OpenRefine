@@ -37,8 +37,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,19 +52,16 @@ public class ColumnModel {
 
     @JsonProperty("columns")
     final public List<Column> columns = new LinkedList<Column>();
-    @JsonProperty("columnGroups")
-    final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
 
     private int _maxCellIndex = -1;
     private int _keyColumnIndex;
 
     transient protected Map<String, Column> _nameToColumn;
     transient protected Map<Integer, Column> _cellIndexToColumn;
-    transient protected List<ColumnGroup> _rootColumnGroups;
     transient protected List<String> _columnNames;
 
     public ColumnModel() {
-        internalInitialize();
+        generateMaps();
     }
 
     synchronized public void setMaxCellIndex(int maxCellIndex) {
@@ -95,26 +90,8 @@ public class ColumnModel {
         return _keyColumnIndex;
     }
 
-    synchronized public void addColumnGroup(int startColumnIndex, int span, int keyColumnIndex) {
-        for (ColumnGroup g : columnGroups) {
-            if (g.startColumnIndex == startColumnIndex && g.columnSpan == span) {
-                if (g.keyColumnIndex == keyColumnIndex) {
-                    return;
-                } else {
-                    columnGroups.remove(g);
-                    break;
-                }
-            }
-        }
-
-        ColumnGroup cg = new ColumnGroup(startColumnIndex, span, keyColumnIndex);
-
-        columnGroups.add(cg);
-
-    }
-
     public void update() {
-        internalInitialize();
+        generateMaps();
     }
 
     synchronized public void addColumn(int index, Column column, boolean avoidNameCollision) throws ModelException {
@@ -211,14 +188,6 @@ public class ColumnModel {
             writer.write('\n');
         }
 
-        writer.write("columnGroupCount=");
-        writer.write(Integer.toString(columnGroups.size()));
-        writer.write('\n');
-        for (ColumnGroup group : columnGroups) {
-            group.save(writer);
-            writer.write('\n');
-        }
-
         writer.write("/e/\n");
     }
 
@@ -239,51 +208,10 @@ public class ColumnModel {
                 for (int i = 0; i < count; i++) {
                     columns.add(Column.load(reader.readLine()));
                 }
-            } else if ("columnGroupCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                for (int i = 0; i < count; i++) {
-                    columnGroups.add(ColumnGroup.load(reader.readLine()));
-                }
             }
         }
 
-        internalInitialize();
-    }
-
-    synchronized protected void internalInitialize() {
         generateMaps();
-
-        // Turn the flat list of column groups into a tree
-
-        _rootColumnGroups = new LinkedList<ColumnGroup>(columnGroups);
-        Collections.sort(_rootColumnGroups, new Comparator<ColumnGroup>() {
-
-            @Override
-            public int compare(ColumnGroup o1, ColumnGroup o2) {
-                int firstDiff = o1.startColumnIndex - o2.startColumnIndex;
-                return firstDiff != 0 ? firstDiff : // whichever group that starts first goes first
-                        (o2.columnSpan - o1.columnSpan); // otherwise, the larger group goes first
-            }
-        });
-
-        for (int i = _rootColumnGroups.size() - 1; i >= 0; i--) {
-            ColumnGroup g = _rootColumnGroups.get(i);
-
-            for (int j = i + 1; j < _rootColumnGroups.size(); j++) {
-                ColumnGroup g2 = _rootColumnGroups.get(j);
-                if (g2.parentGroup == null && g.contains(g2)) {
-                    g2.parentGroup = g;
-                    g.subgroups.add(g2);
-                }
-            }
-        }
-
-        for (int i = _rootColumnGroups.size() - 1; i >= 0; i--) {
-            if (_rootColumnGroups.get(i).parentGroup != null) {
-                _rootColumnGroups.remove(i);
-            }
-        }
     }
 
     protected void generateMaps() {

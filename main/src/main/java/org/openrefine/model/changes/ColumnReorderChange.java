@@ -37,14 +37,12 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
-import org.openrefine.model.ColumnGroup;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -54,7 +52,6 @@ public class ColumnReorderChange extends ColumnChange {
     protected List<Column> _oldColumns;
     protected List<Column> _newColumns;
     protected List<Column> _removedColumns;
-    protected List<ColumnGroup> _oldColumnGroups;
     protected CellAtRowCellIndex[] _oldCells;
 
     public ColumnReorderChange(List<String> columnNames) {
@@ -74,8 +71,6 @@ public class ColumnReorderChange extends ColumnChange {
                         _newColumns.add(column);
                     }
                 }
-
-                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
             }
 
             if (_removedColumns == null) {
@@ -117,7 +112,6 @@ public class ColumnReorderChange extends ColumnChange {
 
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_newColumns);
-            project.columnModel.columnGroups.clear();
 
             project.update();
         }
@@ -128,9 +122,6 @@ public class ColumnReorderChange extends ColumnChange {
         synchronized (project) {
             project.columnModel.columns.clear();
             project.columnModel.columns.addAll(_oldColumns);
-
-            project.columnModel.columnGroups.clear();
-            project.columnModel.columnGroups.addAll(_oldColumnGroups);
 
             for (int i = 0; i < _oldCells.length; i++) {
                 Row row = project.rows.get(_oldCells[i].row);
@@ -179,7 +170,6 @@ public class ColumnReorderChange extends ColumnChange {
             writer.write('\n');
         }
 
-        writeOldColumnGroups(writer, options, _oldColumnGroups);
         writer.write("/ec/\n"); // end of change marker
     }
 
@@ -189,7 +179,6 @@ public class ColumnReorderChange extends ColumnChange {
         List<Column> newColumns = new ArrayList<Column>();
         List<Column> removedColumns = new ArrayList<Column>();
         CellAtRowCellIndex[] oldCells = new CellAtRowCellIndex[0];
-        List<ColumnGroup> oldColumnGroups = null;
 
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
@@ -240,8 +229,6 @@ public class ColumnReorderChange extends ColumnChange {
                 }
             } else if ("oldColumnGroupCount".equals(field)) {
                 int oldColumnGroupCount = Integer.parseInt(line.substring(equal + 1));
-
-                oldColumnGroups = readOldColumnGroups(reader, oldColumnGroupCount);
             }
         }
 
@@ -250,7 +237,6 @@ public class ColumnReorderChange extends ColumnChange {
         change._newColumns = newColumns;
         change._removedColumns = removedColumns;
         change._oldCells = oldCells;
-        change._oldColumnGroups = oldColumnGroups != null ? oldColumnGroups : new LinkedList<ColumnGroup>();
 
         return change;
     }

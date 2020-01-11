@@ -194,13 +194,6 @@ public class XmlImporterTests extends ImporterTest {
         RunTest(getSampleWithTreeStructure());
         log(project);
         assertProjectCreated(project, 5, 6);
-
-        Assert.assertEquals(project.columnModel.columnGroups.size(), 1);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 2);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 2);
-        Assert.assertNull(project.columnModel.columnGroups.get(0).parentGroup);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).subgroups.size(), 0);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).columnSpan, 2);
     }
 
     // ------------helper methods---------------

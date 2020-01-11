@@ -268,9 +268,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "world");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "foo");
         Assert.assertEquals(project.columnModel.columns.get(3).getName(), "bar");
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 2);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 2);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).columnSpan, 2);
     }
 
     @Test

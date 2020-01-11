@@ -36,7 +36,6 @@ package org.openrefine.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -209,57 +208,6 @@ public class RecordModel {
     protected List<KeyedGroup> computeKeyedGroups(ColumnModel columnModel) {
         List<KeyedGroup> keyedGroups = new ArrayList<KeyedGroup>();
 
-        addRootKeyedGroup(columnModel, keyedGroups);
-
-        for (ColumnGroup group : columnModel.columnGroups) {
-            if (group.keyColumnIndex >= 0) {
-                KeyedGroup keyedGroup = new KeyedGroup();
-                keyedGroup.keyCellIndex = columnModel.columns.get(group.keyColumnIndex).getCellIndex();
-                keyedGroup.cellIndices = new int[group.columnSpan - 1];
-
-                int c = 0;
-                for (int i = 0; i < group.columnSpan; i++) {
-                    int columnIndex = group.startColumnIndex + i;
-                    if (columnIndex != group.keyColumnIndex && columnIndex < columnModel.columns.size()) {
-                        int cellIndex = columnModel.columns.get(columnIndex).getCellIndex();
-                        keyedGroup.cellIndices[c++] = cellIndex;
-                    }
-                }
-
-                keyedGroups.add(keyedGroup);
-            }
-        }
-
-        Collections.sort(keyedGroups, new Comparator<KeyedGroup>() {
-
-            @Override
-            public int compare(KeyedGroup o1, KeyedGroup o2) {
-                return o2.cellIndices.length - o1.cellIndices.length; // larger groups first
-            }
-        });
-
-        dumpKeyedGroups(keyedGroups, columnModel); // for debug
-
-        return keyedGroups;
-    }
-
-    // debugging helper
-    private void dumpKeyedGroups(List<KeyedGroup> groups, ColumnModel columnModel) {
-        for (KeyedGroup g : groups) {
-            String keyColName = columnModel.getColumnByCellIndex(g.keyCellIndex).getName();
-            StringBuffer sb = new StringBuffer();
-            for (int ci : g.cellIndices) {
-                Column col = columnModel.getColumnByCellIndex(ci);
-                if (col != null) {
-                    // Old projects have col 0 slot empty
-                    sb.append(col.getName()).append(',');
-                }
-            }
-            logger.trace("KeyedGroup " + keyColName + "::" + sb.toString());
-        }
-    }
-
-    protected void addRootKeyedGroup(ColumnModel columnModel, List<KeyedGroup> keyedGroups) {
         int count = columnModel.getMaxCellIndex() + 1;
         if (count > 0 && columnModel.getKeyColumnIndex() < columnModel.columns.size()) {
             KeyedGroup rootKeyedGroup = new KeyedGroup();
@@ -276,6 +224,8 @@ public class RecordModel {
             }
             keyedGroups.add(rootKeyedGroup);
         }
+
+        return keyedGroups;
     }
 
     protected void setRowDependency(
