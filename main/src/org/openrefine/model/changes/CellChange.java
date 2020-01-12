@@ -62,7 +62,6 @@ public class CellChange implements Change {
         project.rows.get(row).setCell(cellIndex, newCell);
         
         Column column = project.columnModel.getColumnByCellIndex(cellIndex);
-        column.clearPrecomputes();
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
 
@@ -71,7 +70,6 @@ public class CellChange implements Change {
         project.rows.get(row).setCell(cellIndex, oldCell);
         
         Column column = project.columnModel.getColumnByCellIndex(cellIndex);
-        column.clearPrecomputes();
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
     
