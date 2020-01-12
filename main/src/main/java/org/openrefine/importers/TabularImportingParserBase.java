@@ -45,7 +45,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
@@ -159,7 +159,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
                         boolean rowHasData = false;
                         for (int c = 0; c < cells.size(); c++) {
-                            Column column = ImporterUtilities.getOrAllocateColumn(
+                            ColumnMetadata column = ImporterUtilities.getOrAllocateColumn(
                                     project, columnNames, c, hasOurOwnColumnNames);
 
                             Object value = cells.get(c);

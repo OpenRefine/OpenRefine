@@ -50,7 +50,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -106,7 +106,7 @@ public class RdfTripleImporter extends ImportingParserBase {
 
         try {
             Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
-            Column subjectColumn = new Column(project.columnModel.allocateNewCellIndex(), "subject");
+            ColumnMetadata subjectColumn = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), "subject");
             project.columnModel.addColumn(0, subjectColumn, false);
             project.columnModel.setKeyColumnIndex(0);
 
@@ -116,9 +116,9 @@ public class RdfTripleImporter extends ImportingParserBase {
                 String predicate = triple.getPredicate().toString();
                 String object = triple.getObject().toString();
 
-                Column column = project.columnModel.getColumnByName(predicate);
+                ColumnMetadata column = project.columnModel.getColumnByName(predicate);
                 if (column == null) {
-                    column = new Column(project.columnModel.allocateNewCellIndex(), predicate);
+                    column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), predicate);
                     project.columnModel.addColumn(-1, column, true);
                 }
 

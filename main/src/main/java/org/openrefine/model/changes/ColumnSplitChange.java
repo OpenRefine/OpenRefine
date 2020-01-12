@@ -44,7 +44,7 @@ import java.util.Properties;
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
@@ -59,7 +59,7 @@ public class ColumnSplitChange implements Change {
 
     final protected boolean _removeOriginalColumn;
 
-    protected Column _column;
+    protected ColumnMetadata _column;
     protected int _columnIndex;
 
     protected int _firstNewCellIndex = -1;
@@ -88,7 +88,7 @@ public class ColumnSplitChange implements Change {
             List<List<Serializable>> tuples,
             boolean removeOriginalColumn,
 
-            Column column,
+            ColumnMetadata column,
             int columnIndex,
 
             int firstNewCellIndex,
@@ -162,7 +162,7 @@ public class ColumnSplitChange implements Change {
                 String name = _columnNames.get(i);
                 int cellIndex = _firstNewCellIndex + i;
 
-                Column column = new Column(cellIndex, name);
+                ColumnMetadata column = new ColumnMetadata(cellIndex, name);
 
                 project.columnModel.columns.add(_columnIndex + 1 + i, column);
             }
@@ -275,7 +275,7 @@ public class ColumnSplitChange implements Change {
         List<List<Serializable>> tuples = null;
         boolean removeOriginalColumn = false;
 
-        Column column = null;
+        ColumnMetadata column = null;
         int columnIndex = -1;
 
         int firstNewCellIndex = -1;
@@ -336,7 +336,7 @@ public class ColumnSplitChange implements Change {
                 removeOriginalColumn = Boolean.parseBoolean(value);
 
             } else if ("column".equals(field)) {
-                column = Column.load(value);
+                column = ColumnMetadata.load(value);
             } else if ("columnIndex".equals(field)) {
                 columnIndex = Integer.parseInt(value);
             } else if ("firstNewCellIndex".equals(field)) {

@@ -47,7 +47,7 @@ import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionStringComparisonRowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.grel.ast.VariableExpr;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
@@ -129,7 +129,7 @@ public class TextSearchFacet implements Facet {
     public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
         _config = config;
 
-        Column column = project.columnModel.getColumnByName(_config._columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_config._columnName);
         _cellIndex = column != null ? column.getCellIndex() : -1;
 
         _query = _config._query;

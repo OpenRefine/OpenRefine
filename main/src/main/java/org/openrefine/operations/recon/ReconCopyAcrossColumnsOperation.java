@@ -50,7 +50,7 @@ import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Recon.Judgment;
@@ -104,11 +104,11 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     protected HistoryEntry createHistoryEntry(final Project project, final long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
 
-        final Column fromColumn = project.columnModel.getColumnByName(_fromColumnName);
+        final ColumnMetadata fromColumn = project.columnModel.getColumnByName(_fromColumnName);
 
-        final List<Column> toColumns = new ArrayList<Column>(_toColumnNames.length);
+        final List<ColumnMetadata> toColumns = new ArrayList<ColumnMetadata>(_toColumnNames.length);
         for (String c : _toColumnNames) {
-            Column toColumn = project.columnModel.getColumnByName(c);
+            ColumnMetadata toColumn = project.columnModel.getColumnByName(c);
             if (toColumn != null) {
                 toColumns.add(toColumn);
             }
@@ -164,7 +164,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
 
                     @Override
                     public boolean visit(Project project, int rowIndex, Row row) {
-                        for (Column column : toColumns) {
+                        for (ColumnMetadata column : toColumns) {
                             int cellIndex = column.getCellIndex();
                             Cell cell = row.getCell(cellIndex);
                             if (cell != null && cell.value != null) {

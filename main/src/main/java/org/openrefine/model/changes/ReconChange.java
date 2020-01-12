@@ -45,7 +45,7 @@ import java.util.Properties;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconStats;
 import org.openrefine.model.recon.ReconConfig;
@@ -97,7 +97,7 @@ public class ReconChange extends MassCellChange {
         synchronized (project) {
             super.apply(project);
 
-            Column column = project.columnModel.getColumnByName(_commonColumnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(_commonColumnName);
 
             if (_newReconStats == null) {
                 _newReconStats = ReconStats.create(project, column.getCellIndex());
@@ -118,7 +118,7 @@ public class ReconChange extends MassCellChange {
         synchronized (project) {
             super.revert(project);
 
-            Column column = project.columnModel.getColumnByName(_commonColumnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(_commonColumnName);
             column.setReconConfig(_oldReconConfig);
             column.setReconStats(_oldReconStats);
 

@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.clustering;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 /**
@@ -57,7 +57,7 @@ public abstract class Clusterer {
         _project = project;
 
         String colname = c.getColumnName();
-        for (Column column : project.columnModel.columns) {
+        for (ColumnMetadata column : project.columnModel.columns) {
             if (column.getName().equals(colname)) {
                 _colindex = column.getCellIndex();
             }

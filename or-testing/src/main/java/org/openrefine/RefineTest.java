@@ -61,7 +61,7 @@ import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -113,7 +113,7 @@ public class RefineTest extends PowerMockTestCase {
         if (columnNames != null) {
             for (String columnName : columnNames) {
                 int index = project.columnModel.allocateNewCellIndex();
-                Column column = new Column(index, columnName);
+                ColumnMetadata column = new ColumnMetadata(index, columnName);
                 project.columnModel.addColumn(index, column, true);
             }
         }
@@ -158,7 +158,7 @@ public class RefineTest extends PowerMockTestCase {
             meta.setName(projectName);
             for (String column : columns) {
                 int idx = project.columnModel.allocateNewCellIndex();
-                project.columnModel.addColumn(idx, new Column(idx, column), false);
+                project.columnModel.addColumn(idx, new ColumnMetadata(idx, column), false);
             }
             Row row = null;
             int idx = 0;
@@ -264,7 +264,7 @@ public class RefineTest extends PowerMockTestCase {
     public void log(Project project) {
         // some quick and dirty debugging
         StringBuilder sb = new StringBuilder();
-        for (Column c : project.columnModel.columns) {
+        for (ColumnMetadata c : project.columnModel.columns) {
             sb.append(c.getName());
             sb.append("; ");
         }

@@ -84,7 +84,7 @@ import xtc.parser.ParseException;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.ReconStats;
@@ -751,8 +751,8 @@ public class WikitextImporter extends TabularImportingParserBase {
             if (dataReader.columnReconciled != null) {
                 for (int i = 0; i != dataReader.columnReconciled.size(); i++) {
                     if (dataReader.columnReconciled.get(i)) {
-                        Column col = project.columnModel.columns.get(i);
-                        Column newCol = col
+                        ColumnMetadata col = project.columnModel.columns.get(i);
+                        ColumnMetadata newCol = col
                                 .withReconStats(ReconStats.create(project, i))
                                 .withReconConfig(cfg);
                         project.columnModel.columns.set(i, newCol);

@@ -52,7 +52,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.importers.ImporterUtilities;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.ColumnSplitChange;
@@ -197,7 +197,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
 
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }

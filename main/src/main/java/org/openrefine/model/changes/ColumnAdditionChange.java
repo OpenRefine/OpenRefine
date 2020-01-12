@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.history.Change;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -66,7 +66,7 @@ public class ColumnAdditionChange extends ColumnChange {
                 _newCellIndex = project.columnModel.allocateNewCellIndex();
             }
 
-            Column column = new Column(_newCellIndex, _columnName);
+            ColumnMetadata column = new ColumnMetadata(_newCellIndex, _columnName);
             project.columnModel.columns.add(_columnIndex, column);
             try {
                 for (CellAtRow cell : _newCells) {

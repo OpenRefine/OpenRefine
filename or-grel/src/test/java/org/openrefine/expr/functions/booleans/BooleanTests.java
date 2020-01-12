@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -71,7 +71,7 @@ public class BooleanTests extends FunctionTestBase {
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = new Project();
-        project.columnModel.addColumn(0, new Column(0, "Column A"), true);
+        project.columnModel.addColumn(0, new ColumnMetadata(0, "Column A"), true);
 
         bindings.put("project", project);
 

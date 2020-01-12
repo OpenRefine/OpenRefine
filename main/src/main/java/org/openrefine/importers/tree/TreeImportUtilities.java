@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public abstract class TreeImportUtilities {
@@ -83,7 +83,7 @@ public abstract class TreeImportUtilities {
         for (int i = 0; i < columns.size(); i++) {
             ImportColumn c = columns.get(i);
 
-            Column column = new org.openrefine.model.Column(c.cellIndex, c.name);
+            ColumnMetadata column = new org.openrefine.model.ColumnMetadata(c.cellIndex, c.name);
             project.columnModel.columns.add(column);
         }
 

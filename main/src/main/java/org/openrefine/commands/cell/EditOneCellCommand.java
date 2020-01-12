@@ -48,7 +48,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
@@ -157,7 +157,7 @@ public class EditOneCellCommand extends Command {
         @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
-            Column column = _project.columnModel.getColumnByCellIndex(cellIndex);
+            ColumnMetadata column = _project.columnModel.getColumnByCellIndex(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }

@@ -41,7 +41,7 @@ import java.util.Properties;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -92,7 +92,7 @@ public class MassCellChange implements Change {
             }
 
             if (_commonColumnName != null) {
-                Column column = project.columnModel.getColumnByName(_commonColumnName);
+                ColumnMetadata column = project.columnModel.getColumnByName(_commonColumnName);
                 ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
             }
 
@@ -112,7 +112,7 @@ public class MassCellChange implements Change {
             }
 
             if (_commonColumnName != null) {
-                Column column = project.columnModel.getColumnByName(_commonColumnName);
+                ColumnMetadata column = project.columnModel.getColumnByName(_commonColumnName);
                 ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
             }
 

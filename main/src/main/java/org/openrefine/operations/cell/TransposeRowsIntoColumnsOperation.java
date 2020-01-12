@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
@@ -77,14 +77,14 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        List<Column> newColumns = new ArrayList<Column>();
-        List<Column> oldColumns = project.columnModel.columns;
+        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
+        List<ColumnMetadata> oldColumns = project.columnModel.columns;
 
         int columnIndex = project.columnModel.getColumnIndexByName(_columnName);
         int columnCount = oldColumns.size();
 
         for (int i = 0; i < columnCount; i++) {
-            Column column = oldColumns.get(i);
+            ColumnMetadata column = oldColumns.get(i);
 
             if (i == columnIndex) {
                 int newIndex = 1;
@@ -94,12 +94,12 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
                         columnName = _columnName + " " + newIndex++;
                     }
 
-                    newColumns.add(new Column(i + n, columnName));
+                    newColumns.add(new ColumnMetadata(i + n, columnName));
                 }
             } else if (i < columnIndex) {
-                newColumns.add(new Column(i, column.getName()));
+                newColumns.add(new ColumnMetadata(i, column.getName()));
             } else {
-                newColumns.add(new Column(i + _rowCount - 1, column.getName()));
+                newColumns.add(new ColumnMetadata(i + _rowCount - 1, column.getName()));
             }
         }
 
@@ -114,7 +114,7 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
                 boolean hasData = r2 == 0;
 
                 for (int c = 0; c < oldColumns.size(); c++) {
-                    Column column = oldColumns.get(c);
+                    ColumnMetadata column = oldColumns.get(c);
                     Cell cell = oldRow.getCell(column.getCellIndex());
 
                     if (cell != null && cell.value != null) {

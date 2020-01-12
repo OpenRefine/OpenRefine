@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.ReconCandidate;
@@ -130,7 +130,7 @@ public class NewItemLibrary {
                 if (changed) {
                     impactedColumns.add(i);
                     // Compute features
-                    Column column = project.columnModel.getColumnByCellIndex(i);
+                    ColumnMetadata column = project.columnModel.getColumnByCellIndex(i);
                     ReconConfig config = column.getReconConfig();
                     if (config instanceof StandardReconConfig) {
                         StandardReconConfig stdConfig = (StandardReconConfig) config;
@@ -143,7 +143,7 @@ public class NewItemLibrary {
         }
         // Update reconciliation statistics for impacted columns
         for (Integer colId : impactedColumns) {
-            Column column = project.columnModel.getColumnByCellIndex(colId);
+            ColumnMetadata column = project.columnModel.getColumnByCellIndex(colId);
             column.setReconStats(ReconStats.create(project, colId));
         }
     }

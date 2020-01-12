@@ -40,14 +40,14 @@ import java.util.Properties;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public class ColumnRemovalChange extends ColumnChange {
 
     final protected int _oldColumnIndex;
-    protected Column _oldColumn;
+    protected ColumnMetadata _oldColumn;
     protected CellAtRow[] _oldCells;
 
     public ColumnRemovalChange(int index) {
@@ -112,7 +112,7 @@ public class ColumnRemovalChange extends ColumnChange {
 
     static public Change load(LineNumberReader reader) throws Exception {
         int oldColumnIndex = -1;
-        Column oldColumn = null;
+        ColumnMetadata oldColumn = null;
         CellAtRow[] oldCells = null;
 
         String line;
@@ -123,7 +123,7 @@ public class ColumnRemovalChange extends ColumnChange {
             if ("oldColumnIndex".equals(field)) {
                 oldColumnIndex = Integer.parseInt(line.substring(equal + 1));
             } else if ("oldColumn".equals(field)) {
-                oldColumn = Column.load(line.substring(equal + 1));
+                oldColumn = ColumnMetadata.load(line.substring(equal + 1));
             } else if ("oldCellCount".equals(field)) {
                 int oldCellCount = Integer.parseInt(line.substring(equal + 1));
 

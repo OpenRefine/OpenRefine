@@ -42,7 +42,7 @@ import org.openrefine.ProjectManager;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.AbstractOperation;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.operations.OperationRegistry;
@@ -137,9 +137,9 @@ public class FillDownTests extends RefineTest {
         for (Row r : project.rows) {
             r.cells.add(0, null);
         }
-        List<Column> newColumns = new ArrayList<>();
-        for (Column c : project.columnModel.columns) {
-            newColumns.add(new Column(c.getCellIndex() + 1, c.getName()));
+        List<ColumnMetadata> newColumns = new ArrayList<>();
+        for (ColumnMetadata c : project.columnModel.columns) {
+            newColumns.add(new ColumnMetadata(c.getCellIndex() + 1, c.getName()));
         }
         project.columnModel.columns.clear();
         project.columnModel.columns.addAll(newColumns);

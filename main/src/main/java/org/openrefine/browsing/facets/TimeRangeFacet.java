@@ -55,7 +55,7 @@ import org.openrefine.browsing.util.TimeBinRowIndex;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class TimeRangeFacet implements Facet {
@@ -231,7 +231,7 @@ public class TimeRangeFacet implements Facet {
     public void initializeFromConfig(TimeRangeFacetConfig config, Project project) {
         _config = config;
         if (_config._columnName.length() > 0) {
-            Column column = project.columnModel.getColumnByName(_config._columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(_config._columnName);
             if (column != null) {
                 _cellIndex = column.getCellIndex();
             } else {
@@ -269,7 +269,7 @@ public class TimeRangeFacet implements Facet {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
 
-            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            ColumnMetadata column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "time-bin:row-based:" + _config._expression;
             TimeBinIndex index = null;
             // TODO to migrate
@@ -291,7 +291,7 @@ public class TimeRangeFacet implements Facet {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
 
-            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            ColumnMetadata column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "time-bin:record-based:" + _config._expression;
             TimeBinIndex index = null;
             if (index == null) {

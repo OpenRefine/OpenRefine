@@ -45,7 +45,7 @@ import java.util.Properties;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
@@ -223,7 +223,7 @@ public class DataExtensionChange implements Change {
                 if (reconStats.matchedTopics == 0) {
                     reconStats = null;
                 }
-                Column column = new Column(cellIndex, name, name, reconConfig, reconStats);
+                ColumnMetadata column = new ColumnMetadata(cellIndex, name, name, reconConfig, reconStats);
 
                 try {
                     project.columnModel.addColumn(_columnInsertIndex + i, column, true);

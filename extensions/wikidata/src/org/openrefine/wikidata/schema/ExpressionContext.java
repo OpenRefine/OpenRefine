@@ -27,7 +27,7 @@ package org.openrefine.wikidata.schema;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.wikidata.qa.QAWarning;
@@ -85,7 +85,7 @@ public class ExpressionContext {
      * @return the cell
      */
     public Cell getCellByName(String name) {
-        Column column = columnModel.getColumnByName(name);
+        ColumnMetadata column = columnModel.getColumnByName(name);
         if (column != null) {
             int idx = column.getCellIndex();
             return row.getCell(idx);

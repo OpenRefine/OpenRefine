@@ -45,7 +45,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -60,7 +60,7 @@ public class FunctionTests {
     public void SetUp() throws IOException, ModelException {
         MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
         project = new Project();
-        project.columnModel.addColumn(0, new Column(0, "Column A"), false);
+        project.columnModel.addColumn(0, new ColumnMetadata(0, "Column A"), false);
         bindings = new Properties();
         bindings.put("project", project);
 

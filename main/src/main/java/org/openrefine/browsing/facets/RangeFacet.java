@@ -56,7 +56,7 @@ import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class RangeFacet implements Facet {
@@ -271,7 +271,7 @@ public class RangeFacet implements Facet {
         _config = config;
 
         if (_config._columnName.length() > 0) {
-            Column column = project.columnModel.getColumnByName(_config._columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(_config._columnName);
             if (column != null) {
                 _cellIndex = column.getCellIndex();
             } else {
@@ -316,7 +316,7 @@ public class RangeFacet implements Facet {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
 
-            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            ColumnMetadata column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:row-based:" + _config._expression;
             NumericBinIndex index = null;
             // TODO to migrate
@@ -338,7 +338,7 @@ public class RangeFacet implements Facet {
         if (_eval != null && _errorMessage == null) {
             RowEvaluable rowEvaluable = getRowEvaluable(project);
 
-            Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
+            ColumnMetadata column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "numeric-bin:record-based:" + _config._expression;
             NumericBinIndex index = null;
             // TODO to migrate

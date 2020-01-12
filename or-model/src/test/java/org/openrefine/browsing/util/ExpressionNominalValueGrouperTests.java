@@ -43,7 +43,7 @@ import org.testng.annotations.Test;
 import org.openrefine.browsing.util.ExpressionNominalValueGrouper;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -71,7 +71,7 @@ public class ExpressionNominalValueGrouperTests {
     public void setUp() throws IOException, ModelException {
         project = new Project();
         int index = project.columnModel.allocateNewCellIndex();
-        Column column = new Column(index, columnName);
+        ColumnMetadata column = new ColumnMetadata(index, columnName);
         project.columnModel.addColumn(index, column, true);
         bindings = new Properties();
         bindings.put("project", project);

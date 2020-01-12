@@ -45,7 +45,7 @@ import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.MassCellChange;
@@ -69,7 +69,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
 
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }
@@ -89,7 +89,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
                 historyEntryID, project, description, this, createChange(project, column, cellChanges));
     }
 
-    protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
         return new MassCellChange(
                 cellChanges, column.getName(), _updateRowContextDependencies);
     }
@@ -101,5 +101,5 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
 
     abstract protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception;
 
-    abstract protected String createDescription(Column column, List<CellChange> cellChanges);
+    abstract protected String createDescription(ColumnMetadata column, List<CellChange> cellChanges);
 }

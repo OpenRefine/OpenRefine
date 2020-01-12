@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -111,7 +111,7 @@ public class WrappedRow implements HasFields {
 
         @Override
         public Object getField(String name) {
-            Column column = project.columnModel.getColumnByName(name);
+            ColumnMetadata column = project.columnModel.getColumnByName(name);
             if (column != null) {
                 int cellIndex = column.getCellIndex();
 

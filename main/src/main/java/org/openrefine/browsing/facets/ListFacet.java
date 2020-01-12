@@ -59,7 +59,7 @@ import org.openrefine.browsing.util.ExpressionNominalValueGrouper;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class ListFacet implements Facet {
@@ -257,7 +257,7 @@ public class ListFacet implements Facet {
     public void initializeFromConfig(ListFacetConfig config, Project project) {
         _config = config;
         if (_config.columnName.length() > 0) {
-            Column column = project.columnModel.getColumnByName(_config.columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(_config.columnName);
             if (column != null) {
                 _cellIndex = column.getCellIndex();
             } else {

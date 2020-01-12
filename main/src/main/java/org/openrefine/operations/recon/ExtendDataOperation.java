@@ -50,7 +50,7 @@ import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.ReconType;
@@ -105,7 +105,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 " based on column " + _baseColumnName;
     }
 
-    protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
+    protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
         return "Extend data at index " + _columnInsertIndex +
                 " based on column " + column.getName() +
                 " by filling " + cellsAtRows.size();
@@ -148,7 +148,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             Engine engine = new Engine(_project);
             engine.initializeFromConfig(_engineConfig);
 
-            Column column = _project.columnModel.getColumnByName(_baseColumnName);
+            ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
             if (column == null) {
                 throw new Exception("No column named " + _baseColumnName);
             }

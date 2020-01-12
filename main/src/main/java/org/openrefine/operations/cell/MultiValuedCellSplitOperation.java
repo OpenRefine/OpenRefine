@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
@@ -151,13 +151,13 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }
         int cellIndex = column.getCellIndex();
 
-        Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
+        ColumnMetadata keyColumn = project.columnModel.getColumnByName(_keyColumnName);
         if (keyColumn == null) {
             throw new Exception("No key column named " + _keyColumnName);
         }

@@ -43,7 +43,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
@@ -64,7 +64,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String createDescription(Column column,
+    protected String createDescription(ColumnMetadata column,
             List<CellChange> cellChanges) {
 
         return "Blank down " + cellChanges.size() +
@@ -73,7 +73,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         Mode engineMode = createEngine(project).getMode();
 
         return new RowVisitor() {

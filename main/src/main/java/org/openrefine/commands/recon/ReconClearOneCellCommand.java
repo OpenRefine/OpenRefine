@@ -46,7 +46,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.ReconStats;
@@ -130,7 +130,7 @@ public class ReconClearOneCellCommand extends Command {
                 throw new Exception("Cell is blank or error");
             }
 
-            Column column = _project.columnModel.getColumnByCellIndex(cellIndex);
+            ColumnMetadata column = _project.columnModel.getColumnByCellIndex(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }

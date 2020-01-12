@@ -43,7 +43,7 @@ import java.util.Map.Entry;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFieldsListImpl;
 import org.openrefine.expr.WrappedRow;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.JoinException;
@@ -157,8 +157,8 @@ public class InterProjectModel {
             return;
         }
 
-        Column fromColumn = fromProject.columnModel.getColumnByName(join.fromProjectColumnName);
-        Column toColumn = toProject.columnModel.getColumnByName(join.toProjectColumnName);
+        ColumnMetadata fromColumn = fromProject.columnModel.getColumnByName(join.fromProjectColumnName);
+        ColumnMetadata toColumn = toProject.columnModel.getColumnByName(join.toProjectColumnName);
         if (fromColumn == null) {
             throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " + fromProjectMD.getName());
         }

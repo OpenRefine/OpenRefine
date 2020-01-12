@@ -32,7 +32,7 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
@@ -92,6 +92,6 @@ public class ColumnTests {
                 + "    \"newTopics\":0,"
                 + "    \"matchedTopics\":222"
                 + "}}";
-        TestUtils.isSerializedTo(Column.load(json), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ColumnMetadata.load(json), json, ParsingUtilities.defaultWriter);
     }
 }

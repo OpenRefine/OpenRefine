@@ -43,7 +43,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.recon.ReconConfig;
@@ -101,7 +101,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                         "foo", "bar",
                         "alpha", "beta" });
 
-        Column column = project.columnModel.columns.get(0);
+        ColumnMetadata column = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.database/recon_service",
                 "http://my.database/entity/",

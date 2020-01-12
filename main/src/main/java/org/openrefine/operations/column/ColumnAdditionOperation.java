@@ -52,7 +52,7 @@ import org.openrefine.expr.WrappedCell;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
@@ -120,7 +120,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 " using expression " + _expression;
     }
 
-    protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
+    protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
         return "Create new column " + _newColumnName +
                 " based on column " + column.getName() +
                 " by filling " + cellsAtRows.size() +
@@ -131,7 +131,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
 
-        Column column = project.columnModel.getColumnByName(_baseColumnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_baseColumnName);
         if (column == null) {
             throw new Exception("No column named " + _baseColumnName);
         }
@@ -153,7 +153,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
-        Column column = project.columnModel.getColumnByName(_baseColumnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_baseColumnName);
 
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);

@@ -53,7 +53,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.CsvExporter;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -199,7 +199,7 @@ public class TsvExporterTests extends RefineTest {
     protected void CreateColumns(int noOfColumns) {
         for (int i = 0; i < noOfColumns; i++) {
             try {
-                project.columnModel.addColumn(i, new Column(i, "column" + i), true);
+                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
                 project.columnModel.columns.get(i).getCellIndex();
             } catch (ModelException e1) {
                 Assert.fail("Could not create column");

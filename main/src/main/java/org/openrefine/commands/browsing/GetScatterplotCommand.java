@@ -58,7 +58,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
@@ -171,7 +171,7 @@ public class GetScatterplotCommand extends Command {
         Color base_color = o.base_color_str != null ? new Color(Integer.parseInt(o.base_color_str, 16)) : null;
 
         if (o.columnName_x.length() > 0) {
-            Column x_column = project.columnModel.getColumnByName(o.columnName_x);
+            ColumnMetadata x_column = project.columnModel.getColumnByName(o.columnName_x);
             if (x_column != null) {
                 columnIndex_x = x_column.getCellIndex();
             }
@@ -186,7 +186,7 @@ public class GetScatterplotCommand extends Command {
         }
 
         if (o.columnName_y.length() > 0) {
-            Column y_column = project.columnModel.getColumnByName(o.columnName_y);
+            ColumnMetadata y_column = project.columnModel.getColumnByName(o.columnName_y);
             if (y_column != null) {
                 columnIndex_y = y_column.getCellIndex();
             }
@@ -203,7 +203,7 @@ public class GetScatterplotCommand extends Command {
         NumericBinIndex index_x = null;
         NumericBinIndex index_y = null;
 
-        Column column_x = project.columnModel.getColumnByName(o.columnName_x);
+        ColumnMetadata column_x = project.columnModel.getColumnByName(o.columnName_x);
         if (column_x != null) {
             columnIndex_x = column_x.getCellIndex();
             index_x = ScatterplotFacet.getBinIndex(project, column_x, eval_x, o.expression_x);
@@ -211,7 +211,7 @@ public class GetScatterplotCommand extends Command {
             max_x = index_x.getMax();
         }
 
-        Column column_y = project.columnModel.getColumnByName(o.columnName_y);
+        ColumnMetadata column_y = project.columnModel.getColumnByName(o.columnName_y);
         if (column_y != null) {
             columnIndex_y = column_y.getCellIndex();
             index_y = ScatterplotFacet.getBinIndex(project, column_y, eval_y, o.expression_y);

@@ -62,7 +62,7 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
@@ -174,7 +174,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 " using expression " + _urlExpression;
     }
 
-    protected String createDescription(Column column, List<CellAtRow> cellsAtRows) {
+    protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
         return "Create new column " + _newColumnName +
                 ", filling " + cellsAtRows.size() +
                 " rows by fetching URLs based on column " + column.getName() +
@@ -256,7 +256,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
         @Override
         public void run() {
-            Column column = _project.columnModel.getColumnByName(_baseColumnName);
+            ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
             if (column == null) {
                 _project.processManager.onFailedProcess(this, new Exception("No column named " + _baseColumnName));
                 return;
@@ -392,7 +392,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 List<CellAtRow> cellsAtRows;
 
                 public RowVisitor init(List<CellAtRow> cellsAtRows) {
-                    Column column = _project.columnModel.getColumnByName(_baseColumnName);
+                    ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
 
                     this.cellIndex = column.getCellIndex();
                     this.bindings = ExpressionUtils.createBindings(_project);

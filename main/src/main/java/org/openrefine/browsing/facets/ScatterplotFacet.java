@@ -66,7 +66,7 @@ import org.openrefine.browsing.util.NumericBinRowIndex;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class ScatterplotFacet implements Facet {
@@ -346,7 +346,7 @@ public class ScatterplotFacet implements Facet {
         t = createRotationMatrix(config.rotation, config.l);
 
         if (config.columnName_x.length() > 0) {
-            Column x_column = project.columnModel.getColumnByName(config.columnName_x);
+            ColumnMetadata x_column = project.columnModel.getColumnByName(config.columnName_x);
             if (x_column != null) {
                 columnIndex_x = x_column.getCellIndex();
 
@@ -367,7 +367,7 @@ public class ScatterplotFacet implements Facet {
         }
 
         if (config.columnName_y.length() > 0) {
-            Column y_column = project.columnModel.getColumnByName(config.columnName_y);
+            ColumnMetadata y_column = project.columnModel.getColumnByName(config.columnName_y);
             if (y_column != null) {
                 columnIndex_y = y_column.getCellIndex();
 
@@ -423,10 +423,10 @@ public class ScatterplotFacet implements Facet {
     @Override
     public void computeChoices(Project project, FilteredRows filteredRows) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
-            Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
+            ColumnMetadata column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
             NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, config.expression_x, "row-based");
 
-            Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
+            ColumnMetadata column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
             NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, config.expression_y, "row-based");
 
             retrieveDataFromBinIndices(index_x, index_y);
@@ -453,10 +453,10 @@ public class ScatterplotFacet implements Facet {
     @Override
     public void computeChoices(Project project, FilteredRecords filteredRecords) {
         if (eval_x != null && eval_y != null && errorMessage_x == null && errorMessage_y == null) {
-            Column column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
+            ColumnMetadata column_x = project.columnModel.getColumnByCellIndex(columnIndex_x);
             NumericBinIndex index_x = getBinIndex(project, column_x, eval_x, config.expression_x, "record-based");
 
-            Column column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
+            ColumnMetadata column_y = project.columnModel.getColumnByCellIndex(columnIndex_y);
             NumericBinIndex index_y = getBinIndex(project, column_y, eval_y, config.expression_y, "record-based");
 
             retrieveDataFromBinIndices(index_x, index_y);
@@ -501,11 +501,11 @@ public class ScatterplotFacet implements Facet {
         return ("log".equals(type.toLowerCase())) ? LOG : LIN;
     }
 
-    public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression) {
+    public static NumericBinIndex getBinIndex(Project project, ColumnMetadata column, Evaluable eval, String expression) {
         return getBinIndex(project, column, eval, expression, "row-based");
     }
 
-    public static NumericBinIndex getBinIndex(Project project, Column column, Evaluable eval, String expression, String mode) {
+    public static NumericBinIndex getBinIndex(Project project, ColumnMetadata column, Evaluable eval, String expression, String mode) {
         String key = "numeric-bin:" + mode + ":" + expression;
         if (eval == null) {
             try {

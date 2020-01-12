@@ -47,7 +47,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -125,7 +125,7 @@ public class ImporterUtilities {
         }
     }
 
-    static public Column getOrAllocateColumn(Project project, List<String> currentFileColumnNames,
+    static public ColumnMetadata getOrAllocateColumn(Project project, List<String> currentFileColumnNames,
             int index, boolean hasOurOwnColumnNames) {
         if (index < currentFileColumnNames.size()) {
             return project.columnModel.getColumnByName(currentFileColumnNames.get(index));
@@ -134,7 +134,7 @@ public class ImporterUtilities {
             int i = index + 1;
             while (true) {
                 String columnName = prefix + i;
-                Column column = project.columnModel.getColumnByName(columnName);
+                ColumnMetadata column = project.columnModel.getColumnByName(columnName);
                 if (column != null) {
                     if (hasOurOwnColumnNames) {
                         // Already taken name
@@ -143,7 +143,7 @@ public class ImporterUtilities {
                         return column;
                     }
                 } else {
-                    column = new Column(project.columnModel.allocateNewCellIndex(), columnName);
+                    column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), columnName);
                     try {
                         project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
                     } catch (ModelException e) {
@@ -180,7 +180,7 @@ public class ImporterUtilities {
 
             columnNames.set(c, cell);
             if (project.columnModel.getColumnByName(cell) == null) {
-                Column column = new Column(project.columnModel.allocateNewCellIndex(), cell);
+                ColumnMetadata column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), cell);
                 try {
                     project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
                 } catch (ModelException e) {

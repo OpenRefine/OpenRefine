@@ -51,13 +51,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ColumnModel {
 
     @JsonProperty("columns")
-    final public List<Column> columns = new LinkedList<Column>();
+    final protected List<ColumnMetadata> columns = new LinkedList<ColumnMetadata>();
 
     private int _maxCellIndex = -1;
     private int _keyColumnIndex;
 
-    transient protected Map<String, Column> _nameToColumn;
-    transient protected Map<Integer, Column> _cellIndexToColumn;
+    transient protected Map<String, ColumnMetadata> _nameToColumn;
+    transient protected Map<Integer, ColumnMetadata> _cellIndexToColumn;
     transient protected List<String> _columnNames;
 
     public ColumnModel() {
@@ -94,7 +94,7 @@ public class ColumnModel {
         generateMaps();
     }
 
-    synchronized public void addColumn(int index, Column column, boolean avoidNameCollision) throws ModelException {
+    synchronized public void addColumn(int index, ColumnMetadata column, boolean avoidNameCollision) throws ModelException {
         String name = column.getName();
 
         if (_nameToColumn.containsKey(name)) {
@@ -124,7 +124,7 @@ public class ColumnModel {
         return name;
     }
 
-    synchronized public Column getColumnByName(String name) {
+    synchronized public ColumnMetadata getColumnByName(String name) {
         return _nameToColumn.get(name);
     }
 
@@ -145,7 +145,7 @@ public class ColumnModel {
         return -1;
     }
 
-    synchronized public Column getColumnByCellIndex(int cellIndex) {
+    synchronized public ColumnMetadata getColumnByCellIndex(int cellIndex) {
         return _cellIndexToColumn.get(cellIndex);
     }
 
@@ -183,7 +183,7 @@ public class ColumnModel {
         writer.write("columnCount=");
         writer.write(Integer.toString(columns.size()));
         writer.write('\n');
-        for (Column column : columns) {
+        for (ColumnMetadata column : columns) {
             column.save(writer);
             writer.write('\n');
         }
@@ -206,7 +206,7 @@ public class ColumnModel {
                 int count = Integer.parseInt(value);
 
                 for (int i = 0; i < count; i++) {
-                    columns.add(Column.load(reader.readLine()));
+                    columns.add(ColumnMetadata.load(reader.readLine()));
                 }
             }
         }
@@ -215,11 +215,11 @@ public class ColumnModel {
     }
 
     protected void generateMaps() {
-        _nameToColumn = new HashMap<String, Column>();
-        _cellIndexToColumn = new HashMap<Integer, Column>();
+        _nameToColumn = new HashMap<String, ColumnMetadata>();
+        _cellIndexToColumn = new HashMap<Integer, ColumnMetadata>();
         _columnNames = new ArrayList<String>();
         int maxCellIndex = -1;
-        for (Column column : columns) {
+        for (ColumnMetadata column : columns) {
             _nameToColumn.put(column.getName(), column);
             int cidx = column.getCellIndex();
             if (cidx > maxCellIndex) {

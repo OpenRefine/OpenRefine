@@ -42,18 +42,18 @@ import java.util.Properties;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public class MassRowColumnChange implements Change {
 
-    final protected List<Column> _newColumns;
+    final protected List<ColumnMetadata> _newColumns;
     final protected List<Row> _newRows;
-    protected List<Column> _oldColumns;
+    protected List<ColumnMetadata> _oldColumns;
     protected List<Row> _oldRows;
 
-    public MassRowColumnChange(List<Column> newColumns, List<Row> newRows) {
+    public MassRowColumnChange(List<ColumnMetadata> newColumns, List<Row> newRows) {
         _newColumns = newColumns;
         _newRows = newRows;
     }
@@ -62,7 +62,7 @@ public class MassRowColumnChange implements Change {
     public void apply(Project project) {
         synchronized (project) {
             if (_oldColumns == null) {
-                _oldColumns = new ArrayList<Column>(project.columnModel.columns);
+                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.columns);
             }
             if (_oldRows == null) {
                 _oldRows = new ArrayList<Row>(project.rows);
@@ -100,14 +100,14 @@ public class MassRowColumnChange implements Change {
         writer.write("newColumnCount=");
         writer.write(Integer.toString(_newColumns.size()));
         writer.write('\n');
-        for (Column column : _newColumns) {
+        for (ColumnMetadata column : _newColumns) {
             column.save(writer);
             writer.write('\n');
         }
         writer.write("oldColumnCount=");
         writer.write(Integer.toString(_oldColumns.size()));
         writer.write('\n');
-        for (Column column : _oldColumns) {
+        for (ColumnMetadata column : _oldColumns) {
             column.save(writer);
             writer.write('\n');
         }
@@ -129,8 +129,8 @@ public class MassRowColumnChange implements Change {
     }
 
     static public Change load(LineNumberReader reader) throws Exception {
-        List<Column> oldColumns = null;
-        List<Column> newColumns = null;
+        List<ColumnMetadata> oldColumns = null;
+        List<ColumnMetadata> newColumns = null;
 
         List<Row> oldRows = null;
         List<Row> newRows = null;
@@ -163,21 +163,21 @@ public class MassRowColumnChange implements Change {
             } else if ("oldColumnCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
 
-                oldColumns = new ArrayList<Column>(count);
+                oldColumns = new ArrayList<ColumnMetadata>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldColumns.add(Column.load(line));
+                        oldColumns.add(ColumnMetadata.load(line));
                     }
                 }
             } else if ("newColumnCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
 
-                newColumns = new ArrayList<Column>(count);
+                newColumns = new ArrayList<ColumnMetadata>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newColumns.add(Column.load(line));
+                        newColumns.add(ColumnMetadata.load(line));
                     }
                 }
             }

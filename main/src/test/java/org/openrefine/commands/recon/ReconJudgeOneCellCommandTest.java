@@ -48,7 +48,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.recon.ReconJudgeOneCellCommand;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.recon.ReconConfig;
@@ -69,7 +69,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
                 new Serializable[] {
                         "a", "b",
                         "c", "d" });
-        Column reconciled = project.columnModel.columns.get(0);
+        ColumnMetadata reconciled = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.recon.service/api",
                 "http://my.recon.service/rdf/space",

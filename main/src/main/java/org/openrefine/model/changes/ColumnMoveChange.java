@@ -39,7 +39,7 @@ import java.io.Writer;
 import java.util.Properties;
 
 import org.openrefine.history.Change;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class ColumnMoveChange extends ColumnChange {
@@ -63,7 +63,7 @@ public class ColumnMoveChange extends ColumnChange {
                 throw new RuntimeException("Column index out of range");
             }
 
-            Column column = project.columnModel.columns.remove(_oldColumnIndex);
+            ColumnMetadata column = project.columnModel.columns.remove(_oldColumnIndex);
             project.columnModel.columns.add(_newColumnIndex, column);
 
             project.update();
@@ -73,7 +73,7 @@ public class ColumnMoveChange extends ColumnChange {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            Column column = project.columnModel.columns.remove(_newColumnIndex);
+            ColumnMetadata column = project.columnModel.columns.remove(_newColumnIndex);
             project.columnModel.columns.add(_oldColumnIndex, column);
 
             project.update();

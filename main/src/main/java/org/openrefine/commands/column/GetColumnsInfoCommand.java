@@ -48,7 +48,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
@@ -67,7 +67,7 @@ public class GetColumnsInfoCommand extends Command {
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(response.getWriter());
 
             writer.writeStartArray();
-            for (Column column : project.columnModel.columns) {
+            for (ColumnMetadata column : project.columnModel.columns) {
                 writer.writeStartObject();
                 write(project, column, writer);
                 writer.writeEndObject();
@@ -81,7 +81,7 @@ public class GetColumnsInfoCommand extends Command {
         }
     }
 
-    private NumericBinIndex getBinIndex(Project project, Column column) {
+    private NumericBinIndex getBinIndex(Project project, ColumnMetadata column) {
         String expression = "value";
         String key = "numeric-bin:" + expression;
         Evaluable eval = null;
@@ -98,7 +98,7 @@ public class GetColumnsInfoCommand extends Command {
         return index;
     }
 
-    private void write(Project project, Column column, JsonGenerator writer) throws IOException {
+    private void write(Project project, ColumnMetadata column, JsonGenerator writer) throws IOException {
         NumericBinIndex columnIndex = getBinIndex(project, column);
         if (columnIndex != null) {
             writer.writeStringField("name", column.getName());

@@ -62,7 +62,7 @@ import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.exporters.TabularSerializer.CellData;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
@@ -100,10 +100,10 @@ abstract public class CustomizableTabularExporterUtilities {
 
         List<JsonNode> columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
         if (columnOptionArray == null) {
-            List<Column> columns = project.columnModel.columns;
+            List<ColumnMetadata> columns = project.columnModel.columns;
 
             columnNames = new ArrayList<String>(columns.size());
-            for (Column column : columns) {
+            for (ColumnMetadata column : columns) {
                 String name = column.getName();
                 columnNames.add(name);
                 columnNameToFormatter.put(name, new CellFormatter());
@@ -150,7 +150,7 @@ abstract public class CustomizableTabularExporterUtilities {
                 int nonNullCount = 0;
 
                 for (String columnName : columnNames) {
-                    Column column = project.columnModel.getColumnByName(columnName);
+                    ColumnMetadata column = project.columnModel.getColumnByName(columnName);
                     CellFormatter formatter = columnNameToFormatter.get(columnName);
                     CellData cellData = formatter.format(
                             project,
@@ -326,7 +326,7 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
 
-        CellData format(Project project, Column column, Cell cell) {
+        CellData format(Project project, ColumnMetadata column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;

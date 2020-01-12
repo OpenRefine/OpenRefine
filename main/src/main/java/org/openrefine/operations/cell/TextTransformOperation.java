@@ -47,7 +47,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
@@ -106,7 +106,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String createDescription(Column column,
+    protected String createDescription(ColumnMetadata column,
             List<CellChange> cellChanges) {
 
         return "Text transform on " + cellChanges.size() +
@@ -115,7 +115,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
 
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);

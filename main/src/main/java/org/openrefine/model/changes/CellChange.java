@@ -41,7 +41,7 @@ import java.util.Properties;
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class CellChange implements Change {
@@ -62,7 +62,7 @@ public class CellChange implements Change {
     public void apply(Project project) {
         project.rows.get(row).setCell(cellIndex, newCell);
 
-        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+        ColumnMetadata column = project.columnModel.getColumnByCellIndex(cellIndex);
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
 
@@ -70,7 +70,7 @@ public class CellChange implements Change {
     public void revert(Project project) {
         project.rows.get(row).setCell(cellIndex, oldCell);
 
-        Column column = project.columnModel.getColumnByCellIndex(cellIndex);
+        ColumnMetadata column = project.columnModel.getColumnByCellIndex(cellIndex);
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
     }
 
