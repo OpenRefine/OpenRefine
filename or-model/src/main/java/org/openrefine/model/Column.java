@@ -35,43 +35,44 @@ package org.openrefine.model;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.util.ParsingUtilities;
 
+/**
+ * Holds the metadata for a single column. Fields are immutable, copy the column with the provided methods to change its
+ * fields.
+ *
+ */
 public class Column {
 
     final private int _cellIndex;
     final private String _originalName;
-    private String _name;
-    private ReconConfig _reconConfig;
-    private ReconStats _reconStats;
-
-    // from data package metadata Field.java:
-    private String type = "";
-    private String format = "default";
-    private String title = "";
-    private String description = "";
-    private Map<String, Object> constraints = Collections.emptyMap();
-
-    transient protected Map<String, Object> _precomputes;
+    final private String _name;
+    final private ReconConfig _reconConfig;
+    final private ReconStats _reconStats;
 
     @JsonCreator
     public Column(
             @JsonProperty("cellIndex") int cellIndex,
-            @JsonProperty("originalName") String originalName) {
+            @JsonProperty("originalName") String originalName,
+            @JsonProperty("name") String name,
+            @JsonProperty("reconConfig") ReconConfig reconConfig,
+            @JsonProperty("reconStats") ReconStats reconStats) {
         _cellIndex = cellIndex;
-        _originalName = _name = originalName;
+        _originalName = originalName;
+        _name = name == null ? originalName : name;
+        _reconConfig = reconConfig;
+        _reconStats = reconStats;
+    }
+
+    public Column(int index, String name) {
+        this(index, name, name, null, null);
     }
 
     @JsonProperty("cellIndex")
@@ -79,14 +80,17 @@ public class Column {
         return _cellIndex;
     }
 
+    public Column withCellIndex(int cellIndex) {
+        return new Column(cellIndex, _originalName, _name, _reconConfig, _reconStats);
+    }
+
     @JsonProperty("originalName")
     public String getOriginalHeaderLabel() {
         return _originalName;
     }
 
-    @JsonProperty("name")
-    public void setName(String name) {
-        this._name = name;
+    public Column withName(String name) {
+        return new Column(_cellIndex, _originalName, name, _reconConfig, _reconStats);
     }
 
     @JsonProperty("name")
@@ -94,9 +98,8 @@ public class Column {
         return _name;
     }
 
-    @JsonProperty("reconConfig")
-    public void setReconConfig(ReconConfig config) {
-        this._reconConfig = config;
+    public Column withReconConfig(ReconConfig config) {
+        return new Column(_cellIndex, _originalName, _name, config, _reconStats);
     }
 
     @JsonProperty("reconConfig")
@@ -105,110 +108,14 @@ public class Column {
         return _reconConfig;
     }
 
-    @JsonProperty("reconStats")
-    public void setReconStats(ReconStats stats) {
-        this._reconStats = stats;
+    public Column withReconStats(ReconStats stats) {
+        return new Column(_cellIndex, _originalName, _name, _reconConfig, stats);
     }
 
     @JsonProperty("reconStats")
     @JsonInclude(Include.NON_NULL)
     public ReconStats getReconStats() {
         return _reconStats;
-    }
-
-    /**
-     * Clear all cached precomputed values.
-     * <p>
-     * If you are modifying something that requires this to be called, you probably also need to call
-     * {@link InterProjectModel#flushJoinsInvolvingProjectColumn(long, String)}. e.g.
-     * ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName())
-     */
-    public void clearPrecomputes() {
-        if (_precomputes != null) {
-            _precomputes.clear();
-        }
-    }
-
-    public Object getPrecompute(String key) {
-        if (_precomputes != null) {
-            return _precomputes.get(key);
-        }
-        return null;
-    }
-
-    public void setPrecompute(String key, Object value) {
-        if (_precomputes == null) {
-            _precomputes = new HashMap<String, Object>();
-        }
-        _precomputes.put(key, value);
-    }
-
-    @JsonProperty("type")
-    public String getType() {
-        return type;
-    }
-
-    @JsonProperty("type")
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @JsonProperty("format")
-    public String getFormat() {
-        return format;
-    }
-
-    @JsonProperty("format")
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    @JsonProperty("title")
-    public String getTitle() {
-        return title;
-    }
-
-    @JsonProperty("title")
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @JsonProperty("description")
-    public String getDescription() {
-        return description;
-    }
-
-    @JsonProperty("description")
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @JsonProperty("constraints")
-    public String getConstraintsString() {
-        try {
-            return ParsingUtilities.mapper.writeValueAsString(constraints);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "{}";
-        }
-    }
-
-    @JsonProperty("constraints")
-    public void setConstraintsJson(String json) {
-        try {
-            setConstraints(ParsingUtilities.mapper.readValue(json, new TypeReference<Map<String, Object>>() {
-            }));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Map<String, Object> getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(Map<String, Object> constraints) {
-        this.constraints = constraints;
     }
 
     public void save(Writer writer) {

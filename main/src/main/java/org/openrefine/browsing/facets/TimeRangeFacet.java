@@ -271,10 +271,10 @@ public class TimeRangeFacet implements Facet {
 
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "time-bin:row-based:" + _config._expression;
-            TimeBinIndex index = (TimeBinIndex) column.getPrecompute(key);
+            TimeBinIndex index = null;
+            // TODO to migrate
             if (index == null) {
                 index = new TimeBinRowIndex(project, rowEvaluable);
-                column.setPrecompute(key, index);
             }
 
             retrieveDataFromBaseBinIndex(index);
@@ -293,10 +293,9 @@ public class TimeRangeFacet implements Facet {
 
             Column column = project.columnModel.getColumnByCellIndex(_cellIndex);
             String key = "time-bin:record-based:" + _config._expression;
-            TimeBinIndex index = (TimeBinIndex) column.getPrecompute(key);
+            TimeBinIndex index = null;
             if (index == null) {
                 index = new TimeBinRecordIndex(project, rowEvaluable);
-                column.setPrecompute(key, index);
             }
 
             retrieveDataFromBaseBinIndex(index);

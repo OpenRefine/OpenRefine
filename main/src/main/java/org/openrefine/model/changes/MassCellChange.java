@@ -93,7 +93,6 @@ public class MassCellChange implements Change {
 
             if (_commonColumnName != null) {
                 Column column = project.columnModel.getColumnByName(_commonColumnName);
-                column.clearPrecomputes();
                 ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
             }
 
@@ -114,7 +113,6 @@ public class MassCellChange implements Change {
 
             if (_commonColumnName != null) {
                 Column column = project.columnModel.getColumnByName(_commonColumnName);
-                column.clearPrecomputes();
                 ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
             }
 

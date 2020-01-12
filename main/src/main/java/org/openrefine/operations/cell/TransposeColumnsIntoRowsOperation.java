@@ -212,8 +212,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 if (columnsLeftToTranspose == 0) {
                     // This column is beyond the columns to transpose
 
-                    Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
-                    newColumn.setName(column.getName());
+                    Column newColumn = column.withCellIndex(newColumns.size());
 
                     newColumns.add(newColumn);
                 } else if (columnsLeftToTranspose < _columnCount) {
@@ -237,8 +236,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 } else {
                     // This column is before all columns to transpose
 
-                    Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
-                    newColumn.setName(column.getName());
+                    Column newColumn = column.withCellIndex(newColumns.size());
 
                     newColumns.add(newColumn);
                 }
@@ -261,8 +259,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                 } else {
                     // This column is before all columns to transpose
 
-                    Column newColumn = new Column(newColumns.size(), column.getOriginalHeaderLabel());
-                    newColumn.setName(column.getName());
+                    Column newColumn = column.withCellIndex(newColumns.size());
 
                     newColumns.add(newColumn);
                 }

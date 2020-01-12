@@ -90,10 +90,10 @@ public class GetColumnsInfoCommand extends Command {
         } catch (ParsingException e) {
             // this should never happen
         }
-        NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+        NumericBinIndex index = null;
+        // TODO migrate this
         if (index == null) {
             index = new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval));
-            column.setPrecompute(key, index);
         }
         return index;
     }

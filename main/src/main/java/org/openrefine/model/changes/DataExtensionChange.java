@@ -55,6 +55,7 @@ import org.openrefine.model.ReconStats;
 import org.openrefine.model.ReconType;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.DataExtensionReconConfig;
+import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.util.ParsingUtilities;
 
@@ -212,17 +213,17 @@ public class DataExtensionChange implements Change {
                 String name = _columnNames.get(i);
                 int cellIndex = _firstNewCellIndex + i;
 
-                Column column = new Column(cellIndex, name);
                 ReconType columnType = _columnTypes.get(i);
-                column.setReconConfig(new DataExtensionReconConfig(
+                ReconConfig reconConfig = new DataExtensionReconConfig(
                         _service,
                         _identifierSpace,
                         _schemaSpace,
-                        columnType));
+                        columnType);
                 ReconStats reconStats = ReconStats.create(project, cellIndex);
-                if (reconStats.matchedTopics > 0) {
-                    column.setReconStats(reconStats);
+                if (reconStats.matchedTopics == 0) {
+                    reconStats = null;
                 }
+                Column column = new Column(cellIndex, name, name, reconConfig, reconStats);
 
                 try {
                     project.columnModel.addColumn(_columnInsertIndex + i, column, true);

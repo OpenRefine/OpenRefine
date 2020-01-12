@@ -109,7 +109,6 @@ public class ReconChange extends MassCellChange {
             column.setReconConfig(_newReconConfig);
             column.setReconStats(_newReconStats);
 
-            column.clearPrecomputes();
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _commonColumnName);
         }
     }

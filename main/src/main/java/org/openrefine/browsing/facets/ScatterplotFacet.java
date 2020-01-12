@@ -514,13 +514,13 @@ public class ScatterplotFacet implements Facet {
                 logger.warn("Error parsing expression", e);
             }
         }
-        NumericBinIndex index = (NumericBinIndex) column.getPrecompute(key);
+        NumericBinIndex index = null;
+        // TODO to migrate
         if (index == null) {
             index = "row-based".equals(mode)
                     ? new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval))
                     : new NumericBinRecordIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval));
 
-            column.setPrecompute(key, index);
         }
         return index;
     }

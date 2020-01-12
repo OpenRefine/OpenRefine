@@ -62,7 +62,8 @@ public class FacetCount implements Function {
             }
 
             String key = "nominal-bin:" + facetExpression;
-            ExpressionNominalValueGrouper grouper = (ExpressionNominalValueGrouper) column.getPrecompute(key);
+            ExpressionNominalValueGrouper grouper = null;
+            // TODO to migrate
             if (grouper == null) {
                 try {
                     Evaluable eval = MetaParser.parse(facetExpression);
@@ -70,8 +71,6 @@ public class FacetCount implements Function {
 
                     grouper = new ExpressionNominalValueGrouper(eval, columnName, column.getCellIndex());
                     engine.getAllRows().accept(project, grouper);
-
-                    column.setPrecompute(key, grouper);
                 } catch (ParsingException e) {
                     return new EvalError("Error parsing facet expression " + facetExpression);
                 }

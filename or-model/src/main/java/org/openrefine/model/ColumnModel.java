@@ -102,7 +102,7 @@ public class ColumnModel {
                 throw new ModelException("Duplicated column name");
             } else {
                 name = getUnduplicatedColumnName(name);
-                column.setName(name);
+                column = column.withName(name);
             }
         }
 
@@ -229,14 +229,5 @@ public class ColumnModel {
             _columnNames.add(column.getName());
         }
         _maxCellIndex = maxCellIndex;
-    }
-
-    /**
-     * Clear cached value computations for all columns
-     */
-    public void clearPrecomputes() {
-        for (Column column : columns) {
-            column.clearPrecomputes();
-        }
     }
 }
