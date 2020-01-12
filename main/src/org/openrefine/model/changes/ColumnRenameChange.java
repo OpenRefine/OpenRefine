@@ -40,6 +40,7 @@ import java.util.Properties;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
+import org.openrefine.model.Column;
 import org.openrefine.model.Project;
 
 public class ColumnRenameChange extends ColumnChange {
@@ -55,7 +56,9 @@ public class ColumnRenameChange extends ColumnChange {
     public void apply(Project project) {
         synchronized (project) {
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _oldColumnName);
-            project.columnModel.getColumnByName(_oldColumnName).setName(_newColumnName);
+            Column newColumn = project.columnModel.getColumnByName(_oldColumnName)
+            		.withName(_newColumnName);
+            project.columnModel.set
             project.columnModel.update();
         }
     }
