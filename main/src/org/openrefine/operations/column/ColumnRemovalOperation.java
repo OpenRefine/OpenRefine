@@ -36,7 +36,7 @@ package org.openrefine.operations.column;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRemovalChange;
 
@@ -67,7 +67,7 @@ public class ColumnRemovalOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         if (column == null) {
             throw new Exception("No column named " + _columnName);
         }

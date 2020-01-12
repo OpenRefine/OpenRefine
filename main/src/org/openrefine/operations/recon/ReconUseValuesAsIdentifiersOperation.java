@@ -34,7 +34,7 @@ import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.ReconCandidate;
@@ -88,7 +88,7 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID)
             throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
             int cellIndex;
@@ -144,13 +144,13 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     }
 
     @Override
-    protected String createDescription(Column column, List<CellChange> cellChanges) {
+    protected String createDescription(ColumnMetadata column, List<CellChange> cellChanges) {
         return "Use values as reconciliation identifiers for "+ cellChanges.size() + 
         " cells in column " + column.getName();
     }
     
     @Override
-    protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 
             _columnName, 

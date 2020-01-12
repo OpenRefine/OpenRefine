@@ -44,7 +44,7 @@ import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
@@ -173,7 +173,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
             try {
                 project.columnModel.addColumn(
-                    0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+                    0, new ColumnMetadata(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
 
                 return 0;
             } catch (ModelException e) {

@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
@@ -100,7 +100,7 @@ public class PreviewExtendDataCommand extends Command {
             
             List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
             int length = rowIndices.size();
-            Column column = project.columnModel.getColumnByName(columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
             int cellIndex = column.getCellIndex();
 
             // get the endpoint to extract data from

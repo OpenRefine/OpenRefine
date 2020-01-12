@@ -26,7 +26,7 @@
  ******************************************************************************/
 package org.openrefine.model;
 
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.ModelException;
 import org.openrefine.util.ParsingUtilities;
@@ -37,8 +37,8 @@ public class ColumnModelTests {
     @Test
     public void serializeColumnModel() throws ModelException {
         ColumnModel model = new ColumnModel();
-        model.addColumn(0, new Column(0, "a"), false);
-        model.addColumn(1, new Column(1, "b"), false);
+        model.addColumn(0, new ColumnMetadata(0, "a"), false);
+        model.addColumn(1, new ColumnMetadata(1, "b"), false);
         String json = "{\n" + 
                 "       \"columns\" : [ {\n" + 
                 "         \"cellIndex\" : 0,\n" + 
