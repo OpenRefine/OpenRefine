@@ -41,7 +41,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
@@ -86,7 +86,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
     }
 
     @Override
-    protected String createDescription(Column column,
+    protected String createDescription(ColumnMetadata column,
             List<CellChange> cellChanges) {
         
         return (_clearData ?
@@ -97,7 +97,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         
         return new RowVisitor() {
             int cellIndex;
@@ -154,7 +154,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
     }
     
     @Override
-    protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 
             _columnName, 

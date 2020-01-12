@@ -39,7 +39,7 @@ import java.util.List;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
@@ -210,19 +210,19 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
             }
         }
         
-        List<Column> newColumns = new ArrayList<Column>();
-        List<Column> oldColumns = project.columnModel.columns;
+        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
+        List<ColumnMetadata> oldColumns = project.columnModel.columns;
         
         int startColumnIndex = oldColumns.size();
         int columnCount = _columnCount;
         if (_columnCount > 0) {
             int columnsLeftToTranspose = _columnCount;
             for (int c = 0; c < oldColumns.size(); c++) {
-                Column column = oldColumns.get(c);
+                ColumnMetadata column = oldColumns.get(c);
                 if (columnsLeftToTranspose == 0) {
                     // This column is beyond the columns to transpose
                     
-                    Column newColumn =column.withCellIndex(newColumns.size());
+                    ColumnMetadata newColumn =column.withCellIndex(newColumns.size());
                     
                     newColumns.add(newColumn);
                 } else if (columnsLeftToTranspose < _columnCount) {
@@ -236,40 +236,40 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                     startColumnIndex = c;
                     
                     if (_combinedColumnName != null) {
-                        newColumns.add(new Column(newColumns.size(), _combinedColumnName));
+                        newColumns.add(new ColumnMetadata(newColumns.size(), _combinedColumnName));
                     } else {
-                        newColumns.add(new Column(newColumns.size(), _keyColumnName));
-                        newColumns.add(new Column(newColumns.size(), _valueColumnName));
+                        newColumns.add(new ColumnMetadata(newColumns.size(), _keyColumnName));
+                        newColumns.add(new ColumnMetadata(newColumns.size(), _valueColumnName));
                     }
                     
                     columnsLeftToTranspose--;
                 } else {
                     // This column is before all columns to transpose
                     
-                    Column newColumn = column.withCellIndex(newColumns.size());
+                    ColumnMetadata newColumn = column.withCellIndex(newColumns.size());
                     
                     newColumns.add(newColumn);
                 }
             }
         } else {
             for (int c = 0; c < oldColumns.size(); c++) {
-                Column column = oldColumns.get(c);
+                ColumnMetadata column = oldColumns.get(c);
                 if (_startColumnName.equals(column.getName())) {
                     // This is the first column to transpose
                     
                     startColumnIndex = c;
                     
                     if (_combinedColumnName != null) {
-                        newColumns.add(new Column(newColumns.size(), _combinedColumnName));
+                        newColumns.add(new ColumnMetadata(newColumns.size(), _combinedColumnName));
                     } else {
-                        newColumns.add(new Column(newColumns.size(), _keyColumnName));
-                        newColumns.add(new Column(newColumns.size(), _valueColumnName));
+                        newColumns.add(new ColumnMetadata(newColumns.size(), _keyColumnName));
+                        newColumns.add(new ColumnMetadata(newColumns.size(), _valueColumnName));
                     }
                     break;
                 } else {
                     // This column is before all columns to transpose
                     
-                    Column newColumn = column.withCellIndex(newColumns.size());
+                    ColumnMetadata newColumn = column.withCellIndex(newColumns.size());
                     
                     newColumns.add(newColumn);
                 }
@@ -288,7 +288,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
             
             int transposedCells = 0;
             for (int c = 0; c < oldColumns.size(); c++) {
-                Column column = oldColumns.get(c);
+                ColumnMetadata column = oldColumns.get(c);
                 Cell cell = oldRow.getCell(column.getCellIndex());
                 
                 if (c < startColumnIndex) {
@@ -351,7 +351,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
                             (_combinedColumnName != null ?
                                 c > startColumnIndex :
                                 c > startColumnIndex + 1)) {
-                            Column column = newColumns.get(c);
+                            ColumnMetadata column = newColumns.get(c);
                             int cellIndex = column.getCellIndex();
                             
                             Cell cellToCopy = firstNewRow.getCell(cellIndex);

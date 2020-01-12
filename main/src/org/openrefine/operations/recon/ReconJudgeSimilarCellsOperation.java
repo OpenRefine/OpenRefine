@@ -42,7 +42,7 @@ import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.ReconCandidate;
@@ -135,7 +135,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    protected String createDescription(Column column,
+    protected String createDescription(ColumnMetadata column,
             List<CellChange> cellChanges) {
         
         if (_judgment == Judgment.None) {
@@ -161,7 +161,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
 
     @Override
     protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         ReconConfig reconConfig = column.getReconConfig();
 
         return new RowVisitor() {
@@ -262,7 +262,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     
     
     @Override
-    protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 
             _columnName, 

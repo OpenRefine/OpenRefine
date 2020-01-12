@@ -55,7 +55,7 @@ import org.openrefine.exporters.sql.SqlData;
 import org.openrefine.exporters.sql.SqlExporter;
 import org.openrefine.exporters.sql.SqlInsertBuilder;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -161,7 +161,7 @@ public class SqlExporterTests extends RefineTest {
     protected void createColumnsWithScaleEqualsTwo(int noOfColumns){
         for(int i = 0; i < noOfColumns; i++){
             try {
-                project.columnModel.addColumn(i, new Column(i, "column" + i), true);
+                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
             } catch (ModelException e1) {
                 Assert.fail("Could not create column");
             }
@@ -404,7 +404,7 @@ public class SqlExporterTests extends RefineTest {
    protected void createColumns(int noOfColumns){
         for(int i = 0; i < noOfColumns; i++){
             try {
-                project.columnModel.addColumn(i, new Column(i, "column" + i), true);
+                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
             } catch (ModelException e1) {
                 Assert.fail("Could not create column");
             }
@@ -462,7 +462,7 @@ public class SqlExporterTests extends RefineTest {
         ArrayNode columns = json.putArray("columns");
         json.put("tableName", tableName);
         
-        List<Column> cols = project.columnModel.columns;
+        List<ColumnMetadata> cols = project.columnModel.columns;
       
         cols.forEach(c -> {
             //logger.info("Column Name = " + c.getName());
@@ -499,7 +499,7 @@ public class SqlExporterTests extends RefineTest {
        json.put("tableName", tableName);
        ArrayNode columns = json.putArray("columns");
        
-       List<Column> cols = project.columnModel.columns;
+       List<ColumnMetadata> cols = project.columnModel.columns;
      
        cols.forEach(c -> {
            //logger.info("Column Name = " + c.getName());
@@ -538,7 +538,7 @@ public class SqlExporterTests extends RefineTest {
        ArrayNode columns = json.putArray("columns");
        json.put("tableName", tableName);
        
-       List<Column> cols = project.columnModel.columns;
+       List<ColumnMetadata> cols = project.columnModel.columns;
      
        cols.forEach(c -> {
            //logger.info("Column Name = " + c.getName());

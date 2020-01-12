@@ -54,7 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconType;
 import org.openrefine.model.Row;
@@ -104,7 +104,7 @@ public class GuessTypesOfColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
             
-            Column column = project.columnModel.getColumnByName(columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
                 respondJSON(response, new TypesResponse("error", "No such column", null));
             } else {
@@ -141,7 +141,7 @@ public class GuessTypesOfColumnCommand extends Command {
      * @return
      * @throws JSONException, IOException 
      */
-    protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
+    protected List<TypeGroup> guessTypes(Project project, ColumnMetadata column, String serviceUrl)
             throws IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
         

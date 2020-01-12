@@ -42,7 +42,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
@@ -97,13 +97,13 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         int valueColumnIndex = project.columnModel.getColumnIndexByName(_valueColumnName);
         int noteColumnIndex = _noteColumnName == null ? -1 :
             project.columnModel.getColumnIndexByName(_noteColumnName);
-        Column keyColumn = project.columnModel.getColumnByName(_keyColumnName);
-        Column valueColumn = project.columnModel.getColumnByName(_valueColumnName);
-        Column noteColumn = _noteColumnName == null ? null :
+        ColumnMetadata keyColumn = project.columnModel.getColumnByName(_keyColumnName);
+        ColumnMetadata valueColumn = project.columnModel.getColumnByName(_valueColumnName);
+        ColumnMetadata noteColumn = _noteColumnName == null ? null :
             project.columnModel.getColumnByName(_noteColumnName);
         
-        List<Column> unchangedColumns = new ArrayList<Column>();
-        List<Column> oldColumns = project.columnModel.columns;
+        List<ColumnMetadata> unchangedColumns = new ArrayList<ColumnMetadata>();
+        List<ColumnMetadata> oldColumns = project.columnModel.columns;
         for (int i = 0; i < oldColumns.size(); i++) {
             if (i != keyColumnIndex &&
                 i != valueColumnIndex &&
@@ -112,10 +112,10 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             }
         }
         
-        List<Column> newColumns = new ArrayList<Column>();
-        List<Column> newNoteColumns = new ArrayList<Column>();
-        Map<String, Column> keyValueToColumn = new HashMap<String, Column>();
-        Map<String, Column> keyValueToNoteColumn = new HashMap<String, Column>();
+        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
+        List<ColumnMetadata> newNoteColumns = new ArrayList<ColumnMetadata>();
+        Map<String, ColumnMetadata> keyValueToColumn = new HashMap<String, ColumnMetadata>();
+        Map<String, ColumnMetadata> keyValueToNoteColumn = new HashMap<String, ColumnMetadata>();
         Map<String, Row> groupByCellValuesToRow = new HashMap<String, Row>();
         
         List<Row> newRows = new ArrayList<Row>();
@@ -158,10 +158,10 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                 currentRows.clear();
                 currentRows.add(reusableRow);
             }
-            Column newColumn = keyValueToColumn.get(keyString);
+            ColumnMetadata newColumn = keyValueToColumn.get(keyString);
             if (newColumn == null) {
                 // Allocate new column
-                newColumn = new Column(
+                newColumn = new ColumnMetadata(
                     project.columnModel.allocateNewCellIndex(),
                     project.columnModel.getUnduplicatedColumnName(keyString));
                 keyValueToColumn.put(keyString, newColumn);
@@ -181,7 +181,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             if (unchangedColumns.size() > 0) {
                 StringBuffer sb = new StringBuffer();
                 for (int c = 0; c < unchangedColumns.size(); c++) {
-                    Column unchangedColumn = unchangedColumns.get(c);
+                    ColumnMetadata unchangedColumn = unchangedColumns.get(c);
                     Object cellValue = oldRow.getCellValue(unchangedColumn.getCellIndex());
                     if (c > 0) {
                         sb.append('\0');
@@ -214,10 +214,10 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             if (noteColumn != null) {
                 Object noteValue = oldRow.getCellValue(noteColumn.getCellIndex());
                 if (ExpressionUtils.isNonBlankData(noteValue)) {
-                    Column newNoteColumn = keyValueToNoteColumn.get(keyString);
+                    ColumnMetadata newNoteColumn = keyValueToNoteColumn.get(keyString);
                     if (newNoteColumn == null) {
                         // Allocate new column
-                        newNoteColumn = new Column(
+                        newNoteColumn = new ColumnMetadata(
                             project.columnModel.allocateNewCellIndex(),
                             project.columnModel.getUnduplicatedColumnName(
                                 noteColumn.getName() + " : " + keyString));
@@ -238,7 +238,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             }
         }
         
-        List<Column> allColumns = new ArrayList<Column>(unchangedColumns);
+        List<ColumnMetadata> allColumns = new ArrayList<ColumnMetadata>(unchangedColumns);
         allColumns.addAll(newColumns);
         allColumns.addAll(newNoteColumns);
         
@@ -270,10 +270,10 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         return row;
     }
 
-    private Row buildNewRow(List<Column> unchangedColumns, Row oldRow, int size) {
+    private Row buildNewRow(List<ColumnMetadata> unchangedColumns, Row oldRow, int size) {
         Row reusableRow = new Row(size);
         for (int c = 0; c < unchangedColumns.size(); c++) {
-            Column unchangedColumn = unchangedColumns.get(c);
+            ColumnMetadata unchangedColumn = unchangedColumns.get(c);
             int cellIndex = unchangedColumn.getCellIndex();
             reusableRow.setCell(cellIndex, oldRow.getCell(cellIndex));
         }

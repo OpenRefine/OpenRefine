@@ -48,7 +48,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
@@ -200,7 +200,7 @@ public class ReconOperation extends EngineDependentOperation {
             Engine engine = new Engine(_project);
             engine.initializeFromConfig(_engineConfig);
             
-            Column column = _project.columnModel.getColumnByName(_columnName);
+            ColumnMetadata column = _project.columnModel.getColumnByName(_columnName);
             if (column == null) {
                 throw new Exception("No column named " + _columnName);
             }

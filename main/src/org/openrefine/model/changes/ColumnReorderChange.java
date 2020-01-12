@@ -42,15 +42,15 @@ import java.util.Properties;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public class ColumnReorderChange extends ColumnChange {
     final protected List<String>    _columnNames;
-    protected List<Column>          _oldColumns;
-    protected List<Column>          _newColumns;
-    protected List<Column>          _removedColumns;
+    protected List<ColumnMetadata>          _oldColumns;
+    protected List<ColumnMetadata>          _newColumns;
+    protected List<ColumnMetadata>          _removedColumns;
     protected CellAtRowCellIndex[]  _oldCells;
     
     public ColumnReorderChange(List<String> columnNames) {
@@ -61,11 +61,11 @@ public class ColumnReorderChange extends ColumnChange {
     public void apply(Project project) {
         synchronized (project) {
             if (_newColumns == null) {
-                _newColumns = new ArrayList<Column>();
-                _oldColumns = new ArrayList<Column>(project.columnModel.columns);
+                _newColumns = new ArrayList<ColumnMetadata>();
+                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.columns);
                 
                 for (String n : _columnNames) {
-                    Column column = project.columnModel.getColumnByName(n);
+                    ColumnMetadata column = project.columnModel.getColumnByName(n);
                     if (column != null) {
                         _newColumns.add(column);
                     }
@@ -73,9 +73,9 @@ public class ColumnReorderChange extends ColumnChange {
             }
             
             if (_removedColumns == null) {
-            	_removedColumns = new ArrayList<Column>();
+            	_removedColumns = new ArrayList<ColumnMetadata>();
 	            for (String n : project.columnModel.getColumnNames()) {
-	            	Column oldColumn = project.columnModel.getColumnByName(n);
+	            	ColumnMetadata oldColumn = project.columnModel.getColumnByName(n);
 	            	if(!_newColumns.contains(oldColumn)) {
 	            		_removedColumns.add(oldColumn);
 	            	}
@@ -139,17 +139,17 @@ public class ColumnReorderChange extends ColumnChange {
             writer.write('\n');
         }
         writer.write("oldColumnCount="); writer.write(Integer.toString(_oldColumns.size())); writer.write('\n');
-        for (Column c : _oldColumns) {
+        for (ColumnMetadata c : _oldColumns) {
             c.save(writer);
             writer.write('\n');
         }
         writer.write("newColumnCount="); writer.write(Integer.toString(_newColumns.size())); writer.write('\n');
-        for (Column c : _newColumns) {
+        for (ColumnMetadata c : _newColumns) {
             c.save(writer);
             writer.write('\n');
         }
         writer.write("removedColumnCount="); writer.write(Integer.toString(_removedColumns.size())); writer.write('\n');
-        for (Column c : _removedColumns) {
+        for (ColumnMetadata c : _removedColumns) {
             c.save(writer);
             writer.write('\n');
         }
@@ -164,9 +164,9 @@ public class ColumnReorderChange extends ColumnChange {
     
     static public Change load(LineNumberReader reader) throws Exception {
         List<String> columnNames = new ArrayList<String>();
-        List<Column> oldColumns = new ArrayList<Column>();
-        List<Column> newColumns = new ArrayList<Column>();
-        List<Column> removedColumns = new ArrayList<Column>();
+        List<ColumnMetadata> oldColumns = new ArrayList<ColumnMetadata>();
+        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
+        List<ColumnMetadata> removedColumns = new ArrayList<ColumnMetadata>();
         CellAtRowCellIndex[] oldCells = new CellAtRowCellIndex[0];
 
         String line;
@@ -187,7 +187,7 @@ public class ColumnReorderChange extends ColumnChange {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        oldColumns.add(Column.load(line));
+                        oldColumns.add(ColumnMetadata.load(line));
                     }
                 }
             } else if ("newColumnCount".equals(field)) {
@@ -195,7 +195,7 @@ public class ColumnReorderChange extends ColumnChange {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                        newColumns.add(Column.load(line));
+                        newColumns.add(ColumnMetadata.load(line));
                     }
                 }
             } else if ("removedColumnCount".equals(field)) {
@@ -203,7 +203,7 @@ public class ColumnReorderChange extends ColumnChange {
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
-                    	removedColumns.add(Column.load(line));
+                    	removedColumns.add(ColumnMetadata.load(line));
                     }
                 }
             } else if ("oldCellCount".equals(field)) {

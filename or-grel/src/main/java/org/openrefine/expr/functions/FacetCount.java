@@ -44,7 +44,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 
 public class FacetCount implements Function {
@@ -57,7 +57,7 @@ public class FacetCount implements Function {
             String columnName = (String) args[2];
 
             Project project = (Project) bindings.get("project");
-            Column column = project.columnModel.getColumnByName(columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
                 return new EvalError("No such column named " + columnName);
             }

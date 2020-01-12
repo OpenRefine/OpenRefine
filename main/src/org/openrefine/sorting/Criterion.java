@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.sorting;
 
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -80,7 +80,7 @@ abstract public class Criterion  {
     // that has not been applied yet).
     protected int getCellIndex(Project project) {
         if (cellIndex == -2) {
-            Column column = project.columnModel.getColumnByName(columnName);
+            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
             cellIndex = column != null ? column.getCellIndex() : -1;
         }
         return cellIndex;

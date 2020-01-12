@@ -39,7 +39,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
@@ -82,7 +82,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    protected String createDescription(Column column,
+    protected String createDescription(ColumnMetadata column,
             List<CellChange> cellChanges) {
         
         return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
@@ -91,7 +91,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
 
     @Override
     protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID) throws Exception {
-        Column column = project.columnModel.getColumnByName(_columnName);
+        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
         final int cellIndex = column != null ? column.getCellIndex() : -1;
         
         return new RowVisitor() {
@@ -125,7 +125,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     }
     
     @Override
-    protected Change createChange(Project project, Column column, List<CellChange> cellChanges) {
+    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
         return new ReconChange(
             cellChanges, 
             _columnName, 
