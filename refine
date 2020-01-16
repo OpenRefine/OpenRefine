@@ -315,6 +315,7 @@ mvn_prepare() {
         if [ -z "$MVN_HOME" ] ; then
             cd $REFINE_TOOLS_DIR
                 if [ ! -f "$MVN_FILE" ] ; then
+                    echo "\nCould not find Maven locally, starting download for Maven ..."
                     download $MVN_URL $MVN_FILE
                 fi
                 if [ ! -d "$MVN_DIR" ] ; then
