@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Refine.ImportProjectUI = function(elmt) {
   elmt.html(DOM.loadHTML("core", "scripts/index/import-project-ui.html"));
+
+  Refine.wrapCSRF(function(token) {
+     $('#project-upload-form').attr('action', "command/core/import-project?" + $.param({ csrf_token: token}));
+  });
   
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);

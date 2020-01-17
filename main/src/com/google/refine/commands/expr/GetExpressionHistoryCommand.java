@@ -84,7 +84,11 @@ public class GetExpressionHistoryCommand extends Command {
         
         try {
             List<String> expressions = toExpressionList(ProjectManager.singleton.getPreferenceStore().get("scripting.expressions"));
-            Set<String> starredExpressions = new HashSet<String>(((TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions")).getList());
+            TopList topList = (TopList)ProjectManager.singleton.getPreferenceStore().get("scripting.starred-expressions");
+            if (topList == null) {
+            	topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
+            }
+			Set<String> starredExpressions = new HashSet<String>(topList.getList());
             ExpressionsList expressionsList = new ExpressionsList(expressions.stream()
                     .map(s -> new ExpressionState(s, starredExpressions.contains(s)))
                     .collect(Collectors.toList()));

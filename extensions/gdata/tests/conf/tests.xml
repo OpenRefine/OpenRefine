@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+ 
+<suite name="GData extension">
+  <test name="tests">
+    <groups>
+      <run>
+        <exclude name="broken" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.google.refine.extension.gdata.*" />
+    </packages>
+  </test>
+</suite>

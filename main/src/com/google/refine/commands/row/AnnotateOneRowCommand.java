@@ -50,6 +50,10 @@ public class AnnotateOneRowCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");

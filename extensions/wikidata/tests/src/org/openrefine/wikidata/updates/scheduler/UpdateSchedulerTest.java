@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,7 +87,7 @@ public abstract class UpdateSchedulerTest {
             throws ImpossibleSchedulingException {
         ItemUpdate update1 = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
         ItemUpdate update2 = new ItemUpdateBuilder(existingIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr")).addStatement(sAtoB).build();
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true).addStatement(sAtoB).build();
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
     }
@@ -95,9 +95,9 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testMergeNew()
             throws ImpossibleSchedulingException {
-        ItemUpdate update1 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
+        ItemUpdate update1 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .addStatement(sNewAtoB).build();
-        ItemUpdate update2 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"))
+        ItemUpdate update2 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .build();
         ItemUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));

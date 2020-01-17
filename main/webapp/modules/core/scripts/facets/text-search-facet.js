@@ -87,6 +87,7 @@ TextSearchFacet.prototype.hasSelection = function() {
 
 TextSearchFacet.prototype._initializeUI = function() {
   var self = this;
+  var counter = this._uniqueIdForLabels();
   this._div.empty().show().html(
       '<div class="facet-title" bind="facetTitle">' + 
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
@@ -101,8 +102,10 @@ TextSearchFacet.prototype._initializeUI = function() {
       '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
       '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
       '<tr>' +
-      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox" /></td><td><label for="caseSensitiveCheckbox">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
-      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox" /></td><td><label for="regexCheckbox">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox'+counter+'" /></td>' +
+      '<td><label for="caseSensitiveCheckbox'+counter+'">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
+      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox'+counter+'" /></td>' +
+      '<td><label for="regexCheckbox'+counter+'">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
       '</tr>' +
       '</table></div></div>'
   );
@@ -206,4 +209,9 @@ TextSearchFacet.prototype._scheduleUpdate = function() {
 
 TextSearchFacet.prototype._updateRest = function() {
   Refine.update({ engineChanged: true });
+};
+
+var textSearchFacetCounterForLabels = 0;
+TextSearchFacet.prototype._uniqueIdForLabels = function() {
+  return textSearchFacetCounterForLabels++;
 };

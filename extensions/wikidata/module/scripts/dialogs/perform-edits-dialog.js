@@ -94,7 +94,7 @@ PerformEditsDialog.checkAndLaunch = function () {
     ManageAccountDialog.ensureLoggedIn(function(logged_in_username) {
         if (logged_in_username) {
                 var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikidata-edits/analyzing-edits'));
-                $.post(
+                Refine.postCSRF(
                     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
                     { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
                     function(data) {

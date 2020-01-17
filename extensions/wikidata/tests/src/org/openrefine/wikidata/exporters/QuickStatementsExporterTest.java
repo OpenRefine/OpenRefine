@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.exporters;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
@@ -46,9 +47,8 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
 
-public class QuickStatementsExporterTest extends RefineTest {
+public class QuickStatementsExporterTest extends WikidataRefineTest {
 
     private QuickStatementsExporter exporter = new QuickStatementsExporter();
     private ItemIdValue newIdA = TestingData.newIdA;
@@ -91,9 +91,24 @@ public class QuickStatementsExporterTest extends RefineTest {
     @Test
     public void testNameDesc()
             throws IOException {
+    	/**
+    	 * Adding labels and description without overriding is not supported by QS, so
+    	 * we fall back on adding them with overriding.
+    	 */
+        ItemUpdate update = new ItemUpdateBuilder(qid1)
+                .addLabel(Datamodel.makeMonolingualTextValue("some label", "en"), true)
+                .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true)
+                .build();
+
+        assertEquals("Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n", export(update));
+    }
+    
+    @Test
+    public void testOptionalNameDesc()
+            throws IOException {
         ItemUpdate update = new ItemUpdateBuilder(newIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("my new item", "en"))
-                .addDescription(Datamodel.makeMonolingualTextValue("isn't it awesome?", "en"))
+                .addLabel(Datamodel.makeMonolingualTextValue("my new item", "en"), false)
+                .addDescription(Datamodel.makeMonolingualTextValue("isn't it awesome?", "en"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("fabitem", "en")).build();
 
         assertEquals("CREATE\n" + "LAST\tLen\t\"my new item\"\n" + "LAST\tDen\t\"isn't it awesome?\"\n"

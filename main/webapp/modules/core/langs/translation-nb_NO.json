@@ -45,7 +45,7 @@
     "core-index-create/formats": "TSV-, CSV-, *SV-, Excel- (.xls og .xlsx), JSON-, XML-, RDF-som-XML- og Google Data-dokumenter støttes. Støtte for andre formater kan legges til med OpenRefine-utvidelser.",
     "core-index-create/from": "Hent data fra",
     "core-index-import/import-proj": "Importer prosjekt",
-    "core-index-import/locate": "Finn en eksisterende Refine-prosjektfil (.tar eller .tar.gz):",
+    "core-index-import/locate": "Finn en eksisterende Refine-prosjektfil (.tar eller .tar.gz eller .zip):",
     "core-index-import/file": "Prosjektfil:",
     "core-index-import/rename": "Endre navn på prosjektet (valgfritt):",
     "core-index-import/inspecting": "Inspiserer valgte filer…",
@@ -54,7 +54,7 @@
     "core-index-import/creating-proj": "Oppretter prosjekt…",
     "core-index-import/import": "Importer?",
     "core-index-import/name": "Navn",
-    "core-index-import/mime-type": "MIME-type",
+    "core-index-import/mime-type": "Media type",
     "core-index-import/format": "Format",
     "core-index-import/size": "Størrelse",
     "core-index-import/warning-select": "Velg minst én fil.",
@@ -409,5 +409,11 @@
     "core-buttons/download": "Last ned",
     "core-buttons/upload": "Last opp",
     "core-buttons/apply": "Bruk",
-    "core-index-parser/escape": "Utfør skiftesekvens for spesialtegn med \\"
+    "core-index-parser/escape": "Utfør skiftesekvens for spesialtegn med \\",
+    "core-dialogs/export-to-google-drive": "Eksporter til Google Drive",
+    "core-index/tags": "Etiketter:",
+    "core-index/title": "Tittel:",
+    "core-index/license": "Lisens:",
+    "core-index/homepage": "Hjemmeside:",
+    "core-index/image": "Bilde:"
 }

@@ -62,7 +62,7 @@
     "wikidata-account/log-in": "ログイン",
     "wikidata-account/logged-in-as": "ログイン名:",
     "wikidata-account/log-out": "ログアウト",
-    "wikidata-account/connecting-to-wikidata": "Wikidataに接続中...",
+    "wikidata-account/connecting-to-wikidata": "Wikidataに接続中…",
     "perform-wikidata-edits/dialog-header": "Wikidataに編集をアップロードする",
     "perform-wikidata-edits/review-your-edits": "Wikidataに{nb_edits}項目をアップロードします。大量アップロードは<a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">bot review</a>を試みてください。",
     "perform-wikidata-edits/logged-in-as": "ログイン名:",
@@ -70,7 +70,7 @@
     "perform-wikidata-edits/edit-summary-placeholder": "編集項目について",
     "perform-wikidata-edits/perform-edits": "編集項目のアップロード",
     "perform-wikidata-edits/cancel": "中止",
-    "perform-wikidata-edits/analyzing-edits": "編集項目を分析中...",
+    "perform-wikidata-edits/analyzing-edits": "編集項目を分析中…",
     "warnings-messages/new-item-created/title": "このバッチ編集は新しい項目を作ります.",
     "warnings-messages/new-item-created/body": "Wikidataに既存項目がないか、また、<a href=\"https://www.wikidata.org/wiki/Wikidata:Notability\" target=\"_blank\">Wikidataにふさわしいか</a>、確認してください.",
     "warnings-messages/new-item-without-labels-or-aliases/title": "ラベルも別名もない項目が作られます.",
@@ -160,5 +160,13 @@
     "import-wikibase-schema/import": "インポート",
     "wikidata-schema/copy-reference": "コピー",
     "wikidata-schema/paste-reference": "参照貼り付け",
-    "wikidata-schema/reference-copied": "コピー済み"
+    "wikidata-schema/reference-copied": "コピー済み",
+    "wikidata-schema/label-if-new": "ラベル（上書き不可）",
+    "wikidata-schema/label-override": "ラベル（存在すれば上書き）",
+    "wikidata-schema/description-if-new": "説明（上書き不可）",
+    "wikidata-schema/description-override": "説明（存在すれば上書き）",
+    "wikidata-schema/override-term": "存在すれば上書き",
+    "wikidata-extension/export-wikidata-schema": "Wikidataスキーマのエクスポート",
+    "warnings-messages/early-gregorian-date/title": "グレゴリー暦以前の日付",
+    "warnings-messages/early-gregorian-date/body": "1582年10月以前の日付は（例えば、 {example_year}年）、グレゴリー暦で表示されることは稀です。詳しくは、 <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">manual</a> で、適切な暦を指定してください。"
 }

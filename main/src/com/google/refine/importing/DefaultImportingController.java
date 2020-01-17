@@ -50,6 +50,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineServlet;
+import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.util.JSONUtilities;
@@ -218,7 +219,7 @@ public class DefaultImportingController implements ImportingController {
             JSONUtilities.safePut(result, "status", "ok");
             JSONUtilities.safePut(result, "options", options);
             
-            HttpUtilities.respond(response, result.toString());
+            Command.respondJSON(response, result);
         } else {
             HttpUtilities.respond(response, "error", "Unrecognized format or format has no parser");
         }

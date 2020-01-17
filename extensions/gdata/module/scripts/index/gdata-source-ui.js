@@ -109,17 +109,20 @@ Refine.GDataSourceUI.prototype._listDocuments = function() {
   this._elmts.progressPage.show();
   
   var self = this;
-  $.post(
-    "command/core/importing-controller?" + $.param({
-      "controller": "gdata/gdata-importing-controller",
-      "subCommand": "list-documents"
-    }),
-    null,
-    function(o) {
-      self._renderDocuments(o);
-    },
-    "json"
-  );
+  Refine.wrapCSRF(function(token) {
+    $.post(
+        "command/core/importing-controller?" + $.param({
+        "controller": "gdata/gdata-importing-controller",
+        "subCommand": "list-documents",
+        "csrf_token": token
+        }),
+        null,
+        function(o) {
+        self._renderDocuments(o);
+        },
+        "json"
+    );
+  });
 };
 
 Refine.GDataSourceUI.prototype._renderDocuments = function(o) {

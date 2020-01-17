@@ -11,8 +11,12 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.3-SNAPSHOT</version>
   </parent>
+
+  <properties>
+    <powermock.version>2.0.2</powermock.version>
+  </properties>
 
   <build>
     <finalName>openrefine-wikidata</finalName>
@@ -69,7 +73,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>${surefire.version}</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>
@@ -90,45 +94,6 @@
                 <outputDirectory>module/MOD-INF/lib</outputDirectory>
                 <includeScope>runtime</includeScope>
             </configuration>
-            </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-        <executions>
-            <execution>
-                <id>install-wdtk-datamodel</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/wdtk-datamodel-0.9.0-SNAPSHOT-jar-with-dependencies.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>org.wikidata.wdtk</groupId>
-                    <artifactId>wdtk-datamodel</artifactId>
-                    <version>0.9.0-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-wdtk-wikibaseapi</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/wdtk-wikibaseapi-0.9.0-SNAPSHOT.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>org.wikidata.wdtk</groupId>
-                    <artifactId>wdtk-wikibaseapi</artifactId>
-                    <version>0.9.0-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
             </execution>
         </executions>
       </plugin>
@@ -163,12 +128,17 @@
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
+      <version>0.11.0</version>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
-      <version>0.9.0-SNAPSHOT</version>
+      <version>0.11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.wikidata.wdtk</groupId>
+      <artifactId>wdtk-util</artifactId>
+      <version>0.11.0</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -194,19 +164,23 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>2.23.4</version>
       <scope>test</scope>
     </dependency>
-
-
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-testng</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+     </dependency>
+     <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+     </dependency> 
   </dependencies>
 
 </project>

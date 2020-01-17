@@ -194,7 +194,9 @@ public class FileProjectManager extends ProjectManager  {
 
     protected void tarDir(String relative, File dir, TarOutputStream tos) throws IOException{
         File[] files = dir.listFiles();
+        if (files == null) return;
         for (File file : files) {
+        	if (file == null) continue;
             if (!file.isHidden()) {
                 String path = relative + file.getName();
 
@@ -333,7 +335,10 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     static protected void deleteDir(File dir) {
-        for (File file : dir.listFiles()) {
+    	File[] files = dir.listFiles();
+    	if (files == null) return;
+        for (File file : files) {
+        	if (file == null) continue;
             if (file.isDirectory()) {
                 deleteDir(file);
             } else {
@@ -377,7 +382,10 @@ public class FileProjectManager extends ProjectManager  {
 
     protected void recover() {
         boolean recovered = false;
-        for (File file : _workspaceDir.listFiles()) {
+        File[] files = _workspaceDir.listFiles();
+    	if (files == null) return;
+        for (File file : files) {
+        	if (file == null) continue;
             if (file.isDirectory() && !file.isHidden()) {
                 String dirName = file.getName();
                 if (file.getName().endsWith(PROJECT_DIR_SUFFIX)) {

@@ -328,30 +328,33 @@ Refine.DefaultImportingController.prototype._commitFileSelection = function() {
 
   var self = this;
   var dismissBusy = DialogSystem.showBusy($.i18n('core-index-import/inspecting-files'));
-  $.post(
-    "command/core/importing-controller?" + $.param({
-      "controller": "core/default-importing-controller",
-      "jobID": this._jobID,
-      "subCommand": "update-file-selection"
-    }),
-    {
-      "fileSelection" : JSON.stringify(this._job.config.fileSelection)
-    },
-    function(data) {
-      dismissBusy();
+  Refine.wrapCSRF(function(token) {
+    $.post(
+        "command/core/importing-controller?" + $.param({
+        "controller": "core/default-importing-controller",
+        "jobID": self._jobID,
+        "subCommand": "update-file-selection",
+        "csrf_token": token
+        }),
+        {
+        "fileSelection" : JSON.stringify(self._job.config.fileSelection)
+        },
+        function(data) {
+        dismissBusy();
 
-      if (!(data)) {
-        self._createProjectUI.showImportJobError($.i18n('core-index-import/unknown-err'));
-      } else if (data.code == "error" || !("job" in data)) {
-        self._createProjectUI.showImportJobError((data.message) ? ($.i18n('core-index-import/error')+ ' ' + data.message) : $.i18n('core-index-import/unknown-err'));
-      } else {
-        // Different files might be selected. We start over again.
-        delete this._parserOptions;
+        if (!(data)) {
+            self._createProjectUI.showImportJobError($.i18n('core-index-import/unknown-err'));
+        } else if (data.code == "error" || !("job" in data)) {
+            self._createProjectUI.showImportJobError((data.message) ? ($.i18n('core-index-import/error')+ ' ' + data.message) : $.i18n('core-index-import/unknown-err'));
+        } else {
+            // Different files might be selected. We start over again.
+            delete self._parserOptions;
 
-        self._job = data.job;
-        self._showParsingPanel(true);
-      }
-    },
-    "json"
-  );
+            self._job = data.job;
+            self._showParsingPanel(true);
+        }
+        },
+        "json"
+    );
+  });
 };

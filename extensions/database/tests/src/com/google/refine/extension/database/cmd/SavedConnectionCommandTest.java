@@ -1,6 +1,10 @@
 package com.google.refine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
@@ -26,6 +31,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
+import com.google.refine.commands.Command;
 import com.google.refine.extension.database.DBExtensionTestUtils;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
@@ -120,6 +126,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         
@@ -145,6 +152,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
        
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -154,8 +162,11 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         SUT.doPost(request, response);
         
         String result = sw.getBuffer().toString().trim();
- 
+        assertNotNull(result);
+        assertFalse(result.isEmpty(), "Valid response Message expected!");
+        
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
+       // System.out.println("json:" + json);
         
         ArrayNode savedConnections = (ArrayNode) json.get("savedConnections");
         Assert.assertNotNull(savedConnections);
@@ -179,6 +190,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
        
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -219,6 +231,7 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
       
         SUT.doPut(request, response);
         
@@ -229,7 +242,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
         Assert.assertEquals(savedConnections.size(), 1);
         
         ObjectNode sc = (ObjectNode)savedConnections.get(0);
-        System.out.println("sc" + sc);
         String newDbHost = sc.get("databaseHost").asText();
         Assert.assertEquals(newDbHost, newHost);
     }
@@ -276,8 +288,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
 
             SUT.doDelete(request, response);
             
-           // String result = sw.getBuffer().toString().trim();
-          
             ObjectNode json = ParsingUtilities.mapper.createObjectNode();
             
             Assert.assertNotNull(json);
@@ -288,5 +298,46 @@ public class SavedConnectionCommandTest extends DBExtensionTests{
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Added to check XSS invalid tokens
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Test
+    public void testDoPostInvalidConnectionName() throws IOException, ServletException {
+        
+    	when(request.getParameter("connectionName")).thenReturn("<img></img>");
+        when(request.getParameter("databaseType")).thenReturn(MySQLDatabaseService.DB_NAME);
+        when(request.getParameter("databaseServer")).thenReturn(testDbConfig.getDatabaseHost());
+        when(request.getParameter("databasePort")).thenReturn("" + testDbConfig.getDatabasePort());
+        when(request.getParameter("databaseUser")).thenReturn(testDbConfig.getDatabaseUser());
+        when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
+        when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+       
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        
+        when(response.getWriter()).thenReturn(pw);
+       
+        SUT.doPost(request, response);
+        
+        verify(response, times(1)).sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Invalid. Expecting [a-zA-Z0-9._-]");
+    }
+
+    @Test
+    public void testCsrfProtection() throws ServletException, IOException {
+    	StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        when(response.getWriter()).thenReturn(pw);
+        
+        SUT.doPost(request, response);
+    	Assert.assertEquals(
+    			ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", ObjectNode.class),
+    			ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
+    }
+    
 
 }

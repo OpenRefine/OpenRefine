@@ -26,6 +26,7 @@
  ******************************************************************************/
 package com.google.refine.clustering;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -70,6 +71,6 @@ public abstract class ClustererConfig  {
     /**
      * Type string used in Json serialization
      */
-    @JsonProperty("type")
+    @JsonIgnore // already added by @JsonTypeInfo
     public abstract String getType();
 }

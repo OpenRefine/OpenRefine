@@ -48,6 +48,10 @@ public class CancelImportingJobCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         long jobID = Long.parseLong(request.getParameter("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);

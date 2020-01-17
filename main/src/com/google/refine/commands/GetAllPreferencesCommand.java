@@ -46,6 +46,10 @@ import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 
 public class GetAllPreferencesCommand extends Command {
+	/**
+	 * The command uses POST (not sure why?) but does not actually modify any state
+	 * so it does not require CSRF.
+	 */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

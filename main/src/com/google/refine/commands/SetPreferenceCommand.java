@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +50,10 @@ public class SetPreferenceCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         PreferenceStore ps = project != null ? 
@@ -63,7 +68,7 @@ public class SetPreferenceCommand extends Command {
             
             ps.put(prefName, PreferenceStore.loadObject(o));
             
-            respond(response, "{ \"code\" : \"ok\" }");
+            respondJSON(response, Collections.singletonMap("code", "ok"));
         } catch (IOException e) {
             respondException(response, e);
         }

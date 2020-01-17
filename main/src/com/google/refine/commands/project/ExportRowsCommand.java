@@ -61,6 +61,10 @@ import com.google.refine.model.Project;
 
 public class ExportRowsCommand extends Command {
     private  static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
+    
+	/**
+	 * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
+	 */
 
     @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {

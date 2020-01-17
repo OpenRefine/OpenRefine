@@ -30,6 +30,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
@@ -61,6 +63,8 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             .put(new SimpleDateFormat("yyyy-MM"), 10)
             .put(new SimpleDateFormat("yyyy-MM-dd"), 11)
             .build();
+    
+    public static Pattern calendarSuffixPattern = Pattern.compile("_(Q[1-9][0-9]*)$");
 
     private TimeValue parsed;
     private String origDatestamp;
@@ -100,15 +104,46 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         Date bestDate = null;
         int precision = 0; // default precision (will be overridden if successfully parsed)
         int maxLength = 0; // the maximum length parsed
+        String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
+        
+        String trimmedDatestamp = datestamp.trim();
+        
+        if("TODAY".equals(trimmedDatestamp)) {
+	        Calendar calendar = Calendar.getInstance();
+	    	TimeValue todaysDate = Datamodel.makeTimeValue(
+	    			calendar.get(Calendar.YEAR),
+	    			(byte)(calendar.get(Calendar.MONTH)+1),
+	    			(byte)calendar.get(Calendar.DAY_OF_MONTH),
+	    			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
+	    	return todaysDate;
+        }
+        
+    	
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
-            String trimmedDatestamp = datestamp.trim();
             Date date = entry.getKey().parse(trimmedDatestamp, position);
+            
+            if (date == null) {
+            	continue;
+            }
+            
+            // Potentially parse the calendar Qid after the date
+            int consumedUntil = position.getIndex();
+            if(consumedUntil < trimmedDatestamp.length()) {
+            	Matcher matcher = calendarSuffixPattern.matcher(
+            			trimmedDatestamp.subSequence(position.getIndex(), trimmedDatestamp.length()));
+            	if(matcher.find()) {
+            		String calendarQid = matcher.group(1);
+            		calendarIri = Datamodel.SITE_WIKIDATA + calendarQid;
+            		consumedUntil = trimmedDatestamp.length();
+            	}
+            }
 
             // Ignore parses which failed or do not consume all the input
             if (date != null && position.getIndex() > maxLength
-            		// only allow to partially consume the input if the precision is more than a year
-            		&& (entry.getValue() > 9 || position.getIndex() == trimmedDatestamp.length())) {
+            		// only allow to partially consume the input if the precision is day and followed by a T (as in ISO)
+            		&& (consumedUntil == trimmedDatestamp.length()
+            		|| (entry.getValue() == 11 && trimmedDatestamp.charAt(consumedUntil) == 'T'))) {
                 precision = entry.getValue();
                 bestDate = date;
                 maxLength = position.getIndex();
@@ -123,7 +158,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1), 
                     (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,
-                    0, TimeValue.CM_GREGORIAN_PRO);
+                    0, calendarIri);
         }
     }
 

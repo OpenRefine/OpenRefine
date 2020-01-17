@@ -45,13 +45,13 @@ public class NewItemScrutinizer extends EditScrutinizer {
         if (update.isNew()) {
             info(newItemType);
 
-            if (update.getLabels().isEmpty() && update.getAliases().isEmpty()) {
+            if (update.getLabels().isEmpty() && update.getLabelsIfNew().isEmpty() && update.getAliases().isEmpty()) {
                 QAWarning issue = new QAWarning(noLabelType, null, QAWarning.Severity.CRITICAL, 1);
                 issue.setProperty("example_entity", update.getItemId());
                 addIssue(issue);
             }
 
-            if (update.getDescriptions().isEmpty()) {
+            if (update.getDescriptions().isEmpty() && update.getDescriptionsIfNew().isEmpty()) {
                 QAWarning issue = new QAWarning(noDescType, null, QAWarning.Severity.WARNING, 1);
                 issue.setProperty("example_entity", update.getItemId());
                 addIssue(issue);

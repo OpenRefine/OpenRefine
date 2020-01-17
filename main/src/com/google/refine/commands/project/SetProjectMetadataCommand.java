@@ -41,6 +41,10 @@ public class SetProjectMetadataCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
         String metaName = request.getParameter("name");

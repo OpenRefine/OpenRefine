@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -33,6 +33,9 @@ import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.refine.commands.Command;
+import com.google.refine.util.TestUtils;
 
 public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
 
@@ -44,6 +47,8 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
     @Test
     public void testValidSchema()
             throws ServletException, IOException {
+    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+    	
         String schemaJson = jsonFromFile("schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
@@ -54,6 +59,8 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
     
     @Test
     public void testInvalidSchema() throws ServletException, IOException {
+    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+    	
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
                 +"\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
         
@@ -61,5 +68,14 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
         command.doPost(request, response);
         
         assertTrue(writer.toString().contains("\"error\""));
+    }
+    
+    @Test
+    public void testCsrfProtection() throws ServletException, IOException {
+    	String schemaJson = jsonFromFile("schema/inception.json").toString();
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        
+    	command.doPost(request, response);
+    	TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
 }

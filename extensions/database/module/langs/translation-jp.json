@@ -44,5 +44,9 @@
     "database-parsing/limit-next": "最大で",
     "database-parsing/limit": "行を読み込む",
     "database-parsing/store-row": "空白行を保存",
-    "database-parsing/store-cell": "空白行をnullとして保存"
+    "database-parsing/store-cell": "空白行をnullとして保存",
+    "database-source/alert-conn-name-invalid-character": "接続名エラー（ [a-zA-Z0-9._-] のみ使用できます）",
+    "database-source/alert-db-host-invalid-character": "データベースホスト名エラー（記号は使用できません）",
+    "database-source/alert-db-user-invalid-character": "ユーザー名エラー（記号は使用できません）",
+    "database-source/alert-db-port-invalid-character": "ポート番号エラー（半角数字のみ使用）"
 }

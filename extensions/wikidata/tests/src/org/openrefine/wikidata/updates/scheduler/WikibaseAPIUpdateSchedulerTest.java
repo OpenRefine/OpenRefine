@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;

@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
 
@@ -38,7 +38,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
     private ItemIdValue subject = Datamodel.makeWikidataItemIdValue("Q56");
-    public WbNameDescExpr expr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.ALIAS,
+    public WbNameDescExpr expr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
             new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column A")));
 
     public String jsonRepresentation = "{\"name_type\":\"ALIAS\",\"value\":{\"type\":\"wbmonolingualexpr\",\"language\":"
@@ -47,7 +47,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
     @Test
     public void testContributeToLabel() {
-        WbNameDescExpr labelExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.LABEL,
+        WbNameDescExpr labelExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.LABEL,
                 TestingData.getTestMonolingualExpr("fr", "français", "le croissant magnifique"));
         ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         labelExpr.contributeTo(update, ctxt);
@@ -57,7 +57,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
     @Test
     public void testContributeToDescription() {
-        WbNameDescExpr descriptionExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.DESCRIPTION,
+        WbNameDescExpr descriptionExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.DESCRIPTION,
                 TestingData.getTestMonolingualExpr("de", "Deutsch", "wunderschön"));
         ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         descriptionExpr.contributeTo(update, ctxt);
@@ -67,7 +67,7 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
 
     @Test
     public void testContributeToAlias() {
-        WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.ALIAS,
+        WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
                 TestingData.getTestMonolingualExpr("en", "English", "snack"));
         ItemUpdateBuilder update = new ItemUpdateBuilder(subject);
         aliasExpr.contributeTo(update, ctxt);
@@ -86,8 +86,8 @@ public class WbNameDescExprTest extends WbExpressionTest<MonolingualTextValue> {
     @Test
     public void testGetters() {
         WbMonolingualExpr monolingualExpr = TestingData.getTestMonolingualExpr("en", "English", "not sure what");
-        WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescrType.ALIAS, monolingualExpr);
-        assertEquals(WbNameDescExpr.NameDescrType.ALIAS, aliasExpr.getType());
+        WbNameDescExpr aliasExpr = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS, monolingualExpr);
+        assertEquals(WbNameDescExpr.NameDescType.ALIAS, aliasExpr.getType());
         assertEquals(monolingualExpr, aliasExpr.getValue());
     }
 

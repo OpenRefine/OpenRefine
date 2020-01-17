@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.importing;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
-import com.google.refine.util.ParsingUtilities;
 
 public class GetImportingJobStatusCommand extends Command {
     protected static class JobStatusResponse {
@@ -66,6 +64,10 @@ public class GetImportingJobStatusCommand extends Command {
         }
     }
     
+    /**
+     * This command uses POST but does not actually modify any state so
+     * it is not CSRF-protected.
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -73,11 +75,10 @@ public class GetImportingJobStatusCommand extends Command {
         long jobID = Long.parseLong(request.getParameter("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         
-        Writer w = response.getWriter();
         if (job == null) {
-            ParsingUtilities.defaultWriter.writeValue(w, new JobStatusResponse("error", "No such import job", null));
+            respondJSON(response, new JobStatusResponse("error", "No such import job", null));
         } else {
-            ParsingUtilities.defaultWriter.writeValue(w, new JobStatusResponse("ok", null, job));
+            respondJSON(response, new JobStatusResponse("ok", null, job));
         }
     }
 }

@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -371,10 +373,13 @@ abstract public class CustomizableTabularExporterUtilities {
                         if (value instanceof String) {
                             text = (String) value;
                             
-                            if(text.contains(":")) {
-                                if(urlValidator.isValid(text)) {
-                                    link = text;
-                                }
+                            if(text.contains(":") && urlValidator.isValid(text)) {
+                            	// Extra check for https://github.com/OpenRefine/OpenRefine/issues/2213
+                            	try {
+                            		link = new URI(text).toString();
+                            	} catch(URISyntaxException e) {
+                            		;
+                            	}
                             }
                         } else if (value instanceof OffsetDateTime) {
                             text = ((OffsetDateTime) value).format(DateTimeFormatter.ISO_INSTANT);

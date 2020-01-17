@@ -1,0 +1,6 @@
+{
+    "gdata-import/auth-doc": "Authorised Documents",
+    "gdata-import/sign-in": "sign in and authorise",
+    "gdata-auth/authorize-label": "OpenRefine - Authorisation",
+    "gdata-auth/authorized-label": "Authorisation process completed. Close this window and return to OpenRefine."
+}

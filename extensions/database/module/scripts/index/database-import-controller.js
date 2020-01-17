@@ -65,33 +65,36 @@ Refine.DatabaseImportController.prototype.startImportingDocument = function(quer
     //alert(queryInfo.query);
     var self = this;
   
-    $.post(
+    Refine.postCSRF(
       "command/core/create-importing-job",
       null,
       function(data) {
-        $.post(
-          "command/core/importing-controller?" + $.param({
-            "controller": "database/database-import-controller",
-            "subCommand": "initialize-parser-ui"
-          }),
-          queryInfo,
-          
-          function(data2) {
-            dismiss();
+        Refine.wrapCSRF(function(token) {
+            $.post(
+            "command/core/importing-controller?" + $.param({
+                "controller": "database/database-import-controller",
+                "subCommand": "initialize-parser-ui",
+                "csrf_token": token
+            }),
+            queryInfo,
             
-            if (data2.status == 'ok') {
-              self._queryInfo = queryInfo;
-              self._jobID = data.jobID;
-              self._options = data2.options;
-              
-              self._showParsingPanel();
-              
-            } else {
-              alert(data2.message);
-            }
-          },
-          "json"
-        );
+            function(data2) {
+                dismiss();
+                
+                if (data2.status == 'ok') {
+                self._queryInfo = queryInfo;
+                self._jobID = data.jobID;
+                self._options = data2.options;
+                
+                self._showParsingPanel();
+                
+                } else {
+                alert(data2.message);
+                }
+            },
+            "json"
+            );
+        });
       },
       "json"
     );
@@ -248,40 +251,43 @@ Refine.DatabaseImportController.prototype._updatePreview = function() {
     this._queryInfo.options = JSON.stringify(this.getOptions());
     //alert("options:" + this._queryInfo.options);
 
-    $.post(
-      "command/core/importing-controller?" + $.param({
-        "controller": "database/database-import-controller",
-        "jobID": this._jobID,
-        "subCommand": "parse-preview"
-      }),
-      
-      this._queryInfo,
-      
-      function(result) {
-        if (result.status == "ok") {
-            self._getPreviewData(function(projectData) {
-            self._parsingPanelElmts.progressPanel.hide();
-            self._parsingPanelElmts.dataPanel.show();
+    Refine.wrapCSRF(function(token) {
+        $.post(
+        "command/core/importing-controller?" + $.param({
+            "controller": "database/database-import-controller",
+            "jobID": self._jobID,
+            "subCommand": "parse-preview",
+            "csrf_token": token
+        }),
+        
+        this._queryInfo,
+        
+        function(result) {
+            if (result.status == "ok") {
+                self._getPreviewData(function(projectData) {
+                self._parsingPanelElmts.progressPanel.hide();
+                self._parsingPanelElmts.dataPanel.show();
 
-            new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.unbind().empty());
-          });
-        } else {
-          
-           alert('Errors:\n' +  (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
-           self._parsingPanelElmts.progressPanel.hide();
-           
-           Refine.CreateProjectUI.cancelImportingJob(self._jobID);
-           
-           delete self._jobID;
-           delete self._options;
-           
-           self._createProjectUI.showSourceSelectionPanel();
-           
-         
-        }
-      },
-      "json"
-    );
+                new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.unbind().empty());
+            });
+            } else {
+            
+            alert('Errors:\n' +  (result.message) ? result.message : Refine.CreateProjectUI.composeErrorMessage(job));
+            self._parsingPanelElmts.progressPanel.hide();
+            
+            Refine.CreateProjectUI.cancelImportingJob(self._jobID);
+            
+            delete self._jobID;
+            delete self._options;
+            
+            self._createProjectUI.showSourceSelectionPanel();
+            
+            
+            }
+        },
+        "json"
+        );
+    });
   };
 
 Refine.DatabaseImportController.prototype._getPreviewData = function(callback, numRows) {
@@ -329,51 +335,54 @@ Refine.DatabaseImportController.prototype._createProject = function() {
     options.projectName = projectName;
     
     this._queryInfo.options = JSON.stringify(options);
-    $.post(
-      "command/core/importing-controller?" + $.param({
-        "controller": "database/database-import-controller",
-        "jobID": this._jobID,
-        "subCommand": "create-project"
-      }),
-      this._queryInfo,
-      function(o) {
-        if (o.status == 'error') {
-          alert(o.message);
-        } else {
-          var start = new Date();
-          var timerID = window.setInterval(
-            function() {
-              self._createProjectUI.pollImportJob(
-                  start,
-                  self._jobID,
-                  timerID,
-                  function(job) {
-                    return "projectID" in job.config;
-                  },
-                  function(jobID, job) {
-                      //alert("jobID::" + jobID + " job :" + job);
-                    window.clearInterval(timerID);
-                    Refine.CreateProjectUI.cancelImportingJob(jobID);
-                    document.location = "project?project=" + job.config.projectID;
-                  },
-                  function(job) {
-                    alert(Refine.CreateProjectUI.composeErrorMessage(job));
-                  }
-              );
-            },
-            1000
-          );
-          self._createProjectUI.showImportProgressPanel($.i18n('database-import/creating'), function() {
-            // stop the timed polling
-            window.clearInterval(timerID);
+    Refine.wrapCSRF(function(token) {
+        $.post(
+        "command/core/importing-controller?" + $.param({
+            "controller": "database/database-import-controller",
+            "jobID": self._jobID,
+            "subCommand": "create-project",
+            "csrf_token": token
+        }),
+        this._queryInfo,
+        function(o) {
+            if (o.status == 'error') {
+            alert(o.message);
+            } else {
+            var start = new Date();
+            var timerID = window.setInterval(
+                function() {
+                self._createProjectUI.pollImportJob(
+                    start,
+                    self._jobID,
+                    timerID,
+                    function(job) {
+                        return "projectID" in job.config;
+                    },
+                    function(jobID, job) {
+                        //alert("jobID::" + jobID + " job :" + job);
+                        window.clearInterval(timerID);
+                        Refine.CreateProjectUI.cancelImportingJob(jobID);
+                        document.location = "project?project=" + job.config.projectID;
+                    },
+                    function(job) {
+                        alert(Refine.CreateProjectUI.composeErrorMessage(job));
+                    }
+                );
+                },
+                1000
+            );
+            self._createProjectUI.showImportProgressPanel($.i18n('database-import/creating'), function() {
+                // stop the timed polling
+                window.clearInterval(timerID);
 
-            // explicitly cancel the import job
-            Refine.CreateProjectUI.cancelImportingJob(jobID);
+                // explicitly cancel the import job
+                Refine.CreateProjectUI.cancelImportingJob(jobID);
 
-            self._createProjectUI.showSourceSelectionPanel();
-          });
-        }
-      },
-      "json"
-    );
+                self._createProjectUI.showSourceSelectionPanel();
+            });
+            }
+        },
+        "json"
+        );
+    });
 };

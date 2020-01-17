@@ -184,7 +184,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
             if("lengths".equals(_mode)) {
-                if (_fieldLengths.length >= 0 && _fieldLengths[0] > 0) {
+                if (_fieldLengths.length > 0 && _fieldLengths[0] > 0) {
                     values = new String[_fieldLengths.length];
                     
                     int lastIndex = 0;
