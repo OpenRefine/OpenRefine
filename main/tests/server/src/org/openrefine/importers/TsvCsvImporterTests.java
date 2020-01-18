@@ -85,10 +85,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
@@ -106,10 +106,10 @@ public class TsvCsvImporterTests extends ImporterTest {
             Assert.fail("Exception during file parse",e);
         }
         
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -130,10 +130,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -154,10 +154,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Column 1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "Column 2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column 3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "Column 1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "Column 2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "Column 3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -177,7 +177,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1 ");
@@ -197,7 +197,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
@@ -217,7 +217,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
@@ -239,10 +239,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2 sub2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3 sub3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1 sub1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2 sub2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3 sub3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -263,13 +263,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 6);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "Column 4");
-        Assert.assertEquals(project.columnModel.columns.get(4).getName(), "Column 5");
-        Assert.assertEquals(project.columnModel.columns.get(5).getName(), "Column 6");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 6);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "Column 4");
+        Assert.assertEquals(project.columnModel.getColumns().get(4).getName(), "Column 5");
+        Assert.assertEquals(project.columnModel.getColumns().get(5).getName(), "Column 6");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 6);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -293,10 +293,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To Be\" is often followed by \"or not To Be\"");
@@ -317,10 +317,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -342,10 +342,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -371,10 +371,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2 sub2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3 sub3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1 sub1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2 sub2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3 sub3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -403,10 +403,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1 sub1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2 sub2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3 sub3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1 sub1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2 sub2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3 sub3");
         Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data-row1-cell1");
@@ -429,7 +429,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 4);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -450,10 +450,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
@@ -473,10 +473,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "A line with many \n\n\n\n\n empty lines");
@@ -499,10 +499,10 @@ public class TsvCsvImporterTests extends ImporterTest {
             Assert.fail("Exception during file parse",e);
         }
         
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
@@ -522,10 +522,10 @@ public class TsvCsvImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "col3");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");

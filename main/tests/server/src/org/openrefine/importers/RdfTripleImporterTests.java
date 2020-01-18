@@ -77,9 +77,9 @@ public class RdfTripleImporterTests extends ImporterTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(project.columnModel.columns.size(), 2);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 2);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
@@ -95,9 +95,9 @@ public class RdfTripleImporterTests extends ImporterTest {
         parseOneFile(SUT, input);
 
         //columns
-        Assert.assertEquals(project.columnModel.columns.size(), 2);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 2);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
 
         //rows
         Assert.assertEquals(project.rows.size(), 3);
@@ -131,10 +131,10 @@ public class RdfTripleImporterTests extends ImporterTest {
         parseOneFile(SUT, input);
  
         //columns
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
         
         //rows
         Assert.assertEquals(project.rows.size(), 2);
@@ -161,9 +161,9 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.columns.size(), 2);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/common.topic.alias");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 2);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/common.topic.alias");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
@@ -193,10 +193,10 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.RDFXML);
         parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://purl.org/dc/elements/1.1/title");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://purl.org/dc/elements/1.1/description");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://purl.org/dc/elements/1.1/title");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://purl.org/dc/elements/1.1/description");
         Assert.assertEquals(project.rows.size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.w3.org/TR/rdf-syntax-grammar");
@@ -221,11 +221,11 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.columns.size(), 4);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
@@ -248,11 +248,11 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.columns.size(), 4);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
@@ -272,11 +272,11 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
         parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.columns.size(), 4);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
         
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -311,11 +311,11 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
         parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.columns.size(), 4);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");

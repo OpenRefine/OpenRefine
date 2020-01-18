@@ -365,7 +365,7 @@ public class JsonImporterTests extends ImporterTest {
         RunComplexJSONTest(getComplexJSON(fileName));
 
         log(project);
-        logger.info("************************ columnu number:" + project.columnModel.columns.size() + 
+        logger.info("************************ columnu number:" + project.columnModel.getColumns().size() + 
                 ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount()) ;
         
         

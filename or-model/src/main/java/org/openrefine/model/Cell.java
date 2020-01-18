@@ -53,7 +53,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Cell implements HasFields {
+public class Cell implements HasFields, Serializable {
+
+    private static final long serialVersionUID = 6587215646810559731L;
+    
+    public static Cell NULL = new Cell(null, null);
+    
     @JsonIgnore
     final public Serializable   value;
     @JsonIgnore

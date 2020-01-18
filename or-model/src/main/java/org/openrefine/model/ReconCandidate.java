@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class ReconCandidate implements HasFields {
+public class ReconCandidate implements HasFields, Serializable {
+
+    private static final long serialVersionUID = -9003038716720981171L;
+    
     @JsonProperty("id")
     final public String     id;
     @JsonProperty("name")

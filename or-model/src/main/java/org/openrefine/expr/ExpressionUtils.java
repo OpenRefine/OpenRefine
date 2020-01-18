@@ -77,7 +77,7 @@ public class ExpressionUtils {
 
         bindings.put("rowIndex", rowIndex);
         bindings.put("row", new WrappedRow(project, rowIndex, row));
-        bindings.put("cells", new CellTuple(project, row));
+        bindings.put("cells", new CellTuple(project.columnModel, row));
 
         if (columnName != null) {
             bindings.put("columnName", columnName);
@@ -87,7 +87,7 @@ public class ExpressionUtils {
             bindings.remove("cell");
             bindings.remove("value");
         } else {
-            bindings.put("cell", new WrappedCell(project, columnName, cell));
+            bindings.put("cell", new WrappedCell(columnName, cell));
             if (cell.value == null) {
                 bindings.remove("value");
             } else {
