@@ -61,7 +61,7 @@ public class OperationResolver extends TypeIdResolverBase {
     }
     
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
     	Class<? extends AbstractOperation> opClass = OperationRegistry.resolveOperationId(id);
     	if (opClass == null) {
     		opClass = UnknownOperation.class;

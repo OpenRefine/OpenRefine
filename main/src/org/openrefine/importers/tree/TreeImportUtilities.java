@@ -62,7 +62,7 @@ public abstract class TreeImportUtilities {
             Project project,
             ImportColumnGroup columnGroup
     ) {
-        int startColumnIndex = project.columnModel.columns.size();
+        int startColumnIndex = project.columnModel.getColumns().size();
 
         List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
         Collections.sort(columns, new Comparator<ImportColumn>() {
@@ -81,7 +81,7 @@ public abstract class TreeImportUtilities {
             ImportColumn c = columns.get(i);
 
             ColumnMetadata column = new org.openrefine.model.ColumnMetadata(c.cellIndex, c.name);
-            project.columnModel.columns.add(column);
+            project.columnModel.getColumns().add(column);
         }
 
         List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());

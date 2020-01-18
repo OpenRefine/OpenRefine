@@ -35,9 +35,9 @@ package org.openrefine.model;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.openrefine.expr.CellTuple;
 import org.openrefine.expr.HasFields;
@@ -46,46 +46,46 @@ import org.openrefine.util.ParsingUtilities;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Class representing a single Row which contains a list of {@link Cell}s.  There may
  * be multiple rows in a {@link Record}.
  */
 public class Row implements HasFields {
-    public boolean             flagged;
-    public boolean             starred;
-    final public List<Cell>    cells;
+    public final boolean             flagged;
+    public final boolean             starred;
+    public final ImmutableList<Cell>    cells;
     
     private static final String FLAGGED = "flagged";
     private static final String STARRED = "starred";
     
     /**
-     * Construct a new Row.
-     * 
-     * @param cellCount number of cells to give row initially (can be extended later)
+     * Construct a new Row containing the given cells.
      */
-    public Row(int cellCount) {
-        cells = new ArrayList<Cell>(cellCount);
+    public Row(List<Cell> cells) {
+        this(cells, false, false);
     }
     
-    protected Row(List<Cell> cells, boolean flagged, boolean starred) {
+    @JsonCreator
+    public Row(
+            @JsonProperty("cells")
+            List<Cell> cells,
+            @JsonProperty("flagged")
+            boolean flagged,
+            @JsonProperty("starred")
+            boolean starred) {
+        this(cells != null ?
+                ImmutableList.<Cell>builder().addAll(
+                        cells.stream().map(c -> c != null ? c : Cell.NULL).collect(Collectors.toList())
+                ).build() : ImmutableList.of(),
+                flagged, starred);
+    }
+    
+    protected Row(ImmutableList<Cell> cells, boolean flagged, boolean starred) {
         this.cells = cells;
         this.flagged = flagged;
         this.starred = starred;
-    }
-    
-    /**
-     * Copy a row and return the copy. Note that this is a shallow copy, so
-     * if the contents of cells are changed in the original, they will be
-     * be changed in the duplicate.
-     * @return the duplicated row
-     */
-    public Row dup() {
-        Row row = new Row(cells.size());
-        row.flagged = flagged;
-        row.starred = starred;
-        row.cells.addAll(cells);
-        return row;
     }
     
     @Override
@@ -143,19 +143,8 @@ public class Row implements HasFields {
         return value == null || (value instanceof String && ((String) value).trim().length() == 0);
     }
     
-    public void setCell(int cellIndex, Cell cell) {
-        if (cellIndex < cells.size()) {
-            cells.set(cellIndex, cell);
-        } else {
-            while (cellIndex > cells.size()) {
-                cells.add(null);
-            }
-            cells.add(cell);
-        }
-    }
-    
-    public CellTuple getCellTuple(Project project) {
-        return new CellTuple(project, this);
+    public CellTuple getCellTuple(ColumnModel columnModel) {
+        return new CellTuple(columnModel, this);
     }
     
     @JsonProperty(FLAGGED)
@@ -170,13 +159,10 @@ public class Row implements HasFields {
     
     @JsonProperty("cells")
     public List<Cell> getCells() {
-        return cells;
+        return cells.stream()
+                .map(c -> c.value == null && c.recon == null ? null : c)
+                .collect(Collectors.toList());
     }
-    
-    /*
-    @JsonView(JsonViews.SaveMode.class)
-    public 
-    */
     
     public void save(Writer writer, Properties options) {
         if (options.containsKey("rowIndex")) {
@@ -193,20 +179,6 @@ public class Row implements HasFields {
     static public Row load(String s) throws Exception {
         return s.length() == 0 ? null : 
             loadStreaming(s);
-    }
-    
-    @JsonCreator
-    static public Row deserialize(
-            @JsonProperty(STARRED)
-            boolean starred,
-            @JsonProperty(FLAGGED)
-            boolean flagged,
-            @JsonProperty("cells")
-            List<Cell> cells) {
-        if (cells == null) {
-            cells = new ArrayList<>();
-        }
-        return new Row(cells, flagged, starred);
     }
     
     static public Row loadStreaming(String s) throws Exception {

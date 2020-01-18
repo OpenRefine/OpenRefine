@@ -54,7 +54,7 @@ public class ReconConfigResolver extends TypeIdResolverBase {
     }
     
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
         Class klass = ReconConfig.getClassFromMode(id);
         if (klass == null) {
             throw new IllegalArgumentException("Unknown recon config type "+id);

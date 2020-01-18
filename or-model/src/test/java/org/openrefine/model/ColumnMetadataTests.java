@@ -26,15 +26,70 @@
  ******************************************************************************/
 package org.openrefine.model;
 
-import org.openrefine.model.RecordModel;
+import java.util.List;
+
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.Project;
+import org.openrefine.model.Recon;
+import org.openrefine.model.Row;
+import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconJob;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
-public class RecordModelTests {
+public class ColumnMetadataTests {
+	
+	protected static class MyReconConfig extends ReconConfig {
+
+		@Override
+		public int getBatchSize() {
+			return 40;
+		}
+
+		@Override
+		public String getBriefDescription(Project project, String columnName) {
+			return "My description";
+		}
+
+		@Override
+		public ReconJob createJob(Project project, int rowIndex, Row row, String columnName, Cell cell) {
+			return null;
+		}
+
+		@Override
+		public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
+			return null;
+		}
+
+		@Override
+		public Recon createNewRecon(long historyEntryID) {
+			return null;
+		}
+
+		@Override
+		public String getMode() {
+			return "my-recon";
+		}
+		
+	}
+	
     @Test
-    public void serializeRecordModel() {
-        RecordModel model = new RecordModel();
-        TestUtils.isSerializedTo(model, "{\"hasRecords\":false}", ParsingUtilities.defaultWriter);
+    public void serializeColumn() throws Exception {
+        ReconConfig.registerReconConfig("core", "my-recon", MyReconConfig.class);
+        String json = "{\n"
+                + "\"originalName\":\"name\","
+                + "\"name\":\"organization_name\","
+                + "\"reconConfig\":{"
+                + "   \"mode\":\"my-recon\","
+                + "    \"batchSize\":40"
+                + "    },"
+                + "\"reconStats\":{"
+                + "    \"nonBlanks\":299,"
+                + "    \"newTopics\":0,"
+                + "    \"matchedTopics\":222"
+                + "}}";
+        TestUtils.isSerializedTo(ColumnMetadata.load(json), json, ParsingUtilities.defaultWriter);
     }
 }

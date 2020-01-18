@@ -57,6 +57,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
         visible=true) // for UnknownOperation, which needs to read its own id
 @JsonTypeIdResolver(OperationResolver.class)
 abstract public class AbstractOperation  {
+    
     public Process createProcess(Project project, Properties options) throws Exception {
         return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
             @Override

@@ -294,7 +294,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
                         _historyEntryID)
                 );
                 
-                _project.history.addEntry(historyEntry);
+                _project.getHistory().addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }
         }

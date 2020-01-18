@@ -26,6 +26,9 @@
  ******************************************************************************/
 package org.openrefine.model;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.ModelException;
@@ -36,18 +39,15 @@ import org.testng.annotations.Test;
 public class ColumnModelTests {
     @Test
     public void serializeColumnModel() throws ModelException {
-        ColumnModel model = new ColumnModel();
-        model.addColumn(0, new ColumnMetadata(0, "a"), false);
-        model.addColumn(1, new ColumnMetadata(1, "b"), false);
+        ColumnModel model = new ColumnModel(
+                Arrays.asList(new ColumnMetadata("a"), new ColumnMetadata("b")));
         String json = "{\n" + 
                 "       \"columns\" : [ {\n" + 
-                "         \"cellIndex\" : 0,\n" + 
                 "         \"name\" : \"a\",\n" + 
-                "         \"originalName\" : \"a\",\n" + 
+                "         \"originalName\" : \"a\"\n" + 
                 "       }, {\n" + 
-                "         \"cellIndex\" : 1,\n" + 
                 "         \"name\" : \"b\",\n" + 
-                "         \"originalName\" : \"b\",\n" + 
+                "         \"originalName\" : \"b\"\n" + 
                 "       } ],\n" + 
                 "       \"keyCellIndex\" : 0,\n" + 
                 "       \"keyColumnName\" : \"a\"\n" + 
@@ -60,7 +60,7 @@ public class ColumnModelTests {
         String json = "{"
                 + "\"columns\":[]"
                 + "}";
-        ColumnModel m = new ColumnModel();
+        ColumnModel m = new ColumnModel(Collections.emptyList());
         TestUtils.isSerializedTo(m, json, ParsingUtilities.defaultWriter);
     }
 }

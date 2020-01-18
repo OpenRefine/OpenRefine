@@ -84,7 +84,7 @@ public class WikitextImporterTests extends ImporterTest {
     	} catch (Exception e) {
     	   Assert.fail("Parsing failed", e);
     	}
-    	Assert.assertEquals(project.columnModel.columns.size(), 3);
+    	Assert.assertEquals(project.columnModel.getColumns().size(), 3);
     	Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "a");
@@ -114,7 +114,7 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
         Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "e");
@@ -141,7 +141,7 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
         Assert.assertEquals(project.rows.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         
@@ -186,12 +186,12 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 7);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 7);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "EUROFOUND");
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Offizieller Name");
-        Assert.assertEquals(project.columnModel.columns.get(6).getName(), "Anmerkungen");
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "Offizieller Name");
+        Assert.assertEquals(project.columnModel.getColumns().get(6).getName(), "Anmerkungen");
         Assert.assertEquals(project.rows.get(0).cells.size(), 7);  
     }
 
@@ -219,7 +219,7 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 6);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 6);
         Assert.assertNull(project.rows.get(1).cells.get(2));
         Assert.assertNull(project.rows.get(1).cells.get(3));
         Assert.assertEquals(project.rows.get(1).cells.get(4).value, "Butter");
@@ -245,7 +245,7 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 5);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
         Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
@@ -273,7 +273,7 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 5);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 5);
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
         Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
@@ -302,7 +302,7 @@ public class WikitextImporterTests extends ImporterTest {
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
         Assert.assertEquals(project.rows.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "{{free to read}}");
