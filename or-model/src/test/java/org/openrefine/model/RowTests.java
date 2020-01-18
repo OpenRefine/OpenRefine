@@ -33,84 +33,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.StringWriter;
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class RowTests {
 
-    // dependencies
-    StringWriter writer;
-    Project project;
-    Properties options;
-
-    @BeforeMethod
-    public void SetUp() {
-        writer = new StringWriter();
-        project = new Project();
-        options = mock(Properties.class);
-    }
-
-    @AfterMethod
-    public void TearDown() {
-        writer = null;
-        project = null;
-        options = null;
-    }
-
     @Test
     public void emptyRow() {
-        Row row = new Row(5);
+        Row row = new Row(Collections.emptyList());
         Assert.assertTrue(row.isEmpty());
     }
 
     @Test
     public void notEmptyRow() {
-        Row row = new Row(1);
-        row.setCell(0, new Cell("I'm not empty", null));
+        Row row = new Row(Arrays.asList(new Cell("I'm not empty", null)));
         Assert.assertFalse(row.isEmpty());
     }
 
     @Test
-    public void duplicateRow() {
-        Row row = new Row(5);
-        row.flagged = true;
-        Row duplicateRow = row.dup();
-        Assert.assertTrue(duplicateRow.flagged);
-    }
-
-    @Test
     public void saveRow() {
-        Row row = new Row(5);
-        row.setCell(0, new Cell("I'm not empty", null));
-        row.save(writer, options);
-        TestUtils.assertEqualAsJson(writer.getBuffer().toString(),
-                "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}");
-    }
-
-    // This way of serializing a row with indices is now deprecated, see GetRowsCommand.
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void saveRowWithRecordIndex() {
-        Row row = new Row(5);
-        row.setCell(0, new Cell("I'm not empty", null));
-        when(options.containsKey("rowIndex")).thenReturn(true);
-        when(options.get("rowIndex")).thenReturn(0);
-        when(options.containsKey("recordIndex")).thenReturn(true);
-        when(options.get("recordIndex")).thenReturn(1);
-        row.save(writer, options);
+        Row row = new Row(Arrays.asList(new Cell("I'm not empty", null)));
+        TestUtils.isSerializedTo(
+                row,
+                "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}",
+                ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -140,41 +92,36 @@ public class RowTests {
 
     @Test
     public void toStringTest() {
-        Row row = new Row(5);
-        row.setCell(0, new Cell(1, null));
-        row.setCell(1, new Cell(2, null));
-        row.setCell(2, new Cell(3, null));
-        row.setCell(3, new Cell(4, null));
-        row.setCell(4, new Cell(5, null));
+        Row row = new Row(Arrays.asList(
+                new Cell(1, null),
+                new Cell(2, null),
+                new Cell(3, null),
+                new Cell(4, null),
+                new Cell(5, null)));
         Assert.assertEquals(row.toString(), "1,2,3,4,5,");
     }
 
     @Test
     public void blankCell() {
-        Row row = new Row(5);
+        Row row = new Row(Arrays.asList(new Cell("", null)));
         Assert.assertTrue(row.isCellBlank(0));
     }
 
     @Test
     public void nonBlankCell() {
-        Row row = new Row(5);
-        row.setCell(0, new Cell("I'm not empty", null));
+        Row row = new Row(Arrays.asList(new Cell("I'm not empty", null)));
         Assert.assertFalse(row.isCellBlank(0));
-        row.setCell(3, new Cell("I'm not empty", null));
-        Assert.assertFalse(row.isCellBlank(3));
     }
 
     @Test
     public void getFlaggedField() {
-        Row row = new Row(5);
-        row.flagged = true;
+        Row row = new Row(Arrays.asList(new Cell("hello", null)), true, false);
         Assert.assertTrue((Boolean) row.getField("flagged"));
     }
 
     @Test
     public void getStarredField() {
-        Row row = new Row(5);
-        row.starred = true;
+        Row row = new Row(Arrays.asList(new Cell("hello", null)), false, true);
         Assert.assertTrue((Boolean) row.getField("starred"));
     }
 

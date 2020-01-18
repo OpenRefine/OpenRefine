@@ -145,7 +145,7 @@ public class ImporterUtilities {
                 } else {
                     column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), columnName);
                     try {
-                        project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
+                        project.columnModel.addColumn(project.columnModel.getColumns().size(), column, false);
                     } catch (ModelException e) {
                         // Ignore: shouldn't get in here since we just checked for duplicate names.
                     }
@@ -182,7 +182,7 @@ public class ImporterUtilities {
             if (project.columnModel.getColumnByName(cell) == null) {
                 ColumnMetadata column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), cell);
                 try {
-                    project.columnModel.addColumn(project.columnModel.columns.size(), column, false);
+                    project.columnModel.addColumn(project.columnModel.getColumns().size(), column, false);
                 } catch (ModelException e) {
                     // Ignore: shouldn't get in here since we just checked for duplicate names.
                 }

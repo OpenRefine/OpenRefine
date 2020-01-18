@@ -164,11 +164,11 @@ public class ColumnSplitChange implements Change {
 
                 ColumnMetadata column = new ColumnMetadata(cellIndex, name);
 
-                project.columnModel.columns.add(_columnIndex + 1 + i, column);
+                project.columnModel.getColumns().add(_columnIndex + 1 + i, column);
             }
 
             if (_removeOriginalColumn) {
-                project.columnModel.columns.remove(_columnIndex);
+                project.columnModel.getColumns().remove(_columnIndex);
             }
 
             project.update();
@@ -186,11 +186,11 @@ public class ColumnSplitChange implements Change {
             }
 
             if (_removeOriginalColumn) {
-                project.columnModel.columns.add(_columnIndex, _column);
+                project.columnModel.getColumns().add(_columnIndex, _column);
             }
 
             for (int i = 0; i < _columnNames.size(); i++) {
-                project.columnModel.columns.remove(_columnIndex + 1);
+                project.columnModel.getColumns().remove(_columnIndex + 1);
                 ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _columnNames.get(i));
             }
 

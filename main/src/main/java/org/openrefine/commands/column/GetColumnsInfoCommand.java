@@ -67,7 +67,7 @@ public class GetColumnsInfoCommand extends Command {
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(response.getWriter());
 
             writer.writeStartArray();
-            for (ColumnMetadata column : project.columnModel.columns) {
+            for (ColumnMetadata column : project.columnModel.getColumns()) {
                 writer.writeStartObject();
                 write(project, column, writer);
                 writer.writeEndObject();

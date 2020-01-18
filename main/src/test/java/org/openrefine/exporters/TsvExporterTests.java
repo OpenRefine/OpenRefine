@@ -200,7 +200,7 @@ public class TsvExporterTests extends RefineTest {
         for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
-                project.columnModel.columns.get(i).getCellIndex();
+                project.columnModel.getColumns().get(i).getCellIndex();
             } catch (ModelException e1) {
                 Assert.fail("Could not create column");
             }

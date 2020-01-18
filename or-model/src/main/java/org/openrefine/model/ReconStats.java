@@ -33,63 +33,114 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function2;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Recon.Judgment;
-import org.openrefine.util.ParsingUtilities;
 
-public class ReconStats {
+public class ReconStats implements Serializable {
+
+    private static final long serialVersionUID = -6321424927189309528L;
 
     @JsonProperty("nonBlanks")
-    final public int nonBlanks;
+    final public long nonBlanks;
     @JsonProperty("newTopics")
-    final public int newTopics;
+    final public long newTopics;
     @JsonProperty("matchedTopics")
-    final public int matchedTopics;
+    final public long matchedTopics;
 
+    /**
+     * Creates a summary of reconciliation statistics.
+     * 
+     * @param nonBlanks
+     *            the number of non blank cells in the column
+     * @param newTopics
+     *            the number of cells matched to a new topic in the column
+     * @param matchedTopics
+     *            the number of cells matched to an existing topic in the column
+     */
     @JsonCreator
     public ReconStats(
-            @JsonProperty("nonBlanks") int nonBlanks,
-            @JsonProperty("newTopics") int newTopics,
-            @JsonProperty("matchedTopics") int matchedTopics) {
+            @JsonProperty("nonBlanks") long nonBlanks,
+            @JsonProperty("newTopics") long newTopics,
+            @JsonProperty("matchedTopics") long matchedTopics) {
         this.nonBlanks = nonBlanks;
         this.newTopics = newTopics;
         this.matchedTopics = matchedTopics;
     }
 
-    static public ReconStats create(Project project, int cellIndex) {
-        int nonBlanks = 0;
-        int newTopics = 0;
-        int matchedTopics = 0;
+    /**
+     * Creates reconciliation statistics from a column of cells.
+     * 
+     * @param cells
+     *            a RDD of cells
+     * @return the statistics of their reconciliation status
+     */
+    static public ReconStats create(JavaRDD<Cell> cells) {
 
-        for (Row row : project.rows) {
-            Cell cell = row.getCell(cellIndex);
-            if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                nonBlanks++;
+        ReconStats zero = new ReconStats(0, 0, 0);
+        Function2<ReconStats, Cell, ReconStats> incrementer = new Function2<ReconStats, Cell, ReconStats>() {
 
-                if (cell.recon != null) {
-                    if (cell.recon.judgment == Judgment.New) {
-                        newTopics++;
-                    } else if (cell.recon.judgment == Judgment.Matched) {
-                        matchedTopics++;
+            private static final long serialVersionUID = 2389723987L;
+
+            @Override
+            public ReconStats call(ReconStats stats, Cell cell) throws Exception {
+                int nonBlanks = 0;
+                int newTopics = 0;
+                int matchedTopics = 0;
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                    nonBlanks++;
+
+                    if (cell.recon != null) {
+                        if (cell.recon.judgment == Judgment.New) {
+                            newTopics++;
+                        } else if (cell.recon.judgment == Judgment.Matched) {
+                            matchedTopics++;
+                        }
                     }
                 }
+                return new ReconStats(
+                        stats.nonBlanks + nonBlanks,
+                        stats.newTopics + newTopics,
+                        stats.matchedTopics + matchedTopics);
             }
-        }
-
-        return new ReconStats(nonBlanks, newTopics, matchedTopics);
+        };
+        return cells.aggregate(zero, incrementer, (stateA, stateB) -> stateA.add(stateB));
     }
 
-    public void save(Writer writer) {
-        try {
-            ParsingUtilities.defaultWriter.writeValue(writer, this);
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Adds two recon stats into a new recon stats object
+     * 
+     * @param other
+     *            the other recon stats to add
+     * @return a recon stats whose statistics are the sum of the two original ones
+     */
+    protected ReconStats add(ReconStats other) {
+        return new ReconStats(
+                nonBlanks + other.nonBlanks,
+                newTopics + other.newTopics,
+                matchedTopics + other.matchedTopics);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ReconStats)) {
+            return false;
         }
+        ReconStats rs = (ReconStats) other;
+        return (rs.nonBlanks == nonBlanks &&
+                rs.newTopics == newTopics &&
+                rs.matchedTopics == matchedTopics);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[ReconStats: non-blanks: %d, new: %d, matched: %d]",
+                nonBlanks, newTopics, matchedTopics);
     }
 }

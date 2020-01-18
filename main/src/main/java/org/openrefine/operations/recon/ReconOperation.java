@@ -339,7 +339,7 @@ public class ReconOperation extends EngineDependentOperation {
                         ReconOperation.this,
                         reconChange);
 
-                _project.history.addEntry(historyEntry);
+                _project.getHistory().addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }
         }

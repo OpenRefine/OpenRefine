@@ -101,7 +101,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                         "foo", "bar",
                         "alpha", "beta" });
 
-        ColumnMetadata column = project.columnModel.columns.get(0);
+        ColumnMetadata column = project.columnModel.getColumns().get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.database/recon_service",
                 "http://my.database/entity/",

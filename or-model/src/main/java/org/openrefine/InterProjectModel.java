@@ -43,7 +43,6 @@ import java.util.Map.Entry;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFieldsListImpl;
 import org.openrefine.expr.WrappedRow;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.JoinException;
@@ -157,17 +156,17 @@ public class InterProjectModel {
             return;
         }
 
-        ColumnMetadata fromColumn = fromProject.columnModel.getColumnByName(join.fromProjectColumnName);
-        ColumnMetadata toColumn = toProject.columnModel.getColumnByName(join.toProjectColumnName);
-        if (fromColumn == null) {
+        int fromColumnIndex = fromProject.columnModel.getColumnIndexByName(join.fromProjectColumnName);
+        int toColumnIndex = toProject.columnModel.getColumnIndexByName(join.toProjectColumnName);
+        if (fromColumnIndex == -1) {
             throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " + fromProjectMD.getName());
         }
-        if (toColumn == null) {
+        if (toColumnIndex == -1) {
             throw new JoinException("Unable to find column " + join.toProjectColumnName + " in project " + toProjectMD.getName());
         }
 
         for (Row fromRow : fromProject.rows) {
-            Object value = fromRow.getCellValue(fromColumn.getCellIndex());
+            Object value = fromRow.getCellValue(fromColumnIndex);
             if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
                 join.valueToRowIndices.put(value, new ArrayList<Integer>());
             }
@@ -177,7 +176,7 @@ public class InterProjectModel {
         for (int r = 0; r < count; r++) {
             Row toRow = toProject.rows.get(r);
 
-            Object value = toRow.getCellValue(toColumn.getCellIndex());
+            Object value = toRow.getCellValue(toColumnIndex);
             if (ExpressionUtils.isNonBlankData(value) && join.valueToRowIndices.containsKey(value)) {
                 join.valueToRowIndices.get(value).add(r);
             }

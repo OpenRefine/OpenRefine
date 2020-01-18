@@ -100,7 +100,7 @@ abstract public class CustomizableTabularExporterUtilities {
 
         List<JsonNode> columnOptionArray = options == null ? null : JSONUtilities.getArray(options, "columns");
         if (columnOptionArray == null) {
-            List<ColumnMetadata> columns = project.columnModel.columns;
+            List<ColumnMetadata> columns = project.columnModel.getColumns();
 
             columnNames = new ArrayList<String>(columns.size());
             for (ColumnMetadata column : columns) {

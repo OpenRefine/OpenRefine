@@ -76,6 +76,6 @@ public class MassChangeTests extends RefineTest {
         MassChange massChange = new MassChange(changes, false);
         massChange.apply(project);
         massChange.revert(project);
-        assertTrue(project.columnModel.columns.isEmpty());
+        assertTrue(project.columnModel.getColumns().isEmpty());
     }
 }

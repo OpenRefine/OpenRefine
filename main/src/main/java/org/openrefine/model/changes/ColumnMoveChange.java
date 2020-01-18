@@ -63,8 +63,8 @@ public class ColumnMoveChange extends ColumnChange {
                 throw new RuntimeException("Column index out of range");
             }
 
-            ColumnMetadata column = project.columnModel.columns.remove(_oldColumnIndex);
-            project.columnModel.columns.add(_newColumnIndex, column);
+            ColumnMetadata column = project.columnModel.getColumns().remove(_oldColumnIndex);
+            project.columnModel.getColumns().add(_newColumnIndex, column);
 
             project.update();
         }
@@ -73,8 +73,8 @@ public class ColumnMoveChange extends ColumnChange {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            ColumnMetadata column = project.columnModel.columns.remove(_newColumnIndex);
-            project.columnModel.columns.add(_oldColumnIndex, column);
+            ColumnMetadata column = project.columnModel.getColumns().remove(_newColumnIndex);
+            project.columnModel.getColumns().add(_oldColumnIndex, column);
 
             project.update();
         }

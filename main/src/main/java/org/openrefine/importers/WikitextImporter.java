@@ -751,11 +751,11 @@ public class WikitextImporter extends TabularImportingParserBase {
             if (dataReader.columnReconciled != null) {
                 for (int i = 0; i != dataReader.columnReconciled.size(); i++) {
                     if (dataReader.columnReconciled.get(i)) {
-                        ColumnMetadata col = project.columnModel.columns.get(i);
+                        ColumnMetadata col = project.columnModel.getColumns().get(i);
                         ColumnMetadata newCol = col
                                 .withReconStats(ReconStats.create(project, i))
                                 .withReconConfig(cfg);
-                        project.columnModel.columns.set(i, newCol);
+                        project.columnModel.getColumns().set(i, newCol);
                     }
                 }
             }

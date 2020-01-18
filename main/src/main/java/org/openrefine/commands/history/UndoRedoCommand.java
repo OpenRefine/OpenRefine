@@ -64,7 +64,7 @@ public class UndoRedoCommand extends Command {
             if (undoIDString != null) {
                 long undoID = Long.parseLong(undoIDString);
 
-                lastDoneID = project.history.getPrecedingEntryID(undoID);
+                lastDoneID = project.getHistory().getPrecedingEntryID(undoID);
             }
         }
 

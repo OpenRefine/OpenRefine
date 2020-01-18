@@ -34,16 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
 
+// TODO (Antonin, 2020-01-16): why is this class useful? Where do we need to access the column name?
 public class WrappedCell implements HasFields {
 
-    final public Project project;
     final public String columnName;
     final public Cell cell;
 
-    public WrappedCell(Project project, String columnName, Cell cell) {
-        this.project = project;
+    public WrappedCell(String columnName, Cell cell) {
         this.columnName = columnName;
         this.cell = cell;
     }

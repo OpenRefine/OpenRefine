@@ -60,8 +60,8 @@ public class HistoryProcess extends Process {
         if (_lastDoneID == 0) {
             _description = "Undo all";
         } else {
-            HistoryEntry entry = _project.history.getEntry(_lastDoneID);
-            _description = "Undo/redo until after " + entry.description;
+            HistoryEntry entry = _project.getHistory().getEntry(_lastDoneID);
+            _description = "Undo/redo until after " + entry.getDescription();
         }
     }
 
@@ -83,7 +83,7 @@ public class HistoryProcess extends Process {
 
     @Override
     public HistoryEntry performImmediate() {
-        _project.history.undoRedo(_lastDoneID);
+        _project.getHistory().undoRedo(_lastDoneID);
         _done = true;
 
         return null;

@@ -53,7 +53,11 @@ import org.openrefine.expr.HasFields;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 
-public class Cell implements HasFields {
+public class Cell implements HasFields, Serializable {
+
+    private static final long serialVersionUID = 6587215646810559731L;
+
+    public static Cell NULL = new Cell(null, null);
 
     @JsonIgnore
     final public Serializable value;

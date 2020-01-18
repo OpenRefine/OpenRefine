@@ -117,7 +117,7 @@ public class FileHistoryEntryManager implements HistoryEntryManager {
     }
 
     protected File getChangeFile(HistoryEntry historyEntry) {
-        return new File(getHistoryDir(historyEntry), historyEntry.id + ".change.zip");
+        return new File(getHistoryDir(historyEntry), historyEntry.getId() + ".change.zip");
     }
 
     protected File getHistoryDir(HistoryEntry historyEntry) {

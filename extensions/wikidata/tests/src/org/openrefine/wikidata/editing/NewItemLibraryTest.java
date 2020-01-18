@@ -61,7 +61,7 @@ public class NewItemLibraryTest extends WikidataRefineTest {
         Project project = createCSVProject(TestingData.inceptionWithNewCsv);
         StandardReconConfig config = new StandardReconConfig("http://my.endpoint",
                 "http://my.schema", "http://my.schema", "Q5", "human", true, Collections.emptyList());
-        project.columnModel.columns.get(0).setReconConfig(config);
+        project.columnModel.getColumns().get(0).setReconConfig(config);
 
         project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(3289L, "University of Ljubljana"));
         project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));

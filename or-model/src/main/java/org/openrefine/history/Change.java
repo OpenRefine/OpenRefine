@@ -37,18 +37,17 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 
 /**
- * Interface for a concrete change to a project's data. A change should consist of new values already computed. When
- * apply() is called, the change should not spend any more time computing anything. It should simply save existing
- * values and swap in new values. Similarly, when revert() is called, the change should only swap old values back in.
+ * Interface for a concrete change to a project's data.
  */
 public interface Change {
 
-    public void apply(Project project);
+    public GridState apply(GridState projectState);
 
-    public void revert(Project project);
-
+    /*
+     * @todo add ability to save optional change data
+     */
     public void save(Writer writer, Properties options) throws IOException;
 }

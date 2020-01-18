@@ -150,9 +150,9 @@ public class ImporterUtilitiesTests extends RefineTest {
         columnNames.add("col2");
         columnNames.add("");
         ImporterUtilities.setupColumns(project, columnNames);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "Column");
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "Column");
     }
 
 }

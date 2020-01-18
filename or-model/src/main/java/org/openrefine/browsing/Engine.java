@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.NotImplementedException;
 
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.util.ConjunctiveFilteredRecords;
@@ -141,22 +142,7 @@ public class Engine {
 
     @JsonIgnore
     public FilteredRecords getAllRecords() {
-        return new FilteredRecords() {
-
-            @Override
-            public void accept(Project project, RecordVisitor visitor) {
-                try {
-                    visitor.start(project);
-
-                    int c = project.recordModel.getRecordCount();
-                    for (int r = 0; r < c; r++) {
-                        visitor.visit(project, project.recordModel.getRecord(r));
-                    }
-                } finally {
-                    visitor.end(project);
-                }
-            }
-        };
+        throw new NotImplementedException("record mode is not implemented");
     }
 
     @JsonIgnore

@@ -27,8 +27,6 @@
 
 package org.openrefine.operations;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
@@ -62,7 +60,7 @@ public class OperationResolver extends TypeIdResolverBase {
     }
 
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
         Class<? extends AbstractOperation> opClass = OperationRegistry.resolveOperationId(id);
         if (opClass == null) {
             opClass = UnknownOperation.class;

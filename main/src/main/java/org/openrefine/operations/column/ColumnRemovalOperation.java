@@ -72,7 +72,7 @@ public class ColumnRemovalOperation extends AbstractOperation {
 
         String description = "Remove column " + column.getName();
 
-        Change change = new ColumnRemovalChange(project.columnModel.columns.indexOf(column));
+        Change change = new ColumnRemovalChange(project.columnModel.getColumns().indexOf(column));
 
         return new HistoryEntry(historyEntryID, project, description, ColumnRemovalOperation.this, change);
     }

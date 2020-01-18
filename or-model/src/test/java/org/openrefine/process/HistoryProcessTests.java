@@ -55,9 +55,9 @@ public class HistoryProcessTests {
         AbstractOperation op = mock(AbstractOperation.class);
         Change ch = mock(Change.class);
         HistoryEntry entry = new HistoryEntry(1234L, project, "first operation", op, ch);
-        project.history.addEntry(entry);
+        project.getHistory().addEntry(entry);
         entry = new HistoryEntry(5678L, project, "second operation", op, ch);
-        project.history.addEntry(entry);
+        project.getHistory().addEntry(entry);
     }
 
     @Test

@@ -78,7 +78,7 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> oldColumns = project.columnModel.columns;
+        List<ColumnMetadata> oldColumns = project.columnModel.getColumns();
 
         int columnIndex = project.columnModel.getColumnIndexByName(_columnName);
         int columnCount = oldColumns.size();

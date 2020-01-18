@@ -161,12 +161,12 @@ public class KeyValueColumnizeTests extends RefineTest {
         // 1,1,3,,
         // 2,,4,5,
         // 3,2,5,,3
-        Assert.assertEquals(project.columnModel.columns.size(), 5);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "ID");
-        Assert.assertEquals(project.columnModel.columns.get(1).getName(), "a");
-        Assert.assertEquals(project.columnModel.columns.get(2).getName(), "b");
-        Assert.assertEquals(project.columnModel.columns.get(3).getName(), "c");
-        Assert.assertEquals(project.columnModel.columns.get(4).getName(), "d");
+        Assert.assertEquals(project.columnModel.getColumns().size(), 5);
+        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "ID");
+        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "a");
+        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "b");
+        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "c");
+        Assert.assertEquals(project.columnModel.getColumns().get(4).getName(), "d");
         Assert.assertEquals(project.rows.size(), 3);
 
         // The actual row data structure has to leave the columns model untouched for redo/undo purpose.

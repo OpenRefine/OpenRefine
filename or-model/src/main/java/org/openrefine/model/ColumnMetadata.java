@@ -51,7 +51,6 @@ import org.openrefine.util.ParsingUtilities;
  */
 public class ColumnMetadata {
 
-    final private int _cellIndex;
     final private String _originalName;
     final private String _name;
     final private ReconConfig _reconConfig;
@@ -59,29 +58,22 @@ public class ColumnMetadata {
 
     @JsonCreator
     public ColumnMetadata(
-            @JsonProperty("cellIndex") int cellIndex,
             @JsonProperty("originalName") String originalName,
             @JsonProperty("name") String name,
             @JsonProperty("reconConfig") ReconConfig reconConfig,
             @JsonProperty("reconStats") ReconStats reconStats) {
-        _cellIndex = cellIndex;
         _originalName = originalName;
         _name = name == null ? originalName : name;
         _reconConfig = reconConfig;
         _reconStats = reconStats;
     }
 
-    public ColumnMetadata(int index, String name) {
-        this(index, name, name, null, null);
-    }
-
-    @JsonProperty("cellIndex")
-    public int getCellIndex() {
-        return _cellIndex;
+    public ColumnMetadata(String name) {
+        this(name, name, null, null);
     }
 
     public ColumnMetadata withCellIndex(int cellIndex) {
-        return new ColumnMetadata(cellIndex, _originalName, _name, _reconConfig, _reconStats);
+        return new ColumnMetadata(_originalName, _name, _reconConfig, _reconStats);
     }
 
     @JsonProperty("originalName")
@@ -90,7 +82,7 @@ public class ColumnMetadata {
     }
 
     public ColumnMetadata withName(String name) {
-        return new ColumnMetadata(_cellIndex, _originalName, name, _reconConfig, _reconStats);
+        return new ColumnMetadata(_originalName, name, _reconConfig, _reconStats);
     }
 
     @JsonProperty("name")
@@ -99,7 +91,7 @@ public class ColumnMetadata {
     }
 
     public ColumnMetadata withReconConfig(ReconConfig config) {
-        return new ColumnMetadata(_cellIndex, _originalName, _name, config, _reconStats);
+        return new ColumnMetadata(_originalName, _name, config, _reconStats);
     }
 
     @JsonProperty("reconConfig")
@@ -109,7 +101,7 @@ public class ColumnMetadata {
     }
 
     public ColumnMetadata withReconStats(ReconStats stats) {
-        return new ColumnMetadata(_cellIndex, _originalName, _name, _reconConfig, stats);
+        return new ColumnMetadata(_originalName, _name, _reconConfig, stats);
     }
 
     @JsonProperty("reconStats")

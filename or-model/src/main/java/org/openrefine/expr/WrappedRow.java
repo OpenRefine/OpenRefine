@@ -33,8 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -58,7 +59,8 @@ public class WrappedRow implements HasFields {
         } else if ("index".equals(name)) {
             return rowIndex;
         } else if ("record".equals(name)) {
-            return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
+            throw new NotImplementedException("records mode is not implemented");
+            // return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
         } else if ("columnNames".equals(name)) {
             return project.columnModel.getColumnNames();
         } else {
@@ -111,14 +113,13 @@ public class WrappedRow implements HasFields {
 
         @Override
         public Object getField(String name) {
-            ColumnMetadata column = project.columnModel.getColumnByName(name);
-            if (column != null) {
-                int cellIndex = column.getCellIndex();
+            int columnIndex = project.columnModel.getColumnIndexByName(name);
+            if (columnIndex != -1) {
 
                 HasFieldsListImpl cells = new HasFieldsListImpl();
                 for (int r = _record.fromRowIndex; r < _record.toRowIndex; r++) {
                     Row row = project.rows.get(r);
-                    Cell cell = row.getCell(cellIndex);
+                    Cell cell = row.getCell(columnIndex);
                     if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                         cells.add(new WrappedCell(project, name, cell));
                     }

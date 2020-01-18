@@ -237,8 +237,8 @@ public class RefineTest extends PowerMockTestCase {
     public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
         Assert.assertNotNull(project.columnModel);
-        Assert.assertNotNull(project.columnModel.columns);
-        Assert.assertEquals(project.columnModel.columns.size(), numCols);
+        Assert.assertNotNull(project.columnModel.getColumns());
+        Assert.assertEquals(project.columnModel.getColumns().size(), numCols);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), numRows);
     }
@@ -264,7 +264,7 @@ public class RefineTest extends PowerMockTestCase {
     public void log(Project project) {
         // some quick and dirty debugging
         StringBuilder sb = new StringBuilder();
-        for (ColumnMetadata c : project.columnModel.columns) {
+        for (ColumnMetadata c : project.columnModel.getColumns()) {
             sb.append(c.getName());
             sb.append("; ");
         }

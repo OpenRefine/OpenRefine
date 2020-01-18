@@ -98,7 +98,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         ColumnMetadata noteColumn = _noteColumnName == null ? null : project.columnModel.getColumnByName(_noteColumnName);
 
         List<ColumnMetadata> unchangedColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> oldColumns = project.columnModel.columns;
+        List<ColumnMetadata> oldColumns = project.columnModel.getColumns();
         for (int i = 0; i < oldColumns.size(); i++) {
             if (i != keyColumnIndex &&
                     i != valueColumnIndex &&

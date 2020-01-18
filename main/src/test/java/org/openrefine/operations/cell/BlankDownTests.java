@@ -121,11 +121,11 @@ public class BlankDownTests extends RefineTest {
             r.cells.add(0, null);
         }
         List<ColumnMetadata> newColumns = new ArrayList<>();
-        for (ColumnMetadata c : project.columnModel.columns) {
+        for (ColumnMetadata c : project.columnModel.getColumns()) {
             newColumns.add(new ColumnMetadata(c.getCellIndex() + 1, c.getName()));
         }
-        project.columnModel.columns.clear();
-        project.columnModel.columns.addAll(newColumns);
+        project.columnModel.getColumns().clear();
+        project.columnModel.getColumns().addAll(newColumns);
         project.columnModel.update();
 
         AbstractOperation op = new BlankDownOperation(

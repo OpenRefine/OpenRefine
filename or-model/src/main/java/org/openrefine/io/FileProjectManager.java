@@ -189,10 +189,10 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public void exportProject(long projectId, TarOutputStream tos) throws IOException {
         File dir = this.getProjectDir(projectId);
-        this.tarDir("", dir, tos);
+        tarDir("", dir, tos);
     }
 
-    protected void tarDir(String relative, File dir, TarOutputStream tos) throws IOException {
+    protected static void tarDir(String relative, File dir, TarOutputStream tos) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) return;
         for (File file : files) {
@@ -219,7 +219,7 @@ public class FileProjectManager extends ProjectManager {
         }
     }
 
-    protected void copyFile(File file, OutputStream os) throws IOException {
+    protected static void copyFile(File file, OutputStream os) throws IOException {
         final int buffersize = 4096;
 
         FileInputStream fis = new FileInputStream(file);
@@ -423,7 +423,7 @@ public class FileProjectManager extends ProjectManager {
         GZIPOutputStream gos = new GZIPOutputStream(os);
         TarOutputStream tos = new TarOutputStream(gos);
         try {
-            ProjectManager.singleton.exportProject(project.id, tos);
+            ProjectManager.singleton.exportProject(project.getId(), tos);
         } finally {
             tos.close();
             gos.close();

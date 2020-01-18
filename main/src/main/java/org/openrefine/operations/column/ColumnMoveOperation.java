@@ -75,7 +75,7 @@ public class ColumnMoveOperation extends AbstractOperation {
         if (project.columnModel.getColumnByName(_columnName) == null) {
             throw new Exception("No column named " + _columnName);
         }
-        if (_index < 0 || _index >= project.columnModel.columns.size()) {
+        if (_index < 0 || _index >= project.columnModel.getColumns().size()) {
             throw new Exception("New column index out of range " + _index);
         }
 

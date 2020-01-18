@@ -63,7 +63,7 @@ public class ColumnReorderChange extends ColumnChange {
         synchronized (project) {
             if (_newColumns == null) {
                 _newColumns = new ArrayList<ColumnMetadata>();
-                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.columns);
+                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.getColumns());
 
                 for (String n : _columnNames) {
                     ColumnMetadata column = project.columnModel.getColumnByName(n);
@@ -110,8 +110,8 @@ public class ColumnReorderChange extends ColumnChange {
                 }
             }
 
-            project.columnModel.columns.clear();
-            project.columnModel.columns.addAll(_newColumns);
+            project.columnModel.getColumns().clear();
+            project.columnModel.getColumns().addAll(_newColumns);
 
             project.update();
         }
@@ -120,8 +120,8 @@ public class ColumnReorderChange extends ColumnChange {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            project.columnModel.columns.clear();
-            project.columnModel.columns.addAll(_oldColumns);
+            project.columnModel.getColumns().clear();
+            project.columnModel.getColumns().addAll(_oldColumns);
 
             for (int i = 0; i < _oldCells.length; i++) {
                 Row row = project.rows.get(_oldCells[i].row);

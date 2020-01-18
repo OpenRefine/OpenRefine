@@ -37,7 +37,7 @@ import org.openrefine.model.Project;
 
 public class ProjectStub extends Project {
 
-    public ProjectStub(long id) {
-        super(id);
+    public ProjectStub(GridState state) {
+        super(state);
     }
 }

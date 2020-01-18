@@ -27,17 +27,55 @@
 
 package org.openrefine.model;
 
+import java.util.Arrays;
+
+import org.apache.spark.api.java.JavaRDD;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.ReconStats;
+import org.openrefine.SparkBasedTest;
+import org.openrefine.model.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ReconStatsTests {
+public class ReconStatsTests extends SparkBasedTest {
 
     @Test
     public void serializeReconStats() {
         ReconStats rs = new ReconStats(3, 1, 2);
         TestUtils.isSerializedTo(rs, "{\"nonBlanks\":3,\"newTopics\":1,\"matchedTopics\":2}", ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testCreateFromColumn() {
+        Recon reconQ42 = new Recon(0, 0, Judgment.Matched, null, null, null, null, null, null, null, null, null);
+        Recon reconNew = new Recon(0, 0, Judgment.New, null, null, null, null, null, null, null, null, null);
+        JavaRDD<Cell> cells = context().parallelize(Arrays.asList(
+                new Cell(42, null),
+                new Cell("", null),
+                new Cell("Q42", reconQ42),
+                new Cell("new", reconNew)));
+
+        ReconStats rs = ReconStats.create(cells);
+        Assert.assertEquals(rs.nonBlanks, 3);
+        Assert.assertEquals(rs.matchedTopics, 1);
+        Assert.assertEquals(rs.newTopics, 1);
+    }
+
+    @Test
+    public void testEquals() {
+        ReconStats reconA = new ReconStats(10, 8, 1);
+        ReconStats reconB = new ReconStats(10, 8, 1);
+        ReconStats reconC = new ReconStats(10, 8, 2);
+
+        Assert.assertEquals(reconA, reconB);
+        Assert.assertNotEquals(reconA, reconC);
+        Assert.assertNotEquals(reconA, 18);
+    }
+
+    @Test
+    public void testToString() {
+        ReconStats recon = new ReconStats(10, 8, 1);
+        Assert.assertTrue(recon.toString().contains("ReconStats"));
     }
 }

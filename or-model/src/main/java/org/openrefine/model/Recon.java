@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +52,9 @@ import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
 
 @JsonFilter("reconCandidateFilter")
-public class Recon implements HasFields {
+public class Recon implements HasFields, Serializable {
+
+    private static final long serialVersionUID = 3926584932566476537L;
 
     /**
      * Freebase schema URLs kept for compatibility with legacy reconciliation results

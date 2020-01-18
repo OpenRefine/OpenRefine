@@ -33,24 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.ProjectManager;
 import org.openrefine.RefineModel;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
@@ -60,66 +51,55 @@ import org.openrefine.model.Project;
  */
 public class History {
 
-    static public Change readOneChange(InputStream in) throws Exception {
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
-        try {
-            return readOneChange(reader);
-        } finally {
-            reader.close();
+    @JsonProperty("entries")
+    protected final List<HistoryEntry> _entries;
+    @JsonProperty("position")
+    protected int _position;
+
+    @JsonIgnore
+    protected final List<GridState> _states;
+
+    /**
+     * Creates an empty on an initial grid state.
+     * 
+     * @param initialGrid
+     *            the initial state of the project
+     */
+    public History(GridState initialGrid) {
+        _entries = new ArrayList<>();
+        _states = new ArrayList<>();
+        _states.add(initialGrid);
+        _position = 0;
+    }
+
+    /**
+     * Deserializes a saved history.
+     */
+    @JsonCreator
+    public History(
+            @JsonProperty("initialGrid") GridState initialGrid,
+            @JsonProperty("entries") List<HistoryEntry> entries,
+            @JsonProperty("position") int position) {
+        this(initialGrid);
+        for (HistoryEntry entry : entries) {
+            addEntry(entry);
         }
+        _position = position;
     }
 
-    static public Change readOneChange(LineNumberReader reader) throws Exception {
-        /* String version = */ reader.readLine();
-
-        String className = reader.readLine();
-        Class<? extends Change> klass = getChangeClass(className);
-
-        Method load = klass.getMethod("load", LineNumberReader.class);
-
-        return (Change) load.invoke(null, reader);
+    @JsonIgnore
+    public GridState getCurrentGridState() {
+        return _states.get(_position);
     }
 
-    static public void writeOneChange(OutputStream out, Change change) throws IOException {
-        Writer writer = new OutputStreamWriter(out, "UTF-8");
-        try {
-            History.writeOneChange(writer, change);
-        } finally {
-            writer.flush();
-        }
+    @JsonProperty("position")
+    public int getPosition() {
+        return _position;
     }
 
-    static public void writeOneChange(Writer writer, Change change) throws IOException {
-        Properties options = new Properties();
-        options.setProperty("mode", "save");
-
-        writeOneChange(writer, change, options);
-    }
-
-    static public void writeOneChange(Writer writer, Change change, Properties options) throws IOException {
-        writer.write(RefineModel.ASSIGNED_VERSION);
-        writer.write('\n');
-        writer.write(change.getClass().getName());
-        writer.write('\n');
-
-        change.save(writer, options);
-    }
-
-    @SuppressWarnings("unchecked")
-    static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
-        return (Class<? extends Change>) RefineModel.getClass(className);
-    }
-
-    protected long _projectID;
-    @JsonProperty("past")
-    protected List<HistoryEntry> _pastEntries; // done changes, can be undone
-    @JsonProperty("future")
-    protected List<HistoryEntry> _futureEntries; // undone changes, can be redone
-
-    public History(Project project) {
-        _projectID = project.id;
-        _pastEntries = new ArrayList<HistoryEntry>();
-        _futureEntries = new ArrayList<HistoryEntry>();
+    @JsonProperty("entries")
+    public List<HistoryEntry> getEntries() {
+        return _entries;
     }
 
     /**
@@ -128,62 +108,37 @@ public class History {
      * @param entry
      */
     public void addEntry(HistoryEntry entry) {
-        Project project = ProjectManager.singleton.getProject(_projectID);
-        synchronized (project) {
-            // NOTE: project lock must be acquired *first* to prevent deadlocks, so we use a
-            // synchronized block instead of synchronizing the entire method.
-            synchronized (this) {
-                entry.apply(project);
-                _pastEntries.add(entry);
-
-                setModified();
-
-                // Any new change will clear all future entries.
-                List<HistoryEntry> futureEntries = _futureEntries;
-                _futureEntries = new ArrayList<HistoryEntry>();
-
-                for (HistoryEntry entry2 : futureEntries) {
-                    try {
-                        // remove residual data on disk
-                        entry2.delete();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        // Any new change will clear all future entries.
+        if (_position != _entries.size()) {
+            _entries.subList(0, _position);
         }
+
+        GridState newState = entry.getChange().apply(getCurrentGridState());
+        _states.add(newState);
+        _entries.add(entry);
+        _position++;
     }
 
-    protected void setModified() {
-        ProjectManager.singleton.getProjectMetadata(_projectID).updateModified();
-    }
+    public List<HistoryEntry> getLastPastEntries(int count) {
 
-    synchronized public List<HistoryEntry> getLastPastEntries(int count) {
         if (count <= 0) {
-            return new LinkedList<HistoryEntry>(_pastEntries);
+            return _entries.subList(0, _position);
         } else {
-            return _pastEntries.subList(Math.max(_pastEntries.size() - count, 0), _pastEntries.size());
+            return _entries.subList(Math.max(0, _position - count), _position);
         }
     }
 
     synchronized public void undoRedo(long lastDoneEntryID) {
         if (lastDoneEntryID == 0) {
-            // undo all the way back to the start of the project
-            undo(_pastEntries.size());
+            _position = 0;
         } else {
-            for (int i = 0; i < _pastEntries.size(); i++) {
-                if (_pastEntries.get(i).id == lastDoneEntryID) {
-                    undo(_pastEntries.size() - i - 1);
+            for (int i = 0; i < _entries.size(); i++) {
+                if (_entries.get(i).getId() == lastDoneEntryID) {
+                    _position = i + 1;
                     return;
                 }
             }
-
-            for (int i = 0; i < _futureEntries.size(); i++) {
-                if (_futureEntries.get(i).id == lastDoneEntryID) {
-                    redo(i + 1);
-                    return;
-                }
-            }
+            throw new IllegalArgumentException(String.format("History entry id %d not found", lastDoneEntryID));
         }
     }
 
@@ -191,21 +146,9 @@ public class History {
         if (entryID == 0) {
             return -1;
         } else {
-            for (int i = 0; i < _pastEntries.size(); i++) {
-                if (_pastEntries.get(i).id == entryID) {
-                    return i == 0 ? 0 : _pastEntries.get(i - 1).id;
-                }
-            }
-
-            for (int i = 0; i < _futureEntries.size(); i++) {
-                if (_futureEntries.get(i).id == entryID) {
-                    if (i > 0) {
-                        return _futureEntries.get(i - 1).id;
-                    } else if (_pastEntries.size() > 0) {
-                        return _pastEntries.get(_pastEntries.size() - 1).id;
-                    } else {
-                        return 0;
-                    }
+            for (int i = 0; i < _entries.size(); i++) {
+                if (_entries.get(i).getId() == entryID) {
+                    return i == 0 ? 0 : _entries.get(i - 1).getId();
                 }
             }
         }
@@ -213,97 +156,16 @@ public class History {
     }
 
     protected HistoryEntry getEntry(long entryID) {
-        for (int i = 0; i < _pastEntries.size(); i++) {
-            if (_pastEntries.get(i).id == entryID) {
-                return _pastEntries.get(i);
-            }
-        }
-
-        for (int i = 0; i < _futureEntries.size(); i++) {
-            if (_futureEntries.get(i).id == entryID) {
-                return _futureEntries.get(i);
+        for (int i = 0; i < _entries.size(); i++) {
+            if (_entries.get(i).getId() == entryID) {
+                return _entries.get(i);
             }
         }
         return null;
     }
 
-    protected void undo(int times) {
-        Project project = ProjectManager.singleton.getProject(_projectID);
-
-        while (times > 0 && _pastEntries.size() > 0) {
-            HistoryEntry entry = _pastEntries.get(_pastEntries.size() - 1);
-
-            entry.revert(project);
-
-            setModified();
-            times--;
-
-            _pastEntries.remove(_pastEntries.size() - 1);
-            _futureEntries.add(0, entry);
-        }
-    }
-
-    protected void redo(int times) {
-        Project project = ProjectManager.singleton.getProject(_projectID);
-
-        while (times > 0 && _futureEntries.size() > 0) {
-            HistoryEntry entry = _futureEntries.get(0);
-
-            entry.apply(project);
-
-            setModified();
-            times--;
-
-            _pastEntries.add(entry);
-            _futureEntries.remove(0);
-        }
-    }
-
-    /*
-     * NOTE: this method is called from the autosave thread with the Project lock already held, so no other synchronized
-     * method here can aquire that Project lock or a deadlock will result.be careful of thread synchronization to avoid
-     * deadlocks.
-     */
-    synchronized public void save(Writer writer, Properties options) throws IOException {
-        writer.write("pastEntryCount=");
-        writer.write(Integer.toString(_pastEntries.size()));
-        writer.write('\n');
-        for (HistoryEntry entry : _pastEntries) {
-            entry.save(writer, options);
-            writer.write('\n');
-        }
-
-        writer.write("futureEntryCount=");
-        writer.write(Integer.toString(_futureEntries.size()));
-        writer.write('\n');
-        for (HistoryEntry entry : _futureEntries) {
-            entry.save(writer, options);
-            writer.write('\n');
-        }
-
-        writer.write("/e/\n");
-    }
-
-    synchronized public void load(Project project, LineNumberReader reader) throws Exception {
-        String line;
-        while ((line = reader.readLine()) != null && !"/e/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
-            String value = line.substring(equal + 1);
-
-            if ("pastEntryCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                for (int i = 0; i < count; i++) {
-                    _pastEntries.add(HistoryEntry.load(project, reader.readLine()));
-                }
-            } else if ("futureEntryCount".equals(field)) {
-                int count = Integer.parseInt(value);
-
-                for (int i = 0; i < count; i++) {
-                    _futureEntries.add(HistoryEntry.load(project, reader.readLine()));
-                }
-            }
-        }
+    @SuppressWarnings("unchecked")
+    static public Class<? extends Change> getChangeClass(String className) throws ClassNotFoundException {
+        return (Class<? extends Change>) RefineModel.getClass(className);
     }
 }

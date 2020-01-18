@@ -219,7 +219,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 HistoryEntry historyEntry = new HistoryEntry(_historyEntryID, _project, _description,
                         PerformWikibaseEditsOperation.this, change);
 
-                _project.history.addEntry(historyEntry);
+                _project.getHistory().addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }
         }

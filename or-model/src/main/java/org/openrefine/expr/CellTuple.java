@@ -34,29 +34,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 
 public class CellTuple implements HasFields {
 
-    final public Project project;
+    final public ColumnModel columnModel;
     final public Row row;
 
-    public CellTuple(Project project, Row row) {
-        this.project = project;
+    public CellTuple(ColumnModel columnModel, Row row) {
+        this.columnModel = columnModel;
         this.row = row;
     }
 
     @Override
     public Object getField(String name) {
-        ColumnMetadata column = project.columnModel.getColumnByName(name);
-        if (column != null) {
-            int cellIndex = column.getCellIndex();
-            Cell cell = row.getCell(cellIndex);
+        int columnIndex = columnModel.getColumnIndexByName(name);
+        if (columnIndex != -1) {
+            Cell cell = row.getCell(columnIndex);
 
             if (cell != null) {
-                return new WrappedCell(project, name, cell);
+                return new WrappedCell(name, cell);
             }
         }
         return null;

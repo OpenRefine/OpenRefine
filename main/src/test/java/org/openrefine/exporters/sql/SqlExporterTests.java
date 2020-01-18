@@ -288,7 +288,7 @@ public class SqlExporterTests extends RefineTest {
         String size = "2";
         JsonNode optionsJson = createOptionsFromProject(tableName, type, size);
         // logger.info("Options:: = " + optionsJson.toString());
-        List<String> columns = project.columnModel.columns.stream().map(col -> col.getName()).collect(Collectors.toList());
+        List<String> columns = project.columnModel.getColumns().stream().map(col -> col.getName()).collect(Collectors.toList());
 
         sqlCreateBuilder = new SqlCreateBuilder(tableName, columns, optionsJson);
         String createSql = sqlCreateBuilder.getCreateSQL();
@@ -460,7 +460,7 @@ public class SqlExporterTests extends RefineTest {
         ArrayNode columns = json.putArray("columns");
         json.put("tableName", tableName);
 
-        List<ColumnMetadata> cols = project.columnModel.columns;
+        List<ColumnMetadata> cols = project.columnModel.getColumns();
 
         cols.forEach(c -> {
             // logger.info("Column Name = " + c.getName());
@@ -497,7 +497,7 @@ public class SqlExporterTests extends RefineTest {
         json.put("tableName", tableName);
         ArrayNode columns = json.putArray("columns");
 
-        List<ColumnMetadata> cols = project.columnModel.columns;
+        List<ColumnMetadata> cols = project.columnModel.getColumns();
 
         cols.forEach(c -> {
             // logger.info("Column Name = " + c.getName());
@@ -536,7 +536,7 @@ public class SqlExporterTests extends RefineTest {
         ArrayNode columns = json.putArray("columns");
         json.put("tableName", tableName);
 
-        List<ColumnMetadata> cols = project.columnModel.columns;
+        List<ColumnMetadata> cols = project.columnModel.getColumns();
 
         cols.forEach(c -> {
             // logger.info("Column Name = " + c.getName());

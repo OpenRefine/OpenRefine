@@ -71,7 +71,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
         if (_historyEntry == null) {
             _historyEntry = createHistoryEntry(HistoryEntry.allocateID());
         }
-        _project.history.addEntry(_historyEntry);
+        _project.getHistory().addEntry(_historyEntry);
         _done = true;
 
         return _historyEntry;
@@ -89,7 +89,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
 
     @JsonProperty("description")
     public String getDescription() {
-        return _historyEntry != null ? _historyEntry.description : _briefDescription;
+        return _historyEntry != null ? _historyEntry.getDescription() : _briefDescription;
     }
 
     @Override

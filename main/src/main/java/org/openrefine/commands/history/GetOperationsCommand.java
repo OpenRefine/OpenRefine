@@ -90,7 +90,7 @@ public class GetOperationsCommand extends Command {
 
         Project project = getProject(request);
 
-        HistoryEntries entries = new HistoryEntries(project.history.getLastPastEntries(-1));
+        HistoryEntries entries = new HistoryEntries(project.getHistory().getLastPastEntries(-1));
         respondJSON(response, entries);
     }
 

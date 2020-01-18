@@ -201,7 +201,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         }
 
         List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> oldColumns = project.columnModel.columns;
+        List<ColumnMetadata> oldColumns = project.columnModel.getColumns();
 
         int startColumnIndex = oldColumns.size();
         int columnCount = _columnCount;

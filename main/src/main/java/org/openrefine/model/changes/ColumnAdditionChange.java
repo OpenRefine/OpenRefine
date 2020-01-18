@@ -67,7 +67,7 @@ public class ColumnAdditionChange extends ColumnChange {
             }
 
             ColumnMetadata column = new ColumnMetadata(_newCellIndex, _columnName);
-            project.columnModel.columns.add(_columnIndex, column);
+            project.columnModel.getColumns().add(_columnIndex, column);
             try {
                 for (CellAtRow cell : _newCells) {
                     project.rows.get(cell.row).setCell(_newCellIndex, cell.cell);
@@ -88,7 +88,7 @@ public class ColumnAdditionChange extends ColumnChange {
                 row.setCell(_newCellIndex, null);
             }
 
-            project.columnModel.columns.remove(_columnIndex);
+            project.columnModel.getColumns().remove(_columnIndex);
 
             project.update();
         }

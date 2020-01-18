@@ -38,104 +38,85 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.mockito.Mockito;
+import java.util.Arrays;
+import java.util.List;
+
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectMetadata;
-import org.openrefine.history.Change;
-import org.openrefine.history.History;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.history.HistoryEntryManager;
-import org.openrefine.model.Project;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
+import org.openrefine.model.GridState;
 
 public class HistoryTests {
 
-    // System Under Test
-    History SUT;
+    GridState initialState;
+    GridState intermediateState;
+    GridState finalState;
 
-    // dependencies
-    Project proj;
-    ProjectMetadata projectMetadata;
-    ProjectManager projectManager;
-    HistoryEntryManager historyEntryManager;
+    long firstChangeId = 1234L;
+    long secondChangeId = 5678L;
+
+    Change firstChange;
+    Change secondChange;
+
+    HistoryEntry firstEntry;
+    HistoryEntry secondEntry;
+
+    List<HistoryEntry> entries;
 
     @BeforeMethod
-    public void SetUp() {
-        projectManager = mock(ProjectManager.class);
-        historyEntryManager = mock(HistoryEntryManager.class);
-        ProjectManager.singleton = projectManager;
+    public void setUp() {
+        initialState = mock(GridState.class);
+        intermediateState = mock(GridState.class);
+        finalState = mock(GridState.class);
+        firstChange = mock(Change.class);
+        secondChange = mock(Change.class);
+        firstEntry = mock(HistoryEntry.class);
+        secondEntry = mock(HistoryEntry.class);
 
-        proj = new Project();
-        projectMetadata = mock(ProjectMetadata.class);
+        when(firstChange.apply(initialState)).thenReturn(intermediateState);
+        when(secondChange.apply(intermediateState)).thenReturn(finalState);
 
-        when(projectManager.getProject(Mockito.anyLong())).thenReturn(proj);
-        when(projectManager.getProjectMetadata(Mockito.anyLong())).thenReturn(projectMetadata);
-        when(projectManager.getHistoryEntryManager()).thenReturn(historyEntryManager);
+        when(firstEntry.getId()).thenReturn(firstChangeId);
+        when(secondEntry.getId()).thenReturn(secondChangeId);
 
-        SUT = new History(proj);
-    }
+        when(firstEntry.getChange()).thenReturn(firstChange);
+        when(secondEntry.getChange()).thenReturn(secondChange);
 
-    @AfterMethod
-    public void TearDown() {
-        SUT = null;
-        proj = null;
-    }
-
-    @Test
-    public void canAddEntry() {
-        // local dependencies
-        HistoryEntry entry = mock(HistoryEntry.class);
-
-        SUT.addEntry(entry);
-
-        verify(projectManager, times(1)).getProject(Mockito.anyLong());
-        verify(entry, times(1)).apply(proj);
-        verify(projectMetadata, times(1)).updateModified();
-        Assert.assertEquals(SUT.getLastPastEntries(1).get(0), entry);
+        entries = Arrays.asList(firstEntry, secondEntry);
     }
 
     @Test
-    public void serializeHistory() throws Exception {
-        String json1 = "{\"id\":1533650900300,"
-                + "\"description\":\"Reconcile cells in column organization_name to type Q43229\","
-                + "\"time\":\"2018-08-07T13:57:17Z\","
-                + "\"operation\":{"
-                + "    \"op\":\"core/recon\","
-                + "    \"description\":\"Reconcile cells in column organization_name to type Q43229\","
-                + "    \"columnName\":\"organization_name\","
-                + "    \"config\":{"
-                + "        \"mode\":\"standard-service\","
-                + "        \"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-                + "        \"identifierSpace\":\"http://www.wikidata.org/entity/\","
-                + "        \"schemaSpace\":\"http://www.wikidata.org/prop/direct/\","
-                + "        \"type\":{\"id\":\"Q43229\",\"name\":\"organization\"},"
-                + "        \"autoMatch\":true,"
-                + "        \"columnDetails\":[],"
-                + "        \"limit\":0},"
-                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}}";
-        String json1simple = "{\"id\":1533650900300,"
-                + "\"description\":\"Reconcile cells in column organization_name to type Q43229\","
-                + "\"time\":\"2018-08-07T13:57:17Z\"}";
-        String json2 = "{\"id\":1533651586483,"
-                + "\"description\":\"Edit single cell on row 94, column organization_id\","
-                + "\"time\":\"2018-08-07T14:18:21Z\"}";
+    public void testDeserialize() {
 
-        String targetJson = "{\"past\":[" + json1simple + "," + json2 + "],\"future\":[]}";
+        History history = new History(initialState, entries, 1);
 
-        org.openrefine.history.Change dummyChange = mock(Change.class);
+        Assert.assertEquals(history.getPosition(), 1);
+        Assert.assertEquals(history.getCurrentGridState(), intermediateState);
+        Assert.assertEquals(history.getEntries(), entries);
 
-        HistoryEntry firstEntry = HistoryEntry.load(proj, json1);
-        firstEntry.setChange(dummyChange);
-        HistoryEntry secondEntry = HistoryEntry.load(proj, json2);
-        secondEntry.setChange(dummyChange);
-        SUT.addEntry(firstEntry);
-        SUT.addEntry(secondEntry);
-        TestUtils.isSerializedTo(SUT, targetJson, ParsingUtilities.defaultWriter);
+        history.undoRedo(secondChangeId);
+
+        Assert.assertEquals(history.getPosition(), 2);
+        Assert.assertEquals(history.getCurrentGridState(), finalState);
+        Assert.assertEquals(history.getEntries(), entries);
+
+        history.undoRedo(0);
+
+        Assert.assertEquals(history.getPosition(), 0);
+        Assert.assertEquals(history.getCurrentGridState(), initialState);
+        Assert.assertEquals(history.getEntries(), entries);
+
+        // All changes were called only once
+        verify(firstChange, times(1)).apply(initialState);
+        verify(secondChange, times(1)).apply(intermediateState);
     }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testUnknownChangeId() {
+        History history = new History(initialState, entries, 1);
+
+        history.undoRedo(34782L);
+    }
+
 }

@@ -62,14 +62,14 @@ public class MassRowColumnChange implements Change {
     public void apply(Project project) {
         synchronized (project) {
             if (_oldColumns == null) {
-                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.columns);
+                _oldColumns = new ArrayList<ColumnMetadata>(project.columnModel.getColumns());
             }
             if (_oldRows == null) {
                 _oldRows = new ArrayList<Row>(project.rows);
             }
 
-            project.columnModel.columns.clear();
-            project.columnModel.columns.addAll(_newColumns);
+            project.columnModel.getColumns().clear();
+            project.columnModel.getColumns().addAll(_newColumns);
 
             project.rows.clear();
             project.rows.addAll(_newRows);
@@ -83,8 +83,8 @@ public class MassRowColumnChange implements Change {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            project.columnModel.columns.clear();
-            project.columnModel.columns.addAll(_oldColumns);
+            project.columnModel.getColumns().clear();
+            project.columnModel.getColumns().addAll(_oldColumns);
 
             project.rows.clear();
             project.rows.addAll(_oldRows);

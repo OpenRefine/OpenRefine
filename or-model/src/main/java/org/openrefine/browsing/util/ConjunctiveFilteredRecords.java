@@ -36,6 +36,8 @@ package org.openrefine.browsing.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RecordVisitor;
@@ -55,21 +57,14 @@ public class ConjunctiveFilteredRecords implements FilteredRecords {
 
     @Override
     public void accept(Project project, RecordVisitor visitor) {
-        try {
-            visitor.start(project);
-
-            int c = project.recordModel.getRecordCount();
-            for (int r = 0; r < c; r++) {
-                Record record = project.recordModel.getRecord(r);
-                if (matchRecord(project, record)) {
-                    if (visitor.visit(project, record)) {
-                        return;
-                    }
-                }
-            }
-        } finally {
-            visitor.end(project);
-        }
+        throw new NotImplementedException("records mode not implemented");
+        /*
+         * try { visitor.start(project);
+         * 
+         * int c = project.recordModel.getRecordCount(); for (int r = 0; r < c; r++) { Record record =
+         * project.recordModel.getRecord(r); if (matchRecord(project, record)) { if (visitor.visit(project, record)) {
+         * return; } } } } finally { visitor.end(project); }
+         */
     }
 
     protected boolean matchRecord(Project project, Record record) {

@@ -150,7 +150,7 @@ public class DataExtensionChange implements Change {
                 _newRows = new ArrayList<Row>(project.rows.size());
 
                 int cellIndex = project.columnModel.getColumnByName(_baseColumnName).getCellIndex();
-                int keyCellIndex = project.columnModel.columns.get(project.columnModel.getKeyColumnIndex()).getCellIndex();
+                int keyCellIndex = project.columnModel.getColumns().get(project.columnModel.getKeyColumnIndex()).getCellIndex();
                 int index = 0;
 
                 int rowIndex = index < _rowIndices.size() ? _rowIndices.get(index) : _oldRows.size();
@@ -282,7 +282,7 @@ public class DataExtensionChange implements Change {
             project.rows.addAll(_oldRows);
 
             for (int i = 0; i < _columnNames.size(); i++) {
-                project.columnModel.columns.remove(_columnInsertIndex);
+                project.columnModel.getColumns().remove(_columnInsertIndex);
             }
 
             project.update();

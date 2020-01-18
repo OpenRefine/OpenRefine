@@ -93,7 +93,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
 
             @Override
             public void start(Project project) {
-                keyCellIndex = project.columnModel.columns.get(
+                keyCellIndex = project.columnModel.getColumns().get(
                         project.columnModel.getKeyColumnIndex()).getCellIndex();
             }
 

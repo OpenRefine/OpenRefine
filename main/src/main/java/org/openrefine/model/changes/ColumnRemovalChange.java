@@ -58,7 +58,7 @@ public class ColumnRemovalChange extends ColumnChange {
     public void apply(Project project) {
         synchronized (project) {
 
-            _oldColumn = project.columnModel.columns.remove(_oldColumnIndex);
+            _oldColumn = project.columnModel.getColumns().remove(_oldColumnIndex);
             _oldCells = new CellAtRow[project.rows.size()];
             int cellIndex = _oldColumn.getCellIndex();
             for (int i = 0; i < _oldCells.length; i++) {
@@ -80,7 +80,7 @@ public class ColumnRemovalChange extends ColumnChange {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            project.columnModel.columns.add(_oldColumnIndex, _oldColumn);
+            project.columnModel.getColumns().add(_oldColumnIndex, _oldColumn);
 
             int cellIndex = _oldColumn.getCellIndex();
             for (CellAtRow cell : _oldCells) {
