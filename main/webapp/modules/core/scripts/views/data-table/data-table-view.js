@@ -875,27 +875,45 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
 };
 
 var doAllFillDown = function() {
-  for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+  doFillDown(0);
+};
+
+var doFillDown = function(colIndex) {
+  if (colIndex < theProject.columnModel.columns.length) {
     Refine.postCoreProcess(
         "fill-down",
         {
-          columnName: theProject.columnModel.columns[i].name
+          columnName: theProject.columnModel.columns[colIndex].name
         },
         null,
-        { modelsChanged: true }
+        {modelsChanged: true},
+        {
+          onDone: function() {
+            doFillDown(++colIndex);
+          }
+        }
     );
   }
 };
 
 var doAllBlankDown = function() {
-  for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+  doBlankDown(0);
+};
+
+var doBlankDown = function(colIndex) {
+  if (colIndex < theProject.columnModel.columns.length) {
     Refine.postCoreProcess(
         "blank-down",
         {
-          columnName: theProject.columnModel.columns[i].name
+          columnName: theProject.columnModel.columns[colIndex].name
         },
         null,
-        { modelsChanged: true }
+        { modelsChanged: true },
+        {
+          onDone: function() {
+            doBlankDown(++colIndex);
+          }
+        }
     );
   }
 };
