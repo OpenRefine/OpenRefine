@@ -765,34 +765,12 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/fill-down'),
           id: "core/fill-down",
-          click: function() {
-            for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-              Refine.postCoreProcess(
-                  "fill-down",
-                  {
-                    columnName: theProject.columnModel.columns[i].name
-                  },
-                  null,
-                  { modelsChanged: true }
-              );
-            }
-          }
+          click: doAllFillDown
         },
         {
           label: $.i18n('core-views/blank-down'),
           id: "core/blank-down",
-          click: function() {
-            for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-              Refine.postCoreProcess(
-                  "blank-down",
-                  {
-                    columnName: theProject.columnModel.columns[i].name
-                  },
-                  null,
-                  { modelsChanged: true }
-              );
-            }
-          }
+          click: doAllBlankDown
         }
       ]
     },
@@ -894,6 +872,32 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
   }
 
   MenuSystem.createAndShowStandardMenu(items, elmt, { horizontal: false });
+};
+
+var doAllFillDown = function() {
+  for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+    Refine.postCoreProcess(
+        "fill-down",
+        {
+          columnName: theProject.columnModel.columns[i].name
+        },
+        null,
+        { modelsChanged: true }
+    );
+  }
+};
+
+var doAllBlankDown = function() {
+  for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+    Refine.postCoreProcess(
+        "blank-down",
+        {
+          columnName: theProject.columnModel.columns[i].name
+        },
+        null,
+        { modelsChanged: true }
+    );
+  }
 };
 
 
