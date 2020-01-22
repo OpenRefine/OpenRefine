@@ -168,7 +168,7 @@ abstract public class TimeBinIndex {
         Row             row,
         Properties         bindings
     ) {
-        Object value = rowEvaluable.eval(project, rowIndex, row, bindings);
+        Object value = rowEvaluable.eval(rowIndex, row, bindings);
         
         if (ExpressionUtils.isError(value)) {
             _hasError = true;

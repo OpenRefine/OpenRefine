@@ -35,7 +35,6 @@ package org.openrefine.operations;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

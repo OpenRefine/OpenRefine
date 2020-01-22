@@ -49,9 +49,9 @@ import org.openrefine.expr.MetaParser.LanguageInfo;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.OverlayModel;
 import org.openrefine.model.Project;
 import org.openrefine.model.RecordModel;
+import org.openrefine.overlay.OverlayModel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

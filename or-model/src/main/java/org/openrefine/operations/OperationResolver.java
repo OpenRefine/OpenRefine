@@ -28,8 +28,6 @@ package org.openrefine.operations;
 
 import java.io.IOException;
 
-import org.openrefine.model.AbstractOperation;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;

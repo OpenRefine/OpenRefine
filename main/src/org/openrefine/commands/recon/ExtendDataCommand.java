@@ -37,9 +37,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.recon.ExtendDataOperation;
 
 public class ExtendDataCommand extends EngineDependentCommand {

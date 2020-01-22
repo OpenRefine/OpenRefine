@@ -160,8 +160,9 @@ public abstract class ProjectManager {
      * Loads a project from the data store into memory
      * @param id
      * @return
+     * @throws IOException 
      */
-    protected abstract Project loadProject(long id);
+    protected abstract Project loadProject(long id) throws IOException;
 
     /**
      * Import project from a Refine archive

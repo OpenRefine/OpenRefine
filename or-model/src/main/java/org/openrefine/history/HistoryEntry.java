@@ -37,8 +37,8 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;

@@ -33,15 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Properties;
-
 import org.openrefine.model.GridState;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 /**
  * Interface for a concrete change to a project's data.
  */
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.CUSTOM,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="type",
+        visible=true)
+@JsonTypeIdResolver(ChangeResolver.class)
 public interface Change {
     
     public GridState apply(GridState projectState);
@@ -49,5 +54,4 @@ public interface Change {
     /*
      * @todo add ability to save optional change data
      */
-    public void save(Writer writer, Properties options) throws IOException;
 }

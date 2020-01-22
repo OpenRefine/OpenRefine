@@ -30,8 +30,8 @@ import java.util.Properties;
 
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 

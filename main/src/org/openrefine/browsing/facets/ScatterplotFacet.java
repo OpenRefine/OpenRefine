@@ -60,6 +60,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,9 +144,9 @@ public class ScatterplotFacet implements Facet {
         }
         
         @Override
-        public ScatterplotFacet apply(Project project) {
+        public ScatterplotFacet apply(ColumnModel columnModel) {
             ScatterplotFacet facet = new ScatterplotFacet();
-            facet.initializeFromConfig(this, project);
+            facet.initializeFromConfig(this, columnModel);
             return facet;
         }
         
@@ -388,7 +389,7 @@ public class ScatterplotFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter(Project project) {
+    public RowFilter getRowFilter(ColumnModel columnModel) {
         if (config.isSelected() && 
             eval_x != null && errorMessage_x == null && 
             eval_y != null && errorMessage_y == null) 
@@ -414,8 +415,8 @@ public class ScatterplotFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter(Project project) {
-        RowFilter rowFilter = getRowFilter(project);
+    public RecordFilter getRecordFilter(ColumnModel columnModel) {
+        RowFilter rowFilter = getRowFilter(columnModel);
         return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 

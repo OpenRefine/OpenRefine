@@ -3,7 +3,6 @@ package org.openrefine.operations;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;

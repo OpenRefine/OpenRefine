@@ -31,7 +31,7 @@ import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -64,7 +64,7 @@ public class EngineConfigTests {
     protected static class MyFacetConfig implements FacetConfig {
 
 		@Override
-		public Facet apply(Project project) {
+		public Facet apply(ColumnModel columnModel) {
 			return null;
 		}
 

@@ -54,6 +54,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -119,9 +120,9 @@ public class ListFacet implements Facet {
         }
         
         @Override
-        public Facet apply(Project project) {
+        public Facet apply(ColumnModel columnModel) {
             ListFacet facet = new ListFacet();
-            facet.initializeFromConfig(this, project);
+            facet.initializeFromConfig(this, columnModel);
             return facet;
         }
 
@@ -269,7 +270,7 @@ public class ListFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter(Project project) {
+    public RowFilter getRowFilter(ColumnModel columnModel) {
         return 
             _eval == null || 
             _errorMessage != null ||
@@ -286,8 +287,8 @@ public class ListFacet implements Facet {
     }
     
     @Override
-    public RecordFilter getRecordFilter(Project project) {
-        RowFilter rowFilter = getRowFilter(project);
+    public RecordFilter getRecordFilter(ColumnModel columnModel) {
+        RowFilter rowFilter = getRowFilter(columnModel);
         return rowFilter == null ? null :
             (_config.invert ?
                     new AllRowsRecordFilter(rowFilter) :
