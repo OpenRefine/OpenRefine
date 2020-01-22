@@ -33,16 +33,69 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
-import java.io.Writer;
-import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
-public interface HistoryEntryManager {
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.spark.api.java.JavaSparkContext;
 
-    public void loadChange(HistoryEntry historyEntry);
+import org.openrefine.model.GridState;
+import org.openrefine.util.ParsingUtilities;
 
-    public void saveChange(HistoryEntry historyEntry) throws Exception;
+/**
+ * A utility class to load and save project histories.
+ *
+ */
+public class HistoryEntryManager {
 
-    public void save(HistoryEntry historyEntry, Writer writer, Properties options);
+    protected static final String INITIAL_GRID_SUBDIR = "initial";
+    protected static final String METADATA_FILENAME = "history.json";
 
-    public void delete(HistoryEntry historyEntry);
+    private final JavaSparkContext context;
+
+    public HistoryEntryManager(JavaSparkContext context) {
+        this.context = context;
+    }
+
+    /**
+     * Saves the history and the initial grid state to a directory.
+     * 
+     * @param dir
+     *            the directory where the history should be saved.
+     * @throws IOException
+     */
+    public void save(History history, File dir) throws IOException {
+        File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
+        File metadataFile = new File(dir, METADATA_FILENAME);
+        // Save the initial grid
+        history.getInitialGridState().saveToFile(gridFile);
+        Metadata metadata = new Metadata();
+        metadata.entries = history.getEntries();
+        metadata.position = history.getPosition();
+        // Save the metadata
+        ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
+    }
+
+    public History load(File dir) throws IOException {
+        File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
+        File metadataFile = new File(dir, METADATA_FILENAME);
+        // Load the metadata
+        Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
+        // Load the initial grid
+        GridState gridState = GridState.loadFromFile(context, gridFile);
+        return new History(gridState, metadata.entries, metadata.position);
+    }
+
+    /**
+     * Utility class to help with Jackson deserialization
+     *
+     */
+    protected static class Metadata {
+
+        @JsonProperty("entries")
+        protected List<HistoryEntry> entries;
+        @JsonProperty("position")
+        int position;
+    }
 }

@@ -37,7 +37,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 
 abstract public class EngineDependentOperation extends AbstractOperation {

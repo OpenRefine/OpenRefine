@@ -33,7 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.history.Change;
-import org.openrefine.model.AbstractOperation;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;

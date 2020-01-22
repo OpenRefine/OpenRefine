@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.recon.ReconUseValuesAsIdentifiersOperation;
 
 public class ReconUseValuesAsIdentifiersCommand extends EngineDependentCommand {

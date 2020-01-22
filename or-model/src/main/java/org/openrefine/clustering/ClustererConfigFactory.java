@@ -1,7 +1,6 @@
 
 package org.openrefine.clustering;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,11 +52,11 @@ public class ClustererConfigFactory extends TypeIdResolverBase {
     }
 
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
         if (registry.containsKey(id)) {
             return factory.constructSimpleType(registry.get(id), new JavaType[0]);
         } else {
-            throw new IOException("Unknown clusterer type: '" + id + "'");
+            throw new IllegalArgumentException("Unknown clusterer type: '" + id + "'");
         }
     }
 }

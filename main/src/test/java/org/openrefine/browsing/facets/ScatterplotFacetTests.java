@@ -120,8 +120,8 @@ public class ScatterplotFacetTests extends RefineTest {
         TestUtils.isSerializedTo(facet, facetJson, ParsingUtilities.defaultWriter);
 
         RowFilter filter = facet.getRowFilter(project);
-        assertTrue(filter.filterRow(project, 0, project.rows.get(0)));
-        assertFalse(filter.filterRow(project, 1, project.rows.get(1)));
-        assertTrue(filter.filterRow(project, 3, project.rows.get(3)));
+        assertTrue(filter.filterRow(0, project.rows.get(0)));
+        assertFalse(filter.filterRow(1, project.rows.get(1)));
+        assertTrue(filter.filterRow(3, project.rows.get(3)));
     }
 }

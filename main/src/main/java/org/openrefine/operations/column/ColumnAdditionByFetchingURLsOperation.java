@@ -395,7 +395,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
 
                     this.cellIndex = column.getCellIndex();
-                    this.bindings = ExpressionUtils.createBindings(_project);
+                    this.bindings = ExpressionUtils.createBindings();
                     this.cellsAtRows = cellsAtRows;
                     return this;
                 }

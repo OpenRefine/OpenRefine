@@ -101,12 +101,12 @@ public class ProjectManagerTests {
         registerProject();
 
         // run test
-        SUT.ensureProjectSaved(project.id);
+        SUT.ensureProjectSaved(project.getId());
 
         // assert and verify
         AssertProjectRegistered();
         try {
-            verify(SUT, times(1)).saveMetadata(metadata, project.id);
+            verify(SUT, times(1)).saveMetadata(metadata, project.getId());
         } catch (Exception e) {
             Assert.fail();
         }
@@ -133,7 +133,7 @@ public class ProjectManagerTests {
         registerProject(project2, metadata2);
 
         // check that the two projects are not the same
-        Assert.assertFalse(project.id == project2.id);
+        Assert.assertFalse(project.getId() == project2.getId());
 
         SUT.save(true);
 
@@ -157,7 +157,6 @@ public class ProjectManagerTests {
         verify(metadata, times(1)).getTags();
         verify(project, times(1)).getProcessManager();
         verify(project, times(2)).getLastSave();
-        verify(project, times(1)).dispose();
         verify(SUT, never()).saveProject(project);
         Assert.assertEquals(SUT.getProject(0), null);
         verifyNoMoreInteractions(project);
@@ -206,8 +205,8 @@ public class ProjectManagerTests {
     }
 
     protected void AssertProjectRegistered() {
-        Assert.assertEquals(SUT.getProject(project.id), project);
-        Assert.assertEquals(SUT.getProjectMetadata(project.id), metadata);
+        Assert.assertEquals(SUT.getProject(project.getId()), project);
+        Assert.assertEquals(SUT.getProjectMetadata(project.getId()), metadata);
     }
 
     protected void whenGetSaveTimes(Project proj, ProjectMetadata meta) {

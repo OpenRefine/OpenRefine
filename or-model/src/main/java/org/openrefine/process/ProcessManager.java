@@ -44,7 +44,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.history.HistoryProcess;
 
 public class ProcessManager {
 
@@ -88,18 +87,6 @@ public class ProcessManager {
             update();
         }
         return null;
-    }
-
-    public boolean queueProcess(HistoryProcess process) throws Exception {
-        if (process.isImmediate() && _processes.size() == 0) {
-            _latestExceptions = null;
-            return process.performImmediate() != null;
-        } else {
-            _processes.add(process);
-
-            update();
-        }
-        return false;
     }
 
     public boolean hasPending() {

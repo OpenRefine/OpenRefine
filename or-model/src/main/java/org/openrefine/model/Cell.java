@@ -169,4 +169,15 @@ public class Cell implements HasFields, Serializable {
     public String toString() {
         return StringUtils.toString(value);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Cell)) {
+            return false;
+        }
+        Cell otherCell = (Cell) other;
+        return (((value == null && otherCell.value == null) || value.equals(otherCell.value))
+                && (recon == null && otherCell.recon == null) || recon.equals(otherCell.recon));
+
+    }
 }

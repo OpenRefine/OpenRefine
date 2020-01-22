@@ -38,10 +38,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRemovalChange;
+import org.openrefine.operations.AbstractOperation;
 
 public class ColumnRemovalOperation extends AbstractOperation {
 

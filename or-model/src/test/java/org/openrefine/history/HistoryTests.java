@@ -87,7 +87,7 @@ public class HistoryTests {
     }
 
     @Test
-    public void testDeserialize() {
+    public void testConstruct() {
 
         History history = new History(initialState, entries, 1);
 
@@ -110,6 +110,11 @@ public class HistoryTests {
         // All changes were called only once
         verify(firstChange, times(1)).apply(initialState);
         verify(secondChange, times(1)).apply(intermediateState);
+    }
+
+    @Test
+    public void testSaveAndLoad() {
+
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

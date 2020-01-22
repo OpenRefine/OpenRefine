@@ -51,7 +51,7 @@ public class TimeBinRecordIndex extends TimeBinIndex {
     @Override
     protected void iterate(Project project, RowEvaluable rowEvaluable, List<Long> allValues) {
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
         int count = project.recordModel.getRecordCount();
 
         for (int r = 0; r < count; r++) {

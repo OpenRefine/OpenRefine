@@ -11,8 +11,8 @@ import org.testng.annotations.Test;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 
 public class EngineDependentCommandTests extends CommandTestBase {
 

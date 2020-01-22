@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -56,28 +57,27 @@ public class ExpressionUtils {
         s_binders.add(binder);
     }
 
-    static public Properties createBindings(Project project) {
+    static public Properties createBindings() {
         Properties bindings = new Properties();
 
         bindings.put("true", true);
         bindings.put("false", false);
         bindings.put("PI", Math.PI);
 
-        bindings.put("project", project);
-
         for (Binder binder : s_binders) {
-            binder.initializeBindings(bindings, project);
+            binder.initializeBindings(bindings);
         }
 
         return bindings;
     }
 
-    static public void bind(Properties bindings, Row row, int rowIndex, String columnName, Cell cell) {
+    static public void bind(Properties bindings, Row row, long rowIndex, String columnName, Cell cell) {
         Project project = (Project) bindings.get("project");
+        ColumnModel columnModel = project.getHistory().getCurrentGridState().getColumnModel();
 
         bindings.put("rowIndex", rowIndex);
-        bindings.put("row", new WrappedRow(project, rowIndex, row));
-        bindings.put("cells", new CellTuple(project.columnModel, row));
+        bindings.put("row", new WrappedRow(columnModel, rowIndex, row));
+        bindings.put("cells", new CellTuple(columnModel, row));
 
         if (columnName != null) {
             bindings.put("columnName", columnName);

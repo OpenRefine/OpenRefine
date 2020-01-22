@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
@@ -52,8 +53,9 @@ import org.openrefine.util.ParsingUtilities;
  * Class representing a single Row which contains a list of {@link Cell}s. There may be multiple rows in a
  * {@link Record}.
  */
-public class Row implements HasFields {
+public class Row implements HasFields, Serializable {
 
+    private static final long serialVersionUID = -6999837276078747023L;
     public final boolean flagged;
     public final boolean starred;
     public final ImmutableList<Cell> cells;
@@ -189,5 +191,16 @@ public class Row implements HasFields {
             result.append(',');
         }
         return result.toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Row)) {
+            return false;
+        }
+        Row otherRow = (Row) other;
+        return (otherRow.getCells().equals(cells) &&
+                flagged == otherRow.flagged &&
+                starred == otherRow.starred);
     }
 }

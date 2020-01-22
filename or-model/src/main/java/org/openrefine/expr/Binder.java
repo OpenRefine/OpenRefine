@@ -36,12 +36,11 @@ package org.openrefine.expr;
 import java.util.Properties;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public interface Binder {
 
-    public void initializeBindings(Properties bindings, Project project);
+    public void initializeBindings(Properties bindings);
 
-    public void bind(Properties bindings, Row row, int rowIndex, String columnName, Cell cell);
+    public void bind(Properties bindings, Row row, long rowIndex, String columnName, Cell cell);
 }

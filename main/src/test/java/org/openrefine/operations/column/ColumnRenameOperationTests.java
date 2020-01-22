@@ -31,7 +31,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.AbstractOperation;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnRenameOperation;
 import org.openrefine.util.ParsingUtilities;

@@ -34,8 +34,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.history.Change;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;

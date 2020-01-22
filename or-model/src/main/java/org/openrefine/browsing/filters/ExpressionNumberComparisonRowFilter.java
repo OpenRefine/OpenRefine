@@ -42,7 +42,6 @@ import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 /**
@@ -72,10 +71,10 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     }
 
     @Override
-    public boolean filterRow(Project project, int rowIndex, Row row) {
-        Properties bindings = ExpressionUtils.createBindings(project);
+    public boolean filterRow(long rowIndex, Row row) {
+        Properties bindings = ExpressionUtils.createBindings();
 
-        Object value = _rowEvaluable.eval(project, rowIndex, row, bindings);
+        Object value = _rowEvaluable.eval(rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;

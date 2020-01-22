@@ -48,6 +48,7 @@ import org.openrefine.browsing.filters.ExpressionStringComparisonRowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.grel.ast.VariableExpr;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
@@ -72,9 +73,9 @@ public class TextSearchFacet implements Facet {
         protected boolean _invert;
 
         @Override
-        public TextSearchFacet apply(Project project) {
+        public TextSearchFacet apply(ColumnModel columnModel) {
             TextSearchFacet facet = new TextSearchFacet();
-            facet.initializeFromConfig(this, project);
+            facet.initializeFromConfig(this, columnModel);
             return facet;
         }
 
@@ -151,7 +152,7 @@ public class TextSearchFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter(Project project) {
+    public RowFilter getRowFilter(ColumnModel columnModel) {
         if (_query == null || _query.length() == 0 || _cellIndex < 0) {
             return null;
         } else if ("regex".equals(_config._mode) && _pattern == null) {
@@ -180,8 +181,8 @@ public class TextSearchFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter(Project project) {
-        RowFilter rowFilter = getRowFilter(project);
+    public RecordFilter getRecordFilter(ColumnModel columnModel) {
+        RowFilter rowFilter = getRowFilter(columnModel);
         return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 

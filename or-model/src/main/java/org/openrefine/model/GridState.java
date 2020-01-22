@@ -1,7 +1,11 @@
 
 package org.openrefine.model;
 
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +16,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
+
+import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.ParsingUtilities;
 
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow. This might only
@@ -19,7 +28,8 @@ import org.apache.spark.api.java.JavaPairRDD;
  */
 public class GridState {
 
-    final static protected Map<String, Class<? extends OverlayModel>> s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();
+    final static protected String METADATA_PATH = "metadata.json";
+    final static protected String GRID_PATH = "grid";
 
     protected final Map<String, OverlayModel> overlayModels;
     protected final ImmutableList<Column> columns;
@@ -43,12 +53,14 @@ public class GridState {
                 columns.stream()
                         .map(c -> c.getMetadata())
                         .collect(Collectors.toList()));
-        JavaPairRDD<Long, ImmutableList.Builder<Cell>> join = columns.get(0).getCells()
-                .mapValues(c -> ImmutableList.<Cell> builder());
+        List<Column> reversed = new ArrayList<>(columns.size());
+        Collections.reverse(reversed);
+
+        JavaPairRDD<Long, CellNode> join = columns.get(0).getCells().mapValues(c -> CellNode.NIL);
         for (Column column : columns) {
-            join = join.join(column.getCells()).mapValues(e -> e._1.add(e._2));
+            join = join.join(column.getCells()).mapValues(e -> new CellNode(e._2, e._1));
         }
-        grid = join.mapValues(b -> new Row(b.build(), false, false));
+        grid = join.mapValues(b -> new Row(b.toImmutableList(), false, false));
 
         Builder<String, OverlayModel> builder = ImmutableMap.<String, OverlayModel> builder();
         if (overlayModels != null) {
@@ -88,6 +100,23 @@ public class GridState {
     }
 
     /**
+     * Construct a grid state which is the union of two other grid states. The column models of both grid states are
+     * required to be equal, and the GridStates must contain distinct row ids. The overlay models are taken from the
+     * current instance.
+     * 
+     * @param other
+     *            the other grid state to take the union with
+     * @return the union of both grid states
+     */
+    public GridState union(GridState other) {
+        if (!columnModel.equals(other.getColumnModel())) {
+            throw new IllegalArgumentException("Trying to compute the union of incompatible grid states");
+        }
+        JavaPairRDD<Long, Row> unionRows = grid.union(other.getGrid());
+        return new GridState(columnModel, unionRows, overlayModels);
+    }
+
+    /**
      * @return the column metadata at this stage of the workflow
      */
     @JsonProperty("columnModel")
@@ -117,7 +146,7 @@ public class GridState {
                 return column;
             }
         }
-        throw new IllegalArgumentException(String.format("Column %1 not found", name));
+        throw new IllegalArgumentException(String.format("Column %s not found", name));
     }
 
     /**
@@ -143,10 +172,69 @@ public class GridState {
 
     @Override
     public String toString() {
-        return String.format("[GridState, %1 columns, %1 rows]", columns.size(), size());
+        return String.format("[GridState, %d columns, %d rows]", columns.size(), size());
     }
 
-    static public void registerOverlayModel(String modelName, Class<? extends OverlayModel> klass) {
-        s_overlayModelClasses.put(modelName, klass);
+    public void saveToFile(File file) throws IOException {
+        File metadataFile = new File(file, METADATA_PATH);
+        File gridFile = new File(file, GRID_PATH);
+        getGrid().saveAsObjectFile(gridFile.getAbsolutePath());
+
+        ParsingUtilities.saveWriter.writeValue(metadataFile, this);
+    }
+
+    public static GridState loadFromFile(JavaSparkContext context, File file) throws IOException {
+        File metadataFile = new File(file, METADATA_PATH);
+        File gridFile = new File(file, GRID_PATH);
+
+        Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
+        JavaPairRDD<Long, Row> grid = context.<Tuple2<Long, Row>> objectFile(gridFile.getAbsolutePath())
+                .keyBy(p -> p._1)
+                .mapValues(p -> p._2);
+        return new GridState(metadata.columnModel,
+                grid,
+                metadata.overlayModels);
+    }
+
+    /**
+     * Utility class to help with deserialization of the metadata without other attributes (such as number of rows)
+     */
+    protected static class Metadata {
+
+        @JsonProperty("columnModel")
+        protected ColumnModel columnModel;
+        @JsonProperty("overlayModels")
+        Map<String, OverlayModel> overlayModels;
+    }
+
+    /**
+     * Utility class to efficiently build a join of columns using linked lists of cells.
+     */
+    protected static class CellNode implements Serializable {
+
+        private static final long serialVersionUID = 4819622639390854582L;
+        protected final Cell cell;
+        protected final CellNode next;
+
+        protected static CellNode NIL = new CellNode(null, null);
+
+        protected CellNode(Cell cell, CellNode next) {
+            this.cell = cell;
+            this.next = next;
+        }
+
+        protected ImmutableList<Cell> toImmutableList() {
+            ImmutableList.Builder<Cell> builder = ImmutableList.<Cell> builder();
+            contributeTo(builder);
+            return builder.build();
+        }
+
+        private void contributeTo(ImmutableList.Builder<Cell> builder) {
+            if (next == null) {
+                return;
+            }
+            builder.add(cell);
+            next.contributeTo(builder);
+        }
     }
 }

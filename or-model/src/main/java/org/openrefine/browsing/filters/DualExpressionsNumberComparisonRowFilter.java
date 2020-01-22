@@ -40,7 +40,6 @@ import org.openrefine.browsing.RowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 /**
@@ -72,14 +71,14 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
     }
 
     @Override
-    public boolean filterRow(Project project, int rowIndex, Row row) {
+    public boolean filterRow(long rowIndex, Row row) {
         Cell x_cell = _x_cellIndex < 0 ? null : row.getCell(_x_cellIndex);
-        Properties x_bindings = ExpressionUtils.createBindings(project);
+        Properties x_bindings = ExpressionUtils.createBindings();
         ExpressionUtils.bind(x_bindings, row, rowIndex, _x_columnName, x_cell);
         Object x_value = _x_evaluable.evaluate(x_bindings);
 
         Cell y_cell = _y_cellIndex < 0 ? null : row.getCell(_y_cellIndex);
-        Properties y_bindings = ExpressionUtils.createBindings(project);
+        Properties y_bindings = ExpressionUtils.createBindings();
         ExpressionUtils.bind(y_bindings, row, rowIndex, _y_columnName, y_cell);
         Object y_value = _y_evaluable.evaluate(y_bindings);
 

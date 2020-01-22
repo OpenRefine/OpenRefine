@@ -33,10 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.filters;
 
+import java.util.List;
+
 import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
-import org.openrefine.model.Project;
 import org.openrefine.model.Record;
+import org.openrefine.model.Row;
 
 public class AllRowsRecordFilter implements RecordFilter {
 
@@ -47,9 +49,11 @@ public class AllRowsRecordFilter implements RecordFilter {
     }
 
     @Override
-    public boolean filterRecord(Project project, Record record) {
-        for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-            if (!_rowFilter.filterRow(project, r, project.rows.get(r))) {
+    public boolean filterRecord(Record record, List<Row> rows) {
+        for (int i = 0; i != rows.size(); i++) {
+            Row row = rows.get(i);
+            long rowId = record.fromRowIndex + i;
+            if (!_rowFilter.filterRow(rowId, row)) {
                 return false;
             }
         }

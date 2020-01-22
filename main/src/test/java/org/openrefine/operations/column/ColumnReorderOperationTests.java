@@ -37,8 +37,8 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnReorderOperation;
 import org.openrefine.process.Process;

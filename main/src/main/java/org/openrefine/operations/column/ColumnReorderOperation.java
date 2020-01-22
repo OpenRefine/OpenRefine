@@ -39,9 +39,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnReorderChange;
+import org.openrefine.operations.AbstractOperation;
 
 public class ColumnReorderOperation extends AbstractOperation {
 

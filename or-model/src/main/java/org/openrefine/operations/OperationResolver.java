@@ -33,8 +33,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.openrefine.model.AbstractOperation;
-
 public class OperationResolver extends TypeIdResolverBase {
 
     protected TypeFactory factory = TypeFactory.defaultInstance();

@@ -156,7 +156,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
         ColumnMetadata column = project.columnModel.getColumnByName(_baseColumnName);
 
         Evaluable eval = MetaParser.parse(_expression);
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
 
         return new RowVisitor() {
 

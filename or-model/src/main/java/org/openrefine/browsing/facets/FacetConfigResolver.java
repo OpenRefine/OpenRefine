@@ -27,7 +27,6 @@
 
 package org.openrefine.browsing.facets;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ public class FacetConfigResolver extends TypeIdResolverBase {
     }
 
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
         // backwards compatibility
         if (id.indexOf('/') == -1) {
             id = "core/" + id;
@@ -72,7 +71,7 @@ public class FacetConfigResolver extends TypeIdResolverBase {
         if (s_nameToClass.containsKey(id)) {
             return factory.constructSimpleType(s_nameToClass.get(id), new JavaType[0]);
         } else {
-            throw new IOException("Unknown facet type: '" + id + "'");
+            throw new IllegalArgumentException("Unknown facet type: '" + id + "'");
         }
     }
 }

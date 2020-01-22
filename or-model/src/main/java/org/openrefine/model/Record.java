@@ -35,14 +35,14 @@ package org.openrefine.model;
 
 public class Record {
 
-    final public int fromRowIndex;
-    final public int toRowIndex;
-    final public int recordIndex;
+    final public long fromRowIndex;
+    final public long toRowIndex;
+    final public long recordIndex;
 
     public Record(
-            int fromRowIndex,
-            int toRowIndex,
-            int recordIndex) {
+            long fromRowIndex,
+            long toRowIndex,
+            long recordIndex) {
         this.fromRowIndex = fromRowIndex;
         this.toRowIndex = toRowIndex;
         this.recordIndex = recordIndex;

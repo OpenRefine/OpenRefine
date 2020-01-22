@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 
 /**
  * Represents the configuration of a facet, as stored in the engine configuration and in the JSON serialization of
@@ -45,12 +45,15 @@ import org.openrefine.model.Project;
 public interface FacetConfig {
 
     /**
-     * Instantiates the given facet on a particular project.
+     * Instantiates the given facet on a particular column model. This allows to check the validity of the configuration
+     * against a particular table schema (checking that the dependent columns exist, for instance).
      * 
-     * @param project
+     * @param columnModel
+     *            the header of the table the facet is applied to.
+     * 
      * @return a computed facet on the given project.
      */
-    public Facet apply(Project project);
+    public Facet apply(ColumnModel columnModel);
 
     /**
      * The facet type as stored in json.

@@ -38,9 +38,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRenameChange;
+import org.openrefine.operations.AbstractOperation;
 
 public class ColumnRenameOperation extends AbstractOperation {
 

@@ -93,7 +93,7 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
     public boolean visit(Project project, int rowIndex, Row row) {
         resetFlags();
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
         processRow(project, rowIndex, row, bindings);
 
         updateCounts();
@@ -105,7 +105,7 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
     public boolean visit(Project project, Record record) {
         resetFlags();
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
             processRow(project, r, project.rows.get(r), bindings);
         }
@@ -138,7 +138,7 @@ public class ExpressionTimeValueBinner implements RowVisitor, RecordVisitor {
     }
 
     protected void processRow(Project project, int rowIndex, Row row, Properties bindings) {
-        Object value = _rowEvaluable.eval(project, rowIndex, row, bindings);
+        Object value = _rowEvaluable.eval(rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;

@@ -44,8 +44,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
 

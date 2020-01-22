@@ -49,6 +49,7 @@ import java.util.zip.GZIPOutputStream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
@@ -57,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
 import org.openrefine.preference.PreferenceStore;
@@ -68,22 +70,26 @@ public class FileProjectManager extends ProjectManager {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File _workspaceDir;
+    protected JavaSparkContext _context;
+    protected HistoryEntryManager _historyEntryManager;
 
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
-    static public synchronized void initialize(File dir) {
+    static public synchronized void initialize(JavaSparkContext context, File dir) {
         if (singleton != null) {
             logger.warn("Overwriting singleton already set: " + singleton);
         }
         logger.info("Using workspace directory: {}", dir.getAbsolutePath());
-        singleton = new FileProjectManager(dir);
+        singleton = new FileProjectManager(context, dir);
         // This needs our singleton set, thus the unconventional control flow
         ((FileProjectManager) singleton).recover();
     }
 
-    protected FileProjectManager(File dir) {
+    protected FileProjectManager(JavaSparkContext context, File dir) {
         super();
+        _context = context;
         _workspaceDir = dir;
+        _historyEntryManager = new HistoryEntryManager(_context);
         if (!_workspaceDir.exists() && !_workspaceDir.mkdirs()) {
             logger.error("Failed to create directory : " + _workspaceDir);
             return;
@@ -120,9 +126,6 @@ public class FileProjectManager extends ProjectManager {
     public boolean loadProjectMetadata(long projectID) {
         synchronized (this) {
             ProjectMetadata metadata = ProjectMetadataUtilities.load(getProjectDir(projectID));
-            if (metadata == null) {
-                metadata = ProjectMetadataUtilities.recover(getProjectDir(projectID), projectID);
-            }
 
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
@@ -243,12 +246,21 @@ public class FileProjectManager extends ProjectManager {
 
     @Override
     protected void saveProject(Project project) throws IOException {
-        ProjectUtilities.save(project);
+        synchronized (project) {
+            long id = project.getId();
+            File dir = getProjectDir(id);
+
+            _historyEntryManager.save(project.getHistory(), dir);
+
+            logger.info("Saved project '{}'", id);
+        }
     }
 
     @Override
-    public Project loadProject(long id) {
-        return ProjectUtilities.load(getProjectDir(id), id);
+    public Project loadProject(long id) throws IOException {
+        File dir = getProjectDir(id);
+        History history = _historyEntryManager.load(dir);
+        return new Project(id, history);
     }
 
     /**
@@ -416,7 +428,7 @@ public class FileProjectManager extends ProjectManager {
 
     @Override
     public HistoryEntryManager getHistoryEntryManager() {
-        return new FileHistoryEntryManager();
+        return _historyEntryManager;
     }
 
     public static void gzipTarToOutputStream(Project project, OutputStream os) throws IOException {

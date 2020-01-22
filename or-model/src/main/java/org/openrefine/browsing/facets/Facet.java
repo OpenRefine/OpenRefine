@@ -33,22 +33,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
-import org.openrefine.browsing.FilteredRecords;
-import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
-import org.openrefine.model.Project;
 
 /**
  * Interface of facets.
  */
 public interface Facet {
 
-    public RowFilter getRowFilter(Project project);
+    /**
+     * Creates a row filter which determines which rows match this facet.
+     */
+    public RowFilter getRowFilter();
 
-    public RecordFilter getRecordFilter(Project project);
+    /**
+     * Creates a record filter which determines which records match this facet.
+     */
+    public RecordFilter getRecordFilter();
 
-    public void computeChoices(Project project, FilteredRows filteredRows);
-
-    public void computeChoices(Project project, FilteredRecords filteredRecords);
+    /**
+     * An initial facet state for this facet, which can then be used to scan the table and ingest statistics about rows
+     * or records.
+     */
+    public FacetState getInitialFacetState();
 }

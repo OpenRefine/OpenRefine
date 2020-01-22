@@ -32,6 +32,7 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.spark.api.java.JavaSparkContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -52,7 +53,7 @@ public class FileProjectManagerTests {
     protected class FileProjectManagerStub extends FileProjectManager {
 
         protected FileProjectManagerStub(File dir) {
-            super(dir);
+            super(mock(JavaSparkContext.class), dir);
             _projectsMetadata.put(1234L, mock(ProjectMetadata.class));
         }
     }

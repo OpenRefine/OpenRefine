@@ -126,4 +126,19 @@ public class ColumnMetadata {
     public String toString() {
         return _name;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !(other instanceof ColumnMetadata)) {
+            return false;
+        }
+        ColumnMetadata metadata = (ColumnMetadata) other;
+        return (_name.equals(metadata.getName()) &&
+                _originalName.equals(metadata.getOriginalHeaderLabel()) &&
+                ((_reconConfig == null && metadata.getReconConfig() == null)
+                        || _reconConfig.equals(metadata.getReconConfig()))
+                &&
+                ((_reconStats == null && metadata.getReconStats() == null)
+                        || _reconStats.equals(metadata.getReconStats())));
+    }
 }

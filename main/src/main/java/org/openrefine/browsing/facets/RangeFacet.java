@@ -57,6 +57,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 
 public class RangeFacet implements Facet {
@@ -117,9 +118,9 @@ public class RangeFacet implements Facet {
         }
 
         @Override
-        public RangeFacet apply(Project project) {
+        public RangeFacet apply(ColumnModel columnModel) {
             RangeFacet facet = new RangeFacet();
-            facet.initializeFromConfig(this, project);
+            facet.initializeFromConfig(this, columnModel);
             return facet;
         }
 
@@ -289,10 +290,10 @@ public class RangeFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter(Project project) {
+    public RowFilter getRowFilter(ColumnModel columnModel) {
         if (_eval != null && _errorMessage == null && _config._selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    getRowEvaluable(project), _config._selectNumeric, _config._selectNonNumeric, _config._selectBlank,
+                    getRowEvaluable(columnModel), _config._selectNumeric, _config._selectNonNumeric, _config._selectBlank,
                     _config._selectError) {
 
                 @Override
@@ -306,8 +307,8 @@ public class RangeFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter(Project project) {
-        RowFilter rowFilter = getRowFilter(project);
+    public RecordFilter getRecordFilter(ColumnModel columnModel) {
+        RowFilter rowFilter = getRowFilter(columnModel);
         return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 

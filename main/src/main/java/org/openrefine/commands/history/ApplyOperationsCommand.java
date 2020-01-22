@@ -44,8 +44,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.commands.Command;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;

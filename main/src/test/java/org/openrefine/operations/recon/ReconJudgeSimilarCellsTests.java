@@ -41,13 +41,13 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation;
 import org.openrefine.process.Process;

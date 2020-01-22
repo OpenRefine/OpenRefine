@@ -56,6 +56,7 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 
 public class TimeRangeFacet implements Facet {
@@ -94,9 +95,9 @@ public class TimeRangeFacet implements Facet {
         };
 
         @Override
-        public TimeRangeFacet apply(Project project) {
+        public TimeRangeFacet apply(ColumnModel columnModel) {
             TimeRangeFacet facet = new TimeRangeFacet();
-            facet.initializeFromConfig(this, project);
+            facet.initializeFromConfig(this, columnModel);
             return facet;
         }
 
@@ -249,10 +250,10 @@ public class TimeRangeFacet implements Facet {
     }
 
     @Override
-    public RowFilter getRowFilter(Project project) {
+    public RowFilter getRowFilter(ColumnModel columnModel) {
         if (_eval != null && _errorMessage == null && _config.isSelected()) {
             return new ExpressionTimeComparisonRowFilter(
-                    getRowEvaluable(project), _config._selectTime, _config._selectNonTime, _config._selectBlank, _config._selectError) {
+                    getRowEvaluable(columnModel), _config._selectTime, _config._selectNonTime, _config._selectBlank, _config._selectError) {
 
                 @Override
                 protected boolean checkValue(long t) {
@@ -337,8 +338,8 @@ public class TimeRangeFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter(Project project) {
-        RowFilter rowFilter = getRowFilter(project);
+    public RecordFilter getRecordFilter(ColumnModel columnModel) {
+        RowFilter rowFilter = getRowFilter(columnModel);
         return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
     }
 

@@ -41,8 +41,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.column.ColumnReorderOperation;
 import org.openrefine.util.ParsingUtilities;
 

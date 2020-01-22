@@ -125,10 +125,10 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         // Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), true);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), true);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true);
+        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)), true);
+        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)), false);
+        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)), true);
+        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)), true);
     }
 
     @Test
@@ -151,10 +151,10 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         // Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), true);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), false);
+        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)), false);
+        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)), true);
+        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)), false);
+        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)), false);
     }
 
     @Test
@@ -177,10 +177,10 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         // Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), true);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), true);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true);
+        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)), false);
+        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)), true);
+        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)), true);
+        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)), true);
     }
 
     @Test
@@ -191,10 +191,10 @@ public class TextSearchFacetTests extends RefineTest {
 
         // Check each row in the project against the filter
         // Expect to retrieve one row containing "Abc"
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), false);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true);
+        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)), false);
+        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)), false);
+        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)), false);
+        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)), true);
     }
 
     @Test

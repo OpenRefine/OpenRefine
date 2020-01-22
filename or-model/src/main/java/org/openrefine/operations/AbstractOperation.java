@@ -31,18 +31,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.model;
-
-import java.util.Properties;
+package org.openrefine.operations;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.OperationResolver;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 import org.openrefine.process.Process;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
@@ -62,17 +61,18 @@ import org.openrefine.process.QuickHistoryEntryProcess;
 @JsonTypeIdResolver(OperationResolver.class)
 abstract public class AbstractOperation {
 
-    public Process createProcess(Project project, Properties options) throws Exception {
-        return new QuickHistoryEntryProcess(project, getBriefDescription(null)) {
+    public Process createProcess(History history) throws Exception {
+        GridState state = history.getCurrentGridState();
+        return new QuickHistoryEntryProcess(history, getBriefDescription(null)) {
 
             @Override
             protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-                return AbstractOperation.this.createHistoryEntry(_project, historyEntryID);
+                return AbstractOperation.this.createHistoryEntry(state, historyEntryID);
             }
         };
     }
 
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
+    protected HistoryEntry createHistoryEntry(GridState state, long historyEntryID) throws Exception {
         throw new UnsupportedOperationException();
     }
 

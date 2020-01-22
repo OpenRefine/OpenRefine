@@ -1,15 +1,23 @@
 
 package org.openrefine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+import scala.Tuple2;
+
+import org.openrefine.model.Cell;
+import org.openrefine.model.Row;
 
 public class SparkBasedTest {
 
-    protected SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
-    protected JavaSparkContext _context;
+    protected static SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
+    protected static JavaSparkContext _context;
 
     @BeforeSuite
     public void setUpSpark() {
@@ -18,6 +26,20 @@ public class SparkBasedTest {
 
     protected JavaSparkContext context() {
         return _context;
+    }
+
+    protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells) {
+        List<Tuple2<Long, Row>> rdd = new ArrayList<>(cells.length);
+        for (int i = 0; i != cells.length; i++) {
+            List<Cell> currentCells = new ArrayList<>(cells[i].length);
+            for (int j = 0; j != cells[i].length; j++) {
+                currentCells.add(cells[i][j]);
+            }
+            rdd.add(new Tuple2<Long, Row>((long) i, new Row(currentCells)));
+        }
+        return context().parallelize(rdd)
+                .keyBy(t -> (Long) t._1)
+                .mapValues(t -> t._2);
     }
 
     @AfterSuite

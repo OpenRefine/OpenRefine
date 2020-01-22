@@ -159,4 +159,13 @@ public class ColumnModel {
     public List<ColumnMetadata> getColumns() {
         return _columns;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ColumnModel)) {
+            return false;
+        }
+        ColumnModel otherModel = (ColumnModel) other;
+        return _columns.equals(otherModel.getColumns());
+    }
 }

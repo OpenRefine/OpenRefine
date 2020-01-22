@@ -50,7 +50,7 @@ public class TimeBinRowIndex extends TimeBinIndex {
     @Override
     protected void iterate(Project project, RowEvaluable rowEvaluable, List<Long> allValues) {
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
 
         for (int i = 0; i < project.rows.size(); i++) {
             Row row = project.rows.get(i);

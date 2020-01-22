@@ -33,14 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
-import org.openrefine.model.Project;
+import java.io.Serializable;
+import java.util.List;
+
 import org.openrefine.model.Record;
+import org.openrefine.model.Row;
 
 /**
  * Interface for judging if a particular record matches or doesn't match some particular criterion, such as a facet
  * constraint.
  */
-public interface RecordFilter {
+public interface RecordFilter extends Serializable {
 
-    public boolean filterRecord(Project project, Record record);
+    public boolean filterRecord(Record record, List<Row> rows);
 }

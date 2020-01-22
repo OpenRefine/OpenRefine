@@ -33,11 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
+import static org.mockito.Mockito.mock;
+
+import org.openrefine.history.History;
 import org.openrefine.model.Project;
 
 public class ProjectStub extends Project {
 
     public ProjectStub(GridState state) {
         super(state);
+    }
+
+    public ProjectStub(long id) {
+        super(id, mock(History.class));
     }
 }

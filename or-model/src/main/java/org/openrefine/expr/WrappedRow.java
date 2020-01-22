@@ -35,19 +35,18 @@ package org.openrefine.expr;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class WrappedRow implements HasFields {
 
-    final public Project project;
-    final public int rowIndex;
+    final public ColumnModel columnModel;
+    final public long rowIndex;
     final public Row row;
 
-    public WrappedRow(Project project, int rowIndex, Row row) {
-        this.project = project;
+    public WrappedRow(ColumnModel columnModel, long rowIndex, Row row) {
+        this.columnModel = columnModel;
         this.rowIndex = rowIndex;
         this.row = row;
     }
@@ -55,14 +54,14 @@ public class WrappedRow implements HasFields {
     @Override
     public Object getField(String name) {
         if ("cells".equals(name)) {
-            return new CellTuple(project, row);
+            return new CellTuple(columnModel, row);
         } else if ("index".equals(name)) {
             return rowIndex;
         } else if ("record".equals(name)) {
             throw new NotImplementedException("records mode is not implemented");
             // return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
         } else if ("columnNames".equals(name)) {
-            return project.columnModel.getColumnNames();
+            return columnModel.getColumnNames();
         } else {
             return row.getField(name);
         }
@@ -113,17 +112,16 @@ public class WrappedRow implements HasFields {
 
         @Override
         public Object getField(String name) {
-            int columnIndex = project.columnModel.getColumnIndexByName(name);
+            int columnIndex = columnModel.getColumnIndexByName(name);
             if (columnIndex != -1) {
 
                 HasFieldsListImpl cells = new HasFieldsListImpl();
-                for (int r = _record.fromRowIndex; r < _record.toRowIndex; r++) {
-                    Row row = project.rows.get(r);
-                    Cell cell = row.getCell(columnIndex);
-                    if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                        cells.add(new WrappedCell(project, name, cell));
-                    }
-                }
+                // TODO disabled for now, reimplement once the records mode is reinstated / replaced
+                /*
+                 * for (int r = _record.fromRowIndex; r < _record.toRowIndex; r++) { Row row = project.rows.get(r); Cell
+                 * cell = row.getCell(columnIndex); if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                 * cells.add(new WrappedCell(project, name, cell)); } }
+                 */
 
                 return cells;
             }

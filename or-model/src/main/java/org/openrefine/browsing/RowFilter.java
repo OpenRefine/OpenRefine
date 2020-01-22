@@ -33,14 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
-import org.openrefine.model.Project;
+import java.io.Serializable;
+
 import org.openrefine.model.Row;
 
 /**
  * Interface for judging if a particular row matches or doesn't match some particular criterion, such as a facet
  * constraint.
  */
-public interface RowFilter {
+public interface RowFilter extends Serializable {
 
-    public boolean filterRow(Project project, int rowIndex, Row row);
+    public boolean filterRow(long rowIndex, Row row);
 }

@@ -40,12 +40,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
+import org.openrefine.operations.AbstractOperation;
 
 public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
 

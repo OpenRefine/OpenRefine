@@ -38,8 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openrefine.model.AbstractOperation;
-
 public abstract class OperationRegistry {
 
     static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass = new HashMap<String, List<Class<? extends AbstractOperation>>>();

@@ -33,8 +33,8 @@ import org.testng.annotations.Test;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.Change;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Recon;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.testing.TestingData;
 

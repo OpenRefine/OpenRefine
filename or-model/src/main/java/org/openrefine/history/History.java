@@ -36,7 +36,6 @@ package org.openrefine.history;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -73,13 +72,15 @@ public class History {
     }
 
     /**
-     * Deserializes a saved history.
+     * Constructs a history with an initial grid and a list of history entries.
+     * 
+     * @param initialGrid
+     * @param metadata
      */
-    @JsonCreator
     public History(
-            @JsonProperty("initialGrid") GridState initialGrid,
-            @JsonProperty("entries") List<HistoryEntry> entries,
-            @JsonProperty("position") int position) {
+            GridState initialGrid,
+            List<HistoryEntry> entries,
+            int position) {
         this(initialGrid);
         for (HistoryEntry entry : entries) {
             addEntry(entry);
@@ -87,9 +88,24 @@ public class History {
         _position = position;
     }
 
+    /**
+     * Returns the state of the grid at the current position in the history.
+     * 
+     * @return
+     */
     @JsonIgnore
     public GridState getCurrentGridState() {
         return _states.get(_position);
+    }
+
+    /**
+     * Returns the state of the table at a certain index in the history.
+     * 
+     * @return
+     */
+    @JsonIgnore
+    public GridState getInitialGridState() {
+        return _states.get(0);
     }
 
     @JsonProperty("position")

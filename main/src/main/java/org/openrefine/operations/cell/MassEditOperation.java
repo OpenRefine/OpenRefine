@@ -139,7 +139,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
 
         Evaluable eval = MetaParser.parse(_expression);
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
 
         Map<String, Serializable> fromTo = new HashMap<String, Serializable>();
         Serializable fromBlankTo = null;

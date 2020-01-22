@@ -43,8 +43,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.openrefine.commands.Command;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;

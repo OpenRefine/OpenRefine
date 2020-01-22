@@ -118,7 +118,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
         ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
 
         Evaluable eval = MetaParser.parse(_expression);
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
 
         return new RowVisitor() {
 

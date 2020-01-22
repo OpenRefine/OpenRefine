@@ -38,7 +38,6 @@ import java.util.Properties;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public class ExpressionBasedRowEvaluable implements RowEvaluable {
@@ -57,7 +56,7 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
     @Override
     public Object eval(
-            Project project, int rowIndex, Row row, Properties bindings) {
+            long rowIndex, Row row, Properties bindings) {
 
         Cell cell = row.getCell(_cellIndex);
 

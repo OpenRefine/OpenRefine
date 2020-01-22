@@ -43,7 +43,6 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 /**
@@ -83,14 +82,14 @@ public class ExpressionEqualRowFilter implements RowFilter {
     }
 
     @Override
-    public boolean filterRow(Project project, int rowIndex, Row row) {
-        return _invert ? internalInvertedFilterRow(project, rowIndex, row) : internalFilterRow(project, rowIndex, row);
+    public boolean filterRow(long rowIndex, Row row) {
+        return _invert ? internalInvertedFilterRow(rowIndex, row) : internalFilterRow(rowIndex, row);
     }
 
-    public boolean internalFilterRow(Project project, int rowIndex, Row row) {
+    public boolean internalFilterRow(long rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
 
         Object value = _evaluable.evaluate(bindings);
@@ -126,10 +125,10 @@ public class ExpressionEqualRowFilter implements RowFilter {
         return testValue(value);
     }
 
-    public boolean internalInvertedFilterRow(Project project, int rowIndex, Row row) {
+    public boolean internalInvertedFilterRow(long rowIndex, Row row) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
         ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
 
         Object value = _evaluable.evaluate(bindings);

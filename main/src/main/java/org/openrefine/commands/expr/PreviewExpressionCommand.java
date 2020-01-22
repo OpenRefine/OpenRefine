@@ -160,7 +160,7 @@ public class PreviewExpressionCommand extends Command {
                 Evaluable eval = MetaParser.parse(expression);
 
                 List<ExpressionValue> evaluated = new ArrayList<>();
-                Properties bindings = ExpressionUtils.createBindings(project);
+                Properties bindings = ExpressionUtils.createBindings();
                 for (int i = 0; i < length; i++) {
                     Object result = null;
 

@@ -35,10 +35,9 @@ package org.openrefine.browsing.util;
 
 import java.util.Properties;
 
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public interface RowEvaluable {
 
-    public Object eval(Project project, int rowIndex, Row row, Properties bindings);
+    public Object eval(long rowIndex, Row row, Properties bindings);
 }

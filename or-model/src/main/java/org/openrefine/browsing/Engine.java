@@ -33,32 +33,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import scala.Tuple2;
 
+import org.openrefine.browsing.facets.AllFacetsState;
 import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.util.ConjunctiveFilteredRecords;
-import org.openrefine.browsing.util.ConjunctiveFilteredRows;
-import org.openrefine.browsing.util.FilteredRecordsAsFilteredRows;
-import org.openrefine.model.Project;
+import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 
 /**
- * Faceted browsing engine.
+ * Faceted browsing engine. Given a GridState and facet configurations, it can be used to compute facet statistics and
+ * obtain a filtered view of the grid according to the facets.
  */
 public class Engine {
 
     static public enum Mode {
-        @JsonProperty("row-based")
-        RowBased, @JsonProperty("record-based")
+        @JsonProperty(MODE_ROW_BASED)
+        RowBased, @JsonProperty(MODE_RECORD_BASED)
         RecordBased
-
     }
 
     public final static String INCLUDE_DEPENDENT = "includeDependent";
@@ -66,12 +66,9 @@ public class Engine {
     public final static String MODE_ROW_BASED = "row-based";
     public final static String MODE_RECORD_BASED = "record-based";
 
-    @JsonIgnore
-    protected Project _project;
-    @JsonProperty("facets")
-    protected List<Facet> _facets = new LinkedList<Facet>();
-    @JsonIgnore
-    protected EngineConfig _config = new EngineConfig(Collections.emptyList(), Mode.RowBased);
+    protected final GridState _state;
+    protected final List<Facet> _facets;
+    protected final EngineConfig _config;
 
     static public String modeToString(Mode mode) {
         return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
@@ -81,113 +78,115 @@ public class Engine {
         return MODE_ROW_BASED.equals(s) ? Mode.RowBased : Mode.RecordBased;
     }
 
-    public Engine(Project project) {
-        _project = project;
+    public Engine(GridState state, EngineConfig config) {
+        _state = state;
+        _config = config;
+        _facets = config.getFacetConfigs().stream()
+                .map(fc -> fc.apply(state.getColumnModel()))
+                .collect(Collectors.toList());
+
     }
 
-    @JsonProperty("engine-mode")
     public Mode getMode() {
         return _config.getMode();
     }
 
-    public void setMode(Mode mode) {
-        _config = new EngineConfig(_config.getFacetConfigs(), mode);
+    public GridState getGridState() {
+        return _state;
     }
 
+    /**
+     * Computes a grid state which only contains the rows matching the current facets.
+     * 
+     * @return
+     */
     @JsonIgnore
-    public FilteredRows getAllRows() {
-        return new FilteredRows() {
+    public GridState getMatchingRows() {
+        Function<Tuple2<Long, Row>, Boolean> f = rowFilterConjuction(facetRowFilters());
+        JavaPairRDD<Long, Row> matchingRows = _state.getGrid().filter(f);
+        return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
+    }
+
+    /**
+     * Computes a grid state which only contains all the rows not matched by the current facets
+     * 
+     * @return
+     */
+    public GridState getMismatchingRows() {
+        Function<Tuple2<Long, Row>, Boolean> f = negatedRowFilterConjuction(facetRowFilters());
+        JavaPairRDD<Long, Row> matchingRows = _state.getGrid().filter(f);
+        return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
+    }
+
+    /**
+     * Computes the facet states of the configured facets on the current grid
+     */
+    public List<FacetState> getFacetStates() {
+        if (_config.getMode().equals(Mode.RowBased)) {
+            AllFacetsState aggregated = _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp, facetCombineOp);
+            return aggregated.getFacetStates();
+        } else {
+            throw new IllegalStateException("not implemented");
+        }
+    }
+
+    private List<RowFilter> facetRowFilters() {
+        return _facets.stream()
+                .map(facet -> facet.getRowFilter())
+                .collect(Collectors.toList());
+    }
+
+    private AllFacetsState allFacetsInitialState() {
+        return new AllFacetsState(_facets
+                .stream().map(facet -> facet.getInitialFacetState())
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * Functions used to compute facet statistics
+     */
+
+    private static Function2<AllFacetsState, Tuple2<Long, Row>, AllFacetsState> rowSeqOp = new Function2<AllFacetsState, Tuple2<Long, Row>, AllFacetsState>() {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public AllFacetsState call(AllFacetsState v1, Tuple2<Long, Row> v2) throws Exception {
+            return v1.increment(v2._1, v2._2);
+        }
+    };
+
+    private static Function2<AllFacetsState, AllFacetsState, AllFacetsState> facetCombineOp = new Function2<AllFacetsState, AllFacetsState, AllFacetsState>() {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public AllFacetsState call(AllFacetsState v1, AllFacetsState v2) throws Exception {
+            return v1.merge(v2);
+        }
+    };
+
+    private static Function<Tuple2<Long, Row>, Boolean> rowFilterConjuction(List<RowFilter> rowFilters) {
+        return new Function<Tuple2<Long, Row>, Boolean>() {
+
+            private static final long serialVersionUID = 1L;
 
             @Override
-            public void accept(Project project, RowVisitor visitor) {
-                try {
-                    visitor.start(project);
-
-                    int c = project.rows.size();
-                    for (int rowIndex = 0; rowIndex < c; rowIndex++) {
-                        Row row = project.rows.get(rowIndex);
-                        if (visitor.visit(project, rowIndex, row)) {
-                            break;
-                        }
-                    }
-                } finally {
-                    visitor.end(project);
-                }
+            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
+                return rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
             }
         };
     }
 
-    @JsonIgnore
-    public FilteredRows getAllFilteredRows() {
-        return getFilteredRows(null);
-    }
+    private static Function<Tuple2<Long, Row>, Boolean> negatedRowFilterConjuction(List<RowFilter> rowFilters) {
+        return new Function<Tuple2<Long, Row>, Boolean>() {
 
-    public FilteredRows getFilteredRows(Facet except) {
-        if (_config.getMode().equals(Mode.RecordBased)) {
-            return new FilteredRecordsAsFilteredRows(getFilteredRecords(except));
-        } else if (_config.getMode().equals(Mode.RowBased)) {
-            ConjunctiveFilteredRows cfr = new ConjunctiveFilteredRows();
-            for (Facet facet : _facets) {
-                if (facet != except) {
-                    RowFilter rowFilter = facet.getRowFilter(_project);
-                    if (rowFilter != null) {
-                        cfr.add(rowFilter);
-                    }
-                }
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
+                return !rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
             }
-            return cfr;
-        }
-        throw new InternalError("Unknown mode.");
-    }
-
-    @JsonIgnore
-    public FilteredRecords getAllRecords() {
-        throw new NotImplementedException("record mode is not implemented");
-    }
-
-    @JsonIgnore
-    public FilteredRecords getFilteredRecords() {
-        return getFilteredRecords(null);
-    }
-
-    public FilteredRecords getFilteredRecords(Facet except) {
-        if (_config.getMode().equals(Mode.RecordBased)) {
-            ConjunctiveFilteredRecords cfr = new ConjunctiveFilteredRecords();
-            for (Facet facet : _facets) {
-                if (facet != except) {
-                    RecordFilter recordFilter = facet.getRecordFilter(_project);
-                    if (recordFilter != null) {
-                        cfr.add(recordFilter);
-                    }
-                }
-            }
-            return cfr;
-        }
-        throw new InternalError("This method should not be called when the engine is not in record mode.");
-    }
-
-    public void initializeFromConfig(EngineConfig config) {
-        _config = config;
-        _facets = config.getFacetConfigs().stream()
-                .map(c -> c.apply(_project))
-                .collect(Collectors.toList());
-    }
-
-    public void computeFacets() {
-        if (_config.getMode().equals(Mode.RowBased)) {
-            for (Facet facet : _facets) {
-                FilteredRows filteredRows = getFilteredRows(facet);
-
-                facet.computeChoices(_project, filteredRows);
-            }
-        } else if (_config.getMode().equals(Mode.RecordBased)) {
-            for (Facet facet : _facets) {
-                FilteredRecords filteredRecords = getFilteredRecords(facet);
-
-                facet.computeChoices(_project, filteredRecords);
-            }
-        } else {
-            throw new InternalError("Unknown mode.");
-        }
+        };
     }
 }

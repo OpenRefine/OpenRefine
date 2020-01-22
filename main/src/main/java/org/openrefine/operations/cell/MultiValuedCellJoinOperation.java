@@ -41,12 +41,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
+import org.openrefine.operations.AbstractOperation;
 
 public class MultiValuedCellJoinOperation extends AbstractOperation {
 
