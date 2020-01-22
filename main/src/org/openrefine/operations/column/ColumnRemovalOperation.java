@@ -35,10 +35,10 @@ package org.openrefine.operations.column;
 
 import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRemovalChange;
+import org.openrefine.operations.AbstractOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -33,19 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.process;
 
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 abstract public class QuickHistoryEntryProcess extends Process {
-    final protected Project _project;
+    final protected History _history;
     final protected String _briefDescription;
     protected HistoryEntry _historyEntry;
     boolean _done = false;
     
-    public QuickHistoryEntryProcess(Project project, String briefDescription) {
-        _project = project;
+    public QuickHistoryEntryProcess(History history, String briefDescription) {
+        _history = history;
         _briefDescription = briefDescription;
     }
     
@@ -70,7 +70,7 @@ abstract public class QuickHistoryEntryProcess extends Process {
         if (_historyEntry == null) {
             _historyEntry = createHistoryEntry(HistoryEntry.allocateID());
         }
-        _project.getHistory().addEntry(_historyEntry);
+        _history.addEntry(_historyEntry);
         _done = true;
         
         return _historyEntry;

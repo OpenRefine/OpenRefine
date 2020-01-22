@@ -43,26 +43,7 @@ import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.io.FileProjectManager;
 
 
-public class HistoryEntryManagerStub implements HistoryEntryManager{
-
-    @Override
-    public void delete(HistoryEntry historyEntry) {
-    }
-
-    @Override
-    public void save(HistoryEntry historyEntry, Writer writer, Properties options) {
-    }
-
-    @Override
-    public void loadChange(HistoryEntry historyEntry) {
-    }
-
-    protected void loadChange(HistoryEntry historyEntry, File file) throws Exception {
-    }
-
-    @Override
-    public void saveChange(HistoryEntry historyEntry) throws Exception {
-    }
+public class HistoryEntryManagerStub extends HistoryEntryManager {
 
     protected void saveChange(HistoryEntry historyEntry, File file) throws Exception {
     }

@@ -107,7 +107,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         hasError = false;
         hasBlank = false;
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
 
         visitRow(project, rowIndex, row, bindings, rowIndex);
 
@@ -126,7 +126,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         hasError = false;
         hasBlank = false;
 
-        Properties bindings = ExpressionUtils.createBindings(project);
+        Properties bindings = ExpressionUtils.createBindings();
 
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
             Row row = project.rows.get(r);
@@ -200,7 +200,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     public RowEvaluable getChoiceCountRowEvaluable() {
         return new RowEvaluable() {
             @Override
-            public Object eval(Project project, int rowIndex, Row row, Properties bindings) {
+            public Object eval(long rowIndex, Row row, Properties bindings) {
                 Object value = evalRow(project, rowIndex, row, bindings);
                 return getChoiceValueCountMultiple(value);
             }

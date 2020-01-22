@@ -31,56 +31,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.browsing.util;
+package org.openrefine.overlay;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang3.NotImplementedException;
-import org.openrefine.browsing.FilteredRecords;
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.model.Project;
-import org.openrefine.model.Record;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 /**
- * Encapsulate logic for visiting records that match all given record filters.
+ * Overlay models must be serializable and deserializable with Jackson.
+ * It is possible to have access to the project at deserialization time
+ * by adding the corresponding parameter to the JSON creator with
+ * @JacksonInject("project").
+ *
  */
-public class ConjunctiveFilteredRecords implements FilteredRecords {
-    final protected List<RecordFilter> _recordFilters = new LinkedList<RecordFilter>();
-    
-    public void add(RecordFilter recordFilter) {
-        _recordFilters.add(recordFilter);
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.CUSTOM,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="overlayModelType",
+        visible=true) // for UnknownOverlayModel, which needs to read its own id
+@JsonTypeIdResolver(OverlayModelResolver.class)
+public interface OverlayModel {
+	
+    public default void onBeforeSave(Project project) {
+    	
     }
     
-    @Override
-    public void accept(Project project, RecordVisitor visitor) {
-        throw new NotImplementedException("records mode not implemented");
-        /*
-        try {
-            visitor.start(project);
-
-            int c = project.recordModel.getRecordCount();
-            for (int r = 0; r < c; r++) {
-                Record record = project.recordModel.getRecord(r);
-                if (matchRecord(project, record)) {
-                    if (visitor.visit(project, record)) {
-                        return;
-                    }
-                }
-            }
-        } finally {
-            visitor.end(project);
-        }
-        */
+    public default void onAfterSave(Project project) {
+    	
     }
     
-    protected boolean matchRecord(Project project, Record record) {
-        for (RecordFilter recordFilter : _recordFilters) {
-            if (!recordFilter.filterRecord(project, record)) {
-                return false;
-            }
-        }
-        return true;
+    public default void dispose(Project project) {
+    	
     }
 }

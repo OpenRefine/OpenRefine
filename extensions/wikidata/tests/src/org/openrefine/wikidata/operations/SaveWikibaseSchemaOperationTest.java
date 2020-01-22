@@ -29,7 +29,7 @@ import static org.testng.Assert.assertNull;
 import java.io.LineNumberReader;
 
 import org.openrefine.history.Change;
-import org.openrefine.model.AbstractOperation;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;

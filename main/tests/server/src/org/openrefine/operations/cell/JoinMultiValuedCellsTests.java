@@ -37,8 +37,8 @@ import java.io.Serializable;
 import java.util.Properties;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.AbstractOperation;
 import org.openrefine.model.Project;
+import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
 import org.openrefine.process.Process;

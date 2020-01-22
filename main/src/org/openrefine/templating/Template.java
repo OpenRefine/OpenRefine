@@ -95,7 +95,7 @@ public class Template {
 
         @Override
         public void start(Project project) {
-            bindings = ExpressionUtils.createBindings(project);
+            bindings = ExpressionUtils.createBindings();
 
             try {
                 if (_prefix != null) {

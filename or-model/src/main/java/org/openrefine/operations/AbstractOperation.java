@@ -31,86 +31,57 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.history;
+package org.openrefine.operations;
 
+import org.openrefine.history.History;
+import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
+import org.openrefine.process.QuickHistoryEntryProcess;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
-/**
- * The process for undoing or redoing. This involves calling apply() and revert()
- * on changes.
+/*
+ *  An abstract operation can be applied to different but similar
+ *  projects.
  */
-public class HistoryProcess extends Process {
-    final protected Project _project;
-    final protected long    _lastDoneID;
-    final protected String  _description;
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.CUSTOM,
+        include=JsonTypeInfo.As.PROPERTY,
+        property="op",
+        visible=true) // for UnknownOperation, which needs to read its own id
+@JsonTypeIdResolver(OperationResolver.class)
+abstract public class AbstractOperation  {
     
-    protected boolean _done = false;
-
-    private final static String WARN = "Not a long-running process";
-    
-    public HistoryProcess(Project project, long lastDoneID) {
-        _project = project;
-        _lastDoneID = lastDoneID;
-        
-        if (_lastDoneID == 0) {
-            _description = "Undo all";
-        } else {
-            HistoryEntry entry = _project.getHistory().getEntry(_lastDoneID);
-            _description = "Undo/redo until after " + entry.getDescription();
-        }
+    public Process createProcess(History history) throws Exception {
+    	GridState state = history.getCurrentGridState();
+        return new QuickHistoryEntryProcess(history, getBriefDescription(null)) {
+            @Override
+            protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
+                return AbstractOperation.this.createHistoryEntry(state, historyEntryID);
+            }
+        };
     }
     
-    @Override
-    @JsonIgnore
-    public long getId() {
-        return super.getId();
+    protected HistoryEntry createHistoryEntry(GridState state, long historyEntryID) throws Exception {
+        throw new UnsupportedOperationException();
     }
     
-    @Override
-    public void cancel() {
-        throw new RuntimeException(WARN);
-    }
-
-    @Override
-    public boolean isImmediate() {
-        return true;
-    }
-
-    @Override
-    public HistoryEntry performImmediate() {
-        _project.getHistory().undoRedo(_lastDoneID);
-        _done = true;
-        
-        return null;
-    }
-
-    @Override
-    public void startPerforming(ProcessManager manager) {
-        throw new RuntimeException(WARN);
+    protected String getBriefDescription(Project project) {
+        throw new UnsupportedOperationException();
     }
     
-    @JsonProperty("status")
-    public String getStatus() {
-        return _done ? "done" : "pending";
+    @JsonIgnore // the operation id is already added as "op" by the JsonTypeInfo annotation
+    public String getOperationId() {
+        return OperationRegistry.s_opClassToName.get(this.getClass());
     }
     
     @JsonProperty("description")
-    public String getDescription() {
-        return _description;
-    }
-
-    @Override
-    public boolean isDone() {
-        throw new RuntimeException(WARN);
-    }
-
-    @Override
-    public boolean isRunning() {
-        throw new RuntimeException(WARN);
+    public String getJsonDescription() {
+        return getBriefDescription(null);
     }
 }
