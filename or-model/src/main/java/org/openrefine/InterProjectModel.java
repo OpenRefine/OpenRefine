@@ -47,6 +47,10 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.JoinException;
 
+/*
+ * TODO this needs migrating to the RDD-based architecture
+ */
+
 public class InterProjectModel {
     static public class ProjectJoin {
         final public long   fromProjectID;
@@ -70,6 +74,9 @@ public class InterProjectModel {
         }
         
         public HasFieldsListImpl getRows(Object value) {
+        	// TODO redesign for RDD-based architecture
+        	
+        	/*
             if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
                 Project toProject = ProjectManager.singleton.getProject(toProjectID);
                 if (toProject != null) {
@@ -82,6 +89,7 @@ public class InterProjectModel {
                     return rows;
                 }
             }
+            */
             return null;
         }
     }
@@ -157,6 +165,10 @@ public class InterProjectModel {
             return;
         }
         
+        // @todo redesign InterProjectModel for Spark-based architecture
+        
+        /*
+        
         int fromColumnIndex = fromProject.columnModel.getColumnIndexByName(join.fromProjectColumnName);
         int toColumnIndex = toProject.columnModel.getColumnIndexByName(join.toProjectColumnName);
         if (fromColumnIndex == -1) {
@@ -182,5 +194,6 @@ public class InterProjectModel {
                 join.valueToRowIndices.get(value).add(r);
             }
         }
+        */
     }
 }

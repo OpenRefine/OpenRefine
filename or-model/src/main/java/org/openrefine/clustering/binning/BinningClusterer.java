@@ -41,18 +41,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.clustering.ClusteredEntry;
 import org.openrefine.clustering.Clusterer;
 import org.openrefine.clustering.ClustererConfig;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
+import org.openrefine.model.GridState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,9 +96,9 @@ public class BinningClusterer extends Clusterer {
         }
 
         @Override
-        public BinningClusterer apply(Project project) {
+        public BinningClusterer apply(GridState state) {
             BinningClusterer clusterer = new BinningClusterer();
-            clusterer.initializeFromConfig(project, this);
+            clusterer.initializeFromConfig(state, this);
             return clusterer;
         }
 
@@ -127,6 +122,7 @@ public class BinningClusterer extends Clusterer {
     
     List<Map<String,Integer>> _clusters;
 
+    /*
     class BinningRowVisitor implements RowVisitor {
 
         Keyer _keyer;
@@ -182,6 +178,7 @@ public class BinningClusterer extends Clusterer {
             return _map;
         }
     }
+    */
             
     public static class SizeComparator implements Comparator<Map<String,Integer>>, Serializable {
         private static final long serialVersionUID = -1390696157208674054L;
@@ -213,19 +210,21 @@ public class BinningClusterer extends Clusterer {
         }
     }
     
-    public void initializeFromConfig(Project project, BinningClustererConfig config) {
-        super.initializeFromConfig(project, config);
+    public void initializeFromConfig(GridState state, BinningClustererConfig config) {
+        super.initializeFromConfig(state, config);
         _keyer = config.getKeyer();
         _parameters = config.getParameters();
     }
 
     @Override
     public void computeClusters(Engine engine) {
+    	// TODO adapt to Spark
+    	/*
         BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_parameters);
         FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(_project, visitor);
+        filteredRows.accept(_project, visitor);  */
      
-        Map<String,Map<String,Integer>> map = visitor.getMap();
+        Map<String,Map<String,Integer>> map = Collections.emptyMap(); // visitor.getMap();
         _clusters = new ArrayList<Map<String,Integer>>(map.values());
         Collections.sort(_clusters, new SizeComparator());
     }

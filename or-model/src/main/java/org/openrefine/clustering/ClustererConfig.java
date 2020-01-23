@@ -26,6 +26,7 @@
  ******************************************************************************/
 package org.openrefine.clustering;
 
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,7 +62,7 @@ public abstract class ClustererConfig  {
      * @param project
      * @return
      */
-    public abstract Clusterer apply(Project project);
+    public abstract Clusterer apply(GridState state);
     
     /**
      * Type string used in Json serialization

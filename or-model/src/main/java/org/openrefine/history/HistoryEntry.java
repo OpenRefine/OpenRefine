@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import org.openrefine.model.Project;
 import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
@@ -110,7 +109,7 @@ public class HistoryEntry {
         this.change = change;
     }
 
-    static public HistoryEntry load(Project project, String s) throws IOException {
+    static public HistoryEntry load(String s) throws IOException {
     	return ParsingUtilities.mapper.readValue(s, HistoryEntry.class);
     }
 
