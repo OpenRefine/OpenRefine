@@ -116,4 +116,8 @@ public class Project {
     public long getId() {
         return id;
     }
+
+    public void dispose() {
+        // TODO unload RDDs?
+    }
 }

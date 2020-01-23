@@ -60,7 +60,7 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
         Cell cell = row.getCell(_cellIndex);
 
-        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+        ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
 
         return _eval.evaluate(bindings);
     }

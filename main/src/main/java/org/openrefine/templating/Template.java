@@ -158,7 +158,7 @@ public class Template {
                     writer.write(_separator);
                 }
 
-                ExpressionUtils.bind(bindings, row, rowIndex, null, null);
+                ExpressionUtils.bind(bindings, null, row, rowIndex, null, null);
                 for (Fragment f : _fragments) {
                     if (f instanceof StaticFragment) {
                         writer.write(((StaticFragment) f).text);

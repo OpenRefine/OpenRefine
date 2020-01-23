@@ -36,6 +36,7 @@ package org.openrefine;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.tools.tar.TarOutputStream;
 
 import org.openrefine.ProjectManager;
@@ -48,6 +49,12 @@ import org.openrefine.model.Project;
  *
  */
 public class ProjectManagerStub extends ProjectManager {
+
+    JavaSparkContext context;
+
+    public ProjectManagerStub(JavaSparkContext context) {
+        this.context = context;
+    }
 
     @Override
     public void deleteProject(long projectID) {
@@ -62,7 +69,7 @@ public class ProjectManagerStub extends ProjectManager {
 
     @Override
     public HistoryEntryManager getHistoryEntryManager() {
-        return new HistoryEntryManagerStub();
+        return new HistoryEntryManager(context);
     }
 
     @Override

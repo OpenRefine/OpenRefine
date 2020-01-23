@@ -33,19 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFieldsListImpl;
-import org.openrefine.expr.WrappedRow;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.openrefine.util.JoinException;
+
+/*
+ * TODO this needs migrating to the RDD-based architecture
+ */
 
 public class InterProjectModel {
 
@@ -70,18 +70,16 @@ public class InterProjectModel {
         }
 
         public HasFieldsListImpl getRows(Object value) {
-            if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
-                Project toProject = ProjectManager.singleton.getProject(toProjectID);
-                if (toProject != null) {
-                    HasFieldsListImpl rows = new HasFieldsListImpl();
-                    for (Integer r : valueToRowIndices.get(value)) {
-                        Row row = toProject.rows.get(r);
-                        rows.add(new WrappedRow(toProject, r, row));
-                    }
+            // TODO redesign for RDD-based architecture
 
-                    return rows;
-                }
-            }
+            /*
+             * if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) { Project toProject =
+             * ProjectManager.singleton.getProject(toProjectID); if (toProject != null) { HasFieldsListImpl rows = new
+             * HasFieldsListImpl(); for (Integer r : valueToRowIndices.get(value)) { Row row = toProject.rows.get(r);
+             * rows.add(new WrappedRow(toProject, r, row)); }
+             * 
+             * return rows; } }
+             */
             return null;
         }
     }
@@ -156,30 +154,24 @@ public class InterProjectModel {
             return;
         }
 
-        int fromColumnIndex = fromProject.columnModel.getColumnIndexByName(join.fromProjectColumnName);
-        int toColumnIndex = toProject.columnModel.getColumnIndexByName(join.toProjectColumnName);
-        if (fromColumnIndex == -1) {
-            throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " + fromProjectMD.getName());
-        }
-        if (toColumnIndex == -1) {
-            throw new JoinException("Unable to find column " + join.toProjectColumnName + " in project " + toProjectMD.getName());
-        }
+        // @todo redesign InterProjectModel for Spark-based architecture
 
-        for (Row fromRow : fromProject.rows) {
-            Object value = fromRow.getCellValue(fromColumnIndex);
-            if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
-                join.valueToRowIndices.put(value, new ArrayList<Integer>());
-            }
-        }
-
-        int count = toProject.rows.size();
-        for (int r = 0; r < count; r++) {
-            Row toRow = toProject.rows.get(r);
-
-            Object value = toRow.getCellValue(toColumnIndex);
-            if (ExpressionUtils.isNonBlankData(value) && join.valueToRowIndices.containsKey(value)) {
-                join.valueToRowIndices.get(value).add(r);
-            }
-        }
+        /*
+         * 
+         * int fromColumnIndex = fromProject.columnModel.getColumnIndexByName(join.fromProjectColumnName); int
+         * toColumnIndex = toProject.columnModel.getColumnIndexByName(join.toProjectColumnName); if (fromColumnIndex ==
+         * -1) { throw new JoinException("Unable to find column " + join.fromProjectColumnName + " in project " +
+         * fromProjectMD.getName()); } if (toColumnIndex == -1) { throw new JoinException("Unable to find column " +
+         * join.toProjectColumnName + " in project " + toProjectMD.getName()); }
+         * 
+         * for (Row fromRow : fromProject.rows) { Object value = fromRow.getCellValue(fromColumnIndex); if
+         * (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
+         * join.valueToRowIndices.put(value, new ArrayList<Integer>()); } }
+         * 
+         * int count = toProject.rows.size(); for (int r = 0; r < count; r++) { Row toRow = toProject.rows.get(r);
+         * 
+         * Object value = toRow.getCellValue(toColumnIndex); if (ExpressionUtils.isNonBlankData(value) &&
+         * join.valueToRowIndices.containsKey(value)) { join.valueToRowIndices.get(value).add(r); } }
+         */
     }
 }

@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine;
 
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
+import org.apache.spark.api.java.JavaSparkContext;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -64,12 +66,13 @@ public class ProjectManagerTests {
 
     @BeforeMethod
     public void SetUp() {
-        pm = new ProjectManagerStub();
+        pm = new ProjectManagerStub(mock(JavaSparkContext.class));
         SUT = spy(pm);
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
         procmgr = mock(ProcessManager.class);
         when(project.getProcessManager()).thenReturn(procmgr);
+        when(project.getId()).thenReturn(1234L);
         when(procmgr.hasPending()).thenReturn(false); // always false for now, but should test separately
     }
 
@@ -87,6 +90,7 @@ public class ProjectManagerTests {
         SUT.registerProject(project, metadata);
 
         AssertProjectRegistered();
+        verify(project, atLeast(1)).getId();
         verify(metadata, times(1)).getTags();
 
         verifyNoMoreInteractions(project);
@@ -105,6 +109,7 @@ public class ProjectManagerTests {
 
         // assert and verify
         AssertProjectRegistered();
+        verify(project, atLeast(1)).getId();
         try {
             verify(SUT, times(1)).saveMetadata(metadata, project.getId());
         } catch (Exception e) {
@@ -113,6 +118,7 @@ public class ProjectManagerTests {
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
         verify(metadata, times(1)).getTags();
+        verify(project, atLeast(1)).getId();
 
         // ensure end
         verifyNoMoreInteractions(project);
@@ -149,7 +155,7 @@ public class ProjectManagerTests {
 
         whenGetSaveTimes(project, metadata, -10);// already saved (10 seconds before)
         registerProject(project, metadata);
-        Assert.assertSame(SUT.getProject(0), project);
+        Assert.assertSame(SUT.getProject(1234L), project);
 
         SUT.save(true);
 
@@ -159,6 +165,8 @@ public class ProjectManagerTests {
         verify(project, times(2)).getLastSave();
         verify(SUT, never()).saveProject(project);
         Assert.assertEquals(SUT.getProject(0), null);
+        verify(project, atLeast(1)).getId();
+        verify(project, times(1)).dispose();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
 
@@ -175,6 +183,7 @@ public class ProjectManagerTests {
         verify(SUT, never()).saveProjects(Mockito.anyBoolean());
         verify(SUT, never()).saveWorkspace();
         verify(metadata, times(1)).getTags();
+        verify(project, atLeast(1)).getId();
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
@@ -246,6 +255,7 @@ public class ProjectManagerTests {
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(proj);
         verify(meta, times(1)).getTags();
+        verify(proj, atLeast(1)).getId();
 
         verifyNoMoreInteractions(proj);
         verifyNoMoreInteractions(meta);

@@ -203,7 +203,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
 
-                ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+                ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
 
                 Object v = eval.evaluate(bindings);
                 if (ExpressionUtils.isError(v)) {

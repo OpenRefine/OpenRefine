@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 
 /**
  * Represents the configuration data for a clusterer.
@@ -61,7 +61,7 @@ public abstract class ClustererConfig {
      * @param project
      * @return
      */
-    public abstract Clusterer apply(Project project);
+    public abstract Clusterer apply(GridState state);
 
     /**
      * Type string used in Json serialization

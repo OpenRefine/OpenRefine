@@ -45,23 +45,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.DecoratedValue;
-import org.openrefine.browsing.FilteredRecords;
-import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
-import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.facets.FacetConfig;
-import org.openrefine.browsing.facets.NominalFacetChoice;
 import org.openrefine.browsing.filters.AllRowsRecordFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
 import org.openrefine.browsing.util.ExpressionNominalValueGrouper;
+import org.openrefine.browsing.util.StringValuesFacetState;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Project;
 
 public class ListFacet implements Facet {
 
@@ -125,9 +119,7 @@ public class ListFacet implements Facet {
 
         @Override
         public Facet apply(ColumnModel columnModel) {
-            ListFacet facet = new ListFacet();
-            facet.initializeFromConfig(this, columnModel);
-            return facet;
+            return new ListFacet(this, columnModel);
         }
 
         @Override
@@ -154,7 +146,8 @@ public class ListFacet implements Facet {
         }
     }
 
-    ListFacetConfig _config = new ListFacetConfig();
+    final ListFacetConfig _config;
+    final ColumnModel _columnModel;
 
     /*
      * Derived configuration
@@ -170,7 +163,24 @@ public class ListFacet implements Facet {
     protected int _blankCount;
     protected int _errorCount;
 
-    public ListFacet() {
+    public ListFacet(ListFacetConfig config, ColumnModel model) {
+        _config = config;
+        _columnModel = model;
+
+        if (_config.columnName.length() > 0) {
+            _cellIndex = _columnModel.getColumnIndexByName(_config.columnName);
+            if (_cellIndex == -1) {
+                _errorMessage = "No column named " + _config.columnName;
+            }
+        } else {
+            _cellIndex = -1;
+        }
+
+        try {
+            _eval = MetaParser.parse(_config.expression);
+        } catch (ParsingException e) {
+            _errorMessage = e.getMessage();
+        }
     }
 
     @JsonProperty("name")
@@ -255,28 +265,8 @@ public class ListFacet implements Facet {
         return 2000;
     }
 
-    public void initializeFromConfig(ListFacetConfig config, Project project) {
-        _config = config;
-        if (_config.columnName.length() > 0) {
-            ColumnMetadata column = project.columnModel.getColumnByName(_config.columnName);
-            if (column != null) {
-                _cellIndex = column.getCellIndex();
-            } else {
-                _errorMessage = "No column named " + _config.columnName;
-            }
-        } else {
-            _cellIndex = -1;
-        }
-
-        try {
-            _eval = MetaParser.parse(_config.expression);
-        } catch (ParsingException e) {
-            _errorMessage = e.getMessage();
-        }
-    }
-
     @Override
-    public RowFilter getRowFilter(ColumnModel columnModel) {
+    public RowFilter getRowFilter() {
         return _eval == null ||
                 _errorMessage != null ||
                 (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? null
@@ -291,31 +281,9 @@ public class ListFacet implements Facet {
     }
 
     @Override
-    public RecordFilter getRecordFilter(ColumnModel columnModel) {
-        RowFilter rowFilter = getRowFilter(columnModel);
+    public RecordFilter getRecordFilter() {
+        RowFilter rowFilter = getRowFilter();
         return rowFilter == null ? null : (_config.invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter));
-    }
-
-    @Override
-    public void computeChoices(Project project, FilteredRows filteredRows) {
-        if (_eval != null && _errorMessage == null) {
-            ExpressionNominalValueGrouper grouper = new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
-
-            filteredRows.accept(project, grouper);
-
-            postProcessGrouper(grouper);
-        }
-    }
-
-    @Override
-    public void computeChoices(Project project, FilteredRecords filteredRecords) {
-        if (_eval != null && _errorMessage == null) {
-            ExpressionNominalValueGrouper grouper = new ExpressionNominalValueGrouper(_eval, _config.columnName, _cellIndex);
-
-            filteredRecords.accept(project, grouper);
-
-            postProcessGrouper(grouper);
-        }
     }
 
     protected void postProcessGrouper(ExpressionNominalValueGrouper grouper) {
@@ -353,5 +321,10 @@ public class ListFacet implements Facet {
             a[i] = _config.selection.get(i).value;
         }
         return a;
+    }
+
+    @Override
+    public FacetState getInitialFacetState() {
+        return new StringValuesFacetState(this, _columnModel, _eval, _cellIndex);
     }
 }

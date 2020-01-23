@@ -72,7 +72,7 @@ public class Cross implements Function {
                     join = ProjectManager.singleton.getInterProjectModel().getJoin(
                             // getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
                             // source project name
-                            (Long) ((Project) bindings.get("project")).id,
+                            (Long) ((Project) bindings.get("project")).getId(),
                             // source column name
                             (String) bindings.get("columnName"),
                             // target project name

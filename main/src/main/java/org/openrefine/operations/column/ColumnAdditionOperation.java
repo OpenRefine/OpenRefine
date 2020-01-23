@@ -188,7 +188,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                 Cell cell = row.getCell(cellIndex);
                 Cell newCell = null;
 
-                ExpressionUtils.bind(bindings, row, rowIndex, _baseColumnName, cell);
+                ExpressionUtils.bind(bindings, null, row, rowIndex, _baseColumnName, cell);
 
                 Object o = eval.evaluate(bindings);
                 if (o != null) {

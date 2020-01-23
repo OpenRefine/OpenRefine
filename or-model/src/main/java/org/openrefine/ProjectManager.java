@@ -114,11 +114,11 @@ public abstract class ProjectManager {
     public void dispose() {
         save(true); // complete save
 
-        for (Project project : _projects.values()) {
-            if (project != null) {
-                project.dispose();
-            }
-        }
+        // TODO migrate to RDD-based architecture
+
+        /*
+         * for (Project project : _projects.values()) { if (project != null) { project.dispose(); } }
+         */
 
         _projects.clear();
         _projectsMetadata.clear();
@@ -132,8 +132,8 @@ public abstract class ProjectManager {
      */
     public void registerProject(Project project, ProjectMetadata projectMetadata) {
         synchronized (this) {
-            _projects.put(project.id, project);
-            _projectsMetadata.put(project.id, projectMetadata);
+            _projects.put(project.getId(), project);
+            _projectsMetadata.put(project.getId(), projectMetadata);
             if (_projectsTags == null)
                 _projectsTags = new HashMap<String, Integer>();
             String[] tags = projectMetadata.getTags();
@@ -525,7 +525,12 @@ public abstract class ProjectManager {
             if (_projects.containsKey(id)) {
                 return _projects.get(id);
             } else {
-                Project project = loadProject(id);
+                Project project = null;
+                try {
+                    project = loadProject(id);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 if (project != null) {
                     _projects.put(id, project);
                 }
@@ -568,7 +573,7 @@ public abstract class ProjectManager {
      * @param project
      */
     public void deleteProject(Project project) {
-        deleteProject(project.id);
+        deleteProject(project.getId());
     }
 
     /**

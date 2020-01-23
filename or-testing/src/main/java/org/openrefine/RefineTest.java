@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -49,20 +50,23 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.io.FileUtils;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import scala.Tuple2;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectManagerStub;
-import org.openrefine.ProjectMetadata;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.TestUtils;
@@ -78,8 +82,16 @@ public class RefineTest extends PowerMockTestCase {
     protected File workspaceDir;
     private List<Project> projects = new ArrayList<Project>();
 
+    protected static SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
+    protected static JavaSparkContext _context;
+
+    protected JavaSparkContext context() {
+        return _context;
+    }
+
     @BeforeSuite
     public void init() {
+        _context = new JavaSparkContext(sparkConf);
         System.setProperty("log4j.configuration", "tests.log4j.properties");
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
@@ -88,7 +100,7 @@ public class RefineTest extends PowerMockTestCase {
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
                     "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
                     "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}");
-            FileProjectManager.initialize(workspaceDir);
+            FileProjectManager.initialize(_context, workspaceDir);
 
         } catch (IOException e) {
             workspaceDir = null;
@@ -99,26 +111,14 @@ public class RefineTest extends PowerMockTestCase {
         testFailed = false;
     }
 
-    @BeforeMethod
-    protected void initProjectManager() {
-        ProjectManager.singleton = new ProjectManagerStub();
+    @AfterSuite
+    public void tearDownSpark() {
+        _context.close();
     }
 
-    protected Project createProjectWithColumns(String projectName, String... columnNames) throws IOException, ModelException {
-        Project project = new Project();
-        ProjectMetadata pm = new ProjectMetadata();
-        pm.setName(projectName);
-        ProjectManager.singleton.registerProject(project, pm);
-
-        if (columnNames != null) {
-            for (String columnName : columnNames) {
-                int index = project.columnModel.allocateNewCellIndex();
-                ColumnMetadata column = new ColumnMetadata(index, columnName);
-                project.columnModel.addColumn(index, column, true);
-            }
-        }
-        projects.add(project);
-        return project;
+    @BeforeMethod
+    protected void initProjectManager() {
+        ProjectManager.singleton = new ProjectManagerStub(context());
     }
 
     /**
@@ -151,36 +151,51 @@ public class RefineTest extends PowerMockTestCase {
      *            the cell values, as a flattened array of arrays
      * @return
      */
-    protected Project createProject(String projectName, String[] columns, Serializable[] rows) {
-        try {
-            Project project = new Project();
-            ProjectMetadata meta = new ProjectMetadata();
-            meta.setName(projectName);
-            for (String column : columns) {
-                int idx = project.columnModel.allocateNewCellIndex();
-                project.columnModel.addColumn(idx, new ColumnMetadata(idx, column), false);
-            }
-            Row row = null;
-            int idx = 0;
-            for (Serializable value : rows) {
-                if (idx % columns.length == 0) {
-                    row = new Row(columns.length);
-                    project.rows.add(row);
-                }
-                Cell cell = null;
-                if (value != null) {
-                    cell = new Cell(value, null);
-                }
-                row.setCell(idx % columns.length, cell);
-                idx += 1;
-            }
-            ProjectManager.singleton.registerProject(project, meta);
-            project.update();
-            return project;
-        } catch (ModelException e) {
-            e.printStackTrace();
-            return null;
+    protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
+        ProjectMetadata meta = new ProjectMetadata();
+        meta.setName(projectName);
+        List<ColumnMetadata> columnMeta = new ArrayList<>(columns.length);
+        for (String column : columns) {
+            columnMeta.add(new ColumnMetadata(column));
         }
+        ColumnModel model = new ColumnModel(columnMeta);
+        Cell[][] cells = new Cell[rows.length][];
+        for (int i = 0; i != rows.length; i++) {
+            for (int j = 0; j != rows[i].length; j++) {
+                cells[i][j] = new Cell(rows[i][j], null);
+            }
+        }
+
+        GridState state = new GridState(model, rowRDD(cells), Collections.emptyMap());
+        Project project = new Project(state);
+        ProjectManager.singleton.registerProject(project, meta);
+        return project;
+    }
+
+    @Deprecated
+    protected Project createProject(String projectName, String[] columns, Serializable[] rows) {
+        Serializable[][] cells = new Serializable[rows.length / columns.length][];
+        for (int i = 0; i != rows.length; i++) {
+            if (i % columns.length == 0) {
+                cells[i / columns.length] = new Serializable[columns.length];
+            }
+            cells[i / columns.length][i % columns.length] = rows[i];
+        }
+        return createProject(projectName, columns, cells);
+    }
+
+    protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells) {
+        List<Tuple2<Long, Row>> rdd = new ArrayList<>(cells.length);
+        for (int i = 0; i != cells.length; i++) {
+            List<Cell> currentCells = new ArrayList<>(cells[i].length);
+            for (int j = 0; j != cells[i].length; j++) {
+                currentCells.add(cells[i][j]);
+            }
+            rdd.add(new Tuple2<Long, Row>((long) i, new Row(currentCells)));
+        }
+        return context().parallelize(rdd)
+                .keyBy(t -> (Long) t._1)
+                .mapValues(t -> t._2);
     }
 
     /**
@@ -236,11 +251,13 @@ public class RefineTest extends PowerMockTestCase {
      */
     public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
-        Assert.assertNotNull(project.columnModel);
-        Assert.assertNotNull(project.columnModel.getColumns());
-        Assert.assertEquals(project.columnModel.getColumns().size(), numCols);
-        Assert.assertNotNull(project.rows);
-        Assert.assertEquals(project.rows.size(), numRows);
+        Assert.assertNotNull(project.getHistory());
+        Assert.assertNotNull(project.getHistory().getInitialGridState());
+        ColumnModel model = project.getHistory().getInitialGridState().getColumnModel();
+        Assert.assertNotNull(model);
+        Assert.assertEquals(model.getColumns().size(), numCols);
+        Assert.assertNotNull(project.getHistory().getInitialGridState().getGrid());
+        Assert.assertEquals(project.getHistory().getInitialGridState().size(), numRows);
     }
 
     /**
@@ -256,32 +273,11 @@ public class RefineTest extends PowerMockTestCase {
      *            expected record count
      */
     public static void assertProjectCreated(Project project, int numCols, int numRows, int numRecords) {
-        assertProjectCreated(project, numCols, numRows);
-        Assert.assertNotNull(project.recordModel);
-        Assert.assertEquals(project.recordModel.getRecordCount(), numRecords);
-    }
-
-    public void log(Project project) {
-        // some quick and dirty debugging
-        StringBuilder sb = new StringBuilder();
-        for (ColumnMetadata c : project.columnModel.getColumns()) {
-            sb.append(c.getName());
-            sb.append("; ");
-        }
-        logger.info(sb.toString());
-        for (Row r : project.rows) {
-            sb = new StringBuilder();
-            for (int i = 0; i < r.cells.size(); i++) {
-                Cell c = r.getCell(i);
-                if (c != null) {
-                    sb.append(c.value);
-                    sb.append("; ");
-                } else {
-                    sb.append("null; ");
-                }
-            }
-            logger.info(sb.toString());
-        }
+        throw new IllegalStateException("records mode not implemented");
+        /*
+         * assertProjectCreated(project,numCols,numRows); Assert.assertNotNull(project.recordModel);
+         * Assert.assertEquals(project.recordModel.getRecordCount(),numRecords);
+         */
     }
 
     // ----helpers----

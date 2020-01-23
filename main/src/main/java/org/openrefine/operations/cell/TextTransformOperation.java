@@ -152,7 +152,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
                 Object oldValue = cell != null ? cell.value : null;
 
-                ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+                ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
 
                 Object o = eval.evaluate(bindings);
                 if (o == null) {
@@ -180,7 +180,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
 
                             if (_repeat) {
                                 for (int i = 0; i < _repeatCount; i++) {
-                                    ExpressionUtils.bind(bindings, row, rowIndex, _columnName, newCell);
+                                    ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, newCell);
 
                                     newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                                     if (ExpressionUtils.isError(newValue)) {

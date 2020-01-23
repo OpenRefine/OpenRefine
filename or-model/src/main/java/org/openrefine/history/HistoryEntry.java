@@ -44,7 +44,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.model.Project;
 import org.openrefine.operations.AbstractOperation;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
@@ -105,7 +104,7 @@ public class HistoryEntry {
         this.change = change;
     }
 
-    static public HistoryEntry load(Project project, String s) throws IOException {
+    static public HistoryEntry load(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, HistoryEntry.class);
     }
 

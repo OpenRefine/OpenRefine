@@ -68,7 +68,7 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, row, rowIndex, _columnName, cell);
+        ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
         Boolean invert = _invert;
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

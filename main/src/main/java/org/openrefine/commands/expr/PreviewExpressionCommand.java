@@ -170,13 +170,13 @@ public class PreviewExpressionCommand extends Command {
                         Cell cell = row.getCell(cellIndex);
 
                         try {
-                            ExpressionUtils.bind(bindings, row, rowIndex, columnName, cell);
+                            ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);
                             result = eval.evaluate(bindings);
 
                             if (repeat) {
                                 for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                                     Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                                    ExpressionUtils.bind(bindings, row, rowIndex, columnName, newCell);
+                                    ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, newCell);
 
                                     Object newResult = eval.evaluate(bindings);
                                     if (ExpressionUtils.isError(newResult)) {
