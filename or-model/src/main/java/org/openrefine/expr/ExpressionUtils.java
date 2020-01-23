@@ -71,10 +71,7 @@ public class ExpressionUtils {
         return bindings;
     }
 
-    static public void bind(Properties bindings, Row row, long rowIndex, String columnName, Cell cell) {
-        Project project = (Project) bindings.get("project");
-        ColumnModel columnModel = project.getHistory().getCurrentGridState().getColumnModel();
-
+    static public void bind(Properties bindings, ColumnModel columnModel, Row row, long rowIndex, String columnName, Cell cell) {
         bindings.put("rowIndex", rowIndex);
         bindings.put("row", new WrappedRow(columnModel, rowIndex, row));
 		bindings.put("cells", new CellTuple(columnModel, row));
