@@ -589,6 +589,8 @@
     "core-views/facet-flag": "Facet by flag",
     "core-views/flagged-rows": "Flagged Rows",
     "core-views/blank-rows": "Blank Rows",
+    "core-views/blank-values": "Blank values per column",
+    "core-views/blank-records": "Blank records per column",
     "core-views/non-blank-values": "Non-blank values per column",
     "core-views/non-blank-records": "Non-blank records per column",
     "core-views/edit-rows": "Edit rows",

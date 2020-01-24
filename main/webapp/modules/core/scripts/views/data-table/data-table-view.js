@@ -669,6 +669,40 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           }
         },
         {
+          label: $.i18n('core-views/blank-values'),
+          id: "core/blank-values",
+          click: function() {
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name" : $.i18n('core-views/blank-values'),
+                  "columnName" : "",
+                  "expression" : "filter(row.columnNames,cn,isBlank(cells[cn].value))"
+                },
+                {
+                  "scroll" : false
+                }
+            );
+          }
+        },
+        {
+          label: $.i18n('core-views/blank-records'),
+          id: "core/blank-records",
+          click: function() {
+            ui.browsingEngine.addFacet(
+                "list",
+                {
+                  "name" : $.i18n('core-views/blank-records'),
+                  "columnName" : "",
+                  "expression" : "filter(row.columnNames,cn,isBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),true)))"
+                },
+                {
+                  "scroll" : false
+                }
+            );
+          }
+        },
+        {
           label: $.i18n('core-views/non-blank-values'),
           id: "core/non-blank-values",
           click: function() {
