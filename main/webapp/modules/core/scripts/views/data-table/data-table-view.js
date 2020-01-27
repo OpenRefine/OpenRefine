@@ -794,6 +794,17 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           click: function() {
             new ColumnReorderingDialog();
           }
+        },
+        {},
+        {
+          label: $.i18n('core-views/fill-down'),
+          id: "core/fill-down",
+          click: doAllFillDown
+        },
+        {
+          label: $.i18n('core-views/blank-down'),
+          id: "core/blank-down",
+          click: doAllBlankDown
         }
       ]
     },
@@ -895,6 +906,50 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
   }
 
   MenuSystem.createAndShowStandardMenu(items, elmt, { horizontal: false });
+};
+
+var doAllFillDown = function() {
+  doFillDown(theProject.columnModel.columns.length - 1);
+};
+
+var doFillDown = function(colIndex) {
+  if (colIndex >= 0) {
+    Refine.postCoreProcess(
+        "fill-down",
+        {
+          columnName: theProject.columnModel.columns[colIndex].name
+        },
+        null,
+        {modelsChanged: true},
+        {
+          onDone: function() {
+            doFillDown(--colIndex);
+          }
+        }
+    );
+  }
+};
+
+var doAllBlankDown = function() {
+  doBlankDown(0);
+};
+
+var doBlankDown = function(colIndex) {
+  if (colIndex < theProject.columnModel.columns.length) {
+    Refine.postCoreProcess(
+        "blank-down",
+        {
+          columnName: theProject.columnModel.columns[colIndex].name
+        },
+        null,
+        { modelsChanged: true },
+        {
+          onDone: function() {
+            doBlankDown(++colIndex);
+          }
+        }
+    );
+  }
 };
 
 
