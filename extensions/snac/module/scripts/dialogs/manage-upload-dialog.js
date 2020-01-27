@@ -66,21 +66,21 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
     console.log(elmts.apiKeyForm.serialize());
     frame.hide();
     $.post(
-        "command/snac/upload",
-        // elmts.apiKeyForm.serialize(),
-        {
-          "state": JSON.stringify(prod_or_dev)
-        },
-        function(data) {
-          if (data.apikey) {
-            alert(data.apikey);
-            dismiss();
-            callback(data.apikey);
-          } else {
-            alert(data.apikey);
-            dismiss();
-            callback(null);
-          }
-        });
+      "command/snac/upload",
+      // elmts.apiKeyForm.serialize(),
+      {
+        "state": JSON.stringify(prod_or_dev)
+      },
+      function(data) {
+        // if (data.apikey) {
+        //   alert(data.apikey);
+        //   dismiss();
+        //   callback(data.apikey);
+        // } else {
+        //   alert(data.apikey);
+          dismiss();
+          callback(null);
+        // }
+      });
   });
 };
