@@ -875,11 +875,11 @@ DataTableView.prototype._createSortingMenu = function(elmt) {
 };
 
 var doAllFillDown = function() {
-  doFillDown(0);
+  doFillDown(theProject.columnModel.columns.length - 1);
 };
 
 var doFillDown = function(colIndex) {
-  if (colIndex < theProject.columnModel.columns.length) {
+  if (colIndex >= 0) {
     Refine.postCoreProcess(
         "fill-down",
         {
@@ -889,7 +889,7 @@ var doFillDown = function(colIndex) {
         {modelsChanged: true},
         {
           onDone: function() {
-            doFillDown(++colIndex);
+            doFillDown(--colIndex);
           }
         }
     );
