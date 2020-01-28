@@ -1,0 +1,76 @@
+name: Java CI
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: Install genisoimage
+      run: sudo apt-get install genisoimage
+
+    - name: Install jq
+      run: sudo apt-get install jq
+
+    - name: Get the OpenRefine version
+      run: echo ::set-env name=OR_VERSION::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+
+    - name: Build with Maven
+      run: ./refine build
+
+    - name: Generate dist files
+      run: ./refine dist ${{ env.OR_VERSION }}
+
+    - name: Create Release
+      id: create_release
+      run: echo ::set-env name=API_RELEASE::$(./.github/workflows/release_manager.sh)
+      env:
+        OR_VERSION: ${{ env.OR_VERSION }}
+        RELEASE_REPO_OWNER: OpenRefine
+        RELEASE_REPO_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+
+    - name: Upload Release Asset Windows
+      id: upload-release-asset-win
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+      with:
+        upload_url: ${{ env.API_RELEASE }}
+        asset_path: ./packaging/target/openrefine-win-${{ env.OR_VERSION }}.zip
+        asset_name: openrefine-win-${{ env.OR_VERSION }}.zip
+        asset_content_type: application/zip
+
+    - name: Upload Release Asset Linux
+      id: upload-release-asset-linux
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+      with:
+        upload_url: ${{ env.API_RELEASE }}
+        asset_path: ./packaging/target/openrefine-linux-${{ env.OR_VERSION }}.tar.gz
+        asset_name: openrefine-linux-${{ env.OR_VERSION }}.tar.gz
+        asset_content_type: application/tar+gzip
+
+    - name: Upload Release Asset Mac
+      id: upload-release-asset-mac
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+      with:
+        upload_url: ${{ env.API_RELEASE }}
+        asset_path: ./packaging/target/openrefine-mac-${{ env.OR_VERSION }}.dmg
+        asset_name: openrefine-mac-${{ env.OR_VERSION }}.dmg
+        asset_content_type: application/x-apple-diskimage
