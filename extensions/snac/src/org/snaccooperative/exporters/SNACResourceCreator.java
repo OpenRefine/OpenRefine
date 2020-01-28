@@ -92,6 +92,7 @@ public class SNACResourceCreator {
 
     // Internal Resource IDs that isn't part of the Resource data model
     public static List<Integer> resource_ids = new LinkedList<Integer>();
+    private static HashMap<String, String[]> language_code = new HashMap<String, String[]>();
 
     public static SNACResourceCreator getInstance() {
         return instance;
@@ -162,10 +163,8 @@ public class SNACResourceCreator {
                   }
               case "type":
                   try{
-                      int type_id = Integer.parseInt(temp_val);
                       Term t = new Term();
                       t.setType("document_type");
-                      t.setID(type_id);
                       String term;
                       int type_id;
                       if (temp_val.equals("696") || temp_val.equals("ArchivalResource")){
