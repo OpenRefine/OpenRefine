@@ -86,11 +86,11 @@ public class WikidataConstraintFetcherTests {
         Assert.assertNull(fetcher.allowedQualifiers(startTime));
     }
 
-    @Test
-    public void testSingleValue() {
-        Assert.assertFalse(fetcher.hasSingleValue(headOfGovernment));
-        Assert.assertTrue(fetcher.hasSingleValue(gridId));
-    }
+//     @Test
+//     public void testSingleValue() {
+//         Assert.assertFalse(fetcher.hasSingleValue(headOfGovernment));
+//         Assert.assertTrue(fetcher.hasSingleValue(gridId));
+//     }
 
     @Test
     public void testDistinctValues() {
