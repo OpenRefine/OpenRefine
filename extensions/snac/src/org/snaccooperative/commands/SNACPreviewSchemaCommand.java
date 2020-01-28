@@ -22,7 +22,7 @@ public class SNACPreviewSchemaCommand extends Command  {
         response.setHeader("Content-Type", "application/json");
 
         doGet(request,response);
-        
+
     }
 
     @Override
@@ -41,6 +41,6 @@ public class SNACPreviewSchemaCommand extends Command  {
         writer.close();
         w.flush();
         w.close();
-        
+
     }
 }

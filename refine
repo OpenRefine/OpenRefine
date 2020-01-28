@@ -1,6 +1,6 @@
 #!/bin/bash
 
-########################################################## 
+##########################################################
 #               OpenRefine Control System             #
 ##########################################################
 
@@ -30,7 +30,7 @@ Usage: $0 [options] <action>
 where [options] include:
 
   -h print this message and exit
-  
+
   -p <port> the port that OpenRefine will listen to
      default: 3333
 
@@ -53,14 +53,14 @@ where [options] include:
 
   -x <name=value> additional configuration parameters to pass to OpenRefine
      default: [none]
-  
+
   --debug enable JVM debugging (on port 8000)
-       
+
   --jmx enable JMX monitoring (for jconsole and jvisualvm)
-  
+
 and <action> is one of
 
-   build ............................... Build OpenRefine      
+   build ............................... Build OpenRefine
    run ................................. Run OpenRefine [default]
 
    test ................................ Run all OpenRefine tests
@@ -69,10 +69,10 @@ and <action> is one of
    extensions_test ..................... Run only the extensions tests
 
    broker .............................. Run OpenRefine Broker
-   
+
    broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
    broker_appengine_upload <id> <ver> .. Upload OpenRefine to Google App Engine
-   
+
    findbugs ............................ Run Findbugs against OpenRefine
    pmd ................................. Run PMD against OpenRefine
    cpd ................................. Run Copy/Paste Detection against OpenRefine
@@ -87,17 +87,17 @@ and <action> is one of
 
    clean ............................... Clean compiled classes
    distclean ........................... Remove all generated files
-                
+
 EOF
     exit 1
 }
-                
+
 add_option() {
     if [ ! -z "$*" ] ; then
         OPTS+=("$@")
     fi
 }
-                
+
 load_configs() {
    TEMP_CONFIG=$(mktemp -t refine.XXXXXXX)
    if [ "${TEMP_CONFIG}" = "" ] ; then
@@ -107,7 +107,7 @@ load_configs() {
    . ${TEMP_CONFIG}
    rm ${TEMP_CONFIG}
 }
-                    
+
 check_macosx() {
     if [ "$OS" != "macosx" ] ; then
         error "This action can only run on MacOSX"
@@ -117,7 +117,7 @@ check_macosx() {
 check_downloaders() {
     CURL="`which curl 2> /dev/null`"
     WGET="`which wget 2> /dev/null`"
-    
+
     if [ -z "$CURL" ] && [ -z "$WGET" ] ; then
         error "We need either 'curl' or 'wget' present in PATH to download external dependencies."
     fi
@@ -125,12 +125,12 @@ check_downloaders() {
 
 check_unzip() {
     UNZIP="`which unzip 2> /dev/null`"
-    
+
     if [ -z "$UNZIP" ] ; then
         error "We need 'unzip' present in PATH to expand external dependencies."
     fi
 }
-    
+
 check_python() {
     PYTHON="`which python 2> /dev/null`"
     if [ -z "$PYTHON" ] ; then
@@ -165,15 +165,15 @@ check_running() {
         if [ "$?" = "4" ] ; then
             NOT_RUNNING="1"
         fi
-    fi    
+    fi
 
     if [ -z "${NOT_RUNNING}" ] ; then
         if [ "$CURL" ] ; then
             RUNNING=`curl -s $URL | grep "$CHECK_STR"`
         elif [ "$WGET" ] ; then
             RUNNING=`wget -q -O - $URL | grep "$CHECK_STR"`
-        fi    
-        
+        fi
+
         if [ -z "${RUNNING}" ] ; then
             error "Something is already running on $URL but doesn't seem to be OpenRefine. Maybe a proxy issue?"
         fi
@@ -184,17 +184,17 @@ check_running() {
 
 get_version() {
     VERSION="$1"
-    
+
     if [ -z "$VERSION" ] ; then
         fail "Must specify a version number"
     fi
 
     NUM_VERSION=`echo $VERSION | sed -E 's/-.*//g'`
-    
+
     if [ "${NUM_VERSION}" = "" ] ; then
         fail "${VERSION} is not a valid version number"
     fi
-    
+
     if [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}"
     elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+\.[0-9]+\.[0-9]+$'`" = "${NUM_VERSION}" ] ; then
@@ -203,7 +203,7 @@ get_version() {
         FULL_VERSION="${NUM_VERSION}.0.0"
     elif [ "`echo "${NUM_VERSION}" | egrep '^[0-9]+$'`" = "${NUM_VERSION}" ] ; then
         FULL_VERSION="${NUM_VERSION}.0.0.0"
-    else 
+    else
         fail "${VERSION} is not a valid version number"
     fi
 }
@@ -220,13 +220,13 @@ get_revision() {
         error "cannot obtain revision, exiting!"
     fi
 }
-    
+
 download() {
     URL=$1
     DEST=$2
-    
+
     check_downloaders
-    
+
     if [ "$CURL" ] ; then
         curl -L -o $DEST $URL || exit "Error while downloading $URL"
     elif [ "$WGET" ] ; then
@@ -238,7 +238,7 @@ tool_download() {
     URL=$1
     FILE=$2
     DIR=$3
-    
+
     cd $REFINE_TOOLS_DIR
         if [ ! -f "$FILE" ] ; then
             download $URL $FILE
@@ -260,7 +260,7 @@ load_data() {
     NAME=$2
     URL="http://${REFINE_HOST}:${REFINE_PORT}/command/core/create-project-from-upload"
     CURL="`which curl 2> /dev/null`"
-    
+
     if [ -z "$CURL" ] ; then
         error "We need 'curl' present in PATH to upload data to OpenRefine."
     else
@@ -277,25 +277,25 @@ display() {
 	gnome-open $FILE
     else
 	notepad $FILE
-    fi  
+    fi
 
 }
 # ----------------------------------------------------------------------------------------------
 
 build_prepare() {
-    if [ ! -d $REFINE_BUILD_DIR ] ; then 
+    if [ ! -d $REFINE_BUILD_DIR ] ; then
         mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
     fi
 }
 
 dist_prepare() {
-    if [ ! -d $REFINE_DIST_DIR ] ; then 
+    if [ ! -d $REFINE_DIST_DIR ] ; then
         mkdir $REFINE_DIST_DIR || error "Error while making directory $REFINE_DIST_DIR"
     fi
 }
 
 tools_prepare() {
-    if [ ! -d $REFINE_TOOLS_DIR ] ; then 
+    if [ ! -d $REFINE_TOOLS_DIR ] ; then
         mkdir $REFINE_TOOLS_DIR || error "Error while making directory $REFINE_TOOLS_DIR"
     fi
 }
@@ -309,7 +309,7 @@ mvn_prepare() {
     MVN_DIR="apache-maven-${MVN_VERSION}"
 
     MVN="`which mvn 2> /dev/null`"
-   
+
     if [ -z "$MVN" ] ; then
         if [ -z "$MVN_HOME" ] ; then
             cd $REFINE_TOOLS_DIR
@@ -337,10 +337,10 @@ appengine_prepare() {
     fi
     APPENGINE="$APPENGINE_HOME/bin/appcfg.sh"
     APPENGINE_LOCAL="$APPENGINE_HOME/bin/dev_appserver.sh"
-    
+
     ANT_PARAMS="$ANT_PARAMS -Dappengine.sdk.dir=$APPENGINE_HOME"
 }
-   
+
 virtualenv_prepare() {
     check_python
 
@@ -349,32 +349,32 @@ virtualenv_prepare() {
     VIRTUALENV_URL="http://pypi.python.org/packages/source/v/virtualenv/${VIRTUALENV_FILE}"
 
     tool_download $VIRTUALENV_URL $VIRTUALENV_FILE $VIRTUALENV_DIR
-    
+
     PYTHON_LOCAL="$REFINE_TOOLS_DIR/python"
     if [ "$OS" = "windows" ] ; then
         PYTHON_LOCAL="${PYTHON_LOCAL}_win"
     fi
-    
+
     if [ ! -d "$PYTHON_LOCAL" ] ; then
         $PYTHON $REFINE_TOOLS_DIR/$VIRTUALENV_DIR/virtualenv.py $PYTHON_LOCAL
     fi
-    
+
     PYTHON_HOME="`pwd`/$PYTHON_LOCAL"
 
     if [ "$OS" = "windows" ] ; then
         PYTHON="$PYTHON_HOME/Scripts/python.exe"
         PYTHON_INSTALL="$PYTHON_HOME/Scripts/easy_install.exe"
-    else 
+    else
         PYTHON="$PYTHON_HOME/bin/python"
         PYTHON_INSTALL="$PYTHON_HOME/bin/easy_install"
     fi
 }
-    
+
 # ----------------------------------------------------------------------------------------------
 
 mvn() {
-    mvn_prepare   
-    
+    mvn_prepare
+
     "$MVN" $MVN_PARAMS -Dversion="$VERSION" -Dfull_version="$FULL_VERSION"  $1 || error "Error while running maven task '$1'"
 }
 
@@ -386,7 +386,7 @@ dist() {
     "$MVN" versions:set -DnewVersion="$VERSION"
     mvn package
 }
- 
+
 # Kept just in case someone wants to follow this workflow on a mac,
 # but no longer needed as "mvn package" does it directly on both mac and linux.
 mac_dist() {
@@ -396,15 +396,15 @@ mac_dist() {
     get_revision
 
     appbundler_prepare
-    
+
     ANT_PARAMS="-Dappbundler.dir=${REFINE_TOOLS_DIR}/${APPBUNDLER_DIR}"
     ant mac
 
     mkdir -p "$REFINE_BUILD_DIR/mac/.background"
     cp graphics/dmg_background/dmg_background.png "$REFINE_BUILD_DIR/mac/.background/dmg_background.png"
-    
+
     SIZE=350
-    
+
     if [ -f "$REFINE_BUILD_DIR/temp_refine.dmg" ] ; then
         rm "$REFINE_BUILD_DIR/temp_refine.dmg"
     fi
@@ -419,7 +419,7 @@ mac_dist() {
     DEVICE=`hdiutil attach -readwrite -noverify -noautoopen "$REFINE_BUILD_DIR/temp_refine.dmg" | egrep '^/dev/' | sed -e "s/^\/dev\///g" -e 1q  | awk '{print $1}'`
     echo $DEVICE
     hdiutil attach "$REFINE_BUILD_DIR/temp_refine.dmg" || error "Can't attach temp DMG"
-    
+
     echo '
        tell application "Finder"
          tell disk "'$TITLE'"
@@ -436,26 +436,26 @@ mac_dist() {
             set position of item "OpenRefine" of container window to {170, 175}
             set position of item "Applications" of container window to {380, 175}
             close
-            open               
+            open
             update without registering applications
-            delay 5            
+            delay 5
             eject
          end tell
        end tell
     ' | osascript || error "Error running applescript"
-    
+
     sync
     sync
     sleep 3
     hdiutil detach $DEVICE
-    
+
     if [ -f "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" ] ; then
         rm "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg"
     fi
-    
+
     hdiutil convert "$REFINE_BUILD_DIR/temp_refine.dmg" -format UDZO -imagekey zlib-level=9 -o "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error compressing DMG"
     hdiutil internet-enable -yes "$REFINE_DIST_DIR/openrefine-mac-$VERSION.dmg" || error "Error internet-enabling DMG"
-    
+
     rm -f "$REFINE_BUILD_DIR/temp_refine.dmg"
 }
 
@@ -466,15 +466,15 @@ test() {
 
 ui_test() {
     INTERACTIVE=$1
-    
+
     windmill_prepare
 
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
-    
+
     add_option "-Drefine.headless=true"
-    
+
     run fork
-    
+
     echo "Waiting for OpenRefine to load..."
     sleep 5
     check_running
@@ -483,18 +483,18 @@ ui_test() {
     fi
     echo "... proceed with the tests."
     echo ""
-    
+
     load_data "$REFINE_TEST_DIR/data/food.csv" "Food"
     sleep 3
     echo ""
-    
+
     echo "Starting Windmill..."
     if [ -z "$INTERACTIVE" ] ; then
         "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/ jsdir=$REFINE_TEST_DIR/client/src exit
     else
         "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/
     fi
-    
+
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
@@ -514,13 +514,13 @@ extensions_test() {
 
 run() {
     FORK=$1
-    
+
     check_running
-    
+
     if [ "$RUNNING" ] ; then
         warn "OpenRefine is already running."
     fi
-    
+
     if [ ! -d $REFINE_CLASSES_DIR ] ; then
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
@@ -538,7 +538,7 @@ run() {
     if [ "$OS" = "macosx" ] ; then
         add_option '-Xdock:icon=graphics/icon/openrefine.icns'
     fi
-    
+
     if [ "$REFINE_DATA_DIR" ] ; then
         add_option "-Drefine.data_dir=$REFINE_DATA_DIR"
     fi
@@ -546,11 +546,11 @@ run() {
     if [ "$REFINE_WEBAPP" ] ; then
         add_option "-Drefine.webapp=$REFINE_WEBAPP"
     fi
-                    
+
     if [ "$REFINE_PORT" ] ; then
         add_option "-Drefine.port=$REFINE_PORT"
     fi
-    
+
     if [ "$REFINE_HOST" ] ; then
         add_option "-Drefine.host=$REFINE_HOST"
     fi
@@ -577,10 +577,10 @@ run() {
         REFINE_PID="$!"
     fi
 }
-    
+
 broker_build() {
     build_prepare
-    get_revision    
+    get_revision
     # TODO migrate to Maven
     $MVN prepare_broker
 }
@@ -603,7 +603,7 @@ broker_run() {
 
     add_option "-Drefine.port=$REFINE_PORT"
     add_option "-Drefine.host=0.0.0.0"
-                    
+
     LIB_PATHS=`cat server/classpath.txt`
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$LIB_PATHS"
 
@@ -611,7 +611,7 @@ broker_run() {
 
     #echo "$RUN_CMD"
     #echo ""
-  
+
     echo "Starting OpenRefine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
 
@@ -621,27 +621,27 @@ broker_run() {
         $RUN_CMD &
         REFINE_PID="$!"
     fi
-    
+
 }
 
 broker_appengine_build() {
     appengine_prepare
     get_revision
-    
+
     MVN_PARAMS="-Dappengine.sdk.dir=${APPENGINE_HOME}"
 
     if [ "$1" ] ; then
         MVN_PARAMS="$MVN_PARAMS -Dappengine.app_id=$1"
     fi
-    
+
     if [ "$2" ] ; then
         MVN_PARAMS="$MVN_PARAMS -Dappengine.version=$2"
     fi
-        
+
     # TODO migrate this to Maven
     $MVN prepare_broker_appengine
 }
-       
+
 broker_appengine_upload() {
     broker_appengine_build $1 $2
     "$APPENGINE" update "$REFINE_BUILD_DIR/broker/appengine"
@@ -651,33 +651,33 @@ broker_appengine_run() {
     broker_appengine_build $1 $2
     "$APPENGINE_LOCAL" "$REFINE_BUILD_DIR/broker/appengine"
 }
-    
+
 findbugs() {
     findbugs_prepare
-    
+
     MVN_PARAMS="-Dfindbugs.dir=${REFINE_TOOLS_DIR}/${FINDBUGS_DIR}"
     ant findbugs
-    
+
     display "$REFINE_BUILD_DIR/reports/findbugs.html"
-}    
+}
 
 pmd() {
     pmd_prepare
-    
+
     ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
     ant pmd
-    
+
     display "$REFINE_BUILD_DIR/reports/pmd.html"
-}    
+}
 
 cpd() {
     pmd_prepare
-    
+
     ANT_PARAMS="-Dpmd.dir=${REFINE_TOOLS_DIR}/${PMD_DIR}"
     ant cpd
 
     display "$REFINE_BUILD_DIR/reports/cpd.txt"
-}    
+}
 
 jslint() {
     jslint_prepare
@@ -690,19 +690,19 @@ jslint() {
 
 whitespace() {
     [ $# -gt 0 ] || usage
-    
+
     for i in `find . -name *.$1`; do
         # expand tabs to spaces
         expand -t 4 < $i > $i.1
-        
+
         # convert DOS to UNIX newlines
         tr -d '\r' < $i.1 > $i.2
-            
+
         rm $i $i.1
         mv $i.2 $i
     done
-}   
-    
+}
+
 checkJavaMajorVersion() {
   java_ver=$("$JAVA" -version 2>&1 | grep version | cut -d ' ' -f 3 | tr -d \")
   # Java 6, 7, 8 starts with 1.x
@@ -721,7 +721,7 @@ checkJavaMajorVersion() {
 }
 
 # -------------------------- script -----------------------------
-    
+
 # ----- Normalize the current directory -------------------------
 
 cd `dirname $0`
@@ -741,9 +741,9 @@ case "$SYSTEM" in
   *) OS="other" ;;
 esac
 
-SEP=":" 
+SEP=":"
 if [ "$OS" = "windows" ] ; then
-    SEP=";" 
+    SEP=";"
 fi
 
 # ----- Load configurations -------------------------------------
@@ -762,7 +762,7 @@ fi
 
 if [ "$JAVA_HOME" ] ; then
     JAVA="$JAVA_HOME/bin/java"
-else 
+else
     JAVA="`which java 2> /dev/null`"
 fi
 
@@ -822,7 +822,7 @@ elif [ "$OS" = "linux" ] ; then
 	freeRam=$(free -m | grep -oP '\d+' | head -n 1)
 fi
 
-echo You have "$freeRam"M of free memory. 
+echo You have "$freeRam"M of free memory.
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
 echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
@@ -892,19 +892,19 @@ case "$ACTION" in
   clean) mvn clean;;
   whitespace) whitespace $1;;
   distclean) mvn distclean;;
-  test) test $1;;  
-  tests) test $1;;  
-  ui_test) ui_test $1;;  
-  ui_tests) ui_test $1;;  
-  server_test) server_test $1;;  
-  server_tests) server_test $1;;  
+  test) test $1;;
+  tests) test $1;;
+  ui_test) ui_test $1;;
+  ui_tests) ui_test $1;;
+  server_test) server_test $1;;
+  server_tests) server_test $1;;
   extensions_test) extensions_test $1;;
   extensions_tests) extensions_test $1;;
-  findbugs) findbugs;;  
-  pmd) pmd;;  
-  cpd) cpd;;  
-  jslint) jslint;;  
-  run) run;;  
+  findbugs) findbugs;;
+  pmd) pmd;;
+  cpd) cpd;;
+  jslint) jslint;;
+  run) run;;
   broker) broker_run;;
   broker_appengine_run) broker_appengine_run $1 $2;;
   broker_appengine_upload) broker_appengine_upload $1 $2;;
