@@ -1500,15 +1500,58 @@ SNACSchemaAlignmentDialog.preview = function() {
     return;
   }
   $.get(
-    "command/snac/preview-snac-schema",
-    function(data) {
-      //self.issueSpinner.hide();
-      self.previewSpinner.hide();
+      "command/snac/preview-snac-schema", //+ $.param({ project: theProject.id }),
+      function(data) {
+        self.previewSpinner.hide();
+        self.updateNbEdits(data.SNAC_preview);
+        console.log("edits should be made here");
 
-      var list = data.SNAC_preview.split('\n');
+        var list = []; //Empty Array
+        var line = data.SNAC_preview.split('\n'); //Split the preview string into lines
+        var building = line[0] + "<br>"; //First element in preview string (should be "Inserting 500 new Resources into SNAC.")
+        line.shift(); //remove that first element ("Inserting 500 new Resources into SNAC.")
 
-      self.updateNbEdits(data.SNAC_preview);
-    });
+        //Remove any empty strings
+        line = line.filter(function(str) {
+           return /\S/.test(str);
+        });
+
+        //Fill the list array with each line in HTML list form
+        for(var i = 0; i<line.length; i++) {
+           var line_parts = line[i].split(/:(.+)/); //Split on the first colon
+           list[i] = "<li><b>" + line_parts[0] + ":</b> " + line_parts[1] + "</li>";
+        }
+
+        //Find the max length of items in the list[] array
+        var max = list.reduce((r,s) => r > s.length ? r : s.length, 0);
+
+        //Construct a divder string of "-" to be the size of the longest element in list[]
+        var divider = "";
+        for(var i=9; i<max/2; i++) {
+           divider += "—";
+        }
+
+        //Insert that divider at every (list.length/2 + 1) position to split each resource (of total/2 bullets)
+        //More dynamic based on how many csv columns were paired in the editing SNAC schema
+        var pos = 0, interval = list.length/2 + 1;
+        while (pos < list.length) {
+           list.splice(pos, 0, divider);
+           pos += interval;
+        }
+
+        //Build the string for the HTML list items
+        for(var i = 0; i<list.length; i++) {
+           building += list[i];
+        }
+
+        //Update the string into the preview tab
+        self.updateNbEdits(data.SNAC_preview);
+
+        //Get the HTML id element of where the list should be added
+        var element = document.getElementById("preview-here");
+        element.innerHTML = building; //Replace the empty HTML area with the list
+        console.log("hello");
+     });
 };
 
 Refine.registerUpdateFunction(function(options) {

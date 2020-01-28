@@ -3,6 +3,7 @@ package org.snaccooperative.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -114,6 +115,7 @@ public class SNACResourceCreator {
     }
 
     public String getColumnMatchesJSONString(){
+        // System.out.println(new JSONObject(match_attributes).toString());
         return new JSONObject(match_attributes).toString();
     }
 
@@ -172,32 +174,32 @@ public class SNACResourceCreator {
                       t.setType("document_type");
                       String term;
                       int type_id;
-                      if (temp_val == "696" || temp_val == "ArchivalResource"){
+                      if (temp_val.equals("696") || temp_val.equals("ArchivalResource")){
                         type_id = 696;
                         t.setID(type_id);
                         term = "ArchivalResource";
-                        break;
-                      } else if (temp_val == "697" || temp_val == "BibliographicResource"){
+                      } else if (temp_val.equals("697") || temp_val.equals("BibliographicResource")){
                         type_id = 697;
                         t.setID(type_id);
                         term = "BibliographicResource";
-                        break;
-                      } else if (temp_val == "400479" || temp_val == "DigitalArchivalResource"){
+                      } else if (temp_val.equals("400479") || temp_val.equals("DigitalArchivalResource")){
                         type_id = 400479;
                         t.setID(type_id);
                         term = "DigitalArchivalResource";
-                        break;
                       } else {
                         throw new NumberFormatException();
                       }
                       t.setTerm(term);
                       res.setDocumentType(t);
-                      // System.out.println("Type: " + temp_val);
                       break;
                   }
                   catch (NumberFormatException e){
                       System.out.println(temp_val + " is not a valid resource type.");
                       break;
+                  }
+                  catch (Exception e){
+                    System.out.println(e);
+                    break;
                   }
               case "title":
                   res.setTitle(temp_val);
@@ -253,6 +255,7 @@ public class SNACResourceCreator {
                   // System.out.println("Language: " + lang_term);
                   break;
               case "holding repository snac id":
+                  // System.out.println("HRSID: " + temp_val);
                   Constellation cons = new Constellation();
                   try {
                     cons.setID(Integer.parseInt(temp_val));
@@ -260,7 +263,7 @@ public class SNACResourceCreator {
                     break;
                   }
                   res.setRepository(cons);
-                  // System.out.println("HRSID: " + temp_val);
+                  // System.out.println("Result: " + Integer.toString(res.getRepository().getID()));
                   break;
               // case "note":
               //     System.out.println("Note: " + temp_val);
@@ -272,7 +275,6 @@ public class SNACResourceCreator {
     }
 
     /**
-
     * Converts 2 Resources into format for Preview Tab
     *
     * @param none
@@ -285,68 +287,174 @@ public class SNACResourceCreator {
       }
       else{
         samplePreview += "Inserting " + resources.size() + " new Resources into SNAC." + "\n";
-        Resource firstResource = resources.get(0);
 
-        /*first preview resource*/
-        samplePreview+= "ID: " + firstResource.getID() + "\n";
-        samplePreview+="Document Type: " + firstResource.getDocumentType().getTerm() + "\n";
-        samplePreview+="Title: " + firstResource.getTitle() + "\n";
-        samplePreview+="Display Entry: " + firstResource.getDisplayEntry() + "\n";
-        samplePreview+="Link: " + firstResource.getLink() + "\n";
-        samplePreview+="Abstract: " + firstResource.getAbstract() + "\n";
-        samplePreview+="Extent: " + firstResource.getExtent() +  "\n";
-        samplePreview+="Date: " + firstResource.getDate() + "\n";
-        List<Language> languageList = firstResource.getLanguages();
-        String firstResourceLanguages = "Language(s): ";
-        if(languageList.size() == 0){
-          firstResourceLanguages = "Language(s): " + "\n" ;
-        }
-        for(int i=0; i<languageList.size();i++){
-          if(languageList.size() == 0){
-            break;
-          }
-          if(i != languageList.size()-1){
-            firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() +", ";
-          }
-          else{
-            firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() + "\n";
-          }
-        }
-        samplePreview+= firstResourceLanguages;
-        samplePreview+="Repository ID (work in progress): "+ Integer.toString(firstResource.getRepository().getID()) + "\n";
+        int iterations = Math.min(resources.size(), 2);
 
-        /*second preview resource*/
-        if(resources.size() > 1){
-          Resource secondResource = resources.get(1);
-          samplePreview+="ID: " + secondResource.getID()+ "\n";
-          samplePreview+="Document Type: " + secondResource.getDocumentType().getTerm() + "\n";
-          samplePreview+="Title: " + secondResource.getTitle() + "\n";
-          samplePreview+="Display Entry: " + secondResource.getDisplayEntry() + "\n";
-          samplePreview+="Link: " + secondResource.getLink() + "\n";
-          samplePreview+="Abstract: " + secondResource.getAbstract() + "\n";
-          samplePreview+="Extent: " + secondResource.getExtent() +  "\n";
-          samplePreview+="Date: " + secondResource.getDate() + "\n";
-          List<Language> languageList2 = secondResource.getLanguages();
-          String secondResourceLanguages = "Language(s): ";
-          if(languageList2.size() == 0){
-            secondResourceLanguages = "Language(s): " + "\n" ;
-          }
-          for(int i=0; i<languageList2.size();i++){
-            if(i != languageList2.size()-1){
-              secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() +", ";
-            }
-            else{
-              secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() + "\n";
-            }
-          }
-          samplePreview+= secondResourceLanguages;
-          samplePreview+="Repository ID (work in progress): " + Integer.toString(secondResource.getRepository().getID()) + "\n";
-        }
+        for(int x = 0; x < iterations; x++){
+          Resource previewResource = resources.get(x);
 
+          for(Map.Entry mapEntry: match_attributes.entrySet())
+          {
+              if(!((String)mapEntry.getValue()).equals("")){
+                switch((String)mapEntry.getKey()) {
+                  case "id":
+                    samplePreview+= "ID: " + previewResource.getID() + "\n";
+                    break;
+                  case "type":
+                    Term previewTerm = previewResource.getDocumentType();
+                    samplePreview+="Document Type: " + previewTerm.getTerm() + " (" + previewTerm.getID() +")\n";
+                    break;
+                  case "title":
+                    samplePreview+="Title: " + previewResource.getTitle() + "\n";
+                    break;
+                  case "display_entry":
+                    samplePreview+="Display Entry: " + previewResource.getDisplayEntry() + "\n";
+                    break;
+                  case "link":
+                    samplePreview+="Link: " + previewResource.getLink() + "\n";
+                    break;
+                  case "abstract":
+                    samplePreview+="Abstract: " + previewResource.getAbstract() + "\n";
+                    break;
+                  case "extent":
+                    samplePreview+="Extent: " + previewResource.getExtent() +  "\n";
+                    break;
+                  case "date":
+                    samplePreview+="Date: " + previewResource.getDate() + "\n";
+                    break;
+                  case "lang":
+                    List<Language> languageList = previewResource.getLanguages();
+                    String previewResourceLanguages = "Language(s): ";
+                    if(languageList.size() == 0){
+                      previewResourceLanguages = "Language(s): " + "\n" ;
+                    }
+                    for(int i=0; i<languageList.size();i++){
+                      if(languageList.size() == 0){
+                        break;
+                      }
+                      if(i != languageList.size()-1){
+                        previewResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() +", ";
+                      }
+                      else{
+                        previewResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() + "\n";
+                      }
+                    }
+                    samplePreview+= previewResourceLanguages;
+                    break;
+                  case "repo_ic_id":
+                    try{
+                      samplePreview+="Repository ID: "+ Integer.toString(previewResource.getRepository().getID()) + "\n";
+                    } catch (NullPointerException e){
+                      samplePreview+="Repository ID: " + "\n";
+                    }
+                    break;
+                  default:
+                    break;
+                }
+              }
+          }
+          // samplePreview+= "ID: " + previewResource.getID() + "\n";
+          // samplePreview+="Document Type: " + previewResource.getDocumentType().getTerm() + "\n";
+          // samplePreview+="Title: " + previewResource.getTitle() + "\n";
+          // samplePreview+="Display Entry: " + previewResource.getDisplayEntry() + "\n";
+          // samplePreview+="Link: " + previewResource.getLink() + "\n";
+          // samplePreview+="Abstract: " + previewResource.getAbstract() + "\n";
+          // samplePreview+="Extent: " + previewResource.getExtent() +  "\n";
+          // samplePreview+="Date: " + previewResource.getDate() + "\n";
+          // List<Language> languageList = previewResource.getLanguages();
+          // String previewResourceLanguages = "Language(s): ";
+          // if(languageList.size() == 0){
+          //   previewResourceLanguages = "Language(s): " + "\n" ;
+          // }
+          // for(int i=0; i<languageList.size();i++){
+          //   if(languageList.size() == 0){
+          //     break;
+          //   }
+          //   if(i != languageList.size()-1){
+          //     previewResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() +", ";
+          //   }
+          //   else{
+          //     previewResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() + "\n";
+          //   }
+          // }
+          // samplePreview+= previewResourceLanguages;
+          // try{
+          //   samplePreview+="Repository ID (work in progress): "+ Integer.toString(previewResource.getRepository().getID()) + "\n";
+          // } catch (NullPointerException e){
+          //   samplePreview+="Repository ID (work in progress):" + "\n";
+          // }
+        }
+      //   Resource firstResource = resources.get(0);
+      //
+      //   /*first preview resource*/
+      //   samplePreview+= "ID: " + firstResource.getID() + "\n";
+      //   samplePreview+="Document Type: " + firstResource.getDocumentType().getTerm() + "\n";
+      //   samplePreview+="Title: " + firstResource.getTitle() + "\n";
+      //   samplePreview+="Display Entry: " + firstResource.getDisplayEntry() + "\n";
+      //   samplePreview+="Link: " + firstResource.getLink() + "\n";
+      //   samplePreview+="Abstract: " + firstResource.getAbstract() + "\n";
+      //   samplePreview+="Extent: " + firstResource.getExtent() +  "\n";
+      //   samplePreview+="Date: " + firstResource.getDate() + "\n";
+      //   List<Language> languageList = firstResource.getLanguages();
+      //   String firstResourceLanguages = "Language(s): ";
+      //   if(languageList.size() == 0){
+      //     firstResourceLanguages = "Language(s): " + "\n" ;
+      //   }
+      //   for(int i=0; i<languageList.size();i++){
+      //     if(languageList.size() == 0){
+      //       break;
+      //     }
+      //     if(i != languageList.size()-1){
+      //       firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() +", ";
+      //     }
+      //     else{
+      //       firstResourceLanguages+=languageList.get(i).getLanguage().getTerm().toString() + "\n";
+      //     }
+      //   }
+      //   samplePreview+= firstResourceLanguages;
+      //   try{
+      //     samplePreview+="Repository ID (work in progress): "+ Integer.toString(firstResource.getRepository().getID()) + "\n";
+      //   } catch (NullPointerException e){
+      //     samplePreview+="Repository ID (work in progress):" + "\n";
+      //   }
+      //
+      //   /*second preview resource*/
+      //   if(resources.size() > 1){
+      //     Resource secondResource = resources.get(1);
+      //     samplePreview+="ID: " + secondResource.getID()+ "\n";
+      //     samplePreview+="Document Type: " + secondResource.getDocumentType().getTerm() + "\n";
+      //     samplePreview+="Title: " + secondResource.getTitle() + "\n";
+      //     samplePreview+="Display Entry: " + secondResource.getDisplayEntry() + "\n";
+      //     samplePreview+="Link: " + secondResource.getLink() + "\n";
+      //     samplePreview+="Abstract: " + secondResource.getAbstract() + "\n";
+      //     samplePreview+="Extent: " + secondResource.getExtent() +  "\n";
+      //     samplePreview+="Date: " + secondResource.getDate() + "\n";
+      //     List<Language> languageList2 = secondResource.getLanguages();
+      //     String secondResourceLanguages = "Language(s): ";
+      //     if(languageList2.size() == 0){
+      //       secondResourceLanguages = "Language(s): " + "\n" ;
+      //     }
+      //     for(int i=0; i<languageList2.size();i++){
+      //       if(i != languageList2.size()-1){
+      //         secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() +", ";
+      //       }
+      //       else{
+      //         secondResourceLanguages+=languageList2.get(i).getLanguage().getTerm().toString() + "\n";
+      //       }
+      //     }
+      //     samplePreview+= secondResourceLanguages;
+      //     try{
+      //       samplePreview+="Repository ID (work in progress): "+ Integer.toString(secondResource.getRepository().getID()) + "\n";
+      //     } catch (NullPointerException e){
+      //       samplePreview+="Repository ID (work in progress):" + "\n";
+      //     }        }
+      //
       }
+      // System.out.println(samplePreview);
       return samplePreview;
 
     }
+
 
     /*
     * Helps determine whether a given ISO language exists on the SNAC database
