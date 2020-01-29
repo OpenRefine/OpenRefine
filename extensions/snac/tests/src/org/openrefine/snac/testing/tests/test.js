@@ -119,10 +119,21 @@ const puppeteer = require("puppeteer");
       } else {
         console.log('TEST PASSED: API Key Upload Verification');
       }
+
+      // UNIT TEST: Dev or Prod Upload Verification Appears
+      var devProdUpload = false;
+      const devPordHandler = await page.$('.snac-upload-management-area > .upload-destination > input');
+      var radioText = await page.evaluate(option => option.innerText, devPordHandler);
+      if (radioText == 'Product Site'){
+        console.log('TEST FAILED: Upload to product, API incorrect');
+      } else {
+        console.log('TEST PASSED: Upload to development');
+      }
+
       var uploadButton = await page.$('.cancel-btn');
       uploadButton.click();
       await page.waitFor(1000);
-      
+
       // SETUP
       const extensionButtons = await page.$$('#body > #right-panel > #tool-panel > #extension-bar > #extension-bar-menu-container > a');
       for (const button of extensionButtons){
@@ -176,13 +187,14 @@ const puppeteer = require("puppeteer");
       }
       await page.waitFor(1000);
 
-      // UNIT TEST: Number of issues are 4 (for the number of missing fields)
-      const issuesResults = await page.$$('#snac-issues-panel > table > tbody > .wb-warning');
-      if(issuesResults.length == 4){
-        console.log("TEST PASSED: 4 errors appear on the issues tab when no edits were made to schema.");
-      } else {
-        console.log("TEST FAILED: 4 errors appear on the issues tab when no edits were made to schema.");
-      }
+
+      // // UNIT TEST: Number of issues are 4 (for the number of missing fields)
+      // const issuesResults = await page.$$('#snac-issues-panel > table > tbody > .wb-warning');
+      // if(issuesResults.length == 4){
+      //   console.log("TEST PASSED: Uploaded to Dev");
+      // } else {
+      //   console.log("TEST FAILED: Uploaded to Prod");
+      // }
 
       await page.waitFor(10000);
       await browser.close();
