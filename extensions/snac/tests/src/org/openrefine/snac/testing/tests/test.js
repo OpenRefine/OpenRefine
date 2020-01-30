@@ -120,14 +120,39 @@ const puppeteer = require("puppeteer");
         console.log('TEST PASSED: API Key Upload Verification');
       }
 
-      // UNIT TEST: Dev or Prod Upload Verification Appears
-      var devProdUpload = false;
-      const devPordHandler = await page.$('.snac-upload-management-area > .upload-destination > input');
-      var radioText = await page.evaluate(option => option.innerText, devPordHandler);
-      if (radioText == 'Product Site'){
-        console.log('TEST FAILED: Upload to product, API incorrect');
-      } else {
-        console.log('TEST PASSED: Upload to development');
+      // UNIT TEST: Development Site Upload Verification
+      var devProdHandler = await page.evaluate(selected => {
+        let devOrProd = $('.siteInput').get();
+        if(devOrProd[0].checked){
+          selected = document.getElementsByClassName('siteInput')[0].value;
+        } else if(devOrProd[1].checked){
+          selected = document.getElementsByClassName('siteInput')[1].value;
+        }
+        return selected;
+      });
+      // console.log(devProdHandler);
+      if (devProdHandler == 'dev'){
+        console.log('TEST PASSED: Development site selected');
+      } else if (devProdHandler == 'prod') {
+        console.log('TEST PASSED: Production site selected');
+      }
+
+      // UNIT TEST: Product Site Upload Verification
+      var devProdHandler = await page.evaluate(selected => {
+        let devOrProd = $('.siteInput').get();
+        devOrProd[1].click();
+        if(devOrProd[0].checked){
+          selected = document.getElementsByClassName('siteInput')[0].value;
+        } else if(devOrProd[1].checked){
+          selected = document.getElementsByClassName('siteInput')[1].value;
+        }
+        return selected;
+      });
+      // console.log(devProdHandler);
+      if (devProdHandler == 'dev'){
+        console.log('TEST PASSED: Development site selected');
+      } else if (devProdHandler == 'prod') {
+        console.log('TEST PASSED: Production site selected');
       }
 
       var uploadButton = await page.$('.cancel-btn');
