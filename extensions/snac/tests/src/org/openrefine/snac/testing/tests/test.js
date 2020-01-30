@@ -212,15 +212,6 @@ const puppeteer = require("puppeteer");
       }
       await page.waitFor(1000);
 
-
-      // // UNIT TEST: Number of issues are 4 (for the number of missing fields)
-      // const issuesResults = await page.$$('#snac-issues-panel > table > tbody > .wb-warning');
-      // if(issuesResults.length == 4){
-      //   console.log("TEST PASSED: Uploaded to Dev");
-      // } else {
-      //   console.log("TEST FAILED: Uploaded to Prod");
-      // }
-
       await page.waitFor(10000);
       await browser.close();
       console.log("Browser Closed");
