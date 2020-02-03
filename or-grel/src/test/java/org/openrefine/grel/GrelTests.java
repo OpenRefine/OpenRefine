@@ -38,23 +38,19 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.grel.Parser;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.Evaluable;
+import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Project;
-
 public class GrelTests {
 
-    Project project;
     Properties bindings;
     
     @BeforeTest
@@ -64,13 +60,11 @@ public class GrelTests {
 
     @BeforeMethod
     public void SetUp() {
-        project = new Project();
-        bindings = ExpressionUtils.createBindings(project);
+        bindings = ExpressionUtils.createBindings();
     }
 
     @AfterMethod
     public void TearDown() {
-        project = null;
         bindings = null;
     }
 
