@@ -35,22 +35,16 @@ package org.openrefine.expr.functions;
 
 import java.util.Properties;
 
+import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.Function;
-
-import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.util.ExpressionNominalValueGrouper;
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
 
 public class FacetCount implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
+    	// TODO to migrate
+    	/*
         if (args.length == 3 && args[1] instanceof String && args[2] instanceof String) {
             Object choiceValue = args[0]; // choice value to look up
             String facetExpression = (String) args[1];
@@ -79,6 +73,7 @@ public class FacetCount implements Function {
 
             return grouper.getChoiceValueCountMultiple(choiceValue);
         }
+        */
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
             " expects a choice value, an expression as a string, and a column name");
     }
