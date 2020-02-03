@@ -161,6 +161,7 @@ public class RefineTest extends PowerMockTestCase {
         ColumnModel model = new ColumnModel(columnMeta);
         Cell[][] cells = new Cell[rows.length][];
         for (int i = 0; i != rows.length; i++) {
+            cells[i] = new Cell[columns.length];
             for (int j = 0; j != rows[i].length; j++) {
                 cells[i][j] = new Cell(rows[i][j], null);
             }

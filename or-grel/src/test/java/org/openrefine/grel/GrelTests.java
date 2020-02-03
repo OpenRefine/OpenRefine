@@ -49,11 +49,9 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Project;
 
 public class GrelTests {
 
-    Project project;
     Properties bindings;
 
     @BeforeTest
@@ -63,13 +61,11 @@ public class GrelTests {
 
     @BeforeMethod
     public void SetUp() {
-        project = new Project();
-        bindings = ExpressionUtils.createBindings(project);
+        bindings = ExpressionUtils.createBindings();
     }
 
     @AfterMethod
     public void TearDown() {
-        project = null;
         bindings = null;
     }
 

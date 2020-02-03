@@ -33,19 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.booleans;
 
-import java.io.IOException;
-
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.functions.FunctionTestBase;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 
 public class BooleanTests extends FunctionTestBase {
 
@@ -65,23 +57,6 @@ public class BooleanTests extends FunctionTestBase {
             { "xor", "true", "false", "false", "true" },
             { "xor", "false", "true", "false", "true" },
     };
-
-    private Project project;
-
-    @BeforeMethod
-    public void SetUp() throws IOException, ModelException {
-        project = new Project();
-        project.columnModel.addColumn(0, new ColumnMetadata(0, "Column A"), true);
-
-        bindings.put("project", project);
-
-        // Five rows of a's and five of 1s
-        for (int i = 0; i < 10; i++) {
-            Row row = new Row(1);
-            row.setCell(0, new Cell(i < 5 ? "a" : new Integer(1), null));
-            project.rows.add(row);
-        }
-    }
 
     @Test
     public void testInvalidParams() {
