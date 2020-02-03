@@ -60,4 +60,11 @@ public interface Facet  {
      * about rows or records.
      */
     public FacetState getInitialFacetState();
+    
+    /**
+     * Returns all the information necessary to render the
+     * facet in the UI (aggregation statistics and configuration
+     * combined).
+     */
+    public FacetResult getFacetResult(FacetState state);
 }

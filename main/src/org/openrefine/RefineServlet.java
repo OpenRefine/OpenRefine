@@ -48,6 +48,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineModel;
 import org.openrefine.commands.Command;
@@ -79,6 +81,7 @@ public class RefineServlet extends Butterfly {
 
     static private RefineServlet s_singleton;
     static private File s_dataDir;
+    static private JavaSparkContext s_context;
     
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
@@ -102,6 +105,8 @@ public class RefineServlet extends Butterfly {
     public void init() throws ServletException {
         super.init();
 
+        s_context = new JavaSparkContext(
+        		new SparkConf().setAppName("SparkBasedTest").setMaster("local"));
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");
         
@@ -137,7 +142,7 @@ public class RefineServlet extends Butterfly {
         logger.error("initializing FileProjectManager with dir");
         logger.error(data);
         s_dataDir = new File(data);
-        FileProjectManager.initialize(s_dataDir);
+        FileProjectManager.initialize(s_context, s_dataDir);
         ImportingManager.initialize(this);
 
 	long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
