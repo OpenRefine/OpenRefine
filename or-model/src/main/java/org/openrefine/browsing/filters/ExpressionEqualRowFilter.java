@@ -51,6 +51,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  * values, or if the result is blank or error and we want blank or error values. 
  */
 public class ExpressionEqualRowFilter implements RowFilter {
+    private static final long serialVersionUID = 1L;
+
     final protected Evaluable       _evaluable; // the expression to evaluate
     
     final protected String          _columnName;
