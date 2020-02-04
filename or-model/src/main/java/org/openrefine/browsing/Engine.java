@@ -159,7 +159,8 @@ public class Engine  {
 		}
 	};
 	
-	private static Function2<AllFacetsState, AllFacetsState, AllFacetsState> facetCombineOp= new Function2<AllFacetsState, AllFacetsState, AllFacetsState>() {
+	private static Function2<AllFacetsState, AllFacetsState, AllFacetsState> facetCombineOp =
+	         new Function2<AllFacetsState, AllFacetsState, AllFacetsState>() {
 		private static final long serialVersionUID = 1L;
 		@Override
 		public AllFacetsState call(AllFacetsState v1, AllFacetsState v2) throws Exception {
