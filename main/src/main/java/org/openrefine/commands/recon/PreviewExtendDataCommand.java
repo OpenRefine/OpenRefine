@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
@@ -100,20 +101,21 @@ public class PreviewExtendDataCommand extends Command {
             
             List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
             int length = rowIndices.size();
-            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
-            int cellIndex = column.getCellIndex();
+            ColumnModel model = project.getColumnModel();
+            ColumnMetadata column = model.getColumnByName(columnName);
+            int cellIndex = model.getColumnIndexByName(columnName);
 
             // get the endpoint to extract data from
             String endpoint = null;
 		    ReconConfig cfg = column.getReconConfig();
 		    if (cfg != null &&
-			cfg instanceof StandardReconConfig) {
-			StandardReconConfig scfg = (StandardReconConfig)cfg;
-			endpoint = scfg.service;
-	    } else {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
-                return;
-	    }
+				cfg instanceof StandardReconConfig) {
+				StandardReconConfig scfg = (StandardReconConfig)cfg;
+				endpoint = scfg.service;
+		    } else {
+	                respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
+	                return;
+		    }
 		
             
             List<String> topicNames = new ArrayList<String>();

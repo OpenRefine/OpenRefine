@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.spark.api.java.JavaPairRDD;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
@@ -54,10 +55,12 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.expr.WrappedRow;
 import org.openrefine.model.Cell;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,10 +81,16 @@ public class PreviewExpressionCommand extends Command {
         }
     }
     protected static class SuccessfulEvaluation implements ExpressionValue {
-        @JsonValue
+        @JsonIgnore
         protected String value;
+        
         protected SuccessfulEvaluation(String value) {
             this.value = value;
+        }
+        
+        @JsonValue
+        protected String getValue() {
+        	return value;
         }
     }
     
@@ -125,7 +134,7 @@ public class PreviewExpressionCommand extends Command {
             Project project = getProject(request);
             
             int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
-            String columnName = cellIndex < 0 ? "" : project.columnModel.getColumnByCellIndex(cellIndex).getName();
+            String columnName = cellIndex < 0 ? "" : project.getColumnModel().getColumns().get(cellIndex).getName();
             
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");
@@ -146,6 +155,8 @@ public class PreviewExpressionCommand extends Command {
             
             List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
             int length = rowIndices.size();
+            GridState state = project.getCurrentGridState();
+            JavaPairRDD<Long, Row> rows = state.getGrid();
             
             try {
                 Evaluable eval = MetaParser.parse(expression);
@@ -155,33 +166,31 @@ public class PreviewExpressionCommand extends Command {
                 for (int i = 0; i < length; i++) {
                     Object result = null;
                     
-                    int rowIndex = rowIndices.get(i);
-                    if (rowIndex >= 0 && rowIndex < project.rows.size()) {
-                        Row row = project.rows.get(rowIndex);
+                    int rowIndex = rowIndices.get(i);  
+                            
+                    try {
+                    	Row row = state.getRow(rowIndex);
                         Cell cell = row.getCell(cellIndex);
-                            
-                        try {
-                            ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);
-                            result = eval.evaluate(bindings);
-                            
-                            if (repeat) {
-                                for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
-                                    Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                                    ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, newCell);
-                                    
-                                    Object newResult = eval.evaluate(bindings);
-                                    if (ExpressionUtils.isError(newResult)) {
-                                        break;
-                                    } else if (ExpressionUtils.sameValue(result, newResult)) {
-                                        break;
-                                    } else {
-                                        result = newResult;
-                                    }
+                        ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);
+                        result = eval.evaluate(bindings);
+                        
+                        if (repeat) {
+                            for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
+                                Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
+                                ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, newCell);
+                                
+                                Object newResult = eval.evaluate(bindings);
+                                if (ExpressionUtils.isError(newResult)) {
+                                    break;
+                                } else if (ExpressionUtils.sameValue(result, newResult)) {
+                                    break;
+                                } else {
+                                    result = newResult;
                                 }
                             }
-                        } catch (Exception e) {
-                            // ignore
                         }
+                    } catch (Exception e) {
+                        // ignore
                     }
                     
                     if (result == null) {

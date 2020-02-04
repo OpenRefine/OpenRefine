@@ -54,7 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconType;
 import org.openrefine.model.Row;
@@ -104,11 +104,12 @@ public class GuessTypesOfColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
             
-            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
-            if (column == null) {
+            GridState state = project.getCurrentGridState();
+            int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+            if (columnIndex == -1) {
                 respondJSON(response, new TypesResponse("error", "No such column", null));
             } else {
-                List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
+                List<TypeGroup> typeGroups = guessTypes(state, columnIndex, serviceUrl);
                 respondJSON(response, new TypesResponse("ok", null, typeGroups));   
             }
 
@@ -141,25 +142,20 @@ public class GuessTypesOfColumnCommand extends Command {
      * @return
      * @throws JSONException, IOException 
      */
-    protected List<TypeGroup> guessTypes(Project project, ColumnMetadata column, String serviceUrl)
+    protected List<TypeGroup> guessTypes(GridState gridState, int cellIndex, String serviceUrl)
             throws IOException {
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
-        
-        int cellIndex = column.getCellIndex();
         
         List<String> samples = new ArrayList<String>(SAMPLE_SIZE);
         Set<String> sampleSet = new HashSet<String>();
         
-        for (Row row : project.rows) {
+        for (Row row : gridState.getGrid().values().take(SAMPLE_SIZE)) {
             Object value = row.getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
                 String s = value.toString().trim();
                 if (!sampleSet.contains(s)) {
                     samples.add(s);
                     sampleSet.add(s);
-                    if (samples.size() >= SAMPLE_SIZE) {
-                        break;
-                    }
                 }
             }
         }

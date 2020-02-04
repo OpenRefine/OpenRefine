@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.openrefine.browsing.facets.AllFacetsState;
 import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
@@ -90,10 +92,12 @@ public class Engine  {
         
     }
 
+    @JsonProperty("engine-mode")
     public Mode getMode() {
         return _config.getMode();
     }
 
+    @JsonIgnore
     public GridState getGridState() {
     	return _state;
     }
@@ -115,31 +119,45 @@ public class Engine  {
      * all the rows not matched by the current facets
      * @return
      */
+    @JsonIgnore
     public GridState getMismatchingRows() {
     	Function<Tuple2<Long, Row>, Boolean> f = negatedRowFilterConjuction(facetRowFilters());
 		JavaPairRDD<Long,Row> matchingRows = _state.getGrid().filter(f);
 		return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
     }
     
+    @JsonProperty("facets")
+    public List<FacetResult> getFacetResults() {
+		List<FacetState> states = getFacetStates();
+		List<FacetResult> facetResults = new ArrayList<>();
+		for(int i = 0; i != states.size(); i++) {
+		   facetResults.add(_facets.get(i).getFacetResult(states.get(i))); 
+		}
+		return facetResults;
+    }
+    
     /**
      * Computes the facet states of the configured facets
      * on the current grid
      */
+    @JsonIgnore
     public List<FacetState> getFacetStates() {
-    	if (_config.getMode().equals(Mode.RowBased)) {
-			AllFacetsState aggregated = _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp, facetCombineOp);
-			return aggregated.getFacetStates();
-    	} else {
-    		throw new IllegalStateException("not implemented");
-    	}
+        if (_config.getMode().equals(Mode.RowBased)) {
+            AllFacetsState aggregated = _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp, facetCombineOp);
+            return aggregated.getFacetStates();
+        } else {
+            throw new IllegalStateException("not implemented");
+        }
     }
     
+    @JsonIgnore
 	private List<RowFilter> facetRowFilters() {
 		return _facets.stream()
         		.map(facet -> facet.getRowFilter())
         		.collect(Collectors.toList());
 	}
     
+    @JsonIgnore
 	private AllFacetsState allFacetsInitialState() {
 		return new AllFacetsState(_facets
     			.stream().map(facet -> facet.getInitialFacetState())
