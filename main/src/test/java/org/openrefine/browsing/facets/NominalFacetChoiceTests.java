@@ -39,9 +39,7 @@ public class NominalFacetChoiceTests {
     @Test
     public void serializeNominalFacetChoice() {
         DecoratedValue value = new DecoratedValue("some string", "some string");
-        NominalFacetChoice choice = new NominalFacetChoice(value);
-        choice.count = 3;
-        choice.selected = true;
+        NominalFacetChoice choice = new NominalFacetChoice(value, 3L, true);
         TestUtils.isSerializedTo(choice, "{"
                 + "\"v\":"
                 + "   {\"v\":\"some string\","

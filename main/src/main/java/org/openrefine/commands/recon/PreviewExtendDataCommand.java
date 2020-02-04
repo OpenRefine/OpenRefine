@@ -51,6 +51,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
@@ -103,8 +104,9 @@ public class PreviewExtendDataCommand extends Command {
             List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {
             });
             int length = rowIndices.size();
-            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
-            int cellIndex = column.getCellIndex();
+            ColumnModel model = project.getColumnModel();
+            ColumnMetadata column = model.getColumnByName(columnName);
+            int cellIndex = model.getColumnIndexByName(columnName);
 
             // get the endpoint to extract data from
             String endpoint = null;

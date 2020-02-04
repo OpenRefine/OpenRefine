@@ -52,7 +52,6 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
-import org.openrefine.model.RecordModel;
 import org.openrefine.overlay.OverlayModel;
 
 public class GetModelsCommand extends Command {
@@ -76,8 +75,11 @@ public class GetModelsCommand extends Command {
 
         @JsonProperty("columnModel")
         protected ColumnModel columnModel;
-        @JsonProperty("recordModel")
-        protected RecordModel recordModel;
+        /*
+         * TODO reintroduce
+         * 
+         * @JsonProperty("recordModel") protected RecordModel recordModel;
+         */
         @JsonProperty("overlayModels")
         protected Map<String, OverlayModel> overlayModels;
         @JsonProperty("scripting")
@@ -87,12 +89,12 @@ public class GetModelsCommand extends Command {
 
         protected ModelsResponse(
                 ColumnModel columns,
-                RecordModel records,
+                // RecordModel records,
                 Map<String, OverlayModel> overlays,
                 Map<String, LanguageInfo> languageInfos,
                 Map<String, HttpHeaderInfo> headers) {
             columnModel = columns;
-            recordModel = records;
+            // recordModel = records;
             overlayModels = overlays;
             scripting = languageInfos;
             httpHeaders = headers;
@@ -132,9 +134,9 @@ public class GetModelsCommand extends Command {
         }
 
         respondJSON(response, new ModelsResponse(
-                project.columnModel,
-                project.recordModel,
-                project.overlayModels,
+                project.getColumnModel(),
+                // project.recordModel,
+                project.getOverlayModels(),
                 prefixesMap,
                 headersMap));
     }

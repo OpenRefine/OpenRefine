@@ -93,7 +93,7 @@ public class ProjectMetadata {
     @JsonProperty("description")
     private String _description = ""; // free form of comment
     @JsonProperty("rowCount")
-    private int _rowCount; // at the creation. Essential for cleaning old projects too heavy
+    private long _rowCount; // at the creation. Essential for cleaning old projects too heavy
 
     @JsonProperty("title")
     private String _title = "";
@@ -321,13 +321,13 @@ public class ProjectMetadata {
     }
 
     @JsonIgnore
-    public int getRowCount() {
+    public long getRowCount() {
         return _rowCount;
     }
 
     @JsonIgnore
-    public void setRowCount(int rowCount) {
-        this._rowCount = rowCount;
+    public void setRowCount(long totalCount) {
+        this._rowCount = totalCount;
         updateModified();
     }
 

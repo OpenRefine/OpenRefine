@@ -94,7 +94,7 @@ public class SqlExporter implements WriterExporter {
                         throw new SqlExporterException(NO_OPTIONS_PRESENT_ERROR);
 
                     }
-                    String tableName = ProjectManager.singleton.getProjectMetadata(project.id).getName();
+                    String tableName = ProjectManager.singleton.getProjectMetadata(project.getId()).getName();
 
                     String tableNameManual = JSONUtilities.getString(sqlOptions, JSON_TABLE_NAME, null);
 

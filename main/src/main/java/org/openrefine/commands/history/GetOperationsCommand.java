@@ -62,13 +62,13 @@ public class GetOperationsCommand extends Command {
 
         @JsonProperty("description")
         public String getDescription() {
-            return entry.description;
+            return entry.getDescription();
         }
 
         @JsonProperty("operation")
         @JsonInclude(Include.NON_NULL)
         public AbstractOperation getOperation() {
-            return entry.operation;
+            return entry.getOperation();
         }
     }
 

@@ -59,6 +59,7 @@ import org.openrefine.clustering.ClusteredEntry;
 import org.openrefine.clustering.Clusterer;
 import org.openrefine.clustering.ClustererConfig;
 import org.openrefine.model.Cell;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
@@ -100,9 +101,9 @@ public class kNNClusterer extends Clusterer {
         }
 
         @Override
-        public kNNClusterer apply(Project project) {
+        public kNNClusterer apply(GridState state) {
             kNNClusterer clusterer = new kNNClusterer();
-            clusterer.initializeFromConfig(project, this);
+            clusterer.initializeFromConfig(state, this);
             return clusterer;
         }
 
@@ -228,8 +229,8 @@ public class kNNClusterer extends Clusterer {
         }
     }
 
-    public void initializeFromConfig(Project project, kNNClustererConfig config) {
-        super.initializeFromConfig(project, config);
+    public void initializeFromConfig(GridState state, kNNClustererConfig config) {
+        super.initializeFromConfig(state, config);
         _distance = config.getDistance();
         if (_distance == null) {
             throw new IllegalArgumentException("No distance provided for KNN clustering.");

@@ -150,6 +150,27 @@ public class GridState {
     }
 
     /**
+     * Returns a row by index. Repeatedly calling this method to obtain multiple rows is inefficient, use the Spark API
+     * directly to filter on the grid.
+     * 
+     * @param id
+     *            the row index
+     * @return the row at the given index
+     * @throws IllegalArgumentException
+     *             if row id could not be found IllegalStateException if multiple rows could be found
+     */
+    public Row getRow(long id) {
+        List<Row> rows = grid.lookup(id);
+        if (rows.size() == 0) {
+            throw new IllegalArgumentException(String.format("Row id %d not found", id));
+        } else if (rows.size() > 1) {
+            throw new IllegalStateException(String.format("Found %d rows at index %d", rows.size(), id));
+        } else {
+            return rows.get(0);
+        }
+    }
+
+    /**
      * @return the list of all columns in this table, in order.
      */
     @JsonIgnore

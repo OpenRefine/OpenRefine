@@ -60,9 +60,7 @@ public class HistoryEntry {
     private final OffsetDateTime time;
 
     // the abstract operation, if any, that results in the change
-    @JsonProperty("operation")
-    @JsonView(JsonViews.SaveMode.class)
-    final protected AbstractOperation operation;
+    private final AbstractOperation operation;
 
     // the actual change
     @JsonProperty("change")
@@ -121,6 +119,12 @@ public class HistoryEntry {
     @JsonProperty("time")
     public OffsetDateTime getTime() {
         return time;
+    }
+
+    @JsonProperty("operation")
+    @JsonView(JsonViews.SaveMode.class)
+    public AbstractOperation getOperation() {
+        return operation;
     }
 
 }

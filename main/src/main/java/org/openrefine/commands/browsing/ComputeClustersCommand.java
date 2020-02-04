@@ -68,7 +68,7 @@ public class ComputeClustersCommand extends Command {
             String clusterer_conf = request.getParameter("clusterer");
             ClustererConfig clustererConfig = ParsingUtilities.mapper.readValue(clusterer_conf, ClustererConfig.class);
 
-            Clusterer clusterer = clustererConfig.apply(project);
+            Clusterer clusterer = clustererConfig.apply(project.getHistory().getCurrentGridState());
 
             clusterer.computeClusters(engine);
 

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProcessManager;
 
 /**
@@ -119,5 +121,30 @@ public class Project {
 
     public void dispose() {
         // TODO unload RDDs?
+    }
+
+    /**
+     * Convenience function to return the current column model from the history.
+     * 
+     * @return
+     */
+    public ColumnModel getColumnModel() {
+        return history.getCurrentGridState().getColumnModel();
+    }
+
+    /**
+     * Convenience function to return the current grid state.
+     */
+    public GridState getCurrentGridState() {
+        return history.getCurrentGridState();
+    }
+
+    /**
+     * Convenience function to return the current overlay models
+     * 
+     * @return
+     */
+    public Map<String, OverlayModel> getOverlayModels() {
+        return history.getCurrentGridState().getOverlayModels();
     }
 }

@@ -57,6 +57,6 @@ public class GetProjectMetadataCommand extends Command {
             return;
         }
 
-        respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.id));
+        respondJSON(response, ProjectManager.singleton.getProjectMetadata(project.getId()));
     }
 }

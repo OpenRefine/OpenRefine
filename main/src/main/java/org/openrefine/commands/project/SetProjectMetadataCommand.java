@@ -64,7 +64,7 @@ public class SetProjectMetadataCommand extends Command {
             response.setHeader("Content-Type", "application/json");
 
             meta.setAnyField(metaName, valueString);
-            ProjectManager.singleton.saveMetadata(meta, project.id);
+            ProjectManager.singleton.saveMetadata(meta, project.getId());
 
             respond(response, "{ \"code\" : \"ok\" }");
         } catch (Exception e) {

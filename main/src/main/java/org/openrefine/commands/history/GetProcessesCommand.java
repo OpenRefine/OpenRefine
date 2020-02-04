@@ -50,7 +50,7 @@ public class GetProcessesCommand extends Command {
 
         Project project = getProject(request);
 
-        respondJSON(response, project.processManager);
+        respondJSON(response, project.getProcessManager());
     }
 
     @Override

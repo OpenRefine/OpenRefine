@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
-import org.openrefine.history.HistoryProcess;
 import org.openrefine.model.Project;
 
 public class UndoRedoCommand extends Command {
@@ -69,11 +68,9 @@ public class UndoRedoCommand extends Command {
         }
 
         try {
-            boolean done = lastDoneID == -1 ||
-                    project.processManager.queueProcess(
-                            new HistoryProcess(project, lastDoneID));
+            project.getHistory().undoRedo(lastDoneID);
 
-            respond(response, "{ \"code\" : " + (done ? "\"ok\"" : "\"pending\"") + " }");
+            respond(response, "{ \"code\" : \"ok\" }");
         } catch (Exception e) {
             respondException(response, e);
         }

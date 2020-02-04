@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.RowFlagChange;
@@ -70,7 +71,7 @@ public class AnnotateOneRowCommand extends Command {
                 String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1);
 
                 StarOneRowProcess process = new StarOneRowProcess(
-                        project,
+                        project.getHistory(),
                         description,
                         rowIndex,
                         starred);
@@ -85,7 +86,7 @@ public class AnnotateOneRowCommand extends Command {
                 String description = (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1);
 
                 FlagOneRowProcess process = new FlagOneRowProcess(
-                        project,
+                        project.getHistory(),
                         description,
                         rowIndex,
                         flagged);
@@ -107,11 +108,11 @@ public class AnnotateOneRowCommand extends Command {
         final boolean starred;
 
         StarOneRowProcess(
-                Project project,
+                History history,
                 String briefDescription,
                 int rowIndex,
                 boolean starred) {
-            super(project, briefDescription);
+            super(history, briefDescription);
 
             this.rowIndex = rowIndex;
             this.starred = starred;
@@ -121,7 +122,6 @@ public class AnnotateOneRowCommand extends Command {
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
                     historyEntryID,
-                    _project,
                     (starred ? "Star row " : "Unstar row ") + (rowIndex + 1),
                     null,
                     new RowStarChange(rowIndex, starred));
@@ -134,11 +134,11 @@ public class AnnotateOneRowCommand extends Command {
         final boolean flagged;
 
         FlagOneRowProcess(
-                Project project,
+                History history,
                 String briefDescription,
                 int rowIndex,
                 boolean flagged) {
-            super(project, briefDescription);
+            super(history, briefDescription);
 
             this.rowIndex = rowIndex;
             this.flagged = flagged;
@@ -148,7 +148,6 @@ public class AnnotateOneRowCommand extends Command {
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
             return new HistoryEntry(
                     historyEntryID,
-                    _project,
                     (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1),
                     null,
                     new RowFlagChange(rowIndex, flagged));

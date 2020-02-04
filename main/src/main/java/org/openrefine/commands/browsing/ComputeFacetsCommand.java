@@ -57,8 +57,6 @@ public class ComputeFacetsCommand extends Command {
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
 
-            engine.computeFacets();
-
             respondJSON(response, engine);
         } catch (Exception e) {
             respondException(response, e);

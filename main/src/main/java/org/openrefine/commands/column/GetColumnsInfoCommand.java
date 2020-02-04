@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.column;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,11 +66,11 @@ public class GetColumnsInfoCommand extends Command {
             Project project = getProject(request);
 
             JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(response.getWriter());
-
+            List<ColumnMetadata> columns = project.getColumnModel().getColumns();
             writer.writeStartArray();
-            for (ColumnMetadata column : project.columnModel.getColumns()) {
+            for (int i = 0; i != columns.size(); i++) {
                 writer.writeStartObject();
-                write(project, column, writer);
+                write(project, columns.get(i), i, writer);
                 writer.writeEndObject();
             }
             writer.writeEndArray();
@@ -81,7 +82,7 @@ public class GetColumnsInfoCommand extends Command {
         }
     }
 
-    private NumericBinIndex getBinIndex(Project project, ColumnMetadata column) {
+    private NumericBinIndex getBinIndex(Project project, ColumnMetadata column, int cellIndex) {
         String expression = "value";
         String key = "numeric-bin:" + expression;
         Evaluable eval = null;
@@ -93,13 +94,13 @@ public class GetColumnsInfoCommand extends Command {
         NumericBinIndex index = null;
         // TODO migrate this
         if (index == null) {
-            index = new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), column.getCellIndex(), eval));
+            index = new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), cellIndex, eval));
         }
         return index;
     }
 
-    private void write(Project project, ColumnMetadata column, JsonGenerator writer) throws IOException {
-        NumericBinIndex columnIndex = getBinIndex(project, column);
+    private void write(Project project, ColumnMetadata column, int index, JsonGenerator writer) throws IOException {
+        NumericBinIndex columnIndex = getBinIndex(project, column, index);
         if (columnIndex != null) {
             writer.writeStringField("name", column.getName());
             boolean is_numeric = columnIndex.isNumeric();

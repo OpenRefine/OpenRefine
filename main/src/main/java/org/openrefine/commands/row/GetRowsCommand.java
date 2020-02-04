@@ -35,8 +35,8 @@ package org.openrefine.commands.row;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,22 +46,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import org.apache.spark.api.java.function.Function;
+import scala.Tuple2;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.browsing.FilteredRecords;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RecordVisitor;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.sorting.SortingConfig;
-import org.openrefine.sorting.SortingRecordVisitor;
-import org.openrefine.sorting.SortingRowVisitor;
 import org.openrefine.util.ParsingUtilities;
 
 public class GetRowsCommand extends Command {
@@ -71,12 +66,12 @@ public class GetRowsCommand extends Command {
         @JsonUnwrapped
         protected final Row row;
         @JsonProperty("i")
-        protected final int rowIndex;
+        protected final long rowIndex;
         @JsonProperty("j")
         @JsonInclude(Include.NON_NULL)
         protected final Integer recordIndex;
 
-        protected WrappedRow(Row rowOrRecord, int rowIndex, Integer recordIndex) {
+        protected WrappedRow(Row rowOrRecord, long rowIndex, Integer recordIndex) {
             this.row = rowOrRecord;
             this.rowIndex = rowIndex;
             this.recordIndex = recordIndex;
@@ -90,16 +85,16 @@ public class GetRowsCommand extends Command {
         @JsonProperty("rows")
         protected final List<WrappedRow> rows;
         @JsonProperty("filtered")
-        protected final int filtered;
+        protected final long filtered;
         @JsonProperty("total")
-        protected final int totalCount;
+        protected final long totalCount;
         @JsonProperty("start")
-        protected final int start;
+        protected final long start;
         @JsonProperty("limit")
         protected final int limit;
 
-        protected JsonResult(Mode mode, List<WrappedRow> rows, int filtered,
-                int totalCount, int start, int limit) {
+        protected JsonResult(Mode mode, List<WrappedRow> rows, long filtered,
+                long totalCount, long start, int limit) {
             this.mode = mode;
             this.rows = rows;
             this.filtered = filtered;
@@ -145,9 +140,26 @@ public class GetRowsCommand extends Command {
 
             Engine engine = getEngine(request, project);
             String callback = request.getParameter("callback");
+            GridState state = engine.getMatchingRows();
 
-            int start = Math.min(project.rows.size(), Math.max(0, getIntegerParameter(request, "start", 0)));
-            int limit = Math.min(project.rows.size() - start, Math.max(0, getIntegerParameter(request, "limit", 20)));
+            long start = getLongParameter(request, "start", 0);
+            int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
+            long totalCount = project.getCurrentGridState().size();
+
+            List<Tuple2<Long, Row>> rows = state.getGrid().filter(new Function<Tuple2<Long, Row>, Boolean>() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public Boolean call(Tuple2<Long, Row> v1) throws Exception {
+                    return v1._1() >= start;
+                }
+
+            }).take(limit);
+
+            List<WrappedRow> wrappedRows = rows.stream()
+                    .map(tuple -> new WrappedRow(tuple._2(), tuple._1(), null))
+                    .collect(Collectors.toList());
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
@@ -158,49 +170,21 @@ public class GetRowsCommand extends Command {
                 writer.write("(");
             }
 
-            RowWritingVisitor rwv = new RowWritingVisitor(start, limit);
+            // TODO add support for sorting
+            /*
+             * SortingConfig sortingConfig = null; try { String sortingJson = request.getParameter("sorting"); if
+             * (sortingJson != null) { sortingConfig = SortingConfig.reconstruct(sortingJson); } } catch (IOException e)
+             * { }
+             */
 
-            SortingConfig sortingConfig = null;
-            try {
-                String sortingJson = request.getParameter("sorting");
-                if (sortingJson != null) {
-                    sortingConfig = SortingConfig.reconstruct(sortingJson);
-                }
-            } catch (IOException e) {
-            }
+            if (engine.getMode() == Mode.RecordBased) {
+                throw new IllegalStateException("not implemented");
 
-            if (engine.getMode() == Mode.RowBased) {
-                FilteredRows filteredRows = engine.getAllFilteredRows();
-                RowVisitor visitor = rwv;
-
-                if (sortingConfig != null) {
-                    SortingRowVisitor srv = new SortingRowVisitor(visitor);
-
-                    srv.initializeFromConfig(project, sortingConfig);
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                }
-                filteredRows.accept(project, visitor);
-            } else {
-                FilteredRecords filteredRecords = engine.getFilteredRecords();
-                RecordVisitor visitor = rwv;
-
-                if (sortingConfig != null) {
-                    SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-
-                    srv.initializeFromConfig(project, sortingConfig);
-                    if (srv.hasCriteria()) {
-                        visitor = srv;
-                    }
-                }
-                filteredRecords.accept(project, visitor);
             }
 
             JsonResult result = new JsonResult(engine.getMode(),
-                    rwv.results, rwv.total,
-                    engine.getMode() == Mode.RowBased ? project.rows.size() : project.recordModel.getRecordCount(),
-                    start, limit);
+                    wrappedRows, state.size(),
+                    totalCount, start, limit);
 
             ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {
@@ -209,68 +193,10 @@ public class GetRowsCommand extends Command {
 
             // metadata refresh for row mode and record mode
             if (project.getMetadata() != null) {
-                project.getMetadata().setRowCount(project.rows.size());
+                project.getMetadata().setRowCount(totalCount);
             }
         } catch (Exception e) {
             respondException(response, e);
-        }
-    }
-
-    static protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
-
-        final int start;
-        final int limit;
-        public List<WrappedRow> results;
-
-        public int total;
-
-        public RowWritingVisitor(int start, int limit) {
-            this.start = start;
-            this.limit = limit;
-            this.results = new ArrayList<>();
-        }
-
-        @Override
-        public void start(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public void end(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            if (total >= start && total < start + limit) {
-                internalVisit(project, rowIndex, row);
-            }
-            total++;
-
-            return false;
-        }
-
-        @Override
-        public boolean visit(Project project, Record record) {
-            if (total >= start && total < start + limit) {
-                internalVisit(project, record);
-            }
-            total++;
-
-            return false;
-        }
-
-        public boolean internalVisit(Project project, int rowIndex, Row row) {
-            results.add(new WrappedRow(row, rowIndex, null));
-            return false;
-        }
-
-        protected boolean internalVisit(Project project, Record record) {
-            for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-                Row row = project.rows.get(r);
-                results.add(new WrappedRow(row, r, r == record.fromRowIndex ? record.recordIndex : null));
-            }
-            return false;
         }
     }
 }

@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -143,11 +144,11 @@ public abstract class Command {
             throw new IllegalArgumentException("parameter 'project' should not be null");
         }
 
-        Engine engine = new Engine(project);
         EngineConfig c = getEngineConfig(request);
-        if (c != null) {
-            engine.initializeFromConfig(c);
+        if (c == null) {
+            c = new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased);
         }
+        Engine engine = new Engine(project.getHistory().getCurrentGridState(), c);
         return engine;
     }
 
@@ -214,6 +215,18 @@ public abstract class Command {
         return def;
     }
 
+    static protected long getLongParameter(HttpServletRequest request, String name, long def) {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        try {
+            return Long.parseLong(request.getParameter(name));
+        } catch (Exception e) {
+            // ignore
+        }
+        return def;
+    }
+
     /**
      * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request, and checking
      * that it is valid.
@@ -269,7 +282,7 @@ public abstract class Command {
             Project project,
             Process process) throws Exception {
 
-        HistoryEntry historyEntry = project.processManager.queueProcess(process);
+        HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
         if (historyEntry != null) {
             Writer w = response.getWriter();
             ParsingUtilities.defaultWriter.writeValue(w, new HistoryEntryResponse(historyEntry));
