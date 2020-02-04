@@ -73,7 +73,7 @@ public class ApplyOperationsCommand extends Command {
             	}
             }
 
-            if (project.processManager.hasPending()) {
+            if (project.getProcessManager().hasPending()) {
                 respond(response, "{ \"code\" : \"pending\" }");
             } else {
                 respond(response, "{ \"code\" : \"ok\" }");
@@ -87,9 +87,9 @@ public class ApplyOperationsCommand extends Command {
         AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
         if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
-                Process process = operation.createProcess(project, new Properties());
+                Process process = operation.createProcess(project.getHistory());
                 
-                project.processManager.queueProcess(process);
+                project.getProcessManager().queueProcess(process);
             } catch (Exception e) {
                 e.printStackTrace();
             }
