@@ -104,11 +104,12 @@ public class RefineServlet extends Butterfly {
     @Override
     public void init() throws ServletException {
         super.init();
-
+        
+        Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
         s_context = new JavaSparkContext(
-        		new SparkConf().setAppName("SparkBasedTest").setMaster("local"));
+        		new SparkConf().setAppName("OpenRefine").setMaster("local"));
         VERSION = getInitParameter("refine.version");
-        REVISION = getInitParameter("refine.revision");
+        REVISION = getInitParameter("refine.revision");    
         
         if (VERSION.equals("$VERSION")) {
             VERSION = RefineModel.VERSION;
@@ -336,5 +337,9 @@ public class RefineServlet extends Butterfly {
 
     static public String getUserAgent() {
         return "OpenRefine/" + FULL_VERSION;
+    }
+    
+    static public JavaSparkContext getSparkContext() {
+    	return s_context;
     }
 }
