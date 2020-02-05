@@ -58,7 +58,7 @@ public class ImportingJob  {
     
     private ObjectNode config;
     
-    public Project project;
+    private Project project;
     public ProjectMetadata metadata;
     
     public long lastTouched;
@@ -173,7 +173,7 @@ public class ImportingJob  {
         lastTouched = System.currentTimeMillis();
     }
     
-    public void prepareNewProject() {
+    public void setProject(Project newProject) {
         if (project != null) {
             project.dispose();
         }
@@ -182,8 +182,12 @@ public class ImportingJob  {
         // or have some other catastrophe on import
         ProjectManager.singleton.save(true);
         
-        project = new Project();
+        project = newProject;
         metadata = new ProjectMetadata();
+    }
+    
+    public Project getProject() {
+    	return project;
     }
     
     public void dispose() {
