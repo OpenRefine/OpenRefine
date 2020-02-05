@@ -81,6 +81,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineServlet;
 import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.importing.UrlRewriter.Result;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -956,20 +957,19 @@ public class ImportingUtilities {
             return;
         }
         
-        job.prepareNewProject();
-        
-        record.parser.parse(
-            job.project,
-            job.metadata,
-            job,
-            job.getSelectedFileRecords(),
-            format,
-            100,
-            optionObj,
-            exceptions
-        );
-        
-        job.project.update(); // update all internal models, indexes, caches, etc.
+        try {
+	        GridState state = record.parser.parse(
+	            job.metadata,
+	            job,
+	            job.getSelectedFileRecords(),
+	            format,
+	            100,
+	            optionObj
+	        );
+	        job.setProject(new Project(state));
+        } catch(Exception e) {
+        	exceptions.add(e);
+        }
     }
     
     static public long createProject(
@@ -986,20 +986,20 @@ public class ImportingUtilities {
         
         job.setState("creating-project");
         
-        final Project project = new Project();
+        long projectId = Project.generateID();
         if (synchronous) {
             createProjectSynchronously(
-                job, format, optionObj, exceptions, record, project);
+                job, format, optionObj, exceptions, record, projectId);
         } else {
             new Thread() {
                 @Override
                 public void run() {
                     createProjectSynchronously(
-                        job, format, optionObj, exceptions, record, project);
+                        job, format, optionObj, exceptions, record, projectId);
                 }
             }.start();
         }
-        return project.id;
+        return projectId;
     }
     
     static private void createProjectSynchronously(
@@ -1008,27 +1008,31 @@ public class ImportingUtilities {
         final ObjectNode optionObj,
         final List<Exception> exceptions,
         final Format record,
-        final Project project
+        final long projectId
     ) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
-        record.parser.parse(
-            project,
-            pm,
-            job,
-            job.getSelectedFileRecords(),
-            format,
-            -1,
-            optionObj,
-            exceptions
-        );
+        Project newProject = null;
+        try {
+	        GridState state = record.parser.parse(
+	            pm,
+	            job,
+	            job.getSelectedFileRecords(),
+	            format,
+	            -1,
+	            optionObj
+	        );
+	        newProject = new Project(projectId, state);
+			job.setProject(newProject);
+        } catch(Exception e) {
+        	exceptions.add(e);
+        }
         
         if (!job.canceled) {
             if (exceptions.size() == 0) {
-                project.update(); // update all internal models, indexes, caches, etc.
                 
-                ProjectManager.singleton.registerProject(project, pm);
+                ProjectManager.singleton.registerProject(newProject, pm);
                 
-                job.setProjectID(project.id);
+                job.setProjectID(newProject.getId());
                 job.setState("created-project");
             } else {
                 job.setError(exceptions);
