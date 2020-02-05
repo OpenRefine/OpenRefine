@@ -38,18 +38,23 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
 
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.util.TrackingInputStream;
 
@@ -125,40 +130,7 @@ public class ImporterUtilities {
         }
     }
 
-    static public ColumnMetadata getOrAllocateColumn(Project project, List<String> currentFileColumnNames,
-            int index, boolean hasOurOwnColumnNames) {
-        if (index < currentFileColumnNames.size()) {
-            return project.columnModel.getColumnByName(currentFileColumnNames.get(index));
-        } else if (index >= currentFileColumnNames.size()) {
-            String prefix = "Column ";
-            int i = index + 1;
-            while (true) {
-                String columnName = prefix + i;
-                ColumnMetadata column = project.columnModel.getColumnByName(columnName);
-                if (column != null) {
-                    if (hasOurOwnColumnNames) {
-                        // Already taken name
-                        i++;
-                    } else {
-                        return column;
-                    }
-                } else {
-                    column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), columnName);
-                    try {
-                        project.columnModel.addColumn(project.columnModel.getColumns().size(), column, false);
-                    } catch (ModelException e) {
-                        // Ignore: shouldn't get in here since we just checked for duplicate names.
-                    }
-                    currentFileColumnNames.add(columnName);
-                    return column;
-                }
-            }
-        } else {
-            throw new RuntimeException("Unexpected code path");
-        }
-    }
-
-    static public void setupColumns(Project project, List<String> columnNames) {
+    static public ColumnModel setupColumns(List<String> columnNames) {
         Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < columnNames.size(); c++) {
             String cell = columnNames.get(c).trim();
@@ -179,15 +151,10 @@ public class ImporterUtilities {
             }
 
             columnNames.set(c, cell);
-            if (project.columnModel.getColumnByName(cell) == null) {
-                ColumnMetadata column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), cell);
-                try {
-                    project.columnModel.addColumn(project.columnModel.getColumns().size(), column, false);
-                } catch (ModelException e) {
-                    // Ignore: shouldn't get in here since we just checked for duplicate names.
-                }
-            }
         }
+
+        return new ColumnModel(columnNames.stream().map(name -> new ColumnMetadata(name)).collect(Collectors.toList()));
+
     }
 
     static public interface MultiFileReadingProgress {
@@ -250,5 +217,54 @@ public class ImporterUtilities {
                 return l;
             }
         };
+    }
+
+    /**
+     * Adds columns to a column model if it misses one column to store a cell at a given index.
+     * 
+     * @param columnModel
+     * @param c
+     * @return
+     */
+    public static ColumnModel expandColumnModelIfNeeded(ColumnModel columnModel, int c) {
+        if (c < columnModel.getColumns().size()) {
+            return columnModel;
+        } else if (c == columnModel.getColumns().size()) {
+            List<ColumnMetadata> newColumns = new LinkedList<>(columnModel.getColumns());
+            String prefix = "Column ";
+            int i = c + 1;
+            while (true) {
+                String columnName = prefix + i;
+                ColumnMetadata column = columnModel.getColumnByName(columnName);
+                if (column != null) {
+                    i++;
+                } else {
+                    column = new ColumnMetadata(columnName);
+                    newColumns.add(column);
+                    return columnModel;
+                }
+            }
+        } else {
+            throw new IllegalStateException(String.format("Column model has too few columns to store cell at index %d", c));
+        }
+    }
+
+    /**
+     * Turns an array of rows into a Spark RDD suitable for a GridState.
+     * 
+     * @param context
+     *            the Spark context used to created the RDD
+     * @param cells
+     *            the list of rows to turn into a RDD
+     * @return a RDD indexed by row ids
+     */
+    public static JavaPairRDD<Long, Row> createRowRDD(JavaSparkContext context, List<Row> rows) {
+        List<Tuple2<Long, Row>> rdd = new ArrayList<>(rows.size());
+        for (int i = 0; i != rows.size(); i++) {
+            rdd.add(new Tuple2<Long, Row>((long) i, rows.get(i)));
+        }
+        return context.parallelize(rdd)
+                .keyBy(t -> (Long) t._1)
+                .mapValues(t -> t._2);
     }
 }

@@ -178,8 +178,6 @@ public class DefaultImportingController implements ImportingController {
         try {
             writer.writeStartObject();
             if (exceptions.size() == 0) {
-                job.project.update(); // update all internal models, indexes, caches, etc.
-
                 writer.writeStringField("status", "ok");
             } else {
                 writer.writeStringField("status", "error");

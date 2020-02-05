@@ -52,17 +52,17 @@ import java.util.Map;
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.spark.api.java.JavaSparkContext;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 
 public class SeparatorBasedImporter extends TabularImportingParserBase {
 
-    public SeparatorBasedImporter() {
-        super(false);
+    public SeparatorBasedImporter(JavaSparkContext context) {
+        super(false, context);
     }
 
     @Override
@@ -81,15 +81,11 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     }
 
     @Override
-    public void parseOneFile(
-            Project project,
+    public TableDataReader createTableDataReader(
             ProjectMetadata metadata,
             ImportingJob job,
-            String fileSource,
             Reader reader,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+            ObjectNode options) {
         String sep = JSONUtilities.getString(options, "separator", "\\t");
         if (sep == null || "".equals(sep)) {
             sep = "\\t";
@@ -156,8 +152,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             }
         };
 
-        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
-        super.parseOneFile(project, metadata, job, fileSource, lnReader, limit, options, exceptions);
+        return dataReader;
     }
 
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)

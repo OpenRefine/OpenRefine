@@ -38,7 +38,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 
 public interface ImportingParser {
 
@@ -67,17 +67,12 @@ public interface ImportingParser {
      *            maximum number of rows to create
      * @param options
      *            custom options put together by the UI corresponding to this parser, which the parser should understand
-     * @param exceptions
-     *            list of exceptions thrown during the parse. Expects an empty List as input to which it can append new
-     *            Exceptions thrown
      */
-    public void parse(
-            Project project,
+    public GridState parse(
             ProjectMetadata metadata,
             ImportingJob job,
             List<ObjectNode> fileRecords,
             String format,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions);
+            long limit,
+            ObjectNode options) throws Exception;
 }

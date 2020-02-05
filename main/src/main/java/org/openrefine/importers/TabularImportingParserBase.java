@@ -37,16 +37,20 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 
@@ -77,23 +81,20 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
      *            true if parser takes an InputStream, false if it takes a Reader.
      * 
      */
-    protected TabularImportingParserBase(boolean useInputStream) {
-        super(useInputStream);
+    protected TabularImportingParserBase(boolean useInputStream, JavaSparkContext sparkContext) {
+        super(useInputStream, sparkContext);
     }
 
-    static public void readTable(
-            Project project,
-            ProjectMetadata metadata,
-            ImportingJob job,
-            TableDataReader reader,
-            String fileSource,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+    protected abstract TableDataReader createTableDataReader(ProjectMetadata metadata, ImportingJob job, Reader reader,
+            ObjectNode options);
+
+    @Override
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
+            Reader reader, long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
         int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);
-        int limit2 = JSONUtilities.getInt(options, "limit", -1);
+        long limit2 = JSONUtilities.getLong(options, "limit", -1);
         if (limit > 0) {
             if (limit2 > 0) {
                 limit2 = Math.min(limit, limit2);
@@ -106,105 +107,93 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
-        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
-
-        int filenameColumnIndex = -1;
-        if (includeFileSources) {
-            filenameColumnIndex = addFilenameColumn(project);
-        }
 
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
 
-        List<Object> cells = null;
+        List<Object> cellValues = null;
         int rowsWithData = 0;
 
-        try {
-            while (!job.canceled && (cells = reader.getNextRowOfCells()) != null) {
-                if (ignoreLines > 0) {
-                    ignoreLines--;
-                    continue;
+        TableDataReader dataReader = createTableDataReader(metadata, job, reader, options);
+
+        List<Row> rows = new LinkedList<>();
+        ColumnModel columnModel = new ColumnModel(Collections.emptyList());
+        while (!job.canceled && (cellValues = dataReader.getNextRowOfCells()) != null) {
+            if (ignoreLines > 0) {
+                ignoreLines--;
+                continue;
+            }
+
+            if (headerLines > 0) { // header lines
+                for (int c = 0; c < cellValues.size(); c++) {
+                    Object cell = cellValues.get(c);
+
+                    String columnName;
+                    if (cell == null) {
+                        // add column even if cell is blank
+                        columnName = "";
+                    } else if (cell instanceof Cell) {
+                        columnName = ((Cell) cell).value.toString().trim();
+                    } else {
+                        columnName = cell.toString().trim();
+                    }
+
+                    ImporterUtilities.appendColumnName(columnNames, c, columnName);
                 }
 
-                if (headerLines > 0) { // header lines
-                    for (int c = 0; c < cells.size(); c++) {
-                        Object cell = cells.get(c);
+                headerLines--;
+                if (headerLines == 0) {
+                    columnModel = ImporterUtilities.setupColumns(columnNames);
+                }
+            } else { // data lines
+                List<Cell> cells = new ArrayList<>(cellValues.size());
 
-                        String columnName;
-                        if (cell == null) {
-                            // add column even if cell is blank
-                            columnName = "";
-                        } else if (cell instanceof Cell) {
-                            columnName = ((Cell) cell).value.toString().trim();
-                        } else {
-                            columnName = cell.toString().trim();
-                        }
+                if (storeBlankRows) {
+                    rowsWithData++;
+                } else if (cellValues.size() > 0) {
+                    rowsWithData++;
+                }
 
-                        ImporterUtilities.appendColumnName(columnNames, c, columnName);
-                    }
+                if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
+                    boolean rowHasData = false;
+                    for (int c = 0; c < cellValues.size(); c++) {
+                        columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, c);
 
-                    headerLines--;
-                    if (headerLines == 0) {
-                        ImporterUtilities.setupColumns(project, columnNames);
-                    }
-                } else { // data lines
-                    Row row = new Row(columnNames.size());
-
-                    if (storeBlankRows) {
-                        rowsWithData++;
-                    } else if (cells.size() > 0) {
-                        rowsWithData++;
-                    }
-
-                    if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
-                        boolean rowHasData = false;
-                        for (int c = 0; c < cells.size(); c++) {
-                            ColumnMetadata column = ImporterUtilities.getOrAllocateColumn(
-                                    project, columnNames, c, hasOurOwnColumnNames);
-
-                            Object value = cells.get(c);
-                            if (value instanceof Cell) {
-                                row.setCell(column.getCellIndex(), (Cell) value);
-                                rowHasData = true;
-                            } else if (ExpressionUtils.isNonBlankData(value)) {
-                                Serializable storedValue;
-                                if (value instanceof String) {
-                                    storedValue = guessCellValueTypes ? ImporterUtilities.parseCellValue((String) value) : (String) value;
-                                } else {
-                                    storedValue = ExpressionUtils.wrapStorable(value);
-                                }
-
-                                row.setCell(column.getCellIndex(), new Cell(storedValue, null));
-                                rowHasData = true;
-                            } else if (!storeBlankCellsAsNulls) {
-                                row.setCell(column.getCellIndex(), new Cell("", null));
+                        Object value = cellValues.get(c);
+                        if (value instanceof Cell) {
+                            cells.set(c, (Cell) value);
+                            rowHasData = true;
+                        } else if (ExpressionUtils.isNonBlankData(value)) {
+                            Serializable storedValue;
+                            if (value instanceof String) {
+                                storedValue = guessCellValueTypes ? ImporterUtilities.parseCellValue((String) value) : (String) value;
                             } else {
-                                row.setCell(column.getCellIndex(), null);
+                                storedValue = ExpressionUtils.wrapStorable(value);
                             }
-                        }
 
-                        if (rowHasData || storeBlankRows) {
-                            if (includeFileSources && filenameColumnIndex >= 0) {
-                                row.setCell(
-                                        filenameColumnIndex,
-                                        new Cell(fileSource, null));
-                            }
-                            project.rows.add(row);
+                            cells.set(c, new Cell(storedValue, null));
+                            rowHasData = true;
+                        } else if (!storeBlankCellsAsNulls) {
+                            cells.set(c, new Cell("", null));
+                        } else {
+                            cells.set(c, null);
                         }
+                    }
 
-                        if (limit2 > 0 && project.rows.size() >= limit2) {
-                            break;
-                        }
+                    if (rowHasData || storeBlankRows) {
+                        Row row = new Row(cells);
+                        rows.add(row);
+                    }
+
+                    if (limit2 > 0 && rows.size() >= limit2) {
+                        break;
                     }
                 }
             }
-        } catch (IOException e) {
-            exceptions.add(e);
         }
+
+        JavaPairRDD<Long, Row> rdd = ImporterUtilities.createRowRDD(sparkContext, rows);
+        return new GridState(columnModel, rdd, Collections.emptyMap());
     }
 
-    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            Reader dataReader, int limit, ObjectNode options, List<Exception> exceptions) {
-        super.parseOneFile(project, metadata, job, fileSource, dataReader, limit, options, exceptions);
-    }
 }

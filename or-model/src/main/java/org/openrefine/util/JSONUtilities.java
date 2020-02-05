@@ -69,6 +69,14 @@ public class JSONUtilities {
         }
     }
 
+    static public long getLong(JsonNode obj, String key, long def) {
+        if (obj.has(key)) {
+            return obj.get(key).asLong(def);
+        } else {
+            return def;
+        }
+    }
+
     static public boolean getBoolean(JsonNode obj, String key, boolean def) {
         if (obj.has(key)) {
             return obj.get(key).asBoolean(def);

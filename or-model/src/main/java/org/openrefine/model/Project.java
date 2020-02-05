@@ -70,8 +70,19 @@ public class Project {
      *            the initial state of the project.
      */
     public Project(GridState initialState) {
-        id = generateID();
-        history = new History(initialState);
+        this(generateID(), new History(initialState));
+    }
+
+    /**
+     * Creates a new project from an initial grid and a project id.
+     * 
+     * @param projectId
+     *            the project identifier
+     * @param initialState
+     *            the initial state of the project
+     */
+    public Project(long projectId, GridState initialState) {
+        this(projectId, new History(initialState));
     }
 
     /**

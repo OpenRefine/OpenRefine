@@ -34,12 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.importers;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,24 +50,27 @@ import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
+/**
+ * Importer which handles the import of multiple files as a single one.
+ */
 abstract public class ImportingParserBase implements ImportingParser {
 
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
     final protected boolean useInputStream;
+    final protected JavaSparkContext sparkContext;
 
     /**
      * @param useInputStream
      *            true if parser takes an InputStream, false if it takes a Reader.
      */
-    protected ImportingParserBase(boolean useInputStream) {
+    protected ImportingParserBase(boolean useInputStream, JavaSparkContext context) {
         this.useInputStream = useInputStream;
+        this.sparkContext = context;
     }
 
     @Override
@@ -78,36 +83,59 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     @Override
-    public void parse(Project project, ProjectMetadata metadata,
+    public GridState parse(ProjectMetadata metadata,
             final ImportingJob job, List<ObjectNode> fileRecords, String format,
-            int limit, ObjectNode options, List<Exception> exceptions) {
+            long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
+        List<GridState> gridStates = new ArrayList<>(fileRecords.size());
+
+        if (fileRecords.isEmpty()) {
+            throw new IllegalArgumentException("No file provided");
+        }
+
+        long totalRows = 0;
         for (ObjectNode fileRecord : fileRecords) {
             if (job.canceled) {
                 break;
             }
 
-            try {
-                parseOneFile(project, metadata, job, fileRecord, limit, options, exceptions, progress);
-            } catch (IOException e) {
-                exceptions.add(e);
-            }
+            long fileLimit = limit < 0 ? limit : Math.max(limit - totalRows, 1L);
+            GridState gridState = parseOneFile(metadata, job, fileRecord, fileLimit, options, progress);
+            gridStates.add(gridState);
+            totalRows += gridState.size();
 
-            if (limit > 0 && project.rows.size() >= limit) {
+            if (limit > 0 && totalRows >= limit) {
                 break;
             }
         }
+        return mergeGridStates(gridStates);
     }
 
-    public void parseOneFile(
-            Project project,
+    /**
+     * Merges grids of individual files into one single grid.
+     * 
+     * @param gridStates
+     *            a list of grids returned by the importers
+     * @return
+     */
+    private GridState mergeGridStates(List<GridState> gridStates) {
+        if (gridStates.size() == 1) {
+            return gridStates.get(0);
+        } else {
+            // TODO add back multiple file support
+            // - merge the column models with a "File" column at the start, containing the filename
+            // - do the union of grid states
+            throw new IllegalStateException("Support for multiple files not implemented");
+        }
+    }
+
+    public GridState parseOneFile(
             ProjectMetadata metadata,
             ImportingJob job,
             ObjectNode fileRecord,
-            int limit,
+            long limit,
             ObjectNode options,
-            List<Exception> exceptions,
-            final MultiFileReadingProgress progress) throws IOException {
+            final MultiFileReadingProgress progress) throws Exception {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
 
@@ -115,8 +143,9 @@ abstract public class ImportingParserBase implements ImportingParser {
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
+                pushImportingOptions(metadata, fileSource, options);
                 if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+                    return parseOneFile(metadata, job, fileSource, inputStream, limit, options);
                 } else {
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
@@ -126,7 +155,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                     Reader reader = ImportingUtilities.getReaderFromStream(
                             inputStream, fileRecord, commonEncoding);
 
-                    parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+                    return parseOneFile(metadata, job, fileSource, reader, limit, options);
                 }
             } finally {
                 inputStream.close();
@@ -136,52 +165,54 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
 
-    public void parseOneFile(
-            Project project,
+    /**
+     * Parses one file, read from a {@class Reader} object, into a GridState.
+     * 
+     * @param metadata
+     * @param job
+     * @param fileSource
+     * @param reader
+     * @param limit
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public GridState parseOneFile(
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
             Reader reader,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
-        pushImportingOptions(metadata, fileSource, options);
+            long limit,
+            ObjectNode options) throws Exception {
+        throw new NotImplementedException("Importer does not support reading from a Reader");
+    }
+
+    /**
+     * Parses one file, read from an {@class InputStream} object, into a GridState.
+     * 
+     * @param metadata
+     * @param job
+     * @param fileSource
+     * @param inputStream
+     * @param limit
+     * @param options
+     * @return
+     * @throws Exception
+     */
+    public GridState parseOneFile(
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream inputStream,
+            long limit,
+            ObjectNode options) throws Exception {
+        throw new NotImplementedException("Importer does not support reading from an InputStream");
     }
 
     private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
         options.put("fileSource", fileSource);
         // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
-    }
-
-    public void parseOneFile(
-            Project project,
-            ProjectMetadata metadata,
-            ImportingJob job,
-            String fileSource,
-            InputStream inputStream,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
-        pushImportingOptions(metadata, fileSource, options);
-    }
-
-    protected static int addFilenameColumn(Project project) {
-        String fileNameColumnName = "File";
-        if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
-            try {
-                project.columnModel.addColumn(
-                        0, new ColumnMetadata(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
-
-                return 0;
-            } catch (ModelException e) {
-                // Shouldn't happen: We already checked for duplicate name.
-                logger.error("ModelException adding Filename column", e);
-            }
-            return -1;
-        } else {
-            return 0;
-        }
     }
 
 }
