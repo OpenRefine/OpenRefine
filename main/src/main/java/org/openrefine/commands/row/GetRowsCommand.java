@@ -46,7 +46,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import org.apache.spark.api.java.function.Function;
 import scala.Tuple2;
 
 import org.openrefine.browsing.Engine;
@@ -100,7 +99,7 @@ public class GetRowsCommand extends Command {
             this.filtered = filtered;
             this.totalCount = totalCount;
             this.start = start;
-            this.limit = limit;
+            this.limit = limit > filtered ? (int) filtered : limit;
         }
     }
 
@@ -131,7 +130,7 @@ public class GetRowsCommand extends Command {
                 long jobID = Long.parseLong(importingJobID);
                 ImportingJob job = ImportingManager.getJob(jobID);
                 if (job != null) {
-                    project = job.project;
+                    project = job.getProject();
                 }
             }
             if (project == null) {
@@ -146,16 +145,7 @@ public class GetRowsCommand extends Command {
             int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
             long totalCount = project.getCurrentGridState().size();
 
-            List<Tuple2<Long, Row>> rows = state.getGrid().filter(new Function<Tuple2<Long, Row>, Boolean>() {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                    return v1._1() >= start;
-                }
-
-            }).take(limit);
+            List<Tuple2<Long, Row>> rows = state.getRows(start, limit);
 
             List<WrappedRow> wrappedRows = rows.stream()
                     .map(tuple -> new WrappedRow(tuple._2(), tuple._1(), null))
@@ -182,8 +172,9 @@ public class GetRowsCommand extends Command {
 
             }
 
+            long filtered = state.size();
             JsonResult result = new JsonResult(engine.getMode(),
-                    wrappedRows, state.size(),
+                    wrappedRows, filtered,
                     totalCount, start, limit);
 
             ParsingUtilities.defaultWriter.writeValue(writer, result);

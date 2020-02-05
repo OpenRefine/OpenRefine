@@ -46,9 +46,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.commands.Command;
 import org.openrefine.history.Change;
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
@@ -91,7 +93,7 @@ public class EditOneCellCommand extends Command {
 
             Project project = getProject(request);
 
-            int rowIndex = Integer.parseInt(request.getParameter("row"));
+            long rowIndex = Long.parseLong(request.getParameter("row"));
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
 
             String type = request.getParameter("type");
@@ -113,13 +115,13 @@ public class EditOneCellCommand extends Command {
             }
 
             EditOneCellProcess process = new EditOneCellProcess(
-                    project,
+                    project.getHistory(),
                     "Edit single cell",
                     rowIndex,
                     cellIndex,
                     value);
 
-            HistoryEntry historyEntry = project.processManager.queueProcess(process);
+            HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
             if (historyEntry != null) {
                 /*
                  * If the operation has been done, return the new cell's data so the client side can update the cell's
@@ -136,18 +138,18 @@ public class EditOneCellCommand extends Command {
 
     protected static class EditOneCellProcess extends QuickHistoryEntryProcess {
 
-        final int rowIndex;
+        final long rowIndex;
         final int cellIndex;
         final Serializable value;
         Cell newCell;
 
         EditOneCellProcess(
-                Project project,
+                History history,
                 String briefDescription,
-                int rowIndex,
+                long rowIndex,
                 int cellIndex,
                 Serializable value) {
-            super(project, briefDescription);
+            super(history, briefDescription);
 
             this.rowIndex = rowIndex;
             this.cellIndex = cellIndex;
@@ -156,8 +158,9 @@ public class EditOneCellCommand extends Command {
 
         @Override
         protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
-            ColumnMetadata column = _project.columnModel.getColumnByCellIndex(cellIndex);
+            GridState state = _history.getCurrentGridState();
+            Cell cell = state.getRow(rowIndex).getCell(cellIndex);
+            ColumnMetadata column = state.getColumnModel().getColumns().get(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }
@@ -169,10 +172,10 @@ public class EditOneCellCommand extends Command {
             String description = "Edit single cell on row " + (rowIndex + 1) +
                     ", column " + column.getName();
 
-            Change change = new CellChange(rowIndex, cellIndex, cell, newCell);
+            Change change = new CellChange(rowIndex, cellIndex, newCell);
 
             return new HistoryEntry(
-                    historyEntryID, _project, description, null, change);
+                    historyEntryID, description, null, change);
         }
     }
 }

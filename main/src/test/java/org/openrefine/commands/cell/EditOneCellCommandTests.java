@@ -21,7 +21,9 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.cell.EditOneCellCommand;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.Row;
 import org.openrefine.util.TestUtils;
 
 public class EditOneCellCommandTests extends RefineTest {
@@ -54,7 +56,7 @@ public class EditOneCellCommandTests extends RefineTest {
 
     @Test
 	public void testEditOneCell() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+		when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
 		when(request.getParameter("row")).thenReturn("1");
 		when(request.getParameter("cell")).thenReturn("0");
 		when(request.getParameter("type")).thenReturn("string");
@@ -63,15 +65,18 @@ public class EditOneCellCommandTests extends RefineTest {
 		
 		command.doPost(request, response);
 		
-		assertEquals("a", project.rows.get(0).cells.get(0).value);
-		assertEquals("b", project.rows.get(0).cells.get(1).value);
-		assertEquals("e", project.rows.get(1).cells.get(0).value);
-		assertEquals("d", project.rows.get(1).cells.get(1).value);
+		GridState state = project.getCurrentGridState();
+		Row row0 = state.getRow(0);
+		assertEquals("a", row0.cells.get(0).value);
+		assertEquals("b", row0.cells.get(1).value);
+		Row row1 = state.getRow(1);
+		assertEquals("e", row1.cells.get(0).value);
+		assertEquals("d", row1.cells.get(1).value);
 	}
 
     @Test
 	public void testNumberParsing_parsableLong() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+		when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
 		when(request.getParameter("row")).thenReturn("1");
 		when(request.getParameter("cell")).thenReturn("0");
 		when(request.getParameter("type")).thenReturn("number");
@@ -80,16 +85,19 @@ public class EditOneCellCommandTests extends RefineTest {
 
 		command.doPost(request, response);
 
-		assertEquals("a", project.rows.get(0).cells.get(0).value);
-		assertEquals("b", project.rows.get(0).cells.get(1).value);
-		assertTrue(project.rows.get(1).cells.get(0).value instanceof Long);
-		assertEquals(new Long(12345), project.rows.get(1).cells.get(0).value);
-		assertEquals("d", project.rows.get(1).cells.get(1).value);
+		GridState state = project.getCurrentGridState();
+		Row row0 = state.getRow(0);
+		assertEquals("a", row0.cells.get(0).value);
+		assertEquals("b", row0.cells.get(1).value);
+		Row row1 = state.getRow(1);
+		assertTrue(row1.cells.get(0).value instanceof Long);
+		assertEquals(new Long(12345), row1.cells.get(0).value);
+		assertEquals("d", row1.cells.get(1).value);
 	}
 
     @Test
 	public void testNumberParsing_parsableDouble() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+		when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
 		when(request.getParameter("row")).thenReturn("1");
 		when(request.getParameter("cell")).thenReturn("0");
 		when(request.getParameter("type")).thenReturn("number");
@@ -98,16 +106,19 @@ public class EditOneCellCommandTests extends RefineTest {
 
 		command.doPost(request, response);
 
-		assertEquals("a", project.rows.get(0).cells.get(0).value);
-		assertEquals("b", project.rows.get(0).cells.get(1).value);
-		assertTrue(project.rows.get(1).cells.get(0).value instanceof Double);
-		assertEquals(12345.123, project.rows.get(1).cells.get(0).value);
-		assertEquals("d", project.rows.get(1).cells.get(1).value);
+		GridState state = project.getCurrentGridState();
+		Row row0 = state.getRow(0);
+		assertEquals("a", row0.cells.get(0).value);
+		assertEquals("b", row0.cells.get(1).value);
+		Row row1 = state.getRow(1);
+		assertTrue(row1.cells.get(0).value instanceof Double);
+		assertEquals(12345.123, row1.cells.get(0).value);
+		assertEquals("d", row1.cells.get(1).value);
 	}
 
     @Test
 	public void testMissingCSRFToken() throws ServletException, IOException {
-		when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+		when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
 		when(request.getParameter("row")).thenReturn("1");
 		when(request.getParameter("cell")).thenReturn("0");
 		when(request.getParameter("type")).thenReturn("string");
@@ -115,7 +126,7 @@ public class EditOneCellCommandTests extends RefineTest {
 		
 		command.doPost(request, response);
 		
-		assertEquals("c", project.rows.get(1).cells.get(0).value);
+		assertEquals("c", project.getCurrentGridState().getRow(1).cells.get(0).value);
 		TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
 	}
 }

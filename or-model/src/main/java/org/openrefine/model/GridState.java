@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
 import scala.Tuple2;
 
 import org.openrefine.overlay.OverlayModel;
@@ -171,6 +172,20 @@ public class GridState {
     }
 
     /**
+     * Returns a list of rows, starting from a given index and defined by a maximum size. This is fetched in one Spark
+     * job.
+     * 
+     * @param start
+     *            the first row id to fetch (inclusive)
+     * @param limit
+     *            the maximum number of rows to fetch
+     * @return the list of rows with their ids (if any)
+     */
+    public List<Tuple2<Long, Row>> getRows(long start, int limit) {
+        return grid.filter(takeRows(start)).take(limit);
+    }
+
+    /**
      * @return the list of all columns in this table, in order.
      */
     @JsonIgnore
@@ -258,4 +273,18 @@ public class GridState {
             next.contributeTo(builder);
         }
     }
+
+    private static Function<Tuple2<Long, Row>, Boolean> takeRows(long start) {
+        return new Function<Tuple2<Long, Row>, Boolean>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
+                return v1._1() >= start;
+            }
+
+        };
+    }
+
 }
