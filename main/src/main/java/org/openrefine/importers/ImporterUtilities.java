@@ -227,10 +227,11 @@ public class ImporterUtilities {
      * @return
      */
     public static ColumnModel expandColumnModelIfNeeded(ColumnModel columnModel, int c) {
-        if (c < columnModel.getColumns().size()) {
+        List<ColumnMetadata> columns = columnModel.getColumns();
+        if (c < columns.size()) {
             return columnModel;
-        } else if (c == columnModel.getColumns().size()) {
-            List<ColumnMetadata> newColumns = new LinkedList<>(columnModel.getColumns());
+        } else if (c == columns.size()) {
+            List<ColumnMetadata> newColumns = new LinkedList<>(columns);
             String prefix = "Column ";
             int i = c + 1;
             while (true) {
@@ -241,7 +242,7 @@ public class ImporterUtilities {
                 } else {
                     column = new ColumnMetadata(columnName);
                     newColumns.add(column);
-                    return columnModel;
+                    return new ColumnModel(newColumns);
                 }
             }
         } else {

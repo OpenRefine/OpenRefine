@@ -119,7 +119,12 @@ public class Row implements HasFields, Serializable {
      */
     public Cell getCell(int cellIndex) {
         if (cellIndex >= 0 && cellIndex < cells.size()) {
-            return cells.get(cellIndex);
+            Cell cell = cells.get(cellIndex);
+            if (cell != null && cell.value != null) {
+                return cell;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

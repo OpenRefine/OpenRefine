@@ -161,7 +161,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
                         Object value = cellValues.get(c);
                         if (value instanceof Cell) {
-                            cells.set(c, (Cell) value);
+                            cells.add((Cell) value);
                             rowHasData = true;
                         } else if (ExpressionUtils.isNonBlankData(value)) {
                             Serializable storedValue;
@@ -171,12 +171,12 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 storedValue = ExpressionUtils.wrapStorable(value);
                             }
 
-                            cells.set(c, new Cell(storedValue, null));
+                            cells.add(new Cell(storedValue, null));
                             rowHasData = true;
                         } else if (!storeBlankCellsAsNulls) {
-                            cells.set(c, new Cell("", null));
+                            cells.add(new Cell("", null));
                         } else {
-                            cells.set(c, null);
+                            cells.add(null);
                         }
                     }
 

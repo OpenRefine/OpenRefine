@@ -35,6 +35,7 @@ package org.openrefine.importers;
 
 import java.io.StringReader;
 
+import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -44,13 +45,14 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import org.openrefine.importers.SeparatorBasedImporter;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
 
-    @Override
     @BeforeTest
-    public void init() {
+    public void initLogger() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -64,7 +66,8 @@ public class TsvCsvImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        SUT = new SeparatorBasedImporter();
+        JavaSparkContext c = context();
+        SUT = new SeparatorBasedImporter(c);
     }
 
     @Override
@@ -75,287 +78,261 @@ public class TsvCsvImporterTests extends ImporterTest {
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readJustColumns(String sep) {
+    public void readJustColumns(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_CSV_1Header_1Row(String sep) {
+    public void readSimpleData_CSV_1Header_1Row(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_CSV_1Header_1Row_GuessValues(String sep) {
+    public void readSimpleData_CSV_1Header_1Row_GuessValues(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "data1" + inputSeparator + "234" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, true, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertTrue(project.rows.get(0).cells.get(1).value instanceof Long);
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, Long.parseLong("234"));
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 0, 0, 1, true, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertTrue(row0.getCell(1).value instanceof Long);
+        Assert.assertEquals(row0.getCell(1).value, Long.parseLong("234"));
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_0Header_1Row(String sep) {
+    public void readSimpleData_0Header_1Row(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 0, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "Column 1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "Column 2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "Column 3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 0, 0, 0, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "Column 1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "Column 2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "Column 3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readDoesNotTrimLeadingTrailingWhitespace(String sep) {
+    public void readDoesNotTrimLeadingTrailingWhitespace(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 0, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1 ");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, " 3.4 ");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3 ");
+        prepareOptions(sep, -1, 0, 0, 0, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, " data1 ");
+        Assert.assertEquals(row0.getCell(1).value, " 3.4 ");
+        Assert.assertEquals(row0.getCell(2).value, " data3 ");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readDoesNotTrimLeadingWhitespace(String sep) {
+    public void readDoesNotTrimLeadingWhitespace(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = " data1" + inputSeparator + " 12" + inputSeparator + " data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 0, true, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, 12L);
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
+        prepareOptions(sep, -1, 0, 0, 0, true, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, " data1");
+        Assert.assertEquals(row0.getCell(1).value, 12L);
+        Assert.assertEquals(row0.getCell(2).value, " data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readCanAddNull(String sep) {
+    public void readCanAddNull(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = " data1" + inputSeparator + inputSeparator + " data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 0, true, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1");
-        Assert.assertNull(project.rows.get(0).cells.get(1));
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
+        prepareOptions(sep, -1, 0, 0, 0, true, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, " data1");
+        Assert.assertNull(row0.getCell(1));
+        Assert.assertEquals(row0.getCell(2).value, " data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_2Header_1Row(String sep) {
+    public void readSimpleData_2Header_1Row(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "sub1" + inputSeparator + "sub2" + inputSeparator + "sub3\n" +
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 2, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1 sub1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2 sub2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3 sub3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 0, 0, 2, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2 sub2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3 sub3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_RowLongerThanHeader(String sep) {
+    public void readSimpleData_RowLongerThanHeader(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3" + inputSeparator + "data4" + inputSeparator + "data5"
                 + inputSeparator + "data6";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 6);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "Column 4");
-        Assert.assertEquals(project.columnModel.getColumns().get(4).getName(), "Column 5");
-        Assert.assertEquals(project.columnModel.getColumns().get(5).getName(), "Column 6");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 6);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "data4");
-        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "data5");
-        Assert.assertEquals(project.rows.get(0).cells.get(5).value, "data6");
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 6);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(3).getName(), "Column 4");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(4).getName(), "Column 5");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(5).getName(), "Column 6");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 6);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
+        Assert.assertEquals(row0.getCell(3).value, "data4");
+        Assert.assertEquals(row0.getCell(4).value, "data5");
+        Assert.assertEquals(row0.getCell(5).value, "data6");
     }
 
     @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readQuotedData(String sep) {
+    public void readQuotedData(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + inputSeparator + "data2";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To Be\" is often followed by \"or not To Be\"");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 2);
+        Assert.assertEquals(row0.getCell(0).value, "\"To Be\" is often followed by \"or not To Be\"");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readIgnoreFirstLine(String sep) {
+    public void readIgnoreFirstLine(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "ignore1\n" +
                 "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 0, 1, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 0, 1, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSkipFirstDataLine(String sep) {
+    public void readSkipFirstDataLine(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "skip1\n" +
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 1, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 1, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readIgnore3_Header2_Skip1(String sep) {
+    public void readIgnore3_Header2_Skip1(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "ignore1\n" +
@@ -366,25 +343,23 @@ public class TsvCsvImporterTests extends ImporterTest {
                 "skip1\n" +
                 "data1" + inputSeparator + "data2" + inputSeparator + "data3";
 
-        try {
-            prepareOptions(sep, -1, 1, 3, 2, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1 sub1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2 sub2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3 sub3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 1, 3, 2, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2 sub2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3 sub3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readIgnore3_Header2_Skip2_limit2(String sep) {
+    public void readIgnore3_Header2_Skip2_limit2(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "ignore1\n" +
@@ -400,177 +375,160 @@ public class TsvCsvImporterTests extends ImporterTest {
                                                                                                  // purpose
                 "data-row3-cell1" + inputSeparator + "data-row3-cell2" + inputSeparator + "data-row1-cell3";
 
-        try {
-            prepareOptions(sep, 2, 2, 3, 2, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1 sub1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2 sub2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3 sub3");
-        Assert.assertEquals(project.rows.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data-row1-cell1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data-row1-cell2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data-row1-cell3");
-        Assert.assertEquals(project.rows.get(1).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(1).cells.get(0).value, "data-row2-cell1");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "data-row2-cell2");
-        Assert.assertNull(project.rows.get(1).cells.get(2));
+        prepareOptions(sep, 2, 2, 3, 2, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2 sub2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3 sub3");
+        Assert.assertEquals(state.size(), 2);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data-row1-cell1");
+        Assert.assertEquals(row0.getCell(1).value, "data-row1-cell2");
+        Assert.assertEquals(row0.getCell(2).value, "data-row1-cell3");
+        Row row1 = state.getRow(1);
+        Assert.assertEquals(row1.cells.size(), 3);
+        Assert.assertEquals(row1.getCell(0).value, "data-row2-cell1");
+        Assert.assertEquals(row1.getCell(1).value, "data-row2-cell2");
+        Assert.assertNull(row1.getCell(2));
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void ignoreQuotes(String sep) {
+    public void ignoreQuotes(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "data1" + inputSeparator + "data2\"" + inputSeparator + "data3" + inputSeparator + "data4";
-        try {
-            prepareOptions(sep, -1, 0, 0, 0, false, true);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+
+        prepareOptions(sep, -1, 0, 0, 0, false, true);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 4);
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 4);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readWithMultiLinedQuotedData(String sep) {
+    public void readWithMultiLinedQuotedData(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 2);
+        Assert.assertEquals(row0.getCell(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
     }
 
     @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readWithMultiLinedQuotedDataAndBlankLines(String sep) {
+    public void readWithMultiLinedQuotedDataAndBlankLines(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "A line with many \n\n\n\n\n empty lines");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
+        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 2);
+        Assert.assertEquals(row0.getCell(0).value, "A line with many \n\n\n\n\n empty lines");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void customQuoteCharacter(String sep) {
+    public void customQuoteCharacter(String sep) throws Exception {
         // create input to test with
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "'col1'" + inputSeparator + "'col2'" + inputSeparator + "'col3'\n" +
                 "'data1'" + inputSeparator + "'data2'" + inputSeparator + "'data3'";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false, "'");
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "'");
+        GridState state = parseOneFile(SUT, new StringReader(input));
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readCustomColumnNames(String sep) {
+    public void readCustomColumnNames(String sep) throws Exception {
         // create input
         String inputSeparator = sep == null ? "\t" : sep;
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
 
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]");
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "col1");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "col2");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]");
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.getCell(0).value, "data1");
+        Assert.assertEquals(row0.getCell(1).value, "data2");
+        Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
     // ---------------------read tests------------------------
     @Test
-    public void readCsvWithProperties() {
+    public void readCsvWithProperties() throws Exception {
         StringReader reader = new StringReader(SAMPLE_ROW);
 
         prepareOptions(",", -1, 0, 0, 0, true, true);
 
-        try {
-            parseOneFile(SUT, reader);
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
+        GridState state = parseOneFile(SUT, reader);
 
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals((String) project.rows.get(0).cells.get(0).value, "NDB_No");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "Shrt_Desc");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(2).value, "Water");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals((String) row0.getCell(0).value, "NDB_No");
+        Assert.assertEquals((String) row0.getCell(1).value, "Shrt_Desc");
+        Assert.assertEquals((String) row0.getCell(2).value, "Water");
     }
 
     @Test
-    public void readCsvWithPropertiesIgnoreQuotes() {
+    public void readCsvWithPropertiesIgnoreQuotes() throws Exception {
         String input = "data1,data2\",data3,data4";
         StringReader reader = new StringReader(input);
 
         prepareOptions(",", -1, 0, 0, 0, true, true);
 
-        try {
-            parseOneFile(SUT, reader);
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse", e);
-        }
+        GridState state = parseOneFile(SUT, reader);
 
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals((String) project.rows.get(0).cells.get(0).value, "data1");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(1).value, "data2");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(2).value, "data3");
-        Assert.assertEquals((String) project.rows.get(0).cells.get(3).value, "data4");
+        Assert.assertEquals(state.size(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 4);
+        Assert.assertEquals((String) row0.getCell(0).value, "data1");
+        Assert.assertEquals((String) row0.getCell(1).value, "data2");
+        Assert.assertEquals((String) row0.getCell(2).value, "data3");
+        Assert.assertEquals((String) row0.getCell(3).value, "data4");
     }
 
     // --helpers--
