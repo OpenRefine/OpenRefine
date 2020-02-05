@@ -36,6 +36,7 @@ package org.openrefine.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -161,6 +162,21 @@ public class Row implements HasFields, Serializable {
         return cells.stream()
                 .map(c -> c.value == null && c.recon == null ? null : c)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Overwrite a cell at a given index. As rows are immutable this returns a new row.
+     * 
+     * @param index
+     *            the position of the cell to overwrite
+     * @param cell
+     *            the cell value
+     * @return the modified row
+     */
+    public Row withCell(int index, Cell cell) {
+        List<Cell> newCells = new ArrayList<>(cells);
+        newCells.set(index, cell);
+        return new Row(newCells);
     }
 
     public void save(Writer writer, Properties options) {

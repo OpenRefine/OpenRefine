@@ -33,94 +33,59 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Properties;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.function.Function;
+import scala.Tuple2;
 
-import org.openrefine.ProjectManager;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
 
 public class CellChange implements Change {
 
-    final public int row;
+    @JsonProperty("rowId")
+    final public long row;
+    @JsonProperty("cellIndex")
     final public int cellIndex;
-    final public Cell oldCell;
+    @JsonProperty("newCell")
     final public Cell newCell;
 
-    public CellChange(int row, int cellIndex, Cell oldCell, Cell newCell) {
+    @JsonCreator
+    public CellChange(
+            @JsonProperty("rowId") long row,
+            @JsonProperty("cellIndex") int cellIndex,
+            @JsonProperty("newCell") Cell newCell) {
         this.row = row;
         this.cellIndex = cellIndex;
-        this.oldCell = oldCell;
         this.newCell = newCell;
     }
 
     @Override
-    public void apply(Project project) {
-        project.rows.get(row).setCell(cellIndex, newCell);
+    public GridState apply(GridState projectState) {
 
-        ColumnMetadata column = project.columnModel.getColumnByCellIndex(cellIndex);
-        ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
+        JavaPairRDD<Long, Row> newRDD = projectState.getGrid()
+                .map(mapFunction(cellIndex, row, newCell))
+                .keyBy(t -> (Long) t._1)
+                .mapValues(t -> t._2);
+        return new GridState(projectState.getColumnModel(), newRDD, projectState.getOverlayModels());
     }
 
-    @Override
-    public void revert(Project project) {
-        project.rows.get(row).setCell(cellIndex, oldCell);
+    static protected Function<Tuple2<Long, Row>, Tuple2<Long, Row>> mapFunction(int cellIndex, long row, Cell newCell) {
+        return new Function<Tuple2<Long, Row>, Tuple2<Long, Row>>() {
 
-        ColumnMetadata column = project.columnModel.getColumnByCellIndex(cellIndex);
-        ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
-    }
+            private static final long serialVersionUID = 1L;
 
-    @Override
-    public void save(Writer writer, Properties options) throws IOException {
-        writer.write("row=");
-        writer.write(Integer.toString(row));
-        writer.write('\n');
-        writer.write("cell=");
-        writer.write(Integer.toString(cellIndex));
-        writer.write('\n');
-
-        writer.write("old=");
-        if (oldCell != null) {
-            oldCell.save(writer); // one liner
-        }
-        writer.write('\n');
-
-        writer.write("new=");
-        if (newCell != null) {
-            newCell.save(writer); // one liner
-        }
-        writer.write('\n');
-
-        writer.write("/ec/\n"); // end of change marker
-    }
-
-    static public CellChange load(LineNumberReader reader) throws Exception {
-        int row = -1;
-        int cellIndex = -1;
-        Cell oldCell = null;
-        Cell newCell = null;
-
-        String line;
-        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
-            String value = line.substring(equal + 1);
-
-            if ("row".equals(field)) {
-                row = Integer.parseInt(value);
-            } else if ("cell".equals(field)) {
-                cellIndex = Integer.parseInt(value);
-            } else if ("new".equals(field) && value.length() > 0) {
-                newCell = Cell.loadStreaming(value);
-            } else if ("old".equals(field) && value.length() > 0) {
-                oldCell = Cell.loadStreaming(value);
+            @Override
+            public Tuple2<Long, Row> call(Tuple2<Long, Row> tuple) throws Exception {
+                if (tuple._1() == row) {
+                    return new Tuple2<Long, Row>(tuple._1(), tuple._2().withCell(cellIndex, newCell));
+                } else {
+                    return tuple;
+                }
             }
-        }
-
-        return new CellChange(row, cellIndex, oldCell, newCell);
+        };
     }
 }
