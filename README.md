@@ -1,7 +1,6 @@
 # OpenRefine
 
-[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.com/snac-cooperative/OpenRefine.svg?branch=capstone-testing)](https://travis-ci.com/snac-cooperative/OpenRefine) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=coveralls)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=coveralls) 
-
+[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.com/snac-cooperative/OpenRefine.svg?branch=capstone-testing)](https://travis-ci.com/snac-cooperative/OpenRefine)[![Coverage Status](https://coveralls.io/repos/github/snac-cooperative/OpenRefine/badge.svg?branch=capstone-master)](https://coveralls.io/github/snac-cooperative/OpenRefine?branch=capstone-master)
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
