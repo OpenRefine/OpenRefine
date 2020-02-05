@@ -65,7 +65,7 @@ public class GetRowsCommandTest extends RefineTest {
         		});
         command = new GetRowsCommand();
         writer = new StringWriter();
-        when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
+        when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
         try {
             when(response.getWriter()).thenReturn(new PrintWriter(writer));
         } catch (IOException e) {
