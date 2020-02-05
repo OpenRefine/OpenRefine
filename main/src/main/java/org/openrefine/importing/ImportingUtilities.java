@@ -958,6 +958,7 @@ public class ImportingUtilities {
         }
         
         try {
+        	job.metadata = createProjectMetadata(optionObj);
 	        GridState state = record.parser.parse(
 	            job.metadata,
 	            job,
