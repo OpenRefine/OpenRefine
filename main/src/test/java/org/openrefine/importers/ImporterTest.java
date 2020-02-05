@@ -45,6 +45,7 @@ import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importers.tree.XmlImportUtilities;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
@@ -53,7 +54,6 @@ import org.openrefine.RefineServletStub;
 
 public abstract class ImporterTest extends RefineTest {
     //mock dependencies
-    protected Project project;
     protected ProjectMetadata metadata;
     protected ImportingJob job;
     protected RefineServlet servlet;
@@ -65,7 +65,6 @@ public abstract class ImporterTest extends RefineTest {
 
         servlet = new RefineServletStub();
         ImportingManager.initialize(servlet);
-        project = new Project();
         metadata = new ProjectMetadata();
         ImportingJob spiedJob = ImportingManager.createJob();
         job = Mockito.spy(spiedJob);
@@ -75,7 +74,6 @@ public abstract class ImporterTest extends RefineTest {
     }
     
     public void tearDown(){
-        project = null;
         metadata = null;
         
         ImportingManager.disposeJob(job.id);
@@ -84,49 +82,40 @@ public abstract class ImporterTest extends RefineTest {
         options = null;
     }
     
-    protected void parseOneFile(ImportingParserBase parser, Reader reader) {
-        parser.parseOneFile(
-            project,
+    protected GridState parseOneFile(ImportingParserBase parser, Reader reader) throws Exception {
+        return parser.parseOneFile(
             metadata,
             job,
             "file-source",
             reader,
             -1,
-            options,
-            new ArrayList<Exception>()
+            options
         );
-        project.update();
     }
     
-    protected void parseOneFile(ImportingParserBase parser, InputStream inputStream) {
-        parser.parseOneFile(
-            project,
+    protected GridState parseOneFile(ImportingParserBase parser, InputStream inputStream) throws Exception {
+        return parser.parseOneFile(
             metadata,
             job,
             "file-source",
             inputStream,
             -1,
-            options,
-            new ArrayList<Exception>()
+            options
         );
-        project.update();
     }
     
     protected void parseOneFile(TreeImportingParserBase parser, Reader reader) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         parser.parseOneFile(
-            project,
             metadata,
             job,
             "file-source",
             reader,
             rootColumnGroup,
             -1,
-            options,
-            new ArrayList<Exception>()
+            options
         );
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        project.columnModel.update();
     }
     
     protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
@@ -139,15 +128,13 @@ public abstract class ImporterTest extends RefineTest {
         List<Exception> exceptions = new ArrayList<Exception>();
         
         parser.parseOneFile(
-            project,
             metadata,
             job,
             "file-source",
             inputStream,
             rootColumnGroup,
             -1,
-            options,
-            exceptions
+            options
         );
         postProcessProject(project, rootColumnGroup, exceptions);
     }
@@ -182,7 +169,6 @@ public abstract class ImporterTest extends RefineTest {
         Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
         
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        project.update();
         
         for (Exception e : exceptions) {
             e.printStackTrace();
