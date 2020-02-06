@@ -52,7 +52,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class History  {
 
     @JsonProperty("entries")
-    protected final List<HistoryEntry> _entries;
+    protected List<HistoryEntry>       _entries;
     @JsonProperty("position")
     protected int                      _position;
     
@@ -126,7 +126,7 @@ public class History  {
     public void addEntry(HistoryEntry entry) {
         // Any new change will clear all future entries.
         if(_position != _entries.size()) {
-            _entries.subList(0, _position);
+            _entries = _entries.subList(0, _position);
         }
         
         GridState newState = entry.getChange().apply(getCurrentGridState());
