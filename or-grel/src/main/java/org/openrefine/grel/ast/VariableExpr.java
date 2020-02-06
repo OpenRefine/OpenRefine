@@ -44,6 +44,7 @@ import org.openrefine.expr.Evaluable;
  */
 public class VariableExpr implements Evaluable {
 
+    private static final long serialVersionUID = -7662397690998054801L;
     final protected String _name;
 
     public VariableExpr(String name) {

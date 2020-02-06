@@ -44,6 +44,8 @@ import scala.Tuple2;
 import org.openrefine.SparkBasedTest;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetAggregator;
+import org.openrefine.browsing.facets.FacetAggregatorStub;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.FacetStateStub;
@@ -76,6 +78,7 @@ public class EngineTests extends SparkBasedTest {
         }
     };
 
+    @SuppressWarnings("unchecked")
     @BeforeMethod
     public void createInitialGrid() {
         JavaPairRDD<Long, Row> rdd = rowRDD(new Cell[][] {
@@ -93,10 +96,12 @@ public class EngineTests extends SparkBasedTest {
 
         when(facetConfigA.apply(Matchers.any(ColumnModel.class))).thenReturn(facetA);
         when(facetConfigAll.apply(Matchers.any(ColumnModel.class))).thenReturn(facetAll);
-        when(facetA.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0, filterA));
-        when(facetAll.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0, noFilter));
+        when(facetA.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
+        when(facetAll.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetA.getRowFilter()).thenReturn(filterA);
         when(facetAll.getRowFilter()).thenReturn(noFilter);
+        when((FacetAggregator<FacetStateStub>) facetA.getAggregator()).thenReturn(new FacetAggregatorStub(filterA));
+        when((FacetAggregator<FacetStateStub>) facetAll.getAggregator()).thenReturn(new FacetAggregatorStub(noFilter));
 
         List<FacetConfig> facetConfigs = Arrays.asList(
                 facetConfigA, facetConfigAll);
@@ -107,8 +112,8 @@ public class EngineTests extends SparkBasedTest {
     public void testComputeFacets() {
         List<FacetState> states = SUT.getFacetStates();
         Assert.assertEquals(states, Arrays.asList(
-                new FacetStateStub(1, 1, filterA),
-                new FacetStateStub(2, 0, noFilter)));
+                new FacetStateStub(1, 1),
+                new FacetStateStub(2, 0)));
     }
 
     @Test

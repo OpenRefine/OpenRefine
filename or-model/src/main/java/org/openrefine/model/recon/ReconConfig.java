@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model.recon;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -54,7 +55,9 @@ import org.openrefine.util.ParsingUtilities;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "mode")
 @JsonTypeIdResolver(ReconConfigResolver.class)
-abstract public class ReconConfig {
+abstract public class ReconConfig implements Serializable {
+
+    private static final long serialVersionUID = -6128741248135661216L;
 
     final static protected Logger LOGGER = LoggerFactory.getLogger("recon-config");
 

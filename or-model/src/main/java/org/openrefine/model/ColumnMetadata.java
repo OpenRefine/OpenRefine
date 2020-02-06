@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -49,7 +50,9 @@ import org.openrefine.util.ParsingUtilities;
  * fields.
  *
  */
-public class ColumnMetadata {
+public class ColumnMetadata implements Serializable {
+
+    private static final long serialVersionUID = 8531948502713567634L;
 
     final private String _originalName;
     final private String _name;

@@ -58,6 +58,12 @@ public interface Facet {
     public FacetState getInitialFacetState();
 
     /**
+     * An aggregator used to populate the facet state for this facet. It should accept the initial state returned by
+     * {@link getInitialFacetState}.
+     */
+    public FacetAggregator<?> getAggregator();
+
+    /**
      * Returns all the information necessary to render the facet in the UI (aggregation statistics and configuration
      * combined).
      */

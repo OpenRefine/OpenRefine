@@ -1,8 +1,6 @@
 
 package org.openrefine.browsing.util;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
@@ -11,7 +9,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.browsing.facets.Facet;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.WrappedRow;
@@ -20,10 +17,10 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 
-public class StringValuesFacetStateTests {
+public class StringValuesFacetAggregatorTests {
 
-    Facet facet;
     ColumnModel cm;
+    StringValuesFacetState initial;
     Evaluable dummy = new Evaluable() {
 
         @Override
@@ -33,30 +30,22 @@ public class StringValuesFacetStateTests {
         }
     };
 
-    StringValuesFacetState SUT;
+    StringValuesFacetAggregator SUT;
 
     @BeforeTest
     public void setUpState() {
-        facet = mock(Facet.class);
         cm = new ColumnModel(Arrays.asList(new ColumnMetadata("mycolumn")));
-        SUT = new StringValuesFacetState(facet, cm, dummy, 0);
-    }
-
-    @Test
-    public void testAccessors() {
-        Assert.assertEquals(SUT.getFacet(), facet);
-        Assert.assertTrue(SUT.getCounts().isEmpty());
-        Assert.assertEquals(SUT.getErrorCount(), 0L);
-        Assert.assertEquals(SUT.getBlankCount(), 0L);
+        SUT = new StringValuesFacetAggregator(cm, 0, dummy, Collections.singleton("foo"), false, false);
+        initial = new StringValuesFacetState(Collections.emptyMap(), 0L, 0L);
     }
 
     @Test
     public void testSum() {
-        StringValuesFacetState first = new StringValuesFacetState(facet, cm, dummy, 0,
+        StringValuesFacetState first = new StringValuesFacetState(
                 Collections.<String, Long> singletonMap("foo", 3L), 4L, 5L);
-        StringValuesFacetState second = new StringValuesFacetState(facet, cm, dummy, 0,
+        StringValuesFacetState second = new StringValuesFacetState(
                 Collections.<String, Long> singletonMap("foo", 4L), 10L, 11L);
-        StringValuesFacetState combined = first.sum(second);
+        StringValuesFacetState combined = SUT.sum(first, second);
 
         Assert.assertEquals(combined.getBlankCount(), 16L);
         Assert.assertEquals(combined.getErrorCount(), 14L);
@@ -66,13 +55,13 @@ public class StringValuesFacetStateTests {
     @Test
     public void testEvaluate() {
         Row row = new Row(Arrays.asList(new Cell("foo", null)));
-        StringValuesFacetState first = SUT.withRow(1L, row);
+        StringValuesFacetState first = SUT.withRow(initial, 1L, row);
 
         Assert.assertEquals(first.getBlankCount(), 0L);
         Assert.assertEquals(first.getErrorCount(), 0L);
         Assert.assertEquals((Object) first.getCounts().get("foo"), 1L);
 
-        StringValuesFacetState second = first.withRow(2L, row);
+        StringValuesFacetState second = SUT.withRow(first, 2L, row);
 
         Assert.assertEquals(second.getBlankCount(), 0L);
         Assert.assertEquals(second.getErrorCount(), 0L);
@@ -82,7 +71,7 @@ public class StringValuesFacetStateTests {
     @Test
     public void testEvaluateBlank() {
         Row row = new Row(Arrays.asList(new Cell("", null)));
-        StringValuesFacetState first = SUT.withRow(1L, row);
+        StringValuesFacetState first = SUT.withRow(initial, 1L, row);
 
         Assert.assertEquals(first.getBlankCount(), 1L);
         Assert.assertEquals(first.getErrorCount(), 0L);
@@ -92,7 +81,7 @@ public class StringValuesFacetStateTests {
     @Test
     public void testEvaluateError() {
         Row row = new Row(Arrays.asList(new Cell(new EvalError("error"), null)));
-        StringValuesFacetState first = SUT.withRow(1L, row);
+        StringValuesFacetState first = SUT.withRow(initial, 1L, row);
 
         Assert.assertEquals(first.getBlankCount(), 0L);
         Assert.assertEquals(first.getErrorCount(), 1L);

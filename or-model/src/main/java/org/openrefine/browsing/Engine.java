@@ -44,7 +44,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import scala.Tuple2;
 
-import org.openrefine.browsing.facets.AllFacetsState;
+import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
@@ -139,8 +139,9 @@ public class Engine {
     @JsonIgnore
     public List<FacetState> getFacetStates() {
         if (_config.getMode().equals(Mode.RowBased)) {
-            AllFacetsState aggregated = _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp, facetCombineOp);
-            return aggregated.getFacetStates();
+            AllFacetsAggregator aggregator = new AllFacetsAggregator(
+                    _facets.stream().map(f -> f.getAggregator()).collect(Collectors.toList()));
+            return _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp(aggregator), facetCombineOp(aggregator));
         } else {
             throw new IllegalStateException("not implemented");
         }
@@ -154,9 +155,16 @@ public class Engine {
     }
 
     @JsonIgnore
-    private AllFacetsState allFacetsInitialState() {
-        return new AllFacetsState(_facets
+    private List<FacetState> allFacetsInitialState() {
+        return _facets
                 .stream().map(facet -> facet.getInitialFacetState())
+                .collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    private AllFacetsAggregator allFacetsAggregator() {
+        return new AllFacetsAggregator(_facets
+                .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
     }
 
@@ -164,25 +172,29 @@ public class Engine {
      * Functions used to compute facet statistics
      */
 
-    private static Function2<AllFacetsState, Tuple2<Long, Row>, AllFacetsState> rowSeqOp = new Function2<AllFacetsState, Tuple2<Long, Row>, AllFacetsState>() {
+    private static Function2<List<FacetState>, Tuple2<Long, Row>, List<FacetState>> rowSeqOp(AllFacetsAggregator aggregator) {
+        return new Function2<List<FacetState>, Tuple2<Long, Row>, List<FacetState>>() {
 
-        private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-        @Override
-        public AllFacetsState call(AllFacetsState v1, Tuple2<Long, Row> v2) throws Exception {
-            return v1.increment(v2._1, v2._2);
-        }
-    };
+            @Override
+            public List<FacetState> call(List<FacetState> states, Tuple2<Long, Row> rowTuple) throws Exception {
+                return aggregator.increment(states, rowTuple._1, rowTuple._2);
+            }
+        };
+    }
 
-    private static Function2<AllFacetsState, AllFacetsState, AllFacetsState> facetCombineOp = new Function2<AllFacetsState, AllFacetsState, AllFacetsState>() {
+    private static Function2<List<FacetState>, List<FacetState>, List<FacetState>> facetCombineOp(AllFacetsAggregator aggregator) {
+        return new Function2<List<FacetState>, List<FacetState>, List<FacetState>>() {
 
-        private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-        @Override
-        public AllFacetsState call(AllFacetsState v1, AllFacetsState v2) throws Exception {
-            return v1.merge(v2);
-        }
-    };
+            @Override
+            public List<FacetState> call(List<FacetState> statesA, List<FacetState> statesB) throws Exception {
+                return aggregator.sum(statesA, statesB);
+            }
+        };
+    }
 
     private static Function<Tuple2<Long, Row>, Boolean> rowFilterConjuction(List<RowFilter> rowFilters) {
         return new Function<Tuple2<Long, Row>, Boolean>() {

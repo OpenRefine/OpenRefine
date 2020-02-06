@@ -14,6 +14,7 @@ import org.openrefine.expr.Evaluable;
  */
 public abstract class PureArgumentsExpr implements Evaluable {
 
+    private static final long serialVersionUID = 3199617968479062898L;
     protected final Evaluable[] _args;
 
     public PureArgumentsExpr(Evaluable[] arguments) {

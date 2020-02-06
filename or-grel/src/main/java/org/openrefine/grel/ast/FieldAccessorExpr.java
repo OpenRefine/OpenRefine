@@ -51,6 +51,7 @@ import org.openrefine.expr.util.JsonValueConverter;
  */
 public class FieldAccessorExpr implements Evaluable {
 
+    private static final long serialVersionUID = -1531559726559623162L;
     final protected Evaluable _inner;
     final protected String _fieldName;
 

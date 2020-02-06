@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,11 +48,13 @@ import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.filters.AllRowsRecordFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
+import org.openrefine.browsing.util.StringValuesFacetAggregator;
 import org.openrefine.browsing.util.StringValuesFacetState;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.util.StringUtils;
 
 public class ListFacet implements Facet {
 
@@ -192,7 +195,7 @@ public class ListFacet implements Facet {
 
     @Override
     public StringValuesFacetState getInitialFacetState() {
-        return new StringValuesFacetState(this, _columnModel, _eval, _cellIndex);
+        return new StringValuesFacetState();
     }
 
     @Override
@@ -202,5 +205,13 @@ public class ListFacet implements Facet {
         } else {
             return new ListFacetResult(_config, _errorMessage);
         }
+    }
+
+    @Override
+    public FacetAggregator<StringValuesFacetState> getAggregator() {
+        return new StringValuesFacetAggregator(_columnModel, _cellIndex, _eval,
+                Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
+                        .collect(Collectors.toSet()),
+                _config.selectBlank, _config.selectError, _config.invert);
     }
 }

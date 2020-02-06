@@ -33,13 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr;
 
+import java.io.Serializable;
 import java.util.Properties;
 import java.util.Set;
 
 /**
  * Interface for evaluable expressions in any arbitrary language.
  */
-public interface Evaluable {
+public interface Evaluable extends Serializable {
 
     /**
      * Evaluate this expression in the given environment (bindings).
