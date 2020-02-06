@@ -31,6 +31,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.6.7</jackson.version>
     <powermock.version>2.0.2</powermock.version>
+    <guava.version>15.0</guava.version>
   </properties>
 
   <scm>
