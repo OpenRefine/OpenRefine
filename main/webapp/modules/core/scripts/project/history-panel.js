@@ -69,7 +69,7 @@ HistoryPanel.prototype.update = function(onDone) {
 HistoryPanel.prototype._render = function() {
   var self = this;
 
-  this._tabHeader.html($.i18n('core-project/undo-redo')+' <span class="count">' + this._data.past.length + ' / ' + ( this._data.future.length + this._data.past.length ) + '</span>');
+  this._tabHeader.html($.i18n('core-project/undo-redo')+' <span class="count">' + this._data.position + ' / ' + ( this._data.entries.length ) + '</span>');
 
   this._div.empty().unbind().html(DOM.loadHTML("core", "scripts/project/history-panel.html"));
 
@@ -112,8 +112,8 @@ HistoryPanel.prototype._render = function() {
     return a;
   };
 
-  if (this._data.past.length > 0 || this._data.future.length > 0) {
-    if (!this._data.past.length) {
+  if (this._data.entries.length > 0) {
+    if (!this._data.position) {
       renderEntry(elmts.nowDiv, 0, {
         description: "Create project"
       }, 0, true);
@@ -122,19 +122,17 @@ HistoryPanel.prototype._render = function() {
         description: "Create project"
       }, 0, true);
 
-      for (var i = 0; i < this._data.past.length - 1; i++) {
-        var entry = this._data.past[i];
+      for (var i = 0; i < this._data.position - 1; i++) {
+        var entry = this._data.entries[i];
         renderEntry(elmts.pastDiv, i + 1, entry, entry.id, true);
       }
 
-      renderEntry(elmts.nowDiv, this._data.past.length, this._data.past[this._data.past.length - 1], -1);
+      renderEntry(elmts.nowDiv, this._data.position - 1, this._data.entries[this._data.position - 1], -1);
     }
 
-    if (this._data.future.length) {
-      for (var i = 0; i < this._data.future.length; i++) {
-        var entry = this._data.future[i];
-        renderEntry(elmts.futureDiv, this._data.past.length + i + 1, entry, entry.id, false);
-      }
+    for (var i = this._data.position; i < this._data.entries.length; i++) {
+      var entry = this._data.entries[i];
+      renderEntry(elmts.futureDiv, i + 1, entry, entry.id, false);
     }
 
     elmts.helpDiv.hide();
