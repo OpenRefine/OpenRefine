@@ -54,8 +54,11 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.util.ShutdownHookManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Function0;
+import scala.runtime.BoxedUnit;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.RefineModel;
@@ -144,6 +147,10 @@ public class RefineServlet extends Butterfly {
         s_dataDir = new File(data);
         FileProjectManager.initialize(s_context, s_dataDir);
         ImportingManager.initialize(this);
+
+        // Set up hook to save projects when spark shuts down
+        int priority = ShutdownHookManager.SPARK_CONTEXT_SHUTDOWN_PRIORITY() + 10;
+        ShutdownHookManager.addShutdownHook(priority, sparkShutdownHook());
 
         long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
 
@@ -346,5 +353,21 @@ public class RefineServlet extends Butterfly {
 
     static public JavaSparkContext getSparkContext() {
         return s_context;
+    }
+
+    static private Function0<BoxedUnit> sparkShutdownHook() {
+        return new Function0<BoxedUnit>() {
+
+            @Override
+            public BoxedUnit apply() {
+                if (ProjectManager.singleton != null) {
+                    ProjectManager.singleton.dispose();
+                    ProjectManager.singleton = null;
+                }
+                return BoxedUnit.UNIT;
+            }
+
+        };
+
     }
 }
