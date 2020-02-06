@@ -356,8 +356,8 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       if (column.name in self._collapsedColumnNames) {
         td.innerHTML = "&nbsp;";
       } else {
-        var cell = (column.cellIndex < cells.length) ? cells[column.cellIndex] : null;
-        new DataTableCellUI(self, cell, row.i, column.cellIndex, td);
+        var cell = (i < cells.length) ? cells[i] : null;
+        new DataTableCellUI(self, cell, row.i, i, td);
       }
     }
   };
@@ -919,6 +919,13 @@ DataTableView.sampleVisibleRows = function(column) {
   var rowIndices = [];
   var values = [];
 
+  var cellIndex = 0;
+  for (var c = 0; c < c.columnModel.columns.length; c++) {
+    if (c.columnModel.columns[i].name === column.name) {
+      cellIndex = c;
+    }
+  }
+
   var rows = theProject.rowModel.rows;
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
@@ -926,8 +933,8 @@ DataTableView.sampleVisibleRows = function(column) {
     rowIndices.push(row.i);
 
     var v = null;
-    if (column && column.cellIndex < row.cells.length) {
-      var cell = row.cells[column.cellIndex];
+    if (cellIndex < row.cells.length) {
+      var cell = row.cells[cellIndex];
       if (cell !== null) {
         v = cell.v;
       }

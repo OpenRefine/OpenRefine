@@ -314,7 +314,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
       var td = addCell(tr);
       var divContent = $('<div/>').addClass("data-table-cell-content").appendTo(td);
 
-      var cell = (column.cellIndex < cells.length) ? cells[column.cellIndex] : null;
+      var cell = (i < cells.length) ? cells[i] : null;
       if (!cell || ("v" in cell && cell.v === null)) {
         $('<span>').html("&nbsp;").appendTo(divContent);
       } else if ("e" in cell) {
