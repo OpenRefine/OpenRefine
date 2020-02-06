@@ -42,6 +42,8 @@ import org.openrefine.expr.ExpressionUtils;
  * An abstract syntax tree node encapsulating an operator call, such as "+".
  */
 public class OperatorCallExpr extends PureArgumentsExpr {
+
+    private static final long serialVersionUID = -6453818304035013647L;
     final protected String        _op;
 
     public OperatorCallExpr(Evaluable[] args, String op) {

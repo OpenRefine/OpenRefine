@@ -44,6 +44,8 @@ import org.openrefine.expr.Evaluable;
  * An abstract syntax tree node encapsulating a literal value.
  */
 public class LiteralExpr implements Evaluable {
+
+    private static final long serialVersionUID = -8738998872783303739L;
     final protected Object _value;
     
     public LiteralExpr(Object value) {
