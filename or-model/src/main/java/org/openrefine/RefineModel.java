@@ -14,7 +14,7 @@ import java.util.Map;
  *
  */
 public class RefineModel {
-	public static String VERSION = "3.3-beta";
+	public static String VERSION = "Spark";
 	
     private static class ClassMapping {
         public final String from;
