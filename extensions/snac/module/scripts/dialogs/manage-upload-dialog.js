@@ -55,11 +55,11 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
           elmts.apiKeyForm.serialize(),
           function(data) {
               if (data.apikey) {
-                alert(data.apikey);
+                //alert(data.apikey);
                 dismiss();
                 callback(data.apikey);
               } else {
-                alert(data.apikey);
+                //alert(data.apikey);
                 dismiss();
                 callback(null);
               }
