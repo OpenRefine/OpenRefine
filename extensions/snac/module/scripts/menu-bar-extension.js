@@ -1,4 +1,6 @@
 // Load the localization file
+//menu-bar-extension.js
+
 var dictionary = {};
 $.ajax({
 	url : "command/core/load-language?",
@@ -119,7 +121,13 @@ $(function(){
                         id:"snac/perform-edits",
                         label: $.i18n('snac-extension/perform-edits-on-snac'),
                         click: function() { /*PerformEditsDialog.checkAndLaunch();*/
-                            ManageUploadDialog.launch(null, function(success) {});
+                            if(validationCount == 0){
+                                ManageUploadDialog.launch(null, function(success) {});
+                            }
+                            else{
+                                window.alert("Error: unable to upload edits to SNAC. Please fix the " + validationCount + "issue(s) first.");
+                            }
+                            
                         }
                     },
                     {
