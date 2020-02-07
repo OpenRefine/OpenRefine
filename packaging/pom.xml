@@ -75,7 +75,7 @@
                     </copy>
                     
                     <replace file="${built.webapp.dir}/WEB-INF/web.xml">
-                        <replacefilter token="$VERSION" value="${version}"/>
+                        <replacefilter token="$VERSION" value="${project.version}"/>
                     </replace>
 
                     <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
