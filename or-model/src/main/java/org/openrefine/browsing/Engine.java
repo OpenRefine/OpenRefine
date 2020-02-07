@@ -150,7 +150,8 @@ public class Engine {
     @JsonIgnore
     private List<RowFilter> facetRowFilters() {
         return _facets.stream()
-                .map(facet -> facet.getRowFilter())
+                .map(facet -> facet.getAggregator())
+                .map(aggregator -> aggregator == null ? null : aggregator.getRowFilter())
                 .collect(Collectors.toList());
     }
 
@@ -203,7 +204,7 @@ public class Engine {
 
             @Override
             public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                return rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
+                return rowFilters.stream().allMatch(f -> f == null || f.filterRow(v1._1, v1._2));
             }
         };
     }

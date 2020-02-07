@@ -63,7 +63,7 @@ public class MassEditChange extends EngineDependentChange {
             @Override
             public Row call(Long rowIndex, Row row) throws Exception {
                 Cell cell = row.getCell(columnIdx);
-                Cell newCell = null;
+                Cell newCell = cell;
 
                 Properties bindings = ExpressionUtils.createBindings();
                 ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);

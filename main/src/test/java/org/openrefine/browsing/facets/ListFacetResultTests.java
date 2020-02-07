@@ -88,7 +88,7 @@ public class ListFacetResultTests {
         Map<String, Long> map = new HashMap<>();
         map.put("foobar", 1L);
         map.put("barbar", 1L);
-        StringValuesFacetState state = new StringValuesFacetState(facet, model, evaluable, 0, map, 0L, 0L);
+        StringValuesFacetState state = new StringValuesFacetState(map, 0L, 0L);
 
         ListFacetResult result = facet.getFacetResult(state);
 
@@ -114,7 +114,7 @@ public class ListFacetResultTests {
         map.put("abar", 1L);
         map.put("cbar", 1L);
         map.put("ebar", 1L);
-        StringValuesFacetState state = new StringValuesFacetState(facet, model, evaluable, 0, map, 0L, 0L);
+        StringValuesFacetState state = new StringValuesFacetState(map, 0L, 0L);
 
         ListFacetResult result = facet.getFacetResult(state);
 

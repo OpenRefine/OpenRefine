@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.facets.FacetAggregator;
+import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.ColumnModel;
@@ -110,20 +111,16 @@ public class StringValuesFacetAggregator implements FacetAggregator<StringValues
 
     @Override
     public RowFilter getRowFilter() {
-        return new RowFilter() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean filterRow(long rowIndex, Row row) {
-                Object value = evaluateOnRow(rowIndex, row);
-                boolean initialSelected = (ExpressionUtils.isError(value) && _selectErrors) ||
-                        (ExpressionUtils.isNonBlankData(value) && _selected.contains(StringUtils.toString(value))) ||
-                        _selectBlanks;
-                return initialSelected ^ _invert;
-
-            }
-        };
+        return _evaluable == null ||
+                (_selected.size() == 0 && !_selectBlanks && !_selectErrors) ? null
+                        : new ExpressionEqualRowFilter(
+                                _evaluable,
+                                _columnModel.getColumns().get(_cellIndex).getName(),
+                                _cellIndex,
+                                _selected,
+                                _selectBlanks,
+                                _selectErrors,
+                                _invert);
     }
 
 }

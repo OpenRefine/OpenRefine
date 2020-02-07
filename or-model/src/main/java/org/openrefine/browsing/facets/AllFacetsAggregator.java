@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.Row;
 
 /**
@@ -18,9 +19,14 @@ public class AllFacetsAggregator implements Serializable {
     private static final long serialVersionUID = -8277361327137906882L;
 
     protected final List<FacetAggregator<?>> _facetAggregators;
+    protected final List<RowFilter> _rowFilters;
 
     public AllFacetsAggregator(List<FacetAggregator<?>> facetAggregators) {
         _facetAggregators = facetAggregators;
+        _rowFilters = new ArrayList<>(facetAggregators.size());
+        for (FacetAggregator<?> aggregator : facetAggregators) {
+            _rowFilters.add(aggregator == null ? null : aggregator.getRowFilter());
+        }
     }
 
     public List<FacetState> increment(List<FacetState> states, long rowId, Row row) {
@@ -31,8 +37,8 @@ public class AllFacetsAggregator implements Serializable {
         boolean[] matching = new boolean[_facetAggregators.size()];
         int numberOfMismatches = 0;
         for (int i = 0; i != _facetAggregators.size(); i++) {
-            FacetAggregator<?> aggregator = _facetAggregators.get(i);
-            matching[i] = aggregator.getRowFilter().filterRow(rowId, row);
+            RowFilter filter = _rowFilters.get(i);
+            matching[i] = filter == null || filter.filterRow(rowId, row);
             if (!matching[i]) {
                 numberOfMismatches++;
             }
@@ -44,9 +50,15 @@ public class AllFacetsAggregator implements Serializable {
         }
 
         // Compute the new list of facet states
+        boolean allMatching = numberOfMismatches == 0;
         List<FacetState> newStates = new ArrayList<>(states.size());
         for (int i = 0; i != states.size(); i++) {
-            newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row));
+            // Rows are only seen by facets if they are selected by all other facets
+            if (allMatching || !matching[i]) {
+                newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row));
+            } else {
+                newStates.add(states.get(i));
+            }
         }
         return newStates;
     }
@@ -64,11 +76,19 @@ public class AllFacetsAggregator implements Serializable {
 
     @SuppressWarnings("unchecked")
     private static <T extends FacetState> T incrementHelper(FacetAggregator<T> aggregator, FacetState state, long rowId, Row row) {
-        return aggregator.withRow((T) state, rowId, row);
+        if (aggregator == null) {
+            return (T) state;
+        } else {
+            return aggregator.withRow((T) state, rowId, row);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private static <T extends FacetState> T sumHelper(FacetAggregator<T> aggregator, FacetState first, FacetState second) {
-        return aggregator.sum((T) first, (T) second);
+        if (aggregator == null) {
+            return (T) first;
+        } else {
+            return aggregator.sum((T) first, (T) second);
+        }
     }
 }
