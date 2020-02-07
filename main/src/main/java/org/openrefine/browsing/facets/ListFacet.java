@@ -39,11 +39,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openrefine.browsing.DecoratedValue;
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
-import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
 import org.openrefine.browsing.util.StringValuesFacetAggregator;
 import org.openrefine.browsing.util.StringValuesFacetState;
 import org.openrefine.expr.Evaluable;
@@ -159,32 +154,6 @@ public class ListFacet implements Facet {
             _errorMessage = e.getMessage();
         }
     }
-
-    @Override
-    public RowFilter getRowFilter() {
-        return 
-            _eval == null || 
-            _errorMessage != null ||
-            (_config.selection.size() == 0 && !_config.selectBlank && !_config.selectError) ? 
-                null :
-                new ExpressionEqualRowFilter(
-                    _eval, 
-                    _config.columnName,
-                    _cellIndex, 
-                    createMatches(), 
-                    _config.selectBlank, 
-                    _config.selectError,
-                    _config.invert);
-    }
-    
-    @Override
-    public RecordFilter getRecordFilter() {
-        RowFilter rowFilter = getRowFilter();
-        return rowFilter == null ? null :
-            (_config.invert ?
-                    new AllRowsRecordFilter(rowFilter) :
-                        new AnyRowRecordFilter(rowFilter));
-    }
     
     protected Object[] createMatches() {
         Object[] a = new Object[_config.selection.size()];
@@ -210,8 +179,12 @@ public class ListFacet implements Facet {
 
 	@Override
 	public FacetAggregator<StringValuesFacetState> getAggregator() {
-		return new StringValuesFacetAggregator(_columnModel, _cellIndex, _eval,
-				Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
-				.collect(Collectors.toSet()), _config.selectBlank, _config.selectError, _config.invert);
+		if (_errorMessage == null) {
+			return new StringValuesFacetAggregator(_columnModel, _cellIndex, _eval,
+					Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
+					.collect(Collectors.toSet()), _config.selectBlank, _config.selectError, _config.invert);
+		} else {
+			return null;
+		}
 	}
 }

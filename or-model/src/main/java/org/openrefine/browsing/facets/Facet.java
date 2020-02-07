@@ -41,18 +41,6 @@ import org.openrefine.browsing.RowFilter;
  * Interface of facets.
  */
 public interface Facet  {
-	
-	/**
-	 * Creates a row filter which determines which rows match
-	 * this facet.
-	 */
-    public RowFilter getRowFilter();
-    
-    /**
-     * Creates a record filter which determines which records match
-     * this facet.
-     */
-    public RecordFilter getRecordFilter();
     
     /**
      * An initial facet state for this facet, which can
