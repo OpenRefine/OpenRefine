@@ -179,6 +179,10 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
    this.preview();
 }
 
+/*******************************************************
+* Schema Tab Matching for Resources and Constellations *
+********************************************************/
+
 //Create a table for the resource page function
 function addResourceTable(columns, SNACcolumns) {
    var myTableDiv = document.getElementById("myDynamicTableResource");
@@ -221,7 +225,7 @@ function addResourceTable(columns, SNACcolumns) {
          tr.appendChild(td);
       }
 
-      var selectList = $("<select></select>").addClass('selectColumn').addClass('selectColumnRef').attr('style', 'width: 180px');
+      var selectList = $("<select></select>").addClass('selectColumn').addClass('selectColumnRes').attr('style', 'width: 180px');
 
       //Create and append the options
       var defaultoption = document.createElement("option");
@@ -265,17 +269,23 @@ function addConstellationTable(columns, SNACcolumns) {
       return dropdownOptionsArray;
    }
 
-   let columnsResource = ["id", "entity_type", "name_entry", "surname", "forename", "exist_dates", "bioghist", "place", "occupation", "related_constellation_ids", "related_resource_ids"];
-   for (var i = 0; i < columnsResource.length; i++) {
+   // let columnsResource = ["id", "entity_type", "name_entry", "surname", "forename", "exist_dates", "bioghist", "place", "occupation", "related_constellation_ids", "related_resource_ids"];
+   // for (var i = 0; i < columnsResource.length; i++) {
+   for (var i = 0; i < columns.length; i++) {
+
       var tr = document.createElement('TR');
       tableBody.appendChild(tr);
+      var column = columns[i];
       // var columnsResource = columns[i];
 
       for (var j = 0; j < 2; j+=2) {
          var td = document.createElement('TD');
          td.width = '100';
          // var reconConfig = columnsResource.reconConfig;
-         var cell = SNACSchemaAlignmentDialog._createDraggableColumn(columnsResource[i], false);
+         // var cell = SNACSchemaAlignmentDialog._createDraggableColumn(columnsResource[i], false);
+         var reconConfig = column.reconConfig;
+         var cell = SNACSchemaAlignmentDialog._createDraggableColumn(column.name,
+         reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
 
          // var cell = SNACSchemaAlignmentDialog._createDraggableColumn(columnsResource[i],
          //    reconConfig && reconConfig.identifierSpace === this._wikibasePrefix && column.reconStats);
@@ -283,7 +293,7 @@ function addConstellationTable(columns, SNACcolumns) {
          var dragNode = document.createElement('div');
          dragNode.className += 'wbs-draggable-column wbs-unreconciled-column-undraggable';
          dragNode.style = 'width: 150px';
-         dragNode.id = i;
+         dragNode.id = i + 9;
          dragNode.append(dragDivElement.innerHTML);
          td.appendChild(dragNode);
          tr.appendChild(td);
@@ -344,6 +354,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    }
 
    // ******* CONSTELLATIONS PAGE ******* //
+   // var columnsConstellation = theProject.columnModel.columns;
    var columnsConstellation = theProject.columnModel.columns;
    this._columnAreaConstellation = $(".schema-alignment-dialog-columns-area-constellation");
    this._columnAreaConstellation.addClass("snac-tab");
@@ -436,7 +447,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    };
 
    //Reference Validator Call onChange
-   const $selectsRef = $(".selectColumnRef");
+   const $selectsRef = $(".selectColumnRes");
    $selectsRef.on('change', function(){
       hideAndDisableRef();
    });
@@ -649,12 +660,19 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
       }
    }
 
+
+   console.log(theProject.columnModel.columns);
   // Save resource
+  console.log(dropDownValues);
+
    if (!dup_bool && !empty_required){
       var dict = {};
       var columns = theProject.columnModel.columns;
-      console.log(array_ddv);
-      for (var i = 0; i != dropDownValues.length; i++){
+      // console.log(columns);
+      console.log(dropDownValues);
+      console.log(columns);
+      for (var i = 0; i != columns.length; i++){
+         console.log(i);
          console.log(columns[i].name);
          dict[columns[i].name] = dropDownValues[i].value;
       }
