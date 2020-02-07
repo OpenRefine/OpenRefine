@@ -501,13 +501,21 @@ public class SNACResourceCreator {
 
     }
 
-    public void uploadResources(String apiKey) {
+    public void uploadResources(String apiKey, String state) {
 
     try{
         String opIns = ",\n\"operation\":\"insert\"\n},\"apikey\":\"" + apiKey +"\"";
         List<Resource> new_list_resources = new LinkedList<Resource>();
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
+
+        if(state == "prod") {
+            post = new HttpPost("http://api.snaccooperative.org/");
+            System.out.println(state);
+        }
+        System.out.println(state);
+
+
         System.out.println("Querying SNAC...");
         for(Resource temp_res : resources){
             String rtj = Resource.toJSON(temp_res);

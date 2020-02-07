@@ -119,10 +119,46 @@ const puppeteer = require("puppeteer");
       } else {
         console.log('TEST PASSED: API Key Upload Verification');
       }
+
+      // UNIT TEST: Development Site Upload Verification
+      var devProdHandler = await page.evaluate(selected => {
+        let devOrProd = $('.siteInput').get();
+        if(devOrProd[0].checked){
+          selected = document.getElementsByClassName('siteInput')[0].value;
+        } else if(devOrProd[1].checked){
+          selected = document.getElementsByClassName('siteInput')[1].value;
+        }
+        return selected;
+      });
+      // console.log(devProdHandler);
+      if (devProdHandler == 'dev'){
+        console.log('TEST PASSED: Development site selected');
+      } else if (devProdHandler == 'prod') {
+        console.log('TEST PASSED: Production site selected');
+      }
+
+      // UNIT TEST: Product Site Upload Verification
+      var devProdHandler = await page.evaluate(selected => {
+        let devOrProd = $('.siteInput').get();
+        devOrProd[1].click();
+        if(devOrProd[0].checked){
+          selected = document.getElementsByClassName('siteInput')[0].value;
+        } else if(devOrProd[1].checked){
+          selected = document.getElementsByClassName('siteInput')[1].value;
+        }
+        return selected;
+      });
+      // console.log(devProdHandler);
+      if (devProdHandler == 'dev'){
+        console.log('TEST PASSED: Development site selected');
+      } else if (devProdHandler == 'prod') {
+        console.log('TEST PASSED: Production site selected');
+      }
+
       var uploadButton = await page.$('.cancel-btn');
       uploadButton.click();
       await page.waitFor(1000);
-      
+
       // SETUP
       const extensionButtons = await page.$$('#body > #right-panel > #tool-panel > #extension-bar > #extension-bar-menu-container > a');
       for (const button of extensionButtons){
@@ -175,14 +211,6 @@ const puppeteer = require("puppeteer");
         console.log("TEST FAILED: Issues tab appears after clicking Edit SNAC schema.");
       }
       await page.waitFor(1000);
-
-      // UNIT TEST: Number of issues are 4 (for the number of missing fields)
-      const issuesResults = await page.$$('#snac-issues-panel > table > tbody > .wb-warning');
-      if(issuesResults.length == 4){
-        console.log("TEST PASSED: 4 errors appear on the issues tab when no edits were made to schema.");
-      } else {
-        console.log("TEST FAILED: 4 errors appear on the issues tab when no edits were made to schema.");
-      }
 
       await page.waitFor(10000);
       await browser.close();

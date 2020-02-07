@@ -47,20 +47,40 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
     // callback(apikey);
   });
 
+  var rad = document.getElementsByName('uploadOption')
+  var prev = null;
+  var prod_or_dev = "dev";
+  for (var i = 0; i < rad.length; i++) {
+      rad[i].addEventListener('change', function() {
+          (prev) ? prev.value: null;
+          if (this !== prev) {
+              prev = this;
+          }
+          prod_or_dev = this.value;
+          // console.log(prod_or_dev);
+      });
+  }
+
   elmts.uploadButton.click(function() {
-      console.log(elmts.apiKeyForm.serialize());
-      frame.hide();
-      $.post(
-          "command/snac/upload",
-          elmts.apiKeyForm.serialize(),
-          function(data) {
-              if (data.apikey) {
-                dismiss();
-                callback(data.apikey);
-              } else {
-                dismiss();
-                callback(null);
-              }
-          });
+    console.log(prod_or_dev);
+    console.log(elmts.apiKeyForm.serialize());
+    frame.hide();
+    $.post(
+      "command/snac/upload",
+      // elmts.apiKeyForm.serialize(),
+      {
+        "state": JSON.stringify(prod_or_dev)
+      },
+      function(data) {
+        // if (data.apikey) {
+        //   alert(data.apikey);
+        //   dismiss();
+        //   callback(data.apikey);
+        // } else {
+        //   alert(data.apikey);
+          dismiss();
+          callback(null);
+        // }
+      });
   });
 };
