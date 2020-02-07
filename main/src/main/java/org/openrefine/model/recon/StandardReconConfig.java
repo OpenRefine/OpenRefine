@@ -53,13 +53,10 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
+import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.ReconType;
 import org.openrefine.model.Row;
-import org.openrefine.model.Recon.Judgment;
-import org.openrefine.model.RecordModel.RowDependency;
-import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconJob;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -382,9 +379,12 @@ public class StandardReconConfig extends ReconConfig {
             List<QueryProperty> properties = new ArrayList<>();
                 
             for (ColumnDetail c : columnDetails) {
-                int detailCellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
+                int detailCellIndex = project.getColumnModel().getColumnIndexByName(c.columnName);
                 
                 Cell cell2 = row.getCell(detailCellIndex);
+                /*
+                 *
+                 * TODO reintroduce column model
                 if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
                     int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
                     
@@ -398,6 +398,7 @@ public class StandardReconConfig extends ReconConfig {
                         }
                     }
                 }
+                */
                 
                 if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
                     Object v = null;

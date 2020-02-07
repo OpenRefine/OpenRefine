@@ -36,12 +36,13 @@ package org.openrefine.exporters;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openrefine.exporters.sql.SqlExporter;
-
 abstract public class ExporterRegistry {
     static final private Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
 
     static {
+    	/*
+    	 * TODO put these exporters back
+    	 * 
         s_formatToExporter.put("csv", new CsvExporter());
         s_formatToExporter.put("tsv", new CsvExporter('\t'));
         s_formatToExporter.put("*sv", new CsvExporter());
@@ -56,6 +57,7 @@ abstract public class ExporterRegistry {
         s_formatToExporter.put("template", new TemplatingExporter());
         
         s_formatToExporter.put("sql", new SqlExporter());
+        */
     }
     
     static public void registerExporter(String format, Exporter exporter) {
