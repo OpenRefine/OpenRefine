@@ -38,29 +38,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
+import org.openrefine.history.Change;
+import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.model.changes.MassEditChange;
+import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.StringUtils;
 
-public class MassEditOperation extends EngineDependentMassCellOperation {
+public class MassEditOperation extends EngineDependentOperation {
 
     final protected String _expression;
     final protected List<Edit> _edits;
+    final protected String _columnName;
 
     static public class Edit {
 
@@ -106,9 +103,10 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
             @JsonProperty("columnName") String columnName,
             @JsonProperty("expression") String expression,
             @JsonProperty("edits") List<Edit> edits) {
-        super(engineConfig, columnName, true);
+        super(engineConfig);
         _expression = expression;
         _edits = edits;
+        _columnName = columnName;
     }
 
     @JsonProperty("expression")
@@ -127,21 +125,10 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        return "Mass edit " + cellChanges.size() +
-                " cells in column " + column.getName();
-    }
-
-    @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-
+    protected HistoryEntry createHistoryEntry(GridState state, long historyEntryID) throws Exception {
         Evaluable eval = MetaParser.parse(_expression);
-        Properties bindings = ExpressionUtils.createBindings();
 
-        Map<String, Serializable> fromTo = new HashMap<String, Serializable>();
+        Map<String, Serializable> fromTo = new HashMap<>();
         Serializable fromBlankTo = null;
         Serializable fromErrorTo = null;
 
@@ -158,76 +145,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
                 fromErrorTo = edit.to;
             }
         }
-
-        return new RowVisitor() {
-
-            int cellIndex;
-            Properties bindings;
-            List<CellChange> cellChanges;
-            Evaluable eval;
-
-            Map<String, Serializable> fromTo;
-            Serializable fromBlankTo;
-            Serializable fromErrorTo;
-
-            public RowVisitor init(
-                    int cellIndex,
-                    Properties bindings,
-                    List<CellChange> cellChanges,
-                    Evaluable eval,
-                    Map<String, Serializable> fromTo,
-                    Serializable fromBlankTo,
-                    Serializable fromErrorTo) {
-                this.cellIndex = cellIndex;
-                this.bindings = bindings;
-                this.cellChanges = cellChanges;
-                this.eval = eval;
-                this.fromTo = fromTo;
-                this.fromBlankTo = fromBlankTo;
-                this.fromErrorTo = fromErrorTo;
-                return this;
-            }
-
-            @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
-                Cell newCell = null;
-
-                ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
-
-                Object v = eval.evaluate(bindings);
-                if (ExpressionUtils.isError(v)) {
-                    if (fromErrorTo != null) {
-                        newCell = new Cell(fromErrorTo, (cell != null) ? cell.recon : null);
-                    }
-                } else if (ExpressionUtils.isNonBlankData(v)) {
-                    String from = StringUtils.toString(v);
-                    Serializable to = fromTo.get(from);
-                    if (to != null) {
-                        newCell = new Cell(to, (cell != null) ? cell.recon : null);
-                    }
-                } else {
-                    if (fromBlankTo != null) {
-                        newCell = new Cell(fromBlankTo, (cell != null) ? cell.recon : null);
-                    }
-                }
-
-                if (newCell != null) {
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
-                }
-                return false;
-            }
-        }.init(column.getCellIndex(), bindings, cellChanges, eval, fromTo, fromBlankTo, fromErrorTo);
+        Change change = new MassEditChange(_engineConfig, eval, _columnName, fromTo, fromBlankTo, fromErrorTo);
+        return new HistoryEntry(historyEntryID, getBriefDescription(null), this, change);
     }
 }

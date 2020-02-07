@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,6 +19,8 @@ import com.google.common.collect.ImmutableMap.Builder;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 import scala.Tuple2;
 
 import org.openrefine.overlay.OverlayModel;
@@ -287,4 +290,45 @@ public class GridState {
         };
     }
 
+    /**
+     * Like JavaPairRDD.mapValues in that it preserves partitioning of the underlying RDD, but the mapping function has
+     * also access to the key.
+     * 
+     * @param pairRDD
+     *            the indexed RDD to map
+     * @param function
+     *            a function mapping key, value to the new value
+     * @return a RDD with the same partitioning as the original one, with mapped values
+     */
+    public static JavaPairRDD<Long, Row> mapKeyValuesToValues(JavaPairRDD<Long, Row> pairRDD, Function2<Long, Row, Row> function) {
+
+        PairFlatMapFunction<Iterator<Tuple2<Long, Row>>, Long, Row> mapper = new PairFlatMapFunction<Iterator<Tuple2<Long, Row>>, Long, Row>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<Tuple2<Long, Row>> call(Iterator<Tuple2<Long, Row>> t) throws Exception {
+                return new Iterator<Tuple2<Long, Row>>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return t.hasNext();
+                    }
+
+                    @Override
+                    public Tuple2<Long, Row> next() {
+                        Tuple2<Long, Row> v = t.next();
+                        try {
+                            return new Tuple2<Long, Row>(v._1, function.call(v._1, v._2));
+                        } catch (Exception e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }
+
+                };
+            }
+
+        };
+        return pairRDD.mapPartitionsToPair(mapper, true);
+    }
 }
