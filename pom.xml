@@ -236,6 +236,11 @@
      <!-- dependencies are stored in the relevant submodules:
           see main/pom.xml, server/pom.xml and each extension.
        -->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.2.3</version>
+    </dependency>
   </dependencies>
 </project>
 

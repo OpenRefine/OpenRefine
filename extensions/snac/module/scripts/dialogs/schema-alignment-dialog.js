@@ -1659,6 +1659,9 @@ SNACSchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
 /*************************
  *  ISSUES TAB RENDERING *
  *************************/
+/*global variable used by menu-bar-extension.js in order to check whether or not there are issues in the schema.
+If there are errors, user will not be able to upload to SNAC*/
+var validationCount = 0;
 
 SNACSchemaAlignmentDialog.issues = function() {
    this.issueSpinner.show();
@@ -1671,8 +1674,10 @@ SNACSchemaAlignmentDialog.issues = function() {
    $('.invalid-schema-warning').hide();
    if(error_fields.length != 0){
       this._updateWarnings(error_fields, error_fields.length);
+      validationCount = this._updateWarnings(error_fields, error_fields.length);
       error_fields = [];
    } else {
+      validationCount = this._updateWarnings([],0);
       this._updateWarnings([],0);
    }
 }
@@ -1798,4 +1803,5 @@ SNACSchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
       countsElem.text(totalCount);
       countsElem.show();
    }
+   return totalCount;
 }
