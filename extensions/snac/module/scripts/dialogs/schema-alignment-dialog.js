@@ -1466,6 +1466,9 @@ SNACSchemaAlignmentDialog.updateNbEdits = function(nb_edits) {
 /*************************
  *  ISSUES TAB RENDERING *
  *************************/
+/*global variable used by menu-bar-extension.js in order to check whether or not there are issues in the schema.
+If there are errors, user will not be able to upload to SNAC*/
+var validationCount = 0;
 
 SNACSchemaAlignmentDialog.issues = function() {
    this.issueSpinner.show();
@@ -1478,8 +1481,10 @@ SNACSchemaAlignmentDialog.issues = function() {
    $('.invalid-schema-warning').hide();
    if(error_fields.length != 0){
       this._updateWarnings(error_fields, error_fields.length);
+      validationCount = this._updateWarnings(error_fields, error_fields.length);
       error_fields = [];
    } else {
+      validationCount = this._updateWarnings([],0);
       this._updateWarnings([],0);
    }
 }
@@ -1518,7 +1523,8 @@ SNACSchemaAlignmentDialog.preview = function() {
 
         //Fill the list array with each line in HTML list form
         for(var i = 0; i<line.length; i++) {
-           list[i] = "<li>" + line[i] + "</li>";
+           var line_parts = line[i].split(/:(.+)/); //Split on the first colon
+           list[i] = "<li><b>" + line_parts[0] + ":</b> " + line_parts[1] + "</li>";
         }
 
         //Find the max length of items in the list[] array
@@ -1530,8 +1536,9 @@ SNACSchemaAlignmentDialog.preview = function() {
            divider += "—";
         }
 
-        //Insert that divider at every 11 position to split each resource (of 10 bullets)
-        var pos = 0, interval = 11;
+        //Insert that divider at every (list.length/2 + 1) position to split each resource (of total/2 bullets)
+        //More dynamic based on how many csv columns were paired in the editing SNAC schema
+        var pos = 0, interval = list.length/2 + 1;
         while (pos < list.length) {
            list.splice(pos, 0, divider);
            pos += interval;
@@ -1604,4 +1611,5 @@ SNACSchemaAlignmentDialog._updateWarnings = function(warnings, totalCount) {
         countsElem.text(totalCount);
         countsElem.show();
    }
+   return totalCount;
 }
