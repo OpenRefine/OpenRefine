@@ -113,7 +113,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Create column " + _newColumnName +
                 " at index " + _columnInsertIndex +
                 " based on column " + _baseColumnName +

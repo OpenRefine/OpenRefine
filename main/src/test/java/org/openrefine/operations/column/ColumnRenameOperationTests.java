@@ -31,7 +31,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnRenameOperation;
 import org.openrefine.util.ParsingUtilities;
@@ -50,7 +50,7 @@ public class ColumnRenameOperationTests extends RefineTest {
                 + "\"description\":\"Rename column old name to new name\","
                 + "\"oldColumnName\":\"old name\","
                 + "\"newColumnName\":\"new name\"}";
-        AbstractOperation op = ParsingUtilities.mapper.readValue(json, AbstractOperation.class);
+        Operation op = ParsingUtilities.mapper.readValue(json, Operation.class);
         TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
     }
 }

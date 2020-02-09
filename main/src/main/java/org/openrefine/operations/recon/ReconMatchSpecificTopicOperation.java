@@ -103,7 +103,7 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Match specific item " +
                 match.name + " (" +
                 match.id + ") to cells in column " + _columnName;

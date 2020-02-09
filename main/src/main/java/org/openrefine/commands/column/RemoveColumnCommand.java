@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnRemovalOperation;
 import org.openrefine.process.Process;
 
@@ -60,7 +60,7 @@ public class RemoveColumnCommand extends Command {
 
             String columnName = request.getParameter("columnName");
 
-            AbstractOperation op = new ColumnRemovalOperation(columnName);
+            Operation op = new ColumnRemovalOperation(columnName);
             Process process = op.createProcess(project.getHistory());
 
             performProcessAndRespond(request, response, project, process);

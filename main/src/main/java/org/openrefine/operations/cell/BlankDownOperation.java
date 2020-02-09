@@ -59,7 +59,7 @@ public class BlankDownOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Blank down cells in column " + _columnName;
     }
 

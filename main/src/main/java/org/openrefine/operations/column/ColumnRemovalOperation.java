@@ -41,9 +41,9 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRemovalChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
-public class ColumnRemovalOperation extends AbstractOperation {
+public class ColumnRemovalOperation extends Operation {
 
     final protected String _columnName;
 
@@ -59,7 +59,7 @@ public class ColumnRemovalOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Remove column " + _columnName;
     }
 

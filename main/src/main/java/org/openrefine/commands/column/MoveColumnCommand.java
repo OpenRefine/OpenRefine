@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnMoveOperation;
 import org.openrefine.process.Process;
 
@@ -61,7 +61,7 @@ public class MoveColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
             int index = Integer.parseInt(request.getParameter("index"));
 
-            AbstractOperation op = new ColumnMoveOperation(columnName, index);
+            Operation op = new ColumnMoveOperation(columnName, index);
             Process process = op.createProcess(project.getHistory());
 
             performProcessAndRespond(request, response, project, process);

@@ -90,11 +90,11 @@ public class ReconOperation extends EngineDependentOperation {
         return new ReconProcess(
                 project,
                 getEngineConfig(),
-                getBriefDescription(null));
+                getDescription());
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return _reconConfig.getBriefDescription(project, _columnName);
     }
 

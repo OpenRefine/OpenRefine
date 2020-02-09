@@ -69,7 +69,7 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Match each cell to its best recon candidate in column " + _columnName;
     }
 

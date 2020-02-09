@@ -88,4 +88,10 @@ public class CellChange implements Change {
             }
         };
     }
+
+    @Override
+    public boolean isImmediate() {
+        // this change has no corresponding operation, so it can not be derived from one
+        return false;
+    }
 }

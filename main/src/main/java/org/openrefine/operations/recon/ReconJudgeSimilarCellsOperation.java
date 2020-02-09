@@ -107,7 +107,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         if (_judgment == Judgment.None) {
             return "Discard recon judgments for cells containing \"" +
                     _similarValue + "\" in column " + _columnName;

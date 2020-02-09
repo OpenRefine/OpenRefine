@@ -77,7 +77,7 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
     }
 
     @Override
-    public String getBriefDescription(Project project) {
+    public String getDescription() {
         return "Use values as reconciliation identifiers in column " + _columnName;
     }
 

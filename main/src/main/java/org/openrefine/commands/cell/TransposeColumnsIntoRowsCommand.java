@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.TransposeColumnsIntoRowsOperation;
 import org.openrefine.process.Process;
 
@@ -58,7 +58,7 @@ public class TransposeColumnsIntoRowsCommand extends Command {
 
         try {
             Project project = getProject(request);
-            AbstractOperation op;
+            Operation op;
 
             String startColumnName = request.getParameter("startColumnName");
             int columnCount = Integer.parseInt(request.getParameter("columnCount"));

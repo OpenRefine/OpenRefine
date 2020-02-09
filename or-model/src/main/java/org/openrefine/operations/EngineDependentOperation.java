@@ -39,7 +39,7 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.GridState;
 
-abstract public class EngineDependentOperation extends AbstractOperation {
+abstract public class EngineDependentOperation implements Operation {
 
     transient protected EngineConfig _engineConfig;
 

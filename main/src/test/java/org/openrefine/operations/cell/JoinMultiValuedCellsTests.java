@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
 import org.openrefine.process.Process;
@@ -96,7 +96,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testJoinMultiValuedCells() throws Exception {
-        AbstractOperation op = new MultiValuedCellJoinOperation(
+        Operation op = new MultiValuedCellJoinOperation(
                 "Value",
                 "Key",
                 ",");
@@ -112,7 +112,7 @@ public class JoinMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
-        AbstractOperation op = new MultiValuedCellJoinOperation(
+        Operation op = new MultiValuedCellJoinOperation(
                 "Value",
                 "Key",
                 ",     ,");

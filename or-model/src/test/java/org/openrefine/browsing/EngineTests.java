@@ -98,8 +98,6 @@ public class EngineTests extends SparkBasedTest {
         when(facetConfigAll.apply(Matchers.any(ColumnModel.class))).thenReturn(facetAll);
         when(facetA.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
         when(facetAll.getInitialFacetState()).thenReturn(new FacetStateStub(0, 0));
-        when(facetA.getRowFilter()).thenReturn(filterA);
-        when(facetAll.getRowFilter()).thenReturn(noFilter);
         when((FacetAggregator<FacetStateStub>) facetA.getAggregator()).thenReturn(new FacetAggregatorStub(filterA));
         when((FacetAggregator<FacetStateStub>) facetAll.getAggregator()).thenReturn(new FacetAggregatorStub(noFilter));
 
@@ -113,7 +111,7 @@ public class EngineTests extends SparkBasedTest {
         List<FacetState> states = SUT.getFacetStates();
         Assert.assertEquals(states, Arrays.asList(
                 new FacetStateStub(1, 1),
-                new FacetStateStub(2, 0)));
+                new FacetStateStub(1, 0)));
     }
 
     @Test

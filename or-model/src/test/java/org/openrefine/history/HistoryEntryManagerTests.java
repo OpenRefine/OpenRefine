@@ -19,6 +19,7 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.util.TestUtils;
 
@@ -36,10 +37,15 @@ public class HistoryEntryManagerTests extends SparkBasedTest {
             List<Column> newColumns = columns.subList(1, columns.size());
             return new GridState(newColumns, projectState.getOverlayModels());
         }
+
+        @Override
+        public boolean isImmediate() {
+            return false;
+        }
     };
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws NotImmediateOperationException {
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("a"),
                 new ColumnMetadata("b"),

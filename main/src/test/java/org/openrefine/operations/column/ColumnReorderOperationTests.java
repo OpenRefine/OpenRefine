@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnReorderOperation;
 import org.openrefine.process.Process;
@@ -66,7 +66,7 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @Test
     public void serializeColumnReorderOperation() {
-        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
+        Operation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
                 + "\"description\":\"Reorder columns\","
                 + "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
@@ -86,7 +86,7 @@ public class ColumnReorderOperationTests extends RefineTest {
         Assert.assertEquals(project.rows.get(1).getCellValue(bCol), "f");
         Assert.assertEquals(project.rows.get(1).getCellValue(cCol), "g");
 
-        AbstractOperation op = new ColumnReorderOperation(Arrays.asList("a"));
+        Operation op = new ColumnReorderOperation(Arrays.asList("a"));
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 

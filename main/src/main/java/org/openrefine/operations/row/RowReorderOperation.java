@@ -48,12 +48,12 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.RowReorderChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.SortingRecordVisitor;
 import org.openrefine.sorting.SortingRowVisitor;
 
-public class RowReorderOperation extends AbstractOperation {
+public class RowReorderOperation extends Operation {
 
     final protected Mode _mode;
     final protected SortingConfig _sorting;
@@ -77,7 +77,7 @@ public class RowReorderOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Reorder rows";
     }
 

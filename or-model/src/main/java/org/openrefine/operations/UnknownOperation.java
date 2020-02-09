@@ -9,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.model.Project;
+import org.openrefine.history.History;
+import org.openrefine.process.Process;
 
 /**
  * An operation that is unknown to the current OpenRefine instance, but might be interpretable by another instance (for
@@ -21,7 +22,7 @@ import org.openrefine.model.Project;
  * @author Antonin Delpeuch
  *
  */
-public class UnknownOperation extends AbstractOperation {
+public class UnknownOperation implements Operation {
 
     // Map storing the JSON serialization of the operation in an agnostic way
     private Map<String, Object> properties;
@@ -54,7 +55,12 @@ public class UnknownOperation extends AbstractOperation {
         return opCode;
     }
 
-    protected String getBriefDescription(Project project) {
+    public String getDescription() {
         return description;
+    }
+
+    @Override
+    public Process createProcess(History history) throws Exception {
+        throw new IllegalStateException("An unknown operation cannot be executed");
     }
 }

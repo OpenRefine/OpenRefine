@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.row.DenormalizeOperation;
 import org.openrefine.process.Process;
 
@@ -59,7 +59,7 @@ public class DenormalizeCommand extends Command {
         try {
             Project project = getProject(request);
 
-            AbstractOperation op = new DenormalizeOperation();
+            Operation op = new DenormalizeOperation();
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

@@ -55,9 +55,9 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.operations.AbstractOperation;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OnError;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
@@ -135,7 +135,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
-        AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
+        Operation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
         Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }

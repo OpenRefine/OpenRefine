@@ -45,16 +45,16 @@ import org.openrefine.model.RecordModel.CellDependency;
 import org.openrefine.model.RecordModel.RowDependency;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
-public class DenormalizeOperation extends AbstractOperation {
+public class DenormalizeOperation extends Operation {
 
     @JsonCreator
     public DenormalizeOperation() {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Denormalize";
     }
 
@@ -92,7 +92,7 @@ public class DenormalizeOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                getBriefDescription(project),
+                getDescription(),
                 DenormalizeOperation.this,
                 new MassRowChange(newRows));
     }

@@ -47,7 +47,7 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation;
 import org.openrefine.process.Process;
@@ -111,7 +111,7 @@ public class ReconJudgeSimilarCellsTests extends RefineTest {
                 true, Collections.emptyList());
         column.setReconConfig(config);
 
-        AbstractOperation op = new ReconJudgeSimilarCellsOperation(
+        Operation op = new ReconJudgeSimilarCellsOperation(
                 ENGINE_CONFIG,
                 "A",
                 "foo",

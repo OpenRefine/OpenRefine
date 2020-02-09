@@ -188,7 +188,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Split column " + _columnName +
                 ("separator".equals(_mode) ? " by separator" : " by field lengths");
     }

@@ -45,10 +45,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
 import org.openrefine.model.changes.MassEditChange;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.util.ParsingUtilities;
@@ -119,13 +117,18 @@ public class MassEditOperation extends EngineDependentOperation {
         return _edits;
     }
 
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _columnName;
+    }
+
     @Override
-    protected String getBriefDescription(Project project) {
+    public String getDescription() {
         return "Mass edit cells in column " + _columnName;
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(GridState state, long historyEntryID) throws Exception {
+    public Change createChange() throws ParsingException {
         Evaluable eval = MetaParser.parse(_expression);
 
         Map<String, Serializable> fromTo = new HashMap<>();
@@ -145,7 +148,6 @@ public class MassEditOperation extends EngineDependentOperation {
                 fromErrorTo = edit.to;
             }
         }
-        Change change = new MassEditChange(_engineConfig, eval, _columnName, fromTo, fromBlankTo, fromErrorTo);
-        return new HistoryEntry(historyEntryID, getBriefDescription(null), this, change);
+        return new MassEditChange(_engineConfig, eval, _columnName, fromTo, fromBlankTo, fromErrorTo);
     }
 }

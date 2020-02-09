@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnRenameOperation;
 import org.openrefine.process.Process;
 
@@ -61,7 +61,7 @@ public class RenameColumnCommand extends Command {
             String oldColumnName = request.getParameter("oldColumnName");
             String newColumnName = request.getParameter("newColumnName");
 
-            AbstractOperation op = new ColumnRenameOperation(oldColumnName, newColumnName);
+            Operation op = new ColumnRenameOperation(oldColumnName, newColumnName);
             Process process = op.createProcess(project.getHistory());
 
             performProcessAndRespond(request, response, project, process);

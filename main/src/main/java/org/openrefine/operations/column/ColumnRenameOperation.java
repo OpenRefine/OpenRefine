@@ -40,9 +40,9 @@ import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnRenameChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
-public class ColumnRenameOperation extends AbstractOperation {
+public class ColumnRenameOperation extends Operation {
 
     final protected String _oldColumnName;
     final protected String _newColumnName;
@@ -66,7 +66,7 @@ public class ColumnRenameOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Rename column " + _oldColumnName + " to " + _newColumnName;
     }
 
@@ -81,6 +81,6 @@ public class ColumnRenameOperation extends AbstractOperation {
 
         Change change = new ColumnRenameChange(_oldColumnName, _newColumnName);
 
-        return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnRenameOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, getDescription(), ColumnRenameOperation.this, change);
     }
 }

@@ -42,7 +42,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.MassEditOperation;
 import org.openrefine.operations.cell.MassEditOperation.Edit;
 import org.openrefine.util.ParsingUtilities;
@@ -50,7 +50,7 @@ import org.openrefine.util.ParsingUtilities;
 public class MassEditCommand extends EngineDependentCommand {
 
     @Override
-    protected AbstractOperation createOperation(Project project,
+    protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         String columnName = request.getParameter("columnName");

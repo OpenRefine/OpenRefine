@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
 import org.openrefine.process.Process;
 
@@ -63,7 +63,7 @@ public class JoinMultiValueCellsCommand extends Command {
             String keyColumnName = request.getParameter("keyColumnName");
             String separator = request.getParameter("separator");
 
-            AbstractOperation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
+            Operation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
             Process process = op.createProcess(project, new Properties());
 
             performProcessAndRespond(request, response, project, process);

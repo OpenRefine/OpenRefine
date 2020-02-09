@@ -41,9 +41,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnReorderChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
-public class ColumnReorderOperation extends AbstractOperation {
+public class ColumnReorderOperation extends Operation {
 
     final protected List<String> _columnNames;
 
@@ -59,7 +59,7 @@ public class ColumnReorderOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Reorder columns";
     }
 

@@ -44,7 +44,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.BlankDownOperation;
 import org.openrefine.process.Process;
@@ -82,13 +82,13 @@ public class BlankDownTests extends RefineTest {
                 + "\"description\":\"Blank down cells in column my column\","
                 + "\"engineConfig\":{\"mode\":\"record-based\",\"facets\":[]},"
                 + "\"columnName\":\"my column\"}";
-        AbstractOperation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
+        Operation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
         TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void testBlankDownRecords() throws Exception {
-        AbstractOperation op = new BlankDownOperation(
+        Operation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
@@ -102,7 +102,7 @@ public class BlankDownTests extends RefineTest {
 
     @Test
     public void testBlankDownRows() throws Exception {
-        AbstractOperation op = new BlankDownOperation(
+        Operation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
@@ -128,7 +128,7 @@ public class BlankDownTests extends RefineTest {
         project.columnModel.getColumns().addAll(newColumns);
         project.columnModel.update();
 
-        AbstractOperation op = new BlankDownOperation(
+        Operation op = new BlankDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());

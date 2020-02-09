@@ -40,28 +40,28 @@ import java.util.Map;
 
 public abstract class OperationRegistry {
 
-    static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass = new HashMap<String, List<Class<? extends AbstractOperation>>>();
+    static final public Map<String, List<Class<? extends Operation>>> s_opNameToClass = new HashMap<String, List<Class<? extends Operation>>>();
 
-    static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName = new HashMap<Class<? extends AbstractOperation>, String>();
+    static final public Map<Class<? extends Operation>, String> s_opClassToName = new HashMap<Class<? extends Operation>, String>();
 
-    static public void registerOperation(String moduleName, String name, Class<? extends AbstractOperation> klass) {
+    static public void registerOperation(String moduleName, String name, Class<? extends Operation> klass) {
         String key = moduleName + "/" + name;
 
         s_opClassToName.put(klass, key);
 
-        List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(key);
+        List<Class<? extends Operation>> classes = s_opNameToClass.get(key);
         if (classes == null) {
-            classes = new LinkedList<Class<? extends AbstractOperation>>();
+            classes = new LinkedList<Class<? extends Operation>>();
             s_opNameToClass.put(key, classes);
         }
         classes.add(klass);
     }
 
-    static public Class<? extends AbstractOperation> resolveOperationId(String op) {
+    static public Class<? extends Operation> resolveOperationId(String op) {
         if (!op.contains("/")) {
             op = "core/" + op; // backward compatible
         }
-        List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(op);
+        List<Class<? extends Operation>> classes = s_opNameToClass.get(op);
         if (classes != null && classes.size() > 0) {
             return classes.get(classes.size() - 1);
         }

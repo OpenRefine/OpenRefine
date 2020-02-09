@@ -101,9 +101,9 @@ public class AllFacetsAggregatorTests {
 
         List<FacetState> result = SUT.increment(initial, 1, row);
         Assert.assertEquals(result, Arrays.asList(
-                new FacetStateStub(1, 0),
+                new FacetStateStub(0, 0),
                 new FacetStateStub(0, 1),
-                new FacetStateStub(1, 0)));
+                new FacetStateStub(0, 0)));
     }
 
     @Test

@@ -41,7 +41,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.row.RowReorderOperation;
 import org.openrefine.process.Process;
@@ -79,7 +79,7 @@ public class RowReorderOperationTests extends RefineTest {
         String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
         project.rows.get(1).cells.set(0, new Cell("", null));
-        AbstractOperation op = new RowReorderOperation(
+        Operation op = new RowReorderOperation(
                 Mode.RowBased, sortingConfig);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

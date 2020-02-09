@@ -41,13 +41,13 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.ReconCandidate;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation;
 
 public class ReconJudgeSimilarCellsCommand extends EngineDependentCommand {
 
     @Override
-    protected AbstractOperation createOperation(
+    protected Operation createOperation(
             Project project, HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         String columnName = request.getParameter("columnName");

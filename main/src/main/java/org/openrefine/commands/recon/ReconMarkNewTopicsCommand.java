@@ -38,13 +38,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.recon.ReconMarkNewTopicsOperation;
 
 public class ReconMarkNewTopicsCommand extends EngineDependentCommand {
 
     @Override
-    protected AbstractOperation createOperation(Project project,
+    protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         return new ReconMarkNewTopicsOperation(

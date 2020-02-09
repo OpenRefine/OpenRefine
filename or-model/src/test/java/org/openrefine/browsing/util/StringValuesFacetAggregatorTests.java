@@ -35,7 +35,7 @@ public class StringValuesFacetAggregatorTests {
     @BeforeTest
     public void setUpState() {
         cm = new ColumnModel(Arrays.asList(new ColumnMetadata("mycolumn")));
-        SUT = new StringValuesFacetAggregator(cm, 0, dummy, Collections.singleton("foo"), false, false);
+        SUT = new StringValuesFacetAggregator(cm, 0, dummy, Collections.singleton("foo"), false, false, false);
         initial = new StringValuesFacetState(Collections.emptyMap(), 0L, 0L);
     }
 

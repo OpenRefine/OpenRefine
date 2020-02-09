@@ -101,7 +101,7 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Text transform on cells in column " + _columnName + " using expression " + _expression;
     }
 

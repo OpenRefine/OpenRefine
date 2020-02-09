@@ -167,7 +167,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Create column " + _newColumnName +
                 " at index " + _columnInsertIndex +
                 " by fetching URLs based on column " + _baseColumnName +
@@ -192,7 +192,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 project,
                 engine,
                 eval,
-                getBriefDescription(null),
+                getDescription(),
                 _cacheResponses);
     }
 

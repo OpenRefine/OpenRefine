@@ -10,4 +10,9 @@ public class ChangeStub implements Change {
         return projectState;
     }
 
+    @Override
+    public boolean isImmediate() {
+        return false;
+    }
+
 }

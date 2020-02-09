@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.TextTransformOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
@@ -51,7 +51,7 @@ import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.Ht
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
 
     @Override
-    protected AbstractOperation createOperation(Project project,
+    protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
 
         String baseColumnName = request.getParameter("baseColumnName");

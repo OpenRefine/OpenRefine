@@ -58,7 +58,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Remove rows";
     }
 

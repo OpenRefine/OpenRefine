@@ -46,9 +46,9 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
-public class MultiValuedCellJoinOperation extends AbstractOperation {
+public class MultiValuedCellJoinOperation extends Operation {
 
     final protected String _columnName;
     final protected String _keyColumnName;
@@ -80,7 +80,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Join multi-valued cells in column " + _columnName;
     }
 
@@ -149,7 +149,7 @@ public class MultiValuedCellJoinOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                getBriefDescription(null),
+                getDescription(),
                 this,
                 new MassRowChange(newRows));
     }

@@ -48,9 +48,9 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
-public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
+public class TransposeColumnsIntoRowsOperation extends Operation {
 
     @JsonProperty("startColumnName")
     final protected String _startColumnName;
@@ -155,11 +155,11 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
-        return getBriefDescription();
+    protected String getDescription() {
+        return getDescription();
     }
 
-    protected String getBriefDescription() {
+    protected String getDescription() {
         if (_combinedColumnName != null) {
             if (_columnCount > 0) {
                 return "Transpose cells in " + _columnCount +
@@ -355,7 +355,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         return new HistoryEntry(
                 historyEntryID,
                 project,
-                getBriefDescription(),
+                getDescription(),
                 this,
                 new MassRowColumnChange(newColumns, newRows));
     }

@@ -48,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.commands.Command;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 public class GetOperationsCommand extends Command {
 
@@ -67,7 +67,7 @@ public class GetOperationsCommand extends Command {
 
         @JsonProperty("operation")
         @JsonInclude(Include.NON_NULL)
-        public AbstractOperation getOperation() {
+        public Operation getOperation() {
             return entry.getOperation();
         }
     }

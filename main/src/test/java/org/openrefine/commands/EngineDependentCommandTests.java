@@ -12,14 +12,14 @@ import org.testng.annotations.Test;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 public class EngineDependentCommandTests extends CommandTestBase {
 
     private static class EngineDependentCommandStub extends EngineDependentCommand {
 
         @Override
-        protected AbstractOperation createOperation(Project project, HttpServletRequest request,
+        protected Operation createOperation(Project project, HttpServletRequest request,
                 EngineConfig engineConfig) throws Exception {
             return null;
         }

@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.KeyValueColumnizeOperation;
 import org.openrefine.process.Process;
 
@@ -63,7 +63,7 @@ public class KeyValueColumnizeCommand extends Command {
             String valueColumnName = request.getParameter("valueColumnName");
             String noteColumnName = request.getParameter("noteColumnName");
 
-            AbstractOperation op = new KeyValueColumnizeOperation(
+            Operation op = new KeyValueColumnizeOperation(
                     keyColumnName, valueColumnName, noteColumnName);
 
             Process process = op.createProcess(project, new Properties());

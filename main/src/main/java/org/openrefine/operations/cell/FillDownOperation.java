@@ -60,7 +60,7 @@ public class FillDownOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Fill down cells in column " + _columnName;
     }
 
