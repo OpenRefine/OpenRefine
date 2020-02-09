@@ -31,11 +31,11 @@ public class ListFacetResult implements FacetResult {
         @JsonProperty("s")
         boolean selected;
         @JsonProperty("c")
-        int count;
+        long count;
 
         public OtherChoice(
                 @JsonProperty("s") boolean selected,
-                @JsonProperty("c") int count) {
+                @JsonProperty("c") long count) {
             this.selected = selected;
             this.count = count;
         }
@@ -48,8 +48,8 @@ public class ListFacetResult implements FacetResult {
      * Computed results
      */
     protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
-    protected int _blankCount;
-    protected int _errorCount;
+    protected long _blankCount;
+    protected long _errorCount;
 
     public ListFacetResult(ListFacetConfig config, StringValuesFacetState state) {
         _config = config;
@@ -73,6 +73,9 @@ public class ListFacetResult implements FacetResult {
             NominalFacetChoice choice = new NominalFacetChoice(decoratedValue, 0, true);
             _choices.add(choice);
         }
+
+        _blankCount = state.getBlankCount();
+        _errorCount = state.getErrorCount();
     }
 
     public ListFacetResult(ListFacetConfig config, String errorMessage) {
