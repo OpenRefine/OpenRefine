@@ -890,7 +890,7 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
-  build) build_prepare; mvn process-resources; mvn compile\ test-compile;;
+  build) build_prepare; mvn process-resources; mvn compile;;
   clean) mvn clean;;
   whitespace) whitespace $1;;
   distclean) mvn distclean;;
