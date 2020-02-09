@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -17,7 +17,7 @@ public class EngineDependentCommandTests extends CommandTestBase {
 	private static class EngineDependentCommandStub extends EngineDependentCommand {
 
 		@Override
-		protected AbstractOperation createOperation(Project project, HttpServletRequest request,
+		protected Operation createOperation(Project project, HttpServletRequest request,
 				EngineConfig engineConfig) throws Exception {
 			return null;
 		}

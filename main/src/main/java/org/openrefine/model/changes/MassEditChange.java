@@ -88,4 +88,9 @@ public class MassEditChange extends EngineDependentChange {
 		};
 	}
 
+	@Override
+	public boolean isImmediate() {
+		return true;
+	}
+
 }

@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnReorderOperation;
 import org.openrefine.util.ParsingUtilities;
 
@@ -49,7 +49,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class ReorderColumnsCommand extends EngineDependentCommand {
     
     @Override
-    protected AbstractOperation createOperation(Project project,
+    protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
         
         String columnNames = request.getParameter("columnNames");

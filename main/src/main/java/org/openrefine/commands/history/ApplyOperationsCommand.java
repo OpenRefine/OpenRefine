@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
@@ -84,7 +84,7 @@ public class ApplyOperationsCommand extends Command {
     }
     
     protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
-        AbstractOperation operation = ParsingUtilities.mapper.convertValue(obj, AbstractOperation.class);
+        Operation operation = ParsingUtilities.mapper.convertValue(obj, Operation.class);
         if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
                 Process process = operation.createProcess(project.getHistory());

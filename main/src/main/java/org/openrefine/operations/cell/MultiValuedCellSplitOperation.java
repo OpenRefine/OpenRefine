@@ -44,14 +44,14 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MultiValuedCellSplitOperation extends AbstractOperation {
+public class MultiValuedCellSplitOperation extends Operation {
     final protected String  _columnName;
     final protected String  _keyColumnName;
     final protected String  _mode;
@@ -152,7 +152,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Split multi-valued cells in column " + _columnName;
     }
 
@@ -253,7 +253,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         return new HistoryEntry(
             historyEntryID,
             project, 
-            getBriefDescription(null), 
+            getDescription(), 
             this, 
             new MassRowChange(newRows)
         );

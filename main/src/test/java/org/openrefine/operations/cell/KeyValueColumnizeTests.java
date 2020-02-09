@@ -53,7 +53,7 @@ import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.KeyValueColumnizeOperation;
 import org.openrefine.process.Process;
@@ -147,7 +147,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "3","b","5",
                 "3","d","3"});
 
-        AbstractOperation op = new KeyValueColumnizeOperation(
+        Operation op = new KeyValueColumnizeOperation(
                 "Cat", "Val", null);
 
         Process process = op.createProcess(project, new Properties());
@@ -208,7 +208,7 @@ public class KeyValueColumnizeTests extends RefineTest {
         project.update();
         ProjectManager.singleton.registerProject(project, pm);
 
-	AbstractOperation op = new KeyValueColumnizeOperation(
+	Operation op = new KeyValueColumnizeOperation(
 		"Key",
 		"Value",
 		null);

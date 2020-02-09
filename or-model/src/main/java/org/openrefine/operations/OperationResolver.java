@@ -45,7 +45,7 @@ public class OperationResolver extends TypeIdResolverBase {
 
     @Override
     public String idFromValue(Object instance) {
-        return ((AbstractOperation)instance).getOperationId();
+        return ((Operation)instance).getOperationId();
     }
 
     @Override
@@ -54,13 +54,13 @@ public class OperationResolver extends TypeIdResolverBase {
         if (id != null) {
         	return id;
         } else { // this happens for an UnknownOperation
-        	return ((AbstractOperation) instance).getOperationId();
+        	return ((Operation) instance).getOperationId();
         }
     }
     
     @Override
     public JavaType typeFromId(DatabindContext context, String id) {
-    	Class<? extends AbstractOperation> opClass = OperationRegistry.resolveOperationId(id);
+    	Class<? extends Operation> opClass = OperationRegistry.resolveOperationId(id);
     	if (opClass == null) {
     		opClass = UnknownOperation.class;
     	}

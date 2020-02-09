@@ -37,7 +37,9 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -60,14 +63,13 @@ public class HistoryEntry {
     private final OffsetDateTime   time;
 
     // the abstract operation, if any, that results in the change
-    private final AbstractOperation operation;
+    private final Operation operation;
 
     // the actual change
-    @JsonProperty("change")
-    @JsonView(JsonViews.SaveMode.class)
+    
     final protected Change change;
 
-
+    // JsonIgnore because it is included later on in special cases, see {@link getJsonChange}.
     @JsonIgnore
     public Change getChange() {
         return change;
@@ -84,9 +86,9 @@ public class HistoryEntry {
     		@JsonProperty("description")
     		String description,
     		@JsonProperty("operation")
-    		AbstractOperation operation,
+    		Operation operation,
     		@JsonProperty("change")
-    		Change change) {
+    		Change change) throws NotImmediateOperationException {
     	this(id,
     	     description,
     	     operation,
@@ -97,14 +99,24 @@ public class HistoryEntry {
     protected HistoryEntry(
             long id,
             String description,
-            AbstractOperation operation,
+            Operation operation,
             OffsetDateTime time,
-            Change change) {
+            Change change) throws NotImmediateOperationException {
         this.id = id;
         this.description = description;
         this.operation = operation;
         this.time = time;
-        this.change = change;
+        Change actualChange = change;
+        if (change == null && operation != null) {
+            try {
+                actualChange = change != null ? change : operation.createChange();
+            } catch (ParsingException e) {
+                // todo redesign error reporting for changes which fail to be loaded
+                // for instance, suppose a language evaluator is not available:
+                // how do we fail?
+            }
+        }
+        this.change = actualChange;
     }
 
     static public HistoryEntry load(String s) throws IOException {
@@ -128,8 +140,24 @@ public class HistoryEntry {
     
     @JsonProperty("operation")
     @JsonView(JsonViews.SaveMode.class)
-    public AbstractOperation getOperation() {
+    public Operation getOperation() {
         return operation;
+    }
+    
+    /**
+     * Only returns a change if it needs
+     * to be serialized to JSON, i.e. if it is
+     * not directly derived from the operation.
+     */
+    @JsonProperty("change")
+    @JsonView(JsonViews.SaveMode.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Change getJsonChange() {
+        if (change.isImmediate()) {
+            return null;
+        } else {
+            return change;
+        }
     }
 
 }

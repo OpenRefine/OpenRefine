@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.commands.Command;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -65,7 +65,7 @@ public class GetOperationsCommand extends Command {
         
         @JsonProperty("operation")
         @JsonInclude(Include.NON_NULL)
-        public AbstractOperation getOperation() {
+        public Operation getOperation() {
             return entry.getOperation();
         }
     }
