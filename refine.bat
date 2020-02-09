@@ -241,7 +241,7 @@ echo   http://bit.ly/1c2gkR
 echo.
 :gotMvnHome
 set MVN_ACTION=""%ACTION%""
-if ""%ACTION%"" == ""build"" set MVN_ACTION=compile test-compile dependency:build-classpath
+if ""%ACTION%"" == ""build"" set MVN_ACTION=compile dependency:build-classpath
 if ""%ACTION%"" == ""test"" set MVN_ACTION=test dependency:build-classpath
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=test -f main
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=test -f extensions
