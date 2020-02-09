@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.process.Process;
 
 /**
@@ -78,7 +78,7 @@ abstract public class EngineDependentCommand extends Command {
         try {
             Project project = getProject(request);
             
-            AbstractOperation op = createOperation(project, request, getEngineConfig(request));
+            Operation op = createOperation(project, request, getEngineConfig(request));
             Process process = op.createProcess(project.getHistory());
             
             performProcessAndRespond(request, response, project, process);
@@ -87,6 +87,6 @@ abstract public class EngineDependentCommand extends Command {
         }
     }
     
-    abstract protected AbstractOperation createOperation(
+    abstract protected Operation createOperation(
             Project project, HttpServletRequest request, EngineConfig engineConfig) throws Exception;
 }

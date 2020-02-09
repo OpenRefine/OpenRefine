@@ -45,12 +45,12 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class KeyValueColumnizeOperation extends AbstractOperation {
+public class KeyValueColumnizeOperation extends Operation {
     final protected String  _keyColumnName;
     final protected String  _valueColumnName;
     final protected String  _noteColumnName;
@@ -85,7 +85,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Columnize by key column " +
             _keyColumnName + " and value column " + _valueColumnName +
             (_noteColumnName != null ? (" with note column " + _noteColumnName) : "");
@@ -251,7 +251,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         return new HistoryEntry(
             historyEntryID,
             project, 
-            getBriefDescription(null), 
+            getDescription(), 
             this, 
             new MassRowColumnChange(allColumns, newRows)
         );

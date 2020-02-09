@@ -39,7 +39,7 @@ import org.openrefine.model.GridState;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-abstract public class EngineDependentOperation extends AbstractOperation {
+abstract public class EngineDependentOperation implements Operation {
     
     transient protected EngineConfig    _engineConfig;
     

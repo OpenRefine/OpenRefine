@@ -37,12 +37,12 @@ import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ColumnMoveChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ColumnMoveOperation extends AbstractOperation {
+public class ColumnMoveOperation extends Operation {
     final protected String _columnName;
     final protected int    _index;
 
@@ -68,7 +68,7 @@ public class ColumnMoveOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Move column " + _columnName + " to position " + _index;
     }
 
@@ -83,6 +83,6 @@ public class ColumnMoveOperation extends AbstractOperation {
         
         Change change = new ColumnMoveChange(_columnName, _index);
         
-        return new HistoryEntry(historyEntryID, project, getBriefDescription(null), ColumnMoveOperation.this, change);
+        return new HistoryEntry(historyEntryID, project, getDescription(), ColumnMoveOperation.this, change);
     }
 }

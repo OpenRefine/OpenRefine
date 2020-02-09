@@ -108,7 +108,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Extend data at index " + _columnInsertIndex + 
             " based on column " + _baseColumnName;
     }
@@ -124,7 +124,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
         return new ExtendDataProcess(
             project, 
             getEngineConfig(),
-            getBriefDescription(null)
+            getDescription()
         );
     }
     

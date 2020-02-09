@@ -76,7 +76,7 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     }
     
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Clear recon data for cells containing \"" +
             _similarValue + "\" in column " + _columnName;
     }

@@ -42,12 +42,12 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.MassRowColumnChange;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
+public class TransposeRowsIntoColumnsOperation extends Operation {
     final protected String  _columnName;
     final protected int     _rowCount;
 
@@ -73,7 +73,7 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
     }
 
@@ -141,7 +141,7 @@ public class TransposeRowsIntoColumnsOperation extends AbstractOperation {
         return new HistoryEntry(
             historyEntryID,
             project, 
-            getBriefDescription(null), 
+            getDescription(), 
             this, 
             new MassRowColumnChange(newColumns, newRows)
         );

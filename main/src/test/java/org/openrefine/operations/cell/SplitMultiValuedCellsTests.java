@@ -39,7 +39,7 @@ import java.util.Properties;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
 import org.openrefine.process.Process;
@@ -101,7 +101,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsTextSeparator() throws Exception {
-        AbstractOperation op = new MultiValuedCellSplitOperation(
+        Operation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
             ":",
@@ -120,7 +120,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
 
     @Test
     public void testSplitMultiValuedCellsRegExSeparator() throws Exception {
-        AbstractOperation op = new MultiValuedCellSplitOperation(
+        Operation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
             "\\W",
@@ -145,7 +145,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
     public void testSplitMultiValuedCellsLengths() throws Exception {
         int[] lengths = {4,4,6,4};
 
-        AbstractOperation op = new MultiValuedCellSplitOperation(
+        Operation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
             lengths);

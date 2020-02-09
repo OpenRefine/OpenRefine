@@ -70,7 +70,7 @@ public class RowStarOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getBriefDescription(Project project) {
+    protected String getDescription() {
         return (_starred ? "Star rows" : "Unstar rows");
     }
 

@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
@@ -68,7 +68,7 @@ public class SplitMultiValueCellsCommand extends Command {
             Boolean regex = Boolean.parseBoolean(request.getParameter("regex"));
 
             if ("separator".equals(mode)) {
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
+                Operation op = new MultiValuedCellSplitOperation(columnName, 
                                                                          keyColumnName,
                                                                          separator, 
                                                                          regex);
@@ -80,7 +80,7 @@ public class SplitMultiValueCellsCommand extends Command {
                 
                 int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
                 
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName,
+                Operation op = new MultiValuedCellSplitOperation(columnName,
                                                                          keyColumnName,
                                                                          fieldLengths);
                 Process process = op.createProcess(project, new Properties());

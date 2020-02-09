@@ -29,34 +29,16 @@ package org.openrefine.process;
 import static org.mockito.Mockito.mock;
 
 import org.openrefine.history.History;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
-import org.openrefine.process.Process;
-import org.openrefine.process.QuickHistoryEntryProcess;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class QuickHistoryEntryProcessTests {
-    public static class QuickHistoryEntryProcessStub extends QuickHistoryEntryProcess {
-
-        public QuickHistoryEntryProcessStub(History history, String briefDescription) {
-            super(history, briefDescription);
-            
-        }
-
-        @Override
-        protected HistoryEntry createHistoryEntry(long historyEntryID)
-                throws Exception {
-            return null;
-        }
-        
-    }
     
     @Test
     public void serializeQuickHistoryEntryProcess() {
         History history = mock(History.class);
-        Process process = new QuickHistoryEntryProcessStub(history, "quick description");
+        Process process = new QuickHistoryEntryProcess(history, "quick description", null, null);
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
 		+ "\"id\":"+hashCode+","

@@ -37,7 +37,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.FillDownOperation;
 import org.openrefine.process.Process;
@@ -85,7 +85,7 @@ public class FillDownTests extends RefineTest {
     
     @Test
     public void testFillDownRecordKey() throws Exception {
-        AbstractOperation op = new FillDownOperation(
+        Operation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "key");
         Process process = op.createProcess(project, new Properties());
@@ -101,7 +101,7 @@ public class FillDownTests extends RefineTest {
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
     public void testFillDownRecords() throws Exception {
-        AbstractOperation op = new FillDownOperation(
+        Operation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
@@ -117,7 +117,7 @@ public class FillDownTests extends RefineTest {
     // https://github.com/OpenRefine/OpenRefine/issues/742
     @Test
     public void testFillDownRows() throws Exception {       
-        AbstractOperation op = new FillDownOperation(
+        Operation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
@@ -143,7 +143,7 @@ public class FillDownTests extends RefineTest {
     	project.columnModel.getColumns().addAll(newColumns);
     	project.columnModel.update();
     	
-    	AbstractOperation op = new FillDownOperation(
+    	Operation op = new FillDownOperation(
                 EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
                 "second");
         Process process = op.createProcess(project, new Properties());
