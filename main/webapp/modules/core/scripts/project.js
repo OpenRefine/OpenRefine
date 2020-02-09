@@ -443,13 +443,9 @@ Refine.clearAjaxInProgress = function() {
 
 Refine.cellIndexToColumn = function(cellIndex) {
   var columns = theProject.columnModel.columns;
-  for (var i = 0; i < columns.length; i++) {
-    var column = columns[i];
-    if (column.cellIndex == cellIndex) {
-      return column;
-    }
+  if (0 <= cellIndex && cellIndex < columns.length) {
+     return columns[cellIndex];
   }
-  return null;
 };
 Refine.columnNameToColumn = function(columnName) {
   var columns = theProject.columnModel.columns;
