@@ -293,7 +293,7 @@ function addConstellationTable(columns, SNACcolumns) {
          var dragNode = document.createElement('div');
          dragNode.className += 'wbs-draggable-column wbs-unreconciled-column-undraggable';
          dragNode.style = 'width: 150px';
-         dragNode.id = i + 9;
+         dragNode.id = i + columns.length;
          dragNode.append(dragDivElement.innerHTML);
          td.appendChild(dragNode);
          tr.appendChild(td);
@@ -350,8 +350,19 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    for (var i = 0; i < dragItemsResource.length; i++) {
       var cell = SNACSchemaAlignmentDialog._createDraggableColumn(dragItemsResource[i], false);
       cell.attr('id', 'dragResource');
+      cell.attr('value', dragItemsResource[i]);
       this._refcolumnAreaResource.append(cell);
    }
+   $('[id="dragResource"]').addClass("tooltip");
+
+   // var toolTipSpan = document.createElement("span");                 // Create a <li> node
+   // var toolTiptext = document.createTextNode("Water");
+
+
+
+
+
+   // console.log($('[id="dragResource"]')[0].appendChild());
 
    // ******* CONSTELLATIONS PAGE ******* //
    // var columnsConstellation = theProject.columnModel.columns;
@@ -377,6 +388,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    for (var i = 0; i < dragItemsConstellation.length; i++) {
       var cell = SNACSchemaAlignmentDialog._createDraggableColumn(dragItemsConstellation[i], false);
       cell.attr('id', 'dragConstellation');
+      cell.attr('value', dragItemsConstellation[i]);
       this._refcolumnAreaConestellation.append(cell);
    }
 
@@ -397,7 +409,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
             } else {
                $(this).attr('disabled', true);
                dragResourceIDs.forEach(r => {
-                  if(r.innerHTML==this.innerHTML){
+                  if(r.value==this.innerHTML){
                      r.style.visibility = 'hidden';   // Hide value
                   };
                });
@@ -405,7 +417,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
          } else {
             $(this).attr('disabled', false);
             dragResourceIDs.forEach(c => {
-               if(c.innerHTML==this.innerHTML){
+               if(c.value==this.innerHTML){
                   c.style.visibility = 'visible';  // Show value
                };
             });         
@@ -430,7 +442,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
             } else {
                $(this).attr('disabled', true);
                dragConstellationIDs.forEach(r => {
-                  if(r.innerHTML==this.innerHTML){
+                  if(r.value==this.innerHTML){
                      r.style.visibility = 'hidden';   //Hide value
                   };
                });
@@ -438,13 +450,36 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
          } else {
             $(this).attr('disabled', false);
             dragConstellationIDs.forEach(c => {
-               if(c.innerHTML==this.innerHTML){
+               if(c.value==this.innerHTML){
                   c.style.visibility = 'visible';  //Show value
                };
             });         
          }
       });
    };
+
+   var tooltipsResource = [
+      "Summary abstract of the resource",                                     // Abstract
+      "Date or date range (YYYY or YYYY-YYYY)",                               // Date
+      "The descriptive display name (e.g. Jacob Miller Papers, 1809-1882)",   // Display Entry
+      "Extent",                                                               // Extent
+      "The SNAC ID of the resource's Holding Repository",                     // Holding Repository
+      "ID",                                                                   // ID
+      "Language",                                                             // Language
+      "The preferred permanent link to find aid",                             // Link
+      "Note",                                                                 // Note
+      "The official title (e.g. Papers, 1809-1882)",                          // Title
+      "The resource type (ArchivalResource, BibliographicResource, etc.)"     // Type
+   ];
+   
+   for(var i = 0 ; i<tooltipsResource.length; i++) {
+      var toolTipSpan = document.createElement("span");
+      var toolTiptext = document.createTextNode(tooltipsResource[i]);
+      toolTipSpan.classList.add("tooltiptext");
+      toolTipSpan.appendChild(toolTiptext);
+      console.log($('[id="dragResource"]')[i]);
+      $('[id="dragResource"]')[i].appendChild(toolTipSpan);
+   }
 
    //Reference Validator Call onChange
    const $selectsRef = $(".selectColumnRes");
@@ -466,7 +501,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
          // var matchingSelector = $('.selectColumn').children('option').closest('[value = "'+$(ui.draggable).text()+'"]')[id];
          // console.log(matchingSelector);
          // matchingSelector.selected = 'true';
-         $('.selectColumn')[id].value = $(ui.draggable).text()
+         $('.selectColumn')[id].value = $(ui.draggable).val();
          hideAndDisableRef();
          hideAndDisableConst();
       }
@@ -476,7 +511,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    $('.selectColumn').droppable({
       hoverClass: 'active',
       drop: function(event, ui) {
-         this.value = $(ui.draggable).text();
+         this.value = $(ui.draggable).val();
          hideAndDisableRef();
          hideAndDisableConst();
       },
