@@ -32,6 +32,11 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.Cell;
+import com.google.refine.model.Recon;
+
+
+import com.google.refine.model.changes.CellAtRow;
+import com.google.refine.model.changes.ColumnAdditionChange;
 
 import org.snaccooperative.data.Resource;
 import org.snaccooperative.data.Term;
@@ -100,6 +105,8 @@ public class SNACResourceCreator {
     // Internal Resource IDs that isn't part of the Resource data model
 
     private static List<Integer> resource_ids = new LinkedList<Integer>();
+    private static List<CellAtRow> res_row_ids = new LinkedList<CellAtRow>();
+
     private static HashMap<String, String[]> language_code = new HashMap<String, String[]>();
 
     public static SNACResourceCreator getInstance() {
@@ -132,6 +139,7 @@ public class SNACResourceCreator {
         updateColumnMatches(JSON_SOURCE);
         rowsToResources();
         exportResourcesJSON();
+        test_insertID();
     }
 
     /**
@@ -580,6 +588,22 @@ public class SNACResourceCreator {
             System.out.println(e);
         }
         return res;
+    }
+
+    public void test_insertID(){
+      // Run this function after insertID (above) within SNACUploadCommand
+      // Check if ID column exists (Need to see how to determine which column is "id" given different naming conventions)
+      // If exists: Go through and set the cell values based on the resource_ids
+      // If not: Create a new column "id" and insert cell values based on resource_ids
+
+
+      // Operation below creates new column "id" and insert cell values from uploaded Resource objects through SNAC API
+      for (int x = 0; x < theProject.rows.size(); x++){
+        Cell test_cell = new Cell(x, new Recon(0, null, null));
+        res_row_ids.add(new CellAtRow(x, test_cell));
+      }
+      ColumnAdditionChange CAC = new ColumnAdditionChange("testing_column", 0, res_row_ids);
+      CAC.apply(theProject);
     }
 
     public static void main(String[] args) {
