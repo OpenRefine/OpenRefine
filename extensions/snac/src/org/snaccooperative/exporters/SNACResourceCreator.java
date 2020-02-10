@@ -13,7 +13,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.apache.http.entity.StringEntity;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,7 +56,6 @@ Required Fields:
   - Repository:
     - getRepository()
     - setRepository(Constellation)
-
 Other (non-required) fields:
   - ID
   - Display Entry
@@ -78,7 +75,6 @@ Other (non-required) fields:
     - setLanguages(List<Language>)
     - addLanguage(Language)
   - Note
-
 Term Object (Hardcoded lol)
   - "id": "696"
     - getID()
@@ -89,10 +85,7 @@ Term Object (Hardcoded lol)
   - "type": "document_type"
     - getType()
     - setType(String)
-
 Constellation Object
-
-
 */
 
 public class SNACResourceCreator {
@@ -139,8 +132,9 @@ public class SNACResourceCreator {
         updateColumnMatches(JSON_SOURCE);
         rowsToResources();
         exportResourcesJSON();
-        test_insertID();
+        // test_insertID();
     }
+
 
     /**
     * Take a given Row and convert it to a Resource Object
@@ -170,7 +164,7 @@ public class SNACResourceCreator {
                   try{
                       res.setID(Integer.parseInt(temp_val));
                       resource_ids.add(Integer.parseInt(temp_val));
-                      // System.out.println("ID: " + temp_val);
+                      System.out.println("ID: " + temp_val);
                       break;
                   }
                   catch (NumberFormatException e){
@@ -211,70 +205,43 @@ public class SNACResourceCreator {
                   }
               case "title":
                   res.setTitle(temp_val);
-                  // System.out.println("Title: " + temp_val);
+                  System.out.println("Title: " + temp_val);
                   break;
               case "display entry":
                   res.setDisplayEntry(temp_val);
-                  // System.out.println("Display Entry: " + temp_val);
+                  System.out.println("Display Entry: " + temp_val);
                   break;
               case "link":
                   res.setLink(temp_val);
-                  // System.out.println("Link: " + temp_val);
+                  System.out.println("Link: " + temp_val);
                   break;
               case "abstract":
                   res.setAbstract(temp_val);
-                  // System.out.println("Abstract: " + temp_val);
+                  System.out.println("Abstract: " + temp_val);
                   break;
               case "extent":
                   res.setExtent(temp_val);
-                  // System.out.println("Extent: " + temp_val);
+                  System.out.println("Extent: " + temp_val);
                   break;
               case "date":
                   res.setDate(temp_val);
-                  // System.out.println("Date: " + temp_val);
+                  System.out.println("Date: " + temp_val);
                   break;
-              case "language":
-                  // Call language detecting function if not in dictionary of languages (cache)
-                  temp_val = temp_val.toLowerCase();
-                  String lang_term;
-                  if (!language_code.containsKey(temp_val)){
-                    lang_term = detectLanguage(temp_val);
-                    if (lang_term == null){
-                      break;
-                    }
-                  } else{
-                    lang_term = temp_val;
-                  }
-                  String[] val_array = language_code.get(lang_term);
-
-                  Language lang = new Language();
-                  Term t = new Term();
-                  t.setType("language_code");
-                  try{
-                    t.setID(Integer.parseInt(val_array[0]));
-                  } catch (NumberFormatException e){
-                    break;
-                  }
-                  t.setDescription(val_array[1]);
-                  t.setTerm(lang_term);
-
-                  lang.setLanguage(t);
-                  res.addLanguage(lang);
-                  // System.out.println("Language: " + lang_term);
-                  break;
+              // case "language":
+              //     Language lang = new Language();
+              //     Term t = new Term();
+              //     t.setType(temp_val);
+              //     lang.setLanguage();
+              //     r.addLanguage(lang);
+              //     System.out.println("Language: " + temp_val);
+              //     break;
               case "holding repository snac id":
                   // System.out.println("HRSID: " + temp_val);
                   Constellation cons = new Constellation();
-                  try {
-                    cons.setID(Integer.parseInt(temp_val));
-                  } catch(NumberFormatException e){
-                    break;
-                  }
+                  // Insert ID into cons (WORK IN PROGRESS)
                   res.setRepository(cons);
                   // System.out.println("Result: " + Integer.toString(res.getRepository().getID()));
                   break;
-              // case "note":
-              //     System.out.println("Note: " + temp_val);
               default:
                   continue;
             }
@@ -463,7 +430,6 @@ public class SNACResourceCreator {
 
     }
 
-
     /*
     * Helps determine whether a given ISO language exists on the SNAC database
     *
@@ -502,7 +468,6 @@ public class SNACResourceCreator {
         }
     }
 
-
     /**
     * Converts Project rows to Resources and store into Resources array
     *
@@ -527,7 +492,6 @@ public class SNACResourceCreator {
     * @param none
     * @return String (String converted JSONObject of Resource Array)
     */
-
     public String exportResourcesJSON(){
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
@@ -541,17 +505,19 @@ public class SNACResourceCreator {
           }
         }
         jo.put("resources", ja);
+        //System.out.println(jo.toString());
         return jo.toString();
 
     }
 
     public void uploadResources(String apiKey) {
-    //    String apiKey = "NmZjMTY3Yjc4ZjgxZGRmMzM5YTI0YzZhMDVhMGJhNjE3MTU2ZTg5Mw";
+
     try{
         String opIns = ",\n\"operation\":\"insert\"\n},\"apikey\":\"" + apiKey +"\"";
         List<Resource> new_list_resources = new LinkedList<Resource>();
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
+        System.out.println("Querying SNAC...");
         for(Resource temp_res : resources){
             String rtj = Resource.toJSON(temp_res);
               String api_query = "{\"command\": \"insert_resource\",\n \"resource\":" + rtj.substring(0,rtj.length()-1) + opIns + "}";
@@ -569,45 +535,43 @@ public class SNACResourceCreator {
           System.out.println(e);
         }
     }
-
     public Resource insertID(String result, Resource res){
-        JSONParser jp = new JSONParser();
-        try{
-            JSONObject jsonobj = (JSONObject)jp.parse(result);
-            int new_id = Integer.parseInt((((JSONObject)jsonobj.get("resource")).get("id")).toString());
-            if(new_id!=0){
-              resource_ids.add(new_id);
-              res.setID(new_id);
-              return res;
-            }
-            else{
-              resource_ids.add(null);
-            }
+    JSONParser jp = new JSONParser();
+    try{
+        JSONObject jsonobj = (JSONObject)jp.parse(result);
+        int new_id = Integer.parseInt((((JSONObject)jsonobj.get("resource")).get("id")).toString());
+        if(new_id!=0){
+          resource_ids.add(new_id);
+          res.setID(new_id);
+          return res;
         }
-        catch (ParseException e){
-            System.out.println(e);
+        else{
+          resource_ids.add(null);
         }
-        return res;
     }
-
-    public void test_insertID(){
-      // Run this function after insertID (above) within SNACUploadCommand
-      // Check if ID column exists (Need to see how to determine which column is "id" given different naming conventions)
-      // If exists: Go through and set the cell values based on the resource_ids
-      // If not: Create a new column "id" and insert cell values based on resource_ids
-
-
-      // Operation below creates new column "id" and insert cell values from uploaded Resource objects through SNAC API
-      for (int x = 0; x < theProject.rows.size(); x++){
-        Cell test_cell = new Cell(x, new Recon(0, null, null));
-        res_row_ids.add(new CellAtRow(x, test_cell));
-      }
-      ColumnAdditionChange CAC = new ColumnAdditionChange("testing_column", 0, res_row_ids);
-      CAC.apply(theProject);
+    catch (ParseException e){
+        System.out.println(e);
     }
+    return res;
+}
 
-    public static void main(String[] args) {
-        System.out.println("Hello");
+public void test_insertID(){
+  // Run this function after insertID (above) within SNACUploadCommand
+  // Check if ID column exists (Need to see how to determine which column is "id" given different naming conventions)
+  // If exists: Go through and set the cell values based on the resource_ids
+  // If not: Create a new column "id" and insert cell values based on resource_ids
 
-    }
+
+  // Operation below creates new column "id" and insert cell values from uploaded Resource objects through SNAC API
+  for (int x = 0; x < theProject.rows.size(); x++){
+    Cell test_cell = new Cell(x, new Recon(0, null, null));
+    res_row_ids.add(new CellAtRow(x, test_cell));
+  }
+  ColumnAdditionChange CAC = new ColumnAdditionChange("testing_column", 0, res_row_ids);
+  CAC.apply(theProject);
+}
+
+public static void main(String[] args) {
+    System.out.println("Hello");
+}
 }
