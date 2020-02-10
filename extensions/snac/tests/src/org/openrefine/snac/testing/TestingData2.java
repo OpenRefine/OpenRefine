@@ -69,6 +69,10 @@ public class TestingData2 {
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "CREATE\n" + "LAST\tP571\t+2016-01-01T00:00:00Z/9"
             + "\tS854\t\"http://new-uni.com/\"" + "\tS813\t+2018-02-28T00:00:00Z/11\n";
 
+    public static final String constellationCsv = "subject,place,occupation\n"
+            + "Kaijus,Kyoto,Demolition\n"
+            + "kaijus,Tokyo,Demolition";
+
     public static String jsonFromFile(String filename)
             throws IOException {
         InputStream f = TestingData2.class.getClassLoader().getResourceAsStream(filename);

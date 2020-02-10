@@ -60,32 +60,43 @@ import java.io.IOException;
 import org.snaccooperative.commands.SNACUploadCommand;
 import org.snaccooperative.commands.SNACResourceCommand;
 import org.snaccooperative.exporters.SNACResourceCreator;
+import org.snaccooperative.exporters.SNACConstellationCreator;
 import org.snaccooperative.data.EntityId;
 import org.snaccooperative.data.Resource;
 
 public class CommandTest extends RefineTest{
 
     protected Project project = null;
+    protected Project project2 = null;
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected StringWriter writer = null;
     protected Command command = null;
     protected Command upload = null;
-    protected SNACResourceCreator manager = SNACResourceCreator.getInstance();
+    protected SNACResourceCreator resourceManager = SNACResourceCreator.getInstance();
+    protected SNACConstellationCreator constellationManager = SNACConstellationCreator.getInstance();
     protected EntityId entityId = null;
 
     @BeforeMethod
     public void SetUp() {
         // Setup for Post Request
-        manager.csv_headers = new LinkedList<String>(){{add("title"); add("link"); add("abstract");}};
+        resourceManager.csv_headers = new LinkedList<String>(){{add("title"); add("link"); add("abstract");}};
         HashMap<String, String> hash_map = new HashMap<String, String>();
         hash_map.put("title", "title");
         hash_map.put("link", "link");
         hash_map.put("abstract", "abstract");
 
-        manager.match_attributes = hash_map;
+        constellationManager.csv_headers = new LinkedList<String>(){{add("subject"); add("place"); add("occupation");}};
+        HashMap<String, String> hash_map2 = new HashMap<String, String>();
+        hash_map2.put("subject", "subject");
+        hash_map2.put("place", "place");
+        hash_map2.put("occupation", "occupation");
+
+        resourceManager.match_attributes = hash_map;
+        constellationManager.match_attributes = hash_map2;
 
         project = createCSVProject(TestingData2.resourceCsv);
+        project2 = createCSVProject(TestingData2.constellationCsv);
 
         command = new SNACResourceCommand();
         upload = new SNACUploadCommand();
@@ -141,17 +152,17 @@ public class CommandTest extends RefineTest{
       testEntity.setText("123");
       Assert.assertEquals(testEntity.toString(), "EntityID: 123");
     }
- 
+
     @Test
     public void testResourceEquivalent1() throws Exception{
-      Resource fromDataRes = manager.createResource(project.rows.get(0));
+      Resource fromDataRes = resourceManager.createResource(project.rows.get(0));
       String fromData = Resource.toJSON(fromDataRes);
       Assert.assertTrue(fromData.contains("Title1"));
     }
 
     @Test
     public void testResourceEquivalent2() throws Exception{
-      Resource fromDataRes = manager.createResource(project.rows.get(0));
+      Resource fromDataRes = resourceManager.createResource(project.rows.get(0));
       String fromData = Resource.toJSON(fromDataRes);
       Assert.assertTrue(fromData.contains("abstract_example1"));
     }
@@ -161,7 +172,7 @@ public class CommandTest extends RefineTest{
       // command.doPost(request, response);
       // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
       // String response_str = response.get("resource").textValue();
-      String response_str = manager.getColumnMatchesJSONString();
+      String response_str = resourceManager.getColumnMatchesJSONString();
       Assert.assertTrue(response_str.contains("title"));
     }
 
@@ -170,7 +181,7 @@ public class CommandTest extends RefineTest{
       // command.doPost(request, response);
       // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
       // String response_str = response.get("resource").textValue();
-      String response_str = manager.getColumnMatchesJSONString();
+      String response_str = resourceManager.getColumnMatchesJSONString();
       Assert.assertFalse(response_str.contains("col5"));
     }
 
@@ -180,7 +191,7 @@ public class CommandTest extends RefineTest{
       // command.doPost(request, response);
       // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
       // String response_str = response.get("resource").textValue();
-      String response_str = manager.getColumnMatchesJSONString();
+      String response_str = resourceManager.getColumnMatchesJSONString();
       Assert.assertTrue(response_str.contains("abstract"));
     }
 
@@ -189,7 +200,7 @@ public class CommandTest extends RefineTest{
       // command.doPost(request, response);
       // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
       // String response_str = response.get("resource").textValue();
-      String response_str = manager.getColumnMatchesJSONString();
+      String response_str = resourceManager.getColumnMatchesJSONString();
       Assert.assertTrue(response_str.contains("link"));
     }
 
@@ -198,16 +209,10 @@ public class CommandTest extends RefineTest{
       // command.doPost(request, response);
       // ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
       // String response_str = response.get("resource").textValue();
-      String response_str = manager.getColumnMatchesJSONString();
+      String response_str = resourceManager.getColumnMatchesJSONString();
       Assert.assertFalse(response_str.contains("col4"));
     }
 
-//     @Test
-//     public void testGson() throws Exception{
-//       Gson bruh = new Gson();
-//       String a="";
-//       Assert.assertTrue(a.equals(""));
-//     }
     @Test
     public void testResourceUpload() throws Exception{
       upload.doPost(request, response);
@@ -228,6 +233,18 @@ public class CommandTest extends RefineTest{
             Assert.assertTrue(a.equals(""));
         }
 
+    }
+
+    @Test
+    public void testConstellationOne() throws Exception{
+      String response_str = constellationManager.getColumnMatchesJSONString();
+      Assert.assertTrue(response_str.contains("subject"));
+    }
+
+    @Test
+    public void testConstellationFalse() throws Exception{
+      String response_str = constellationManager.getColumnMatchesJSONString();
+      Assert.assertFalse(response_str.contains("title"));
     }
 
     /*

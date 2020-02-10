@@ -196,27 +196,27 @@ public class SNACConstellationCreator {
                   }
               case "name entry":
                   //con.setTitle(temp_val);
-                  System.out.println("Title: " + temp_val);
+                  //System.out.println("Title: " + temp_val);
                   break;
               case "date":
                   //con.setDisplayEntry(temp_val);
-                  System.out.println("Display Entry: " + temp_val);
+                  //System.out.println("Display Entry: " + temp_val);
                   break;
               case "subject":
                   //con.setLink(temp_val);
-                  System.out.println("Link: " + temp_val);
+                  //System.out.println("Link: " + temp_val);
                   break;
               case "place":
                   //con.setAbstract(temp_val);
-                  System.out.println("Abstract: " + temp_val);
+                  //System.out.println("Abstract: " + temp_val);
                   break;
               case "occupation":
                   //con.setExtent(temp_val);
-                  System.out.println("Extent: " + temp_val);
+                  //System.out.println("Extent: " + temp_val);
                   break;
               case "function":
                   //con.setDate(temp_val);
-                  System.out.println("Date: " + temp_val);
+                  //System.out.println("Date: " + temp_val);
                   break;
               // case "language":
               //     Language lang = new Language();

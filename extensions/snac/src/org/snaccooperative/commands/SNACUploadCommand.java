@@ -33,8 +33,8 @@ public class SNACUploadCommand extends Command {
         SNACResourceCreator manager = SNACResourceCreator.getInstance();
         SNACConnector key_manager = SNACConnector.getInstance();
         String API_key = key_manager.getKey();
-        System.out.println("Key: "+ API_key);
-        System.out.println("State: "+ state);
+        // System.out.println("Key: "+ API_key);
+        // System.out.println("State: "+ state);
         manager.uploadResources(API_key, state);
 
 
