@@ -158,15 +158,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._engine = engine;
             this._schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             this._summary = summary;
-            // TODO this is one of the attributes that should be configured on a per-wiki basis
-            // TODO enable this tag once 3.3 final is released and create 3.4 tag without AbuseFilter
             String tag = "openrefine";
             Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
             Matcher matcher = pattern.matcher(RefineServlet.VERSION);
             if (matcher.matches()) {
                 tag += "-"+matcher.group(1);
             }
-            this._tags = Collections.emptyList(); // TODO Arrays.asList(tag);
+            this._tags = Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
         }
 
@@ -191,7 +189,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // make sure they can be told apart.
             String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
             String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 10)));
+                    (Long.toHexString(token).substring(0, 11)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
