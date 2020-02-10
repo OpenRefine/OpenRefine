@@ -43,3 +43,6 @@ target/
 *.classpath
 *.project
 *.settings
+
+# Ignore Apache Maven default download path
+apache-maven-*/
