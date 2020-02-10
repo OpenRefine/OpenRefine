@@ -28,12 +28,14 @@ public class SNACUploadCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String API_key = request.getParameter("apikey");
+        // String API_key = request.getParameter("apikey");
+        String state =  request.getParameter("state");
         SNACResourceCreator manager = SNACResourceCreator.getInstance();
         SNACConnector key_manager = SNACConnector.getInstance();
-        API_key = key_manager.getKey();
-        System.out.println("Key: "+ API_key);
-        manager.uploadResources(API_key);
+        String API_key = key_manager.getKey();
+        // System.out.println("Key: "+ API_key);
+        // System.out.println("State: "+ state);
+        manager.uploadResources(API_key, state);
 
 
         // Project p = getProject(request);

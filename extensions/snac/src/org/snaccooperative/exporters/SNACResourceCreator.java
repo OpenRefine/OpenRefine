@@ -205,27 +205,27 @@ public class SNACResourceCreator {
                   }
               case "title":
                   res.setTitle(temp_val);
-                  System.out.println("Title: " + temp_val);
+                  //System.out.println("Title: " + temp_val);
                   break;
               case "display entry":
                   res.setDisplayEntry(temp_val);
-                  System.out.println("Display Entry: " + temp_val);
+                  //System.out.println("Display Entry: " + temp_val);
                   break;
               case "link":
                   res.setLink(temp_val);
-                  System.out.println("Link: " + temp_val);
+                  //System.out.println("Link: " + temp_val);
                   break;
               case "abstract":
                   res.setAbstract(temp_val);
-                  System.out.println("Abstract: " + temp_val);
+                  //System.out.println("Abstract: " + temp_val);
                   break;
               case "extent":
                   res.setExtent(temp_val);
-                  System.out.println("Extent: " + temp_val);
+                  //System.out.println("Extent: " + temp_val);
                   break;
               case "date":
                   res.setDate(temp_val);
-                  System.out.println("Date: " + temp_val);
+                  //System.out.println("Date: " + temp_val);
                   break;
               // case "language":
               //     Language lang = new Language();
@@ -510,13 +510,21 @@ public class SNACResourceCreator {
 
     }
 
-    public void uploadResources(String apiKey) {
+    public void uploadResources(String apiKey, String state) {
 
     try{
         String opIns = ",\n\"operation\":\"insert\"\n},\"apikey\":\"" + apiKey +"\"";
         List<Resource> new_list_resources = new LinkedList<Resource>();
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://snac-dev.iath.virginia.edu/api/");
+
+        if(state == "prod") {
+            post = new HttpPost("http://api.snaccooperative.org/");
+            System.out.println(state);
+        }
+        System.out.println(state);
+
+
         System.out.println("Querying SNAC...");
         for(Resource temp_res : resources){
             String rtj = Resource.toJSON(temp_res);
