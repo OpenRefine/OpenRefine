@@ -655,14 +655,35 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
    }
 
    var columns = theProject.columnModel.columns;
-   var dropDownValues = document.getElementsByClassName('selectColumn');
+   
+   // This helps the Issue tab to differentiate between what issues it will look at for Resource vs Constellation
+   if (document.getElementById('resourcebutton').checked) {
+      var dropDownValues = document.getElementsByClassName('selectColumnRes');
+   }
+   else {
+      var dropDownValues = document.getElementsByClassName('selectColumnConst');
+   }
+
+   //   var dropDownValues = document.getElementsByClassName('selectColumn');
+
    var array_ddv = [];
    for (var j = 0; j < dropDownValues.length; j++){
       array_ddv.push(dropDownValues[j].value);
    }
 
    // Empty required field check (for issues tab)
-   var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
+   // The required fields for Resource vs Constellation are different, so required_fields will be used to check whether all the fields in this array have been used
+   if (document.getElementById('resourcebutton').checked) {
+      var mainfields = ["ID", "Type", "Title", "Display Entry", "Link", "Abstract", "Extent", "Date", "Language", "Holding Repository SNAC ID", "Note", "Script"];
+      var required_fields = ["Title", "Link", "Type", "Holding Repository SNAC ID"];
+   }
+
+   else {
+      var mainfields = ["ID", "Entity Type", "Name Entry", "Surename", "Forename", "Exist Dates", "BiogHist", "Place", "Occupation", "Related Constellation IDs", "Related Resource IDs"];
+      var required_fields = ["Entity Type", "Name Entry"];
+
+   }
+
    // For printing to issues tab
    var empty_required = false;
    for (var x = 0; x < required_fields.length; x++){
@@ -685,13 +706,20 @@ SNACSchemaAlignmentDialog._save = function(onDone) {
       }
       if (!(array_ddv[y] in dup_dict)){
          dup_dict[array_ddv[y]] = 1;
-      } else {
-         dup_bool = true;
-         error = {
-            title: `Duplicate values of '${array_ddv[y]}'`,
-            body: `Duplicate values found for '${array_ddv[y]}'.`,
-         };
-         error_fields.push(error);
+      }
+      else{
+         if (mainfields.includes(array_ddv[y])) {
+            dup_bool = true;
+            error = {
+               title: `Duplicate values of '${array_ddv[y]}'`,
+               body: `Duplicate values found for '${array_ddv[y]}'.`,
+            };
+            error_fields.push(error);
+         }
+         else {
+            continue;
+         }
+        
       }
    }
 
