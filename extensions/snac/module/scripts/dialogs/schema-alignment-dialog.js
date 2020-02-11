@@ -54,7 +54,7 @@ SNACSchemaAlignmentDialog.setUpTabs = function() {
       .addClass('main-view-panel-tab-header')
       .addClass('active')
       .attr('href', '#view-panel');
-   
+
    this._schemaPanel = $('<div id="snac-schema-panel"></div>')
       .addClass('main-view-panel-tab')
       .appendTo(this._rightPanel);
@@ -381,10 +381,10 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    }
 
    // Reference Validator Function
-   var dragResourceIDs =$.makeArray($('[id="dragResource"]'));   
+   var dragResourceIDs =$.makeArray($('[id="dragResource"]'));
    function hideAndDisableRef(evt) {
       const selectedValue = [];  //Array to hold selected values
-      $selectsRef.find(':selected').filter(function(i, el) { // Filter selected values and push to array 
+      $selectsRef.find(':selected').filter(function(i, el) { // Filter selected values and push to array
          return $(el).attr('value');
       }).each(function(i, el) {
          selectedValue.push($(el).attr('value'));
@@ -408,7 +408,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
                if(c.innerHTML==this.innerHTML){
                   c.style.visibility = 'visible';  // Show value
                };
-            });         
+            });
          }
       });
    };
@@ -417,13 +417,13 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
    var dragConstellationIDs =$.makeArray($('[id="dragConstellation"]'));
    function hideAndDisableConst(evt) {
       const selectedValue = [];  //Array to hold selected values
-      $selectsConst.find(':selected').filter(function(i, el) { //Filter selected values and push to array 
+      $selectsConst.find(':selected').filter(function(i, el) { //Filter selected values and push to array
          return $(el).attr('value');
       }).each(function(i, el) {
          selectedValue.push($(el).attr('value'));
       });
       // loop all the options
-      $selectsConst.find('.dropdown-option-const').each(function(i, option) { 
+      $selectsConst.find('.dropdown-option-const').each(function(i, option) {
          if (selectedValue.indexOf($(option).attr('value')) > -1) { //Re-enable option if array does not contain current value
             if ($(option).is(':checked')) {  //Disable if current value is selected, else skip
                return;
@@ -441,7 +441,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
                if(c.innerHTML==this.innerHTML){
                   c.style.visibility = 'visible';  //Show value
                };
-            });         
+            });
          }
       });
    };
@@ -493,7 +493,7 @@ SNACSchemaAlignmentDialog.updateColumns = function() {
          var original = $(e.target).hasClass("ui-draggable") ? $(e.target) :  $(e.target).closest(".ui-draggable");
          return original.clone().css({
          width: original.width() // or outerWidth*
-         });                
+         });
       },
       cursor: "crosshair",
       snap: ".wbs-target-input input",
@@ -521,7 +521,7 @@ SNACSchemaAlignmentDialog.switchbuttons = function() {
 //       var selectList = document.createElement("select");
 //       selectList.setAttribute("id", "mySelect");
 //       this._dropdownArea.appendChild(selectList);
-      
+
 //       //Create and append the options
 //       for (var j = 0; j < SNACcolumns.length; j++) {
 //          var option = document.createElement("option");
@@ -1687,68 +1687,69 @@ SNACSchemaAlignmentDialog.issues = function() {
  *************************/
 
 SNACSchemaAlignmentDialog.preview = function() {
-   var self = this;
+  var self = this;
 
-   this._previewPanes.empty();
-   this.updateNbEdits(0);
-   this.previewSpinner.show();
-   var schema = this.getJSON();
-   if (schema === null) {
-      $('.invalid-schema-warning').show();
-      return;
-   }
-   $.get(
+  this._previewPanes.empty();
+  this.updateNbEdits(0);
+  this.previewSpinner.show();
+  var schema = this.getJSON();
+  if (schema === null) {
+    $('.invalid-schema-warning').show();
+    return;
+  }
+  $.get(
       "command/snac/preview-snac-schema", //+ $.param({ project: theProject.id }),
       function(data) {
-         self.previewSpinner.hide();
-         self.updateNbEdits(data.SNAC_preview);
-         // console.log("edits should be made here");
+        self.previewSpinner.hide();
+        self.updateNbEdits(data.SNAC_preview);
+        console.log("edits should be made here");
 
-         var list = []; //Empty Array
-         var line = data.SNAC_preview.split('\n'); //Split the preview string into lines
-         var building = line[0] + "<br>"; //First element in preview string (should be "Inserting 500 new Resources into SNAC.")
-         line.shift(); //remove that first element ("Inserting 500 new Resources into SNAC.")
+        var list = []; //Empty Array
+        var line = data.SNAC_preview.split('\n'); //Split the preview string into lines
+        var building = line[0] + "<br>"; //First element in preview string (should be "Inserting 500 new Resources into SNAC.")
+        line.shift(); //remove that first element ("Inserting 500 new Resources into SNAC.")
 
-         //Remove any empty strings
-         line = line.filter(function(str) {
-            return /\S/.test(str);
-         });
+        //Remove any empty strings
+        line = line.filter(function(str) {
+           return /\S/.test(str);
+        });
 
-         //Fill the list array with each line in HTML list form
-         for(var i = 0; i<line.length; i++) {
-            list[i] = "<li>" + line[i] + "</li>";
-         }
+        //Fill the list array with each line in HTML list form
+        for(var i = 0; i<line.length; i++) {
+           var line_parts = line[i].split(/:(.+)/); //Split on the first colon
+           list[i] = "<li><b>" + line_parts[0] + ":</b> " + line_parts[1] + "</li>";
+        }
 
-         //Find the max length of items in the list[] array
-         var max = list.reduce((r,s) => r > s.length ? r : s.length, 0);
+        //Find the max length of items in the list[] array
+        var max = list.reduce((r,s) => r > s.length ? r : s.length, 0);
 
-         //Construct a divder string of "-" to be the size of the longest element in list[]
-         var divider = "";
-         for(var i=9; i<max/2; i++) {
-            divider += "—";
-         }
+        //Construct a divder string of "-" to be the size of the longest element in list[]
+        var divider = "";
+        for(var i=9; i<max/2; i++) {
+           divider += "—";
+        }
 
-         //Insert that divider at every 11 position to split each resource (of 10 bullets)
-         var pos = 0, interval = 11;
-         while (pos < list.length) {
-            list.splice(pos, 0, divider);
-            pos += interval;
-         }
+        //Insert that divider at every (list.length/2 + 1) position to split each resource (of total/2 bullets)
+        //More dynamic based on how many csv columns were paired in the editing SNAC schema
+        var pos = 0, interval = list.length/2 + 1;
+        while (pos < list.length) {
+           list.splice(pos, 0, divider);
+           pos += interval;
+        }
 
-         //Build the string for the HTML list items
-         for(var i = 0; i<list.length; i++) {
-            building += list[i];
-         }
+        //Build the string for the HTML list items
+        for(var i = 0; i<list.length; i++) {
+           building += list[i];
+        }
 
-         //Update the string into the preview tab
-         self.updateNbEdits(data.SNAC_preview);
+        //Update the string into the preview tab
+        self.updateNbEdits(data.SNAC_preview);
 
-         //Get the HTML id element of where the list should be added
-         var element = document.getElementById("preview-here");
-         element.innerHTML = building; //Replace the empty HTML area with the list
-         // console.log("hello");
-      }
-   );
+        //Get the HTML id element of where the list should be added
+        var element = document.getElementById("preview-here");
+        element.innerHTML = building; //Replace the empty HTML area with the list
+        console.log("hello");
+     });
 };
 
 Refine.registerUpdateFunction(function(options) {
