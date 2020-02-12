@@ -107,14 +107,14 @@ public class SNACResourceTest extends RefineTest{
         }
     }
 
-    @Test
-    public void testLanguage1() throws Exception{
-      Assert.assertNotNull(manager.detectLanguage("eng"));
-      Assert.assertNotNull(manager.detectLanguage("kor"));
-      Assert.assertNull(manager.detectLanguage("reeeee"));
-      Assert.assertNotNull(manager.detectLanguage("jpn"));
-      Assert.assertNull(manager.detectLanguage("hmm"));
-    }
+    // @Test
+    // public void testLanguage1() throws Exception{
+    //   Assert.assertNotNull(manager.detectLanguage("eng"));
+    //   Assert.assertNotNull(manager.detectLanguage("kor"));
+    //   Assert.assertNull(manager.detectLanguage("reeeee"));
+    //   Assert.assertNotNull(manager.detectLanguage("jpn"));
+    //   Assert.assertNull(manager.detectLanguage("hmm"));
+    // }
     // @Test
     // public void testLanguage2() throws Exception{
     //   Assert.assertNull(manager.detectLanguage("reeeee"));
