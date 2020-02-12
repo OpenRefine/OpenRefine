@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
+import com.google.refine.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
 import org.apache.http.*;

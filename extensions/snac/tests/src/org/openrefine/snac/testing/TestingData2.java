@@ -32,7 +32,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import com.google.refine.tests.RefineTest;
+import com.google.refine.RefineTest;
 
 /*
 import org.openrefine.wikidata.schema.WbLanguageConstant;
