@@ -65,8 +65,8 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     public void testGoodNewItem() {
 
         ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"))
-                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en")).addStatement(p31Statement)
+                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
+                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.newItemType);
@@ -75,8 +75,8 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testDeletedStatements() {
         ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
-                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"))
-                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en")).addStatement(p31Statement)
+                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
+                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
                 .deleteStatement(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)).build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.newItemType, NewItemScrutinizer.deletedStatementsType);

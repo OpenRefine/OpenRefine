@@ -28,13 +28,14 @@ import java.util.Locale;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
-import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
@@ -49,12 +50,6 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
  *
  */
 public class QSValuePrinter implements ValueVisitor<String> {
-
-    @Override
-    public String visit(DatatypeIdValue value) {
-        // impossible case (this is actually a bug in WDTK, DatatypeIdValue should not subclass Value)
-        throw new IllegalArgumentException();
-    }
 
     @Override
     public String visit(EntityIdValue value) {
@@ -76,12 +71,10 @@ public class QSValuePrinter implements ValueVisitor<String> {
 
     @Override
     public String visit(QuantityValue value) {
-        String unitPrefix = "http://www.wikidata.org/entity/Q";
-        String unitIri = value.getUnit();
+        ItemIdValue unit = value.getUnitItemId();
         String unitRepresentation = "", boundsRepresentation = "";
-        if (!unitIri.isEmpty()) {
-            if (!unitIri.startsWith(unitPrefix)) return null; // QuickStatements only accepts Qids as units
-            unitRepresentation = "U" + unitIri.substring(unitPrefix.length());
+        if (unit != null) {
+            unitRepresentation = "U" + unit.getId().substring(1);
         }
         if (value.getLowerBound() != null) {
             // bounds are always null at the same time so we know they are both not null
@@ -102,5 +95,11 @@ public class QSValuePrinter implements ValueVisitor<String> {
     public String visit(TimeValue value) {
         return String.format("+%04d-%02d-%02dT%02d:%02d:%02dZ/%d", value.getYear(), value.getMonth(), value.getDay(),
                 value.getHour(), value.getMinute(), value.getSecond(), value.getPrecision());
+    }
+
+    @Override
+    public String visit(UnsupportedValue value) {
+            // we know this cannot happen, since UnsupportedValues cannot be generated in OpenRefine
+            return "<UNSUPPORTED>";
     }
 }

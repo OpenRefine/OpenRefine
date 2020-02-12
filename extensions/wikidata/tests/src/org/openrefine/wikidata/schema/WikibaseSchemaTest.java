@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
@@ -50,10 +51,9 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
-import com.google.refine.tests.util.TestUtils;
+import com.google.refine.util.TestUtils;
 
-public class WikibaseSchemaTest extends RefineTest {
+public class WikibaseSchemaTest extends WikidataRefineTest {
 
     private ItemIdValue qid1 = Datamodel.makeWikidataItemIdValue("Q1377");
     private ItemIdValue qid2 = Datamodel.makeWikidataItemIdValue("Q865528");

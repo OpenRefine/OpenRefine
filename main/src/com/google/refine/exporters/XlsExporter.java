@@ -39,7 +39,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -127,9 +127,15 @@ public class XlsExporter implements StreamExporter {
                             }
                             
                             if (cellData.link != null) {
-                                Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
-                                hl.setLabel(cellData.text);
-                                hl.setAddress(cellData.link);
+                            	try {
+                            		Hyperlink hl = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+                            		hl.setLabel(cellData.text);
+                            		hl.setAddress(cellData.link);
+                            		c.setHyperlink(hl);
+                            	} catch(IllegalArgumentException e) {
+                            		// If we failed to create the hyperlink and add it to the cell,
+                            		// we just use the string value as fallback
+                            	}
                             }
                         }
                     }

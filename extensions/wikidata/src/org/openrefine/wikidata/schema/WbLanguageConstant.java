@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.utils.LanguageCodeStore;
 import org.wikidata.wdtk.datamodel.interfaces.WikimediaLanguageCodes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -59,10 +60,13 @@ public class WbLanguageConstant implements WbExpression<String> {
      */
     public static String normalizeLanguageCode(String lang) {
         try {
-            WikimediaLanguageCodes.getLanguageCode(lang);
-            return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
+        	if (LanguageCodeStore.ALLOWED_LANGUAGE_CODES.contains(lang)) {
+        		return WikimediaLanguageCodes.fixLanguageCodeIfDeprecated(lang);
+        	} else {
+        		return null;
+        	}
         } catch (IllegalArgumentException e) {
-            return null;
+        	return null;
         }
     }
 

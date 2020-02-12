@@ -71,7 +71,7 @@ public class Match implements Function {
             
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regexp");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a regexp");
     }
     
     @Override
@@ -81,7 +81,7 @@ public class Match implements Function {
     
     @Override
     public String getParams() {
-        return "string or regexp";
+        return "regexp";
     }
     
     @Override

@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.3-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -64,7 +64,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>2.22.2</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>
@@ -153,19 +153,26 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.9.9</version>
+      <version>${jackson.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.9.9</version>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.6</version>
     </dependency>
+    
+    <dependency>
+	    <groupId>org.owasp.encoder</groupId>
+	    <artifactId>encoder</artifactId>
+	    <version>1.2.2</version>
+	</dependency>
+
   
 
     <dependency>

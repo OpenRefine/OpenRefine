@@ -34,14 +34,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
-import com.google.refine.tests.RefineTest;
 
-public abstract class CommandTest extends RefineTest {
+public abstract class CommandTest extends WikidataRefineTest {
 
     protected Project project = null;
     protected HttpServletRequest request = null;
@@ -49,6 +49,7 @@ public abstract class CommandTest extends RefineTest {
     protected StringWriter writer = null;
 
     protected Command command = null;
+   
 
     @BeforeMethod(alwaysRun = true)
     public void setUpProject() {

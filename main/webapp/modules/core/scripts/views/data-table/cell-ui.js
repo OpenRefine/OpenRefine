@@ -212,6 +212,10 @@ DataTableCellUI.prototype._render = function() {
           if ('view' in service && 'url' in service.view && !('view_url' in suggestOptions)) {
             suggestOptions.view_url = service.view.url;
           }
+          // CORS / JSONP support
+          if (service.ui && service.ui.access) {
+            suggestOptions.access = service.ui.access;
+          }
           addSuggest = true;
         }
 

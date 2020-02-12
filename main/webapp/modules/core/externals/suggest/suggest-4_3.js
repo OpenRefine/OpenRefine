@@ -280,7 +280,6 @@
       $(window)
         .unbind("resize.suggest", this.onresize)
         .unbind("scroll.suggest", this.onresize);
-      this.input.removeData("data.suggest");
     },
 
     invalidate_position: function() {
@@ -1259,7 +1258,7 @@
             xhr.getResponseHeader("X-Metaweb-TID"));
           }
         },
-        dataType: "jsonp",
+        dataType: o.access === undefined ? "jsonp" : o.access,
         cache: true
       };
 
@@ -1509,7 +1508,7 @@
             xhr.getResponseHeader("X-Metaweb-TID"));
           }
         },
-        dataType: "jsonp",
+        dataType: o.access === undefined ? "jsonp" : o.access,
         cache: true
       };
       if (o.flyout_lang) {

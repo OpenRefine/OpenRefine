@@ -25,6 +25,7 @@ package org.openrefine.wikidata.qa;
 
 import java.util.regex.Pattern;
 
+import org.openrefine.wikidata.utils.EntityCacheStub;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -44,7 +45,7 @@ public class WikidataConstraintFetcherTests {
     private PropertyIdValue child;
 
     public WikidataConstraintFetcherTests() {
-        fetcher = new WikidataConstraintFetcher();
+        fetcher = new WikidataConstraintFetcher(new EntityCacheStub());
         headOfGovernment = Datamodel.makeWikidataPropertyIdValue("P6");
         startTime = Datamodel.makeWikidataPropertyIdValue("P580");
         endTime = Datamodel.makeWikidataPropertyIdValue("P582");

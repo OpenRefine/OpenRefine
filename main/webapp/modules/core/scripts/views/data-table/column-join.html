@@ -1,0 +1,64 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout grid-layout-for-ui layout-full" >
+        <div class="column-join-left-pane">
+          <p bind = "or_views_column_join_before_column_picker"></p>
+          <div class="column-join-inner-left-pane">
+            <div bind="column_join_columnPicker" class="column-join-inner-left-pane-list"></div>
+            <div class="column-join-global-selection">
+              <button class="button" bind="selectAllButton"></button>
+              <button class="button" bind="deselectAllButton"></button>
+            </div>
+          </div>
+        </div>
+        <div class="column-join-right-pane grid-layout ">
+          <p bind="or_views_column_join_before_options"></p>
+          <div class="column-join-inner-right-pane">
+          <div class="option">
+            <label for="$field-separator" bind="or_views_column_join_field_separator"></label>
+            <input size="10" value="" bind="field_separatorInput" id="$field-separator"/>
+            <p class = "tip" bind= "or_views_column_join_field_separator_advice"></p>
+          </div>
+          <div class="option">
+            <div>
+            <input type="radio" checked="true" bind="replace_nullsInput" name="manage-nulls" value="replace-nulls" id="$replace-nulls" >
+            <label for="$replace-nulls" bind="or_views_column_join_replace_nulls"></label>
+            <input size="10" value="" bind="null_substituteInput" id="$null-substitute" />
+            <p class = "tip" bind= "or_views_column_join_replace_nulls_advice"></p>
+            
+          </div>
+          <div>
+            <input type="radio" bind="skip_nullsInput" name="manage-nulls" value="skip-nulls" id="$skip-nulls" />
+            <label for="$skip-nulls" bind="or_views_column_join_skip_nulls"></label>
+            <p class = "tip" bind= "or_views_column_join_skip_nulls_advice"></p>
+          </div>
+          </div>
+          <div class="option">
+            <input type="checkbox" bind ="dont_escapeInput" name="dont-escape" id="$dont-escapeInput" />
+            <label for="$dont-escape" bind="or_views_column_join_dont_escape"></label>
+          </div>
+          <div class="option">
+          <div>
+            <input type="radio" bind ="write_selected_columnInput" name="write-or-copy" value="write-selected-column" id="$write-selected-column" checked />
+            <label for="$write-selected-column" bind="or_views_column_join_write_selected_column"></label>
+          </div>
+          <div>
+            <input type="radio" bind ="copy_to_new_columnInput" name="write-or-copy" value="copy-to-new-column" id="$copy-to-new-column" />
+            <label for="$copy-to-new-column" bind="or_views_column_join_copy_to_new_column"></label>
+            <input size="20" value="" bind ="new_column_nameInput" id="$new-column-name" />
+          </div>
+          </div>
+          <div class="option">
+            <input type="checkbox" bind ="delete_joined_columnsInput" name="delete-joined-columns" id="$delete-joined-columns" />
+            <label for="$delete-joined-columns" bind="or_views_column_join_delete_joined_columns"></label>
+          </div>
+         </div>
+       </div>
+     </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="okButton"></button>
+    <button class="button" bind="cancelButton"></button>
+  </div>
+</div>

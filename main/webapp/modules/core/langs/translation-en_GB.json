@@ -1,0 +1,7 @@
+{
+    "core-index/license": "Licence:",
+    "core-dialogs/cluster-descr": "This feature helps you find groups of different cell values that might be alternative representations of the same thing. For example, the two strings \"New York\" and \"new york\" are very likely to refer to the same concept and just have capitalisation differences, and \"Gödel\" and \"Godel\" probably refer to the same person.",
+    "core-views/custom-facets": "Customised facets",
+    "core-views/columnize": "Columnise by Key/Value Columns",
+    "core-views/columnize-col": "Columnise by key/value columns"
+}

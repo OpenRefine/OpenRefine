@@ -26,11 +26,16 @@ package org.openrefine.wikidata.operations;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
+import org.apache.log4j.spi.LoggerRepository;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -46,6 +51,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.history.Change;
@@ -143,6 +149,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected Engine _engine;
         protected WikibaseSchema _schema;
         protected String _summary;
+        protected List<String> _tags;
         protected final long _historyEntryID;
 
         protected PerformEditsProcess(Project project, Engine engine, String description, String summary) {
@@ -151,6 +158,15 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._engine = engine;
             this._schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             this._summary = summary;
+            // TODO this is one of the attributes that should be configured on a per-wiki basis
+            // TODO enable this tag once 3.3 final is released and create 3.4 tag without AbuseFilter
+            String tag = "openrefine";
+            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+            if (matcher.matches()) {
+                tag += "-"+matcher.group(1);
+            }
+            this._tags = Collections.emptyList(); // TODO Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
         }
 
@@ -175,7 +191,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // make sure they can be told apart.
             String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
             String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 9)));
+                    (Long.toHexString(token).substring(0, 10)));
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
@@ -183,7 +199,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Prepare the edits
             NewItemLibrary newItemLibrary = new NewItemLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
-                    50);
+                    _tags, 50);
 
             // Perform edits
             logger.info("Performing edits");

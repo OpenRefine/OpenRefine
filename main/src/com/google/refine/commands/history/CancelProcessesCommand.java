@@ -53,6 +53,10 @@ public class CancelProcessesCommand extends Command {
         if( response == null ) {
             throw new IllegalArgumentException("parameter 'request' should not be null");
         }
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         try {
             Project project = getProject(request);

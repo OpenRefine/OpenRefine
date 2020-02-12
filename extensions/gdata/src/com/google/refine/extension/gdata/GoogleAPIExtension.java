@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,19 +23,17 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.fusiontables.FusiontablesScopes;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.refine.ProjectManager;
 import com.google.refine.preference.PreferenceStore;
-import com.google.refine.util.ParsingUtilities;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
 abstract public class GoogleAPIExtension {
     protected static final String SERVICE_APP_NAME = "OpenRefine-Google-Service";
-    private static final String CLIENT_ID = "455686949425-d237cmorii0ge8if7it5r1qijce6caf0.apps.googleusercontent.com";
-    private static final String CLIENT_SECRET = "wm5qVtjp3VDfuAx2P2qm6GJb"; 
+    private static final String CLIENT_ID = "";
+    private static final String CLIENT_SECRET = ""; 
     
     /** Global instance of the HTTP transport. */
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -42,7 +41,7 @@ abstract public class GoogleAPIExtension {
     /** Global instance of the JSON factory. */
     protected static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
-    private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS, FusiontablesScopes.FUSIONTABLES};
+    private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS};
     
     private static PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
     
@@ -54,24 +53,30 @@ abstract public class GoogleAPIExtension {
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
         String authorizedUrl = makeRedirectUrl(module, request);
-              
+        String state = makeState(module, request);
         
         GoogleAuthorizationCodeRequestUrl url = new GoogleAuthorizationCodeRequestUrl(
                 CLIENT_ID, 
                 authorizedUrl, // execution continues at authorized on redirect
                 Arrays.asList(SCOPES));
+        url.setState(state);
         
         return url.toString();
 
     }
 
-    private static String makeRedirectUrl(ButterflyModule module, HttpServletRequest request)
+    private static String makeState(ButterflyModule module, HttpServletRequest request) {
+    	String winname = request.getParameter("winname");
+    	String cb = request.getParameter("cb");
+    	String json = "{\"winname\":\""+winname.replaceAll("\"", "\\\"")
+    			+"\",\"cb\":\""+cb.replaceAll("\"", "\\\"")+"\"}";
+    	return new String(Base64.getEncoder().encode(json.getBytes()));
+    }
+
+	private static String makeRedirectUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
         StringBuffer sb = new StringBuffer(module.getMountPoint().getMountPoint());
-        sb.append("authorized?winname=");
-        sb.append(ParsingUtilities.encode(request.getParameter("winname")));
-        sb.append("&cb=");
-        sb.append(ParsingUtilities.encode(request.getParameter("cb")));
+        sb.append("authorized");
     
         URL thisUrl = new URL(request.getRequestURL().toString());
         URL authorizedUrl = new URL(thisUrl, sb.toString());

@@ -117,7 +117,7 @@ final class SpreadsheetSerializer implements TabularSerializer {
     }
     
     public String getUrl() throws UnsupportedEncodingException {
-        String urlString= "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit#gid=0";
-        return URLEncoder.encode(urlString, "UTF-8");
+        String urlString = "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit#gid=0";
+        return urlString;
     }
 }

@@ -43,6 +43,10 @@ public class UploadCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
         
         String token = TokenCookie.getToken(request);
         if (token == null) {
@@ -104,8 +108,6 @@ public class UploadCommand extends Command {
         String format = params.getProperty("format");
         if ("gdata/google-spreadsheet".equals(format)) {
             return uploadSpreadsheet(project, engine, params, token, name, exceptions);
-        } else if ("gdata/fusion-table".equals(format)) {
-            return uploadFusionTable(project, engine, params, token, name, exceptions);
         } else if (("raw/openrefine-project").equals(format)) {
             return uploadOpenRefineProject(project, token, name, exceptions);
         }
@@ -194,18 +196,5 @@ public class UploadCommand extends Command {
             exceptions.add(e);
         }
         return null;
-    }
-    
-    static private String uploadFusionTable(
-            Project project, final Engine engine, final Properties params,
-            String token, String name, List<Exception> exceptions) {
-        
-        FusionTableSerializer serializer = new FusionTableSerializer(
-                FusionTableHandler.getFusionTablesService(token), name, exceptions);
-        
-        CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
-        
-        return serializer.getUrl();
     }
 }

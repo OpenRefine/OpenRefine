@@ -70,7 +70,7 @@ abstract public class Criterion  {
     @JsonProperty("reverse")
     public boolean reverse = false;
 
-    @JsonProperty("valueType")
+    @JsonIgnore // already added by @JsonTypeInfo
     public abstract String getValueType();
     
     // Returns a cached cell index

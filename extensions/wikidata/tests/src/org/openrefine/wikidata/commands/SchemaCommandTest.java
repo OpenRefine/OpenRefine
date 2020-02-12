@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
@@ -32,6 +32,7 @@ import javax.servlet.ServletException;
 
 import org.testng.annotations.Test;
 
+import com.google.refine.commands.Command;
 import com.google.refine.util.ParsingUtilities;
 
 public abstract class SchemaCommandTest extends CommandTest {
@@ -39,9 +40,11 @@ public abstract class SchemaCommandTest extends CommandTest {
     @Test
     public void testNoSchema()
             throws ServletException, IOException {
+    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+    	
         command.doPost(request, response);
 
-        assertEquals("{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}", writer.toString());
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}");
     }
 
     @Test

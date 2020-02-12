@@ -111,6 +111,10 @@ public class GetRowsCommand extends Command {
         }
     }
     
+    /**
+     * This command accepts both POST and GET. It is not CSRF-protected as it does not incur any state change.
+     */
+    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

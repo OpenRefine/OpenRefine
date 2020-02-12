@@ -23,20 +23,22 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
@@ -51,14 +53,13 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.google.refine.tests.RefineTest;
-
-public class EditBatchProcessorTest extends RefineTest {
+public class EditBatchProcessorTest extends WikidataRefineTest {
 
     private WikibaseDataFetcher fetcher = null;
     private WikibaseDataEditor editor = null;
     private NewItemLibrary library = null;
     private String summary = "my fantastic edits";
+    private List<String> tags = null;
 
     @BeforeMethod
     public void setUp() {
@@ -66,6 +67,7 @@ public class EditBatchProcessorTest extends RefineTest {
         editor = mock(WikibaseDataEditor.class);
         editor.disableEditing(); // just in case we got mocking wrong…
         library = new NewItemLibrary();
+        tags = Arrays.asList("my-tag");
     }
 
     @Test
@@ -88,9 +90,9 @@ public class EditBatchProcessorTest extends RefineTest {
         ItemDocument expectedNewItem = ItemDocumentBuilder.forItemId(TestingData.newIdA).withLabel(label).build();
         ItemDocument createdNewItem = ItemDocumentBuilder.forItemId(Datamodel.makeWikidataItemIdValue("Q1234"))
                 .withLabel(label).withRevisionId(37828L).build();
-        when(editor.createItemDocument(expectedNewItem, summary)).thenReturn(createdNewItem);
+        when(editor.createItemDocument(expectedNewItem, summary, tags)).thenReturn(createdNewItem);
 
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, 50);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, tags, 50);
         assertEquals(2, processor.remainingEdits());
         assertEquals(0, processor.progress());
         processor.performEdit();
@@ -120,7 +122,7 @@ public class EditBatchProcessorTest extends RefineTest {
         List<ItemIdValue> qids = ids.stream().map(e -> Datamodel.makeWikidataItemIdValue(e))
                 .collect(Collectors.toList());
         List<ItemUpdate> batch = qids.stream()
-                .map(qid -> new ItemUpdateBuilder(qid).addDescription(description).build())
+                .map(qid -> new ItemUpdateBuilder(qid).addDescription(description, true).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
@@ -135,7 +137,7 @@ public class EditBatchProcessorTest extends RefineTest {
         when(fetcher.getEntityDocuments(toQids(secondBatch))).thenReturn(toMap(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, batchSize);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, tags, batchSize);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);
@@ -151,15 +153,15 @@ public class EditBatchProcessorTest extends RefineTest {
         for (ItemDocument doc : fullBatch) {
             verify(editor, times(1)).updateTermsStatements(doc, Collections.emptyList(),
                     Collections.singletonList(description), Collections.emptyList(), Collections.emptyList(),
-                    Collections.emptyList(), Collections.emptyList(), summary);
+                    Collections.emptyList(), Collections.emptyList(), summary, tags);
         }
     }
 
     private Map<String, EntityDocument> toMap(List<ItemDocument> docs) {
-        return docs.stream().collect(Collectors.toMap(doc -> doc.getItemId().getId(), doc -> doc));
+        return docs.stream().collect(Collectors.toMap(doc -> doc.getEntityId().getId(), doc -> doc));
     }
 
     private List<String> toQids(List<ItemDocument> docs) {
-        return docs.stream().map(doc -> doc.getItemId().getId()).collect(Collectors.toList());
+        return docs.stream().map(doc -> doc.getEntityId().getId()).collect(Collectors.toList());
     }
 }

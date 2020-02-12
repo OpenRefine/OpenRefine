@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.FilteredRows;
@@ -101,9 +102,9 @@ public class GetScatterplotCommand extends Command {
     	public int size = 100;
     	@JsonProperty(ScatterplotFacet.DOT)
     	double dot = 100;
-    	@JsonProperty(ScatterplotFacet.DIM_X)
+    	@JsonIgnore
     	public int dim_x = ScatterplotFacet.LIN;
-    	@JsonProperty(ScatterplotFacet.DIM_Y)
+    	@JsonIgnore
     	public int dim_y = ScatterplotFacet.LIN;
     	@JsonProperty(ScatterplotFacet.ROTATION)
     	public int rotation = ScatterplotFacet.NO_ROTATION;
@@ -119,6 +120,36 @@ public class GetScatterplotCommand extends Command {
     	public String columnName_y = "";
     	@JsonProperty(ScatterplotFacet.Y_EXPRESSION)
     	public String expression_y = "value";
+    	
+        @JsonProperty(ScatterplotFacet.DIM_X)
+        public String getDimX() {
+            return dim_x == ScatterplotFacet.LIN ? "lin" : "log";
+        }
+        
+        @JsonProperty(ScatterplotFacet.DIM_Y)
+        public String getDimY() {
+            return dim_y == ScatterplotFacet.LIN ? "lin" : "log";
+        }
+        
+        @JsonProperty(ScatterplotFacet.DIM_X)
+        public void setDimX(String dim) {
+        	dim_x = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
+        }
+        
+        @JsonProperty(ScatterplotFacet.DIM_Y)
+        public void setDimY(String dim) {
+        	dim_y = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
+        }
+        
+        // rotation can be set to "none" (a JSON string) in which case it should be ignored
+        @JsonProperty(ScatterplotFacet.ROTATION)
+        public void setRotation(Object rotation) {
+        	try {
+        		this.rotation = Integer.parseInt(rotation.toString());
+        	} catch(NumberFormatException e) {
+        		;
+        	}
+        }
     }
     
     public void draw(OutputStream output, Project project, Engine engine, PlotterConfig o) throws IOException {

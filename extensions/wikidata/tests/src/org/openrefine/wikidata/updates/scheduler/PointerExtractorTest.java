@@ -23,7 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 public class PointerExtractorTest {
@@ -66,7 +68,6 @@ public class PointerExtractorTest {
 
     @Test
     public void testExtractDatavalues() {
-        assertEmpty(Datamodel.makeDatatypeIdValue("string"));
         assertEmpty(Datamodel.makeGlobeCoordinatesValue(1.34, 2.354, 0.1, GlobeCoordinatesValue.GLOBE_EARTH));
         assertEmpty(Datamodel.makeStringValue("est"));
         assertEmpty(Datamodel.makeMonolingualTextValue("srtu", "en"));
@@ -74,6 +75,7 @@ public class PointerExtractorTest {
         assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("898")));
         assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("7.87"), "http://www.wikidata.org/entity/Q34"));
         assertEmpty(Datamodel.makeTimeValue(1898, (byte) 2, (byte) 3, TimeValue.CM_GREGORIAN_PRO));
+        assertEmpty(mock(UnsupportedValue.class));
     }
 
     @Test

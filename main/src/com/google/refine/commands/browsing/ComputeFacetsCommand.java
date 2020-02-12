@@ -44,6 +44,11 @@ import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 
 public class ComputeFacetsCommand extends Command {
+	
+    /**
+     * This command uses POST (probably to allow for larger parameters) but does not actually modify any state
+     * so we do not add CSRF protection to it.
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

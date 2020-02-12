@@ -29,6 +29,7 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
@@ -38,14 +39,17 @@ import com.google.common.cache.LoadingCache;
 
 public class EntityCache {
 
-    private static EntityCache _entityCache = new EntityCache();
+    private static EntityCache _entityCache = new EntityCache(BasicApiConnection.getWikidataApiConnection());
 
     private LoadingCache<String, EntityDocument> _cache = null;
     private WikibaseDataFetcher _fetcher;
 
-    private EntityCache() {
-        ApiConnection connection = ApiConnection.getWikidataApiConnection();
-        _fetcher = new WikibaseDataFetcher(connection, Datamodel.SITE_WIKIDATA);
+    protected EntityCache(ApiConnection connection) {
+        this(new WikibaseDataFetcher(connection, Datamodel.SITE_WIKIDATA));
+    }
+    
+    protected EntityCache(WikibaseDataFetcher fetcher) {
+        _fetcher = fetcher;
 
         _cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
                 .build(new CacheLoader<String, EntityDocument>() {
@@ -68,7 +72,7 @@ public class EntityCache {
 
     public static EntityCache getEntityCache() {
         if (_entityCache == null) {
-            _entityCache = new EntityCache();
+            _entityCache = new EntityCache(BasicApiConnection.getWikidataApiConnection());
         }
         return _entityCache;
     }

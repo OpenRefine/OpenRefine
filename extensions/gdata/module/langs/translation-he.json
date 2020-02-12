@@ -39,8 +39,6 @@
     "gdata-exporter/upload-error": "שגיאת העלאה: ",
     "gdata-exporter/new-spreadsheet": "גיליון חישוב חדש של גוגל",
     "gdata-exporter/enter-spreadsheet": "הכנס שם לגיליון חישוב גוגל החדש",
-    "gdata-exporter/new-fusion": "טבלת מיזוג גוגל חדשה",
-    "gdata-exporter/enter-fusion": "הכנס שם לטבלת מיזוג גוגל חדשה",
     "gdata-auth/authorize-label": "OpenRefine - Authorization",
     "gdata-auth/authorized-label": "תהליך האישור הסתיים. סגור חלון זה וחזור ל- OpenRefine."
 }

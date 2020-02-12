@@ -43,15 +43,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WbNameDescExpr {
 
-    enum NameDescrType {
-        LABEL, DESCRIPTION, ALIAS,
+    enum NameDescType {
+        LABEL, LABEL_IF_NEW, DESCRIPTION, DESCRIPTION_IF_NEW, ALIAS,
     }
 
-    private NameDescrType type;
+    private NameDescType type;
     private WbMonolingualExpr value;
 
     @JsonCreator
-    public WbNameDescExpr(@JsonProperty("name_type") NameDescrType type,
+    public WbNameDescExpr(@JsonProperty("name_type") NameDescType type,
             @JsonProperty("value") WbMonolingualExpr value) {
         Validate.notNull(type);
         this.type = type;
@@ -72,11 +72,17 @@ public class WbNameDescExpr {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
             case LABEL:
-                item.addLabel(val);
+                item.addLabel(val, true);
                 break;
+            case LABEL_IF_NEW:
+            	item.addLabel(val, false);
+            	break;
             case DESCRIPTION:
-                item.addDescription(val);
+                item.addDescription(val, true);
                 break;
+            case DESCRIPTION_IF_NEW:
+            	item.addDescription(val, false);
+            	break;
             case ALIAS:
                 item.addAlias(val);
                 break;
@@ -87,7 +93,7 @@ public class WbNameDescExpr {
     }
 
     @JsonProperty("name_type")
-    public NameDescrType getType() {
+    public NameDescType getType() {
         return type;
     }
 

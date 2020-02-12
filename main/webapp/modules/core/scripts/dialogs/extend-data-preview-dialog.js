@@ -185,7 +185,7 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
     this._elmts.previewContainer.empty();
   } else {
     // otherwise, refresh the preview
-    $.post(
+    Refine.postCSRF(
         "command/core/preview-extend-data?" + $.param(params),
         {
         rowIndices: JSON.stringify(this._rowIndices),
@@ -194,10 +194,10 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
         function(data) {
         self._renderPreview(data);
         },
-        "json"
-    ).fail(function(data) {
-        alert($.i18n('core-views/internal-err'));
-    });
+        "json",
+        function(data) {
+           alert($.i18n('core-views/internal-err'));
+        });
   }
 };
 
@@ -283,9 +283,11 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
       var cell = row[c];
       if (cell !== null) {
         if ($.isPlainObject(cell)) {
-          $('<a>').attr("href",
-                this._serviceMetadata.identifierSpace + cell.id
-                ).attr("target", "_blank").text(cell.name).appendTo(td);
+          var service = self._serviceMetadata;
+          var href = (service.view && service.view.url) ?
+            encodeURI(service.view.url.replace("{{id}}", cell.id)) :
+            service.identifierSpace + cell.id;
+          $('<a>').attr("href", href).attr("target", "_blank").text(cell.name).appendTo(td);
         } else {
           $('<span>').text(cell).appendTo(td);
         }

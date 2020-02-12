@@ -37,13 +37,17 @@ EditRenderer._renderItem = function(json, container) {
 
   // Terms
   if ((json.labels && json.labels.length) ||
+      (json.labelsIfNew && json.labelsIfNew.length) ||
       (json.descriptions && json.descriptions.length) ||
+      (json.descriptionsIfNew && json.descriptionsIfNew.length) ||
       (json.addedAliases && json.addedAliases.length)) {
     var termsContainer = $('<div></div>').addClass('wbs-namedesc-container')
         .appendTo(right);
     
-    this._renderTermsList(json.labels, "label", termsContainer);
-    this._renderTermsList(json.descriptions, "description", termsContainer);
+    this._renderTermsList(json.labels, "label-override", termsContainer);
+    this._renderTermsList(json.labelsIfNew, "label-if-new", termsContainer);
+    this._renderTermsList(json.descriptions, "description-override", termsContainer);
+    this._renderTermsList(json.descriptionsIfNew, "description-if-new", termsContainer);
     this._renderTermsList(json.addedAliases, "alias", termsContainer);
 
     // Clear the float
@@ -224,8 +228,9 @@ EditRenderer._renderValue = function(json, container) {
     EditRenderer._renderEntity(json.datavalue, container);
   } else {
     var jsonValue = JSON.stringify(json.datavalue);
-    if (jsonValue in EditRenderer.renderedValueCache) {
-        $('<span>'+EditRenderer.renderedValueCache[jsonValue]+'</span>').appendTo(container);
+    var fullJsonValue = JSON.stringify(json);
+    if (fullJsonValue in EditRenderer.renderedValueCache) {
+        $('<span>'+EditRenderer.renderedValueCache[fullJsonValue]+'</span>').appendTo(container);
     } else {
         var params = {
             action: 'wbformatvalue',
@@ -244,7 +249,7 @@ EditRenderer._renderValue = function(json, container) {
             params,
             function (data) {
                 if('result' in data) {
-                    EditRenderer.renderedValueCache[jsonValue] = data.result;
+                    EditRenderer.renderedValueCache[fullJsonValue] = data.result;
                     $('<span>'+data.result+'</span>').appendTo(container);
                 }
             },

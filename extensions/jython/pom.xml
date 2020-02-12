@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>jython</artifactId>
   <packaging>jar</packaging>
-  <version>3.2-SNAPSHOT</version>
+  <version>3.3-SNAPSHOT</version>
 
   <name>OpenRefine - Jython extension</name>
   <description>OpenRefine integration of Python as an expression language</description>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.3-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -66,7 +66,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>${surefire.version}</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>tests/conf/tests.xml</suiteXmlFile>

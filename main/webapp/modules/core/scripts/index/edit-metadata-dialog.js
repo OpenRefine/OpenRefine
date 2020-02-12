@@ -13,7 +13,7 @@ function EditMetadataDialog(metaData, targetRowElem) {
       
       var td0 = tr.insertCell(0);
       
-      var keyLable = $.i18n._('core-index')[key] || key;
+      var keyLable = $.i18n('core-index/'+key) || key;
       $(td0).text(keyLable);
 
       var td1 = tr.insertCell(1);
@@ -31,16 +31,16 @@ function EditMetadataDialog(metaData, targetRowElem) {
               if (newTags !== null) {
                   $(td1).text(newTags);
                   metaData[key] = newTags;
-                  $.ajax({
-                      type : "POST",
-                      url : "command/core/set-project-tags",
-                      data : {
+                  Refine.postCSRF(
+                      "command/core/set-project-tags",
+                      {
                           "project" : project,
                           "old" : oldTags,
                           "new" : newTags
                       },
-                      dataType : "json",
-                  });
+                      function(data) {},
+                      "json"
+                  );
               }
               
               Refine.OpenProjectUI.refreshProject(targetRowElem, metaData, project);
@@ -58,8 +58,8 @@ function EditMetadataDialog(metaData, targetRowElem) {
             if (newValue !== null) {
               $(td1).text(newValue);
               metaData[key] = newValue;
-              $.post(
-                "command/core/set-metaData",
+              Refine.postCSRF(
+                "command/core/set-project-metadata",
                 {
                   project : project,
                   name : key,

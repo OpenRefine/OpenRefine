@@ -157,7 +157,8 @@ check_running() {
 
     if [ "$CURL" ] ; then
         curl -s -S -f $URL > /dev/null 2>&1
-        if [ "$?" = "7" ] || [ "$?" = "22" ] ; then
+        CURL_RETURN=$?
+        if [ $CURL_RETURN -eq "7" ] || [ $CURL_RETURN -eq "22" ]  ; then
             NOT_RUNNING="1"
         fi
     elif [ "$WGET" ] ; then
@@ -314,6 +315,7 @@ mvn_prepare() {
         if [ -z "$MVN_HOME" ] ; then
             cd $REFINE_TOOLS_DIR
                 if [ ! -f "$MVN_FILE" ] ; then
+                    echo "\nCould not find Maven locally, starting download for Maven ..."
                     download $MVN_URL $MVN_FILE
                 fi
                 if [ ! -d "$MVN_DIR" ] ; then
@@ -712,11 +714,11 @@ checkJavaMajorVersion() {
     # Java 9+ starts with x using semver versioning
     major=`echo ${java_ver} | sed -E 's/([0-9]+)(-ea|(\.[0-9]+)*)/\1/g'`
   fi
-  if (( ${major} < 7 )); then
-    error "OpenRefine requires Java version 7 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
+  if (( ${major} < 8 )); then
+    error "OpenRefine requires Java version 8 or later. If you have multiple versions of Java installed, please set the environment variable JAVA_HOME to the correct version."
   fi
-  if (( ${major} > 9 )); then
-    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 9."
+  if (( ${major} > 12 )); then
+    echo "WARNING: OpenRefine is not tested and not recommended for use with Java versions greater than 12."
   fi
 }
 

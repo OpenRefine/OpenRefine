@@ -33,6 +33,41 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var preferenceUIs = [];
 
+var Refine = {
+};
+
+// Requests a CSRF token and calls the supplied callback
+// with the token
+Refine.wrapCSRF = function(onCSRF) {
+   $.get(
+      "command/core/get-csrf-token",
+      {},
+      function(response) {
+         onCSRF(response['token']);
+      },
+      "json"
+   );
+};
+
+// Performs a POST request where an additional CSRF token
+// is supplied in the POST data. The arguments match those
+// of $.post().
+Refine.postCSRF = function(url, data, success, dataType, failCallback) {
+   return Refine.wrapCSRF(function(token) {
+      var fullData = data || {};
+      if (typeof fullData == 'string') {
+         fullData = fullData + "&" + $.param({csrf_token: token});
+      } else {
+         fullData['csrf_token'] = token;
+      }
+      var req = $.post(url, fullData, success, dataType);
+      if (failCallback !== undefined) {
+         req.fail(failCallback);
+      }
+   });
+};
+
+
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
 var dictionary = "";
 $.ajax({
@@ -78,7 +113,7 @@ function PreferenceUI(tr, key, value) {
       }
       $(td1).text(newValue);
       
-      $.post(
+      Refine.postCSRF(
         "command/core/set-preference",
         {
           name : key,
@@ -96,7 +131,7 @@ function PreferenceUI(tr, key, value) {
 
   $('<button class="button">').text($.i18n('core-index/delete')).appendTo(td2).click(function() {
     if (window.confirm($.i18n('core-index/delete-key')+" " + key + "?")) {
-      $.post(
+      Refine.postCSRF(
         "command/core/set-preference",
         {
           name : key
@@ -154,7 +189,7 @@ function populatePreferences(prefs) {
             value = deDupUserMetaData(value);
         }
         
-        $.post(
+        Refine.postCSRF(
           "command/core/set-preference",
           {
             name : key,

@@ -11,13 +11,14 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.3-SNAPSHOT</version>
   </parent>
 
   <properties>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
+    <powermock.version>2.0.2</powermock.version>
   </properties>
 
   <scm>
@@ -79,7 +80,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+        <version>${surefire.version}</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>tests/server/conf/tests.xml</suiteXmlFile>
@@ -248,6 +249,7 @@
             <generateGitPropertiesFile>true</generateGitPropertiesFile>
             <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
             <failOnNoGitDirectory>false</failOnNoGitDirectory>
+            <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
             <format>json</format>
             <gitDescribe>
                 <skip>false</skip>
@@ -279,12 +281,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.9.9</version>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.9.9</version>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -349,17 +351,17 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>4.1.0</version>
+      <version>4.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>4.1.0</version> <!-- in classpath: 3.13-20150929 -->
+      <version>4.1.1</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.odftoolkit</groupId>
+      <groupId>org.odftoolkit</groupId>
       <artifactId>odfdom-java</artifactId>
-      <version>0.8.8-incubating</version> <!-- in classpath: 0.8.7 -->
+      <version>0.9.0-RC1</version>
     </dependency>
     <dependency>
       <groupId>edu.mit.simile</groupId>
@@ -468,28 +470,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>1.7.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>1.7.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>2.3.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-testng</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+     </dependency>
+     <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+     </dependency> 
   </dependencies>
-
 </project>
