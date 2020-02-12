@@ -143,7 +143,7 @@ public class XlsExporter implements StreamExporter {
             }
         };
         
-        CustomizableTabularExporterUtilities.exportRows(
+        EngineDependentExporter.exportRows(
                 project, engine, params, serializer);
         
         wb.write(outputStream);
