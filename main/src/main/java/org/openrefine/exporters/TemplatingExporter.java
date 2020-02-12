@@ -46,7 +46,7 @@ import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.SortingRecordVisitor;
 import org.openrefine.sorting.SortingRowVisitor;
@@ -83,7 +83,7 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
+    public void export(GridState grid, Properties options, Engine engine, Writer writer) throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
 
@@ -108,7 +108,7 @@ public class TemplatingExporter implements WriterExporter {
         if (!"true".equals(options.getProperty("preview"))) {
             TemplateConfig config = new TemplateConfig(templateString, prefixString,
                     suffixString, separatorString);
-            project.getMetadata().getPreferenceStore().put("exporters.templating.template",
+            grid.getMetadata().getPreferenceStore().put("exporters.templating.template",
                     ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
 
@@ -119,14 +119,14 @@ public class TemplatingExporter implements WriterExporter {
             if (sortingJson != null) {
                 SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
                 SortingRowVisitor srv = new SortingRowVisitor(visitor);
-                srv.initializeFromConfig(project, sorting);
+                srv.initializeFromConfig(grid, sorting);
 
                 if (srv.hasCriteria()) {
                     visitor = srv;
                 }
             }
 
-            filteredRows.accept(project, visitor);
+            filteredRows.accept(grid, visitor);
         } else {
             FilteredRecords filteredRecords = engine.getFilteredRecords();
             RecordVisitor visitor = template.getRecordVisitor(writer, limit);
@@ -134,14 +134,14 @@ public class TemplatingExporter implements WriterExporter {
             if (sortingJson != null) {
                 SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
                 SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
-                srv.initializeFromConfig(project, sorting);
+                srv.initializeFromConfig(grid, sorting);
 
                 if (srv.hasCriteria()) {
                     visitor = srv;
                 }
             }
 
-            filteredRecords.accept(project, visitor);
+            filteredRecords.accept(grid, visitor);
         }
     }
 
