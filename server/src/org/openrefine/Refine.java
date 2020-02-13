@@ -194,14 +194,16 @@ class RefineServer extends Server {
         this.setHandler(context);
         this.setStopAtShutdown(true);
         StatisticsHandler handler = new StatisticsHandler();
+        handler.setServer(this);
+        handler.setHandler(this.getHandler());
+        this.addBean(handler);
         // Tell the server we want to try and shutdown gracefully
         // this means that the server will stop accepting new connections
         // right away but it will continue to process the ones that
         // are in execution for the given timeout before attempting to stop
         // NOTE: this is *not* a blocking method, it just sets a parameter
         // that _server.stop() will rely on
-        handler.setStopTimeout(3000);
-        this.addBean(handler);
+        this.setStopTimeout(30000);
 
         // Enable context autoreloading
         if (Configurations.getBoolean("refine.autoreload", false)) {
@@ -226,7 +228,7 @@ class RefineServer extends Server {
             if (threadPool != null) {
                 threadPool.shutdown();
             }
-
+            Thread.sleep(3000);
             // then let the parent stop
             super.doStop();
         } catch (InterruptedException e) {
