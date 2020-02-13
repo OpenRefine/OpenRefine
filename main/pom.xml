@@ -367,6 +367,11 @@
       <artifactId>juniversalchardet</artifactId>
       <version>2.4.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
 
     <!-- test dependencies -->
 

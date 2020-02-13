@@ -62,6 +62,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.12.1</jackson.version>
     <slf4j.version>1.7.30</slf4j.version>
+    <jetty.version>9.4.26.v20200117</jetty.version>
   </properties>
 
 
