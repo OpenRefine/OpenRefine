@@ -41,25 +41,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-        <executions>
-          <execution>
-            <id>install-or-model</id>
-              <phase>compile</phase>
-              <configuration>
-                <file>${basedir}/target/${project.build.finalName}.jar</file>
-                <repositoryLayout>default</repositoryLayout>
-                <packaging>jar</packaging>
-              </configuration>
-              <goals>
-                <goal>install-file</goal>
-              </goals>
-            </execution>
-         </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -68,6 +49,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>or-model</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
