@@ -56,7 +56,6 @@ import org.openrefine.exporters.Exporter;
 import org.openrefine.exporters.ExporterRegistry;
 import org.openrefine.exporters.StreamExporter;
 import org.openrefine.exporters.WriterExporter;
-import org.openrefine.exporters.sql.SqlExporterException;
 import org.openrefine.model.Project;
 
 public class ExportRowsCommand extends Command {
@@ -126,10 +125,7 @@ public class ExportRowsCommand extends Command {
         } catch (Exception e) {
             // Use generic error handling rather than our JSON handling
             logger.info("error:{}", e.getMessage());
-            if (e instanceof SqlExporterException) {
-                response.sendError(HttpStatus.SC_BAD_REQUEST, e.getMessage());
-            }
-            throw new ServletException(e);
+            response.sendError(HttpStatus.SC_BAD_REQUEST, e.getMessage());
         } finally {
             ProjectManager.singleton.setBusy(false);
         }
