@@ -139,11 +139,11 @@
                 <id>install-butterfly</id>
                 <phase>process-resources</phase>
                 <configuration>
-                    <file>${basedir}/lib-local/butterfly-1.0.2.jar</file>
+                    <file>${basedir}/lib-local/butterfly-${butterfly.version}.jar</file>
                     <repositoryLayout>default</repositoryLayout>
                     <groupId>edu.mit.simile</groupId>
                     <artifactId>butterfly</artifactId>
-                    <version>1.0.2</version>
+                    <version>${butterfly.version}</version>
                     <packaging>jar</packaging>
                     <generatePom>true</generatePom>
                 </configuration>
@@ -264,7 +264,7 @@
     <dependency>
       <groupId>edu.mit.simile</groupId>
       <artifactId>butterfly</artifactId>
-      <version>1.0.2</version>
+      <version>${butterfly.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>

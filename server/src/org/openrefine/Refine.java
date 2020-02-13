@@ -53,15 +53,19 @@ import javax.swing.JFrame;
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
 import org.apache.log4j.Level;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.util.Scanner;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.StatisticsHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.Scanner;
+import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openrefine.Configurations;
 import org.openrefine.util.threads.ThreadPoolExecutorAdapter;
 
 /**
@@ -82,7 +86,7 @@ public class Refine {
 
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE", "false");
-        System.setProperty("org.mortbay.log.class", "org.mortbay.log.Slf4jLog");
+        System.setProperty("org.eclipse.jetty.log.class", "org.eclipse.jetty.util.log.Slf4jLog");
 
         // tell macosx to keep the menu associated with the screen and what the app title is
         System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -136,6 +140,18 @@ class RefineServer extends Server {
 
     final static Logger logger = LoggerFactory.getLogger("refine_server");
 
+    public RefineServer() {
+        super(createThreadPool());
+    }
+
+    private static ThreadPool createThreadPool() {
+        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
+        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
+        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
+        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
+        return new ThreadPoolExecutorAdapter(new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue));
+    }
+
     private ThreadPoolExecutor threadPool;
 
     public void init(String host, int port) throws Exception {
@@ -146,21 +162,13 @@ class RefineServer extends Server {
             logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
         }
 
-        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
-        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
-        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
-
-        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
-
-        threadPool = new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue);
-
-        this.setThreadPool(new ThreadPoolExecutorAdapter(threadPool));
-
-        Connector connector = new SocketConnector();
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        httpConfig.setSendServerVersion(false);
+        HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
+        ServerConnector connector = new ServerConnector(this, httpFactory);
         connector.setPort(port);
         connector.setHost(host);
-        connector.setMaxIdleTime(Configurations.getInteger("refine.connection.max_idle_time", 60000));
-        connector.setStatsOn(false);
+        connector.setIdleTimeout(Configurations.getInteger("server.connection.max_idle_time", 60000));
         this.addConnector(connector);
 
         File webapp = new File(Configurations.get("refine.webapp", "main/webapp"));
@@ -185,7 +193,15 @@ class RefineServer extends Server {
 
         this.setHandler(context);
         this.setStopAtShutdown(true);
-        this.setSendServerVersion(true);
+        StatisticsHandler handler = new StatisticsHandler();
+        // Tell the server we want to try and shutdown gracefully
+        // this means that the server will stop accepting new connections
+        // right away but it will continue to process the ones that
+        // are in execution for the given timeout before attempting to stop
+        // NOTE: this is *not* a blocking method, it just sets a parameter
+        // that _server.stop() will rely on
+        handler.setStopTimeout(3000);
+        this.addBean(handler);
 
         // Enable context autoreloading
         if (Configurations.getBoolean("refine.autoreload", false)) {
@@ -261,7 +277,11 @@ class RefineServer extends Server {
             }
         });
 
-        scanner.start();
+        try {
+            scanner.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
@@ -500,14 +520,6 @@ class ShutdownSignalHandler implements Runnable {
 
     @Override
     public void run() {
-
-        // Tell the server we want to try and shutdown gracefully
-        // this means that the server will stop accepting new connections
-        // right away but it will continue to process the ones that
-        // are in execution for the given timeout before attempting to stop
-        // NOTE: this is *not* a blocking method, it just sets a parameter
-        // that _server.stop() will rely on
-        _server.setGracefulShutdown(3000);
 
         try {
             _server.stop();

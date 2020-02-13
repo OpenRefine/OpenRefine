@@ -33,6 +33,7 @@
     <powermock.version>2.0.2</powermock.version>
     <guava.version>15.0</guava.version>
     <servlet-api.version>3.1.0</servlet-api.version>
+    <butterfly.version>1.0.3</butterfly.version>
   </properties>
 
   <scm>
