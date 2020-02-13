@@ -99,6 +99,11 @@ public class Engine {
         return _state;
     }
 
+    @JsonIgnore
+    public EngineConfig getConfig() {
+        return _config;
+    }
+
     /**
      * Computes a grid state which only contains the rows matching the current facets.
      * 

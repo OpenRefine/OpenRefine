@@ -44,9 +44,9 @@ public abstract class EngineDependentExporter implements WriterExporter {
         }
     }
 
-    public abstract void startFile(JsonNode options, ColumnModel columnModel, Writer writer);
+    public abstract void startFile(JsonNode options, Properties params, ColumnModel columnModel, Writer writer);
 
-    public abstract void endFile();
+    public abstract void endFile() throws IOException;
 
     public abstract void addRow(List<CellData> cells, boolean isHeader);
 
@@ -111,7 +111,7 @@ public abstract class EngineDependentExporter implements WriterExporter {
          */
         List<Partition> partitions = filtered.getGrid().partitions();
 
-        startFile(jsonOptions, columnModel, writer);
+        startFile(jsonOptions, options, columnModel, writer);
         if (outputColumnHeaders) {
             List<CellData> cells = new ArrayList<CellData>(columnNames.size());
             for (String name : columnNames) {
