@@ -66,7 +66,7 @@ public class CsvExporter extends EngineDependentExporter {
     
     private static class Configuration {
         @JsonProperty("separator")
-        protected String separator = ",";
+        protected String separator = null;
         @JsonProperty("lineSeparator")
         protected String lineSeparator = CSVWriter.DEFAULT_LINE_END;
         @JsonProperty("quoteAll")
