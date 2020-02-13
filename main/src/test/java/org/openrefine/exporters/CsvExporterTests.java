@@ -39,17 +39,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.exporters.CsvExporter;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -59,27 +58,26 @@ import org.testng.annotations.Test;
 
 public class CsvExporterTests extends RefineTest {
 
-    @Override
     @BeforeTest
-    public void init() {
+    public void initLogger() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
     //dependencies
     StringWriter writer;
-    Project project;
     Engine engine;
+    GridState grid;
     Properties options;
 
     //System Under Test
     CsvExporter SUT;
+	
 
     @BeforeMethod
     public void SetUp(){
         SUT = new CsvExporter();
         writer = new StringWriter();
-        project = new Project();
-        engine = new Engine(project);
+     
         options = mock(Properties.class);
     }
 
@@ -87,7 +85,7 @@ public class CsvExporterTests extends RefineTest {
     public void TearDown(){
         SUT = null;
         writer = null;
-        project = null;
+        grid = null;
         engine = null;
         options = null;
     }
@@ -97,7 +95,7 @@ public class CsvExporterTests extends RefineTest {
         CreateGrid(2, 2);
 
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -113,7 +111,7 @@ public class CsvExporterTests extends RefineTest {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -130,7 +128,7 @@ public class CsvExporterTests extends RefineTest {
         when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -143,11 +141,18 @@ public class CsvExporterTests extends RefineTest {
 
     @Test
     public void exportCsvWithLineBreaks(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, new Cell("line\n\n\nbreak", null));
+        Project project = createProject("csv project",
+        		new String[] {"column0","column1","column2"},
+        		new Serializable[][] {
+        	{"row0cell0","row0cell1","row0cell2"},
+        	{"row1cell0","line\n\n\nbreak","row1cell2"},
+        	{"row2cell0","row2cell1","row2cell2"}
+        });
+        
+        GridState grid = project.getCurrentGridState();
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -160,11 +165,18 @@ public class CsvExporterTests extends RefineTest {
 
     @Test
     public void exportCsvWithComma(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, new Cell("with, comma", null));
+    	Project project = createProject("csv project",
+        		new String[] {"column0","column1","column2"},
+        		new Serializable[][] {
+        	{"row0cell0","row0cell1","row0cell2"},
+        	{"row1cell0","with, comma","row1cell2"},
+        	{"row2cell0","row2cell1","row2cell2"}
+        });
+        
+        GridState grid = project.getCurrentGridState();
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -177,11 +189,18 @@ public class CsvExporterTests extends RefineTest {
 
     @Test
     public void exportCsvWithQuote(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, new Cell("line has \"quote\"", null));
+    	Project project = createProject("csv project",
+        		new String[] {"column0","column1","column2"},
+        		new Serializable[][] {
+        	{"row0cell0","row0cell1","row0cell2"},
+        	{"row1cell0","line has \"quote\"","row1cell2"},
+        	{"row2cell0","row2cell1","row2cell2"}
+        });
+        
+        GridState grid = project.getCurrentGridState();
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -194,12 +213,18 @@ public class CsvExporterTests extends RefineTest {
 
     @Test
     public void exportCsvWithEmptyCells(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, null);
-        project.rows.get(2).cells.set(0, null);
+    	Project project = createProject("csv project",
+        		new String[] {"column0","column1","column2"},
+        		new Serializable[][] {
+        	{"row0cell0","row0cell1","row0cell2"},
+        	{"row1cell0",null,"row1cell2"},
+        	{null,"row2cell1","row2cell2"}
+        });
+        
+        GridState grid = project.getCurrentGridState();
+        Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -237,25 +262,22 @@ public class CsvExporterTests extends RefineTest {
     */
     //helper methods
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
-            try {
-                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
-            } catch (ModelException e1) {
-                Assert.fail("Could not create column");
-            }
-        }
-    }
-
     protected void CreateGrid(int noOfRows, int noOfColumns){
-        CreateColumns(noOfColumns);
-
+    	String[] columns = new String[noOfColumns];
+		for(int i = 0; i < noOfColumns; i++) {
+			columns[i] = "column" + i;
+		}
+        
+        Serializable[][] cells = new Serializable[noOfRows][];
         for(int i = 0; i < noOfRows; i++){
-            Row row = new Row(noOfColumns);
+            cells[i] = new Serializable[noOfColumns];
             for(int j = 0; j < noOfColumns; j++){
-                row.cells.add(new Cell("row" + i + "cell" + j, null));
+                cells[i][j] = "row" + i + "cell" + j;
             }
-            project.rows.add(row);
         }
+        
+		Project project = createProject("csv project", columns, cells);
+		grid = project.getCurrentGridState();
+		engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
     }
 }
