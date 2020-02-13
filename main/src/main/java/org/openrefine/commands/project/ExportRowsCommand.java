@@ -108,7 +108,7 @@ public class ExportRowsCommand extends Command {
                     response.getWriter() :
                     new OutputStreamWriter(response.getOutputStream(), encoding);
                 
-                ((WriterExporter) exporter).export(project, params, engine, writer);
+                ((WriterExporter) exporter).export(project.getCurrentGridState(), params, engine, writer);
                 writer.close();
             }
             else if (exporter instanceof StreamExporter) {
