@@ -31,6 +31,7 @@
     <groups>
       <run>
         <exclude name="broken" />
+        <exclude name="broken_by_spark" />
       </run>
     </groups>
     <packages>
