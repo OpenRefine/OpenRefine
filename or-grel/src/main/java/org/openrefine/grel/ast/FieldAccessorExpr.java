@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -96,6 +97,22 @@ public class FieldAccessorExpr implements Evaluable {
             String innerStr = _inner.toString();
             if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
                 return Collections.singleton(_fieldName);
+            }
+            // TODO add support for starred, flagged, rowIndex
+            return null;
+        }
+    }
+
+    @Override
+    public FieldAccessorExpr renameColumnDependencies(Map<String, String> substitutions) {
+        Evaluable innerTranslated = _inner.renameColumnDependencies(substitutions);
+        if (innerTranslated != null) {
+            return new FieldAccessorExpr(innerTranslated, _fieldName);
+        } else {
+            String innerStr = _inner.toString();
+            if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
+                String newColumnName = substitutions.getOrDefault(_fieldName, _fieldName);
+                return new FieldAccessorExpr(_inner, newColumnName);
             }
             // TODO add support for starred, flagged, rowIndex
             return null;

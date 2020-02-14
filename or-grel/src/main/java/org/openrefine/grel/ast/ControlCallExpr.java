@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.grel.ast;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.openrefine.expr.EvalError;
@@ -78,5 +79,17 @@ public class ControlCallExpr extends PureArgumentsExpr {
     @Override
     public boolean equals(Object other) {
         return (other instanceof Evaluable) && toString().equals(other.toString());
+    }
+
+    @Override
+    public ControlCallExpr renameColumnDependencies(Map<String, String> substitutions) {
+        Evaluable[] translatedArgs = new Evaluable[_args.length];
+        for (int i = 0; i != _args.length; i++) {
+            translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
+            if (translatedArgs[i] == null) {
+                return null;
+            }
+        }
+        return new ControlCallExpr(translatedArgs, _control);
     }
 }

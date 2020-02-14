@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -228,6 +230,43 @@ public class GrelTests {
                     : Arrays.asList(test[1].split(",")).stream()
                             .filter(s -> !s.isEmpty()).collect(Collectors.toSet());
             Assert.assertEquals(eval.getColumnDependencies(baseColumn), expected, "for expression: " + test[0]);
+        }
+    }
+
+    @Test
+    public void testRenameColumnDependencies() throws ParsingException {
+        // integration test for column dependency extraction
+
+        Map<String, String> substitutions = new HashMap<>();
+        substitutions.put("foo", "bar");
+        substitutions.put("bar", "foo");
+        substitutions.put("base", "newBase");
+
+        String tests[][] = {
+                { "value", "value" },
+                { "cell.recon.match.id", "cell.recon.match.id" },
+                { "value + 'a'", "value + \"a\"" },
+                { "\"constant\"", "\"constant\"" },
+                { "1", "1" },
+                { "cells.foo", "cells.bar" },
+                { "cells.bar.value + ' ' + cells.foo.value", "cells.foo.value + \" \" + cells.bar.value" },
+                { "parseHtml(value.trim())", "parseHtml(trim(value))" },
+                { "[ cells.columnA.value, cells.foo.value ]", "[ cells.columnA.value, cells.bar.value ]" },
+                { "cells", null },
+                { "facetCount(value, 'value', 'col')", null },
+                // this could be analyzed too, but we will never reach completeness anyway!
+                // Moving to Truffle might help with partial evaluation down
+                { "get(cells, 'foo'+'bar')", null },
+        };
+        for (String[] test : tests) {
+            Evaluable eval = MetaParser.parse("grel:" + test[0]);
+            Evaluable translated = eval.renameColumnDependencies(substitutions);
+            String actual = translated == null ? null : translated.toString();
+            Assert.assertEquals(actual, test[1], "for expression: " + test[0]);
+            if (actual != null) {
+                // check that the new expression can be parsed back
+                Assert.assertNotNull(MetaParser.parse("grel:" + actual));
+            }
         }
     }
 

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.ast;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -52,11 +53,13 @@ public class FunctionCallExpr implements Evaluable {
 
     private static final long serialVersionUID = -7793494352606403242L;
     final protected Function _function;
-    final private Evaluable[] _args;
+    final protected Evaluable[] _args;
+    final protected String _sourceName;
 
-    public FunctionCallExpr(Evaluable[] args, Function f) {
+    public FunctionCallExpr(Evaluable[] args, Function f, String sourceName) {
         _args = args;
         _function = f;
+        _sourceName = sourceName;
     }
 
     @Override
@@ -87,7 +90,7 @@ public class FunctionCallExpr implements Evaluable {
             sb.append(ev.toString());
         }
 
-        return _function.getClass().getSimpleName() + "(" + sb.toString() + ")";
+        return _sourceName + "(" + sb.toString() + ")";
     }
 
     @Override
@@ -107,6 +110,23 @@ public class FunctionCallExpr implements Evaluable {
                 dependencies.addAll(deps);
             }
             return dependencies;
+        } else {
+            // Functions which are not pure might rely on arbitrary parts of the project
+            return null;
+        }
+    }
+
+    @Override
+    public FunctionCallExpr renameColumnDependencies(Map<String, String> substitutions) {
+        if (_function instanceof PureFunction) {
+            Evaluable[] translatedArgs = new Evaluable[_args.length];
+            for (int i = 0; i != _args.length; i++) {
+                translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
+                if (translatedArgs[i] == null) {
+                    return null;
+                }
+            }
+            return new FunctionCallExpr(translatedArgs, _function, _sourceName);
         } else {
             // Functions which are not pure might rely on arbitrary parts of the project
             return null;

@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -59,6 +60,21 @@ public interface Evaluable extends Serializable {
      *          the project.
      */
     public default Set<String> getColumnDependencies(String baseColumn) {
+        return null;
+    }
+
+    /**
+     * Translates this expression by simultaneously substituting column names as the supplied map specifies.
+     * 
+     * This is only possible if the extraction of column dependencies with {@link #getColumnDependencies(String)}
+     * succeeds (return a non-null value).
+     * 
+     * @param substitutions
+     *            a map specifying new names for some columns. If a column name is not present in the map, it is assumed
+     *            that the column is not renamed.
+     * @return a new expression with updated column names.
+     */
+    public default Evaluable renameColumnDependencies(Map<String, String> substitutions) {
         return null;
     }
 }

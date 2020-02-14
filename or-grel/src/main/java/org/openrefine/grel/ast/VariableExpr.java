@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -78,5 +79,15 @@ public class VariableExpr implements Evaluable {
             return null;
         }
         return Collections.emptySet();
+    }
+
+    @Override
+    public VariableExpr renameColumnDependencies(Map<String, String> substitutions) {
+        if ("value".equals(_name) || "cell".equals(_name) || "recon".equals(_name)) {
+            return this;
+        } else if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
+            return null;
+        }
+        return this;
     }
 }
