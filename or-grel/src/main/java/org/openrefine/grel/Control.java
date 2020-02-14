@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.expr.Evaluable;
+import org.openrefine.grel.ast.GrelExpr;
 
 /**
  * Interface of GREL controls such as if, forEach, forNonBlank, with. A control can decide which part of the code to
@@ -47,9 +47,9 @@ import org.openrefine.expr.Evaluable;
  */
 public interface Control {
 
-    public Object call(Properties bindings, Evaluable[] args);
+    public Object call(Properties bindings, GrelExpr[] args);
 
-    public String checkArguments(Evaluable[] args);
+    public String checkArguments(GrelExpr[] args);
 
     @JsonProperty("description")
     public String getDescription();

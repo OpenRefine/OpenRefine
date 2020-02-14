@@ -36,7 +36,6 @@ package org.openrefine.grel.ast;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 
 /**
@@ -47,7 +46,7 @@ public class OperatorCallExpr extends PureArgumentsExpr {
     private static final long serialVersionUID = -6453818304035013647L;
     final protected String _op;
 
-    public OperatorCallExpr(Evaluable[] args, String op) {
+    public OperatorCallExpr(GrelExpr[] args, String op) {
         super(args);
         _op = op;
     }
@@ -147,7 +146,7 @@ public class OperatorCallExpr extends PureArgumentsExpr {
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(' ');
                 sb.append(_op);
@@ -165,12 +164,12 @@ public class OperatorCallExpr extends PureArgumentsExpr {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
 
     @Override
     public OperatorCallExpr renameColumnDependencies(Map<String, String> substitutions) {
-        Evaluable[] translatedArgs = new Evaluable[_args.length];
+        GrelExpr[] translatedArgs = new GrelExpr[_args.length];
         for (int i = 0; i != _args.length; i++) {
             translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
             if (translatedArgs[i] == null) {

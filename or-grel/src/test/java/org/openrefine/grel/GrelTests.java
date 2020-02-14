@@ -261,7 +261,7 @@ public class GrelTests {
         for (String[] test : tests) {
             Evaluable eval = MetaParser.parse("grel:" + test[0]);
             Evaluable translated = eval.renameColumnDependencies(substitutions);
-            String actual = translated == null ? null : translated.toString();
+            String actual = translated == null ? null : translated.getSource();
             Assert.assertEquals(actual, test[1], "for expression: " + test[0]);
             if (actual != null) {
                 // check that the new expression can be parsed back

@@ -36,6 +36,8 @@ package org.openrefine.browsing.facets;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -157,6 +159,36 @@ public class ListFacet implements Facet {
         } catch (ParsingException e) {
             _errorMessage = e.getMessage();
         }
+    }
+
+    @Override
+    public Set<String> getColumnDependencies() {
+        if (_errorMessage != null) {
+            return null;
+        }
+        return _eval.getColumnDependencies(_config.columnName);
+    }
+
+    @Override
+    public ListFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+        if (_errorMessage != null) {
+            return null;
+        }
+        Evaluable translated = _eval.renameColumnDependencies(substitutions);
+        if (translated == null) {
+            return null;
+        }
+        ListFacetConfig newConfig = new ListFacetConfig();
+        newConfig.columnName = substitutions.getOrDefault(_config.columnName, _config.columnName);
+        newConfig.expression = translated.getFullSource();
+        newConfig.invert = _config.invert;
+        newConfig.name = _config.name;
+        newConfig.omitBlank = _config.omitBlank;
+        newConfig.omitError = _config.omitError;
+        newConfig.selectBlank = _config.selectBlank;
+        newConfig.selectError = _config.selectError;
+        newConfig.selection = _config.selection;
+        return newConfig;
     }
 
     protected Object[] createMatches() {

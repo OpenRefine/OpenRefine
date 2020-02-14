@@ -9,7 +9,6 @@ import static org.testng.Assert.assertNull;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.Evaluable;
 import org.openrefine.grel.Function;
 import org.openrefine.grel.PureFunction;
 
@@ -24,29 +23,29 @@ public class FunctionCallExprTest extends ExprTestBase {
 
     @Test
     public void testUnion() {
-        Evaluable ev = new FunctionCallExpr(new Evaluable[] { constant, currentColumn, twoColumns }, function, "foo");
+        GrelExpr ev = new FunctionCallExpr(new GrelExpr[] { constant, currentColumn, twoColumns }, function, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set(baseColumn, "a", "b"));
     }
 
     @Test
     public void testUnanalyzable() {
-        Evaluable ev = new FunctionCallExpr(new Evaluable[] { currentColumn, unanalyzable }, function, "foo");
+        GrelExpr ev = new FunctionCallExpr(new GrelExpr[] { currentColumn, unanalyzable }, function, "foo");
         assertNull(ev.getColumnDependencies(baseColumn));
     }
 
     @Test
     public void testImpureFunction() {
-        Evaluable ev = new FunctionCallExpr(
-                new Evaluable[] { currentColumn, constant },
+        GrelExpr ev = new FunctionCallExpr(
+                new GrelExpr[] { currentColumn, constant },
                 mock(Function.class), "foo");
         assertNull(ev.getColumnDependencies(baseColumn));
     }
 
     @Test
     public void testToString() {
-        Evaluable arg = mock(Evaluable.class);
+        GrelExpr arg = mock(GrelExpr.class);
         when(arg.toString()).thenReturn("arg");
-        Evaluable SUT = new FunctionCallExpr(new Evaluable[] { arg }, function, "myFunction");
+        GrelExpr SUT = new FunctionCallExpr(new GrelExpr[] { arg }, function, "myFunction");
         assertEquals(SUT.toString(), "myFunction(arg)");
     }
 }

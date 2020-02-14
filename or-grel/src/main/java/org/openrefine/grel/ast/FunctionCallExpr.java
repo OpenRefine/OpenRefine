@@ -39,7 +39,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.Function;
 import org.openrefine.grel.PureFunction;
@@ -49,14 +48,14 @@ import org.openrefine.grel.PureFunction;
  * before the function is applied. If any argument is an error, the function is not applied, and the error is the result
  * of the expression.
  */
-public class FunctionCallExpr implements Evaluable {
+public class FunctionCallExpr implements GrelExpr {
 
     private static final long serialVersionUID = -7793494352606403242L;
     final protected Function _function;
-    final protected Evaluable[] _args;
+    final protected GrelExpr[] _args;
     final protected String _sourceName;
 
-    public FunctionCallExpr(Evaluable[] args, Function f, String sourceName) {
+    public FunctionCallExpr(GrelExpr[] args, Function f, String sourceName) {
         _args = args;
         _function = f;
         _sourceName = sourceName;
@@ -83,7 +82,7 @@ public class FunctionCallExpr implements Evaluable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
-        for (Evaluable ev : _args) {
+        for (GrelExpr ev : _args) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -95,14 +94,14 @@ public class FunctionCallExpr implements Evaluable {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
 
     @Override
     public final Set<String> getColumnDependencies(String baseColumn) {
         if (_function instanceof PureFunction) {
             Set<String> dependencies = new HashSet<>();
-            for (Evaluable ev : _args) {
+            for (GrelExpr ev : _args) {
                 Set<String> deps = ev.getColumnDependencies(baseColumn);
                 if (deps == null) {
                     return null;
@@ -119,7 +118,7 @@ public class FunctionCallExpr implements Evaluable {
     @Override
     public FunctionCallExpr renameColumnDependencies(Map<String, String> substitutions) {
         if (_function instanceof PureFunction) {
-            Evaluable[] translatedArgs = new Evaluable[_args.length];
+            GrelExpr[] translatedArgs = new GrelExpr[_args.length];
             for (int i = 0; i != _args.length; i++) {
                 translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
                 if (translatedArgs[i] == null) {

@@ -76,7 +76,6 @@ public class EngineConfigTests {
         public String getFoo() {
             return "bar";
         }
-
     }
 
     @BeforeTest

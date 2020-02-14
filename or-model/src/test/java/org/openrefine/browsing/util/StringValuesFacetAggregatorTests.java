@@ -28,6 +28,16 @@ public class StringValuesFacetAggregatorTests {
             WrappedRow row = (WrappedRow) bindings.get("row");
             return row.row.getCellValue(0);
         }
+
+        @Override
+        public String getSource() {
+            return "firstvalue";
+        }
+
+        @Override
+        public String getLanguagePrefix() {
+            return "mylanguage";
+        }
     };
 
     StringValuesFacetAggregator SUT;

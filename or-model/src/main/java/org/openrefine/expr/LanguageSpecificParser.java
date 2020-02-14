@@ -35,5 +35,5 @@ package org.openrefine.expr;
 
 public interface LanguageSpecificParser {
 
-    public Evaluable parse(String s) throws ParsingException;
+    public Evaluable parse(String source, String languagePrefix) throws ParsingException;
 }

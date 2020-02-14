@@ -50,13 +50,13 @@ import org.openrefine.expr.util.JsonValueConverter;
  * An abstract syntax tree node encapsulating a field accessor, e.g., "cell.value" is accessing the field named "value"
  * on the variable called "cell".
  */
-public class FieldAccessorExpr implements Evaluable {
+public class FieldAccessorExpr implements GrelExpr {
 
     private static final long serialVersionUID = -1531559726559623162L;
-    final protected Evaluable _inner;
+    final protected GrelExpr _inner;
     final protected String _fieldName;
 
-    public FieldAccessorExpr(Evaluable inner, String fieldName) {
+    public FieldAccessorExpr(GrelExpr inner, String fieldName) {
         _inner = inner;
         _fieldName = fieldName;
     }
@@ -105,7 +105,7 @@ public class FieldAccessorExpr implements Evaluable {
 
     @Override
     public FieldAccessorExpr renameColumnDependencies(Map<String, String> substitutions) {
-        Evaluable innerTranslated = _inner.renameColumnDependencies(substitutions);
+        GrelExpr innerTranslated = _inner.renameColumnDependencies(substitutions);
         if (innerTranslated != null) {
             return new FieldAccessorExpr(innerTranslated, _fieldName);
         } else {

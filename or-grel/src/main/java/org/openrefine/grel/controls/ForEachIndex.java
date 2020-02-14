@@ -40,17 +40,17 @@ import java.util.Properties;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.grel.Control;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class ForEachIndex implements Control {
 
     @Override
-    public String checkArguments(Evaluable[] args) {
+    public String checkArguments(GrelExpr[] args) {
         if (args.length != 4) {
             return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
@@ -64,7 +64,7 @@ public class ForEachIndex implements Control {
     }
 
     @Override
-    public Object call(Properties bindings, Evaluable[] args) {
+    public Object call(Properties bindings, GrelExpr[] args) {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;

@@ -35,16 +35,16 @@ package org.openrefine.grel.controls;
 
 import java.util.Properties;
 
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.grel.Control;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class ForNonBlank implements Control {
 
     @Override
-    public String checkArguments(Evaluable[] args) {
+    public String checkArguments(GrelExpr[] args) {
         if (args.length != 4) {
             return ControlFunctionRegistry.getControlName(this) + " expects 4 arguments";
         } else if (!(args[1] instanceof VariableExpr)) {
@@ -55,10 +55,10 @@ public class ForNonBlank implements Control {
     }
 
     @Override
-    public Object call(Properties bindings, Evaluable[] args) {
+    public Object call(Properties bindings, GrelExpr[] args) {
         Object o = args[0].evaluate(bindings);
 
-        Evaluable var = args[1];
+        GrelExpr var = args[1];
         String name = ((VariableExpr) var).getName();
 
         if (ExpressionUtils.isNonBlankData(o)) {

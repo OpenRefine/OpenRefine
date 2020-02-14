@@ -43,7 +43,7 @@ import org.openrefine.expr.Evaluable;
 /**
  * An abstract syntax tree node encapsulating the retrieval of a variable's content.
  */
-public class VariableExpr implements Evaluable {
+public class VariableExpr implements GrelExpr {
 
     private static final long serialVersionUID = -7662397690998054801L;
     final protected String _name;

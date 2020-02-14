@@ -8,7 +8,6 @@ import static org.testng.Assert.assertNull;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.Evaluable;
 import org.openrefine.grel.Control;
 
 public class ControlCallExprTest extends ExprTestBase {
@@ -22,19 +21,19 @@ public class ControlCallExprTest extends ExprTestBase {
 
     @Test
     public void testConstant() {
-        Evaluable c = new ControlCallExpr(new Evaluable[] { constant }, control);
+        GrelExpr c = new ControlCallExpr(new GrelExpr[] { constant }, control);
         assertEquals(c.getColumnDependencies(baseColumn), set());
     }
 
     @Test
     public void testUnion() {
-        Evaluable c = new ControlCallExpr(new Evaluable[] { twoColumns, currentColumn }, control);
+        GrelExpr c = new ControlCallExpr(new GrelExpr[] { twoColumns, currentColumn }, control);
         assertEquals(c.getColumnDependencies(baseColumn), set("a", "b", baseColumn));
     }
 
     @Test
     public void testUnanalyzable() {
-        Evaluable c = new ControlCallExpr(new Evaluable[] { twoColumns, unanalyzable }, control);
+        GrelExpr c = new ControlCallExpr(new GrelExpr[] { twoColumns, unanalyzable }, control);
         assertNull(c.getColumnDependencies(baseColumn));
     }
 }
