@@ -51,6 +51,18 @@ public interface Evaluable extends Serializable {
     public Object evaluate(Properties bindings);
     
     /**
+     * Returns the source string which generated this expression.
+     * This does not include the language prefix, which can be obtained
+     * by {@link #getLanguagePrefix()}.
+     */
+    public String getSource();
+    
+    /**
+     * @return the language prefix used to generate this evaluable.
+     */
+    public String getLanguagePrefix();
+    
+    /**
      * Returns the names of the columns this expression depends on.
      * 
      * @param baseColumn
@@ -78,5 +90,13 @@ public interface Evaluable extends Serializable {
      */
     public default Evaluable renameColumnDependencies(Map<String, String> substitutions) {
         return null;
+    }
+
+    /**
+     * @return
+     *    the source prefixed by the language prefix
+     */
+    public default String getFullSource() {
+        return getLanguagePrefix() + ":" + getSource();
     }
 }

@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -61,4 +61,22 @@ public interface Facet  {
      * combined).
      */
     public FacetResult getFacetResult(FacetState state);
+    
+    
+    /**
+     * The columns this facet depends on.
+     * 
+     * @return null if dependent columns cannot be extracted, in which
+     * case it should be assumed that the facet potentially depends on all
+     * columns.
+     */
+    public Set<String> getColumnDependencies();
+    
+    /**
+     * Updates the facet config after a renaming of columns.
+     * 
+     * @return null if the update could not be performed, or the new
+     * facet config if the update could be performed.
+     */
+    public FacetConfig renameColumnDependencies(Map<String, String> substitutions);
 }

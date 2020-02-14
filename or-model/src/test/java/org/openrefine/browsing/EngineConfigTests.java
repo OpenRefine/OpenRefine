@@ -27,6 +27,10 @@
 package org.openrefine.browsing;
 
 import org.openrefine.browsing.EngineConfig;
+
+import java.util.Map;
+import java.util.Set;
+
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetConfig;
@@ -77,7 +81,6 @@ public class EngineConfigTests {
 		public String getFoo() {
 			return "bar";
 		}
-    	
     }
     
     @BeforeTest

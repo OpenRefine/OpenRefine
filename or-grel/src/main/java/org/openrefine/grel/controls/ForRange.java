@@ -39,6 +39,7 @@ import java.util.Properties;
 
 import org.openrefine.grel.Control;
 import org.openrefine.grel.ControlFunctionRegistry;
+import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
 import org.openrefine.expr.EvalError;
@@ -47,7 +48,7 @@ import org.openrefine.expr.ExpressionUtils;
 
 public class ForRange implements Control {
     @Override
-    public String checkArguments(Evaluable[] args) {
+    public String checkArguments(GrelExpr[] args) {
         if (args.length != 5) {
             return ControlFunctionRegistry.getControlName(this) + " expects 5 arguments";
         } else if (!(args[3] instanceof VariableExpr)) {
@@ -58,7 +59,7 @@ public class ForRange implements Control {
     }
 
     @Override
-    public Object call(Properties bindings, Evaluable[] args) {
+    public Object call(Properties bindings, GrelExpr[] args) {
         Object fromO = args[0].evaluate(bindings);
         Object toO = args[1].evaluate(bindings);
         Object stepO = args[2].evaluate(bindings);

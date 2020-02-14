@@ -26,6 +26,9 @@
  ******************************************************************************/
 package org.openrefine.browsing.facets;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.openrefine.model.ColumnModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

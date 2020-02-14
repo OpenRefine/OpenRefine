@@ -21,17 +21,17 @@ import org.openrefine.expr.Evaluable;
 public class ExprTestBase {
 
     protected String baseColumn = "column";
-    protected Evaluable currentColumn;
-    protected Evaluable unanalyzable;
-    protected Evaluable twoColumns;
-    protected Evaluable constant;
+    protected GrelExpr currentColumn;
+    protected GrelExpr unanalyzable;
+    protected GrelExpr twoColumns;
+    protected GrelExpr constant;
 
     @BeforeMethod
     public void setUp() {
-        currentColumn = mock(Evaluable.class);
-        unanalyzable = mock(Evaluable.class);
-        twoColumns = mock(Evaluable.class);
-        constant = mock(Evaluable.class);
+        currentColumn = mock(GrelExpr.class);
+        unanalyzable = mock(GrelExpr.class);
+        twoColumns = mock(GrelExpr.class);
+        constant = mock(GrelExpr.class);
         
         when(currentColumn.getColumnDependencies(baseColumn))
            .thenReturn(set(baseColumn));
