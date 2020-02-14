@@ -118,6 +118,48 @@ public class ListFacetTests extends RefineTest {
 
     @Test
     public void testTwoListFacets() {
+        String expectedJson = "[ {\n" +
+                "       \"choices\" : [ {\n" +
+                "         \"c\" : 1,\n" +
+                "         \"s\" : false,\n" +
+                "         \"v\" : {\n" +
+                "           \"l\" : \"a\",\n" +
+                "           \"v\" : \"a\"\n" +
+                "         }\n" +
+                "       }, {\n" +
+                "         \"c\" : 1,\n" +
+                "         \"s\" : false,\n" +
+                "         \"v\" : {\n" +
+                "           \"l\" : \"c\",\n" +
+                "           \"v\" : \"c\"\n" +
+                "         }\n" +
+                "       } ],\n" +
+                "       \"columnName\" : \"foo\",\n" +
+                "       \"expression\" : \"grel:value\",\n" +
+                "       \"invert\" : false,\n" +
+                "       \"name\" : \"foo\"\n" +
+                "     }, {\n" +
+                "       \"choices\" : [ {\n" +
+                "         \"c\" : 1,\n" +
+                "         \"s\" : false,\n" +
+                "         \"v\" : {\n" +
+                "           \"l\" : \"b\",\n" +
+                "           \"v\" : \"b\"\n" +
+                "         }\n" +
+                "       }, {\n" +
+                "         \"c\" : 1,\n" +
+                "         \"s\" : false,\n" +
+                "         \"v\" : {\n" +
+                "           \"l\" : \"d\",\n" +
+                "           \"v\" : \"d\"\n" +
+                "         }\n" +
+                "       } ],\n" +
+                "       \"columnName\" : \"bar\",\n" +
+                "       \"expression\" : \"grel:value\",\n" +
+                "       \"invert\" : false,\n" +
+                "       \"name\" : \"foo\"\n" +
+                "     } ]";
+
         Project project = createProject("my project",
                 new String[] { "foo", "bar" },
                 new Serializable[][] {
@@ -146,7 +188,7 @@ public class ListFacetTests extends RefineTest {
         secondColumn.selection = Collections.emptyList();
         EngineConfig config = new EngineConfig(Arrays.asList(firstColumn, secondColumn), Engine.Mode.RowBased);
         Engine engine = new Engine(project.getCurrentGridState(), config);
-        TestUtils.isSerializedTo(engine.getFacetResults(), "{}", ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(engine.getFacetResults(), expectedJson, ParsingUtilities.defaultWriter);
     }
 
 }

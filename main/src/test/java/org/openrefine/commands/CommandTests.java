@@ -53,6 +53,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.History;
 import org.openrefine.model.Project;
 
 public class CommandTests extends RefineTest {
@@ -74,6 +75,8 @@ public class CommandTests extends RefineTest {
         request = mock(HttpServletRequest.class);
         projectManager = mock(ProjectManager.class);
         project = mock(Project.class);
+        History history = mock(History.class);
+        when(project.getHistory()).thenReturn(history);
     }
 
     @AfterMethod
