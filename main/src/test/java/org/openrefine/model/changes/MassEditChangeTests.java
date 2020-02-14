@@ -36,6 +36,16 @@ public class MassEditChangeTests extends RefineTest {
             return bindings.get("value");
         }
 
+        @Override
+        public String getSource() {
+            return "value";
+        }
+
+        @Override
+        public String getLanguagePrefix() {
+            return "grel";
+        }
+
     };
 
     @BeforeTest
