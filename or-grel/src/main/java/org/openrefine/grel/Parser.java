@@ -42,6 +42,7 @@ import org.openrefine.grel.Scanner.NumberToken;
 import org.openrefine.grel.Scanner.RegexToken;
 import org.openrefine.grel.Scanner.Token;
 import org.openrefine.grel.Scanner.TokenType;
+import org.openrefine.grel.ast.ArrayExpr;
 import org.openrefine.grel.ast.ControlCallExpr;
 import org.openrefine.grel.ast.FieldAccessorExpr;
 import org.openrefine.grel.ast.FunctionCallExpr;
@@ -235,7 +236,7 @@ public class Parser {
                     }
                     eval = new ControlCallExpr(argsA, c);
                 } else {
-                    eval = new FunctionCallExpr(makeArray(args), f);
+                    eval = new FunctionCallExpr(makeArray(args), f, text);
                 }
             }
         } else if (_token.type == TokenType.Delimiter && _token.text.equals("(")) {
@@ -253,7 +254,7 @@ public class Parser {
 
             List<Evaluable> args = parseExpressionList("]");
 
-            eval = new FunctionCallExpr(makeArray(args), new ArgsToArray());
+            eval = new ArrayExpr(makeArray(args));
         } else {
             throw makeException("Missing number, string, identifier, regex, or parenthesized expression");
         }
@@ -280,7 +281,7 @@ public class Parser {
                     List<Evaluable> args = parseExpressionList(")");
                     args.add(0, eval);
 
-                    eval = new FunctionCallExpr(makeArray(args), f);
+                    eval = new FunctionCallExpr(makeArray(args), f, identifier);
                 } else {
                     eval = new FieldAccessorExpr(eval, identifier);
                 }
@@ -290,7 +291,7 @@ public class Parser {
                 List<Evaluable> args = parseExpressionList("]");
                 args.add(0, eval);
 
-                eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"));
+                eval = new FunctionCallExpr(makeArray(args), ControlFunctionRegistry.getFunction("get"), "get");
             } else {
                 break;
             }

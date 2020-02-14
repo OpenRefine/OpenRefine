@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.grel.ast;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -71,4 +72,9 @@ public class LiteralExpr implements Evaluable {
 	public Set<String> getColumnDependencies(String baseColumn) {
 		return Collections.emptySet();
 	}
+
+    @Override
+    public LiteralExpr renameColumnDependencies(Map<String, String> substitutions) {
+        return this;
+    }
 }
