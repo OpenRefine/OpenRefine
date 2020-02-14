@@ -74,8 +74,8 @@ public class ExpressionCommandTestBase {
         initWorkspace(jsonData);
     }
 
-	public void initWorkspace(String jsonData) {
-		try {
+    public void initWorkspace(String jsonData) {
+        try {
             File workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
 			FileUtils.writeStringToFile(jsonPath, jsonData);
@@ -83,7 +83,7 @@ public class ExpressionCommandTestBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
+    }
     
     public void assertResponseJsonIs(String expectedJson)  {
         String actualJson = writer.toString();

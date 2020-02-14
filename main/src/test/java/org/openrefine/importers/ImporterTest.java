@@ -28,29 +28,20 @@ package org.openrefine.importers;
 
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.mockito.Mockito;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineServlet;
+import org.openrefine.RefineServletStub;
 import org.openrefine.RefineTest;
-import org.openrefine.importers.ImportingParserBase;
-import org.openrefine.importers.tree.ImportColumnGroup;
-import org.openrefine.importers.tree.TreeImportingParserBase;
-import org.openrefine.importers.tree.XmlImportUtilities;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.RefineServletStub;
 
 public abstract class ImporterTest extends RefineTest {
     //mock dependencies
@@ -104,6 +95,7 @@ public abstract class ImporterTest extends RefineTest {
         );
     }
     
+    /*
     protected void parseOneFile(TreeImportingParserBase parser, Reader reader) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         parser.parseOneFile(
@@ -174,4 +166,5 @@ public abstract class ImporterTest extends RefineTest {
             e.printStackTrace();
         }
     }
+    */
 }
