@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.storage.StorageLevel;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
@@ -41,6 +41,8 @@ public class GridState {
     protected final ImmutableList<Column> columns;
     protected final ColumnModel columnModel;
     protected final JavaPairRDD<Long, Row> grid;
+    
+    private transient long cachedCount;
     
     /**
      * Creates a grid state from a list of columns.
@@ -74,6 +76,7 @@ public class GridState {
             builder.putAll(overlayModels);
         }
         this.overlayModels = builder.build();
+        this.cachedCount = -1;
     }
     
     /**
@@ -88,8 +91,27 @@ public class GridState {
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels) {
+        this(columnModel, grid, overlayModels, -1);
+    }
+    
+    /**
+     * Creates a grid state from a grid and a column model
+     * 
+     * @param columnModel
+     *     the header of the table
+     * @param grid
+     *     the state of the table
+     * @param cachedSize
+     *     the number of rows in the table, cached
+     */
+    protected GridState(
+            ColumnModel columnModel,
+            JavaPairRDD<Long, Row> grid,
+            Map<String, OverlayModel> overlayModels,
+            long cachedSize) {
         this.columnModel = columnModel;
         this.grid = grid;
+        this.cachedCount = cachedSize;
         ImmutableList.Builder<Column> builder = ImmutableList.<Column>builder();
         int index = 0;
         for(ColumnMetadata meta : columnModel.getColumns()) {
@@ -216,7 +238,10 @@ public class GridState {
      */
     @JsonProperty("size")
     public long size() {
-        return getGrid().count();
+        if (cachedCount == -1) {
+            cachedCount = getGrid().count();
+        }
+        return cachedCount;
     }
     
     @JsonProperty("overlayModels")
@@ -244,10 +269,12 @@ public class GridState {
 		Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
 		JavaPairRDD<Long, Row> grid = context.<Tuple2<Long,Row>>objectFile(gridFile.getAbsolutePath())
 				.keyBy(p -> p._1)
-				.mapValues(p -> p._2);
+				.mapValues(p -> p._2)
+				.persist(StorageLevel.MEMORY_ONLY());
 		return new GridState(metadata.columnModel,
 				grid,
-				metadata.overlayModels);
+				metadata.overlayModels,
+				metadata.size);
 	}
 	
 	/**
@@ -259,6 +286,8 @@ public class GridState {
 		protected ColumnModel columnModel;
 		@JsonProperty("overlayModels")
 		Map<String, OverlayModel> overlayModels;
+		@JsonProperty("size")
+		long size = -1;
 	}
 	
 	/**
@@ -337,6 +366,49 @@ public class GridState {
                         } catch (Exception e) {
                             throw new IllegalStateException(e);
                         }
+                    }
+                    
+                };
+            }
+            
+        };
+        return pairRDD.mapPartitionsToPair(mapper, true);
+    }
+    
+    /**
+     * Performs a partition-wise limit: returns a RDD where partitions are capped to a maximum
+     * number of items.
+     * 
+     * This is intended to be used as a deterministic and efficient form of "sampling".
+     * Spark's own sampling is non-deterministic and does not speed up computations much because
+     * it still scans the entire RDD (it is equivalent to a filter).
+     * 
+     * @param pairRDD
+     *      the RDD to limit
+     * @param limit
+     *      the maximum number of elements per partition
+     * @return
+     *      the truncated RDD
+     */
+    public static JavaPairRDD<Long, Row> limitPartitions(JavaPairRDD<Long, Row> pairRDD, long limit) {
+        PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row> mapper = new PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<Tuple2<Long, Row>> call(Iterator<Tuple2<Long, Row>> t) throws Exception {
+                return new Iterator<Tuple2<Long,Row>> () {
+                    
+                    long seen = 0;
+
+                    @Override
+                    public boolean hasNext() {
+                        return seen < limit && t.hasNext();
+                    }
+
+                    @Override
+                    public Tuple2<Long, Row> next() {
+                        seen++;
+                        return t.next();
                     }
                     
                 };
