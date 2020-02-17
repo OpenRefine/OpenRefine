@@ -3,9 +3,11 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -110,7 +112,7 @@ public class GridStateTests extends SparkBasedTest {
         GridState loaded = GridState.loadFromFile(context(), tempFile);
 
         Assert.assertEquals(loaded.getOverlayModels(), state.getOverlayModels());
-        Assert.assertEquals(loaded.size(), state.size());
+        Assert.assertEquals(loaded.getGrid().collect(), state.getGrid().collect());
     }
 
     @Test
@@ -142,5 +144,23 @@ public class GridStateTests extends SparkBasedTest {
         GridState other = new GridState(otherModel, rdd, state.getOverlayModels());
 
         state.union(other);
+    }
+
+    @Test
+    public void testLimitPartitions() {
+        List<Tuple2<Long, Row>> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add(new Tuple2<Long, Row>((long) i, new Row(
+                    Arrays.asList(new Cell(i, null)))));
+        }
+        JavaPairRDD<Long, Row> rdd = context().parallelize(list, 2)
+                .keyBy(t -> (Long) t._1)
+                .mapValues(t -> t._2);
+
+        JavaPairRDD<Long, Row> capped = GridState.limitPartitions(rdd, 3);
+        List<Tuple2<Long, Row>> rows = capped.collect();
+        Assert.assertEquals(rows.size(), 6);
+        Assert.assertEquals(rows.stream().map(t -> t._1).collect(Collectors.toList()),
+                Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
     }
 }
