@@ -155,14 +155,14 @@ public class CommandTest extends RefineTest{
 
     @Test
     public void testResourceEquivalent1() throws Exception{
-      Resource fromDataRes = resourceManager.createResource(project.rows.get(0));
+      Resource fromDataRes = resourceManager.createResourceRow(project.rows.get(0));
       String fromData = Resource.toJSON(fromDataRes);
       Assert.assertTrue(fromData.contains("Title1"));
     }
 
     @Test
     public void testResourceEquivalent2() throws Exception{
-      Resource fromDataRes = resourceManager.createResource(project.rows.get(0));
+      Resource fromDataRes = resourceManager.createResourceRow(project.rows.get(0));
       String fromData = Resource.toJSON(fromDataRes);
       Assert.assertTrue(fromData.contains("abstract_example1"));
     }
