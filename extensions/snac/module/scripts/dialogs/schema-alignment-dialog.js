@@ -1766,7 +1766,7 @@ SNACSchemaAlignmentDialog.preview = function() {
         self.previewSpinner.hide();
         self.updateNbEdits(data.SNAC_preview);
         console.log("edits should be made here");
-
+        console.log(data.SNAC_preview);
         var list = []; //Empty Array
         var line = data.SNAC_preview.split('\n'); //Split the preview string into lines
         var building = line[0] + "<br>"; //First element in preview string (should be "Inserting 500 new Resources into SNAC.")
