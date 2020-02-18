@@ -167,6 +167,7 @@
         <configuration>
           <sourceDirectories>
              <sourceDirectory>main/src</sourceDirectory>
+             <sourceDirectory>extensions/gdata/src</sourceDirectory>
              <sourceDirectory>extensions/jython/src</sourceDirectory>
              <sourceDirectory>extensions/wikidata/src</sourceDirectory>
              <sourceDirectory>extensions/database/src</sourceDirectory>
