@@ -74,7 +74,7 @@ public abstract class SparkImportingParserBase extends ImportingParserBase {
             for (int i = ignoreLines; i < firstLines.size(); i++) {
                 List<Serializable> headerLine = firstLines.get(i)._2;
                 for (int j = 0; j != headerLine.size(); j++) {
-                    Serializable cellValue = headerLine.get(i);
+                    Serializable cellValue = headerLine.get(j);
                     ImporterUtilities.appendColumnName(columnNames, j, cellValue == null ? "" : cellValue.toString());
                 }
             }
@@ -92,19 +92,7 @@ public abstract class SparkImportingParserBase extends ImportingParserBase {
         }
 
         ColumnModel columnModel = ImporterUtilities.setupColumns(columnNames);
-        Function<List<Serializable>, Row> toRow = new Function<List<Serializable>, Row>() {
 
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Row call(List<Serializable> v1) throws Exception {
-                List<Cell> cells = v1.stream()
-                        .map(v -> v == null ? null : new Cell(v, null))
-                        .collect(Collectors.toList());
-                return new Row(cells);
-            }
-
-        };
         JavaPairRDD<Long, Row> grid = tail(rawCells, ignoreLines + headerLines + skipDataLines)
                 .mapValues(toRow);
         return new GridState(columnModel, grid, Collections.emptyMap());
@@ -136,4 +124,18 @@ public abstract class SparkImportingParserBase extends ImportingParserBase {
 
         });
     }
+
+    protected static Function<List<Serializable>, Row> toRow = new Function<List<Serializable>, Row>() {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public Row call(List<Serializable> v1) throws Exception {
+            List<Cell> cells = v1.stream()
+                    .map(v -> v == null ? null : new Cell(v, null))
+                    .collect(Collectors.toList());
+            return new Row(cells);
+        }
+
+    };
 }

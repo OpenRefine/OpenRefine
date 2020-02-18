@@ -33,6 +33,7 @@ import static org.testng.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -72,6 +73,26 @@ public class TestUtils {
         dir.delete();
         dir.mkdir();
         return dir;
+    }
+
+    /**
+     * Creates a temporary file with the given contents. This is useful in the case where Java's resource mechanism is
+     * not applicable, for instance when importing from files with Spark (as they need to be located by path, not using
+     * an InputStream).
+     * 
+     * @param filename
+     *            the filename of the temporary file to create
+     * @param contents
+     *            the contents to write in the file
+     * @return a {%class java.io.File} object, use {@link java.io.File#getAbsolutePath()} to obtain its path.
+     * @throws IOException
+     */
+    public static File createTempFile(String filename, String contents) throws IOException {
+        File file = File.createTempFile(filename, "");
+        PrintWriter pw = new PrintWriter(file);
+        pw.print(contents);
+        pw.close();
+        return file;
     }
 
     /**

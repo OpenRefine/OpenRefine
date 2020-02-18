@@ -117,7 +117,7 @@ public class FixedWidthImporter extends SparkImportingParserBase {
      *            array of integers with field sizes
      * @return
      */
-    static private ArrayList<Serializable> getCells(String line, int[] widths) {
+    static private List<Serializable> getCells(String line, int[] widths) {
         ArrayList<Serializable> cells = new ArrayList<>();
 
         int columnStartCursor = 0;

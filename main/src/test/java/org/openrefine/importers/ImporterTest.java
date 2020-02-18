@@ -95,6 +95,16 @@ public abstract class ImporterTest extends RefineTest {
                 options);
     }
 
+    protected GridState parseOneFile(ImportingParserBase parser, String sparkURI) throws Exception {
+        return parser.parseOneFile(
+                metadata,
+                job,
+                "file-source",
+                sparkURI,
+                -1,
+                options);
+    }
+
     /*
      * protected void parseOneFile(TreeImportingParserBase parser, Reader reader) { ImportColumnGroup rootColumnGroup =
      * new ImportColumnGroup(); parser.parseOneFile( metadata, job, "file-source", reader, rootColumnGroup, -1, options
