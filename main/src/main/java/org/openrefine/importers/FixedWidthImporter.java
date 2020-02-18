@@ -33,23 +33,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.PairFunction;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class FixedWidthImporter extends TabularImportingParserBase {
-    public FixedWidthImporter() {
-        super(false);
+import scala.Tuple2;
+
+public class FixedWidthImporter extends SparkImportingParserBase {
+    public FixedWidthImporter(JavaSparkContext context) {
+        super(context);
     }
     
     @Override
@@ -79,63 +85,25 @@ public class FixedWidthImporter extends TabularImportingParserBase {
     }
 
     @Override
-    public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+    public JavaPairRDD<Long, List<Serializable>> parseRawCells(ProjectMetadata metadata, ImportingJob job,
+			String fileSource, String sparkURI, long limit, ObjectNode options) {
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
         
-        List<Object> retrievedColumnNames = null;
-        if (options.has("columnNames")) {
-            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
-            if (strings.length > 0) {
-                retrievedColumnNames = new ArrayList<Object>();
-                for (String s : strings) {
-                    s = s.trim();
-                    if (!s.isEmpty()) {
-                        retrievedColumnNames.add(s);
-                    }
-                }
-                
-                if (retrievedColumnNames.size() > 0) {
-                    JSONUtilities.safePut(options, "headerLines", 1);
-                } else {
-                    retrievedColumnNames = null;
-                }
-            }
-        }
-        
-        final List<Object> columnNames = retrievedColumnNames;
-        final LineNumberReader lnReader = new LineNumberReader(reader);
-        
-        TableDataReader dataReader = new TableDataReader() {
-            boolean usedColumnNames = false;
-            
-            @Override
-            public List<Object> getNextRowOfCells() throws IOException {
-                if (columnNames != null && !usedColumnNames) {
-                    usedColumnNames = true;
-                    return columnNames;
-                } else {
-                    String line = lnReader.readLine();
-                    if (line == null) {
-                        return null;
-                    } else {
-                        return getCells(line, columnWidths);
-                    }
-                }
-            }
-        };
-        
-        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
-        
-        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+        JavaRDD<String> lines = sparkContext.textFile(sparkURI, 4);
+		return lines.zipWithIndex().mapToPair(parseCells(columnWidths));
+    }
+    
+    static private PairFunction<Tuple2<String,Long>, Long, List<Serializable>> parseCells(int[] widths) {
+		return new PairFunction<Tuple2<String,Long>, Long, List<Serializable>>() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Tuple2<Long, List<Serializable>> call(Tuple2<String, Long> v1) throws Exception {
+				List<Serializable> cellValues = getCells(v1._1, widths);
+				return new Tuple2<Long,List<Serializable>>(v1._2, cellValues);
+			}
+			
+		};
     }
     
     /**
@@ -144,8 +112,8 @@ public class FixedWidthImporter extends TabularImportingParserBase {
      * @param widths array of integers with field sizes
      * @return
      */
-    static private ArrayList<Object> getCells(String line, int[] widths) {
-        ArrayList<Object> cells = new ArrayList<Object>();
+    static private ArrayList<Serializable> getCells(String line, int[] widths) {
+        ArrayList<Serializable> cells = new ArrayList<>();
         
         int columnStartCursor = 0;
         int columnEndCursor = 0;

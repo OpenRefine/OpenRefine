@@ -42,6 +42,7 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class FixedWidthImporterTests extends ImporterTest {
+
     @Override
     @BeforeTest
     public void init() {

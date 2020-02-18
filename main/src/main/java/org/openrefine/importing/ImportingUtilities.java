@@ -493,6 +493,16 @@ public class ImportingUtilities {
         return new File(job.getRawDataDir(), location);
     }
     
+	public static String getSparkURI(ImportingJob job, ObjectNode fileRecord) {
+		String sparkURI = JSONUtilities.getString(fileRecord, "sparkURI", "");
+		if (sparkURI.isEmpty()) {
+			File file = getFile(job, fileRecord);
+			return file.getAbsolutePath();
+		} else {
+			return sparkURI;
+		}
+	}
+    
     static public String getFileSource(ObjectNode fileRecord) {
         return JSONUtilities.getString(
             fileRecord,

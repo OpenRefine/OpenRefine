@@ -62,7 +62,7 @@ import au.com.bytecode.opencsv.CSVParser;
 
 public class SeparatorBasedImporter extends TabularImportingParserBase {
     public SeparatorBasedImporter(JavaSparkContext context) {
-        super(false, context);
+        super(Mode.Reader, context);
     }
     
     @Override
