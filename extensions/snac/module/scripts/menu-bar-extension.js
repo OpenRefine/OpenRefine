@@ -125,7 +125,7 @@ $(function(){
                                 ManageUploadDialog.launch(null, function(success) {});
                             }
                             else{
-                                window.alert("Error: unable to upload edits to SNAC. Please fix the " + validationCount + "issue(s) first.");
+                                window.alert("Error: unable to upload edits to SNAC. Please fix the " + validationCount + " issue(s) first.");
                             }
                             
                         }
@@ -133,7 +133,14 @@ $(function(){
                     {
                         id:"snac/export-schema",
                         label: $.i18n('snac-extension/export-to-json'),
-                        click: function() { SNACExporterMenuBar.stringToJSONDownload(); }
+                        click: function() { 
+                            if(validationCount == 0){
+                                SNACExporterMenuBar.stringToJSONDownload();;
+                            }
+                            else{
+                                window.alert("Error: unable to upload edits to SNAC. Please fix the " + validationCount + " issue(s) first.");
+                            }
+                        }
                     },
 
                 ]
