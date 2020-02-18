@@ -62,7 +62,7 @@ import org.openrefine.util.JSONUtilities;
 public class SeparatorBasedImporter extends TabularImportingParserBase {
 
     public SeparatorBasedImporter(JavaSparkContext context) {
-        super(false, context);
+        super(Mode.Reader, context);
     }
 
     @Override

@@ -81,8 +81,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
      *            true if parser takes an InputStream, false if it takes a Reader.
      * 
      */
-    protected TabularImportingParserBase(boolean useInputStream, JavaSparkContext sparkContext) {
-        super(useInputStream, sparkContext);
+    protected TabularImportingParserBase(Mode mode, JavaSparkContext sparkContext) {
+        super(mode, sparkContext);
     }
 
     protected abstract TableDataReader createTableDataReader(ProjectMetadata metadata, ImportingJob job, Reader reader,

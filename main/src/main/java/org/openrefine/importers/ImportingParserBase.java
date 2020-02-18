@@ -61,15 +61,22 @@ abstract public class ImportingParserBase implements ImportingParser {
 
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
-    final protected boolean useInputStream;
+    final protected Mode mode;
     final protected JavaSparkContext sparkContext;
 
     /**
-     * @param useInputStream
+     * Determines how a file should be read by the subclass, which implements the corresponding method accordingly.
+     */
+    public static enum Mode {
+        InputStream, Reader, SparkURI
+    };
+
+    /**
+     * @param mode
      *            true if parser takes an InputStream, false if it takes a Reader.
      */
-    protected ImportingParserBase(boolean useInputStream, JavaSparkContext context) {
-        this.useInputStream = useInputStream;
+    protected ImportingParserBase(Mode mode, JavaSparkContext context) {
+        this.mode = mode;
         this.sparkContext = context;
     }
 
@@ -136,45 +143,80 @@ abstract public class ImportingParserBase implements ImportingParser {
             long limit,
             ObjectNode options,
             final MultiFileReadingProgress progress) throws Exception {
-        final File file = ImportingUtilities.getFile(job, fileRecord);
+
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
 
         progress.startFile(fileSource);
-        try {
-            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
+        pushImportingOptions(metadata, fileSource, options);
+
+        if (mode.equals(Mode.SparkURI)) {
+            return parseOneFile(metadata, job, fileSource, ImportingUtilities.getSparkURI(job, fileRecord), limit, options);
+        } else {
+            final File file = ImportingUtilities.getFile(job, fileRecord);
             try {
-                pushImportingOptions(metadata, fileSource, options);
-                if (useInputStream) {
-                    return parseOneFile(metadata, job, fileSource, inputStream, limit, options);
-                } else {
-                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
-                    if (commonEncoding != null && commonEncoding.isEmpty()) {
-                        commonEncoding = null;
+                InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
+                try {
+                    if (mode.equals(Mode.InputStream)) {
+                        return parseOneFile(metadata, job, fileSource, inputStream, limit, options);
+                    } else {
+                        String commonEncoding = JSONUtilities.getString(options, "encoding", null);
+                        if (commonEncoding != null && commonEncoding.isEmpty()) {
+                            commonEncoding = null;
+                        }
+
+                        Reader reader = ImportingUtilities.getReaderFromStream(
+                                inputStream, fileRecord, commonEncoding);
+
+                        return parseOneFile(metadata, job, fileSource, reader, limit, options);
                     }
-
-                    Reader reader = ImportingUtilities.getReaderFromStream(
-                            inputStream, fileRecord, commonEncoding);
-
-                    return parseOneFile(metadata, job, fileSource, reader, limit, options);
+                } finally {
+                    inputStream.close();
                 }
             } finally {
-                inputStream.close();
+                progress.endFile(fileSource, file.length());
             }
-        } finally {
-            progress.endFile(fileSource, file.length());
         }
+
+    }
+
+    /**
+     * Parses one file, designated by a URI understood by Spark.
+     * 
+     * @param metadata
+     *            the project metadata associated with the project to parse (which can be modified by the importer)
+     * @param job
+     *            the importing job where this import is being done
+     * @param fileSource
+     *            the original path or source of the file (could be "clipboard" or a URL as well)
+     * @param uri
+     *            the uri understood by Spark where to read the data from
+     * @param limit
+     *            the maximum number of rows to read
+     * @param options
+     *            any options passed to the importer as a JSON payload
+     * @return a parsed GridState
+     */
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String uri,
+            long limit, ObjectNode options) throws Exception {
+        throw new NotImplementedException("Importer does not support reading from a File");
     }
 
     /**
      * Parses one file, read from a {@class Reader} object, into a GridState.
      * 
      * @param metadata
+     *            the project metadata associated with the project to parse (which can be modified by the importer)
      * @param job
+     *            the importing job where this import is being done
      * @param fileSource
+     *            the path or source of the file (could be "clipboard" or a URL as well)
      * @param reader
+     *            the reader object where to read the data from
      * @param limit
+     *            the maximum number of rows to read
      * @param options
-     * @return
+     *            any options passed to the importer as a JSON payload
+     * @return a parsed GridState
      * @throws Exception
      */
     public GridState parseOneFile(
@@ -191,12 +233,18 @@ abstract public class ImportingParserBase implements ImportingParser {
      * Parses one file, read from an {@class InputStream} object, into a GridState.
      * 
      * @param metadata
+     *            the project metadata associated with the project to parse (which can be modified by the importer)
      * @param job
+     *            the importing job where this import is being done
      * @param fileSource
+     *            the path or source of the file (could be "clipboard" or a URL as well)
      * @param inputStream
+     *            the input stream where to read the data from
      * @param limit
+     *            the maximum number of rows to read
      * @param options
-     * @return
+     *            any options passed to the importer as a JSON payload
+     * @return a parsed GridState
      * @throws Exception
      */
     public GridState parseOneFile(
