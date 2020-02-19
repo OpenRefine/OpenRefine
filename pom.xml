@@ -124,6 +124,9 @@
                 <configuration>
                     <dataFile>${project.build.directory}/jacoco.exec</dataFile>
                     <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+		    <excludes>
+			<exclude> **/*SNACLoginCommand</exclude>
+		    </excludes>			
                 </configuration>
             </execution>
             <execution>
