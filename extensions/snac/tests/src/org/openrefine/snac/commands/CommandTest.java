@@ -23,7 +23,10 @@
  ******************************************************************************/
 package org.openrefine.snac.commands;
 
+
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -46,7 +49,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
+import com.google.refine.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
 import org.apache.http.*;
@@ -56,6 +59,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
+import org.powermock.modules.testng.PowerMockTestCase;
 
 import org.snaccooperative.commands.SNACUploadCommand;
 import org.snaccooperative.commands.SNACResourceCommand;
@@ -261,188 +265,6 @@ public class CommandTest extends RefineTest{
       Assert.assertTrue(result.contains("success"));
     }
 
-    /*
-    * Test API calls for term search
-    */
-
-    @Test
-    public void testTermSearch() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"vocabulary\",\"query_string\": \"person\",\"type\": \"entity_type\",\"entity_type\": null}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("700"));
-    }
-
-    /*
-    * Test API calls for browsing
-    */
-
-    @Test
-    public void testBrowsing() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"browse\",\"term\": \"Washington\",\"position\": \"middle\"}", "UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("name_entry"));
-    }
-
-    /*
-    * Test API calls for read_resource
-    */
-
-    @Test
-    public void testReadConstellation() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": 7149468}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("resource"));
-    }
-
-    @Test
-    public void TestNonexistantReadResource() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"read_resource\",\"resourceid\": \"100000000\"}", "UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(!result.contains("dataType\": \"Resource\""));
-    }
-
-    /*
-    * Test API calls for resource_search
-    */
-
-    @Test
-    public void TestResourceSearch() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"resource_search\",\"term\": \"Papers\"}", "UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("total\": ")); // we got a result
-      Assert.assertTrue(!result.contains("total\": 0,")); // There were resources found
-    }
-
-    /*
-    * Test API calls for read
-    */
-
-    @Test
-    public void testSearchConcepts() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": \"16715425\"}","UTF-8"));
-      //post.setEntity(new StringEntity("{\"command\": \"browse\",\"term\": \"Washington\",\"position\": \"middle\"}", "UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("500"));
-    }
-
-    /*
-    * Test API calls for constellation_history
-    */
-
-    @Test
-    public void testConstellationHistory() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"constellation_history\",\"constellationid\": 76813079}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("Constellation"));
-    }
-
-    /*
-    * Test API calls for shared_resources
-    */
-
-   @Test
-    public void testSharedResources() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"shared_resources\",\"icid1\": 29260863 ,\"icid2\": 50307952}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("7960925"));
-    }
-
-    /*
-    * Test API calls for read_vocabulary
-    */
-
-    @Test
-    public void testReadVocabulary() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"read_vocabulary\",\"term_id\": 700}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("person"));
-    }
-
-    /*
-    * Test API calls for get_holdings
-    */
-
-    @Test
-    public void testGetHoldings() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"get_holdings\",\"constellationid\": 76778184}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("7677119"));
-    }
-
-    /*
-    * Test API calls for elastic
-    */
-
-    @Test
-    public void testElastic() throws Exception{
-      DefaultHttpClient client = new DefaultHttpClient();
-      HttpPost post = new HttpPost("http://api.snaccooperative.org");
-      post.setEntity(new StringEntity("{\"command\": \"elastic\",\"query\": { \"simple_query_string\": { \"query\": \"poets\", \"default_operator\": \"and\"}}, \"size\": 2, \"from\":0}","UTF-8"));
-      HttpResponse response = client.execute(post);
-      String result = EntityUtils.toString(response.getEntity());
-      Assert.assertTrue(result.contains("\"result\": \"success\""));
-      Assert.assertTrue(!result.contains("total\": 0,"));
-    }
-
-    @Test
-    public void testRead1() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"search\",\"term\": \"Mozart\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("23271282"));
-    }
-
-    @Test
-    public void testRead2() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"search\",\"term\": \"Mendelssohn\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("47916702"));
-    }
-
-    @Test
-    public void testRead3() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"search\",\"term\": \"Dvorak\",\"count\": 10,\"start\": 0,\"entity_type\": \"person\"}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("40081682"));
-    }
 /*
     @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
@@ -467,92 +289,6 @@ public class CommandTest extends RefineTest{
       project = createCSVProject(TestingData2.inceptionWithNewCsv);
       //project = createProjectWithColumns("test_columns", TestingData2.column_values);
       Assert.assertEquals(project.columnModel.getColumnNames().size(), 3);
-    }
-
-    /*
-    * Test API calls for existence of constellation
-    */
-    @Test
-    public void testConstellationExists() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": 16715425}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("success"));
-    }
-
-    @Test
-    public void testConstellationDNE() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"read\",\"constellationid\": 16715429}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("Input Error"));
-    }
-
-    /*
-    * Test API calls for download
-    */
-    @Test
-    public void testConstellationDownload() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"download_constellation\",\"constellationid\": 16715425, \"type\": \"eac-cpf\"}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertFalse(result.contains("text/xml"));
-    }
-
-    @Test
-    public void testSearchTerm1() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 700}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertFalse(result.contains("success"));
-    }
-
-    @Test
-    public void testSearchTerm2() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 600}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertFalse(result.contains("'term': 'Edward'"));
-    }
-
-    @Test
-    public void testSearchTerm3() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"vocabulary\"}, \"term_id\": 500}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertFalse(result.contains("success"));
-    }
-
-    @Test
-    public void testReadVocab1() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"read_vocabulary\", \"term_id\": 700}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertTrue(result.contains("success"));
-    }
-
-    @Test
-    public void testReadResource() throws Exception{
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://api.snaccooperative.org");
-        post.setEntity(new StringEntity("{\"command\": \"read_resource\"}, \"resourceid\": 7149468}","UTF-8"));
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        Assert.assertFalse(result.contains("abstract: This collection contains business papers, political papers, and family papers. "));
     }
 
     /*

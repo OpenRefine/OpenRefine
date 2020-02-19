@@ -45,7 +45,7 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
 
     public WbItemDocumentExprTest() {
         WbStatementGroupExprTest sgt = new WbStatementGroupExprTest();
-        WbNameDescExpr nde = new WbNameDescExpr(WbNameDescExpr.NameDescrType.ALIAS,
+        WbNameDescExpr nde = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
                 new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column D")));
         WbItemVariable subjectExpr = new WbItemVariable("column E");
         expr = new WbItemDocumentExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr));

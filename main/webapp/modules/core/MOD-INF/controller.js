@@ -54,6 +54,7 @@ function registerCommands() {
   var RS = Packages.com.google.refine.RefineServlet;
 
   RS.registerCommand(module, "get-version", new Packages.com.google.refine.commands.GetVersionCommand());
+  RS.registerCommand(module, "get-csrf-token", new Packages.com.google.refine.commands.GetCSRFTokenCommand());
 
   RS.registerCommand(module, "get-importing-configuration", new Packages.com.google.refine.commands.importing.GetImportingConfigurationCommand());
   RS.registerCommand(module, "create-importing-job", new Packages.com.google.refine.commands.importing.CreateImportingJobCommand());
@@ -68,7 +69,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-project-metadata", new Packages.com.google.refine.commands.project.GetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-metadata", new Packages.com.google.refine.commands.workspace.GetAllProjectMetadataCommand());
-  RS.registerCommand(module, "set-metaData", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
+  RS.registerCommand(module, "set-project-metadata", new Packages.com.google.refine.commands.project.SetProjectMetadataCommand());
   RS.registerCommand(module, "get-all-project-tags", new Packages.com.google.refine.commands.workspace.GetAllProjectTagsCommand());
   RS.registerCommand(module, "set-project-tags", new Packages.com.google.refine.commands.project.SetProjectTagsCommand());
 
@@ -516,6 +517,7 @@ function init() {
       "styles/widgets/slider-widget.less",
 
       "styles/views/data-table-view.less",
+      "styles/views/column-join.less",
 
       "styles/dialogs/expression-preview-dialog.less",
       "styles/dialogs/clustering-dialog.less",

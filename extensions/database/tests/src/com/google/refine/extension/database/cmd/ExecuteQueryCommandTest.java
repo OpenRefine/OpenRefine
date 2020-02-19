@@ -19,6 +19,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.commands.Command;
 import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
@@ -72,6 +73,7 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
         when(request.getParameter("databasePassword")).thenReturn(testDbConfig.getDatabasePassword());
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("queryString")).thenReturn("SELECT count(*) FROM " + testTable);
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         
 
         StringWriter sw = new StringWriter();
@@ -93,4 +95,17 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
         Assert.assertNotNull(queryResult);
     }
 
+    @Test
+    public void testCsrfProtection() throws ServletException, IOException {
+    	StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        when(response.getWriter()).thenReturn(pw);
+        ConnectCommand connectCommand = new ConnectCommand();
+        
+        connectCommand.doPost(request, response);
+    	Assert.assertEquals(
+    			ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", ObjectNode.class),
+    			ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
+    }
 }

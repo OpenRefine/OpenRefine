@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -66,6 +68,8 @@ import com.google.refine.util.ParsingUtilities;
 public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
+    
+    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
 
     protected RefineServlet servlet;
     
@@ -215,6 +219,42 @@ public abstract class Command {
         return def;
     }
     
+    /**
+     * Utility method for retrieving the CSRF token stored in the "csrf_token" parameter of the request,
+     * and checking that it is valid.
+     *
+     * @param request
+     * @return
+     * @throws ServletException
+     */
+    protected boolean hasValidCSRFToken(HttpServletRequest request) throws ServletException {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+        try {
+            String token = request.getParameter("csrf_token");
+            return token != null && csrfFactory.validToken(token);
+        } catch (Exception e) {
+            // ignore
+        }
+        throw new ServletException("Can't find CSRF token: missing or bad URL parameter");
+    }
+    
+    
+    /**
+     * Checks the validity of a CSRF token, without reading the whole POST body.
+     * Useful when we need to control how the POST body is read (for instance if it
+     * contains files).
+     */
+    protected boolean hasValidCSRFTokenAsGET(HttpServletRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("parameter 'request' should not be null");
+        }
+    	Properties options = ParsingUtilities.parseUrlParameters(request);
+        String token = options.getProperty("csrf_token");
+        return token != null && csrfFactory.validToken(token);
+    }
+    
     protected static class HistoryEntryResponse {
         @JsonProperty("code")
         protected String getCode() { return "ok"; }
@@ -277,7 +317,7 @@ public abstract class Command {
         w.close();
     }
 
-    static protected void respondJSON(HttpServletResponse response, Object o)
+    public static void respondJSON(HttpServletResponse response, Object o)
         throws IOException {
 
         respondJSON(response, o, new Properties());
@@ -296,6 +336,13 @@ public abstract class Command {
 
         w.flush();
         w.close();
+    }
+    
+    static protected void respondCSRFError(HttpServletResponse response) throws IOException {
+    	Map<String, String> responseJSON = new HashMap<>();
+    	responseJSON.put("code", "error");
+    	responseJSON.put("message", "Missing or invalid csrf_token parameter");
+    	respondJSON(response, responseJSON);
     }
 
     static protected void respondException(HttpServletResponse response, Exception e)

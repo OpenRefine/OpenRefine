@@ -43,6 +43,11 @@ public class SetProjectTagsCommand extends Command {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+  	  if(!hasValidCSRFToken(request)) {
+  		 respondCSRFError(response);
+		 return;
+  	  }
+  	
 	  response.setHeader("Content-Type", "application/json");
 
 	  Project project;
@@ -81,13 +86,15 @@ public class SetProjectTagsCommand extends Command {
 	    tag = tag.trim();
 	
 	    if (!tag.isEmpty()) {
-	      if (allProjectTags!= null && allProjectTags.containsKey(tag)) {
-	        allProjectTags.put(tag, allProjectTags.get(tag) + 1);
-	      } else {
-	        allProjectTags.put(tag, 1);
+	      if (allProjectTags != null) {
+	        if (allProjectTags.containsKey(tag)) {
+	          allProjectTags.put(tag, allProjectTags.get(tag) + 1);
+	        } else {
+	          allProjectTags.put(tag, 1);
+	        }
 	      }
 	      polishedTags.add(tag);
-	    }
+	    } 
 	  }
 	
 	  // Lets update the project tags

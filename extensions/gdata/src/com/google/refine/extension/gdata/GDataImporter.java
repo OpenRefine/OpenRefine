@@ -45,15 +45,6 @@ public class GDataImporter {
                 options,
                 exceptions
             );
-        } else if ("table".equals(docType)) {
-            FusionTableImporter.parse(token, 
-                project,
-                metadata,
-                job,
-                limit,
-                options,
-                exceptions
-            );
         }
     }
     

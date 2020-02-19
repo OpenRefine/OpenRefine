@@ -49,6 +49,11 @@ public class DeleteProjectCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
+    	
         response.setHeader("Content-Type", "application/json");
         try {
             long projectID = Long.parseLong(request.getParameter("project"));

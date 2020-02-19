@@ -69,6 +69,22 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
     public void testDoubleInteger() {
     	evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45.0,null));
     }
+    
+    /**
+     * Test that large doubles are correctly converted to strings
+     */
+    @Test
+    public void testLargeDouble() {
+    	evaluatesTo(Datamodel.makeStringValue("14341937500"), new Cell(14341937500d, null));
+    }
+    
+    /**
+     * Test that large doubles are correctly converted to strings
+     */
+    @Test
+    public void testLong() {
+    	evaluatesTo(Datamodel.makeStringValue("14341937500"), new Cell(14341937500L, null));
+    }
 
 
     @Test

@@ -452,6 +452,15 @@
    width: 300px;
 }
 
+.wbs-namedesc-override {
+   display: inline-block;
+   margin-left: 10px;
+}
+
+.wbs-namedesc-override input {
+   vertical-align: middle;
+}
+
 .wbs-language-input {
    width: 100%;
 }

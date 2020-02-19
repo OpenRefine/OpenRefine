@@ -62,18 +62,18 @@ ReconciliationManager.registerService = function(service) {
   return ReconciliationManager.customServices.length - 1;
 };
 
-ReconciliationManager.registerStandardService = function(url, f) {
-  var dismissBusy = DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+ReconciliationManager.registerStandardService = function(url, f, silent) {
+  var dismissBusy = function() {};
+  if (!silent) {
+    dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
+  }
 
-  $.ajax(
-    url,
-    { "dataType" : "jsonp",
-    "timeout":10000
-     }
-  )
-  .success(function(data, textStatus, jqXHR) {
+  var registerService = function(data, mode) {
     data.url = url;
-    data.ui = { "handler" : "ReconStandardServicePanel" };
+    data.ui = {
+      "handler" : "ReconStandardServicePanel",
+      "access" : mode
+    };
 
     index = ReconciliationManager.customServices.length + 
     ReconciliationManager.standardServices.length;
@@ -88,10 +88,35 @@ ReconciliationManager.registerStandardService = function(url, f) {
     if (f) {
       f(index);
     }
+  };
+
+  // First, try with CORS (default "json" dataType)
+  $.ajax(
+    url,
+    { "dataType" : "json",
+    "timeout":5000
+     }
+  )
+  .success(function(data, textStatus, jqXHR) {
+    registerService(data, "json");
   })
   .error(function(jqXHR, textStatus, errorThrown) {
-    dismissBusy(); 
-    alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+    // If it fails, try with JSONP
+    $.ajax(
+        url,
+        { "dataType" : "jsonp",
+           "timeout": 5000
+        }
+    )
+    .success(function(data, textStatus, jqXHR) {
+      registerService(data, "jsonp");
+    })
+    .error(function(jqXHR, textStatus, errorThrown) {
+        if (!silent) {
+          dismissBusy(); 
+          alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);
+        }
+    });
   });
 };
 
@@ -113,28 +138,33 @@ ReconciliationManager.unregisterService = function(service, f) {
 };
 
 ReconciliationManager.save = function(f) {
-  $.ajax({
-    async: false,
-    type: "POST",
-    url: "command/core/set-preference?" + $.param({ 
-      name: "reconciliation.standardServices" 
-    }),
-    data: { "value" : JSON.stringify(ReconciliationManager.standardServices) },
-    success: function(data) {
-      if (f) { f(); }
-    },
-    dataType: "json"
+  Refine.wrapCSRF(function(token) {
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: "command/core/set-preference?" + $.param({ 
+        name: "reconciliation.standardServices" 
+        }),
+        data: {
+          "value" : JSON.stringify(ReconciliationManager.standardServices), 
+          csrf_token: token
+        },
+        success: function(data) {
+        if (f) { f(); }
+        },
+        dataType: "json"
+    });
   });
 };
 
-ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
+ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f, silent) {
    var service = ReconciliationManager.getServiceFromUrl(url);
    if (service == null) {
       ReconciliationManager.registerStandardService(url, function(idx) {
           ReconciliationManager.save(function() {
               f(ReconciliationManager.standardServices[idx]);
           });
-      });
+      }, silent);
    } else {
       f(service);
    }  
@@ -143,7 +173,7 @@ ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f) {
 ReconciliationManager.ensureDefaultServicePresent = function() {
    var lang = $.i18n('core-recon/wd-recon-lang');
    var url = "https://tools.wmflabs.org/openrefine-wikidata/"+lang+"/api";
-   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { });
+   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) { }, true);
    return url;
 };
 

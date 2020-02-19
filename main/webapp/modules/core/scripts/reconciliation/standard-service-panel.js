@@ -44,7 +44,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = DialogSystem.showBusy();
 
-  $.post(
+  Refine.postCSRF(
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
       columnName: this._column.name,
@@ -74,7 +74,8 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
 
       dismissBusy();
       f();
-    }
+    },
+    "json"
   );
 };
 
@@ -221,6 +222,10 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
     var suggestOptions = $.extend({}, this._service.suggest.type);
     suggestOptions.key = null;
     suggestOptions.query_param_name = "prefix";
+    // CORS/JSONP support
+    if (this._service.ui && this._service.ui.access) {
+      suggestOptions.access = this._service.ui.access;
+    }
     input.suggestT(suggestOptions);
   }
 
@@ -245,8 +250,12 @@ ReconStandardServicePanel.prototype._rewirePropertySuggests = function(type) {
     var suggestOptions = $.extend({}, this._service.suggest.property);
     suggestOptions.key = null;
     suggestOptions.query_param_name = "prefix";
+    // CORS/JSONP support
+    if (this._service.ui && this._service.ui.access) {
+      suggestOptions.access = this._service.ui.access;
+    }
     if (type) {
-      suggestOptions.ac_param = { schema: typeof type == "string" ? type : type.id };
+      suggestOptions.type = typeof type == "string" ? type : type.id;
     }
     inputs.suggestP(suggestOptions);
   }

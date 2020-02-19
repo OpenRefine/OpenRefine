@@ -63,14 +63,14 @@
     "wikidata-account/password-label": "Lösenord:",
     "wikidata-account/password-placeholder": "Skriv in ditt lösenord",
     "wikidata-account/remember-credentials-label": "Kom ihåg inloggningsuppgifter (lagras okrypterade i OpenRefines inställningar)",
-    "wikidata-account/connecting-to-wikidata": "Anslut till Wikidata...",
+    "wikidata-account/connecting-to-wikidata": "Anslut till Wikidata…",
     "perform-wikidata-edits/dialog-header": "Överför redigeringar till Wikidata",
     "perform-wikidata-edits/review-your-edits": "Du håller på att ladda upp {nb_edits} redigeringar till Wikidata. Kontrollera dem noggrant. Stora antal av ändringar bör skickas till <a href=\"https://www.wikidata.org/wiki/Wikidata:Requests_for_permissions/Bot\" target=\"_blank\">botgranskning</a> först.",
     "perform-wikidata-edits/edit-summary-label": "Redigeringssammanfattning:",
     "perform-wikidata-edits/edit-summary-placeholder": "några ord som beskriver dina ändringar",
     "perform-wikidata-edits/perform-edits": "Överför redigeringar",
     "perform-wikidata-edits/cancel": "Avbryt",
-    "perform-wikidata-edits/analyzing-edits": "Analyserar dina ändringar...",
+    "perform-wikidata-edits/analyzing-edits": "Analyserar dina ändringar…",
     "import-wikibase-schema/dialog-header": "Importera Wikidata-schema",
     "import-wikibase-schema/file-label": "Från JSON-fil: ",
     "import-wikibase-schema/schema-label": "Eller från JSON-text:",
@@ -145,5 +145,8 @@
     "warnings-messages/no-unit-provided/title": "Enhet saknas för {property_entity}",
     "warnings-messages/no-unit-provided/body": "Värden som <span class = \"wb-issue-preformat\">{example_value}</span> på {example_item_entity} förväntas ha enhet.",
     "warnings-messages/invalid-entity-type/title": "{property_entity} används i objekt",
-    "warnings-messages/invalid-entity-type/body": "Användning av {property_entity} i objekt som {example_entity} är icke giltigt."
+    "warnings-messages/invalid-entity-type/body": "Användning av {property_entity} i objekt som {example_entity} är icke giltigt.",
+    "wikidata-schema/copy-reference": "kopiera",
+    "wikidata-schema/paste-reference": "klistra referens",
+    "wikidata-extension/export-wikidata-schema": "Exportera Wikidata-schema"
 }

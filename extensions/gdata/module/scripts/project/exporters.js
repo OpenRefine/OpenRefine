@@ -54,7 +54,7 @@ $.i18n().load(dictionary, lang);
       var name = window.prompt(prompt, theProject.metadata.name);
       if (name) {
         var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
-        $.post(
+        Refine.postCSRF(
           "command/gdata/upload",
           {
             "project" : theProject.id,
@@ -90,13 +90,6 @@ $.i18n().load(dictionary, lang);
     label: $.i18n('gdata-exporter/new-spreadsheet'),
     handler: function(options, exportAllRows, onDone) {
       handleUpload(options, exportAllRows, onDone, $.i18n('gdata-exporter/enter-spreadsheet'));
-    }
-  });
-  CustomTabularExporterDialog.uploadTargets.push({
-    id: 'gdata/fusion-table',
-    label: $.i18n('gdata-exporter/new-fusion'),
-    handler: function(options, exportAllRows, onDone) {
-      handleUpload(options, exportAllRows, onDone, $.i18n('gdata-exporter/enter-fusion'));
     }
   });
 })();

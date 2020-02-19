@@ -68,6 +68,7 @@
     "perform-wikidata-edits/edit-summary-placeholder": "qualche parola per descrivere le tue modifiche",
     "wikidata-extension/import-wikidata-schema": "Importa schema",
     "wikidata-extension/export-schema": "Esporta schema",
+    "wikidata-extension/export-wikidata-schema": "Esporta schema Wikidata",
     "perform-wikidata-edits/perform-edits": "Carica modifiche",
     "perform-wikidata-edits/cancel": "Annulla",
     "perform-wikidata-edits/analyzing-edits": "Analisi delle modifiche apportate…",
@@ -145,5 +146,15 @@
     "warnings-messages/no-unit-provided/title": "Unità di misura mancante per {property_entity}",
     "warnings-messages/no-unit-provided/body": "Valori come <span class=\"wb-issue-preformat\">{example_value}</span> (aggiunto in {example_item_entity}) dovrebbero avere un'unità di misura corrispondente.",
     "warnings-messages/invalid-entity-type/title": "{property_entity} usata negli elementi",
-    "warnings-messages/invalid-entity-type/body": "L'uso di {property_entity} in elementi come {example_entity} non è valido."
+    "warnings-messages/invalid-entity-type/body": "L'uso di {property_entity} in elementi come {example_entity} non è valido.",
+    "wikidata-schema/copy-reference": "copia",
+    "wikidata-schema/paste-reference": "incolla fonte",
+    "wikidata-schema/reference-copied": "copiato",
+    "wikidata-schema/label-if-new": "Etichetta (non sovrascrivere)",
+    "wikidata-schema/label-override": "Etichetta (sovrascrivi, se esistente)",
+    "wikidata-schema/description-if-new": "Descrizione (non sovrascrivere)",
+    "wikidata-schema/description-override": "Descrizione (sovrascrivi, se esistente)",
+    "wikidata-schema/override-term": "sovrascrivi, se esistente",
+    "warnings-messages/early-gregorian-date/title": "Date antiche in calendario gregoriano",
+    "warnings-messages/early-gregorian-date/body": "È improbabile che le date precedenti all'ottobre 1582 (ad esempio, {example_year}) siano espresse utilizzando il calendario gregoriano. Per specificare il calendario appropriato per le date, consulta il <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">manual</a>."
 }

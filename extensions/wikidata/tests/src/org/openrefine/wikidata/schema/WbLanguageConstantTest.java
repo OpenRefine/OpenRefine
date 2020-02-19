@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
@@ -50,6 +50,7 @@ public class WbLanguageConstantTest extends WbExpressionTest<String> {
         assertEquals("de", WbLanguageConstant.normalizeLanguageCode("de"));
         assertEquals("nb", WbLanguageConstant.normalizeLanguageCode("no"));
         assertEquals("nb", WbLanguageConstant.normalizeLanguageCode("nb"));
+        assertEquals("mul", WbLanguageConstant.normalizeLanguageCode("mul"));
         assertNull(WbLanguageConstant.normalizeLanguageCode("non-existent language code"));
         assertNull(WbLanguageConstant.normalizeLanguageCode(null));
     }

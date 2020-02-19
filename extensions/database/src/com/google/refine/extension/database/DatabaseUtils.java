@@ -314,7 +314,7 @@ public class DatabaseUtils {
         String fileSep = System.getProperty("file.separator"); 
         String filename = dir.getPath() + fileSep + DATABASE_EXTENSION_DIR + fileSep + SETTINGS_FILE_NAME;
         
-       // logger.info("** extension file name: {} **", filename);
+        logger.debug("** extension file name: {} **", filename);
         return filename;
     }
     public static String getExtensionFolder(){

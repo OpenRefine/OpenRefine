@@ -33,7 +33,7 @@ ExporterManager.MenuItems.push(
 ExporterManager.MenuItems.push(
         {               
             id:"exportWikibaseSchema",
-            label: $.i18n('wikidata-extension/export-schema'),
+            label: $.i18n('wikidata-extension/export-wikidata-schema'),
             click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
         }
 );
@@ -51,7 +51,7 @@ WikibaseExporterMenuBar.exportTo = function(format) {
     $(form).css("display", "none")
         .attr("method", "post")
         .attr("action", "command/core/export-rows/"+targetUrl)
-        .attr("target", "gridworks-export");
+        .attr("target", "gridworks-export-"+format);
     $('<input />')
         .attr("name", "engine")
         .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))

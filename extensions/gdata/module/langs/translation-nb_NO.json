@@ -1,0 +1,14 @@
+{
+    "gdata-import/preparing": "Forbereder …",
+    "gdata-import/creating": "Oppretter prosjekt …",
+    "gdata-import/title": "Offentlige dokumenter",
+    "gdata-import/import-by-url": "Importer et <em>offentlig</em> Google-regneark eller fusjonstabell med denne nettadressen:",
+    "gdata-import/next->": "Neste &raquo;",
+    "gdata-import/auth-doc": "Godkjente dokumenter",
+    "gdata-import/sign-in": "Logg inn og godkjenn",
+    "gdata-import/sign-out": "Logg ut",
+    "gdata-import/access-data": "Tilgang til din Google-data.",
+    "gdata-import/retrieving": "Henter Google Docs-dokumenter …",
+    "gdata-import/re-sign-in": "Logg inn igjen",
+    "gdata-import/another-account": "med en annen konto"
+}

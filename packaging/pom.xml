@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.3-SNAPSHOT</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -23,6 +23,105 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+            <!-- This is a clean snapshot of launch4j's master branch,
+                which includes fixes to Java discovery that we need
+                to support recent versions of Java. When launch4j-3.13
+                is officially released, remove this and the locally stored
+                jars -->
+            <execution>
+                <id>install-launch4j-core</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-core.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>net.sf.launch4j</groupId>
+                    <artifactId>launch4j</artifactId>
+                    <classifier>core</classifier>
+                    <version>3.13-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-launch4j-linux64</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-linux64.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>net.sf.launch4j</groupId>
+                    <artifactId>launch4j</artifactId>
+                    <classifier>workdir-linux64</classifier>
+                    <version>3.13-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-launch4j-linux</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-linux.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>net.sf.launch4j</groupId>
+                    <artifactId>launch4j</artifactId>
+                    <classifier>workdir-linux</classifier>
+                    <version>3.13-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-launch4j-win32</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-win32.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>net.sf.launch4j</groupId>
+                    <artifactId>launch4j</artifactId>
+                    <classifier>workdir-win32</classifier>
+                    <version>3.13-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>install-launch4j-mac</id>
+                <phase>process-resources</phase>
+                <configuration>
+                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-mac.jar</file>
+                    <repositoryLayout>default</repositoryLayout>
+                    <groupId>net.sf.launch4j</groupId>
+                    <artifactId>launch4j</artifactId>
+                    <classifier>workdir-mac</classifier>
+                    <version>3.13-SNAPSHOT</version>
+                    <packaging>jar</packaging>
+                    <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                    <goal>install-file</goal>
+                </goals>
+            </execution>
+
+
+        </executions>
+      </plugin>
       <plugin> <!-- necessary for launch4j -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -94,7 +193,26 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>1.7.23</version>
+        <version>1.7.25</version>
+
+            <!-- This is a clean snapshot of launch4j's master branch,
+                which includes fixes to Java discovery that we need
+                to support recent versions of Java.
+                When the maven plugin is updated to use launch4j-3.13,
+                this can be removed. -->
+        <dependencies>
+          <dependency>
+            <groupId>net.sf.launch4j</groupId>
+            <artifactId>launch4j</artifactId>
+            <classifier>core</classifier>
+            <version>3.13-SNAPSHOT</version>
+          </dependency>
+          <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+          <version>1.4.9</version>
+        </dependency>
+        </dependencies>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -106,14 +224,16 @@
               <jar>server/target/lib/openrefine-${project.version}-server.jar</jar>
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
+              <icon>openrefine.ico</icon>
               <classPath>
                 <mainClass>com.google.refine.Refine</mainClass>
                 <jarLocation>server/target/lib/</jarLocation>
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
               <jre>
+                <path>%JAVA_HOME%;%PATH%</path>
                 <minVersion>1.8.0</minVersion>
-                <jdkPreference>preferJre</jdkPreference>
+                <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -139,6 +259,18 @@
         <groupId>sh.tak.appbundler</groupId>
         <artifactId>appbundle-maven-plugin</artifactId>
         <version>1.2.0</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-archiver</artifactId>
+            <version>4.0.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>2.0</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <mainClass>com.google.refine.Refine</mainClass>
           <bundleName>OpenRefine</bundleName>

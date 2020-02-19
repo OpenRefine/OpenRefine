@@ -44,5 +44,10 @@
     "database-parsing/limit-next": "Load at most",
     "database-parsing/limit": "row(s) of data",
     "database-parsing/store-row": "Store blank rows",
-    "database-parsing/store-cell": "Store blank cells as nulls"
+    "database-parsing/store-cell": "Store blank cells as nulls",
+    "database-source/alert-conn-name-invalid-character": "Connection Name Input Error: Illegal Character in Input. Only [a-zA-Z0-9._-] Allowed",
+    "database-source/alert-db-host-invalid-character": "Database Host Error: Illegal Character in Input. Only Alphanumeric characters allowed",
+    "database-source/alert-db-user-invalid-character": "Database User Error: Illegal Character in Input. Only Alphanumeric characters allowed",
+    "database-source/alert-db-port-invalid-character": "Database Port Error: Illegal Character in Input. Only Numeric values allowed."
+    
 }

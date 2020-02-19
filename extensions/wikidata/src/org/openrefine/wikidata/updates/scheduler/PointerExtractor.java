@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -39,6 +38,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
@@ -123,11 +123,6 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     }
 
     @Override
-    public Set<ReconItemIdValue> visit(DatatypeIdValue value) {
-        return null;
-    }
-
-    @Override
     public Set<ReconItemIdValue> visit(EntityIdValue value) {
         if (ReconItemIdValue.class.isInstance(value)) {
             ReconItemIdValue recon = (ReconItemIdValue) value;
@@ -161,6 +156,11 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
 
     @Override
     public Set<ReconItemIdValue> visit(TimeValue value) {
+        return null;
+    }
+
+    @Override
+    public Set<ReconItemIdValue> visit(UnsupportedValue value) {
         return null;
     }
 }

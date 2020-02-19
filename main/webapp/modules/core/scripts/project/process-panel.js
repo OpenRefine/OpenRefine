@@ -124,14 +124,14 @@ ProcessPanel.prototype.undo = function() {
 
 ProcessPanel.prototype._cancelAll = function() {
   var self = this;
-  $.post(
-      "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
-      null,
-      function(o) {
+  Refine.postCSRF(
+    "command/core/cancel-processes?" + $.param({ project: theProject.id }), 
+    { },
+    function(o) {
         self._data = null;
         self._runOnDones();
-      },
-      "json"
+    },
+    "json"
   );
 };
 
@@ -200,7 +200,7 @@ ProcessPanel.prototype._render = function(newData) {
     } else {
       if (window.confirm($.i18n('core-project/last-op-er')+':\n' + messages +
             '\n\n'+$.i18n('core-project/continue-remaining')+'?')) {
-        $.post(
+        Refine.postCSRF(
           "command/core/apply-operations?" + $.param({ project: theProject.id }), 
           { operations: '[]' },
           function(o) {},

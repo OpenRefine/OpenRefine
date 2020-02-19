@@ -84,6 +84,10 @@ public class EditOneCellCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -99,7 +103,11 @@ public class EditOneCellCommand extends Command {
             Serializable value = null;
 
             if ("number".equals(type)) {
-                value = Double.parseDouble(valueString);
+                try {
+                    value = Long.parseLong(valueString);
+                } catch (NumberFormatException e) {
+                    value = Double.parseDouble(valueString);
+                }
             } else if ("boolean".equals(type)) {
                 value = "true".equalsIgnoreCase(valueString);
             } else if ("date".equals(type)) {

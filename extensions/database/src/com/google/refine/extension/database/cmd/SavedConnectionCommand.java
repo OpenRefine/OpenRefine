@@ -31,12 +31,15 @@ package com.google.refine.extension.database.cmd;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +52,9 @@ import com.google.refine.util.ParsingUtilities;
 public class SavedConnectionCommand extends DatabaseCommand {
  
     private static final Logger logger = LoggerFactory.getLogger("SavedConnectionCommand");
+    
+    private static final Pattern CONN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9._-]*");
+    private static final Pattern DATABASE_PORT_PATTERN = Pattern.compile("^[0-9]*");
     
 
     @Override
@@ -126,25 +132,23 @@ public class SavedConnectionCommand extends DatabaseCommand {
             writer.writeArrayFieldStart(DatabaseUtils.SAVED_CONNECTION_KEY);
             
             writer.writeStartObject();
-            writer.writeStringField("connectionName", savedConnection.getConnectionName());
             
+       
+            writer.writeStringField("connectionName", savedConnection.getConnectionName());
             writer.writeStringField("databaseType", savedConnection.getDatabaseType());
-
             writer.writeStringField("databaseHost", savedConnection.getDatabaseHost());
-
             writer.writeNumberField("databasePort", savedConnection.getDatabasePort());
-
             writer.writeStringField("databaseName", savedConnection.getDatabaseName());
-           
+       
+            
             String dbPasswd = savedConnection.getDatabasePassword();
             if(dbPasswd != null && !dbPasswd.isEmpty()) {
                 dbPasswd = DatabaseUtils.decrypt(savedConnection.getDatabasePassword());
             }
             writer.writeStringField("databasePassword", dbPasswd);
-
-            writer.writeStringField("databaseSchema", savedConnection.getDatabaseSchema());
-            
+            writer.writeStringField("databaseSchema", savedConnection.getDatabaseSchema());        
             writer.writeStringField("databaseUser", savedConnection.getDatabaseUser());
+
 
             writer.writeEndObject();
             writer.writeEndArray();
@@ -224,10 +228,15 @@ public class SavedConnectionCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
        
         if(logger.isDebugEnabled()) {
             logger.debug("doPost Connection: {}", request.getParameter("connectionName"));
         }
+       
         
         DatabaseConfiguration jdbcConfig = getJdbcConfiguration(request);
         
@@ -240,6 +249,21 @@ public class SavedConnectionCommand extends DatabaseCommand {
             response.flushBuffer();
             return;
         }
+        
+        if(!validateInput(jdbcConfig.getConnectionName(), CONN_NAME_PATTERN)) {
+        	logger.warn("Invalid Connection Name: {}", jdbcConfig.getConnectionName());
+        	response.sendError(HttpStatus.SC_BAD_REQUEST, "Connection Name is Invalid. Expecting [a-zA-Z0-9._-]");
+            response.flushBuffer();
+            return;
+        }
+        
+        if(!validateInput("" + jdbcConfig.getDatabasePort(), DATABASE_PORT_PATTERN)) {
+        	logger.warn("Invalid Database Port: {}", jdbcConfig.getDatabasePort());
+        	response.sendError(HttpStatus.SC_BAD_REQUEST, "Database Port Invalid. Expecting Numeric values only");
+            response.flushBuffer();
+            return;
+        }
+        
      
         DatabaseConfiguration savedConn = DatabaseUtils.getSavedConnection(jdbcConfig.getConnectionName());
         if(savedConn != null) {
@@ -266,8 +290,14 @@ public class SavedConnectionCommand extends DatabaseCommand {
         }
    
     }
-
-
+    
+    private boolean validateInput(String input, Pattern pattern){
+        Matcher matcher = pattern.matcher(input);
+        if(matcher.matches()){
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response)

@@ -24,6 +24,8 @@
 package org.openrefine.snac.commands;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -46,7 +48,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
+import com.google.refine.RefineTest;
 import com.google.refine.util.ParsingUtilities;
 
 import org.apache.http.*;
@@ -56,6 +58,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
+import org.powermock.modules.testng.PowerMockTestCase;
 
 import org.snaccooperative.commands.SNACUploadCommand;
 import org.snaccooperative.commands.SNACResourceCommand;
@@ -104,14 +107,14 @@ public class SNACResourceTest extends RefineTest{
         }
     }
 
-    @Test
-    public void testLanguage1() throws Exception{
-      Assert.assertNotNull(manager.detectLanguage("eng"));
-      Assert.assertNotNull(manager.detectLanguage("kor"));
-      Assert.assertNull(manager.detectLanguage("reeeee"));
-      Assert.assertNotNull(manager.detectLanguage("jpn"));
-      Assert.assertNull(manager.detectLanguage("hmm"));
-    }
+    // @Test
+    // public void testLanguage1() throws Exception{
+    //   Assert.assertNotNull(manager.detectLanguage("eng"));
+    //   Assert.assertNotNull(manager.detectLanguage("kor"));
+    //   Assert.assertNull(manager.detectLanguage("reeeee"));
+    //   Assert.assertNotNull(manager.detectLanguage("jpn"));
+    //   Assert.assertNull(manager.detectLanguage("hmm"));
+    // }
     // @Test
     // public void testLanguage2() throws Exception{
     //   Assert.assertNull(manager.detectLanguage("reeeee"));

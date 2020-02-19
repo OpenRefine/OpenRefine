@@ -54,7 +54,10 @@ public class TestConnectCommand extends DatabaseCommand {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+    	if(!hasValidCSRFToken(request)) {
+    		respondCSRFError(response);
+    		return;
+    	}
         
         DatabaseConfiguration databaseConfiguration = getJdbcConfiguration(request);
         if(logger.isDebugEnabled()) {

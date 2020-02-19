@@ -29,6 +29,7 @@ import java.io.Serializable;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
@@ -37,9 +38,8 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
-import com.google.refine.tests.RefineTest;
 
-public class WbExpressionTest<T> extends RefineTest {
+public class WbExpressionTest<T> extends WikidataRefineTest {
 
     protected Project project;
     protected Row row;

@@ -149,7 +149,7 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
 
   $('<a href="javascript:{}"></a>')
   .addClass("action")
-  .text("Sort ")
+  .text($.i18n('core-views/sort') + " ")
   .append($('<img>').attr("src", "../images/down-arrow.png"))
   .appendTo(sortingControls)
   .click(function() {

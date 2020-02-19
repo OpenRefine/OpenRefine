@@ -68,7 +68,7 @@ import com.google.refine.util.ParsingUtilities;
  */
 public abstract class ProjectManager {
     // last n expressions used across all projects
-    static protected final int s_expressionHistoryMax = 100;
+    static public final int EXPRESSION_HISTORY_MAX = 100;
 
     // If a project has been idle this long, flush it from memory
     static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
@@ -610,7 +610,7 @@ public abstract class ProjectManager {
     * @param ps
     */
    static protected void preparePreferenceStore(PreferenceStore ps) {
-       ps.put("scripting.expressions", new TopList(s_expressionHistoryMax));
+       ps.put("scripting.expressions", new TopList(EXPRESSION_HISTORY_MAX));
        ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
    }
 }

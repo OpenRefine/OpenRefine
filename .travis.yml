@@ -12,8 +12,8 @@ branches:
   - capstone-master
 
 addons:
-  mariadb: '10.0'
-
+  mariadb: '10.3'
+  
 services:
   # - mysql
   - postgresql
@@ -25,8 +25,8 @@ env:
 before_install:
   # create test database for mysql, mariadb and postgresql
   # mysql is currently disabled: https://github.com/OpenRefine/OpenRefine/issues/2043
-  #- mysql -u root -e 'CREATE DATABASE test_db;'
-  #- mysql -u root test_db < extensions/database/tests/conf/travis-mysql.sql
+  - mysql -u root -e 'CREATE DATABASE test_db;'
+  - mysql -u root test_db < extensions/database/tests/conf/travis-mysql.sql
   - psql -c 'CREATE DATABASE test_db;' -U postgres
   - psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
   - cp extensions/database/tests/conf/travis_tests.xml extensions/database/tests/conf/tests.xml

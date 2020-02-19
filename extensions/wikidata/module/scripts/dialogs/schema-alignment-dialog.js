@@ -439,12 +439,14 @@ SchemaAlignmentDialog._itemToJSON = function (item) {
  **************************/
 
 SchemaAlignmentDialog._addNameDesc = function(item, json) {
-  var type = 'ALIAS';
+  var term_type = 'ALIAS';
   var value = null;
+  var override = false;
   if (json) {
-     type = json.name_type;
+     term_type = json.name_type.replace('_IF_NEW', '');
      value = json.value;
-  }
+     override = json.name_type.indexOf('_IF_NEW') == -1; 
+  } 
 
   var container = item.find('.wbs-namedesc-container').first();
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
@@ -462,10 +464,7 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   .attr('value', 'ALIAS')
   .text($.i18n('wikidata-schema/alias'))
   .appendTo(type_input);
-  type_input.val(type);
-  type_input.on('change', function(e) {
-    SchemaAlignmentDialog._hasChanged();
-  });
+  type_input.val(term_type);
 
   var toolbar = $('<div></div>').addClass('wbs-toolbar').appendTo(namedesc);
   SchemaAlignmentDialog._makeDeleteButton().click(function(e) {
@@ -478,10 +477,37 @@ SchemaAlignmentDialog._addNameDesc = function(item, json) {
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
   SchemaAlignmentDialog._initField(value_container, "monolingualtext", value);
 
+  var override_container = $('<div></div>').addClass('wbs-namedesc-override').appendTo(namedesc);
+  var label = $('<label></label>').appendTo(override_container);
+  var checkbox = $('<input></input>')
+       .attr('type', 'checkbox')
+       .prop('checked', override)
+       .appendTo(label);
+  var span = $('<span></span>').text($.i18n('wikidata-schema/override-term')).appendTo(label);
+  checkbox.on('change', function(e) {
+    SchemaAlignmentDialog._hasChanged();
+  });
+  type_input.on('change', function(e) {
+    var checkbox_visible = type_input.val() !== 'ALIAS';
+    if (checkbox_visible) {
+       override_container.show();
+    } else {
+       override_container.hide();
+    }
+    SchemaAlignmentDialog._hasChanged();
+  });
+
 }
 
 SchemaAlignmentDialog._nameDescToJSON = function (namedesc) {
-  var type = namedesc.find('select').first().val();
+  var term_type = namedesc.find('select').first().val();
+  var type = term_type;
+  if (term_type !== 'ALIAS') {
+      var override = namedesc.find('input[type=checkbox]').first().is(':checked');
+      if (!override) {
+         type = term_type + '_IF_NEW';
+      }
+  }
   var value = namedesc.find('.wbs-namedesc-value').first().data("jsonValue");
   return {
     type: "wbnamedescexpr",
@@ -970,7 +996,7 @@ SchemaAlignmentDialog._initField = function(inputContainer, mode, initialValue, 
       changedCallback();
     });
 
-    SchemaAlignmentDialog.setupStringInputValidation(input, /^\d{4}(-[0-1]\d(-[0-3]\d)?)?$/);
+    SchemaAlignmentDialog.setupStringInputValidation(input, /^((\d{4}(-[0-1]\d(-[0-3]\d)?)?)|TODAY)$/);
    } else if (mode === "globe-coordinate") {
      input.attr("placeholder", "lat,lon");
      var propagateValue = function(val) {
@@ -1268,7 +1294,7 @@ SchemaAlignmentDialog.preview = function() {
     $('.invalid-schema-warning').show();
     return;
   }
-  $.post(
+  Refine.postCSRF(
     "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
     { schema: JSON.stringify(schema), engine: JSON.stringify(ui.browsingEngine.getJSON()) },
     function(data) {
