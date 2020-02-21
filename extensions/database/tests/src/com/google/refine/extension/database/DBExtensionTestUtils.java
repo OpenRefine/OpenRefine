@@ -66,9 +66,14 @@ public class DBExtensionTestUtils {
              DatabaseMetaData dbm = conn.getMetaData();
              // check if "employee" table is there
              ResultSet tables = dbm.getTables(null, null, tableName, null);
+             boolean dropTable = false;
              if (tables.next()) {
-                 stmt.executeUpdate("DROP TABLE " + tableName);
+                 dropTable = true;
                  //System.out.println("Drop Table Result::" + dropResult);
+             }
+             tables.close();
+             if (dropTable) {
+                 stmt.executeUpdate("DROP TABLE " + tableName);
              }
           
             String createSQL = " CREATE TABLE " + tableName + " ( "
@@ -123,7 +128,13 @@ public class DBExtensionTestUtils {
              DatabaseMetaData dbm = conn.getMetaData();
              // check if "employee" table is there
              ResultSet tables = dbm.getTables(null, null, DEFAULT_TEST_TABLE, null);
+             boolean dropTable = false;
              if (tables.next()) {
+                dropTable = true;
+                //System.out.println("Drop Table Result::" + dropResult);
+             }
+             tables.close();
+             if (dropTable) {
                  stmt.executeUpdate("DROP TABLE " + DEFAULT_TEST_TABLE);
                  //System.out.println("Drop Table Result::" + dropResult);
              }
