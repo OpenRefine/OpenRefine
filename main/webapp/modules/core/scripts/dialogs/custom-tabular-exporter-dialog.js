@@ -320,7 +320,7 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   
   document.body.appendChild(form);
 
-  window.open("about:blank", "refine-export");
+  window.open(" ", "refine-export");
   form.submit();
 
   document.body.removeChild(form);
