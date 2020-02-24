@@ -28,8 +28,34 @@
             </div>
             <div class="snac-upload-buttons">
                 <button class="button-snac cancel-btn" bind="cancelButton"></button>
-                <button class="button-snac submit-btn" bind="uploadButton"></button>
+                <button class="button-snac submit-btn" bind="uploadButton" onclick="displayProgressBar()"></button>
             </div>
+
+
+
+
+            <div class="upload-progress-bar" style = "visibility: hidden">
+              <span id = "changer"></span>
+            </div>
+
+            <script>
+              // var words = ["Uploading", "Uploading.", "Uploading..", "Uploading..."];
+              // var i = 0;
+              // var text = ".";
+              
+              // function _getChangedText() {
+              //     i = (i + 1) % words.length;
+              //     return words[i];
+              // }
+              
+              // function _changeText() {
+              //     var txt = _getChangedText();
+              //     document.getElementById("changer").innerHTML = txt;
+              // }
+              // setInterval("_changeText()", 1000);
+              </script>
+
+
         </div>
      </div>
   </div>

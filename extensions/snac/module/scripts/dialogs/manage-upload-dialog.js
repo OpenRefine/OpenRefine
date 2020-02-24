@@ -1,5 +1,33 @@
 var ManageUploadDialog = {};
 
+var myVar;
+
+function _getChangedText() {
+  var words = ["Uploading", "Uploading.", "Uploading..", "Uploading..."];
+
+  var i = 0;
+  // words.forEach(e => {
+  //   console.log(e);
+  // });
+
+  i = (i + 1) % words.length;
+  return words[i];
+}
+
+function _changeText() {
+  var txt = _getChangedText();
+  document.getElementById("changer").innerHTML = txt;
+}
+function displayProgressBar() {
+  // var words = ["Uploading", "Uploading.", "Uploading..", "Uploading..."];
+  // var i = 0;
+  // var text = ".";
+  
+  myVar = setInterval("_changeText()", 1000); 
+  // find way to terminate this...maybe put in new function (using a start/stop)
+  $(".upload-progress-bar")[0].style.visibility = "visible";
+}
+
 ManageUploadDialog.firstLogin = true;
 
 ManageUploadDialog.launch = function(apikey, callback) {
@@ -62,9 +90,11 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
   }
 
   elmts.uploadButton.click(function() {
+    
     console.log(prod_or_dev);
     console.log(elmts.apiKeyForm.serialize());
-    frame.hide();
+    // frame.hide();
+
     $.post(
       "command/snac/upload",
       // elmts.apiKeyForm.serialize(),
@@ -79,7 +109,9 @@ ManageUploadDialog.display = function(apikey, saved_apikey, callback) {
         // } else {
         //   alert(data.apikey);
           dismiss();
-          callback(null);
+          callback(null); 
+          // console.log(myVar);
+          clearInterval(myVar);//maybe here you need to terminate the setInterval call
         // }
       });
   });
