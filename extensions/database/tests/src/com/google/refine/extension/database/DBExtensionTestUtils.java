@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -438,7 +438,7 @@ public class DBExtensionTestUtils {
         substitutes.put("dbName", dbConfig.getDatabaseName());
         substitutes.put("useSSL", dbConfig.isUseSSL());
         String urlTemplate = "jdbc:${dbType}://${host}:${port}/${dbName}?useSSL=${useSSL}";
-        StrSubstitutor strSub = new StrSubstitutor(substitutes);
+        StringSubstitutor strSub = new StringSubstitutor(substitutes);
         return strSub.replace(urlTemplate);
     }
 

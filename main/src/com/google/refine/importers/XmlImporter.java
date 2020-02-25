@@ -186,7 +186,7 @@ public class XmlImporter extends TreeImportingParserBase {
         }
         
         if (children.size() > 0) {
-        	result.put("c", children);
+        	result.set("c", children);
         }
         return result;
     }

@@ -47,7 +47,7 @@ import java.util.Map;
 
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
@@ -258,8 +258,8 @@ public class ExcelImporter extends TabularImportingParserBase {
         } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
             
-            if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                value = HSSFDateUtil.getJavaDate(d);
+            if (DateUtil.isCellDateFormatted(cell)) {
+                value = DateUtil.getJavaDate(d);
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60
