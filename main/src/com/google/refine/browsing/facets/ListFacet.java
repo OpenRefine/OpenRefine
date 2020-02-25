@@ -155,7 +155,7 @@ public class ListFacet implements Facet {
     /*
      * Computed results
      */
-    protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
+    protected List<NominalFacetChoice> _choices = new LinkedList<>();
     protected int _blankCount;
     protected int _errorCount;
     

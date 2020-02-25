@@ -57,8 +57,8 @@ public class SqlExporter implements WriterExporter {
     public static final String JSON_INCLUDE_CONTENT = "includeContent";
     public static final String JSON_TABLE_NAME = "tableName";
  
-    private List<String> columnNames = new ArrayList<String>();
-    private List<ArrayList<SqlData>> sqlDataList = new ArrayList<ArrayList<SqlData>>();
+    private List<String> columnNames = new ArrayList<>();
+    private List<ArrayList<SqlData>> sqlDataList = new ArrayList<>();
     private JsonNode sqlOptions;
  
 
@@ -127,8 +127,8 @@ public class SqlExporter implements WriterExporter {
                         logger.debug("sqlOptions::{}", sqlOptions);
                     }
 
-                    columnNames = new ArrayList<String>();
-                    sqlDataList = new ArrayList<ArrayList<SqlData>>();
+                    columnNames = new ArrayList<>();
+                    sqlDataList = new ArrayList<>();
 
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -81,7 +81,7 @@ public class ForEachIndex implements Control {
             if (o.getClass().isArray()) {
                 Object[] values = (Object[]) o;
                 
-                results = new ArrayList<Object>(values.length);
+                results = new ArrayList<>(values.length);
                 
                 for (int i = 0; i < values.length; i++) {
                     Object v = values[i];
@@ -97,7 +97,7 @@ public class ForEachIndex implements Control {
                 ArrayNode a = (ArrayNode) o;
                 int l = a.size();
                 
-                results = new ArrayList<Object>(l);
+                results = new ArrayList<>(l);
                 for (int i = 0; i < l; i++) {
                     Object v = JsonValueConverter.convert(a.get(i));
                     
@@ -111,7 +111,7 @@ public class ForEachIndex implements Control {
             } else {
                 List<Object> list = ExpressionUtils.toObjectList(o);
                 
-                results = new ArrayList<Object>(list.size());
+                results = new ArrayList<>(list.size());
                 
                 for (int i = 0; i < list.size(); i++) {
                     Object v = list.get(i);

@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
@@ -104,7 +104,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         if (options.has("columnNames")) {
           String[] strings = JSONUtilities.getStringArray(options, "columnNames");
           if (strings.length > 0) {
-            retrievedColumnNames = new ArrayList<Object>();
+            retrievedColumnNames = new ArrayList<>();
             for (String s : strings) {
               s = s.trim();
               if (!s.isEmpty()) {
@@ -163,7 +163,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)
         throws IOException{
         
-        ArrayList<Object> cells = new ArrayList<Object>();
+        ArrayList<Object> cells = new ArrayList<>();
         String[] tokens = parser.parseLineMulti(line);
         cells.addAll(Arrays.asList(tokens));
         while (parser.isPending()) {
@@ -213,8 +213,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             LineNumberReader lineNumberReader = new LineNumberReader(reader);
 
             try {
-                List<Separator> separators = new ArrayList<SeparatorBasedImporter.Separator>();
-                Map<Character, Separator> separatorMap = new HashMap<Character, SeparatorBasedImporter.Separator>();
+                List<Separator> separators = new ArrayList<>();
+                Map<Character, Separator> separatorMap = new HashMap<>();
                 
                 int totalChars = 0;
                 int lineCount = 0;

@@ -58,8 +58,7 @@ public class DataExtensionReconConfig extends StandardReconConfig {
             schemaSpace,
             type != null ? type.id : null, 
             type != null ? type.name : null,
-            true,
-            new ArrayList<ColumnDetail>());
+            true, new ArrayList<>());
         this.type = type;
     }
 

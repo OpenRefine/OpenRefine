@@ -127,7 +127,7 @@ public class FileProjectManager extends ProjectManager  {
             if (metadata != null) {
                 _projectsMetadata.put(projectID, metadata);
                 if (_projectsTags == null) {
-                    _projectsTags = new HashMap<String, Integer>();
+                    _projectsTags = new HashMap<>();
                 }
                 
                 if (metadata != null && metadata.getTags() != null) {

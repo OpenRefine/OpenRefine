@@ -123,7 +123,7 @@ public class ReconOperation extends EngineDependentOperation {
     }
     static protected class JobGroup {
         final public ReconJob job;
-        final public List<ReconEntry> entries = new ArrayList<ReconEntry>();
+        final public List<ReconEntry> entries = new ArrayList<>();
         public int trials = 0;
         
         public JobGroup(ReconJob job) {
@@ -205,7 +205,7 @@ public class ReconOperation extends EngineDependentOperation {
                 throw new Exception("No column named " + _columnName);
             }
             
-            _entries = new ArrayList<ReconEntry>(_project.rows.size());
+            _entries = new ArrayList<>(_project.rows.size());
             _cellIndex = column.getCellIndex();
             
             FilteredRows filteredRows = engine.getAllFilteredRows();
@@ -242,7 +242,7 @@ public class ReconOperation extends EngineDependentOperation {
                 e2.printStackTrace();
             }
             
-            Map<String, JobGroup> jobKeyToGroup = new HashMap<String, JobGroup>();
+            Map<String, JobGroup> jobKeyToGroup = new HashMap<>();
             
             for (ReconEntry entry : _entries) {
                 ReconJob job = _reconConfig.createJob(
@@ -265,11 +265,11 @@ public class ReconOperation extends EngineDependentOperation {
             int batchSize = _reconConfig.getBatchSize();
             int done = 0;
             
-            List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
-            List<JobGroup> groups = new ArrayList<JobGroup>(jobKeyToGroup.values());
+            List<CellChange> cellChanges = new ArrayList<>(_entries.size());
+            List<JobGroup> groups = new ArrayList<>(jobKeyToGroup.values());
             
-            List<ReconJob> jobs = new ArrayList<ReconJob>(batchSize);
-            Map<ReconJob, JobGroup> jobToGroup = new HashMap<ReconJob, ReconOperation.JobGroup>();
+            List<ReconJob> jobs = new ArrayList<>(batchSize);
+            Map<ReconJob, JobGroup> jobToGroup = new HashMap<>();
             
             for (int i = 0; i < groups.size(); /* don't increment here */) {
                 while (jobs.size() < batchSize && i < groups.size()) {

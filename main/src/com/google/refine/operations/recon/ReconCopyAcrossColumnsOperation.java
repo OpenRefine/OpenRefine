@@ -110,7 +110,7 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
         
         final Column fromColumn = project.columnModel.getColumnByName(_fromColumnName);
         
-        final List<Column> toColumns = new ArrayList<Column>(_toColumnNames.length);
+        final List<Column> toColumns = new ArrayList<>(_toColumnNames.length);
         for (String c : _toColumnNames) {
             Column toColumn = project.columnModel.getColumnByName(c);
             if (toColumn != null) {
@@ -118,15 +118,15 @@ public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
             }
         }
         
-        final Set<Recon.Judgment> judgments = new HashSet<Recon.Judgment>(_judgments.length);
+        final Set<Recon.Judgment> judgments = new HashSet<>(_judgments.length);
         for (String j : _judgments) {
             judgments.add(Recon.stringToJudgment(j));
         }
         
-        final List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
+        final List<CellChange> cellChanges = new ArrayList<>(project.rows.size());
         
         if (fromColumn != null && toColumns.size() > 0) {
-            final Map<Object, Recon> cellValueToRecon = new HashMap<Object, Recon>();
+            final Map<Object, Recon> cellValueToRecon = new HashMap<>();
             
             FilteredRows filteredRows = engine.getAllFilteredRows();
             try {

@@ -127,7 +127,7 @@ public class kNNClusterer extends Clusterer {
 
     List<Set<Serializable>> _clusters;
 
-    Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
+    Map<Serializable, Integer> _counts = new HashMap<>();
 
     final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
 
@@ -193,7 +193,7 @@ public class kNNClusterer extends Clusterer {
         
         public BlockingClusteringRowVisitor(SimilarityDistance _distance2, kNNClustererConfigParameters params) {
             _distance = _distance2;
-            _data = new HashSet<String>();
+            _data = new HashSet<>();
             _blockingNgramSize = params.blockingNgramSize;
             _radius = params.radius;
             _clusterer = new NGramClusterer(new DistanceWrapper(_distance), _blockingNgramSize);

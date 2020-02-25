@@ -94,7 +94,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
         if (options.has("columnNames")) {
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
             if (strings.length > 0) {
-                retrievedColumnNames = new ArrayList<Object>();
+                retrievedColumnNames = new ArrayList<>();
                 for (String s : strings) {
                     s = s.trim();
                     if (!s.isEmpty()) {
@@ -144,7 +144,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
      * @return
      */
     static private ArrayList<Object> getCells(String line, int[] widths) {
-        ArrayList<Object> cells = new ArrayList<Object>();
+        ArrayList<Object> cells = new ArrayList<>();
         
         int columnStartCursor = 0;
         int columnEndCursor = 0;
@@ -213,7 +213,7 @@ public class FixedWidthImporter extends TabularImportingParserBase {
                 }
                 
                 if (counts != null && lineCount > 2) {
-                    List<Integer> widths = new ArrayList<Integer>();
+                    List<Integer> widths = new ArrayList<>();
                     
                     int startIndex = 0;
                     for (int c = 0; c < counts.length; c++) {

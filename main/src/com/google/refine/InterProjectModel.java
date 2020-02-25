@@ -55,8 +55,7 @@ public class InterProjectModel {
         final public long   toProjectID;
         final public String toProjectColumnName;
         
-        final public Map<Object, List<Integer>> valueToRowIndices = 
-            new HashMap<Object, List<Integer>>();
+        final public Map<Object, List<Integer>> valueToRowIndices = new HashMap<>();
         
         ProjectJoin(
             long   fromProjectID,
@@ -87,7 +86,7 @@ public class InterProjectModel {
         }
     }
     
-    protected Map<String, ProjectJoin> _joins = new HashMap<String, ProjectJoin>();
+    protected Map<String, ProjectJoin> _joins = new HashMap<>();
     
     /**
      * Compute the ProjectJoin based on combination key, return the cached one from the HashMap if already computed
@@ -170,7 +169,7 @@ public class InterProjectModel {
         for (Row fromRow : fromProject.rows) {
             Object value = fromRow.getCellValue(fromColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(value) && !join.valueToRowIndices.containsKey(value)) {
-                join.valueToRowIndices.put(value, new ArrayList<Integer>());
+                join.valueToRowIndices.put(value, new ArrayList<>());
             }
         }
         

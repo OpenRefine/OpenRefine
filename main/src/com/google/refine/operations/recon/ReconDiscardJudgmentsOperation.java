@@ -101,7 +101,7 @@ public class ReconDiscardJudgmentsOperation extends EngineDependentMassCellOpera
         return new RowVisitor() {
             int cellIndex;
             List<CellChange> cellChanges;
-            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
+            Map<Long, Recon> dupReconMap = new HashMap<>();
             long historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {

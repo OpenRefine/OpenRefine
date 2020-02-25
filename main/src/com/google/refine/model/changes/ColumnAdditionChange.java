@@ -70,7 +70,7 @@ public class ColumnAdditionChange extends ColumnChange {
             }
 
             int columnGroupCount = project.columnModel.columnGroups.size();
-            _oldColumnGroups = new ArrayList<ColumnGroup>(columnGroupCount);
+            _oldColumnGroups = new ArrayList<>(columnGroupCount);
             for (int i = columnGroupCount - 1; i >= 0; i--) {
                 ColumnGroup columnGroup = project.columnModel.columnGroups.get(i);
                 
@@ -163,7 +163,7 @@ public class ColumnAdditionChange extends ColumnChange {
             } else if ("newCellCount".equals(field)) {
                 int newCellCount = Integer.parseInt(line.substring(equal + 1));
                 
-                newCells = new ArrayList<CellAtRow>(newCellCount);
+                newCells = new ArrayList<>(newCellCount);
                 for (int i = 0; i < newCellCount; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -180,7 +180,7 @@ public class ColumnAdditionChange extends ColumnChange {
         ColumnAdditionChange change = new ColumnAdditionChange(columnName, columnIndex, newCells);
         change._newCellIndex = newCellIndex;
         change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+                oldColumnGroups : new LinkedList<>();
 
         return change;
     }

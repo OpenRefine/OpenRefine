@@ -47,7 +47,7 @@ import com.google.refine.history.HistoryProcess;
 
 public class ProcessManager  {
     @JsonProperty("processes")
-    protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
+    protected List<Process> _processes = Collections.synchronizedList(new LinkedList<>());
     @JsonIgnore
     protected List<Exception> _latestExceptions = null;
     
@@ -108,7 +108,7 @@ public class ProcessManager  {
     }
     
     public void onFailedProcess(Process p, Exception exception) {
-        List<Exception> exceptions = new LinkedList<Exception>();
+        List<Exception> exceptions = new LinkedList<>();
         exceptions.add(exception);
         onFailedProcess(p, exceptions);
     }

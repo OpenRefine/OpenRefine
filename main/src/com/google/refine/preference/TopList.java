@@ -48,7 +48,7 @@ public class TopList implements Iterable<String>, PreferenceValue {
     
     @JsonProperty("top")
     protected int          _top = 10;
-    protected List<String> _list = new ArrayList<String>();
+    protected List<String> _list = new ArrayList<>();
 
     public TopList(int top) {
         _top = top;

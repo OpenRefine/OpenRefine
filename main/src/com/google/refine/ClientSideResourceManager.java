@@ -56,12 +56,12 @@ public class ClientSideResourceManager {
         public String           fullPath;
     }
     static public class ClientSideResourceBundle {
-        final protected Set<String>     _pathSet = new HashSet<String>();
-        final protected List<QualifiedPath>      _pathList = new ArrayList<QualifiedPath>();
+        final protected Set<String>     _pathSet = new HashSet<>();
+        final protected List<QualifiedPath>      _pathList = new ArrayList<>();
     }
     
     final static protected Map<String, ClientSideResourceBundle> s_bundles
-        = new HashMap<String, ClientSideResourceBundle>();
+        = new HashMap<>();
     
     static public void addPaths(
         String bundleName, 

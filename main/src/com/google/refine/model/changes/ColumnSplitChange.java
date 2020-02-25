@@ -129,8 +129,8 @@ public class ColumnSplitChange implements Change {
                 _column = project.columnModel.getColumnByName(_columnName);
                 _columnIndex = project.columnModel.getColumnIndexByName(_columnName);
                 
-                _oldRows = new ArrayList<Row>(_rowIndices.size());
-                _newRows = new ArrayList<Row>(_rowIndices.size());
+                _oldRows = new ArrayList<>(_rowIndices.size());
+                _newRows = new ArrayList<>(_rowIndices.size());
                 
                 int cellIndex = _column.getCellIndex();
                 
@@ -159,7 +159,7 @@ public class ColumnSplitChange implements Change {
             
             int columnGroupCount = project.columnModel.columnGroups.size();
             int columnCountChange = _columnNames.size() - (_removeOriginalColumn ? 1 : 0);
-            _oldColumnGroups = new ArrayList<ColumnGroup>(columnGroupCount);
+            _oldColumnGroups = new ArrayList<>(columnGroupCount);
             for (int i = columnGroupCount - 1; i >= 0; i--) {
                 ColumnGroup columnGroup = project.columnModel.columnGroups.get(i);
                 
@@ -237,7 +237,7 @@ public class ColumnSplitChange implements Change {
             if (_removeOriginalColumn) {
                 project.columnModel.columns.add(_columnIndex, _column);
             }
-            
+
             for (int i = 0; i < _columnNames.size(); i++) {
                 project.columnModel.columns.remove(_columnIndex + 1);
                 ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _columnNames.get(i));
@@ -325,7 +325,7 @@ public class ColumnSplitChange implements Change {
             } else if ("columnNameCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                columnNames = new ArrayList<String>(count);
+                columnNames = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -335,7 +335,7 @@ public class ColumnSplitChange implements Change {
             } else if ("rowIndexCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                rowIndices = new ArrayList<Integer>(count);
+                rowIndices = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -345,7 +345,7 @@ public class ColumnSplitChange implements Change {
             } else if ("tupleCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                tuples = new ArrayList<List<Serializable>>(count);
+                tuples = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     
@@ -355,7 +355,7 @@ public class ColumnSplitChange implements Change {
                     
                     int valueCount = Integer.parseInt(line);
                     
-                    List<Serializable> tuple = new ArrayList<Serializable>(valueCount);
+                    List<Serializable> tuple = new ArrayList<>(valueCount);
                     for (int r = 0; r < valueCount; r++) {
                         line = reader.readLine();
                         
@@ -376,7 +376,7 @@ public class ColumnSplitChange implements Change {
             } else if ("oldRowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                oldRows = new ArrayList<Row>(count);
+                oldRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -386,7 +386,7 @@ public class ColumnSplitChange implements Change {
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                newRows = new ArrayList<Row>(count);
+                newRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -415,7 +415,7 @@ public class ColumnSplitChange implements Change {
             newRows
         );
         change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+                oldColumnGroups : new LinkedList<>();
         
         return change;
     }

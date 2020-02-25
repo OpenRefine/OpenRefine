@@ -65,7 +65,7 @@ public class RowRemovalOperation extends EngineDependentOperation {
 protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
         Engine engine = createEngine(project);
         
-        List<Integer> rowIndices = new ArrayList<Integer>();
+        List<Integer> rowIndices = new ArrayList<>();
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, rowIndices));

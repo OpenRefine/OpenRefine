@@ -142,12 +142,12 @@ public class GuessTypesOfColumnCommand extends Command {
      */
     protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
             throws IOException {
-        Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
+        Map<String, TypeGroup> map = new HashMap<>();
         
         int cellIndex = column.getCellIndex();
         
-        List<String> samples = new ArrayList<String>(SAMPLE_SIZE);
-        Set<String> sampleSet = new HashSet<String>();
+        List<String> samples = new ArrayList<>(SAMPLE_SIZE);
+        Set<String> sampleSet = new HashSet<>();
         
         for (Row row : project.rows) {
             Object value = row.getCellValue(cellIndex);
@@ -241,7 +241,7 @@ public class GuessTypesOfColumnCommand extends Command {
             throw e;
         }
         
-        List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
+        List<TypeGroup> types = new ArrayList<>(map.values());
         Collections.sort(types, new Comparator<TypeGroup>() {
             @Override
             public int compare(TypeGroup o1, TypeGroup o2) {

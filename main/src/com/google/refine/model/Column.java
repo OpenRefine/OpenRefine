@@ -140,7 +140,7 @@ public class Column  {
     
     public void setPrecompute(String key, Object value) {
         if (_precomputes == null) {
-            _precomputes = new HashMap<String, Object>();
+            _precomputes = new HashMap<>();
         }
         _precomputes.put(key, value);
     }

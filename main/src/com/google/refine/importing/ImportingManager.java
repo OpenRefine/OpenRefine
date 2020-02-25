@@ -91,27 +91,27 @@ public class ImportingManager {
     static private RefineServlet servlet;
     static private File importDir;
     
-    final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<Long, ImportingJob>());
+    final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<>());
     static private long jobIdCounter = 0;
     final static private Object jobIdLock = new Object();
     
     // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
-    final static public Map<String, Format> formatToRecord = new HashMap<String, Format>();
+    final static public Map<String, Format> formatToRecord = new HashMap<>();
     
     // Mapping from format to guessers
-    final static public Map<String, List<FormatGuesser>> formatToGuessers = new HashMap<String, List<FormatGuesser>>();
+    final static public Map<String, List<FormatGuesser>> formatToGuessers = new HashMap<>();
     
     // Mapping from file extension to format, e.g., ".xml" to "text/xml"
-    final static public Map<String, String> extensionToFormat = new HashMap<String, String>();
+    final static public Map<String, String> extensionToFormat = new HashMap<>();
     
     // Mapping from mime type to format, e.g., "application/json" to "text/json"
-    final static public Map<String, String> mimeTypeToFormat = new HashMap<String, String>();
+    final static public Map<String, String> mimeTypeToFormat = new HashMap<>();
     
     // URL rewriters
-    final static public Set<UrlRewriter> urlRewriters = new HashSet<UrlRewriter>();
+    final static public Set<UrlRewriter> urlRewriters = new HashSet<>();
     
     // Mapping from controller name to controller
-    final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
+    final static public Map<String, ImportingController> controllers = new HashMap<>();
     
     // timer for periodically deleting stale importing jobs
     static private ScheduledExecutorService service;
@@ -151,7 +151,7 @@ public class ImportingManager {
     static public void registerFormatGuesser(String format, FormatGuesser guesser) {
         List<FormatGuesser> guessers = formatToGuessers.get(format);
         if (guessers == null) {
-            guessers = new LinkedList<FormatGuesser>();
+            guessers = new LinkedList<>();
             formatToGuessers.put(format, guessers);
         }
         guessers.add(0, guesser); // prepend so that newer guessers take priority
@@ -281,7 +281,7 @@ public class ImportingManager {
         long now = System.currentTimeMillis();
         Collection<Long> keys;
         synchronized(jobs) {
-            keys = new ArrayList<Long>(jobs.keySet());
+            keys = new ArrayList<>(jobs.keySet());
         }
         for (Long id : keys) {
             ImportingJob job = jobs.get(id);

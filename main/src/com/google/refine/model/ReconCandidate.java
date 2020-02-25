@@ -120,7 +120,7 @@ public class ReconCandidate implements HasFields {
                     return null;
                 }
                 
-                types = new ArrayList<String>();
+                types = new ArrayList<>();
                 
                 while (jp.nextToken() != JsonToken.END_ARRAY) {
                     types.add(jp.getText());

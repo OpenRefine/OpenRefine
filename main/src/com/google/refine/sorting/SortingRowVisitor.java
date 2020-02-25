@@ -64,8 +64,8 @@ public class SortingRowVisitor extends BaseSorter implements RowVisitor {
     @Override
     public void start(Project project) {
         int count = project.rows.size();
-        _indexedRows = new ArrayList<IndexedRow>(count);
-        _keys = new ArrayList<Object[]>(count);
+        _indexedRows = new ArrayList<>(count);
+        _keys = new ArrayList<>(count);
     }
 
     @Override

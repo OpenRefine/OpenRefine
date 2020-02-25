@@ -71,7 +71,7 @@ abstract public class EngineDependentMassCellOperation extends EngineDependentOp
             throw new Exception("No column named " + _columnName);
         }
         
-        List<CellChange> cellChanges = new ArrayList<CellChange>(project.rows.size());
+        List<CellChange> cellChanges = new ArrayList<>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
         try {

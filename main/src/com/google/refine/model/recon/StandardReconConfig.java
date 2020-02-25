@@ -425,7 +425,7 @@ public class StandardReconConfig extends ReconConfig {
     
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-        List<Recon> recons = new ArrayList<Recon>(jobs.size());
+        List<Recon> recons = new ArrayList<>(jobs.size());
         
         StringWriter stringWriter = new StringWriter();
         
@@ -609,7 +609,7 @@ public class StandardReconConfig extends ReconConfig {
         return common / longWords.size();
     }
     
-    static final protected Set<String> s_stopWords = new HashSet<String>();
+    static final protected Set<String> s_stopWords = new HashSet<>();
     static {
         // FIXME: This is English specific
         s_stopWords.add("the");
@@ -625,7 +625,7 @@ public class StandardReconConfig extends ReconConfig {
     static protected Set<String> breakWords(String s) {
         String[] words = s.toLowerCase().split("\\s+");
         
-        Set<String> set = new HashSet<String>(words.length);
+        Set<String> set = new HashSet<>(words.length);
         for (String word : words) {
             if (!s_stopWords.contains(word)) {
                 set.add(word);

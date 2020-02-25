@@ -167,7 +167,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             int                 _cellIndex;
             List<CellChange>    _cellChanges;
             Recon               _sharedNewRecon = null;
-            Map<Long, Recon>    _dupReconMap = new HashMap<Long, Recon>();
+            Map<Long, Recon>    _dupReconMap = new HashMap<>();
             long                _historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {

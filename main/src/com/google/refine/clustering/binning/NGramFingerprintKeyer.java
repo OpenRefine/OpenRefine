@@ -59,7 +59,7 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {
-        TreeSet<String> set = new TreeSet<String>();
+        TreeSet<String> set = new TreeSet<>();
         char[] chars = s.toCharArray();
         for (int i = 0; i + size <= chars.length; i++) {
             set.add(new String(chars,i,size));

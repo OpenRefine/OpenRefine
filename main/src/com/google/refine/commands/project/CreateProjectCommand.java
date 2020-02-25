@@ -125,7 +125,7 @@ public class CreateProjectCommand extends Command {
                 JSONUtilities.safePut(optionObj, "projectName", projectName);
             }
             
-            List<Exception> exceptions = new LinkedList<Exception>();
+            List<Exception> exceptions = new LinkedList<>();
             
             long projectId = ImportingUtilities.createProject(job, format, optionObj, exceptions, true);
 

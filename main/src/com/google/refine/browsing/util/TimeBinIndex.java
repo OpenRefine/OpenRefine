@@ -92,7 +92,7 @@ abstract public class TimeBinIndex {
         _min = Long.MAX_VALUE;
         _max = Long.MIN_VALUE;
         
-        List<Long> allValues = new ArrayList<Long>();
+        List<Long> allValues = new ArrayList<>();
         
         iterate(project, rowEvaluable, allValues);
         

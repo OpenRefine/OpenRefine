@@ -156,11 +156,11 @@ import com.google.refine.grel.controls.With;
 
 public class ControlFunctionRegistry {
 
-    static private Map<String, Function> s_nameToFunction = new HashMap<String, Function>();
-    static private Map<Function, String> s_functionToName = new HashMap<Function, String>();
+    static private Map<String, Function> s_nameToFunction = new HashMap<>();
+    static private Map<Function, String> s_functionToName = new HashMap<>();
 
-    static private Map<String, Control> s_nameToControl = new HashMap<String, Control>();
-    static private Map<Control, String> s_controlToName = new HashMap<Control, String>();
+    static private Map<String, Control> s_nameToControl = new HashMap<>();
+    static private Map<Control, String> s_controlToName = new HashMap<>();
 
     static public Function getFunction(String name) {
         return s_nameToFunction.get(name);

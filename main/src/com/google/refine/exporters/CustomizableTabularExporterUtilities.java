@@ -98,15 +98,14 @@ abstract public class CustomizableTabularExporterUtilities {
             JSONUtilities.getInt(options, "limit", -1);
         
         final List<String> columnNames;
-        final Map<String, CellFormatter> columnNameToFormatter =
-            new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
+        final Map<String, CellFormatter> columnNameToFormatter = new HashMap<>();
         
         List<JsonNode> columnOptionArray = options == null ? null :
             JSONUtilities.getArray(options, "columns");
         if (columnOptionArray == null) {
             List<Column> columns = project.columnModel.columns;
             
-            columnNames = new ArrayList<String>(columns.size());
+            columnNames = new ArrayList<>(columns.size());
             for (Column column : columns) {
                 String name = column.getName();
                 columnNames.add(name);
@@ -115,7 +114,7 @@ abstract public class CustomizableTabularExporterUtilities {
         } else {
             int count = columnOptionArray.size();
             
-            columnNames = new ArrayList<String>(count);
+            columnNames = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 JsonNode columnOptions = columnOptionArray.get(i);
                 if (columnOptions != null) {
@@ -139,7 +138,7 @@ abstract public class CustomizableTabularExporterUtilities {
             public void start(Project project) {
                 serializer.startFile(options);
                 if (outputColumnHeaders) {
-                    List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+                    List<CellData> cells = new ArrayList<>(columnNames.size());
                     for (String name : columnNames) {
                         cells.add(new CellData(name, name, name, null));
                     }
@@ -149,7 +148,7 @@ abstract public class CustomizableTabularExporterUtilities {
 
             @Override
             public boolean visit(Project project, int rowIndex, Row row) {
-                List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+                List<CellData> cells = new ArrayList<>(columnNames.size());
                 int nonNullCount = 0;
                 
                 for (String columnName : columnNames) {
@@ -404,7 +403,7 @@ abstract public class CustomizableTabularExporterUtilities {
                 return;
             }
 
-            identifierSpaceToUrl = new HashMap<String, String>();
+            identifierSpaceToUrl = new HashMap<>();
             
             PreferenceStore ps = ProjectManager.singleton.getPreferenceStore();
             ArrayNode services = (ArrayNode) ps.get("reconciliation.standardServices");

@@ -146,9 +146,9 @@ public class DataExtensionChange implements Change {
                     project.columnModel.allocateNewCellIndex();
                 }
                 
-                _oldRows = new ArrayList<Row>(project.rows);
+                _oldRows = new ArrayList<>(project.rows);
                 
-                _newRows = new ArrayList<Row>(project.rows.size());
+                _newRows = new ArrayList<>(project.rows.size());
                 
                 int cellIndex = project.columnModel.getColumnByName(_baseColumnName).getCellIndex();
                 int keyCellIndex = project.columnModel.columns.get(project.columnModel.getKeyColumnIndex()).getCellIndex();
@@ -159,7 +159,7 @@ public class DataExtensionChange implements Change {
                 
                 index++;
                 
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
+                Map<String, Recon> reconMap = new HashMap<>();
                 
                 for (int r = 0; r < _oldRows.size(); r++) {
                     Row oldRow = _oldRows.get(r);
@@ -368,7 +368,7 @@ public class DataExtensionChange implements Change {
             } else if ("rowIndexCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                rowIndices = new ArrayList<Integer>(count);
+                rowIndices = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -378,7 +378,7 @@ public class DataExtensionChange implements Change {
             } else if ("columnNameCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                columnNames = new ArrayList<String>(count);
+                columnNames = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -388,7 +388,7 @@ public class DataExtensionChange implements Change {
             } else if ("columnTypeCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                columnTypes = new ArrayList<ReconType>(count);
+                columnTypes = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line == null || line.length() == 0) {
@@ -403,7 +403,7 @@ public class DataExtensionChange implements Change {
                 // the change, so we ignore it.
                 int count = Integer.parseInt(value);
                 
-                dataExtensions = new ArrayList<DataExtension>(count);
+                dataExtensions = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     
@@ -427,7 +427,7 @@ public class DataExtensionChange implements Change {
             } else if ("oldRowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                oldRows = new ArrayList<Row>(count);
+                oldRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -437,7 +437,7 @@ public class DataExtensionChange implements Change {
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(value);
                 
-                newRows = new ArrayList<Row>(count);
+                newRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {

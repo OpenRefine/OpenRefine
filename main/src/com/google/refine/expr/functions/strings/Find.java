@@ -40,7 +40,7 @@ public class Find implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        List<String> allMatches = new ArrayList<String>();
+        List<String> allMatches = new ArrayList<>();
         
         if (args.length == 2) {
             Object s = args[0];

@@ -212,9 +212,9 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             throw new Exception("No column named " + _columnName);
         }
         
-        List<String> columnNames = new ArrayList<String>();
-        List<Integer> rowIndices = new ArrayList<Integer>(project.rows.size());
-        List<List<Serializable>> tuples = new ArrayList<List<Serializable>>(project.rows.size());
+        List<String> columnNames = new ArrayList<>();
+        List<Integer> rowIndices = new ArrayList<>(project.rows.size());
+        List<List<Serializable>> tuples = new ArrayList<>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
         RowVisitor rowVisitor;
@@ -222,7 +222,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
             rowVisitor = new ColumnSplitRowVisitor(column.getCellIndex(), columnNames, rowIndices, tuples) {
                 @Override
                 protected java.util.List<Serializable> split(String s) {
-                    List<Serializable> results = new ArrayList<Serializable>(_fieldLengths.length + 1);
+                    List<Serializable> results = new ArrayList<>(_fieldLengths.length + 1);
                     
                     int lastIndex = 0;
                     for (int length : _fieldLengths) {
@@ -347,7 +347,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         }
         
         protected List<Serializable> stringArrayToValueList(String[] cells) {
-            List<Serializable> results = new ArrayList<Serializable>(cells.length);
+            List<Serializable> results = new ArrayList<>(cells.length);
             for (String cell : cells) {
                 results.add(stringToValue(cell));
             }

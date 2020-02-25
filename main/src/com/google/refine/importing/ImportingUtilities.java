@@ -762,8 +762,8 @@ public class ImportingUtilities {
      * @return best (highest frequency) format
      */
     static public String autoSelectFiles(ImportingJob job, ObjectNode retrievalRecord, ArrayNode fileSelectionIndexes) {
-        final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
-        List<String> formats = new ArrayList<String>();
+        final Map<String, Integer> formatToCount = new HashMap<>();
+        List<String> formats = new ArrayList<>();
         
         ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         int count = fileRecords.size();
@@ -817,8 +817,8 @@ public class ImportingUtilities {
     static public String getCommonFormatForSelectedFiles(ImportingJob job, ArrayNode fileSelectionIndexes) {
         ObjectNode retrievalRecord = job.getRetrievalRecord();
         
-        final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
-        List<String> formats = new ArrayList<String>();
+        final Map<String, Integer> formatToCount = new HashMap<>();
+        List<String> formats = new ArrayList<>();
         
         ArrayNode fileRecords = JSONUtilities.getArray(retrievalRecord, "files");
         int count = fileSelectionIndexes.size();
@@ -891,12 +891,12 @@ public class ImportingUtilities {
     }
     
     static void rankFormats(ImportingJob job, final String bestFormat, ArrayNode rankedFormats) {
-        final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
+        final Map<String, String[]> formatToSegments = new HashMap<>();
         
         boolean download = bestFormat == null ? true :
             ImportingManager.formatToRecord.get(bestFormat).download;
         
-        List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
+        List<String> formats = new ArrayList<>(ImportingManager.formatToRecord.keySet().size());
         for (String format : ImportingManager.formatToRecord.keySet()) {
             Format record = ImportingManager.formatToRecord.get(format);
             if (record.uiClass != null && record.parser != null && record.download == download) {

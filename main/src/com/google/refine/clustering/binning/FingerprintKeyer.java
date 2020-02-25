@@ -54,7 +54,7 @@ public class FingerprintKeyer extends Keyer {
         s = punctctrl.matcher(s).replaceAll(""); // then remove all punctuation and control chars
         s = asciify(s); // find ASCII equivalent to characters
         String[] frags = StringUtils.split(s); // split by whitespace
-        TreeSet<String> set = new TreeSet<String>();
+        TreeSet<String> set = new TreeSet<>();
         for (String ss : frags) {
             set.add(ss); // order fragments and dedupe
         }

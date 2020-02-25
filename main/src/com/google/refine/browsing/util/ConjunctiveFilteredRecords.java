@@ -46,7 +46,7 @@ import com.google.refine.model.Record;
  * Encapsulate logic for visiting records that match all given record filters.
  */
 public class ConjunctiveFilteredRecords implements FilteredRecords {
-    final protected List<RecordFilter> _recordFilters = new LinkedList<RecordFilter>();
+    final protected List<RecordFilter> _recordFilters = new LinkedList<>();
     
     public void add(RecordFilter recordFilter) {
         _recordFilters.add(recordFilter);

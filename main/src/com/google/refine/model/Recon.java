@@ -99,7 +99,7 @@ public class Recon implements HasFields {
     static final public int Feature_nameWordDistance = 3;
     static final public int Feature_max = 4;
 
-    static final protected Map<String, Integer> s_featureMap = new HashMap<String, Integer>();
+    static final protected Map<String, Integer> s_featureMap = new HashMap<>();
     static {
         s_featureMap.put("typeMatch", Feature_typeMatch);
         s_featureMap.put("nameMatch", Feature_nameMatch);
@@ -184,7 +184,7 @@ public class Recon implements HasFields {
         System.arraycopy(features, 0, r.features, 0, features.length);
         
         if (candidates != null) {
-            r.candidates = new ArrayList<ReconCandidate>(candidates);
+            r.candidates = new ArrayList<>(candidates);
         }
         
         r.service = service;
@@ -200,7 +200,7 @@ public class Recon implements HasFields {
     
     public void addCandidate(ReconCandidate candidate) {
         if (candidates == null) {
-            candidates = new ArrayList<ReconCandidate>(3);
+            candidates = new ArrayList<>(3);
         }
         candidates.add(candidate);
     }

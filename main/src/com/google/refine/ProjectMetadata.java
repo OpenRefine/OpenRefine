@@ -195,7 +195,7 @@ public class ProjectMetadata {
     @JsonIgnore
     public void setTags(String[] tags) {
         if (tags != null) {
-            List<String> tmpTags = new ArrayList<String>(tags.length);
+            List<String> tmpTags = new ArrayList<>(tags.length);
             for (String tag : tags) {
                 if (tag != null) {
                     String trimmedTag = tag.trim();

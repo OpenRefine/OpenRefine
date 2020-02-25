@@ -53,9 +53,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnModel  {
     @JsonProperty("columns")
-    final public List<Column>      columns = new LinkedList<Column>();
+    final public List<Column>      columns = new LinkedList<>();
     @JsonProperty("columnGroups")
-    final public List<ColumnGroup> columnGroups = new LinkedList<ColumnGroup>();
+    final public List<ColumnGroup> columnGroups = new LinkedList<>();
     
     private int _maxCellIndex = -1;
     private int _keyColumnIndex;
@@ -245,7 +245,7 @@ public class ColumnModel  {
         
         // Turn the flat list of column groups into a tree
         
-        _rootColumnGroups = new LinkedList<ColumnGroup>(columnGroups);
+        _rootColumnGroups = new LinkedList<>(columnGroups);
         Collections.sort(_rootColumnGroups, new Comparator<ColumnGroup>() {
             @Override
             public int compare(ColumnGroup o1, ColumnGroup o2) {
@@ -276,9 +276,9 @@ public class ColumnModel  {
     }
     
     protected void generateMaps() {
-        _nameToColumn = new HashMap<String, Column>();
-        _cellIndexToColumn = new HashMap<Integer, Column>();
-        _columnNames = new ArrayList<String>();
+        _nameToColumn = new HashMap<>();
+        _cellIndexToColumn = new HashMap<>();
+        _columnNames = new ArrayList<>();
         int maxCellIndex = -1;
         for (Column column : columns) {
             _nameToColumn.put(column.getName(), column);

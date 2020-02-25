@@ -157,7 +157,7 @@ public class ReconciledDataExtensionJob {
     
     final public DataExtensionConfig extension;
     final public String              endpoint;
-    final public List<ColumnInfo>    columns = new ArrayList<ColumnInfo>();
+    final public List<ColumnInfo>    columns = new ArrayList<>();
     
     public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint) {
         this.extension = obj;
@@ -182,7 +182,7 @@ public class ReconciledDataExtensionJob {
             	columns.addAll(newColumns);
             }
           
-            Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
+            Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<>();
             if (o.has("rows") && o.get("rows") instanceof ObjectNode){
                 ObjectNode records = (ObjectNode) o.get("rows");
                 
@@ -234,7 +234,7 @@ public class ReconciledDataExtensionJob {
         ObjectNode record,
         Map<String, ReconCandidate> reconCandidateMap
     ) {
-        List<Object[]> rows = new ArrayList<Object[]>();
+        List<Object[]> rows = new ArrayList<>();
 
         // for each property
         int colindex = 0;

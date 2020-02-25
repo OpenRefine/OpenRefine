@@ -35,7 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;

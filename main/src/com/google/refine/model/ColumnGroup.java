@@ -108,7 +108,7 @@ public class ColumnGroup  {
     }
     
     protected void internalInitialize() {
-        subgroups = new LinkedList<ColumnGroup>();
+        subgroups = new LinkedList<>();
     }
     
     @Override

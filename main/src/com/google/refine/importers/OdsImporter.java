@@ -89,11 +89,11 @@ public class OdsImporter extends TabularImportingParserBase {
                 odfDoc = OdfDocument.loadDocument(is);
                 List<OdfTable> tables = odfDoc.getTableList();
                 int sheetCount = tables.size();
-    
+
                 for (int i = 0; i < sheetCount; i++) {
                     OdfTable sheet = tables.get(i);
                     int rows = sheet.getRowCount();
-    
+
                     ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getTableName());
                     JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
@@ -156,7 +156,7 @@ public class OdsImporter extends TabularImportingParserBase {
 
             TableDataReader dataReader = new TableDataReader() {
                 int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
+                Map<String, Recon> reconMap = new HashMap<>();
 
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
@@ -164,7 +164,7 @@ public class OdsImporter extends TabularImportingParserBase {
                         return null;
                     }
 
-                    List<Object> cells = new ArrayList<Object>();
+                    List<Object> cells = new ArrayList<>();
                     OdfTableRow row = table.getRowByIndex(nextRow++);
                     if (row != null) {
                         int lastCell = row.getCellCount();

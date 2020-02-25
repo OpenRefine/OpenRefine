@@ -117,8 +117,8 @@ public class History  {
 
     public History(Project project) {
         _projectID = project.id;
-        _pastEntries = new ArrayList<HistoryEntry>();
-        _futureEntries = new ArrayList<HistoryEntry>();
+        _pastEntries = new ArrayList<>();
+        _futureEntries = new ArrayList<>();
     }
 
     /**
@@ -139,7 +139,7 @@ public class History  {
 
                 // Any new change will clear all future entries.
                 List<HistoryEntry> futureEntries = _futureEntries;
-                _futureEntries = new ArrayList<HistoryEntry>();
+                _futureEntries = new ArrayList<>();
 
                 for (HistoryEntry entry2 : futureEntries) {
                     try {
@@ -159,7 +159,7 @@ public class History  {
 
     synchronized public List<HistoryEntry> getLastPastEntries(int count) {
         if (count <= 0) {
-            return new LinkedList<HistoryEntry>(_pastEntries);
+            return new LinkedList<>(_pastEntries);
         } else {
             return _pastEntries.subList(Math.max(_pastEntries.size() - count, 0), _pastEntries.size());
         }

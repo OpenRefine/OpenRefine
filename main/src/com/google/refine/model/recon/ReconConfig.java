@@ -62,11 +62,9 @@ import edu.mit.simile.butterfly.ButterflyModule;
 abstract public class ReconConfig  {
     final static protected Logger LOGGER = LoggerFactory.getLogger("recon-config");
 
-    static final public Map<String, List<Class<? extends ReconConfig>>> s_opNameToClass =
-        new HashMap<String, List<Class<? extends ReconConfig>>>();
+    static final public Map<String, List<Class<? extends ReconConfig>>> s_opNameToClass = new HashMap<>();
     
-    static final public Map<Class<? extends ReconConfig>, String> s_opClassToName =
-        new HashMap<Class<? extends ReconConfig>, String>();
+    static final public Map<Class<? extends ReconConfig>, String> s_opClassToName = new HashMap<>();
     
     static public void registerReconConfig(ButterflyModule module, String name, Class<? extends ReconConfig> klass) {
         String key = module.getName() + "/" + name;
@@ -75,7 +73,7 @@ abstract public class ReconConfig  {
         
         List<Class<? extends ReconConfig>> classes = s_opNameToClass.get(key);
         if (classes == null) {
-            classes = new LinkedList<Class<? extends ReconConfig>>();
+            classes = new LinkedList<>();
             s_opNameToClass.put(key, classes);
         }
         classes.add(klass);

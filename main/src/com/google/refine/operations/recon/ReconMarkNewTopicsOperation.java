@@ -105,7 +105,7 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
         return new RowVisitor() {
             int                 cellIndex;
             List<CellChange>    cellChanges;
-            Map<String, Recon>  sharedRecons = new HashMap<String, Recon>();
+            Map<String, Recon>  sharedRecons = new HashMap<>();
             long                historyEntryID;
             
             public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {

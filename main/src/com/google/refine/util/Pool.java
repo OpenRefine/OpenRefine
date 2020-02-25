@@ -56,10 +56,10 @@ import com.google.refine.model.ReconCandidate;
  */
 public class Pool  {
     @JsonProperty("recons")
-    final protected Map<String, Recon> recons = new HashMap<String, Recon>();
+    final protected Map<String, Recon> recons = new HashMap<>();
     
     // This is only for backward compatibility while loading old project files
-    final protected Map<String, ReconCandidate> candidates = new HashMap<String, ReconCandidate>();
+    final protected Map<String, ReconCandidate> candidates = new HashMap<>();
     
     private void pool(ReconCandidate candidate) {
         candidates.put(candidate.id, candidate);

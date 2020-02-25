@@ -65,13 +65,13 @@ public class MassRowColumnChange implements Change {
     public void apply(Project project) {
         synchronized (project) {
             if (_oldColumnGroups == null) {
-                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
+                _oldColumnGroups = new ArrayList<>(project.columnModel.columnGroups);
             }
             if (_oldColumns == null) {
-                _oldColumns = new ArrayList<Column>(project.columnModel.columns);
+                _oldColumns = new ArrayList<>(project.columnModel.columns);
             }
             if (_oldRows == null) {
-                _oldRows = new ArrayList<Row>(project.rows);
+                _oldRows = new ArrayList<>(project.rows);
             }
             
             project.columnModel.columns.clear();
@@ -147,7 +147,7 @@ public class MassRowColumnChange implements Change {
             if ("oldRowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                oldRows = new ArrayList<Row>(count);
+                oldRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -157,7 +157,7 @@ public class MassRowColumnChange implements Change {
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                newRows = new ArrayList<Row>(count);
+                newRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -167,7 +167,7 @@ public class MassRowColumnChange implements Change {
             } else if ("oldColumnCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                oldColumns = new ArrayList<Column>(count);
+                oldColumns = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -177,7 +177,7 @@ public class MassRowColumnChange implements Change {
             } else if ("newColumnCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                newColumns = new ArrayList<Column>(count);
+                newColumns = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -195,7 +195,7 @@ public class MassRowColumnChange implements Change {
         change._oldColumns = oldColumns;
         change._oldRows = oldRows;
         change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+                oldColumnGroups : new LinkedList<>();
         
         return change;
     }

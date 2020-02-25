@@ -44,11 +44,9 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 public abstract class OperationRegistry {
 
-    static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass =
-        new HashMap<String, List<Class<? extends AbstractOperation>>>();
+    static final public Map<String, List<Class<? extends AbstractOperation>>> s_opNameToClass = new HashMap<>();
     
-    static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName =
-        new HashMap<Class<? extends AbstractOperation>, String>();
+    static final public Map<Class<? extends AbstractOperation>, String> s_opClassToName = new HashMap<>();
     
     static public void registerOperation(ButterflyModule module, String name, Class<? extends AbstractOperation> klass) {
         String key = module.getName() + "/" + name;
@@ -57,7 +55,7 @@ public abstract class OperationRegistry {
         
         List<Class<? extends AbstractOperation>> classes = s_opNameToClass.get(key);
         if (classes == null) {
-            classes = new LinkedList<Class<? extends AbstractOperation>>();
+            classes = new LinkedList<>();
             s_opNameToClass.put(key, classes);
         }
         classes.add(klass);

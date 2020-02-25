@@ -44,11 +44,11 @@ public class Coalesce implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length> 1) {
-            for (int i = 0; i < args.length; i++){
-                if (args[i] == null) {
+            for (Object arg : args) {
+                if (arg == null) {
                     continue;
                 } else {
-                    return args[i];
+                    return arg;
                 }
             }
             return null;

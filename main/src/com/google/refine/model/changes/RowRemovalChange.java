@@ -59,15 +59,15 @@ public class RowRemovalChange implements Change {
         synchronized (project) {
             int count = _rowIndices.size();
             
-            _rows = new ArrayList<Row>(count);
+            _rows = new ArrayList<>(count);
             
             int offset = 0;
             for (int i = 0; i < count; i++) {
                 int index = _rowIndices.get(i);
-                
+
                 Row row = project.rows.remove(index + offset);
                 _rows.add(row);
-                
+
                 offset--;
             }
             
@@ -121,7 +121,7 @@ public class RowRemovalChange implements Change {
             if ("rowIndexCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                rowIndices = new ArrayList<Integer>(count);
+                rowIndices = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -131,7 +131,7 @@ public class RowRemovalChange implements Change {
             } else if ("rowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                rows = new ArrayList<Row>(count);
+                rows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {

@@ -65,8 +65,8 @@ public class ColumnReorderChange extends ColumnChange {
     public void apply(Project project) {
         synchronized (project) {
             if (_newColumns == null) {
-                _newColumns = new ArrayList<Column>();
-                _oldColumns = new ArrayList<Column>(project.columnModel.columns);
+                _newColumns = new ArrayList<>();
+                _oldColumns = new ArrayList<>(project.columnModel.columns);
                 
                 for (String n : _columnNames) {
                     Column column = project.columnModel.getColumnByName(n);
@@ -75,11 +75,11 @@ public class ColumnReorderChange extends ColumnChange {
                     }
                 }
                 
-                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
+                _oldColumnGroups = new ArrayList<>(project.columnModel.columnGroups);
             }
             
             if (_removedColumns == null) {
-            	_removedColumns = new ArrayList<Column>();
+            	_removedColumns = new ArrayList<>();
 	            for (String n : project.columnModel.getColumnNames()) {
 	            	Column oldColumn = project.columnModel.getColumnByName(n);
 	            	if(!_newColumns.contains(oldColumn)) {
@@ -132,10 +132,9 @@ public class ColumnReorderChange extends ColumnChange {
             project.columnModel.columnGroups.clear();
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
 
-
-            for (int i = 0; i < _oldCells.length; i++) {
-                Row row = project.rows.get(_oldCells[i].row);
-                row.setCell(_oldCells[i].cellIndex,_oldCells[i].cell);
+            for (CellAtRowCellIndex oldCell : _oldCells) {
+                Row row = project.rows.get(oldCell.row);
+                row.setCell(oldCell.cellIndex, oldCell.cell);
             }
 
             project.update();
@@ -175,10 +174,10 @@ public class ColumnReorderChange extends ColumnChange {
     }
     
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
-        List<String> columnNames = new ArrayList<String>();
-        List<Column> oldColumns = new ArrayList<Column>();
-        List<Column> newColumns = new ArrayList<Column>();
-        List<Column> removedColumns = new ArrayList<Column>();
+        List<String> columnNames = new ArrayList<>();
+        List<Column> oldColumns = new ArrayList<>();
+        List<Column> newColumns = new ArrayList<>();
+        List<Column> removedColumns = new ArrayList<>();
         CellAtRowCellIndex[] oldCells = new CellAtRowCellIndex[0];
         List<ColumnGroup> oldColumnGroups = null;
         
@@ -242,7 +241,7 @@ public class ColumnReorderChange extends ColumnChange {
         change._removedColumns = removedColumns;
         change._oldCells = oldCells;
         change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+                oldColumnGroups : new LinkedList<>();
         
         return change;
     }

@@ -63,7 +63,7 @@ public class ColumnRemovalChange extends ColumnChange {
     public void apply(Project project) {
         synchronized (project) {
             int columnGroupCount = project.columnModel.columnGroups.size();
-            _oldColumnGroups = new ArrayList<ColumnGroup>(columnGroupCount);
+            _oldColumnGroups = new ArrayList<>(columnGroupCount);
             for (int i = columnGroupCount - 1; i >= 0; i--) {
                 ColumnGroup columnGroup = project.columnModel.columnGroups.get(i);
                 
@@ -184,7 +184,7 @@ public class ColumnRemovalChange extends ColumnChange {
         change._oldColumn = oldColumn;
         change._oldCells = oldCells;
         change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+                oldColumnGroups : new LinkedList<>();
         
         return change;
     }

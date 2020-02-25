@@ -101,7 +101,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
         Column noteColumn = _noteColumnName == null ? null :
             project.columnModel.getColumnByName(_noteColumnName);
         
-        List<Column> unchangedColumns = new ArrayList<Column>();
+        List<Column> unchangedColumns = new ArrayList<>();
         List<Column> oldColumns = project.columnModel.columns;
         for (int i = 0; i < oldColumns.size(); i++) {
             if (i != keyColumnIndex &&
@@ -111,16 +111,16 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             }
         }
         
-        List<Column> newColumns = new ArrayList<Column>();
-        List<Column> newNoteColumns = new ArrayList<Column>();
-        Map<String, Column> keyValueToColumn = new HashMap<String, Column>();
-        Map<String, Column> keyValueToNoteColumn = new HashMap<String, Column>();
-        Map<String, Row> groupByCellValuesToRow = new HashMap<String, Row>();
+        List<Column> newColumns = new ArrayList<>();
+        List<Column> newNoteColumns = new ArrayList<>();
+        Map<String, Column> keyValueToColumn = new HashMap<>();
+        Map<String, Column> keyValueToNoteColumn = new HashMap<>();
+        Map<String, Row> groupByCellValuesToRow = new HashMap<>();
         
-        List<Row> newRows = new ArrayList<Row>();
+        List<Row> newRows = new ArrayList<>();
         List<Row> oldRows = project.rows;
         Row reusableRow = null;
-        List<Row> currentRows = new ArrayList<Row>();
+        List<Row> currentRows = new ArrayList<>();
         String recordKey = null; // key which indicates the start of a record
         if (unchangedColumns.isEmpty()) {
             reusableRow = new Row(1);
@@ -131,7 +131,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
 
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = oldRows.get(r);
-            
+
             Object key = oldRow.getCellValue(keyColumn.getCellIndex());
             if (!ExpressionUtils.isNonBlankData(key)) {
                 if (unchangedColumns.isEmpty()) {
@@ -145,9 +145,9 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     // Copy rows with no key
                     newRows.add(buildNewRow(unchangedColumns, oldRow, unchangedColumns.size()));
                 }
-                continue; 
+                continue;
             }
-            
+
             String keyString = key.toString();
             // Start a new row on our beginning of record key
             // TODO: Add support for processing in record mode instead of just by rows
@@ -172,7 +172,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     recordKey = keyString;
                 }
             }
-            
+
             /*
              * NOTE: If we have additional columns, we currently merge all rows that
              * have identical values in those columns and then add our new columns.
@@ -199,7 +199,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                     newRows.add(reusableRow);
                 }
             }
-            
+
             Cell cell = oldRow.getCell(valueColumn.getCellIndex());
             if (unchangedColumns.size() == 0) {
                 int index = newColumn.getCellIndex();
@@ -209,7 +209,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                 // TODO: support repeating keys in this mode too
                 reusableRow.setCell(newColumn.getCellIndex(), cell);
             }
-            
+
             if (noteColumn != null) {
                 Object noteValue = oldRow.getCellValue(noteColumn.getCellIndex());
                 if (ExpressionUtils.isNonBlankData(noteValue)) {
@@ -223,7 +223,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
                         keyValueToNoteColumn.put(keyString, newNoteColumn);
                         newNoteColumns.add(newNoteColumn);
                     }
-                    
+
                     int newNoteCellIndex = newNoteColumn.getCellIndex();
                     Object existingNewNoteValue = reusableRow.getCellValue(newNoteCellIndex);
                     if (ExpressionUtils.isNonBlankData(existingNewNoteValue)) {
@@ -237,7 +237,7 @@ public class KeyValueColumnizeOperation extends AbstractOperation {
             }
         }
         
-        List<Column> allColumns = new ArrayList<Column>(unchangedColumns);
+        List<Column> allColumns = new ArrayList<>(unchangedColumns);
         allColumns.addAll(newColumns);
         allColumns.addAll(newNoteColumns);
         

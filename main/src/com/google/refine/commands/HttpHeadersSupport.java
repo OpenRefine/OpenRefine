@@ -43,7 +43,7 @@ import com.google.refine.RefineServlet;
 
 abstract public class HttpHeadersSupport {
 
-    static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<String, HttpHeaderInfo>();
+    static final protected Map<String, HttpHeaderInfo> s_headers = new HashMap<>();
 
     static public class HttpHeaderInfo {
         @JsonIgnore

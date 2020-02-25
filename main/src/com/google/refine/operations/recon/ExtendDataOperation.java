@@ -201,7 +201,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             int limit,
             Map<String, ReconCandidate> reconCandidateMap
         ) {
-            Set<String> ids = new HashSet<String>();
+            Set<String> ids = new HashSet<>();
             
             int end;
             for (end = from; end < limit && ids.size() < 10; end++) {
@@ -216,7 +216,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             try {
                 map = _job.extend(ids, reconCandidateMap);
             } catch (Exception e) {
-                map = new HashMap<String, DataExtension>();
+                map = new HashMap<>();
             }
             
             for (int i = from; i < end; i++) {
@@ -237,8 +237,8 @@ public class ExtendDataOperation extends EngineDependentOperation {
         
         @Override
         public void run() {
-            List<Integer> rowIndices = new ArrayList<Integer>();
-            List<DataExtension> dataExtensions = new ArrayList<DataExtension>();
+            List<Integer> rowIndices = new ArrayList<>();
+            List<DataExtension> dataExtensions = new ArrayList<>();
             
             try {
                 populateRowsWithMatches(rowIndices);
@@ -248,7 +248,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }
             
             int start = 0;
-            Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
+            Map<String, ReconCandidate> reconCandidateMap = new HashMap<>();
             
             while (start < rowIndices.size()) {
                 int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
@@ -265,12 +265,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }
             
             if (!_canceled) {
-                List<String> columnNames = new ArrayList<String>();
+                List<String> columnNames = new ArrayList<>();
                 for (ColumnInfo info : _job.columns) {
                     columnNames.add(info.name);
                 }
                 
-                List<ReconType> columnTypes = new ArrayList<ReconType>();
+                List<ReconType> columnTypes = new ArrayList<>();
                 for (ColumnInfo info : _job.columns) {
                     columnTypes.add(info.expectedType);
                 }

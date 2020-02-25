@@ -105,7 +105,7 @@ public class MassChange implements Change {
             } else if ("changeCount".equals(field)) {
                 int changeCount = Integer.parseInt(line.substring(equal + 1));
                 
-                changes = new ArrayList<Change>(changeCount);
+                changes = new ArrayList<>(changeCount);
                 for (int i = 0; i < changeCount; i++) {
                     changes.add(History.readOneChange(reader, pool));
                 }

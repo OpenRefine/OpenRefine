@@ -77,7 +77,7 @@ public class ForEach implements Control {
             if (o.getClass().isArray()) {
                 Object[] values = (Object[]) o;
                 
-                results = new ArrayList<Object>(values.length);
+                results = new ArrayList<>(values.length);
                 for (Object v : values) {
                     if (v != null) {
                         bindings.put(name, v);
@@ -93,7 +93,7 @@ public class ForEach implements Control {
                 ArrayNode a = (ArrayNode) o;
                 int l = a.size();
                 
-                results = new ArrayList<Object>(l);
+                results = new ArrayList<>(l);
                 for (int i = 0; i < l; i++) {
                     Object v = JsonValueConverter.convert(a.get(i));
                     
@@ -110,7 +110,7 @@ public class ForEach implements Control {
             } else {
                 Collection<Object> collection = ExpressionUtils.toObjectCollection(o);
                 
-                results = new ArrayList<Object>(collection.size());
+                results = new ArrayList<>(collection.size());
                 
                 for (Object v : collection) {
                     if (v != null) {

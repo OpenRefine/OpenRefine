@@ -104,10 +104,10 @@ public abstract class ProjectManager {
     static public ProjectManager singleton;
 
     protected ProjectManager(){
-        _projectsMetadata = new HashMap<Long, ProjectMetadata>();
+        _projectsMetadata = new HashMap<>();
         _preferenceStore = new PreferenceStore();
-        _projects = new HashMap<Long, Project>();
-        _projectsTags = new HashMap<String, Integer>();
+        _projects = new HashMap<>();
+        _projectsTags = new HashMap<>();
 
         preparePreferenceStore(_preferenceStore);
     }
@@ -135,7 +135,7 @@ public abstract class ProjectManager {
             _projects.put(project.id, project);
             _projectsMetadata.put(project.id, projectMetadata);
             if (_projectsTags == null)
-                _projectsTags = new HashMap<String, Integer>();
+                _projectsTags = new HashMap<>();
             String[] tags = projectMetadata.getTags();
             if (tags != null) {
                 for (String tag : tags) {
@@ -259,7 +259,7 @@ public abstract class ProjectManager {
      * @param allModified
      */
     protected void saveProjects(boolean allModified) {
-        List<SaveRecord> records = new ArrayList<SaveRecord>();
+        List<SaveRecord> records = new ArrayList<>();
         LocalDateTime startTimeOfSave = LocalDateTime.now();
         
         synchronized (this) {

@@ -56,7 +56,7 @@ public class RowReorderChange implements Change {
     public void apply(Project project) {
         synchronized (project) {
             List<Row> oldRows = project.rows;
-            List<Row> newRows = new ArrayList<Row>(oldRows.size());
+            List<Row> newRows = new ArrayList<>(oldRows.size());
 
             for (Integer oldIndex : _rowIndices) {
                 newRows.add(oldRows.get(oldIndex));
@@ -74,7 +74,7 @@ public class RowReorderChange implements Change {
             int count = project.rows.size();
 
             List<Row> newRows = project.rows;
-            List<Row> oldRows = new ArrayList<Row>(count);
+            List<Row> oldRows = new ArrayList<>(count);
 
             for (int r = 0; r < count; r++) {
                 oldRows.add(null);
@@ -113,7 +113,7 @@ public class RowReorderChange implements Change {
             if ("rowIndexCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                rowIndices = new ArrayList<Integer>(count);
+                rowIndices = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {

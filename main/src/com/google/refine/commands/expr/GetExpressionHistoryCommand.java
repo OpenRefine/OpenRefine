@@ -75,7 +75,7 @@ public class GetExpressionHistoryCommand extends Command {
     }
 
     static protected List<String> toExpressionList(Object o) {
-        return o == null ? new ArrayList<String>() : ((TopList) o).getList();
+        return o == null ? new ArrayList<>() : ((TopList) o).getList();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class GetExpressionHistoryCommand extends Command {
             if (topList == null) {
             	topList = new TopList(ProjectManager.EXPRESSION_HISTORY_MAX);
             }
-			Set<String> starredExpressions = new HashSet<String>(topList.getList());
+			Set<String> starredExpressions = new HashSet<>(topList.getList());
             ExpressionsList expressionsList = new ExpressionsList(expressions.stream()
                     .map(s -> new ExpressionState(s, starredExpressions.contains(s)))
                     .collect(Collectors.toList()));

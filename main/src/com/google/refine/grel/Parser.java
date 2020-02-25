@@ -294,7 +294,7 @@ public class Parser {
      *
      */
     protected List<Evaluable> parseExpressionList(String closingDelimiter) throws ParsingException {
-        List<Evaluable> l = new LinkedList<Evaluable>();
+        List<Evaluable> l = new LinkedList<>();
 
         if (_token != null &&
             (_token.type != TokenType.Delimiter || !_token.text.equals(closingDelimiter))) {

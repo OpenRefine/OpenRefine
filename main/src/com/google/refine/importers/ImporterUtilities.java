@@ -158,7 +158,7 @@ public class ImporterUtilities {
     }
 
     static public void setupColumns(Project project, List<String> columnNames) {
-        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
+        Map<String, Integer> nameToIndex = new HashMap<>();
         for (int c = 0; c < columnNames.size(); c++) {
             String cell = columnNames.get(c).trim();
             if (cell.isEmpty()) {

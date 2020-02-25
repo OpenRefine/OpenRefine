@@ -42,8 +42,8 @@ import oauth.signpost.OAuthConsumer;
 
 public class OAuthUtilities {
     
-    static final private Map<String,Provider> providers = new HashMap<String,Provider>();
-    static final private Map<String,String[]> infos = new HashMap<String,String[]>();
+    static final private Map<String,Provider> providers = new HashMap<>();
+    static final private Map<String,String[]> infos = new HashMap<>();
     
     static final public void registerOAuthProvider(Provider provider, String[] oauthInfo) {
         providers.put(provider.getHost(), provider);

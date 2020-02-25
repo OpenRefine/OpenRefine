@@ -115,9 +115,9 @@ public class PreviewExtendDataCommand extends Command {
 	    }
 		
             
-            List<String> topicNames = new ArrayList<String>();
-            List<String> topicIds = new ArrayList<String>();
-            Set<String> ids = new HashSet<String>();
+            List<String> topicNames = new ArrayList<>();
+            List<String> topicIds = new ArrayList<>();
+            Set<String> ids = new HashSet<>();
             for (int i = 0; i < length; i++) {
                 int rowIndex = rowIndices.get(i);
                 if (rowIndex >= 0 && rowIndex < project.rows.size()) {
@@ -135,7 +135,7 @@ public class PreviewExtendDataCommand extends Command {
                 }
             }
             
-            Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
+            Map<String, ReconCandidate> reconCandidateMap = new HashMap<>();
             ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint);
             Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
             List<List<Object>> rows = new ArrayList<>();

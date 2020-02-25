@@ -94,7 +94,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         String localName = parser.getFieldName();
         String fullName = composeName(parser.getPrefix(), localName);
         if (tag.equals(parser.getFieldName()) || tag.equals(fullName)) {
-            List<String> path = new LinkedList<String>();
+            List<String> path = new LinkedList<>();
             path.add(localName);
 
             return path;
@@ -132,7 +132,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (logger.isTraceEnabled()) {
             logger.trace("detectRecordElement(inputStream)");
         }
-        List<RecordElementCandidate> candidates = new ArrayList<RecordElementCandidate>();
+        List<RecordElementCandidate> candidates = new ArrayList<>();
 
         try {
             while (parser.hasNext()) {
@@ -166,9 +166,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (logger.isTraceEnabled()) {
             logger.trace("detectRecordElement(TreeReader, String[])");
         }
-        List<RecordElementCandidate> descendantCandidates = new ArrayList<RecordElementCandidate>();
+        List<RecordElementCandidate> descendantCandidates = new ArrayList<>();
 
-        Map<String, Integer> immediateChildCandidateMap = new HashMap<String, Integer>();
+        Map<String, Integer> immediateChildCandidateMap = new HashMap<>();
 
         try {
             while (parser.hasNext()) {
@@ -199,7 +199,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         }
 
         if (immediateChildCandidateMap.size() > 0) {
-            List<RecordElementCandidate> immediateChildCandidates = new ArrayList<RecordElementCandidate>(immediateChildCandidateMap.size());
+            List<RecordElementCandidate> immediateChildCandidates = new ArrayList<>(immediateChildCandidateMap.size());
             for (Entry<String, Integer> entry : immediateChildCandidateMap.entrySet()) {
                 int count = entry.getValue();
                 if (count > 1) {

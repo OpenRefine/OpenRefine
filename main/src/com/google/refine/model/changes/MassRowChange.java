@@ -57,7 +57,7 @@ public class MassRowChange implements Change {
     @Override
     public void apply(Project project) {
         synchronized (project) {
-            _oldRows = new ArrayList<Row>(project.rows);
+            _oldRows = new ArrayList<>(project.rows);
             project.rows.clear();
             project.rows.addAll(_newRows);
             
@@ -105,7 +105,7 @@ public class MassRowChange implements Change {
             if ("oldRowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                oldRows = new ArrayList<Row>(count);
+                oldRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {
@@ -115,7 +115,7 @@ public class MassRowChange implements Change {
             } else if ("newRowCount".equals(field)) {
                 int count = Integer.parseInt(line.substring(equal + 1));
                 
-                newRows = new ArrayList<Row>(count);
+                newRows = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     line = reader.readLine();
                     if (line != null) {

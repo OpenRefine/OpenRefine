@@ -39,7 +39,7 @@ import java.util.Map;
 import com.google.refine.exporters.sql.SqlExporter;
 
 abstract public class ExporterRegistry {
-    static final private Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();
+    static final private Map<String, Exporter> s_formatToExporter = new HashMap<>();
 
     static {
         s_formatToExporter.put("csv", new CsvExporter());

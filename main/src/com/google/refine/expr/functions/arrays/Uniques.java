@@ -63,12 +63,12 @@ public class Uniques implements Function {
                     if (v.getClass().isArray()) {
                         Object[] a = (Object[]) v;
                         
-                        set = new HashSet<Object>(a.length);
+                        set = new HashSet<>(a.length);
                         for (Object element : a) {
                             set.add(element);
                         }
                     } else {
-                        set = new HashSet<Object>(ExpressionUtils.toObjectList(v));
+                        set = new HashSet<>(ExpressionUtils.toObjectList(v));
                     }
                     return set.toArray();
                 }

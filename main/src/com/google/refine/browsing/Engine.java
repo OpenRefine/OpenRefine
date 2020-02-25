@@ -67,7 +67,7 @@ public class Engine  {
     @JsonIgnore
     protected Project _project;
     @JsonProperty("facets")
-    protected List<Facet> _facets = new LinkedList<Facet>();
+    protected List<Facet> _facets = new LinkedList<>();
     @JsonIgnore
     protected EngineConfig _config = new EngineConfig(Collections.emptyList(), Mode.RowBased);
 

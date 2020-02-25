@@ -75,7 +75,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
         
         final List<Object> columnNames;
         if (options.has("columnNames")) {
-            columnNames = new ArrayList<Object>();
+            columnNames = new ArrayList<>();
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
             for (String s : strings) {
                 columnNames.add(s);
@@ -115,7 +115,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
                             if (line == null) {
                                 return null;
                             } else {
-                                cells = new ArrayList<Object>(linesPerRow);
+                                cells = new ArrayList<>(linesPerRow);
                                 cells.add(line);
                             }
                         } else if (line != null) {

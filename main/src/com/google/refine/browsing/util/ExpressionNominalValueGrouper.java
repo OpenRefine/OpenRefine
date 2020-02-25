@@ -76,7 +76,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
     /*
      * Computed results
      */
-    final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<Object, IndexedNominalFacetChoice>();
+    final public Map<Object, IndexedNominalFacetChoice> choices = new HashMap<>();
     public int blankCount = 0;
     public int errorCount = 0;
 
@@ -212,7 +212,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] choiceValues = (Object[]) value;
-                List<Integer> counts = new ArrayList<Integer>(choiceValues.length);
+                List<Integer> counts = new ArrayList<>(choiceValues.length);
 
                 for (Object choiceValue : choiceValues) {
                     counts.add(getChoiceValueCount(choiceValue));
@@ -220,11 +220,10 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
                 return counts;
             } else if (value instanceof Collection<?>) {
                 List<Object> choiceValues = ExpressionUtils.toObjectList(value);
-                List<Integer> counts = new ArrayList<Integer>(choiceValues.size());
+                List<Integer> counts = new ArrayList<>(choiceValues.size());
 
-                int count = choiceValues.size();
-                for (int i = 0; i < count; i++) {
-                    counts.add(getChoiceValueCount(choiceValues.get(i)));
+                for (Object choiceValue : choiceValues) {
+                    counts.add(getChoiceValueCount(choiceValue));
                 }
                 return counts;
             }

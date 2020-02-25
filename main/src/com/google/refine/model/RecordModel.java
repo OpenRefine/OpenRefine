@@ -138,7 +138,7 @@ public class RecordModel  {
                 lastNonBlankRowsByGroup[i] = -1;
             }
 
-            _rowDependencies = new ArrayList<RowDependency>(rowCount);
+            _rowDependencies = new ArrayList<>(rowCount);
 
             int recordIndex = 0;
             for (int r = 0; r < rowCount; r++) {
@@ -171,7 +171,7 @@ public class RecordModel  {
 
                 if (rowDependency.cellDependencies != null && rowDependency.cellDependencies.length > 0) {
                     rowDependency.recordIndex = -1;
-                    rowDependency.contextRows = new ArrayList<Integer>();
+                    rowDependency.contextRows = new ArrayList<>();
                     for (CellDependency cd : rowDependency.cellDependencies) {
                         if (cd != null) {
                             rowDependency.contextRows.add(cd.rowIndex);
@@ -185,7 +185,7 @@ public class RecordModel  {
                 _rowDependencies.add(rowDependency);
             }
 
-            _records = new ArrayList<Record>(recordIndex);
+            _records = new ArrayList<>(recordIndex);
             if (recordIndex > 0) {
                 recordIndex = 0;
 
@@ -206,7 +206,7 @@ public class RecordModel  {
     }
 
     protected List<KeyedGroup> computeKeyedGroups(ColumnModel columnModel) {
-        List<KeyedGroup> keyedGroups = new ArrayList<KeyedGroup>();
+        List<KeyedGroup> keyedGroups = new ArrayList<>();
 
         addRootKeyedGroup(columnModel, keyedGroups);
 

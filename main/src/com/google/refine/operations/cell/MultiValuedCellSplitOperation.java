@@ -170,7 +170,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         }
         int keyCellIndex = keyColumn.getCellIndex();
 
-        List<Row> newRows = new ArrayList<Row>();
+        List<Row> newRows = new ArrayList<>();
         
         int oldRowCount = project.rows.size();
         for (int r = 0; r < oldRowCount; r++) {

@@ -66,7 +66,7 @@ public class Row implements HasFields {
      * @param cellCount number of cells to give row initially (can be extended later)
      */
     public Row(int cellCount) {
-        cells = new ArrayList<Cell>(cellCount);
+        cells = new ArrayList<>(cellCount);
     }
     
     protected Row(List<Cell> cells, boolean flagged, boolean starred) {

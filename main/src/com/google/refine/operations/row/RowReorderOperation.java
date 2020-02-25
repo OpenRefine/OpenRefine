@@ -86,7 +86,7 @@ public class RowReorderOperation extends AbstractOperation {
         Engine engine = new Engine(project);
         engine.setMode(_mode);
 
-        List<Integer> rowIndices = new ArrayList<Integer>();
+        List<Integer> rowIndices = new ArrayList<>();
         if (_mode == Mode.RowBased) {
             RowVisitor visitor = new IndexingVisitor(rowIndices);
             if (_sorting != null) {

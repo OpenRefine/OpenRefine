@@ -58,7 +58,7 @@ abstract public class ColumnChange implements Change {
     
     static public List<ColumnGroup> readOldColumnGroups(
             LineNumberReader reader, int oldColumnGroupCount) throws Exception {
-        List<ColumnGroup> oldColumnGroups = new ArrayList<ColumnGroup>(oldColumnGroupCount);
+        List<ColumnGroup> oldColumnGroups = new ArrayList<>(oldColumnGroupCount);
         for (int i = 0; i < oldColumnGroupCount; i++) {
             String line = reader.readLine();
             if (line != null) {

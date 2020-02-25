@@ -81,7 +81,7 @@ public class RefineServlet extends Butterfly {
     static private RefineServlet s_singleton;
     static private File s_dataDir;
     
-    static final private Map<String, Command> commands = new HashMap<String, Command>();
+    static final private Map<String, Command> commands = new HashMap<>();
 
     // timer for periodically saving projects
     static private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
@@ -316,7 +316,7 @@ public class RefineServlet extends Butterfly {
         }
     }
     
-    static final private List<ClassMapping> classMappings = new ArrayList<ClassMapping>();
+    static final private List<ClassMapping> classMappings = new ArrayList<>();
     
     /**
      * Add a mapping that determines how old class names can be updated to newer
@@ -336,8 +336,8 @@ public class RefineServlet extends Butterfly {
         registerClassMapping("com.google.gridworks.*", "com.google.refine.*");
     }
     
-    static final private Map<String, String> classMappingsCache  = new HashMap<String, String>();
-    static final private Map<String, Class<?>> classCache  = new HashMap<String, Class<?>>();
+    static final private Map<String, String> classMappingsCache  = new HashMap<>();
+    static final private Map<String, Class<?>> classCache  = new HashMap<>();
     
     // TODO(dfhuynh): Temporary solution until we figure out why cross butterfly module class resolution
     // doesn't entirely work

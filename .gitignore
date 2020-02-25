@@ -47,3 +47,7 @@ target/
 # Ignore Apache Maven default download path
 apache-maven-*/
 apache-maven-*-bin.tar.gz
+
+# Ignore Intellij .idea directory
+.idea/
+*.iml

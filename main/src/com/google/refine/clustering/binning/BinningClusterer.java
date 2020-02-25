@@ -133,7 +133,7 @@ public class BinningClusterer extends Clusterer {
         Object[] _params;
         BinningParameters _parameters;
         
-        Map<String,Map<String,Integer>> _map = new HashMap<String,Map<String,Integer>>();
+        Map<String,Map<String,Integer>> _map = new HashMap<>();
         
         public BinningRowVisitor(Keyer k, BinningParameters parameters) {
             _keyer = k;
@@ -171,7 +171,7 @@ public class BinningClusterer extends Clusterer {
                         m.put(s,1);
                     }
                 } else {
-                    Map<String,Integer> m = new TreeMap<String,Integer>();
+                    Map<String,Integer> m = new TreeMap<>();
                     m.put(s,1);
                     _map.put(key, m);
                 }
@@ -227,7 +227,7 @@ public class BinningClusterer extends Clusterer {
         filteredRows.accept(_project, visitor);
      
         Map<String,Map<String,Integer>> map = visitor.getMap();
-        _clusters = new ArrayList<Map<String,Integer>>(map.values());
+        _clusters = new ArrayList<>(map.values());
         Collections.sort(_clusters, new SizeComparator());
     }
     

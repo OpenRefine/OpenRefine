@@ -35,8 +35,8 @@ import org.apache.commons.lang3.StringUtils;
  * A column group describes a branch in tree structured data
  */
 public class ImportColumnGroup extends ImportVertical {
-    public Map<String, ImportColumnGroup> subgroups = new LinkedHashMap<String, ImportColumnGroup>();
-    public Map<String, ImportColumn> columns = new LinkedHashMap<String, ImportColumn>();
+    public Map<String, ImportColumnGroup> subgroups = new LinkedHashMap<>();
+    public Map<String, ImportColumn> columns = new LinkedHashMap<>();
     public int nextRowIndex; // TODO: this can be hoisted into superclass
 
     @Override

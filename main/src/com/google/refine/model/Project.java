@@ -62,13 +62,13 @@ import com.google.refine.util.Pool;
 
 public class Project {
     final static protected Map<String, Class<? extends OverlayModel>> 
-        s_overlayModelClasses = new HashMap<String, Class<? extends OverlayModel>>();
+        s_overlayModelClasses = new HashMap<>();
     
     final public long                       id;
-    final public List<Row>                  rows = new ArrayList<Row>();
+    final public List<Row>                  rows = new ArrayList<>();
     final public ColumnModel                columnModel = new ColumnModel();
     final public RecordModel                recordModel = new RecordModel();
-    final public Map<String, OverlayModel>  overlayModels = new HashMap<String, OverlayModel>();
+    final public Map<String, OverlayModel>  overlayModels = new HashMap<>();
     final public History                    history;
     
     transient public ProcessManager processManager = new ProcessManager();

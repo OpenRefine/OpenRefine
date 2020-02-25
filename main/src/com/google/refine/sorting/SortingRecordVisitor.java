@@ -54,8 +54,8 @@ public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
     @Override
     public void start(Project project) {
         int count = project.recordModel.getRecordCount();
-        _records = new ArrayList<Record>(count);
-        _keys = new ArrayList<Object[]>(count);
+        _records = new ArrayList<>(count);
+        _keys = new ArrayList<>(count);
     }
 
     @Override

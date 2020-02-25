@@ -148,7 +148,7 @@ public class ImportingJob  {
     
     @JsonIgnore
     public List<ObjectNode> getSelectedFileRecords() {
-        List<ObjectNode> results = new ArrayList<ObjectNode>();
+        List<ObjectNode> results = new ArrayList<>();
         
         ObjectNode retrievalRecord = JSONUtilities.getObject(config,"retrievalRecord");
         if (retrievalRecord != null) {

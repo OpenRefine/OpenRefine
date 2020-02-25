@@ -209,7 +209,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
             }
         }
         
-        List<Column> newColumns = new ArrayList<Column>();
+        List<Column> newColumns = new ArrayList<>();
         List<Column> oldColumns = project.columnModel.columns;
         
         int startColumnIndex = oldColumns.size();
@@ -280,7 +280,7 @@ public class TransposeColumnsIntoRowsOperation extends AbstractOperation {
         }
         
         List<Row> oldRows = project.rows;
-        List<Row> newRows = new ArrayList<Row>(oldRows.size() * columnCount);
+        List<Row> newRows = new ArrayList<>(oldRows.size() * columnCount);
         for (int r = 0; r < oldRows.size(); r++) {
             Row oldRow = project.rows.get(r);
             Row firstNewRow = new Row(newColumns.size());

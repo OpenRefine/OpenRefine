@@ -147,7 +147,7 @@ public class MassEditOperation extends EngineDependentMassCellOperation {
         Evaluable eval = MetaParser.parse(_expression);
         Properties bindings = ExpressionUtils.createBindings(project);
         
-        Map<String, Serializable> fromTo = new HashMap<String, Serializable>();
+        Map<String, Serializable> fromTo = new HashMap<>();
         Serializable fromBlankTo = null;
         Serializable fromErrorTo = null;
         

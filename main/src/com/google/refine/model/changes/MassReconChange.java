@@ -71,7 +71,7 @@ public class MassReconChange implements Change {
     
     protected void switchRecons(Project project, Map<Long, Recon> reconMap) {
         synchronized (project) {
-            HashSet<String> flushedColumn = new HashSet<String>(); 
+            HashSet<String> flushedColumn = new HashSet<>();
             for (Row row : project.rows) {
                 for (int c = 0; c < row.cells.size(); c++) {
                     Cell cell = row.cells.get(c);
@@ -114,8 +114,8 @@ public class MassReconChange implements Change {
     }
     
     static public Change load(LineNumberReader reader, Pool pool) throws Exception {
-        Map<Long, Recon> oldRecons = new HashMap<Long, Recon>();
-        Map<Long, Recon> newRecons = new HashMap<Long, Recon>();
+        Map<Long, Recon> oldRecons = new HashMap<>();
+        Map<Long, Recon> newRecons = new HashMap<>();
         
         String line;
         while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {

@@ -81,7 +81,7 @@ public class SetProjectTagsCommand extends Command {
 	
 	  // Lets add the new tags to the general map
 	  String[] newTags = newT.split(" |\\,");
-	  List<String> polishedTags = new ArrayList<String>(newTags.length);
+	  List<String> polishedTags = new ArrayList<>(newTags.length);
 	  for (String tag : newTags) {
 	    tag = tag.trim();
 	

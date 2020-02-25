@@ -76,7 +76,7 @@ public class ForRange implements Control {
         Object oldIndexValue = bindings.get(indexName);
 
         try {
-            List<Object> results = new ArrayList<Object>();
+            List<Object> results = new ArrayList<>();
             
             if (isIntegral((Number) fromO) && isIntegral((Number) stepO)) {
                 long from = ((Number) fromO).longValue();

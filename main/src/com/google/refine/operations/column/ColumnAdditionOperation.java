@@ -144,7 +144,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
             throw new Exception("Another column already named " + _newColumnName);
         }
         
-        List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
+        List<CellAtRow> cellsAtRows = new ArrayList<>(project.rows.size());
         
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, createRowVisitor(project, cellsAtRows));

@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class KeyerFactory {
 
-	static final private Map<String, Keyer> _keyers = new HashMap<String, Keyer>();
+	static final private Map<String, Keyer> _keyers = new HashMap<>();
 	// We cannot derive this from the hashmap as the order matters
 	static final private List<String> _keyerNames = new LinkedList<>();
 

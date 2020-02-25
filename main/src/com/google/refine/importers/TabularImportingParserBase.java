@@ -110,7 +110,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
             filenameColumnIndex = addFilenameColumn(project);
         }
         
-        List<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
         boolean hasOurOwnColumnNames = headerLines > 0;
         
         List<Object> cells = null;

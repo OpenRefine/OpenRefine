@@ -65,7 +65,7 @@ public abstract class TreeImportUtilities {
     ) {
         int startColumnIndex = project.columnModel.columns.size();
 
-        List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
+        List<ImportColumn> columns = new ArrayList<>(columnGroup.columns.values());
         Collections.sort(columns, new Comparator<ImportColumn>() {
             @Override
             public int compare(ImportColumn o1, ImportColumn o2) {
@@ -85,7 +85,7 @@ public abstract class TreeImportUtilities {
             project.columnModel.columns.add(column);
         }
 
-        List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
+        List<ImportColumnGroup> subgroups = new ArrayList<>(columnGroup.subgroups.values());
         Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
             @Override
             public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
@@ -153,7 +153,7 @@ public abstract class TreeImportUtilities {
 
         List<Cell> row = record.rows.get(rowIndex);
         if (row == null) {
-            row = new ArrayList<Cell>();
+            row = new ArrayList<>();
             record.rows.set(rowIndex, row);
         }
         

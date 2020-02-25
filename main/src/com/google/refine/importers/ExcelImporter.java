@@ -201,7 +201,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             
             TableDataReader dataReader = new TableDataReader() {
                 int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
+                Map<String, Recon> reconMap = new HashMap<>();
                 
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
@@ -209,7 +209,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                         return null;
                     }
                     
-                    List<Object> cells = new ArrayList<Object>();
+                    List<Object> cells = new ArrayList<>();
                     org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
                     if (row != null) {
                         short lastCell = row.getLastCellNum();

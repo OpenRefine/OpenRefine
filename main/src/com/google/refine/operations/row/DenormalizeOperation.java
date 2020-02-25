@@ -58,7 +58,7 @@ public class DenormalizeOperation extends AbstractOperation {
 
     @Override
     protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        List<Row> newRows = new ArrayList<Row>();
+        List<Row> newRows = new ArrayList<>();
         
         List<Row> oldRows = project.rows;
         for (int r = 0; r < oldRows.size(); r++) {

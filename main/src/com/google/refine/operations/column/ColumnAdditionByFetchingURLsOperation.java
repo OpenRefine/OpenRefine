@@ -277,12 +277,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 return;
             }
 
-            List<CellAtRow> urls = new ArrayList<CellAtRow>(_project.rows.size());
+            List<CellAtRow> urls = new ArrayList<>(_project.rows.size());
 
             FilteredRows filteredRows = _engine.getAllFilteredRows();
             filteredRows.accept(_project, createRowVisitor(urls));
 
-            List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(urls.size());
+            List<CellAtRow> responseBodies = new ArrayList<>(urls.size());
             for (int i = 0; i < urls.size(); i++) {
                 CellAtRow urlData = urls.get(i);
                 String urlString = urlData.cell.value.toString();

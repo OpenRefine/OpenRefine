@@ -78,7 +78,7 @@ abstract public class NumericBinIndex {
         _max = Double.NEGATIVE_INFINITY;
         
         // TODO: An array of doubles would be more memmory efficient - double[] allValues
-        List<Double> allValues = new ArrayList<Double>();
+        List<Double> allValues = new ArrayList<>();
         
         iterate(project, rowEvaluable, allValues);
         

@@ -63,7 +63,7 @@ abstract public class MetaParser {
         }
     }
     
-    static final protected Map<String, LanguageInfo> s_languages = new HashMap<String, LanguageInfo>();
+    static final protected Map<String, LanguageInfo> s_languages = new HashMap<>();
 
     // TODO: We should switch from using the internal compiler class 
 //    final static private Var CLOJURE_READ_STRING = RT.var("clojure.core", "read-string");

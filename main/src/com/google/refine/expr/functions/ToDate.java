@@ -61,7 +61,7 @@ public class ToDate implements Function {
     public Object call(Properties bindings, Object[] args) {
         String o1;
         Boolean month_first = null;
-        List<String> formats =  new ArrayList<String>();  
+        List<String> formats = new ArrayList<>();
         OffsetDateTime date = null;
         
         //Check there is at least one argument

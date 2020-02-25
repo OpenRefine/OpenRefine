@@ -68,7 +68,7 @@ public class ColumnMoveChange extends ColumnChange {
                 throw new RuntimeException("Column index out of range");
             }
             if (_oldColumnGroups == null) {
-                _oldColumnGroups = new ArrayList<ColumnGroup>(project.columnModel.columnGroups);
+                _oldColumnGroups = new ArrayList<>(project.columnModel.columnGroups);
             }
             
             Column column = project.columnModel.columns.remove(_oldColumnIndex);
@@ -129,7 +129,7 @@ public class ColumnMoveChange extends ColumnChange {
         ColumnMoveChange change = new ColumnMoveChange(columnName, newColumnIndex);
         change._oldColumnIndex = oldColumnIndex;
         change._oldColumnGroups = oldColumnGroups != null ?
-                oldColumnGroups : new LinkedList<ColumnGroup>();
+                oldColumnGroups : new LinkedList<>();
         
         return change;
     }
