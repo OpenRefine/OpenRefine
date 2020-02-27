@@ -2,5 +2,16 @@
 <workingSetManager>
 <workingSet editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1582124383675_0" label="Java Main Sources" name="Java Main Sources"/>
 <workingSet editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1582124384375_1" label="Java Test Sources" name="Java Test Sources"/>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1582565449457_3" label="openrefine" name="openrefine">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/jython" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/database" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/main" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/server" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/wikidata" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/extensions" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/gdata" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/phonetic" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/pc-axis" type="4"/>
+</workingSet>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1582124408313_2" label="Window Working Set" name="Aggregate for window 1582124408313"/>
 </workingSetManager>

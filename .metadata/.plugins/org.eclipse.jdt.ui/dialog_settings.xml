@@ -7,6 +7,10 @@
 		<item value="1" key="rootMode"/>
 		<item value="false" key="linkWithEditor"/>
 	</section>
+	<section name="quick_assist_proposal_size">
+	</section>
+	<section name="completion_proposal_size">
+	</section>
 	<section name="JavaElementSearchActions">
 	</section>
 </section>
