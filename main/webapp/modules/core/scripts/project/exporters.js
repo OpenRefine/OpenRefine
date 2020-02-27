@@ -126,7 +126,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
   
   document.body.appendChild(form);
 
-  window.open("about:blank", "refine-export");
+  window.open(" ", "refine-export");
   form.submit();
 
   document.body.removeChild(form);
@@ -235,7 +235,7 @@ ExporterManager.handlers.exportProject = function() {
     
       document.body.appendChild(form);
     
-      window.open("about:blank", "refine-export");
+      window.open(" ", "refine-export");
       form.submit();
     
       document.body.removeChild(form);

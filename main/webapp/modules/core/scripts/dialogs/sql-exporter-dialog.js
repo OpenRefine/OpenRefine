@@ -368,7 +368,7 @@ function SqlExporterDialog(options) {
    // alert("form::" + form);
     document.body.appendChild(form);
   
-    window.open("about:blank", "refine-export");
+    window.open(" ", "refine-export");
     form.submit();
   
     document.body.removeChild(form);
