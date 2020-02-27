@@ -120,6 +120,22 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.click(function() { self._onApplyClose(); });
     this._elmts.closeButton.click(function() { self._dismiss(); });
 
+    var clickOutside = function(event) {
+        $target = $(event.target);
+        var dist = $target.closest(dialog).length;
+        if(dist == 0 && $(dialog).is(':visible')) {
+            self._dismiss();
+        }
+    }
+    $(document).click(clickOutside);
+    
+    var escapeKey = function(event) {
+        if (event.keyCode == 27) {
+            self._dismiss();
+        }
+    }
+    $(window).keydown(escapeKey);
+
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
     .success(function(data) {
@@ -433,6 +449,8 @@ ClusteringDialog.prototype._export = function() {
 
 ClusteringDialog.prototype._dismiss = function() {
     DialogSystem.dismissUntil(this._level - 1);
+    $(document).off('click');
+    $(window).off('keydown');
 };
 
 ClusteringDialog.prototype._getBaseClusters = function() {
