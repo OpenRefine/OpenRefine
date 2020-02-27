@@ -203,7 +203,7 @@ TextSearchFacet.prototype._scheduleUpdate = function() {
     this._timerID = window.setTimeout(function() {
       self._timerID = null;
       self._updateRest();
-    }, 2000);
+    }, 500);
   }
 };
 
