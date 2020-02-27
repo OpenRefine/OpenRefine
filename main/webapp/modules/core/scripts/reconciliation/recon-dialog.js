@@ -57,6 +57,28 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.reconcileButton.click(function() { self._onOK(); });
   this._elmts.cancelButton.click(function() { self._dismiss(); });
 
+  var justOpened = true;
+  var clickOutside = function(event) {
+    $target = $(event.target);
+    var dialog = $('.dialog-frame');
+    var dist = $target.closest(dialog).length;
+    if(justOpened) {
+      justOpened = false;
+      return;
+    }
+    if(dist == 0 && $(dialog).is(':visible') && !justOpened) {
+      self._dismiss();
+    }
+  }
+  $(document).click(clickOutside);
+
+  var escapeKey = function(event) {
+    if (event.keyCode == 27) {
+      self._dismiss();
+    }
+  }
+  $(window).keydown(escapeKey);
+
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
 };
@@ -81,6 +103,8 @@ ReconDialog.prototype._dismiss = function() {
   this._serviceRecords = null;
 
   DialogSystem.dismissUntil(this._level - 1);
+  $(document).off('click');
+  $(window).off('keydown');
 };
 
 ReconDialog.prototype._cleanDialog = function() {
