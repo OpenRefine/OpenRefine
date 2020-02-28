@@ -28,6 +28,9 @@ test-out/
 open-refine.log
 .vscode
 
+.idea
+*.iml
+
 main/target/
 main/webapp/WEB-INF/lib/
 server/target/
