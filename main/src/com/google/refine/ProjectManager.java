@@ -450,7 +450,7 @@ public abstract class ProjectManager {
                 ObjectNode node = (ObjectNode)jsonObj;
                 if (node.get("name").asText("").equals(placeHolderJsonObj.get("name").asText(""))) {
                     found = true;
-                    node.put("display", placeHolderJsonObj.get("display"));
+                    node.set("display", placeHolderJsonObj.get("display"));
                     break;
                 }
             }

@@ -149,7 +149,7 @@ public class JSONUtilities {
     }
     
     static public void safePut(ObjectNode options, String key, JsonNode rootElement) {
-        options.put(key, rootElement);
+        options.set(key, rootElement);
     }
     
     static public void safeInc(ObjectNode obj, String key) {
