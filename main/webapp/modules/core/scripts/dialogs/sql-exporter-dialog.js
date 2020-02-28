@@ -290,28 +290,6 @@ function SqlExporterDialog(options) {
     this._elmts.downloadButton.click(function() { self._download(); });
     this._elmts.downloadPreviewButton.click(function(evt) { self._previewDownload(); });
 
-    var justOpened = true;
-    var clickOutside = function(event) {
-        $target = $(event.target);
-        var dialog = $('.dialog-frame');
-        var dist = $target.closest(dialog).length;
-        if(justOpened) {
-            justOpened = false;
-            return;
-        }
-        if(dist == 0 && $(dialog).is(':visible') && !justOpened) {
-            self._dismiss();
-        }
-    }
-    $(document).click(clickOutside);
-    
-    var escapeKey = function(event) {
-        if (event.keyCode == 27) {
-            self._dismiss();
-        }
-    }
-    $(window).keydown(escapeKey);
-    
     this._configureUIFromOptionCode(options);
     this._updateOptionCode();
   };
@@ -332,8 +310,6 @@ function SqlExporterDialog(options) {
   
   SqlExporterDialog.prototype._dismiss = function() {
       DialogSystem.dismissUntil(this._level - 1);
-      $(document).off('click');
-    $(window).off('keydown');
   };
   
   SqlExporterDialog.prototype._previewDownload = function() {
