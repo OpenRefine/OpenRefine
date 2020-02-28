@@ -463,7 +463,11 @@ class RefineClient extends JFrame implements ActionListener {
     
     public void init(String host, int port) throws Exception {
 
-        uri = new URI("http://" + host + ":" + port + "/");
+        if (host.equals("0.0.0.0")) {
+            uri = new URI("http://" + "localhost" + ":" + port + "/");
+        } else {
+            uri = new URI("http://" + host + ":" + port + "/");
+        }
 
         openBrowser();
     }
