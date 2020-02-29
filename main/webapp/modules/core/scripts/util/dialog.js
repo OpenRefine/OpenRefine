@@ -35,6 +35,13 @@ DialogSystem = {
     _layers: []
 };
 
+var escapeKey = function(event) {
+  var level = DialogSystem._layers.length;
+  if (event.keyCode == 27) {
+      DialogSystem.dismissUntil(level - 1);
+  }
+}
+
 DialogSystem.showDialog = function(elmt, onCancel) {
   var overlay = $('<div>&nbsp;</div>')
   .addClass("dialog-overlay")
@@ -61,14 +68,8 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 
   var level = DialogSystem._layers.length;
 
-
-  var escapeKey = function(event) {
-      if (event.keyCode == 27) {
-          DialogSystem.dismissUntil(level - 1);
-      }
-  }
   $(window).keydown(escapeKey);
-
+  
   return level;
 };
 
@@ -98,15 +99,12 @@ DialogSystem.dismissUntil = function(level) {
   for (var i = DialogSystem._layers.length - 1; i >= level; i--) {
 	  DialogSystem.dismissLevel(i);
   }
-  $(window).off('keydown');
+  $(window).off('keydown', escapeKey);
   DialogSystem._layers = DialogSystem._layers.slice(0, level);
-  
 };
 
 DialogSystem.createDialog = function() {
-  
   return $('<div></div>').addClass("dialog-frame");
-  
 };
 
 DialogSystem.showBusy = function(message) {
