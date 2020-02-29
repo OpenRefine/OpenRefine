@@ -87,7 +87,7 @@ DataTableCellUI.prototype._render = function() {
       }
       $('<span>')
       .addClass("data-table-value-nonstring")
-      .text(cell.v)
+      .text(cell.v )
       .appendTo(divContent);
     } else if (URL.looksLikeUrl(cell.v)) {
       $('<a>')
@@ -97,7 +97,7 @@ DataTableCellUI.prototype._render = function() {
       .appendTo(divContent);
     } else {
       $('<span>')
-      .text(cell.v)
+      .html(cell.v)
       .appendTo(divContent);
     }
   } else {
@@ -413,6 +413,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   .data("suggest").textchange();
 };
 
+
 DataTableCellUI.prototype._postProcessOneCell = function(command, params, bodyParams, columnStatsChanged) {
   var self = this;
 
@@ -527,7 +528,6 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   self = this;
 
   var originalContent = !this._cell || ("v" in this._cell && this._cell.v === null) ? "" : this._cell.v;
-
   var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
   menu.html(DOM.loadHTML("core", "scripts/views/data-table/cell-editor.html"));
   var elmts = DOM.bind(menu);
@@ -547,6 +547,16 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
 
+  if ($('#toggle-display-characters').prop('checked')) {
+    $(".interfaceForTextArea").show();
+    var content = originalContent;
+    $(".data-table-cell-editor-editor").hide();
+    var updatedContent = ""
+
+    updatedContent = checkNonPrintable(content)
+    $(".interfaceForTextArea").html(updatedContent);
+  }
+
   var commit = function() {
     var type = elmts.typeSelect[0].value;
 
@@ -554,7 +564,9 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     if (this === elmts.okallButton[0]) {
       applyOthers = 1;
     }
-
+    if ($("#toggle-display-characters").prop('checked')) {
+      parseToTextAreaFromDiv();
+    }
     var text = elmts.textarea[0].value;
     var value = text;
 
@@ -646,3 +658,56 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     MenuSystem.dismissAll();
   });
 };
+
+function checkNonPrintable(content){
+  var stringIncNonPrintable = "";
+  for (var character = 0; character < content.length; character++) {
+    var unprintableChar = "";
+    if ((content.charAt(character)).charCodeAt(0) == 13) {
+      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>CR</b></span>";
+    }
+    else if ((content.charAt(character)).charCodeAt(0) == 10) {
+      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>LF</b></span>";
+    } 
+    else if ((content.charAt(character)).charCodeAt(0) == 9) {
+      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>HT</b></span>";
+    } 
+    else if ((content.charAt(character)).charCodeAt(0) == 16) {
+      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>LS</b></span>";
+    } 
+    else if ((content.charAt(character)).charCodeAt(0) == 32) {
+      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>NBSP</b></span>";
+    }
+    stringIncNonPrintable += unprintableChar + content.charAt(character);
+  }
+  return stringIncNonPrintable;
+}
+
+function parseToTextAreaFromDiv() {
+  $(".unprintableCharacaters").remove();
+  $(".data-table-cell-editor-editor").val($(".interfaceForTextArea").text());
+}
+
+function nonPrintableCheckBox(){
+  if ($('#toggle-display-characters').prop('checked')) {
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+      }
+    }
+  }
+  else {
+    $(".unprintableCharacaters").remove();
+  }
+}
+
+$(document).on('change', '#toggle-display-characters', function () {
+  nonPrintableCheckBox();
+});

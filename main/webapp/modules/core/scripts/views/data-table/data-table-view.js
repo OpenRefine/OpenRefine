@@ -142,6 +142,7 @@ DataTableView.prototype.render = function() {
   this.resize();
   
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
+  nonPrintableCheckBox();
 };
 
 DataTableView.prototype._renderSortingControls = function(sortingControls) {

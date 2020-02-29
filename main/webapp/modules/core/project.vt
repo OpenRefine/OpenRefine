@@ -76,6 +76,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <!-- row/record counts -->
           </div>
           <div bind="extensionBarDiv" id="extension-bar">
+              <input type="checkbox" id="toggle-display-characters" name="nonPrintableCharacters">
+              <label class="non-printable" type="checkbox" for="nonPrintableCharacters" >Non-printable Characters</label>
             <span id="or-proj-ext"></span> <span bind="menuContainer" id="extension-bar-menu-container"></span>
           </div>
         </div>
