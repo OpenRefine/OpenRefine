@@ -663,19 +663,19 @@ function checkNonPrintable(content){
   for (var character = 0; character < content.length; character++) {
     var unprintableChar = "";
     if ((content.charAt(character)).charCodeAt(0) == 13) {
-      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>CR</b></span>";
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>CR</b></span>";
     }
     else if ((content.charAt(character)).charCodeAt(0) == 10) {
-      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>LF</b></span>";
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>LF</b></span>";
     } 
     else if ((content.charAt(character)).charCodeAt(0) == 9) {
-      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>HT</b></span>";
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>HT</b></span>";
     } 
     else if ((content.charAt(character)).charCodeAt(0) == 16) {
-      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>LS</b></span>";
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>LS</b></span>";
     } 
     else if ((content.charAt(character)).charCodeAt(0) == 32) {
-      unprintableChar = "<span class='unprintableCharacaters' style='background-color: orange'><b>NBSP</b></span>";
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>NBSP</b></span>";
     }
     stringIncNonPrintable += unprintableChar + content.charAt(character);
   }
@@ -683,7 +683,7 @@ function checkNonPrintable(content){
 }
 
 function parseToTextAreaFromDiv() {
-  $(".unprintableCharacaters").remove();
+  $(".unprintableCharacters").remove();
   $(".data-table-cell-editor-editor").val($(".interfaceForTextArea").text());
 }
 
@@ -703,7 +703,7 @@ function nonPrintableCheckBox(){
     }
   }
   else {
-    $(".unprintableCharacaters").remove();
+    $(".unprintableCharacters").remove();
   }
 }
 
