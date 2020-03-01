@@ -164,7 +164,7 @@
     "warnings-messages/item-description-begin-with-uppercase/title": "Description begins with a uppercase letter",
     "warnings-messages/item-description-begin-with-uppercase/body": "Description of items such as {example_entity} begins with a uppercase letter.",
     "warnings-messages/item-description-begin-with-article/title": "Description begins with article (a, an or the)",
-    "warnings-messages/item-description-begin-with-article/body": "Description of items such as {example_entity} begins with article (a, and or the).",
+    "warnings-messages/item-description-begin-with-article/body": "Description of items such as {example_entity} begins with article (a, an or the).",
     "warnings-messages/item-description-identical-with-label/title": "Description is identical with label",
     "warnings-messages/item-description-identical-with-label/body": "Description of items such as {example_entity} is identical with corresponding label."
 }
