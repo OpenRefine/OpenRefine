@@ -551,9 +551,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     $(".interfaceForTextArea").show();
     var content = originalContent;
     $(".data-table-cell-editor-editor").hide();
-    var updatedContent = ""
 
-    updatedContent = checkNonPrintable(content)
+    var updatedContent = checkNonPrintable(content);
     $(".interfaceForTextArea").html(updatedContent);
   }
 
