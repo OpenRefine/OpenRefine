@@ -15,10 +15,10 @@ import java.util.Set;
  * merely focusing on English here should be enough.
  *
  * To be more specific, it does the following checks:
- * 1. is a description is too long
+ * 1. is a description too long
  * 2. does a description end by punctuation signs
  * 3. does a description begin with a uppercase letter
- * 4. does a description begins with article ("a", "an" or "the")
+ * 4. does a description begin with article ("a", "an" or "the")
  * 5. is the description identical with corresponding label
  *
  * @author Lu Liu
