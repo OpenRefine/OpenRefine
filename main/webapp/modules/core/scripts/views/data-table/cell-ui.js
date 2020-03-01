@@ -87,7 +87,7 @@ DataTableCellUI.prototype._render = function() {
       }
       $('<span>')
       .addClass("data-table-value-nonstring")
-      .text(cell.v )
+      .text(cell.v)
       .appendTo(divContent);
     } else if (URL.looksLikeUrl(cell.v)) {
       $('<a>')
