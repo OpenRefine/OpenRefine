@@ -289,7 +289,6 @@ function SqlExporterDialog(options) {
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     this._elmts.downloadButton.click(function() { self._download(); });
     this._elmts.downloadPreviewButton.click(function(evt) { self._previewDownload(); });
-    
     this._configureUIFromOptionCode(options);
     this._updateOptionCode();
   };
