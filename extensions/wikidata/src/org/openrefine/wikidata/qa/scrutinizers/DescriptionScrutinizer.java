@@ -49,7 +49,7 @@ public abstract class DescriptionScrutinizer extends EditScrutinizer {
     protected void checkLength(ItemUpdate update, String descText, String lang) {
         final int maxLength = 250;
         if (descText.length() > maxLength) {
-            QAWarning issue = new QAWarning(descTooLongType, null, QAWarning.Severity.WARNING, 1);
+            QAWarning issue = new QAWarning(descTooLongType, null, QAWarning.Severity.CRITICAL, 1);
             issue.setProperty("example_entity", update.getItemId());
             issue.setProperty("description", descText);
             issue.setProperty("lang", lang);
