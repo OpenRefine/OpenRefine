@@ -24,41 +24,6 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
     }
 
     @Test
-    public void testTooLong() {
-        String description = "long description long description long description long description "
-                + "long description long description long description long description "
-                + "long description long description long description long description "
-                + "long description long description long description long description ";
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
-                .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .build();
-        scrutinize(update);
-        assertWarningsRaised(EnglishDescriptionScrutinizer.descTooLongType);
-    }
-
-    @Test
-    public void testIdenticalWithLabel1() {
-        String description = "identical with label";
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
-                .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), true)
-                .build();
-        scrutinize(update);
-        assertNoWarningRaised();
-    }
-
-    @Test
-    public void testIdenticalWithLabel() {
-        String description = "identical with label";
-        ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
-                .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
-                .build();
-        scrutinize(update);
-        assertWarningsRaised(EnglishDescriptionScrutinizer.descIdenticalWithLabel);
-    }
-
-    @Test
     public void testEndWithPunctuationSign() {
         String description = "description with punctuationSign.";
         ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
@@ -90,16 +55,13 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testAwfulDesc() {
-        String description = "An awful description An awful description An awful description An awful description"
-                + "An awful description An awful description An awful description An awful description"
-                + "An awful description An awful description An awful description An awful description"
-                + "An awful description An awful description An awful description An awful description!";
+        String description = "An awful description.";
         ItemUpdate update = new ItemUpdateBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();
         scrutinize(update);
-        assertWarningsRaised(EnglishDescriptionScrutinizer.descTooLongType, EnglishDescriptionScrutinizer.descEndsByPunctuationSign,
-                EnglishDescriptionScrutinizer.descBeginWithUppercase, EnglishDescriptionScrutinizer.descBeginWithArticle, EnglishDescriptionScrutinizer.descIdenticalWithLabel);
+        assertWarningsRaised(EnglishDescriptionScrutinizer.descEndsByPunctuationSign,
+                EnglishDescriptionScrutinizer.descBeginWithUppercase, EnglishDescriptionScrutinizer.descBeginWithArticle);
     }
 }

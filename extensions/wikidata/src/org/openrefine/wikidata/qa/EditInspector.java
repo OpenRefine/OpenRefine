@@ -67,6 +67,7 @@ public class EditInspector {
         register(new RestrictedValuesScrutinizer());
         register(new EntityTypeScrutinizer());
         register(new CalendarScrutinizer());
+        register(new CommonDescriptionScrutinizer());
         register(new EnglishDescriptionScrutinizer());
     }
 
