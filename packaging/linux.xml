@@ -35,25 +35,6 @@
       <directory>${rootdir}/licenses</directory>
       <outputDirectory>licenses</outputDirectory>
     </fileSet>    
-    <fileSet>
-      <directory>${rootdir}/extensions</directory>
-      <outputDirectory>webapp/extensions</outputDirectory>
-      <includes>
-	<include>**</include>
-      </includes>
-      <excludes>
-	<exclude>**/target/**</exclude>
-	<exclude>**/tests/**</exclude>
-	<exclude>**/src/**</exclude>
-	<exclude>**/*.java</exclude>
-	<exclude>**/lib-src/**</exclude>
-	<exclude>**/pom.xml</exclude>
-	<exclude>**/.settings/**</exclude>
-	<exclude>**/.project</exclude>
-        <exclude>**/lib-local/**</exclude>
-        <exclude>*/lib-local-src/**</exclude>
-      </excludes>
-    </fileSet>
   </fileSets>
   <!-- TODO replace $VERSION by ${project.version} in WEB-INF/web.xml -->
   <files>
