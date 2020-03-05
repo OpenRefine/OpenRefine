@@ -86,7 +86,6 @@ import org.openrefine.RefineServlet;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingManager.Format;
-import org.openrefine.importing.UrlRewriter.Result;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
@@ -211,8 +210,7 @@ public class ImportingUtilities {
             }
         });
 
-        @SuppressWarnings("unchecked")
-        List<FileItem> tempFiles = (List<FileItem>) upload.parseRequest(request);
+        List<FileItem> tempFiles = upload.parseRequest(request);
 
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
@@ -271,20 +269,6 @@ public class ImportingUtilities {
                             null, // format
                             null // archiveFileName
                     );
-
-                    for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
-                        Result result = rewriter.rewrite(urlString);
-                        if (result != null) {
-                            urlString = result.rewrittenUrl;
-                            url = new URL(urlString);
-                            fileRecord.setFormat(result.format);
-                            if (!result.download) {
-                                downloadCount++;
-                                fileRecords.add(fileRecord);
-                                continue parts;
-                            }
-                        }
-                    }
 
                     if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
                         DefaultHttpClient client = new DefaultHttpClient();
