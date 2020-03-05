@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>spark</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -22,6 +22,7 @@
   </properties>
 
   <build>
+    <finalName>openrefine</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -277,7 +278,7 @@
           <buildDirectory>target/OpenRefine ${version}</buildDirectory>
           <iconFile>${icon.path}</iconFile>
           <generateDiskImageFile>true</generateDiskImageFile>
-          <diskImageFile>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</diskImageFile>
+          <diskImageFile>${project.build.directory}/${project.parent.build.finalName}-mac-${project.version}.dmg</diskImageFile>
           <jvmVersion>1.8</jvmVersion>
           <jrePath>${mac.jre.path}</jrePath>
           <jvmOptions>
