@@ -107,9 +107,6 @@ public class ImportingManager {
     // Mapping from mime type to format, e.g., "application/json" to "text/json"
     final static public Map<String, String> mimeTypeToFormat = new HashMap<String, String>();
     
-    // URL rewriters
-    final static public Set<UrlRewriter> urlRewriters = new HashSet<UrlRewriter>();
-    
     // Mapping from controller name to controller
     final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
     
@@ -163,10 +160,6 @@ public class ImportingManager {
     
     static public void registerMimeType(String mimeType, String format) {
         mimeTypeToFormat.put(mimeType, format);
-    }
-    
-    static public void registerUrlRewriter(UrlRewriter urlRewriter) {
-        urlRewriters.add(urlRewriter);
     }
     
     static public void registerController(ButterflyModule module, String name, ImportingController controller) {
