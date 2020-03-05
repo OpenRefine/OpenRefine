@@ -48,14 +48,13 @@ import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.util.TrackingInputStream;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import scala.Tuple2;
 
@@ -165,10 +164,10 @@ public class ImporterUtilities {
     }
     
     static public MultiFileReadingProgress createMultiFileReadingProgress(
-            final ImportingJob job, List<ObjectNode> fileRecords) {
+            final ImportingJob job, List<ImportingFileRecord> fileRecords) {
         long totalSize = 0;
-        for (ObjectNode fileRecord : fileRecords) {
-            File file = ImportingUtilities.getFile(job, fileRecord);
+        for (ImportingFileRecord fileRecord : fileRecords) {
+            File file = fileRecord.getFile(job.getRawDataDir());
             totalSize += file.length();
         }
         

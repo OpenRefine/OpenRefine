@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -48,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
+import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -110,8 +112,8 @@ public class DefaultImportingController implements ImportingController {
         }
         
         job.updating = true;
-        ObjectNode config = job.getOrCreateDefaultConfig();
-        if (!("new".equals(JSONUtilities.getString(config, "state", null)))) {
+        ImportingJobConfig config = job.getJsonConfig();
+        if (!("new".equals(config.state))) {
             HttpUtilities.respond(response, "error", "Job already started; cannot load more data");
             return;
         }
@@ -133,14 +135,14 @@ public class DefaultImportingController implements ImportingController {
         }
         
         job.updating = true;
-        ObjectNode config = job.getOrCreateDefaultConfig();
-        if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
+        ImportingJobConfig config = job.getJsonConfig();
+        if (!("ready".equals(config.state))) {
             HttpUtilities.respond(response, "error", "Job not ready");
             return;
         }
         
-        ArrayNode fileSelectionArray = ParsingUtilities.evaluateJsonStringToArrayNode(
-                request.getParameter("fileSelection"));
+        List<Integer> fileSelectionArray = Arrays.asList((Integer[])JSONUtilities.toArray(ParsingUtilities.evaluateJsonStringToArrayNode(
+                request.getParameter("fileSelection"))));
         
         ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
         
@@ -160,8 +162,8 @@ public class DefaultImportingController implements ImportingController {
         }
         
         job.updating = true;
-        ObjectNode config = job.getOrCreateDefaultConfig();
-        if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
+        ImportingJobConfig config = job.getJsonConfig();
+        if (!("ready".equals(config.state))) {
             HttpUtilities.respond(response, "error", "Job not ready");
             return;
         }
@@ -236,8 +238,8 @@ public class DefaultImportingController implements ImportingController {
         
         job.updating = true;
         job.touch();
-        ObjectNode config = job.getOrCreateDefaultConfig();
-        if (!("ready".equals(JSONUtilities.getString(config, "state", null)))) {
+        ImportingJobConfig config = job.getJsonConfig();
+        if (!("ready".equals(config.state))) {
             HttpUtilities.respond(response, "error", "Job not ready");
             return;
         }

@@ -37,9 +37,9 @@ import org.openrefine.RefineServlet;
 import org.openrefine.RefineServletStub;
 import org.openrefine.RefineTest;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.GridState;
-import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -59,7 +59,7 @@ public abstract class ImporterTest extends RefineTest {
         metadata = new ProjectMetadata();
         ImportingJob spiedJob = ImportingManager.createJob();
         job = Mockito.spy(spiedJob);
-        when(job.getRetrievalRecord()).thenReturn(ParsingUtilities.mapper.createObjectNode());
+        when(job.getRetrievalRecord()).thenReturn(new RetrievalRecord());
         
         options = Mockito.mock(ObjectNode.class);
     }

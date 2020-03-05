@@ -37,7 +37,6 @@ import java.util.List;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -54,7 +53,7 @@ public interface ImportingParser {
      */
     public ObjectNode createParserUIInitializationData(
         ImportingJob job,
-        List<ObjectNode> fileRecords,
+        List<ImportingFileRecord> fileRecords,
         String format
     );
     
@@ -74,7 +73,7 @@ public interface ImportingParser {
     public GridState parse(
         ProjectMetadata metadata,
         ImportingJob job,
-        List<ObjectNode> fileRecords,
+        List<ImportingFileRecord> fileRecords,
         String format,
         long limit,
         ObjectNode options
