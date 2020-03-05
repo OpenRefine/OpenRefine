@@ -47,6 +47,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -63,7 +64,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ObjectNode> fileRecords, String format) {
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore

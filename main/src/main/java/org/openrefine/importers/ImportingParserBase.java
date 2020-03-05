@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.importing.ImportingUtilities;
@@ -82,7 +83,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ObjectNode> fileRecords, String format) {
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
 
@@ -91,7 +92,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 
     @Override
     public GridState parse(ProjectMetadata metadata,
-            final ImportingJob job, List<ObjectNode> fileRecords, String format,
+            final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
             long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         List<GridState> gridStates = new ArrayList<>(fileRecords.size());
@@ -101,7 +102,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
 
         long totalRows = 0;
-        for (ObjectNode fileRecord : fileRecords) {
+        for (ImportingFileRecord fileRecord : fileRecords) {
             if (job.canceled) {
                 break;
             }
@@ -139,20 +140,20 @@ abstract public class ImportingParserBase implements ImportingParser {
     public GridState parseOneFile(
             ProjectMetadata metadata,
             ImportingJob job,
-            ObjectNode fileRecord,
+            ImportingFileRecord fileRecord,
             long limit,
             ObjectNode options,
             final MultiFileReadingProgress progress) throws Exception {
 
-        final String fileSource = ImportingUtilities.getFileSource(fileRecord);
+        final String fileSource = fileRecord.getFileSource();
 
         progress.startFile(fileSource);
         pushImportingOptions(metadata, fileSource, options);
 
         if (mode.equals(Mode.SparkURI)) {
-            return parseOneFile(metadata, job, fileSource, ImportingUtilities.getSparkURI(job, fileRecord), limit, options);
+            return parseOneFile(metadata, job, fileSource, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
         } else {
-            final File file = ImportingUtilities.getFile(job, fileRecord);
+            final File file = fileRecord.getFile(job.getRawDataDir());
             try {
                 InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
                 try {

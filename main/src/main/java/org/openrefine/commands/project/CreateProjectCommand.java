@@ -42,7 +42,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +50,7 @@ import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.importing.ImportingUtilities;
@@ -73,7 +73,7 @@ public class CreateProjectCommand extends Command {
         try {
             Properties parameters = ParsingUtilities.parseUrlParameters(request);
             ImportingJob job = ImportingManager.createJob();
-            ObjectNode config = job.getOrCreateDefaultConfig();
+            ImportingJobConfig config = job.getJsonConfig();
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job, config);
 
@@ -97,9 +97,9 @@ public class CreateProjectCommand extends Command {
                         "\\t".equals(parameters.getProperty("separator"))) {
                     format = "text/line-based/*sv";
                 } else {
-                    ArrayNode rankedFormats = JSONUtilities.getArray(config, "rankedFormats");
+                    List<String> rankedFormats = config.rankedFormats;
                     if (rankedFormats != null && rankedFormats.size() > 0) {
-                        format = rankedFormats.get(0).asText();
+                        format = rankedFormats.get(0);
                     }
                 }
 

@@ -48,8 +48,8 @@ import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -61,16 +61,14 @@ public class FixedWidthImporter extends SparkImportingParserBase {
 
     @Override
     public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         if (fileRecords.size() > 0) {
-            ObjectNode firstFileRecord = fileRecords.get(0);
-            String encoding = ImportingUtilities.getEncoding(firstFileRecord);
-            String location = JSONUtilities.getString(firstFileRecord, "location", null);
-            if (location != null) {
-                File file = new File(job.getRawDataDir(), location);
-                int[] columnWidthsA = guessColumnWidths(file, encoding);
+            ImportingFileRecord firstFileRecord = fileRecords.get(0);
+            if (firstFileRecord.getLocation() != null) {
+                File file = firstFileRecord.getFile(job.getRawDataDir());
+                int[] columnWidthsA = guessColumnWidths(file, firstFileRecord.getEncoding());
                 if (columnWidthsA != null) {
                     for (int w : columnWidthsA) {
                         JSONUtilities.append(columnWidths, w);

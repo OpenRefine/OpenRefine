@@ -55,8 +55,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.util.JSONUtilities;
 
 public class SeparatorBasedImporter extends TabularImportingParserBase {
@@ -67,7 +67,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
 
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ObjectNode> fileRecords, String format) {
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         String separator = guessSeparator(job, fileRecords);
@@ -168,11 +168,11 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         return cells;
     }
 
-    static public String guessSeparator(ImportingJob job, List<ObjectNode> fileRecords) {
+    static public String guessSeparator(ImportingJob job, List<ImportingFileRecord> fileRecords) {
         for (int i = 0; i < 5 && i < fileRecords.size(); i++) {
-            ObjectNode fileRecord = fileRecords.get(i);
-            String encoding = ImportingUtilities.getEncoding(fileRecord);
-            String location = JSONUtilities.getString(fileRecord, "location", null);
+            ImportingFileRecord fileRecord = fileRecords.get(i);
+            String encoding = fileRecord.getDerivedEncoding();
+            String location = fileRecord.getLocation();
 
             if (location != null) {
                 File file = new File(job.getRawDataDir(), location);

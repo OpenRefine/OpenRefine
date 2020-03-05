@@ -53,7 +53,7 @@ public interface ImportingParser {
      */
     public ObjectNode createParserUIInitializationData(
             ImportingJob job,
-            List<ObjectNode> fileRecords,
+            List<ImportingFileRecord> fileRecords,
             String format);
 
     /**
@@ -71,7 +71,7 @@ public interface ImportingParser {
     public GridState parse(
             ProjectMetadata metadata,
             ImportingJob job,
-            List<ObjectNode> fileRecords,
+            List<ImportingFileRecord> fileRecords,
             String format,
             long limit,
             ObjectNode options) throws Exception;
