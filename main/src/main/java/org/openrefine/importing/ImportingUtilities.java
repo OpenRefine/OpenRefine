@@ -107,9 +107,9 @@ public class ImportingUtilities {
             HttpServletRequest request,
             HttpServletResponse response,
             Properties parameters,
-            final ImportingJob job,
-            ImportingJobConfig config) throws IOException, ServletException {
+            final ImportingJob job) throws IOException, ServletException {
 
+        ImportingJobConfig config = job.getJsonConfig();
         RetrievalRecord retrievalRecord = new RetrievalRecord();
         config.retrievalRecord = retrievalRecord;
         config.state = "loading-raw-data";
@@ -146,27 +146,14 @@ public class ImportingUtilities {
 
         config.fileSelection = new ArrayList<>();
 
-        String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, config.fileSelection);
-        bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
+        String bestFormat = job.autoSelectFiles();
+        bestFormat = job.guessBetterFormat(bestFormat);
 
-        List<String> rankedFormats = new ArrayList<>();
-        ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
-        config.rankedFormats = rankedFormats;
+        job.rerankFormats(bestFormat);
 
         config.state = "ready";
         config.hasData = true;
         config.progress = null;
-    }
-
-    static public void updateJobWithNewFileSelection(ImportingJob job, List<Integer> fileSelectionArray) {
-        job.setFileSelection(fileSelectionArray);
-
-        String bestFormat = ImportingUtilities.getCommonFormatForSelectedFiles(job, fileSelectionArray);
-        bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
-
-        List<String> rankedFormats = new ArrayList<>();
-        ImportingUtilities.rankFormats(job, bestFormat, rankedFormats);
-        job.setRankedFormats(rankedFormats);
     }
 
     static public void retrieveContentFromPostRequest(
@@ -765,210 +752,6 @@ public class ImportingUtilities {
         return NumberFormat.getIntegerInstance().format(bytes);
     }
 
-    /**
-     * Figure out the best (most common) format for the set of files, select all files which match that format, and
-     * return the format found.
-     * 
-     * @param job
-     *            ImportingJob object
-     * @param retrievalRecord
-     *            JSON object containing "files" key with all our files
-     * @param fileSelection
-     *            JSON array of selected file indices matching best format
-     * @return best (highest frequency) format
-     */
-    static public String autoSelectFiles(ImportingJob job, RetrievalRecord retrievalRecord, List<Integer> fileSelection) {
-        final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
-        List<String> formats = new ArrayList<String>();
-
-        List<ImportingFileRecord> fileRecords = retrievalRecord.files;
-        int count = fileRecords.size();
-        for (int i = 0; i < count; i++) {
-            ImportingFileRecord fileRecord = fileRecords.get(i);
-            String format = fileRecord.getFormat();
-            if (format != null) {
-                if (formatToCount.containsKey(format)) {
-                    formatToCount.put(format, formatToCount.get(format) + 1);
-                } else {
-                    formatToCount.put(format, 1);
-                    formats.add(format);
-                }
-            }
-        }
-        Collections.sort(formats, new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                return formatToCount.get(o2) - formatToCount.get(o1);
-            }
-        });
-
-        // Default to text/line-based to to avoid parsing as binary/excel.
-        String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
-        if (retrievalRecord.archiveCount == 0) {
-            // If there's no archive, then select everything
-            for (int i = 0; i < count; i++) {
-                fileSelection.add(i);
-            }
-        } else {
-            // Otherwise, select files matching the best format
-            for (int i = 0; i < count; i++) {
-                ImportingFileRecord fileRecord = fileRecords.get(i);
-                String format = fileRecord.getFormat();
-                if (format != null && format.equals(bestFormat)) {
-                    fileSelection.add(i);
-                }
-            }
-
-            // If nothing matches the best format but we have some files,
-            // then select them all
-            if (fileSelection.size() == 0 && count > 0) {
-                for (int i = 0; i < count; i++) {
-                    fileSelection.get(i);
-                }
-            }
-        }
-        return bestFormat;
-    }
-
-    static public String getCommonFormatForSelectedFiles(ImportingJob job, List<Integer> fileSelectionArray) {
-        RetrievalRecord retrievalRecord = job.getRetrievalRecord();
-
-        final Map<String, Integer> formatToCount = new HashMap<String, Integer>();
-        List<String> formats = new ArrayList<String>();
-
-        List<ImportingFileRecord> fileRecords = retrievalRecord.files;
-        int count = fileSelectionArray.size();
-        for (int i = 0; i < count; i++) {
-            int index = fileSelectionArray.get(i);
-            if (index >= 0 && index < fileRecords.size()) {
-                ImportingFileRecord fileRecord = fileRecords.get(index);
-                String format = fileRecord.getFormat();
-                if (format != null) {
-                    if (formatToCount.containsKey(format)) {
-                        formatToCount.put(format, formatToCount.get(format) + 1);
-                    } else {
-                        formatToCount.put(format, 1);
-                        formats.add(format);
-                    }
-                }
-            }
-        }
-        Collections.sort(formats, new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                return formatToCount.get(o2) - formatToCount.get(o1);
-            }
-        });
-
-        return formats.size() > 0 ? formats.get(0) : null;
-    }
-
-    static String guessBetterFormat(ImportingJob job, String bestFormat) {
-        RetrievalRecord retrievalRecord = job.getRetrievalRecord();
-        return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
-    }
-
-    static String guessBetterFormat(ImportingJob job, RetrievalRecord retrievalRecord, String bestFormat) {
-        List<ImportingFileRecord> fileRecords = retrievalRecord.files;
-        return fileRecords != null ? guessBetterFormat(job, fileRecords, bestFormat) : bestFormat;
-    }
-
-    static String guessBetterFormat(ImportingJob job, List<ImportingFileRecord> fileRecords, String bestFormat) {
-        if (bestFormat != null && fileRecords != null && fileRecords.size() > 0) {
-            ImportingFileRecord firstFileRecord = fileRecords.get(0);
-            String encoding = firstFileRecord.getDerivedEncoding();
-            String location = firstFileRecord.getLocation();
-
-            if (location != null) {
-                File file = new File(job.getRawDataDir(), location);
-
-                while (true) {
-                    String betterFormat = null;
-
-                    List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
-                    if (guessers != null) {
-                        for (FormatGuesser guesser : guessers) {
-                            betterFormat = guesser.guess(file, encoding, bestFormat);
-                            if (betterFormat != null) {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (betterFormat != null && !betterFormat.equals(bestFormat)) {
-                        bestFormat = betterFormat;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-        return bestFormat;
-    }
-
-    static void rankFormats(ImportingJob job, final String bestFormat, List<String> rankedFormats) {
-        final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
-
-        boolean download = true;
-        if (bestFormat != null && ImportingManager.formatToRecord.get(bestFormat) != null) {
-            download = ImportingManager.formatToRecord.get(bestFormat).download;
-        }
-
-        List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
-        for (String format : ImportingManager.formatToRecord.keySet()) {
-            Format record = ImportingManager.formatToRecord.get(format);
-            if (record.uiClass != null && record.parser != null && record.download == download) {
-                formats.add(format);
-                formatToSegments.put(format, format.split("/"));
-            }
-        }
-
-        if (bestFormat == null) {
-            Collections.sort(formats);
-        } else {
-            Collections.sort(formats, new Comparator<String>() {
-
-                @Override
-                public int compare(String format1, String format2) {
-                    if (format1.equals(bestFormat)) {
-                        return -1;
-                    } else if (format2.equals(bestFormat)) {
-                        return 1;
-                    } else {
-                        return compareBySegments(format1, format2);
-                    }
-                }
-
-                int compareBySegments(String format1, String format2) {
-                    int c = commonSegments(format2) - commonSegments(format1);
-                    return c != 0 ? c : format1.compareTo(format2);
-                }
-
-                int commonSegments(String format) {
-                    String[] bestSegments = formatToSegments.get(bestFormat);
-                    String[] segments = formatToSegments.get(format);
-                    if (bestSegments == null || segments == null) {
-                        return 0;
-                    } else {
-                        int i;
-                        for (i = 0; i < bestSegments.length && i < segments.length; i++) {
-                            if (!bestSegments[i].equals(segments[i])) {
-                                break;
-                            }
-                        }
-                        return i;
-                    }
-                }
-            });
-        }
-
-        for (String format : formats) {
-            rankedFormats.add(format);
-        }
-    }
-
     static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, List<Exception> exceptions) {
         Format record = ImportingManager.formatToRecord.get(format);
         if (record == null || record.parser == null) {
@@ -1072,5 +855,38 @@ public class ImportingUtilities {
         }
         pm.setEncoding(encoding);
         return pm;
+    }
+
+    /**
+     * Given a list of importing file records, return the most common format in them, or null if none of the records
+     * contain a format.
+     * 
+     * @param records
+     *            the importing file records to read formats from
+     * @return the most common format, or null
+     */
+    public static String mostCommonFormat(List<ImportingFileRecord> records) {
+        Map<String, Integer> formatToCount = new HashMap<>();
+        List<String> formats = new ArrayList<>();
+        for (ImportingFileRecord fileRecord : records) {
+            String format = fileRecord.getFormat();
+            if (format != null) {
+                if (formatToCount.containsKey(format)) {
+                    formatToCount.put(format, formatToCount.get(format) + 1);
+                } else {
+                    formatToCount.put(format, 1);
+                    formats.add(format);
+                }
+            }
+        }
+        Collections.sort(formats, new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return formatToCount.get(o2) - formatToCount.get(o1);
+            }
+        });
+
+        return formats.size() > 0 ? formats.get(0) : null;
     }
 }

@@ -75,7 +75,7 @@ public class CreateProjectCommand extends Command {
             ImportingJob job = ImportingManager.createJob();
             ImportingJobConfig config = job.getJsonConfig();
             ImportingUtilities.loadDataAndPrepareJob(
-                    request, response, parameters, job, config);
+                    request, response, parameters, job);
 
             String format = parameters.getProperty("format");
 

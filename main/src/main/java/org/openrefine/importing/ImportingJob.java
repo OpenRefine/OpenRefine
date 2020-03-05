@@ -36,7 +36,12 @@ package org.openrefine.importing;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,6 +51,7 @@ import org.apache.commons.io.FileUtils;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -159,6 +165,10 @@ public class ImportingJob {
         }
     }
 
+    public List<Integer> getFileSelection() {
+        return config.fileSelection;
+    }
+
     public void setRankedFormats(List<String> rankedFormats) {
         synchronized (config) {
             config.rankedFormats = rankedFormats;
@@ -226,5 +236,196 @@ public class ImportingJob {
         File dir2 = new File(dir, "raw-data");
         dir2.mkdirs();
         return dir2;
+    }
+
+    /**
+     * Returns the most common format among the selected files.
+     * 
+     * @param fileSelectionArray
+     * @return the most common format found, or null if no format could be guessed.
+     */
+    @JsonIgnore
+    public String getCommonFormatForSelectedFiles() {
+        RetrievalRecord retrievalRecord = this.getRetrievalRecord();
+
+        List<ImportingFileRecord> fileRecords = retrievalRecord.files;
+        List<ImportingFileRecord> selectedFiles = getFileSelection().stream()
+                .filter(idx -> idx >= 0 && idx < fileRecords.size())
+                .map(idx -> fileRecords.get(idx))
+                .collect(Collectors.toList());
+
+        return ImportingUtilities.mostCommonFormat(selectedFiles);
+    }
+
+    /**
+     * Guesses a better format by inspecting the first file to import with format guessers.
+     * 
+     * @param bestFormat
+     *            the best format guessed so far
+     * @return any better format, or the current best format
+     */
+    public String guessBetterFormat(String bestFormat) {
+        RetrievalRecord retrievalRecord = getRetrievalRecord();
+        if (retrievalRecord == null) {
+            return bestFormat;
+        }
+        List<ImportingFileRecord> fileRecords = retrievalRecord.files;
+        if (fileRecords == null) {
+            return bestFormat;
+        }
+        if (bestFormat != null && fileRecords != null && fileRecords.size() > 0) {
+            ImportingFileRecord firstFileRecord = fileRecords.get(0);
+            String encoding = firstFileRecord.getDerivedEncoding();
+            String location = firstFileRecord.getLocation();
+
+            if (location != null) {
+                File file = new File(getRawDataDir(), location);
+
+                while (true) {
+                    String betterFormat = null;
+
+                    List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
+                    if (guessers != null) {
+                        for (FormatGuesser guesser : guessers) {
+                            betterFormat = guesser.guess(file, encoding, bestFormat);
+                            if (betterFormat != null) {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (betterFormat != null && !betterFormat.equals(bestFormat)) {
+                        bestFormat = betterFormat;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        return bestFormat;
+    }
+
+    /**
+     * Updates the ranked formats stored in the configuration.
+     * 
+     * @param bestFormat
+     *            the format that should be put first in the list
+     */
+    void rerankFormats(String bestFormat) {
+        List<String> rankedFormats = new ArrayList<>();
+        final String bestFormat1 = bestFormat;
+        final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
+
+        boolean download = true;
+        if (bestFormat1 != null && ImportingManager.formatToRecord.get(bestFormat1) != null) {
+            download = ImportingManager.formatToRecord.get(bestFormat1).download;
+        }
+
+        List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
+        for (String format : ImportingManager.formatToRecord.keySet()) {
+            Format record = ImportingManager.formatToRecord.get(format);
+            if (record.uiClass != null && record.parser != null && record.download == download) {
+                formats.add(format);
+                formatToSegments.put(format, format.split("/"));
+            }
+        }
+
+        if (bestFormat1 == null) {
+            Collections.sort(formats);
+        } else {
+            Collections.sort(formats, new Comparator<String>() {
+
+                @Override
+                public int compare(String format1, String format2) {
+                    if (format1.equals(bestFormat1)) {
+                        return -1;
+                    } else if (format2.equals(bestFormat1)) {
+                        return 1;
+                    } else {
+                        return compareBySegments(format1, format2);
+                    }
+                }
+
+                int compareBySegments(String format1, String format2) {
+                    int c = commonSegments(format2) - commonSegments(format1);
+                    return c != 0 ? c : format1.compareTo(format2);
+                }
+
+                int commonSegments(String format) {
+                    String[] bestSegments = formatToSegments.get(bestFormat1);
+                    String[] segments = formatToSegments.get(format);
+                    if (bestSegments == null || segments == null) {
+                        return 0;
+                    } else {
+                        int i;
+                        for (i = 0; i < bestSegments.length && i < segments.length; i++) {
+                            if (!bestSegments[i].equals(segments[i])) {
+                                break;
+                            }
+                        }
+                        return i;
+                    }
+                }
+            });
+        }
+
+        for (String format : formats) {
+            rankedFormats.add(format);
+        }
+        setRankedFormats(rankedFormats);
+    }
+
+    /**
+     * Figure out the best (most common) format for the set of files, select all files which match that format, and
+     * return the format found.
+     * 
+     * @return best (highest frequency) format
+     */
+    @JsonIgnore
+    public String autoSelectFiles() {
+        RetrievalRecord retrievalRecord = getRetrievalRecord();
+        List<Integer> fileSelection = config.fileSelection;
+        List<ImportingFileRecord> fileRecords = retrievalRecord.files;
+        int count = fileRecords.size();
+
+        // Default to text/line-based to to avoid parsing as binary/excel.
+        String bestFormat = ImportingUtilities.mostCommonFormat(retrievalRecord.files);
+        if (bestFormat == null) {
+            bestFormat = "text/line-based";
+        }
+
+        if (retrievalRecord.archiveCount == 0) {
+            // If there's no archive, then select everything
+            for (int i = 0; i < count; i++) {
+                fileSelection.add(i);
+            }
+        } else {
+            // Otherwise, select files matching the best format
+            for (int i = 0; i < count; i++) {
+                ImportingFileRecord fileRecord = fileRecords.get(i);
+                String format = fileRecord.getFormat();
+                if (format != null && format.equals(bestFormat)) {
+                    fileSelection.add(i);
+                }
+            }
+
+            // If nothing matches the best format but we have some files,
+            // then select them all
+            if (fileSelection.size() == 0 && count > 0) {
+                for (int i = 0; i < count; i++) {
+                    fileSelection.get(i);
+                }
+            }
+        }
+        return bestFormat;
+    }
+
+    public void updateWithNewFileSelection(List<Integer> fileSelectionArray) {
+        setFileSelection(fileSelectionArray);
+
+        String bestFormat = getCommonFormatForSelectedFiles();
+        bestFormat = guessBetterFormat(bestFormat);
+
+        rerankFormats(bestFormat);
     }
 }

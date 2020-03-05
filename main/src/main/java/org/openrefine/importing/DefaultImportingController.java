@@ -118,7 +118,7 @@ public class DefaultImportingController implements ImportingController {
         }
 
         ImportingUtilities.loadDataAndPrepareJob(
-                request, response, parameters, job, config);
+                request, response, parameters, job);
         job.touch();
         job.updating = false;
     }
@@ -143,7 +143,12 @@ public class DefaultImportingController implements ImportingController {
         List<Integer> fileSelectionArray = Arrays.asList((Integer[]) JSONUtilities.toArray(ParsingUtilities.evaluateJsonStringToArrayNode(
                 request.getParameter("fileSelection"))));
 
-        ImportingUtilities.updateJobWithNewFileSelection(job, fileSelectionArray);
+        job.setFileSelection(fileSelectionArray);
+
+        String bestFormat = job.getCommonFormatForSelectedFiles();
+        bestFormat = job.guessBetterFormat(bestFormat);
+
+        job.rerankFormats(bestFormat);
 
         replyWithJobData(request, response, job);
         job.touch();
