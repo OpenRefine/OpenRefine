@@ -202,13 +202,8 @@ TextSearchFacet.prototype._scheduleUpdate = function() {
     var self = this;
     this._timerID = window.setTimeout(function() {
       self._timerID = null;
-      if(self._config.mode === 'regex') {
-        setTimeout(function(){ self._updateRest(); }, 1000);
-      }
-      else if (self._config.caseSensitive == true) {
-        setTimeout(function(){ self._updateRest(); }, 250);
-      }
-    }, 500);
+      self._updateRest();
+    }, self._config.mode === 'regex' ? 1500 : 500);
   }
 };
 
