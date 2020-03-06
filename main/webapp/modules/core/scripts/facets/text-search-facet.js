@@ -127,13 +127,13 @@ TextSearchFacet.prototype._initializeUI = function() {
   this._elmts.caseSensitiveCheckbox.bind("change", function() {
     self._config.caseSensitive = this.checked;
     if (self._query !== null && self._query.length > 0) {
-      setTimeout(function(){ self._scheduleUpdate(); }, 250);
+      self._scheduleUpdate();
     }
   });
   this._elmts.regexCheckbox.bind("change", function() {
     self._config.mode = this.checked ? "regex" : "text";
     if (self._query !== null && self._query.length > 0) {
-      setTimeout(function(){ self._scheduleUpdate(); }, 1500);
+      self._scheduleUpdate();
     }
   });
 
@@ -202,7 +202,12 @@ TextSearchFacet.prototype._scheduleUpdate = function() {
     var self = this;
     this._timerID = window.setTimeout(function() {
       self._timerID = null;
-      self._updateRest();
+      if(self._config.mode === 'regex') {
+        setTimeout(function(){ self._updateRest(); }, 1000);
+      }
+      else if (self._config.caseSensitive == true) {
+        setTimeout(function(){ self._updateRest(); }, 250);
+      }
     }, 500);
   }
 };
