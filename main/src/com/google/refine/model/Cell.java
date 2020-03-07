@@ -61,7 +61,7 @@ public class Cell implements HasFields {
     final public Serializable   value;
     @JsonIgnore
     final public Recon          recon;
-    
+
     public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
@@ -73,6 +73,8 @@ public class Cell implements HasFields {
             return value;
         } else if ("recon".equals(name)) {
             return recon;
+        } else if ("error".equals(name)) {
+            return getErrorMessage();
         }
         return null;
     }
