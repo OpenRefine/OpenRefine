@@ -117,109 +117,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-        <executions>
-            <execution>
-                <id>install-marc4j</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/marc4j-2.4.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>marc4j</groupId>
-                    <artifactId>marc4j</artifactId>
-                    <version>2.4</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-opencsv</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/opencsv-2.4-SNAPSHOT.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>net.sf.opencsv</groupId>
-                    <artifactId>opencsv</artifactId>
-                    <version>2.4-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-butterfly</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/butterfly-1.0.2.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>edu.mit.simile</groupId>
-                    <artifactId>butterfly</artifactId>
-                    <version>1.0.2</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-vicino</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/vicino-1.1.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>edu.mit.simile</groupId>
-                    <artifactId>vicino</artifactId>
-                    <version>1.1</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-secondstring</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/secondstring-20100303.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>com.wcohen</groupId>
-                    <artifactId>secondstring</artifactId>
-                    <version>20100303</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-arithcode</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/arithcode-1.1.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>com.colloquial</groupId>
-                    <artifactId>arithcode</artifactId>
-                    <version>1.1</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
         <version>3.1.0</version>
         <configuration>
@@ -269,7 +166,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>edu.mit.simile</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>1.0.2</version>
     </dependency>
@@ -329,7 +226,7 @@
       <version>1.5</version>
     </dependency>
     <dependency>
-      <groupId>marc4j</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>marc4j</artifactId>
       <version>2.4</version>
     </dependency>
@@ -344,9 +241,9 @@
       <version>1.11.3</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
-      <version>2.4-SNAPSHOT</version>
+      <groupId>org.openrefine.dependencies</groupId>
+      <artifactId>opencsv-multichar</artifactId>
+      <version>2.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
@@ -364,7 +261,7 @@
       <version>0.9.0-RC1</version>
     </dependency>
     <dependency>
-      <groupId>edu.mit.simile</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
       <version>1.1</version>
     </dependency>
@@ -429,12 +326,12 @@
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>com.wcohen</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>secondstring</artifactId>
       <version>20100303</version>
     </dependency>
     <dependency>
-      <groupId>com.colloquial</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>arithcode</artifactId>
       <version>1.1</version>
     </dependency>
