@@ -32,6 +32,12 @@ Contributing to the project
 * [Contributing Guide](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 * [Project Governance](https://github.com/OpenRefine/OpenRefine/blob/master/GOVERNANCE.md)
 
+Our Core Philosophy
+-------------------
+* We give power to our users.
+* We trust users to know what is best for them.
+* We give users smart defaults, and options to change them.
+
 Contact us
 ----------
 * [Mailing List](https://groups.google.com/forum/#!forum/openrefine)
