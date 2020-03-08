@@ -174,7 +174,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
             String encoding = fileRecord.getDerivedEncoding();
             String location = fileRecord.getLocation();
 
-            if (location != null) {
+            if (location != null && location.length() > 0) {
                 File file = new File(job.getRawDataDir(), location);
                 // Quotes are turned on by default, so use that for guessing
                 Separator separator = guessSeparator(file, encoding, true);

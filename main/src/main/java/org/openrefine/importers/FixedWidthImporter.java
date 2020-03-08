@@ -66,7 +66,7 @@ public class FixedWidthImporter extends SparkImportingParserBase {
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         if (fileRecords.size() > 0) {
             ImportingFileRecord firstFileRecord = fileRecords.get(0);
-            if (firstFileRecord.getLocation() != null) {
+            try {
                 File file = firstFileRecord.getFile(job.getRawDataDir());
                 int[] columnWidthsA = guessColumnWidths(file, firstFileRecord.getEncoding());
                 if (columnWidthsA != null) {
@@ -74,6 +74,8 @@ public class FixedWidthImporter extends SparkImportingParserBase {
                         JSONUtilities.append(columnWidths, w);
                     }
                 }
+            } catch (IllegalArgumentException e) {
+                // the file is not stored in the import directory, skipping
             }
 
             JSONUtilities.safePut(options, "headerLines", 0);

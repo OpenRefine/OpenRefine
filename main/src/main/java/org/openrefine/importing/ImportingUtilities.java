@@ -66,6 +66,7 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.hadoop.fs.Path;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -168,6 +169,7 @@ public class ImportingUtilities {
         int uploadCount = 0;
         int downloadCount = 0;
         int archiveCount = 0;
+        int sparkCount = 0;
 
         // This tracks the total progress, which involves uploading data from the client
         // as well as downloading data from URLs.
@@ -213,7 +215,7 @@ public class ImportingUtilities {
         List<FileItem> tempFiles = upload.parseRequest(request);
 
         progress.setProgress("Uploading data ...", -1);
-        parts: for (FileItem fileItem : tempFiles) {
+        for (FileItem fileItem : tempFiles) {
             if (progress.isCanceled()) {
                 break;
             }
@@ -222,7 +224,7 @@ public class ImportingUtilities {
 
             String name = fileItem.getFieldName().toLowerCase();
             if (fileItem.isFormField()) {
-                if (name.equals("clipboard")) {
+                if ("clipboard".equals(name)) {
                     String encoding = request.getCharacterEncoding();
                     if (encoding == null) {
                         encoding = "UTF-8";
@@ -251,7 +253,28 @@ public class ImportingUtilities {
 
                     clipboardCount++;
 
-                } else if (name.equals("download")) {
+                } else if ("spark".equals(name)) {
+                    String urlString = Streams.asString(stream);
+                    String filename = extractFilenameFromSparkURI(urlString);
+
+                    ImportingFileRecord fileRecord = new ImportingFileRecord(
+                            urlString, // sparkURI
+                            null, // location
+                            filename, // fileName
+                            0, // size
+                            "spark", // origin
+                            null, // declaredMimeType
+                            null, // mimeType
+                            null, // URL
+                            null, // encoding
+                            null, // declaredEncoding
+                            null, // format
+                            null // archiveFileName
+                    );
+                    fileRecords.add(fileRecord);
+
+                    sparkCount++;
+                } else if ("download".equals(name)) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
 
@@ -347,7 +370,6 @@ public class ImportingUtilities {
 //                    request.getParameterMap().put(name, value);
 
                 }
-
             } else { // is file content
                 String fileName = fileItem.getName();
                 if (fileName.length() > 0) {
@@ -394,6 +416,23 @@ public class ImportingUtilities {
         retrievalRecord.downloadCount = downloadCount;
         retrievalRecord.clipboardCount = clipboardCount;
         retrievalRecord.archiveCount = archiveCount;
+        retrievalRecord.sparkCount = sparkCount;
+    }
+
+    /**
+     * Attempts to extract a filename from a Spark URI.
+     * 
+     * @param uri
+     *            the spark URI
+     * @return null if it does not succeed, or if there is no final name in the path
+     */
+    protected static String extractFilenameFromSparkURI(String uri) {
+        Path url = new Path(uri);
+        if (url.getName().length() > 0) {
+            return url.getName();
+        } else {
+            return null;
+        }
     }
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,

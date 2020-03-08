@@ -41,6 +41,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,8 @@ abstract public class ImportingParserBase implements ImportingParser {
     public GridState parse(ProjectMetadata metadata,
             final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
             long limit, ObjectNode options) throws Exception {
-        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
+        FileSystem hdfs = FileSystem.get(sparkContext.hadoopConfiguration());
+        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords, hdfs);
         List<GridState> gridStates = new ArrayList<>(fileRecords.size());
 
         if (fileRecords.isEmpty()) {
@@ -199,7 +201,7 @@ abstract public class ImportingParserBase implements ImportingParser {
      */
     public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String uri,
             long limit, ObjectNode options) throws Exception {
-        throw new NotImplementedException("Importer does not support reading from a File");
+        throw new NotImplementedException("Importer does not support reading from a Spark URI");
     }
 
     /**

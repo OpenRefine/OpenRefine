@@ -108,8 +108,17 @@ public class RefineServlet extends Butterfly {
         super.init();
 
         Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
+        int defaultParallelism = 4;
+        try {
+            String parallelism = getInitParameter("refine.defaultParallelism");
+            defaultParallelism = Integer.parseInt(parallelism == null ? "" : parallelism);
+        } catch (NumberFormatException e) {
+            ;
+        }
         s_context = new JavaSparkContext(
-                new SparkConf().setAppName("OpenRefine").setMaster("local"));
+                new SparkConf()
+                        .setAppName("OpenRefine")
+                        .setMaster(String.format("local[%d]", defaultParallelism)));
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");
 

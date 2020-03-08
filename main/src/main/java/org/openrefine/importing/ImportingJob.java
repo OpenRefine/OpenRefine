@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -72,6 +73,7 @@ public class ImportingJob {
 
     final private Object lock = new Object();
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public static class ImportingJobConfig {
 
         @JsonProperty("retrievalRecord")
@@ -81,6 +83,7 @@ public class ImportingJob {
         @JsonProperty("state")
         public String state = "new";
         @JsonProperty("hasData")
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         public boolean hasData = false;
         @JsonProperty("errors")
         public ArrayNode errors; // to be converted
@@ -108,6 +111,8 @@ public class ImportingJob {
         public int downloadCount;
         @JsonProperty("clipboardCount")
         public int clipboardCount;
+        @JsonProperty("sparkCount")
+        public int sparkCount;
     }
 
     public ImportingJob(long id, File dir) {

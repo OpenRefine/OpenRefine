@@ -2,10 +2,14 @@
 package org.openrefine.importing;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.hadoop.fs.ContentSummary;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 /**
  * Represents a file to import in an importing job. Multiple files can be imported to form the same project.
@@ -72,7 +76,7 @@ public class ImportingFileRecord {
     }
 
     @JsonProperty("size")
-    public long getSize() {
+    public long getCachedSize() {
         return _size;
     }
 
@@ -159,6 +163,34 @@ public class ImportingFileRecord {
         } else {
             return _sparkURI;
         }
+    }
+
+    /**
+     * Returns the number of bytes in this file. If this is cached in this record, the cached value will be returned.
+     * 
+     * @param rawDataDir
+     *            the directory where the files pertaining to the corresponding importing
+     * @param hdfs
+     *            the Hadoop file system, to read Spark URIs
+     * @return the length of the file in bytes
+     */
+    public long getSize(File rawDataDir, FileSystem hdfs) {
+        if (_size > 0) {
+            return _size;
+        }
+        if (_sparkURI == null) {
+            File localFile = getFile(rawDataDir);
+            _size = localFile.length();
+        } else {
+            Path path = new Path(getDerivedSparkURI(rawDataDir));
+            try {
+                ContentSummary summary = hdfs.getContentSummary(path);
+                _size = summary.getLength();
+            } catch (IOException e) {
+                _size = 0;
+            }
+        }
+        return _size;
     }
 
     @JsonIgnore
