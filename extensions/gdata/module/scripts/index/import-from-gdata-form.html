@@ -12,10 +12,15 @@
   
   <div bind="authorizedDocsPanel" class="gdata-panel">
     <h1 id="gdata-auth-doc"></h1>
-    
     <div bind="signinPage" class="gdata-page">
-      <p><span id="gdata-please"></span> <button class="gdata-signin button button-primary" id="gdata-signin-btn"></button>
-        <span id="gdata-access-data"></p>
+      <p class="gdata-dev-setup">
+        <span id="gdata-dev-version"></span><br>
+        <span id="gdata-setup-keys"></span> <a id="gdata-google-extension" href='https://github.com/OpenRefine/OpenRefine/wiki/Google-Extension'></a>
+        <span id="gdata-help-page"></span>
+      </p>
+      <p>
+        <span id="gdata-please"></span> <button class="gdata-signin button button-primary" id="gdata-signin-btn"></button>
+        <span id="gdata-access-data"></span></p>
     </div>
     <div bind="progressPage" class="gdata-page">
       <p><img src="images/large-spinner.gif" /> <span id="gdata-retrieving"></span></p>
