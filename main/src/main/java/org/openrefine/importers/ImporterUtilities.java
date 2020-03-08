@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.openrefine.importing.ImportingFileRecord;
@@ -164,11 +165,12 @@ public class ImporterUtilities {
     }
     
     static public MultiFileReadingProgress createMultiFileReadingProgress(
-            final ImportingJob job, List<ImportingFileRecord> fileRecords) {
+            final ImportingJob job,
+            List<ImportingFileRecord> fileRecords,
+            FileSystem hdfs) {
         long totalSize = 0;
         for (ImportingFileRecord fileRecord : fileRecords) {
-            File file = fileRecord.getFile(job.getRawDataDir());
-            totalSize += file.length();
+			totalSize += fileRecord.getSize(job.getRawDataDir(), hdfs);
         }
         
         final long totalSize2 = totalSize;

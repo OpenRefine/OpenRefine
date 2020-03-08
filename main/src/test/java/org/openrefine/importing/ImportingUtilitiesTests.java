@@ -28,22 +28,22 @@ package org.openrefine.importing;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.tree.TreeImportingParserBase;
-import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.util.JSONUtilities;
+import org.openrefine.importers.ImporterTest;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.importers.ImporterTest;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
@@ -71,15 +71,29 @@ public class ImportingUtilitiesTests extends ImporterTest {
     	ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
     }
     
-    private ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
-        ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
-        
-        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
-        path.add("results");
-        path.add("result");
-        
-        JSONUtilities.safePut(options, "recordPath", path);
-        return options;
+    @Test
+    public void testMostCommonFormatEmpty() {
+    	Assert.assertNull(ImportingUtilities.mostCommonFormat(Collections.emptyList()));
+    }
+    
+    @Test
+    public void testMostCommonFormat() {
+    	ImportingFileRecord recA = mock(ImportingFileRecord.class);
+    	when(recA.getFormat()).thenReturn("foo");
+    	ImportingFileRecord recB = mock(ImportingFileRecord.class);
+    	when(recB.getFormat()).thenReturn("bar");
+    	ImportingFileRecord recC = mock(ImportingFileRecord.class);
+    	when(recC.getFormat()).thenReturn("foo");
+    	ImportingFileRecord recD = mock(ImportingFileRecord.class);
+    	when(recD.getFormat()).thenReturn(null);
+    	List<ImportingFileRecord> records = Arrays.asList(recA, recB, recC, recD);
+    	
+    	Assert.assertEquals(ImportingUtilities.mostCommonFormat(records), "foo");
+    }
+    
+    @Test
+    public void testExtractFilenameFromSparkURI() {
+    	Assert.assertEquals(ImportingUtilities.extractFilenameFromSparkURI("hdfs:///data/records"), "records");
+    	Assert.assertNull(ImportingUtilities.extractFilenameFromSparkURI("////"));
     }
 }
