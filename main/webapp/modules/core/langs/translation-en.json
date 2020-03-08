@@ -420,7 +420,7 @@
     "core-views/not-valid-number": "Not a valid number.",
     "core-views/not-valid-date": "Not a valid date.",
     "core-views/match-this": "Match this cell only",
-    "core-views/match-other": "Match other cells with same content",
+    "core-views/match-other": "Match other rows in this column with same text",
     "core-views/search-for": "Search for",
     "core-views/match-cell": "Match this Cell",
     "core-views/match-identical": "Match All Identical Cells",
