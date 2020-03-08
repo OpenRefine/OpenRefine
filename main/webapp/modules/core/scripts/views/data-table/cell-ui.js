@@ -658,26 +658,18 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   });
 };
 
+
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
+
 function checkNonPrintable(content){
   var stringIncNonPrintable = "";
   for (var character = 0; character < content.length; character++) {
     var unprintableChar = "";
-    if ((content.charAt(character)).charCodeAt(0) == 13) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>CR</b></span>";
+    var charCode = content.charAt(character).charCodeAt(0);
+    if (charCode <= 32){
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] +"</b></span>";
     }
-    else if ((content.charAt(character)).charCodeAt(0) == 10) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>LF</b></span>";
-    } 
-    else if ((content.charAt(character)).charCodeAt(0) == 9) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>HT</b></span>";
-    } 
-    else if ((content.charAt(character)).charCodeAt(0) == 16) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>LS</b></span>";
-    } 
-    else if ((content.charAt(character)).charCodeAt(0) == 32) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>NBSP</b></span>";
-    }
-    stringIncNonPrintable += unprintableChar + content.charAt(character);
+      stringIncNonPrintable += unprintableChar + content.charAt(character);
   }
   return stringIncNonPrintable;
 }

@@ -153,6 +153,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
     createFormatTab(formats[i]);
   }
   this._selectFormat(this._format);
+  nonPrintableCheckBox();
 };
 
 Refine.DefaultImportingController.prototype._disposeParserUI = function() {
@@ -187,7 +188,6 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
           $(this).addClass("selected");
         }
       });
-
       self._format = newFormat;
       self._formatParserUI = new uiClass(
         self,
@@ -200,5 +200,47 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
         self._parsingPanelElmts.optionsContainer
       );
     });
+    
   }
 };
+
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
+
+function checkNonPrintable(content) {
+  var stringIncNonPrintable = "";
+  for (var character = 0; character < content.length; character++) {
+    var unprintableChar = "";
+    var charCode = content.charAt(character).charCodeAt(0);
+    if (charCode <= 32) {
+      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+    }
+    stringIncNonPrintable += unprintableChar + content.charAt(character);
+  }
+  return stringIncNonPrintable;
+}
+
+function nonPrintableCheckBox() {
+  if ($('#toggle-display-characters').prop('checked')) {
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+        console.log("originalContent");
+        console.log(originalContent);
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+      }
+    }
+  }
+  else {
+    $(".unprintableCharacters").remove();
+  }
+}
+
+$(document).on('change', '#toggle-display-characters', function () {
+  nonPrintableCheckBox();
+});

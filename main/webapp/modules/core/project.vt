@@ -77,7 +77,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           </div>
           <div bind="extensionBarDiv" id="extension-bar">
               <input type="checkbox" id="toggle-display-characters" name="nonPrintableCharacters">
-              <label class="non-printable" type="checkbox" for="nonPrintableCharacters" >Non-printable Characters</label>
+              <label class="non-printable" type="checkbox" for="nonPrintableCharacters" >Show control characters</label>
             <span id="or-proj-ext"></span> <span bind="menuContainer" id="extension-bar-menu-container"></span>
           </div>
         </div>
