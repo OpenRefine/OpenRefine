@@ -26,23 +26,23 @@
  ******************************************************************************/
 package com.google.refine.model;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
-import static org.testng.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.testng.annotations.Test;
-
-import com.google.refine.model.Cell;
+import com.google.refine.expr.EvalError;
 import com.google.refine.model.Recon;
 import com.google.refine.util.Pool;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 public class CellTests {
-    
+
     String reconJson = "{\"id\":1533649346002675326,"
             + "\"judgmentHistoryEntry\":1530278634724,"
             + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -93,7 +93,16 @@ public class CellTests {
         Cell c = Cell.loadStreaming(json, pool);
         TestUtils.isSerializedTo(c, json);
     }
-    
+
+    @Test
+    public void getMessageFromErrorCell() throws Exception {
+        String errorMessage = "Sample error message";
+        EvalError err = new EvalError(errorMessage);
+        Cell c = new Cell(err, null);
+        assertEquals(c.getField("error", null), errorMessage);
+        assertEquals(c.getField("value", null), err);
+    }
+
     @Test
     public void serializeDateCell() throws Exception {
         String json = "{\"v\":\"2018-03-04T08:09:10Z\",\"t\":\"date\"}";
