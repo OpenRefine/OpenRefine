@@ -61,7 +61,7 @@ public class Cell implements HasFields {
     final public Serializable   value;
     @JsonIgnore
     final public Recon          recon;
-
+    
     public Cell(Serializable value, Recon recon) {
         this.value = value;
         this.recon = recon;
