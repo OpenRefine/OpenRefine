@@ -90,7 +90,6 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
   this._elmts.nextButton.click(function(evt) {
-    console.log(self._elmts.urlInput[0].value);
     if(!isUrlValid(self._elmts.urlInput[0].value)) {
       window.alert($.i18n('core-index-import/warning-web-address'));
     } else {
