@@ -189,12 +189,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
   };
 
-  var doAddQcolumn = function() {
+  var doAddIdcolumn = function() {
     var frame = $(
       DOM.loadHTML("core", "scripts/views/data-table/add-q-column-dialog.html"));
 
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/add-q-col')+" " + column.name);
+    elmts.dialogHeader.text($.i18n('core-views/add-id-col')+" " + column.name);
     
     elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
     elmts.okButton.html($.i18n('core-buttons/ok'));
@@ -518,10 +518,10 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     },
     {},
     {
-      id: "core/add-q-column",
-      label: $.i18n('core-views/add-q-column'),
-      tooltip: $.i18n('core-views/add-q-column2'),
-      click: doAddQcolumn
+      id: "core/add-id-column",
+      label: $.i18n('core-views/add-id-column'),
+      tooltip: $.i18n('core-views/add-id-column2'),
+      click: doAddIdcolumn
     }
   ]);
 });
