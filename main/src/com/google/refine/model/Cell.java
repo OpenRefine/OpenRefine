@@ -73,6 +73,8 @@ public class Cell implements HasFields {
             return value;
         } else if ("recon".equals(name)) {
             return recon;
+        } else if ("error".equals(name)) {
+            return getErrorMessage();
         }
         return null;
     }
