@@ -183,7 +183,7 @@ abstract public class GoogleAPIExtension {
          throws IllegalArgumentException {
       URL urlAsUrl;
       
-      Matcher matcher = Pattern.compile("(?<=\\/d\\/).*(?=\\/.*)").matcher(url);
+      Matcher matcher = Pattern.compile("(?<=/d/).*?(?=[/?#]|$)").matcher(url);
       if (matcher.find()) {
           return matcher.group(0);
       }
