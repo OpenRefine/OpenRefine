@@ -65,6 +65,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        JSONUtilities.safePut(options, "trimStrings", false);
         
         return options;
     }
@@ -203,6 +204,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
 
     public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
             Reader dataReader, int limit, ObjectNode options, List<Exception> exceptions) {
+        // boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
         super.parseOneFile(project, metadata, job, fileSource, dataReader, limit, options, exceptions);
     }
 }
