@@ -353,7 +353,6 @@
     "core-project/remove-all": "全ファセットを削除",
     "core-project/complete": "完了",
     "core-project/undo": "取り消す",
-    "core-project/warning-align": "まだ任意のスキーマの配置を行っていないので、\nエクスポートするトリプルはありません。\n最初にFreebaseのスキーマで、データを整列するコマンド\n[Freebase > スキーマのアライメントスケルトンを編集…]\nを使用してください。",
     "core-project/use-to-select": "ファセットやフィルターでデータのサブセットを選択できます。各カラムのメニューからファセットとフィルターメソッドを選択してください。",
     "core-project/not-sure": "使い方がわからない?",
     "core-project/permalink": "パーマリンク",

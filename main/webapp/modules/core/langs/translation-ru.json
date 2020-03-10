@@ -371,7 +371,6 @@
     "core-project/remove-all": "Удалить все фасеты",
     "core-project/complete": "завершить",
     "core-project/undo": "Отмена",
-    "core-project/warning-align": "You haven't done any schema alignment yet,\n so there is no triple to export.\n\n Use the Freebase > Еdit Schema Alignment Skeleton...\n command to align your data with Freebase schemas first.",
     "core-project/use-to-select": "Чтобы создать наборы данных для обработки используйте фасеты и фильтры. Выбирайте методы фасетов и фильтров из меню заголовков колонок данных.",
     "core-project/not-sure": "Не знаете с чего начать?",
     "core-project/permalink": "Постоянная ссылка",
