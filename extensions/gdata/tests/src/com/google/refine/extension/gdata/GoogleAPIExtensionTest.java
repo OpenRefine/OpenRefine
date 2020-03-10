@@ -12,7 +12,9 @@ import static org.testng.Assert.*;
 public class GoogleAPIExtensionTest {
 
 	@Test
-	public void reTest() {
+	public void extractSpreadSheetIdTest() {
+		// GoogleAPIExtension will call ProjectManager.singleton.getPreferenceStore() during class initialization,
+		// which will cause NullPointerException if this line is omitted.
 		ProjectManager.singleton = mock(ProjectManager.class);
 
 		String spreadSheetId = "16L0JfpBWPfBJTqKtm-YU5-UBWLpkwXII-IRLMLnoKw0";
