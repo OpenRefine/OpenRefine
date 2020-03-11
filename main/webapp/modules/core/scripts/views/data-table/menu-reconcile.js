@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
+  var columnIndex = Refine.columnNameToColumnIndex(column.name);
   var doReconcile = function() {
     new ReconDialog(column);
   };
@@ -186,6 +187,49 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     }).appendTo(footer);
 
     var level = DialogSystem.showDialog(frame);
+  };
+
+  var doAddIdcolumn = function() {
+    var frame = $(
+      DOM.loadHTML("core", "scripts/views/data-table/add-q-column-dialog.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/add-id-col', column.name));
+    
+    elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    var o = DataTableView.sampleVisibleRows(column);
+    
+    elmts.cancelButton.click(dismiss);
+    elmts.okButton.click(function() {
+      var columnName = $.trim(elmts.columnNameInput[0].value);
+      if (!columnName.length) {
+        alert($.i18n('core-views/warning-col-name'));
+        return;
+      }
+
+      Refine.postCoreProcess(
+        "add-column", 
+        {
+          baseColumnName: column.name,  
+          newColumnName: columnName, 
+          columnInsertIndex: columnIndex + 1,
+          onError: "set-to-blank"
+        },
+        { expression: "cell.recon.match.id" },
+        { modelsChanged: true },
+        {
+          onDone: function(o) {
+            dismiss();
+          }
+        }
+      );
+    });
   };
 
 
@@ -471,6 +515,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n('core-views/use-values-as-identifiers'),
       tooltip: $.i18n('core-views/use-values-as-identifiers2'),
       click: doUseValuesAsIdentifiers
+    },
+    {},
+    {
+      id: "core/add-id-column",
+      label: $.i18n('core-views/add-id-column'),
+      tooltip: $.i18n('core-views/add-id-column2'),
+      click: doAddIdcolumn
     }
   ]);
 });
