@@ -99,7 +99,7 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         sep = StringEscapeUtils.unescapeJava(sep);
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
         boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
-
+        
         
         List<Object> retrievedColumnNames = null;
         if (options.has("columnNames")) {
