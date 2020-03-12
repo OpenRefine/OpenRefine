@@ -272,7 +272,7 @@ ListFacet.prototype._update = function(resetScroll) {
     //this._elmts.statusDiv.hide();
     this._elmts.controlsDiv.hide();
     this._elmts.bodyInnerDiv.empty().append(
-        $('<div>').text($.i18n('core-facets/loading')).addClass("facet-body-message"));
+        $('<div>').html($.i18n('core-facets/loading')).addClass("facet-body-message"));
 
     return;
   } else if ("error" in this._data) {
@@ -283,7 +283,7 @@ ListFacet.prototype._update = function(resetScroll) {
       this._elmts.bodyInnerDiv.empty();
       
       var messageDiv = $('<div>')
-        .text(this._data.choiceCount + " "+$.i18n('core-facets/too-many-choices'))
+        .html(this._data.choiceCount + " "+$.i18n('core-facets/too-many-choices'))
         .addClass("facet-body-message")
         .appendTo(this._elmts.bodyInnerDiv);
       $('<br>').appendTo(messageDiv);
@@ -301,7 +301,7 @@ ListFacet.prototype._update = function(resetScroll) {
     } else {
       this._elmts.bodyInnerDiv.empty().append(
           $('<div>')
-            .text(this._data.error)
+            .html(this._data.error)
             .addClass("facet-body-message"));
     }
     return;
@@ -520,7 +520,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
 
   var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
   menu.html(
-      '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
+    '<div contenteditable="true" bind="textarea" class="data-table-cell-editor-editor"></div>' +
       '<div id="data-table-cell-editor-actions">' +
         '<div class="data-table-cell-editor-action">' +
           '<button class="button" bind="okButton">'+$.i18n('core-buttons/apply')+'</button>' +
