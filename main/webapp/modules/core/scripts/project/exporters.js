@@ -109,14 +109,6 @@ ExporterManager.stripNonFileChars = function(name) {
     return $.trim(name.replace(/[\\*\/:?"<>|]/g, ' ')).replace(/\s+/g, '-');
 };
 
-ExporterManager.handlers.exportTripleloader = function(format) {
-  if (!theProject.overlayModels.freebaseProtograph) {
-    alert($.i18n('triple-loader/warning-align'));
-  } else {
-    ExporterManager.handlers.exportRows(format, "txt");
-  }
-};
-
 ExporterManager.handlers.exportRows = function(format, ext) {
   var form = ExporterManager.prepareExportRowsForm(format, true, ext);
   $('<input />')
