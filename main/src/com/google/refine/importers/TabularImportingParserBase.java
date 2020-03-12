@@ -65,6 +65,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        JSONUtilities.safePut(options, "trimStrings", false);
         
         return options;
     }
@@ -104,6 +105,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
+
+        boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
         int filenameColumnIndex = -1;
         if (includeFileSources) {
@@ -161,6 +164,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             
                             Object value = cells.get(c);
                             if (value instanceof Cell) {
+                                if(trimStrings) {
+                                    value = ((Cell) cell).value.toString().trim();
+                                }
                                 row.setCell(column.getCellIndex(), (Cell) value);
                                 rowHasData = true;
                             } else if (ExpressionUtils.isNonBlankData(value)) {
@@ -171,7 +177,11 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 } else {
                                     storedValue = ExpressionUtils.wrapStorable(value);
                                 }
-                                
+                                if(trimStrings) {
+                                    storedValue = ((String) storedValue);
+                                    storedValue = storedValue.trim();
+                                }
+
                                 row.setCell(column.getCellIndex(), new Cell(storedValue, null));
                                 rowHasData = true;
                             } else if (!storeBlankCellsAsNulls) {

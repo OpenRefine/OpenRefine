@@ -76,7 +76,8 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
-
+        JSONUtilities.safePut(options, "trimStrings", false);
+        
         return options;
     }
     
