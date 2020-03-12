@@ -181,6 +181,11 @@ if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
 set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
 
+if "%GDATA_CLIENT_ID%" == "" goto skipGDataCredentials
+if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials
+set OPTS=%OPTS% -Dext.gdata.clientid=%GDATA_CLIENT_ID% -Dext.gdata.clientsecret=%GDATA_CLIENT_SECRET%
+:skipGDataCredentials
+
 rem ----- Respond to the action ----------------------------------------------------------
 
 set ACTION=%1

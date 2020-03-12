@@ -32,8 +32,10 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 abstract public class GoogleAPIExtension {
     protected static final String SERVICE_APP_NAME = "OpenRefine-Google-Service";
-    private static final String CLIENT_ID = "";
-    private static final String CLIENT_SECRET = ""; 
+    // We can set the second param to a default client_id for release version
+    private static final String CLIENT_ID = System.getProperty("ext.gdata.clientid", "");
+    // We can set the second param to a default client_secret for release version
+    private static final String CLIENT_SECRET = System.getProperty("ext.gdata.clientsecret", "");
     
     /** Global instance of the HTTP transport. */
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();

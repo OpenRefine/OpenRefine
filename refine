@@ -888,6 +888,12 @@ fi
 add_option "-Dpython.path=$JYTHONPATH"
 add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
+if [ ! -z "$GDATA_CLIENT_ID" ] ; then
+    if [ ! -z "$GDATA_CLIENT_SECRET" ] ; then
+        add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET"
+    fi
+fi
+
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
   build) build_prepare; mvn process-resources; mvn compile\ test-compile;;
