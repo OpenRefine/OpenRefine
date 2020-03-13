@@ -174,4 +174,9 @@ public class ColumnModel implements Serializable {
     	ColumnModel otherModel = (ColumnModel)other;
     	return _columns.equals(otherModel.getColumns());
     }
+    
+    @Override
+    public int hashCode() {
+        return _columns.hashCode();
+    }
 }

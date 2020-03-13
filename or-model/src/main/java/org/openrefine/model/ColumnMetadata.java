@@ -147,4 +147,9 @@ public class ColumnMetadata implements Serializable {
     			((_reconStats == null && metadata.getReconStats() == null)
     					|| _reconStats.equals(metadata.getReconStats())));
     }
+    
+    @Override
+    public int hashCode() {
+        return _name.hashCode() + 87 * _originalName.hashCode();
+    }
 }
