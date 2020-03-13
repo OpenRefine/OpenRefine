@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+var recordElementSelected = false;
+
 Refine.XmlParserUI = function(controller, jobID, job, format, config,
     dataContainerElmt, progressContainerElmt, optionContainerElmt) {
 
@@ -225,6 +227,7 @@ Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
         div.removeClass('highlight');
       })
       .click(function(evt) {
+        recordElementSelected = true;
         if (hittest(evt)) {
           self._setRecordPath(path);
         }
@@ -256,6 +259,11 @@ Refine.XmlParserUI.prototype._setRecordPath = function(path) {
 };
 
 Refine.XmlParserUI.prototype._updatePreview = function() {
+  if(!recordElementSelected) {
+    alert("No record element selected! Please select one first.");
+    return;
+  }
+
   var self = this;
 
   this._progressContainer.show();
