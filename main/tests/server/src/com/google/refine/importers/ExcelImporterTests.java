@@ -65,16 +65,16 @@ import com.google.refine.importers.ExcelImporter;
 import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
-
+    
     private static final double EPSILON = 0.0000001;
     private static final int SHEETS = 3;
     private static final int ROWS = 5;
     private static final int COLUMNS = 6;
-
+    
     //private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
     private static final File xlsxFile = createSpreadsheet(true);
-
+    
     @Override
     @BeforeTest
     public void init() {
@@ -97,7 +97,7 @@ public class ExcelImporterTests extends ImporterTest {
         SUT = null;
         super.tearDown();
     }
-
+    
     //---------------------read tests------------------------
     @Test
     public void readXls() throws FileNotFoundException, IOException{
@@ -107,21 +107,21 @@ public class ExcelImporterTests extends ImporterTest {
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
-
+        
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 0);
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
         whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-
+        
         InputStream stream = new FileInputStream(xlsFile);
-
+        
         try {
             parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-
+        
         Assert.assertEquals(project.rows.size(), ROWS * SHEETS);
         Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
         Assert.assertEquals(project.columnModel.columns.size(), COLUMNS + SHEETS - 1);
@@ -134,7 +134,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
-
+        
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
@@ -145,7 +145,7 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("limit");
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
-
+    
     @Test
     public void readXlsx() throws FileNotFoundException, IOException{
 
@@ -154,21 +154,21 @@ public class ExcelImporterTests extends ImporterTest {
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
-
+        
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 0);
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
         whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-
+        
         InputStream stream = new FileInputStream(xlsxFile);
-
+        
         try {
             parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
-
+        
         Assert.assertEquals(project.rows.size(), ROWS * SHEETS);
         Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
         Assert.assertEquals(project.columnModel.columns.size(), COLUMNS + SHEETS - 1);
@@ -182,7 +182,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
-
+        
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
@@ -193,7 +193,7 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(SHEETS)).get("limit");
         verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
     }
-
+    
     private static File createSpreadsheet(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
@@ -249,7 +249,6 @@ public class ExcelImporterTests extends ImporterTest {
             return null;
         }
         return file;
-
     }
 
 }
