@@ -109,8 +109,10 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         if (includeFileSources) {
             filenameColumnIndex = addFilenameColumn(project);
         }
-        
-        List<String> columnNames = new ArrayList<String>();
+
+        // Try to reuse previous columnNames if possible to avoid mismatching cells and columns.
+        List<String> columnNames = project.columnModel.getColumnNames();
+
         boolean hasOurOwnColumnNames = headerLines > 0;
         
         List<Object> cells = null;
