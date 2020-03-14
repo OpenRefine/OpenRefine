@@ -43,7 +43,6 @@ Refine.XmlParserUI = function(controller, jobID, job, format, config,
   this._dataContainer = dataContainerElmt;
   this._progressContainer = progressContainerElmt;
   this._optionContainer = optionContainerElmt;
-  this._recordElementSelected = false;
 
   this._timerID = null;
   this._initialize();
@@ -132,7 +131,7 @@ Refine.XmlParserUI.prototype._initialize = function() {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
   this._optionContainerElmts.pickRecordElementsButton.click(function() {
-    self._recordElementSelected = false;
+    self._config.recordPath = undefined;
     self._showPickRecordElementsUI();
   });
 
@@ -227,7 +226,6 @@ Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
         div.removeClass('highlight');
       })
       .click(function(evt) {
-        self._recordElementSelected = true;
         if (hittest(evt)) {
           self._setRecordPath(path);
         }
@@ -261,7 +259,7 @@ Refine.XmlParserUI.prototype._setRecordPath = function(path) {
 Refine.XmlParserUI.prototype._updatePreview = function() {
   var self = this;
   
-  if(!self._recordElementSelected) {
+  if(!this._config.recordPath){
     window.alert($.i18n('core-index-import/warning-record-path'));
     return;
   }
