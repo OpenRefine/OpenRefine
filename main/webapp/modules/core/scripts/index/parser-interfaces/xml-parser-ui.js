@@ -262,7 +262,7 @@ Refine.XmlParserUI.prototype._updatePreview = function() {
   var self = this;
   
   if(!self._recordElementSelected) {
-    alert("No record element selected! Please select one first.");
+    window.alert($.i18n('core-index-import/warning-record-path'));
     return;
   }
 
