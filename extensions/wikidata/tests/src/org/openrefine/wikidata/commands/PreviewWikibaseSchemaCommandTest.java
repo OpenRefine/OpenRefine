@@ -31,6 +31,11 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.openrefine.wikidata.qa.EditInspector;
+import org.openrefine.wikidata.qa.WikidataConstraintFetcher;
+import org.openrefine.wikidata.utils.EntityCacheStub;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -38,6 +43,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
 
+@PrepareForTest(EditInspector.class)
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
     @BeforeMethod
@@ -46,8 +52,10 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
     }
 
     @Test
-    public void testValidSchema()
-            throws IOException, ServletException {
+    public void testValidSchema() throws Exception {
+        WikidataConstraintFetcher fetcher = new WikidataConstraintFetcher(new EntityCacheStub());
+        PowerMockito.whenNew(WikidataConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
+
         String schemaJson = jsonFromFile("schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
