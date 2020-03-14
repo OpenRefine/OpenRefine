@@ -163,9 +163,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             
                             Object value = cells.get(c);
                             if (value instanceof Cell) {
-                                if(trimStrings) {
-                                    value = ((Cell) value).value.toString().trim();
-                                }
                                 row.setCell(column.getCellIndex(), (Cell) value);
                                 rowHasData = true;
                             } else if (ExpressionUtils.isNonBlankData(value)) {
@@ -173,11 +170,11 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 if (value instanceof String) {
                                     storedValue = guessCellValueTypes ?
                                         ImporterUtilities.parseCellValue((String) value) : (String) value;
+                                    if(trimStrings) {
+                                        storedValue = ((String) storedValue).toString().trim();
+                                    }
                                 } else {
                                     storedValue = ExpressionUtils.wrapStorable(value);
-                                }
-                                if(trimStrings) {
-                                    storedValue = ((String) storedValue).toString().trim();
                                 }
                                 
                                 row.setCell(column.getCellIndex(), new Cell(storedValue, null));
