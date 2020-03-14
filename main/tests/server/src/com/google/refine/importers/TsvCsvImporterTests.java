@@ -206,6 +206,46 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3");
     }
 
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void readTrimsLeadingTrailingWhitespaceOnTrimStrings(String sep){
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        try {
+            prepareOptions(sep, -1, 0, 0, 0, false, false, true);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "3.4");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void readDoesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(String sep){
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        try {
+            prepareOptions(sep, -1, 0, 0, 0, false, false, false);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, " data1 ");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, " 3.4 ");
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3 ");
+    }
+
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readCanAddNull(String sep){
         //create input to test with
@@ -595,6 +635,19 @@ public class TsvCsvImporterTests extends ImporterTest {
         int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
         
         prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]");      
+    }
+
+    protected void prepareOptions(
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes, boolean trimStrings) {
+        whenGetStringOption("separator", options, sep);
+        whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("skipDataLines", options, skip);
+        whenGetIntegerOption("ignoreLines", options, ignoreLines);
+        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+        whenGetBooleanOption("trimStrings", options, trimStrings);
     }
     
     protected void prepareOptions(
