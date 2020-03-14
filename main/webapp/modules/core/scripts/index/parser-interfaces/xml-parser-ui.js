@@ -131,6 +131,7 @@ Refine.XmlParserUI.prototype._initialize = function() {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
   }
   this._optionContainerElmts.pickRecordElementsButton.click(function() {
+    self._config.recordPath = undefined;
     self._showPickRecordElementsUI();
   });
 
@@ -257,6 +258,11 @@ Refine.XmlParserUI.prototype._setRecordPath = function(path) {
 
 Refine.XmlParserUI.prototype._updatePreview = function() {
   var self = this;
+  
+  if(!this._config.recordPath){
+    window.alert($.i18n('core-index-import/warning-record-path'));
+    return;
+  }
 
   this._progressContainer.show();
 
