@@ -61,6 +61,8 @@ import com.google.refine.importers.tree.TreeReaderException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
+import static org.testng.Assert.fail;
+
 
 public class XmlImportUtilitiesTests extends RefineTest {
 
@@ -139,7 +141,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Assert.assertNotNull(response);
         Assert.assertEquals(response.size(), 1);
@@ -157,7 +159,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Assert.assertNotNull(response);
         Assert.assertEquals(response.size(), 2);
@@ -176,7 +178,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
         Assert.assertNull(response);
     }
@@ -209,9 +211,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadSampleXml();
 
         String[] recordPath = new String[]{"library","book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
-                new ImportParameters(false, true, false));
-
+        try {
+            XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
+                    new ImportParameters(false, true, false));
+        } catch (Exception e){
+            fail();
+        }
         log(project);
         assertProjectCreated(project, 0, 6);
 
@@ -230,9 +235,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[]{"library", "book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
-                new ImportParameters(false, true, false));
-
+        try {
+            XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
+                    new ImportParameters(false, true, false));
+        } catch (Exception e){
+            fail();
+        }
         log(project);
         assertProjectCreated(project, 0, 6);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -287,7 +295,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
             SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup,
                     false, false, false);
         } catch (Exception e) {
-            Assert.fail();
+            fail();
         }
 
         log(project);
@@ -306,7 +314,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
-            Assert.fail();
+            fail();
         }
         log(project);
         Assert.assertNotNull(project.rows);
@@ -327,7 +335,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
-            Assert.fail();
+            fail();
         }
         log(project);
         Assert.assertNotNull(project.rows);
@@ -352,7 +360,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
-            Assert.fail();
+            fail();
         }
         log(project);
         Assert.assertNotNull(project.rows);
@@ -377,7 +385,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
             SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0, 
                     new ImportParameters(false, false, false));
         } catch (Exception e) {
-            Assert.fail();
+            fail();
         }
         log(project);
 
@@ -432,7 +440,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             inputStream = new ByteArrayInputStream( xml.getBytes( "UTF-8" ) );
         } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
+            fail();
         }
     }
 
@@ -442,7 +450,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
                 parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
             }
         } catch (Exception e1) {
-            Assert.fail();
+            fail();
         }
     }
 

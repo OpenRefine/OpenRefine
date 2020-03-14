@@ -252,7 +252,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportColumnGroup rootColumnGroup,
         int limit,
         ImportParameters parameters
-    ) {
+    ) throws TreeReaderException{
         if (logger.isTraceEnabled()) {
             logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
         }
@@ -264,8 +264,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             }
         } catch (TreeReaderException e) {
-            // TODO: This error needs to be reported to the browser/user
             logger.error("Exception from XML parse",e);
+            throw e;
         }
     }
 
