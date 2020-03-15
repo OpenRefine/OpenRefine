@@ -292,10 +292,6 @@ public class DefaultImportingController implements ImportingController {
             e.printStackTrace(new PrintWriter(sw));
             
             writer.writeStartObject();
-
-            if(e instanceof TreeReaderException) {
-                writer.writeStringField("localizedMessage", "core-views/check-format");
-            }
             writer.writeStringField("message", e.getLocalizedMessage());
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
