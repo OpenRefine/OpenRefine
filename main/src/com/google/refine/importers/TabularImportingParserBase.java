@@ -65,7 +65,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
-        JSONUtilities.safePut(options, "trimStrings", false);
         
         return options;
     }
