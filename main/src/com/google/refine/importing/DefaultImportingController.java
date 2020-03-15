@@ -292,12 +292,11 @@ public class DefaultImportingController implements ImportingController {
             e.printStackTrace(new PrintWriter(sw));
             
             writer.writeStartObject();
-            String errorMessage = e.getLocalizedMessage();
+
             if(e instanceof TreeReaderException) {
-                errorMessage += "\nPlease correct the format of your input file, or choose another" +
-                        " importer type such as Line-based";
+                writer.writeStringField("localizedMessage", "core-views/check-format");
             }
-            writer.writeStringField("message", errorMessage);
+            writer.writeStringField("message", e.getLocalizedMessage());
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
         }

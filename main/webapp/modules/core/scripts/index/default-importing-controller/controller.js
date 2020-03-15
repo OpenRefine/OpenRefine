@@ -233,7 +233,7 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             alert(o.message);					
             } else {
             var messages = [];
-            $.each(o.errors, function() { messages.push(this.message); });
+            $.each(o.errors, function() { messages.push(this.message + "\n\n" + $.i18n(this.localizedMessage)); });
             alert(messages.join('\n\n'));
             }
             finallyCallBack();
