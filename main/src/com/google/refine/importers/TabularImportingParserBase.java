@@ -109,9 +109,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         if (includeFileSources) {
             filenameColumnIndex = addFilenameColumn(project);
         }
-
-        // Try to reuse previous columnNames if possible to avoid mismatching cells and columns.
-        List<String> columnNames = project.columnModel.getColumnNames();
+        
+        List<String> columnNames = new ArrayList<String>();
 
         boolean hasOurOwnColumnNames = headerLines > 0;
         
@@ -138,7 +137,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         } else {
                             columnName = cell.toString().trim();
                         }
-                        
                         ImporterUtilities.appendColumnName(columnNames, c, columnName);
                     }
                     
@@ -148,7 +146,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     }
                 } else { // data lines
                     Row row = new Row(columnNames.size());
-                    
                     if (storeBlankRows) {
                         rowsWithData++;
                     } else if (cells.size() > 0) {
