@@ -111,7 +111,6 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         }
         
         List<String> columnNames = new ArrayList<String>();
-
         boolean hasOurOwnColumnNames = headerLines > 0;
         
         List<Object> cells = null;
@@ -137,6 +136,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         } else {
                             columnName = cell.toString().trim();
                         }
+                        
                         ImporterUtilities.appendColumnName(columnNames, c, columnName);
                     }
                     
@@ -146,6 +146,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     }
                 } else { // data lines
                     Row row = new Row(columnNames.size());
+
                     if (storeBlankRows) {
                         rowsWithData++;
                     } else if (cells.size() > 0) {
