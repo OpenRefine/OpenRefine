@@ -396,7 +396,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         //TODO check record
     }
 
-    // HEREEEE
     @Test
     public void trimLeadingTrailingWhitespaceOnTrimString(){
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
