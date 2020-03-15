@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineServlet;
@@ -292,7 +293,15 @@ public class DefaultImportingController implements ImportingController {
             e.printStackTrace(new PrintWriter(sw));
             
             writer.writeStartObject();
-            writer.writeStringField("message", e.getLocalizedMessage());
+            String message = e.getLocalizedMessage();
+            
+            if(e.getCause() instanceof JsonParseException) {
+                // Get message only 
+                writer.writeStringField("isJsonParseException", "true");
+                message = ((JsonParseException)e.getCause()).getOriginalMessage();
+            }
+
+            writer.writeStringField("message", message);
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
         }
