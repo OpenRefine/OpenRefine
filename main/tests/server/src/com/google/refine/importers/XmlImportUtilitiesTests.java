@@ -61,9 +61,6 @@ import com.google.refine.importers.tree.TreeReaderException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-import static org.testng.Assert.fail;
-
-
 public class XmlImportUtilitiesTests extends RefineTest {
 
     @Override
@@ -141,7 +138,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
-            fail(e.getMessage());
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotNull(response);
         Assert.assertEquals(response.size(), 1);
@@ -159,7 +156,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
-            fail(e.getMessage());
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotNull(response);
         Assert.assertEquals(response.size(), 2);
@@ -178,7 +175,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             response = SUT.detectRecordElementWrapper(parser, tag);
         } catch (Exception e) {
-            fail(e.getMessage());
+            Assert.fail(e.getMessage());
         }
         Assert.assertNull(response);
     }
@@ -215,7 +212,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
             XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
                     new ImportParameters(false, true, false));
         } catch (Exception e){
-            fail();
+            Assert.fail();
         }
         log(project);
         assertProjectCreated(project, 0, 6);
@@ -239,7 +236,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
             XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
                     new ImportParameters(false, true, false));
         } catch (Exception e){
-            fail();
+            Assert.fail();
         }
         log(project);
         assertProjectCreated(project, 0, 6);
@@ -295,7 +292,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
             SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup,
                     false, false, false);
         } catch (Exception e) {
-            fail();
+            Assert.fail();
         }
 
         log(project);
