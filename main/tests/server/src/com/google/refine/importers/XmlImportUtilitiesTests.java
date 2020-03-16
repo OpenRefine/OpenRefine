@@ -314,7 +314,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
-            fail();
+            Assert.fail();
         }
         log(project);
         Assert.assertNotNull(project.rows);
@@ -335,7 +335,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
-            fail();
+            Assert.fail();
         }
         log(project);
         Assert.assertNotNull(project.rows);
@@ -360,7 +360,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
         } catch (Exception e) {
-            fail();
+            Assert.fail();
         }
         log(project);
         Assert.assertNotNull(project.rows);
@@ -385,7 +385,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
             SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0, 
                     new ImportParameters(false, false, false));
         } catch (Exception e) {
-            fail();
+            Assert.fail();
         }
         log(project);
 
@@ -440,7 +440,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         try {
             inputStream = new ByteArrayInputStream( xml.getBytes( "UTF-8" ) );
         } catch (UnsupportedEncodingException e1) {
-            fail();
+            Assert.fail();
         }
     }
 
@@ -450,7 +450,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
                 parser.next(); //move parser forward once e.g. skip the START_DOCUMENT parser event
             }
         } catch (Exception e1) {
-            fail();
+            Assert.fail();
         }
     }
 

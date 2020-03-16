@@ -375,7 +375,6 @@ Refine.TagsManager._getAllProjectTags = function() {
 
 // Helper function to provide more localized message from plain Java Exception message.
 function getLocalizedErrorMessage(message) {
-    console.log(message);
     if(message.isJsonParseException){
         return $.i18n("core-views/check-format");
     }
