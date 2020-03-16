@@ -113,7 +113,15 @@ public class JsonImporterTests extends ImporterTest {
     @Test 
     public void canThrowError(){
         String errJSON = getSampleWithError();
-        ObjectNode options = getOptions(job, SUT, JsonImporter.ANONYMOUS);
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+
         
         try {
             inputStream = new ByteArrayInputStream(errJSON.getBytes( "UTF-8" ) );
