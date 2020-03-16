@@ -50,3 +50,6 @@ target/
 # Ignore Apache Maven default download path
 apache-maven-*/
 apache-maven-*-bin.tar.gz
+
+# Ignore the node_modules folder as they are dependencies to be installed by end-user
+main/webapp/node_modules
