@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -33,130 +33,128 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var CustomSuggest = {};
 
-(function() {
-
+(function () {
   /*
    *  Make suggest widgets clean up when removed.
    */
-  var oldInit = $.suggest.suggest.prototype._init;
-  $.suggest.suggest.prototype._init = function() {
-    oldInit.call(this);
+  var oldInit = $.suggest.suggest.prototype._init
+  $.suggest.suggest.prototype._init = function () {
+    oldInit.call(this)
 
-    var self = this;
-    this.input.bind("remove", function() {
-      self._destroy();
-    });
-  };
+    var self = this
+    this.input.bind('remove', function () {
+      self._destroy()
+    })
+  }
 
   /*
    *  Property suggest
    */
   $.suggest(
-    "suggestP",
+    'suggestP',
     $.extend(
       true,
       {},
-      $.suggest.suggest.prototype, 
+      $.suggest.suggest.prototype,
       {
-        create_item: function(data, response_data) {
-          var css = this.options.css;
+        create_item: function (data, response_data) {
+          var css = this.options.css
 
-          var li =  $("<li>").addClass(css.item);
+          var li = $('<li>').addClass(css.item)
 
-          var name = $("<div>")
-          .addClass(css.item_name)
-          .append(
-            $("<label>").append(
+          var name = $('<div>')
+            .addClass(css.item_name)
+            .append(
+              $('<label>').append(
                 $.suggest.strongify(
-                    data.name || data.guid, response_data.prefix
+                  data.name || data.guid, response_data.prefix
                 )
+              )
             )
-          );
 
-          data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+          data.name = name.text() // this converts html escaped strings like "&amp;" back to "&"
           if (data.description) {
-             var descriptionSpan = $("<span></span>").text(data.description);
-             name.append(descriptionSpan);
+            var descriptionSpan = $('<span></span>').text(data.description)
+            name.append(descriptionSpan)
           }
-          li.append(name);
+          li.append(name)
 
-          name.prepend($("<div>").addClass(css.item_type).text(data.id));
+          name.prepend($('<div>').addClass(css.item_type).text(data.id))
 
-          return li;
+          return li
         }
       }
     )
-  );
+  )
 
-  var originalSuggestP = $.suggest.suggestP;
-  $.suggest.suggestP = function(input, options) {
-    originalSuggestP.call(this, input, options);
-  };
-  $.suggest.suggestP.prototype = originalSuggestP.prototype;
+  var originalSuggestP = $.suggest.suggestP
+  $.suggest.suggestP = function (input, options) {
+    originalSuggestP.call(this, input, options)
+  }
+  $.suggest.suggestP.prototype = originalSuggestP.prototype
 
   $.extend(
-    $.suggest.suggestP, 
+    $.suggest.suggestP,
     {
       defaults: $.extend(
         true,
         {},
         $.suggest.suggest.defaults, {
-          scoring: "schema",
-          css: { pane: "fbs-pane fbs-pane-property" }
+          scoring: 'schema',
+          css: { pane: 'fbs-pane fbs-pane-property' }
         }
       )
     }
-  );
+  )
 
   /*
    *  Type suggest
    */
   $.suggest(
-    "suggestT",
+    'suggestT',
     $.extend(
       true,
       {},
-      $.suggest.suggest.prototype, 
+      $.suggest.suggest.prototype,
       {
-        create_item: function(data, response_data) {
-          var css = this.options.css;
+        create_item: function (data, response_data) {
+          var css = this.options.css
 
-          var li =  $("<li>").addClass(css.item);
+          var li = $('<li>').addClass(css.item)
 
-          var name = $("<div>")
-          .addClass(css.item_name)
-          .append(
-              $("<label>")
-              .append($.suggest.strongify(data.name || data.guid, response_data.prefix)));
+          var name = $('<div>')
+            .addClass(css.item_name)
+            .append(
+              $('<label>')
+                .append($.suggest.strongify(data.name || data.guid, response_data.prefix)))
 
-          data.name = name.text(); // this converts html escaped strings like "&amp;" back to "&"
+          data.name = name.text() // this converts html escaped strings like "&amp;" back to "&"
           if (data.description) {
-             var descriptionSpan = $("<span></span>").text(data.description);
-             name.append(descriptionSpan);
+            var descriptionSpan = $('<span></span>').text(data.description)
+            name.append(descriptionSpan)
           }
 
-          li.append(name);
+          li.append(name)
 
-          name.prepend($("<div>").addClass(css.item_type).text(data.id));
+          name.prepend($('<div>').addClass(css.item_type).text(data.id))
 
-          return li;
+          return li
         }
       }
     )
-  );
+  )
 
   $.extend(
-    $.suggest.suggestT, 
+    $.suggest.suggestT,
     {
       defaults: $.extend(
         true,
         {},
         $.suggest.suggest.defaults, {
-          scoring: "schema",
-          css: { pane: "fbs-pane fbs-pane-type" }
+          scoring: 'schema',
+          css: { pane: 'fbs-pane fbs-pane-type' }
         }
       )
     }
-  );
-  
-})();
+  )
+})()

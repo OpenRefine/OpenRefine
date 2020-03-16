@@ -23,36 +23,36 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-Refine.ImportProjectUI = function(elmt) {
-  elmt.html(DOM.loadHTML("core", "scripts/index/import-project-ui.html"));
+Refine.ImportProjectUI = function (elmt) {
+  elmt.html(DOM.loadHTML('core', 'scripts/index/import-project-ui.html'))
 
-  Refine.wrapCSRF(function(token) {
-     $('#project-upload-form').attr('action', "command/core/import-project?" + $.param({ csrf_token: token}));
-  });
-  
-  this._elmt = elmt;
-  this._elmts = DOM.bind(elmt);
-  
-  $('#or-import-locate').text($.i18n('core-index-import/locate'));
-  $('#or-import-file').text($.i18n('core-index-import/file'));
-  $('#or-import-rename').text($.i18n('core-index-import/rename'));
-  $('#import-project-button').attr("value",$.i18n('core-buttons/import-proj'));
-};
+  Refine.wrapCSRF(function (token) {
+    $('#project-upload-form').attr('action', 'command/core/import-project?' + $.param({ csrf_token: token }))
+  })
+
+  this._elmt = elmt
+  this._elmts = DOM.bind(elmt)
+
+  $('#or-import-locate').text($.i18n('core-index-import/locate'))
+  $('#or-import-file').text($.i18n('core-index-import/file'))
+  $('#or-import-rename').text($.i18n('core-index-import/rename'))
+  $('#import-project-button').attr('value', $.i18n('core-buttons/import-proj'))
+}
 
 Refine.actionAreas.push({
-  id: "import-project",
+  id: 'import-project',
   label: $.i18n('core-index-import/import-proj'),
   uiClass: Refine.ImportProjectUI
-});
+})
 
-Refine.ImportProjectUI.prototype.resize = function() {
-  
-};
+Refine.ImportProjectUI.prototype.resize = function () {
+
+}

@@ -23,31 +23,31 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function SummaryBar(div) {
-  this._div = div;
-  this._initializeUI();
+function SummaryBar (div) {
+  this._div = div
+  this._initializeUI()
 }
 
-SummaryBar.prototype._initializeUI = function() {
+SummaryBar.prototype._initializeUI = function () {
 
-};
+}
 
-SummaryBar.prototype.updateResultCount = function() {
-  var summaryText;
-  var units = theProject.rowModel.mode == "row-based" ? $.i18n('core-views/rows') : $.i18n('core-views/records');
+SummaryBar.prototype.updateResultCount = function () {
+  var summaryText
+  var units = theProject.rowModel.mode == 'row-based' ? $.i18n('core-views/rows') : $.i18n('core-views/records')
   if (theProject.rowModel.filtered == theProject.rowModel.total) {
-    summaryText = (theProject.rowModel.total) + ' ' + units;
+    summaryText = (theProject.rowModel.total) + ' ' + units
   } else {
-    summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
+    summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>'
   }
 
-  $('<span>').html(summaryText).appendTo(this._div.empty());
-};
+  $('<span>').html(summaryText).appendTo(this._div.empty())
+}

@@ -23,206 +23,203 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ReconDialog(column, types) {
-  this._column = column;
-  this._serviceRecords = [];
-  this._selectedServiceRecordIndex = -1;
+function ReconDialog (column, types) {
+  this._column = column
+  this._serviceRecords = []
+  this._selectedServiceRecordIndex = -1
 
-  this._createDialog();
+  this._createDialog()
 }
 
-ReconDialog.prototype._createDialog = function() {
-  var self = this;
-  var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/recon-dialog.html"));
+ReconDialog.prototype._createDialog = function () {
+  var self = this
+  var dialog = $(DOM.loadHTML('core', 'scripts/reconciliation/recon-dialog.html'))
 
-  this._elmts = DOM.bind(dialog);
-  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col')+' "' + this._column.name + '"');
-  
-  this._elmts.servicePanelMessage.html($.i18n('core-recon/pick-service'));
-  this._elmts.serviceListTitle.html($.i18n('core-recon/service-title'));
-  this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc')+"...");
-  this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
-  this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  this._elmts = DOM.bind(dialog)
+  this._elmts.dialogHeader.text($.i18n('core-recon/recon-col') + ' "' + this._column.name + '"')
 
-  this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
+  this._elmts.servicePanelMessage.html($.i18n('core-recon/pick-service'))
+  this._elmts.serviceListTitle.html($.i18n('core-recon/service-title'))
+  this._elmts.addStandardServiceButton.html($.i18n('core-buttons/add-std-svc') + '...')
+  this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'))
+  this._elmts.cancelButton.html($.i18n('core-buttons/cancel'))
 
-  this._elmts.reconcileButton.click(function() { self._onOK(); });
-  this._elmts.cancelButton.click(function() { self._dismiss(); });
+  this._elmts.addStandardServiceButton.click(function () { self._onAddStandardService() })
 
-  this._level = DialogSystem.showDialog(dialog);
-  this._populateDialog();
-};
+  this._elmts.reconcileButton.click(function () { self._onOK() })
+  this._elmts.cancelButton.click(function () { self._dismiss() })
 
-ReconDialog.prototype._onOK = function() {
+  this._level = DialogSystem.showDialog(dialog)
+  this._populateDialog()
+}
+
+ReconDialog.prototype._onOK = function () {
   if (this._selectedServiceRecordIndex >= 0) {
-    var record = this._serviceRecords[this._selectedServiceRecordIndex];
+    var record = this._serviceRecords[this._selectedServiceRecordIndex]
     if (record.handler) {
-      record.handler.start();
+      record.handler.start()
     }
   }
-  this._dismiss();
-};
+  this._dismiss()
+}
 
-ReconDialog.prototype._dismiss = function() {
+ReconDialog.prototype._dismiss = function () {
   for (var i = 0; i < this._serviceRecords.length; i++) {
-    var record = this._serviceRecords[i];
+    var record = this._serviceRecords[i]
     if (record.handler) {
-      record.handler.dispose();
+      record.handler.dispose()
     }
   }
-  this._serviceRecords = null;
+  this._serviceRecords = null
 
-  DialogSystem.dismissUntil(this._level - 1);
-};
+  DialogSystem.dismissUntil(this._level - 1)
+}
 
-ReconDialog.prototype._cleanDialog = function() {
+ReconDialog.prototype._cleanDialog = function () {
   for (var i = 0; i < this._serviceRecords.length; i++) {
-    var record = this._serviceRecords[i];
+    var record = this._serviceRecords[i]
     if (record.handler) {
-      record.handler.deactivate();
+      record.handler.deactivate()
     }
-    record.selector.remove();
+    record.selector.remove()
   }
-  this._serviceRecords = [];
-  this._selectedServiceRecordIndex = -1;
-};
+  this._serviceRecords = []
+  this._selectedServiceRecordIndex = -1
+}
 
-ReconDialog.prototype._populateDialog = function() {
-  var self = this;
+ReconDialog.prototype._populateDialog = function () {
+  var self = this
 
-  var services = ReconciliationManager.getAllServices();
+  var services = ReconciliationManager.getAllServices()
   if (services.length > 0) {
-    var renderService = function(service) {
+    var renderService = function (service) {
       var record = {
-          service: service,
-          handler: null
-      };
+        service: service,
+        handler: null
+      }
 
       record.selector = $('<a>')
-      .attr("href", "javascript:{}")
-      .addClass("recon-dialog-service-selector")
-      .text(service.name)
-      .appendTo(self._elmts.serviceList)
-      .click(function() {
-    	self._toggleServices();
-        self._selectService(record);
-      });
+        .attr('href', 'javascript:{}')
+        .addClass('recon-dialog-service-selector')
+        .text(service.name)
+        .appendTo(self._elmts.serviceList)
+        .click(function () {
+    	self._toggleServices()
+          self._selectService(record)
+        })
 
       $('<a>')
-      .html("&nbsp;")
-      .addClass("recon-dialog-service-selector-remove")
-      .prependTo(record.selector)
-      .click(function() {
-        ReconciliationManager.unregisterService(service, function() {
-          self._refresh(-1);
-        });
-      });
+        .html('&nbsp;')
+        .addClass('recon-dialog-service-selector-remove')
+        .prependTo(record.selector)
+        .click(function () {
+          ReconciliationManager.unregisterService(service, function () {
+            self._refresh(-1)
+          })
+        })
 
-      self._serviceRecords.push(record);
-    };
+      self._serviceRecords.push(record)
+    }
 
     for (var i = 0; i < services.length; i++) {
-      renderService(services[i]);
+      renderService(services[i])
     }
-    
 
-    $('.recon-dialog-service-opener').click(function() {
-      self._toggleServices();
-    });
+    $('.recon-dialog-service-opener').click(function () {
+      self._toggleServices()
+    })
   }
-};
+}
 
-ReconDialog.prototype._toggleServices = function() {
-  var self = this;
-  self._toggleServiceTitle(500);
-  self._toggleServiceList(500);
-};
+ReconDialog.prototype._toggleServices = function () {
+  var self = this
+  self._toggleServiceTitle(500)
+  self._toggleServiceList(500)
+}
 
-ReconDialog.prototype._toggleServiceTitle = function(duration) {
-  var title = $('.recon-dialog-service-opener-title');
+ReconDialog.prototype._toggleServiceTitle = function (duration) {
+  var title = $('.recon-dialog-service-opener-title')
   title.animate({
-	width : 'toggle'
-	}, duration, 'swing', function() {
-  });
-};
+    width: 'toggle'
+  }, duration, 'swing', function () {
+  })
+}
 
-ReconDialog.prototype._toggleServiceList = function(duration) {
-  $(".recon-dialog-service-list").toggle("slide", duration);
-};
+ReconDialog.prototype._toggleServiceList = function (duration) {
+  $('.recon-dialog-service-list').toggle('slide', duration)
+}
 
-ReconDialog.prototype._selectService = function(record) {
+ReconDialog.prototype._selectService = function (record) {
   for (var i = 0; i < this._serviceRecords.length; i++) {
     if (record === this._serviceRecords[i]) {
       if (i !== this._selectedServiceRecordIndex) {
         if (this._selectedServiceRecordIndex >= 0) {
-          var oldRecord = this._serviceRecords[this._selectedServiceRecordIndex];
+          var oldRecord = this._serviceRecords[this._selectedServiceRecordIndex]
           if (oldRecord.handler) {
-            oldRecord.selector.removeClass("selected");
-            oldRecord.handler.deactivate();
+            oldRecord.selector.removeClass('selected')
+            oldRecord.handler.deactivate()
           }
         }
 
-        this._elmts.servicePanelMessage.hide();
+        this._elmts.servicePanelMessage.hide()
 
-        record.selector.addClass("selected");
+        record.selector.addClass('selected')
         if (record.handler) {
-          record.handler.activate();
+          record.handler.activate()
         } else {
-          var handlerConstructor = eval(record.service.ui.handler);
+          var handlerConstructor = eval(record.service.ui.handler)
 
           record.handler = new handlerConstructor(
-              this._column, record.service, this._elmts.servicePanelContainer);
+            this._column, record.service, this._elmts.servicePanelContainer)
         }
 
-        this._selectedServiceRecordIndex = i;
-        return;
+        this._selectedServiceRecordIndex = i
+        return
       }
     }
   }
-};
+}
 
-ReconDialog.prototype._refresh = function(newSelectIndex) {
-  this._cleanDialog();
-  this._populateDialog();
+ReconDialog.prototype._refresh = function (newSelectIndex) {
+  this._cleanDialog()
+  this._populateDialog()
   if (newSelectIndex >= 0) {
-    this._selectService(this._serviceRecords[newSelectIndex]);
+    this._selectService(this._serviceRecords[newSelectIndex])
   }
-};
+}
 
-ReconDialog.prototype._onAddStandardService = function() {
-  var self = this;
-  var dialog = $(DOM.loadHTML("core", "scripts/reconciliation/add-standard-service-dialog.html"));
-  var elmts = DOM.bind(dialog);
+ReconDialog.prototype._onAddStandardService = function () {
+  var self = this
+  var dialog = $(DOM.loadHTML('core', 'scripts/reconciliation/add-standard-service-dialog.html'))
+  var elmts = DOM.bind(dialog)
 
-  elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'));
-  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url')+":");
-  elmts.addButton.html($.i18n('core-buttons/add-service'));
-  elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  
-  var level = DialogSystem.showDialog(dialog);
-  var dismiss = function() {
-    DialogSystem.dismissUntil(level - 1);
-  };
+  elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'))
+  elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url') + ':')
+  elmts.addButton.html($.i18n('core-buttons/add-service'))
+  elmts.cancelButton.html($.i18n('core-buttons/cancel'))
 
-  elmts.cancelButton.click(dismiss);
-  elmts.addButton.click(function() {
-    var url = $.trim(elmts.input[0].value);
+  var level = DialogSystem.showDialog(dialog)
+  var dismiss = function () {
+    DialogSystem.dismissUntil(level - 1)
+  }
+
+  elmts.cancelButton.click(dismiss)
+  elmts.addButton.click(function () {
+    var url = $.trim(elmts.input[0].value)
     if (url.length > 0) {
-      ReconciliationManager.registerStandardService(url, function(index) {
-        self._refresh(index);
-      });
+      ReconciliationManager.registerStandardService(url, function (index) {
+        self._refresh(index)
+      })
     }
-    dismiss();
-  });
-  elmts.input.focus().select();
-};
-
-
+    dismiss()
+  })
+  elmts.input.focus().select()
+}

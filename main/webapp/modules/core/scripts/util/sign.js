@@ -31,41 +31,41 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-if (typeof window.Sign == 'undefined') {
+if (typeof window.Sign === 'undefined') {
   window.Sign = {
-    window_position: function() {
-      var position = {};
+    window_position: function () {
+      var position = {}
 
-      if (typeof(window.innerWidth) == 'number') {
+      if (typeof (window.innerWidth) === 'number') {
         // Non-IE
-        position.width = window.outerWidth;
-        position.height = window.outerHeight;
-        position.top = window.screenY;
-        position.left = window.screenX;
+        position.width = window.outerWidth
+        position.height = window.outerHeight
+        position.top = window.screenY
+        position.left = window.screenX
       } else if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
         // IE 6+ in 'standards compliant mode'
-        position.width = document.body.clientWidth;
-        position.height = document.body.clientHeight;
-        position.top = window.screenTop;
-        position.left = window.screenLeft;
+        position.width = document.body.clientWidth
+        position.height = document.body.clientHeight
+        position.top = window.screenTop
+        position.left = window.screenLeft
       }
 
-      return position;
+      return position
     },
 
-    popup : function(url, width, height, windowname) {
-      width = width || 700;
-      height = height || 500;
+    popup: function (url, width, height, windowname) {
+      width = width || 700
+      height = height || 500
 
-      var pos = window.Sign.window_position();
-      var left = Math.floor((pos.width - width) / 2) + pos.left;
-      var top = Math.floor((pos.height - height) / 2) + pos.top;
+      var pos = window.Sign.window_position()
+      var left = Math.floor((pos.width - width) / 2) + pos.left
+      var top = Math.floor((pos.height - height) / 2) + pos.top
 
       // Chrome might fix this bug, but until then add some padding
       //  to the height of the popup for the urlbar
-      var is_chrome = /chrome/.test(navigator.userAgent.toLowerCase());
+      var is_chrome = /chrome/.test(navigator.userAgent.toLowerCase())
       if (is_chrome) {
-        height += 50;
+        height += 50
       }
 
       var params = {
@@ -80,58 +80,58 @@ if (typeof window.Sign == 'undefined') {
         scrollbars: 'yes',
         status: 'no',
         toolbar: 'no'
-      };
+      }
 
-      var params_list = [];
+      var params_list = []
       for (var key in params) {
         if (params.hasOwnProperty(key)) {
-          params_list.push(key + "=" + params[key]);
+          params_list.push(key + '=' + params[key])
         }
       }
 
-      return window.open(url, windowname || "", params_list.join(","));
+      return window.open(url, windowname || '', params_list.join(','))
     },
 
-    signin : function(success, provider, check_authorization_url, width, height) {
-      var newwin = window.Sign.popup("command/core/authorize/" + provider, width, height);
+    signin: function (success, provider, check_authorization_url, width, height) {
+      var newwin = window.Sign.popup('command/core/authorize/' + provider, width, height)
 
       if (newwin !== null) {
-        newwin.opener = window;
+        newwin.opener = window
       }
 
-      window.onauthorization = function() {
-        if (typeof success == 'undefined') {
-          window.location.reload();
+      window.onauthorization = function () {
+        if (typeof success === 'undefined') {
+          window.location.reload()
         } else {
           $.ajax({
             url: check_authorization_url,
-            dataType: "json",
-            success: function(data) {
-              window.user = data;
-              if (typeof success == 'function') success();
+            dataType: 'json',
+            success: function (data) {
+              window.user = data
+              if (typeof success === 'function') success()
             }
-          });
+          })
         }
-      };
-
-      if (window.focus && newwin !== null) {
-        newwin.focus();
       }
 
-      return false;
+      if (window.focus && newwin !== null) {
+        newwin.focus()
+      }
+
+      return false
     },
 
-    signout : function(success,provider) {
+    signout: function (success, provider) {
       $.ajax({
-        url: "command/core/deauthorize/" + provider,
-        success: function() {
-          if (typeof success == 'undefined') {
-            window.location.reload();
+        url: 'command/core/deauthorize/' + provider,
+        success: function () {
+          if (typeof success === 'undefined') {
+            window.location.reload()
           } else {
-            if (typeof success == 'function') success();
+            if (typeof success === 'function') success()
           }
         }
-      });
+      })
     }
-  };
+  }
 }

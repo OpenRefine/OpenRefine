@@ -23,288 +23,288 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
-  var doFilterByExpressionPrompt = function(expression, type) {
+DataTableColumnHeaderUI.extendMenu(function (column, columnHeaderUI, menu) {
+  var doFilterByExpressionPrompt = function (expression, type) {
     DataTableView.promptExpressionOnVisibleRows(
       column,
-      (type == "list" ? $.i18n('core-views/custom-facet') : $.i18n('core-views/custom-numeric-label')) +" "+ column.name, 
+      (type == 'list' ? $.i18n('core-views/custom-facet') : $.i18n('core-views/custom-numeric-label')) + ' ' + column.name,
       expression,
-      function(expression) {
+      function (expression) {
         var config = {
-          "name" : column.name,
-          "columnName" : column.name, 
-          "expression" : expression
-        };
-        if (type == "range") {
-          config.mode = "range";
+          name: column.name,
+          columnName: column.name,
+          expression: expression
+        }
+        if (type == 'range') {
+          config.mode = 'range'
         }
 
-        ui.browsingEngine.addFacet(type, config);
+        ui.browsingEngine.addFacet(type, config)
       }
-    );
-  };
+    )
+  }
 
-  MenuSystem.appendTo(menu, [ "core/facet" ], [
+  MenuSystem.appendTo(menu, ['core/facet'], [
     {
-      id: "core/text-facet",
+      id: 'core/text-facet',
       label: $.i18n('core-views/text-facet'),
-      click: function() {
+      click: function () {
         ui.browsingEngine.addFacet(
-            "list",
-            {
-              "name": column.name,
-              "columnName": column.name,
-              "expression": "value"
-            }
-        );
+          'list',
+          {
+            name: column.name,
+            columnName: column.name,
+            expression: 'value'
+          }
+        )
       }
     },
     {
-      id: "core/numeric-facet",
-      label:  $.i18n('core-views/numeric-facet'),
-      click: function() {
+      id: 'core/numeric-facet',
+      label: $.i18n('core-views/numeric-facet'),
+      click: function () {
         ui.browsingEngine.addFacet(
-            "range",
-            {
-              "name": column.name,
-              "columnName": column.name,
-              "expression": "value",
-              "mode": "range"
-            }
-        );
+          'range',
+          {
+            name: column.name,
+            columnName: column.name,
+            expression: 'value',
+            mode: 'range'
+          }
+        )
       }
     },
     {
-      id: "core/time-facet",
+      id: 'core/time-facet',
       label: $.i18n('core-views/timeline-facet'),
-      click: function() {
+      click: function () {
         ui.browsingEngine.addFacet(
-            "timerange",
-            {
-              "name": column.name,
-              "columnName": column.name,
-              "expression": "value",
-              "mode": "range"
-            }
-        );
+          'timerange',
+          {
+            name: column.name,
+            columnName: column.name,
+            expression: 'value',
+            mode: 'range'
+          }
+        )
       }
     },
     {
-      id: "core/scatterplot-facet",
+      id: 'core/scatterplot-facet',
       label: $.i18n('core-views/scatterplot-facet'),
-      click: function() {
-        new ScatterplotDialog(column.name);
+      click: function () {
+        new ScatterplotDialog(column.name)
       }
     },
     {},
     {
-      id: "core/custom-text-facet",
-      label: $.i18n('core-views/custom-text-facet')+'...',
-      click: function() {
-        doFilterByExpressionPrompt(null, "list");
+      id: 'core/custom-text-facet',
+      label: $.i18n('core-views/custom-text-facet') + '...',
+      click: function () {
+        doFilterByExpressionPrompt(null, 'list')
       }
     },
     {
-      id: "core/custom-numeric-facet",
-      label: $.i18n('core-views/custom-numeric')+'...',
-      click: function() {
-        doFilterByExpressionPrompt(null, "range");
+      id: 'core/custom-numeric-facet',
+      label: $.i18n('core-views/custom-numeric') + '...',
+      click: function () {
+        doFilterByExpressionPrompt(null, 'range')
       }
     },
     {
-      id: "core/customized-facets",
+      id: 'core/customized-facets',
       label: $.i18n('core-views/custom-facets'),
       submenu: [
         {
-          id: "core/word-facet",
+          id: 'core/word-facet',
           label: $.i18n('core-views/word-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "value.split(' ')"
-                }
-            );
+              'list',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: "value.split(' ')"
+              }
+            )
           }
         },
         {},
         {
-          id: "core/duplicates-facet",
+          id: 'core/duplicates-facet',
           label: $.i18n('core-views/duplicates-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "facetCount(value, 'value', '" +
+              'list',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: "facetCount(value, 'value', '" +
                   column.name + "') > 1"
-                }
-            );
+              }
+            )
           }
         },
         {},
         {
-          id: "core/numeric-log-facet",
+          id: 'core/numeric-log-facet',
           label: $.i18n('core-views/numeric-log-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "range",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "value.log()",
-                  "mode": "range"
-                }
-            );
+              'range',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'value.log()',
+                mode: 'range'
+              }
+            )
           }
         },
         {
-          id: "core/bounded-numeric-log-facet",
+          id: 'core/bounded-numeric-log-facet',
           label: $.i18n('core-views/bounded-log-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "range",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "log(max(1, value))",
-                  "mode": "range"
-                }
-            );
+              'range',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'log(max(1, value))',
+                mode: 'range'
+              }
+            )
           }
         },
         {},
         {
-          id: "core/text-length-facet",
+          id: 'core/text-length-facet',
           label: $.i18n('core-views/text-length-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "range",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "value.length()",
-                  "mode": "range"
-                }
-            );
+              'range',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'value.length()',
+                mode: 'range'
+              }
+            )
           }
         },
         {
-          id: "core/log-text-length-facet",
+          id: 'core/log-text-length-facet',
           label: $.i18n('core-views/log-length-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "range",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "value.length().log()",
-                  "mode": "range"
-                }
-            );
+              'range',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'value.length().log()',
+                mode: 'range'
+              }
+            )
           }
         },
         {
-          id: "core/unicode-charcode-facet",
+          id: 'core/unicode-charcode-facet',
           label: $.i18n('core-views/unicode-facet'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "range",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "value.unicode()",
-                  "mode": "range"
-                }
-            );
+              'range',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'value.unicode()',
+                mode: 'range'
+              }
+            )
           }
         },
         {},
         {
-          id: "core/error-facet",
+          id: 'core/error-facet',
           label: $.i18n('core-views/facet-error'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "isError(value)"
-                }
-            );
+              'list',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'isError(value)'
+              }
+            )
           }
         },
         {
-          id: "core/null-facet",
+          id: 'core/null-facet',
           label: $.i18n('core-views/facet-null'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "isNull(value)"
-                }
-            );
+              'list',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'isNull(value)'
+              }
+            )
           }
         },
         {
-          id: "core/empty-string-facet",
+          id: 'core/empty-string-facet',
           label: $.i18n('core-views/facet-empty-string'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "isEmptyString(value)"
-                }
-            );
+              'list',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'isEmptyString(value)'
+              }
+            )
           }
         },
         {
-          id: "core/blank-facet",
+          id: 'core/blank-facet',
           label: $.i18n('core-views/facet-blank'),
-          click: function() {
+          click: function () {
             ui.browsingEngine.addFacet(
-                "list",
-                {
-                  "name": column.name,
-                  "columnName": column.name,
-                  "expression": "isBlank(value)"
-                }
-            );
+              'list',
+              {
+                name: column.name,
+                columnName: column.name,
+                expression: 'isBlank(value)'
+              }
+            )
           }
         }
       ]
     }
-  ]);
+  ])
 
-  MenuSystem.insertAfter(menu, [ "core/facet" ], [
+  MenuSystem.insertAfter(menu, ['core/facet'], [
     {
       label: $.i18n('core-views/text-filter'),
-      click: function() {
+      click: function () {
         ui.browsingEngine.addFacet(
-            "text", 
-            {
-              "name" : column.name,
-              "columnName" : column.name, 
-              "mode" : "text",
-              "caseSensitive" : false
-            }
-        );
+          'text',
+          {
+            name: column.name,
+            columnName: column.name,
+            mode: 'text',
+            caseSensitive: false
+          }
+        )
       }
     }
-  ]);
-});
+  ])
+})

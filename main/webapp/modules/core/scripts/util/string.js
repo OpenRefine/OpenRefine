@@ -23,40 +23,40 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-String.prototype.trim = function() {
-  return this.replace(/^\s+/, '').replace(/\s+$/, '');
-};
+String.prototype.trim = function () {
+  return this.replace(/^\s+/, '').replace(/\s+$/, '')
+}
 
-String.prototype.startsWith = function(s) {
-  return this.length >= s.length && this.substring(0, s.length) == s;
-};
+String.prototype.startsWith = function (s) {
+  return this.length >= s.length && this.substring(0, s.length) == s
+}
 
-String.prototype.endsWith = function(s) {
-  return this.length >= s.length && this.substring(this.length - s.length) == s;
-};
+String.prototype.endsWith = function (s) {
+  return this.length >= s.length && this.substring(this.length - s.length) == s
+}
 
-String.prototype.contains = function(s) {
-  return this.indexOf(s) >= 0;
-};
+String.prototype.contains = function (s) {
+  return this.indexOf(s) >= 0
+}
 
-String.encodeSeparator = function(s) {
-  return s.replace("\\", "\\\\")
-  .replace("\r", "\\r")
-  .replace("\n", "\\n")
-  .replace("\t", "\\t");
-};
+String.encodeSeparator = function (s) {
+  return s.replace('\\', '\\\\')
+    .replace('\r', '\\r')
+    .replace('\n', '\\n')
+    .replace('\t', '\\t')
+}
 
-String.decodeSeparator = function(s) {
-  return s.replace("\\n", "\n")
-  .replace("\\r", "\r")
-  .replace("\\t", "\t")
-  .replace("\\\\", "\\");
-};
+String.decodeSeparator = function (s) {
+  return s.replace('\\n', '\n')
+    .replace('\\r', '\r')
+    .replace('\\t', '\t')
+    .replace('\\\\', '\\')
+}

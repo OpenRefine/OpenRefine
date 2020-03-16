@@ -23,38 +23,38 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-function HttpHeadersDialog(title, headers, onDone) {
-    this._onDone = onDone;
-    var self = this;
-    
-    var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
-    var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
-    var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
-    var html = $(HttpHeadersDialog.generateWidgetHtml()).appendTo(body);
-    this._elmts = DOM.bind(html);
-        
-    this._httpHeadersWidget = new HttpHeadersDialog.Widget(
-        this._elmts, 
-        headers
-    );
+function HttpHeadersDialog (title, headers, onDone) {
+  this._onDone = onDone
+  var self = this
+
+  var header = $('<div></div>').addClass('dialog-header').text(title).appendTo(frame)
+  var body = $('<div></div>').addClass('dialog-body').appendTo(frame)
+  var footer = $('<div></div>').addClass('dialog-footer').appendTo(frame)
+  var html = $(HttpHeadersDialog.generateWidgetHtml()).appendTo(body)
+  this._elmts = DOM.bind(html)
+
+  this._httpHeadersWidget = new HttpHeadersDialog.Widget(
+    this._elmts,
+    headers
+  )
 }
 
-HttpHeadersDialog.generateWidgetHtml = function() {
-    var html = DOM.loadHTML("core", "scripts/dialogs/http-headers-dialog.html");
-    var httpheaderOptions = [];
+HttpHeadersDialog.generateWidgetHtml = function () {
+  var html = DOM.loadHTML('core', 'scripts/dialogs/http-headers-dialog.html')
+  var httpheaderOptions = []
 
-    for (var headerLabel in theProject.httpHeaders) {
-        if (theProject.httpHeaders.hasOwnProperty(headerLabel)) {
-            var info = theProject.httpHeaders[headerLabel];
-            httpheaderOptions.push('<label for="' +
+  for (var headerLabel in theProject.httpHeaders) {
+    if (theProject.httpHeaders.hasOwnProperty(headerLabel)) {
+      var info = theProject.httpHeaders[headerLabel]
+      httpheaderOptions.push('<label for="' +
                                     headerLabel +
                                     '">' +
                                     info.header +
@@ -64,10 +64,9 @@ HttpHeadersDialog.generateWidgetHtml = function() {
                                     headerLabel +
                                     '" value="' +
                                     info.defaultValue +
-                                    '" /></option><br />');
-        }
+                                    '" /></option><br />')
     }
+  }
 
-    return html.replace("$HTTP_HEADER_OPTIONS$", httpheaderOptions.join(""));
-};
-
+  return html.replace('$HTTP_HEADER_OPTIONS$', httpheaderOptions.join(''))
+}
