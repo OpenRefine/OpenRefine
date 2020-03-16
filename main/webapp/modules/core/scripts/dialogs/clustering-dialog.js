@@ -282,7 +282,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
     }
 };
 
-ClusteringDialog.prototype._cluster = function() {
+ClusteringDialog.prototype._cluster = async function() {
     var self = this;
 
     var container = this._elmts.tableContainer.html(
@@ -291,7 +291,7 @@ ClusteringDialog.prototype._cluster = function() {
 
     this._elmts.resultSummary.empty();
 
-    $.post(
+    var data = await $.post(
         "command/core/compute-clusters?" + $.param({ project: theProject.id }),
         {
             engine: JSON.stringify(ui.browsingEngine.getJSON()),
@@ -302,11 +302,10 @@ ClusteringDialog.prototype._cluster = function() {
                 'params' : this._params
             })
         },
-        function(data) {
-            self._updateData(data);
-        },
         "json"
     );
+    self._updateData(data);
+    document.body.style.cursor='default';
 };
 
 ClusteringDialog.prototype._updateData = function(data) {
@@ -370,6 +369,7 @@ ClusteringDialog.prototype._onExportCluster = function() {
 };
 
 ClusteringDialog.prototype._apply = function(onDone) {
+    document.body.style.cursor='wait';
     var clusters = this._getRestrictedClusters();
     var edits = [];
     for (var i = 0; i < clusters.length; i++) {
