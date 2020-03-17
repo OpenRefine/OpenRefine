@@ -270,6 +270,7 @@
     "core-dialogs/html-table": "HTML table",
     "core-dialogs/char-enc": "Character encoding",
     "core-dialogs/line-sep": "Line separator",
+    "core-dialogs/lb-formats-quotation": "Always quote text",
     "core-dialogs/upload-to": "Upload to",
     "core-dialogs/json-text": "The following JSON text encodes the options you have set in the other tabs. You can copy it out and save it for later, and paste it back in and click Apply to re-use the same options.",
     "core-dialogs/columnType": "SQL Type",
