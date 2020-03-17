@@ -249,7 +249,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
 
     if (groups.length > 0) {
       var tr = headerTable.insertRow(headerTable.rows.length);
-      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var foundGroup = false;
