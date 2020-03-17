@@ -742,7 +742,7 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
 
 // Converting control characters into tags
 function control_to_tags(str) {
-  if (localStorage.getItem('preference_control_char') == 'Enabled') {
+  if (localStorage.getItem('preference_control_char') == 'true') {
     var stringIncNonPrintable = '';
     for (var character = 0; character < str.length; character++) {
       var unprintableChar = '';
@@ -761,7 +761,7 @@ function control_to_tags(str) {
 
 // Converting tags into control characters
 function tags_to_control(str) {
-  if (localStorage.getItem('preference_control_char') == 'Enabled') {
+  if (localStorage.getItem('preference_control_char') == 'true') {
     var re = new RegExp("<tag [^>]+>([^<]+)<\/tag>");
     while (re.test(str)) {
       resultantTag = str.match(re)[0];

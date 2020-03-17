@@ -107,7 +107,7 @@ function PreferenceUI(tr, key, value) {
 
   $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
     var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, value);
-    if (key == "Control characters"){
+    if (key == "ui.show-control-characters"){
       localStorage.setItem('preference_control_char', newValue);
     }
     if (newValue !== null) {

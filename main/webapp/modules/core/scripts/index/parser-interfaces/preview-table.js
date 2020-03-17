@@ -37,7 +37,7 @@ Refine.PreviewTable = function(projectData, elmt) {
   this._render();
 };
 
-var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "SPACE"];
 
 Refine.PreviewTable.prototype._render = function() {
   var self = this;
@@ -106,7 +106,7 @@ Refine.PreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          if (localStorage.getItem('preference_control_char') == 'Enabled' ) {
+          if (localStorage.getItem('preference_control_char') == 'true' ) {
             var stringIncNonPrintable = "";
             for (var character = 0; character < cell.v.length; character++) {
               var unprintableChar = "";

@@ -245,19 +245,19 @@ $(function() {
   showVersion();
 });
 
-// Setting up control character as a default in preferences tab
+// Setting up control character as a default in global preferences tab
 function set_preference_control_char() {
   Refine.postCSRF(
     "command/core/set-preference",
     {
-      name: "Control characters",
-      value: JSON.stringify("Enabled")
+      name: "ui.show-control-characters",
+      value: JSON.stringify("true")
     },
     function (o) {
       if (o.code == "error") {
         alert(o.message);
       } else {
-        localStorage.setItem('preference_control_char', 'Enabled');
+        localStorage.setItem('preference_control_char', 'true');
       }
     },
     "json"
@@ -272,7 +272,7 @@ function get_preference_control_char() {
     async: false,
     type: "GET",
     url: "command/core/get-preference?" + $.param({
-      name: "Control characters"
+      name: "ui.show-control-characters"
     }),
     success: function (data) {
       if (data.value != undefined) {
@@ -292,6 +292,6 @@ if (get_preference_control_char() == null) {
     set_preference_control_char();
   }
   else {
-    localStorage.setItem('preference_control_char', 'Disabled');
+    localStorage.setItem('preference_control_char', 'false');
   }
 }
