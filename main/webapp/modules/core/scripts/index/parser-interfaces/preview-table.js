@@ -112,7 +112,7 @@ Refine.PreviewTable.prototype._render = function() {
               var unprintableChar = "";
               var charCode = cell.v.charAt(character).charCodeAt(0);
               if (charCode <= 32) {
-                unprintableChar = "<tag class='unprintableCharacters' style='background-color: black'>" + controlCharacters[charCode] + "</tag>";
+                unprintableChar = "<tag class='unprintableCharacters' style='background-color: orange; color:black'>" + controlCharacters[charCode] + "</tag>";
               } else {
                 unprintableChar += cell.v.charAt(character);
               }
