@@ -380,6 +380,52 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
+    public void testCanParseTab() throws Exception {
+        // Use un-escaped tab here. 
+        String sampleJson = "{\"field\":\"\tvalue\"}";
+        String sampleJson2 = "{\"\tfield\":{}}";
+        
+        
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        Token token = Token.Ignorable;
+        int i = 0;
+        try {
+            while (token != null) {
+                token = parser.next();
+                if (token == null) {
+                    break;
+                }
+                i++;
+                if (i == 3) {
+                    Assert.assertEquals(Token.Value, token);
+                    Assert.assertEquals("field", parser.getFieldName());
+                }
+            }
+        } catch (Exception e) {
+            Assert.fail();
+        }
+
+        parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
+        token = Token.Ignorable;
+        i = 0;
+        try{
+            while(token != null){
+                token = parser.next();
+                if(token == null) {
+                    break;
+                }
+                i++;
+                if(i == 3){
+                    Assert.assertEquals(Token.StartEntity, token);
+                    Assert.assertEquals(parser.getFieldName(), "\tfield");
+                }
+            }
+        }catch(Exception e){
+            Assert.fail();
+        }
+    }
+    
+    @Test
     public void testJsonDatatypes(){
         RunTest(getSampleWithDataTypes());
 
