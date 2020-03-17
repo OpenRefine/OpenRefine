@@ -255,12 +255,10 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   this._elmts.separatorInput[0].value = escapeJavascriptString(options.separator || ',');
   this._elmts.lineSeparatorInput[0].value = escapeJavascriptString(options.lineSeparator || '\n');
   this._elmts.encodingInput[0].value = options.encoding;
-  this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
-  this._elmts.outputEmptyRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
-  if (options.quoteAll) {
-    this._elmts.quoteAllCheckbox.attr('checked');
-  }
-  
+  this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : null);
+  this._elmts.outputEmptyRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : null);
+  this._elmts.quoteAllCheckbox.attr('checked', (options.quoteAll) ? 'checked' : null);
+
   if (options.columns !== null) {
     var self = this;
     this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', false);
