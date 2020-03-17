@@ -134,7 +134,7 @@ $(function() {
           OpenRefineVersion = data;
 
           $("#openrefine-version").text($.i18n('core-index/version')+" " + OpenRefineVersion.full_version);
-          
+
 
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
              function( data ) {
@@ -205,7 +205,7 @@ $(function() {
     .css("margin-top", rightPanelBodyVPaddings + "px")
     .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-    
+
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       Refine.actionAreas[i].ui.resize();
     }
@@ -233,7 +233,7 @@ $(function() {
     renderActionArea(Refine.actionAreas[i]);
   }
   Refine.selectActionArea('create-project');
-  
+
   $("#slogan").text($.i18n('core-index/slogan')+".");
   $("#or-index-pref").text($.i18n('core-index/preferences'));
   $("#or-index-help").text($.i18n('core-index/help'));
@@ -244,3 +244,54 @@ $(function() {
 
   showVersion();
 });
+
+// Setting up control character as a default in preferences tab
+function set_preference_control_char() {
+  Refine.postCSRF(
+    "command/core/set-preference",
+    {
+      name: "Control characters",
+      value: JSON.stringify("Enabled")
+    },
+    function (o) {
+      if (o.code == "error") {
+        alert(o.message);
+      } else {
+        localStorage.setItem('preference_control_char', 'Enabled');
+      }
+    },
+    "json"
+  )
+}
+
+// Getting value of control character
+function get_preference_control_char() {
+  var control_char = null;
+
+  $.ajax({
+    async: false,
+    type: "GET",
+    url: "command/core/get-preference?" + $.param({
+      name: "Control characters"
+    }),
+    success: function (data) {
+      if (data.value != undefined) {
+        control_char = data.value;
+        localStorage.setItem('preference_control_char', control_char);
+      }
+    },
+    dataType: "json"
+  });
+
+  return control_char;
+}
+
+//  Checking whether preference of control character has been set or not
+if (get_preference_control_char() == null) {
+  if (localStorage.getItem('preference_control_char') == null) {
+    set_preference_control_char();
+  }
+  else {
+    localStorage.setItem('preference_control_char', 'Disabled');
+  }
+}

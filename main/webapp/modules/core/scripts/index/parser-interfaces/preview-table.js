@@ -37,6 +37,8 @@ Refine.PreviewTable = function(projectData, elmt) {
   this._render();
 };
 
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
+
 Refine.PreviewTable.prototype._render = function() {
   var self = this;
   var table = $('<table>').addClass("data-table").appendTo(this._elmt)[0];
@@ -104,7 +106,21 @@ Refine.PreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          $('<span>').text(cell.v).appendTo(divContent);
+          if (localStorage.getItem('preference_control_char') == 'Enabled' ) {
+            var stringIncNonPrintable = "";
+            for (var character = 0; character < cell.v.length; character++) {
+              var unprintableChar = "";
+              var charCode = cell.v.charAt(character).charCodeAt(0);
+              if (charCode <= 32) {
+                unprintableChar = "<tag class='unprintableCharacters' style='background-color: black'>" + controlCharacters[charCode] + "</tag>";
+              } else {
+                unprintableChar += cell.v.charAt(character);
+              }
+              stringIncNonPrintable += unprintableChar;
+            }
+            cell.v = stringIncNonPrintable;
+          }
+          $('<span>').html(cell.v).appendTo(divContent);
         }
       }
     }
@@ -116,5 +132,5 @@ Refine.PreviewTable.prototype._render = function() {
     var tr = table.insertRow(table.rows.length);
     even = !even;
     renderRow(tr, r, row, even);
-  }    
+  }
 };

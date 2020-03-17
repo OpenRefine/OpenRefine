@@ -90,7 +90,7 @@ function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
     });
-    
+
     return JSON.stringify(result).replace(/"/g, '\"');
 }
 
@@ -107,12 +107,15 @@ function PreferenceUI(tr, key, value) {
 
   $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
     var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, value);
+    if (key == "Control characters"){
+      localStorage.setItem('preference_control_char', newValue);
+    }
     if (newValue !== null) {
       if (key === "userMetadata")  {
           newValue = deDupUserMetaData(newValue);
       }
       $(td1).text(newValue);
-      
+
       Refine.postCSRF(
         "command/core/set-preference",
         {
@@ -184,11 +187,11 @@ function populatePreferences(prefs) {
       if (value !== null) {
         var tr = table.insertRow(table.rows.length - 1);
         preferenceUIs.push(new PreferenceUI(tr, key, value));
-        
+
         if (key === "userMetadata")  {
             value = deDupUserMetaData(value);
         }
-        
+
         Refine.postCSRF(
           "command/core/set-preference",
           {

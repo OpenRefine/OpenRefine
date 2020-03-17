@@ -202,10 +202,10 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             var rowCount = 0;
             var onClick = function() {
               var parent = $(this).closest("tr");
-              var value = $(this).text();
-              cluster.value = value;
+              var value = $(this).html();
+                cluster.value = tags_to_control(value);
 
-              parent.find("input[type='text']").val(value);
+              parent.find(".cluster-new-value").html(value);
               var checkbox = parent.find("input[type='checkbox']");
               checkbox.prop('checked', true).change();
               return false;
@@ -213,7 +213,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             for (var c = 0; c < choices.length; c++) {
                 var choice = choices[c];
                 var li = $('<li></li>');
-                $('<a href="javascript:{}" title='+$.i18n('core-dialogs/use-this-val')+'></a>').text(choice.v).click(onClick).appendTo(li);
+                $('<a href="javascript:{}" title=' + $.i18n('core-dialogs/use-this-val') + '></a>').html(control_to_tags(choice.v)).click(onClick).appendTo(li);
                 $('<span></span>').text("(" + choice.c + " rows)").addClass("clustering-dialog-entry-count").appendTo(li);
                 rowCount += choice.c;
                 facet.s[c] = {
@@ -256,8 +256,8 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 editCheck.attr("checked", "true");
             }
 
-            var input = $('<input type="text" size="25" />')
-                .attr("value", cluster.value)
+            var input = $('<span contenteditable="true" type="text" size="25" class="cluster-new-value" style="background-color:white; display:block;"></span>')
+                .html(control_to_tags(cluster.value))
                 .bind("keyup change input",function() {
                     cluster.value = this.value;
                 }).appendTo(tr.insertCell(4));

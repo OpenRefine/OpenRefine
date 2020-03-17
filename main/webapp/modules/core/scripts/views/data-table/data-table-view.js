@@ -140,9 +140,8 @@ DataTableView.prototype.render = function() {
   $(".data-table-null").toggle(self._shownulls);
 
   this.resize();
-  
+
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
-  // nonPrintableCheckBox();
 };
 
 DataTableView.prototype._renderSortingControls = function(sortingControls) {

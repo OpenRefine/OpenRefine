@@ -358,7 +358,7 @@ ListFacet.prototype._update = function(resetScroll) {
   var html = [];
   var temp = $('<div>');
   var encodeHtml = function(s) {
-    return temp.text(s).html();
+    return temp.html(s).html();
   };
 
   var renderEdit = this._config.expression === "value";
@@ -366,6 +366,7 @@ ListFacet.prototype._update = function(resetScroll) {
     var label = customLabel || choice.v.l;
     var count = choice.c;
 
+    label = control_to_tags(label);
     html.push('<div class="facet-choice' + (choice.s ? ' facet-choice-selected' : '') + '" choiceIndex="' + index + '">');
 
     // include/exclude link
@@ -547,8 +548,8 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
   }
 
   var commit = function() {
-    var text = elmts.textarea[0].value;
-
+    var text = elmts.textarea[0].innerHTML;
+    text = tags_to_control(text);
     MenuSystem.dismissAll();
 
     var edit = { to : text };
@@ -591,12 +592,12 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
           self._selection = selection;
         }
       }
-    );            
+    );
   };
 
   elmts.okButton.click(commit);
   elmts.textarea
-  .text(originalContent)
+  .html(control_to_tags(choice.v.v))
   .keydown(function(evt) {
     if (!evt.shiftKey) {
       if (evt.keyCode === 13) {
@@ -680,8 +681,8 @@ ListFacet.prototype._updateRest = function() {
 
 ListFacet.prototype._editExpression = function() {
   var self = this;
-  var title = (this._config.columnName) ? 
-      ($.i18n('core-facets/edit-based-col')+" " + this._config.columnName) : 
+  var title = (this._config.columnName) ?
+      ($.i18n('core-facets/edit-based-col')+" " + this._config.columnName) :
     	  $.i18n('core-facets/edit-facet-exp');
 
   var column = Refine.columnNameToColumn(this._config.columnName);
@@ -689,14 +690,13 @@ ListFacet.prototype._editExpression = function() {
 
   new ExpressionPreviewDialog(
     title,
-    column ? column.cellIndex : -1, 
+    column ? column.cellIndex : -1,
     o.rowIndices,
     o.values,
-    this._config.expression, 
+    this._config.expression,
     function(expr) {
       if (expr != self._config.expression) {
         self._config.expression = expr;
-
         self._elmts.expressionDiv.text(self._config.expression);
         self._elmts.changeButton.attr("title", $.i18n('core-facets/current-exp')+": " + self._config.expression);
         if (self._config.expression === "value" || self._config.expression === "grel:value") {
@@ -735,7 +735,40 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
           }
         },
         "json"
-      );      
+      );
     }
   }
 };
+
+// Converting control characters into tags
+function control_to_tags(str) {
+  if (localStorage.getItem('preference_control_char') == 'Enabled') {
+    var stringIncNonPrintable = '';
+    for (var character = 0; character < str.length; character++) {
+      var unprintableChar = '';
+      var charCode = str.charAt(character).charCodeAt(0);
+      if (charCode <= 32) {
+        unprintableChar = "<tag contenteditable='false' class='unprintableCharacters'>" + controlCharacters[charCode] + "</tag>";
+      } else {
+        unprintableChar += str.charAt(character);
+      }
+      stringIncNonPrintable += unprintableChar;
+    }
+    return stringIncNonPrintable;
+  }
+  return str;
+}
+
+// Converting tags into control characters
+function tags_to_control(str) {
+  if (localStorage.getItem('preference_control_char') == 'Enabled') {
+    var re = new RegExp("<tag [^>]+>([^<]+)<\/tag>");
+    while (re.test(str)) {
+      resultantTag = str.match(re)[0];
+      result = str.match(re)[1];
+      var indexOfControlCharacter = controlCharacters.indexOf(result);
+      str = str.replace(resultantTag, String.fromCharCode(indexOfControlCharacter));
+    }
+  }
+  return str;
+}

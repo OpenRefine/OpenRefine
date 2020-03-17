@@ -37,26 +37,26 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("700px");
-    
+
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
     var html = $(ExpressionPreviewDialog.generateWidgetHtml()).appendTo(body);
-    
+
     this._elmts = DOM.bind(html);
-    
+
     $('<button class="button"></button>').html($.i18n('core-buttons/ok')).click(function() {
         DialogSystem.dismissUntil(self._level - 1);
         self._onDone(self._previewWidget.getExpression(true));
     }).appendTo(footer);
-    
+
     $('<button class="button"></button>').text($.i18n('core-buttons/cancel')).click(function() {
         DialogSystem.dismissUntil(self._level - 1);
     }).appendTo(footer);
-    
+
     this._level = DialogSystem.showDialog(frame);
     this._previewWidget = new ExpressionPreviewDialog.Widget(
-        this._elmts, 
+        this._elmts,
         cellIndex,
         rowIndices,
         values,
@@ -66,7 +66,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 
 ExpressionPreviewDialog.generateWidgetHtml = function() {
     var html = DOM.loadHTML("core", "scripts/dialogs/expression-preview-dialog.html");
-    
+
     var languageOptions = [];
     for (var prefix in theProject.scripting) {
         if (theProject.scripting.hasOwnProperty(prefix)) {
@@ -74,12 +74,12 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
             languageOptions.push('<option value="' + prefix + '">' + info.name + '</option>');
         }
     }
-    
+
     return html.replace("$LANGUAGE_OPTIONS$", languageOptions.join(""));
 };
 
 ExpressionPreviewDialog.Widget = function(
-    elmts, 
+    elmts,
     cellIndex,
     rowIndices,
     values,
@@ -91,14 +91,14 @@ ExpressionPreviewDialog.Widget = function(
         if (language == "gel") { // backward compatible
             language = "grel";
         }
-        
+
         if (!(language) || !(language.toLowerCase() in theProject.scripting)) {
             language = "grel";
         }
         this.expression = theProject.scripting[language].defaultExpression;
     } else {
         this.expression = expression;
-        
+
         var colon = expression.indexOf(":");
         if (colon > 0) {
             var l = expression.substring(0, colon);
@@ -108,23 +108,23 @@ ExpressionPreviewDialog.Widget = function(
             }
         }
     }
-    
+
     this._elmts = elmts;
     this._cellIndex = cellIndex;
     this._rowIndices = rowIndices;
     this._values = values;
-    
+
     this._results = null;
     this._timerID = null;
-    
+
     $("#expression-preview-tabs").tabs();
-    
+
     this._elmts.expressionPreviewLanguageSelect[0].value = language;
     this._elmts.expressionPreviewLanguageSelect.bind("change", function() {
         $.cookie("scripting.lang", this.value);
         self.update();
     });
-        
+
     var self = this;
     this._elmts.expressionPreviewTextarea
         .attr("value", this.expression)
@@ -133,16 +133,16 @@ ExpressionPreviewDialog.Widget = function(
         })
         .select()
         .focus();
-        
+
     this._tabContentWidth = this._elmts.expressionPreviewPreviewContainer.width() + "px";
-    
+
     this._elmts.or_dialog_expr.html($.i18n('core-dialogs/expression'));
     this._elmts.or_dialog_lang.html($.i18n('core-dialogs/language'));
     this._elmts.or_dialog_preview.html($.i18n('core-dialogs/preview'));
     this._elmts.or_dialog_history.html($.i18n('core-dialogs/history'));
     this._elmts.or_dialog_starred.html($.i18n('core-dialogs/starred'));
     this._elmts.or_dialog_help.html($.i18n('core-dialogs/help'));
-    
+
     this.update();
     this._renderExpressionHistoryTab();
     this._renderStarredExpressionsTab();
@@ -154,7 +154,7 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
     if (!s.length) {
         return null;
     }
-    
+
     s = this._getLanguage() + ":" + s;
     if (commit) {
         Refine.postCSRF(
@@ -165,7 +165,7 @@ ExpressionPreviewDialog.Widget.prototype.getExpression = function(commit) {
             "json"
         );
     }
-    
+
     return s;
 };
 
@@ -187,7 +187,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
 
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
     var elmt = this._elmts.expressionPreviewHelpTabBody.empty().width(this._tabContentWidth);
-    
+
     $('<h3></h3>').text("Variables").appendTo(elmt);
     var varTable = $('<table cellspacing="5"></table>').appendTo(elmt)[0];
     var vars = [
@@ -216,18 +216,18 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
         $(tr.insertCell(0)).addClass("expression-preview-doc-item-title").text(variable.name);
         $(tr.insertCell(1)).addClass("expression-preview-doc-item-desc").text(variable.description);
     }
-    
+
     var renderEntry = function(table, name, entry) {
         var tr0 = table.insertRow(table.rows.length);
         var tr1 = table.insertRow(table.rows.length);
         var tr2 = table.insertRow(table.rows.length);
-        
+
         $(tr0.insertCell(0)).addClass("expression-preview-doc-item-title").text(name);
         $(tr0.insertCell(1)).addClass("expression-preview-doc-item-params").text("(" + entry.params + ")");
-        
+
         $(tr1.insertCell(0));
         $(tr1.insertCell(1)).addClass("expression-preview-doc-item-returns").text($.i18n('core-dialogs/returns')+": " + entry.returns);
-        
+
         $(tr2.insertCell(0));
         $(tr2.insertCell(1)).addClass("expression-preview-doc-item-desc").text(entry.description);
     };
@@ -239,17 +239,17 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
             }
         }
         names.sort();
-        
+
         for (var i = 0; i < names.length; i++) {
             var name = names[i];
             renderEntry(table, name, map[name]);
         }
     };
-    
+
     $('<h3></h3>').text("Functions").appendTo(elmt);
     var functionTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
     renderEntries(functionTable, data.functions);
-    
+
     $('<h3></h3>').text("Controls").appendTo(elmt);
     var controlTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
     renderEntries(controlTable, data.controls);
@@ -270,13 +270,13 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function(
 ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(data) {
     var self = this;
     var elmt = this._elmts.expressionPreviewHistoryContainer.empty().width(this._tabContentWidth);
-    
+
     var table = $(
         '<table>' +
             '<tr><th></th><th></th><th>'+$.i18n('core-dialogs/from')+'</th><th colspan="2">'+$.i18n('core-dialogs/expression')+'</th><th></th></tr>' +
         '</table>'
     ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
-    
+
     var renderEntry = function(self,tr,entry) {
         $(tr).empty();
         var o = Scripting.parse(entry.code);
@@ -297,30 +297,30 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
                         "json"
                     );
                 });
-        
+
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/reuse')+'</a>').appendTo(tr.insertCell(1)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
-            
+
             $("#expression-preview-tabs").tabs('option', 'selected', 0);
-            
+
             self._elmts.expressionPreviewTextarea.select().focus();
-            
+
             self.update();
         });
-        
-        
+
+
         $(tr.insertCell(2)).html(entry.global ? "Other&nbsp;projects" : "This&nbsp;project");
         $(tr.insertCell(3)).text(o.language + ":");
         $(tr.insertCell(4)).text(o.expression);
     };
-    
+
     for (var i = 0; i < data.expressions.length; i++) {
         var tr = table.insertRow(table.rows.length);
         var entry = data.expressions[i];
         renderEntry(self,tr,entry);
     }
-   
+
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function() {
@@ -338,17 +338,17 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function
 ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(data) {
     var self = this;
     var elmt = this._elmts.expressionPreviewStarredContainer.empty().width(this._tabContentWidth);
-    
+
     var table = $(
         '<table>' +
             '<tr><th></th><th></th><th colspan="2">'+$.i18n('core-dialogs/expression')+'</th><th></th></tr>' +
         '</table>'
     ).appendTo($('<div>').addClass("expression-preview-table-wrapper").appendTo(elmt))[0];
-    
+
     var renderEntry = function(entry) {
         var tr = table.insertRow(table.rows.length);
         var o = Scripting.parse(entry.code);
-        
+
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/remove')+'</a>').appendTo(tr.insertCell(0)).click(function() {
             Refine.postCSRF(
                 "command/core/toggle-starred-expression",
@@ -360,22 +360,22 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
                 "json"
             );
         });
-        
+
         $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
-            
+
             $("#expression-preview-tabs").tabs('option', 'selected', 0);
-            
+
             self._elmts.expressionPreviewTextarea.select().focus();
-            
+
             self.update();
         });
-        
+
         $(tr.insertCell(2)).text(o.language + ":");
         $(tr.insertCell(3)).text(o.expression);
     };
-    
+
     for (var i = 0; i < data.expressions.length; i++) {
         var entry = data.expressions[i];
         renderEntry(entry);
@@ -398,7 +398,7 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
         cellIndex: this._cellIndex
     };
     this._prepareUpdate(params);
-    
+
     $.post(
         "command/core/preview-expression?" + $.param(params), 
         {
@@ -422,43 +422,43 @@ ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
 
 ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, data) {
     var container = this._elmts.expressionPreviewPreviewContainer.empty().width(this._tabContentWidth);
-    
+
     var table = $('<table></table>').appendTo(
         $('<div>').addClass("expression-preview-table-wrapper").appendTo(container))[0];
-    
+
     var truncExpression = expression.length > 30 ? expression.substring(0, 30) + ' ...' : expression; 
-    
+
     var tr = table.insertRow(0);
     $(tr.insertCell(0)).addClass("expression-preview-heading").text("row");
     $(tr.insertCell(1)).addClass("expression-preview-heading").text("value");
     $(tr.insertCell(2)).addClass("expression-preview-heading").text(truncExpression);
-    
+
     var renderValue = function(td, v) {
         if (v !== null && v !== undefined) {
             if ($.isPlainObject(v)) {
                 $('<span></span>').addClass("expression-preview-special-value").text($.i18n('core-dialogs/error')+": " + v.message).appendTo(td);
             } else {
-                td.text(v);
+                td.html(control_to_tags(v));
             }
         } else {
             $('<span>null</span>').addClass("expression-preview-special-value").appendTo(td);
         }
     };
-    
+
     if (this._results !== null) {
         this._elmts.expressionPreviewParsingStatus.empty().removeClass("error").text($.i18n('core-dialogs/no-syntax-err')+".");
     } else {
         var message = (data.type == "parser") ? data.message : $.i18n('core-dialogs/internal-err');
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }
-    
+
     for (var i = 0; i < this._values.length; i++) {
         var tr = table.insertRow(table.rows.length);
-        
+
         $(tr.insertCell(0)).attr("width", "1%").html((this._rowIndices[i] + 1) + ".");
-        
+
         renderValue($(tr.insertCell(1)).addClass("expression-preview-value"), this._values[i]);
-        
+
         var tdValue = $(tr.insertCell(2)).addClass("expression-preview-value");
         if (this._results !== null) {
             var v = this._results[i];
