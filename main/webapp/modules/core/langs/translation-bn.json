@@ -5,5 +5,16 @@
     "core-index/new-version": "নতুন সংকরণ!",
     "core-index/download": "ডাউনলোড করুন",
     "core-index/now": "এখন",
-    "core-index/preferences": "পছন্দসমূহ"
+    "core-index/preferences": "পছন্দসমূহ",
+    "name": "ইংরেজি",
+    "core-index/value": "মান",
+    "core-index/delete": "অপসারণ করুন",
+    "core-index/name": "প্রকল্পের নাম:",
+    "core-index/contributors": "অবদানকারী:",
+    "core-index/subject": "বিষয়:",
+    "core-index/rowCount": "সারি সংখ্যা:",
+    "core-index-parser/commas": "কমা (সিএসভি)",
+    "core-index-parser/tabs": "ট্যাব (টিএসভি)",
+    "core-index/tags": "ট্যাগ:",
+    "core-index/image": "চিত্র:"
 }
