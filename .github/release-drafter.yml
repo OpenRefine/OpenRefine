@@ -1,18 +1,20 @@
 name-template: v$NEXT_PATCH_VERSION 🌈
 tag-template: v$NEXT_PATCH_VERSION
 categories:
-  - title: 🚀 Features
-    label: feature
-  - title: 🐛 Bug Fixes
-    label: fix
-  - title: 🧰 Maintenance
-    label: chore
-  - title: 📝 Documentation
-    label: docs
-  - title: ⚙ Dependencies and Libraries
-    label: dependencies
-  - title: ✨ Enhancements
+  - title: Features
     label: enhancement
+  - title: Bug Fixes
+    label: bug
+  - title: Maintenance
+    label: maintainability
+  - title: Documentation
+    label: documentation
+  - title: Dependencies and Libraries
+    label: dependencies
+  - title: Enhancements
+    label: enhancement
+  - title: Web UI Improvements
+    label: UI
 change-template: '- $TITLE (#$NUMBER) - @$AUTHOR'
 template: |
   ## Changes
