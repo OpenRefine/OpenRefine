@@ -89,18 +89,8 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
-  this._elmts.urlInput.keypress(function (evt) {
+  this._elmts.form.submit(function(evt){
     evt.preventDefault();
-    if (evt.which === 13) {
-      if(!isUrlValid(self._elmts.urlInput[0].value)) {
-        window.alert($.i18n('core-index-import/warning-web-address'));
-      } else {
-        self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
-      }
-    }
-  });
-
-  this._elmts.nextButton.click(function(evt) {
     if(!isUrlValid(self._elmts.urlInput[0].value)) {
       window.alert($.i18n('core-index-import/warning-web-address'));
     } else {
