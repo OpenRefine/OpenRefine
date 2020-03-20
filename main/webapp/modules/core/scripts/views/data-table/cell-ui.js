@@ -360,11 +360,13 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
       if (elmts.radioSimilar[0].checked) {
         params.similarValue = self._cell.v;
         params.columnName = Refine.cellIndexToColumn(self._cellIndex).name;
+        elmts.radioSimilar[0].setAttribute(checked, "true");
 
         self._postProcessSeveralCells("recon-judge-similar-cells", {}, params, true);
       } else {
         params.row = self._rowIndex;
         params.cell = self._cellIndex;
+        elmts.radioOne[0].setAttribute(checked, "true");
 
         self._postProcessOneCell("recon-judge-one-cell", {}, params, true);
       }
