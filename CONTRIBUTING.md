@@ -32,7 +32,7 @@ All developers including new distributions and plugin developers are invited to 
 ### How to submit PR's (pull requests), patches, and bug fixes
 
 Welcome new contributor!
-Follow this guide [Your first pull request](https://gitter.im/OpenRefine/OpenRefine)
+Follow this guide [Your first pull request](https://github.com/OpenRefine/OpenRefine/wiki/Your-first-pull-request)
 
 - Avoid merging master in your branch because it makes code review a lot harder. **Please make your changes in a new git branch and send your patch**, including appropriate test cases.
 - If you want to keep your branch up to date with our master, it would be nicer if you could just rebase your branch instead. That would keep the history a lot cleaner.
