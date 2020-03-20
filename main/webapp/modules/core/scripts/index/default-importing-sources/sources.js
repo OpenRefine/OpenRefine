@@ -88,8 +88,9 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-enterurl').text($.i18n('core-index-import/enter-url'));
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
-  
-  this._elmts.nextButton.click(function(evt) {
+
+  this._elmts.form.submit(function(evt){
+    evt.preventDefault();
     if(!isUrlValid(self._elmts.urlInput[0].value)) {
       window.alert($.i18n('core-index-import/warning-web-address'));
     } else {
