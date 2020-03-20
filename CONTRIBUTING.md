@@ -31,17 +31,23 @@ All developers including new distributions and plugin developers are invited to 
 
 ### How to submit PR's (pull requests), patches, and bug fixes
 
-- Avoid merging master in your branch because it makes code review a lot harder.
+Welcome new contributor!
+Follow this guide [Your first pull request](https://gitter.im/OpenRefine/OpenRefine)
+
+- Avoid merging master in your branch because it makes code review a lot harder. **Please make your changes in a new git branch and send your patch**, including appropriate test cases.
 - If you want to keep your branch up to date with our master, it would be nicer if you could just rebase your branch instead. That would keep the history a lot cleaner.
-- Please avoid adding unrelated changes in the PR. Do a separate PR and rebase once they get merged can work really well.
- 
-If you make trivial changes, you can send them directly via a pull request. **Please make your changes in a new git branch and send your patch**, including appropriate test cases.
+- Please avoid adding unrelated changes in a PR. Use separate PR's and rebase once they get merged can work really well.
+- If you make trivial changes, you can send them directly via a PR.
 
-We want to keep the quality of the trunk at a very high level, since this is ultimately where the Stable Releases are built from after bugs are fixed. Please take the time to test your changes (including travis-ci) before sending a pull request.
+### Code Quality ###
+We want to keep the quality of the trunk at a very high level, since this is ultimately where the Stable Releases are built from after bugs are fixed.
+- For Java code, we follow **Google Java Style** (Use the [Eclipse Plugin](https://github.com/google/google-java-format#eclipse)).
+- For JavaScript, we follow **JavaScript Standard Style** (Eclipse Orion and greater [defaults to ESLint](https://eslint.org/docs/3.0.0/user-guide/integrations)).
+- Test your changes locally before sending a PR.
+- After sending a PR, review your PR on GitHub for Travis and Appveyor failures.
+- Code style checks are currently NOT part of our GitHub CI/CD automation, but will be in the future. See issue [#2338](https://github.com/OpenRefine/OpenRefine/issues/2338).
 
-OpenRefine is volunteer supported. Pull Requests are reviewed and merged by volunteers. All Pull Requests will be answered, however it may take some time to get back to you. Thank you in advance for your patience.
-
-If you don't know where to start and are looking for a bug to fix, please see our [issue list](https://github.com/OpenRefine/OpenRefine/issues). 
+OpenRefine is volunteer supported. PR's are reviewed and merged by volunteers. All PR's will be answered, however it may take some time to get back to you. Thank you in advance for your patience.
 
 ### New functionalities via extensions
 
@@ -54,7 +60,7 @@ If you want to list your extension on the download page, please edit [this file]
 OpenRefine is already available in many different distributions (see the [download page](http://openrefine.org/download.html)). New distributions often package OpenRefine for a specific usage or port it. We are fine with new forks ([see discussion](https://groups.google.com/forum/#!msg/openrefine/pasNnMDJ3p8/LrZz_GiFCwAJ)) but we invite you to engage with the community to share your roadmap and progress.
 
 Github offers a powerful system to work between different repositories and we encourage you to leverage it:
-- You can cross reference issues and pull requests between Github repository using `user/repository#number` ([see more here](https://github.com/blog/967-github-secrets#cross-repository-issue-references))
-- If you want to merge a Pull Request that is pending for review to your own repository check the pull request locally ([see more here](https://help.github.com/articles/checking-out-pull-requests-locally/)).
+- You can cross reference issues and PR's between Github repository using `user/repository#number` ([see more here](https://github.com/blog/967-github-secrets#cross-repository-issue-references))
+- If you want to merge a PR that is pending for review to your own repository check the PR locally ([see more here](https://help.github.com/articles/checking-out-pull-requests-locally/)).
 
 Don't forget to contribute to the upstream ([main OpenRefine repository](https://github.com/openrefine/openrefine.git)) so your changes from your distribution can be reviewed and merged and to keep other developers aware of your progress. If you want to list your distribution on the download page, please edit [this file](https://github.com/OpenRefine/openrefine.github.com/blob/master/download.md).
