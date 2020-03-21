@@ -2,27 +2,38 @@ apiVersion: 1.0.0
 metadata:
   generateName: openrefine-
 projects:
-  - name: openrefine
+  - name: OpenRefine_Che
     source:
       type: github
       location: https://github.com/OpenRefine/OpenRefine.git
       startPoint: master
 components:
-  - type: dockerrimage
-    alias: shell
-    image: openjdk:15-alpine
+  - type: dockerimage
+    alias: alpine
+    image: openjdk:8-alpine
     memoryLimit: 1536M
+    mountSources: true
+    volumes:
+      - name: mavenrepo
+        containerPath: /root/.m2
+    env:
+      - name: ENV_VAR
+        value: value
     endpoints:
-      - name: openrefine
+      - name: OpenRefineUI
         port: 3333
         attributes:
           discoverable: 'false'
-          public: 'false'
+          public: 'true'
+          secure: 'false'
           protocol: http
+    command: ['tail']
+    args: ['-f', '/dev/null']
+
 commands:
   - name: compile and run
     actions:
       - type: exec
-        component: shell
+        component: alpine
         command: "./refine build && ./refine"
-        workdir: "${CHE_PROJECTS_ROOT}/src/github.com/OpenRefine/OpenRefine"
+        workdir: "${CHE_PROJECTS_ROOT}/OpenRefine_Che"

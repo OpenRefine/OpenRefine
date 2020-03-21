@@ -1,27 +1,25 @@
 apiVersion: 1.0.0
-
 metadata:
-    name: OpenRefineChe-
-
+  name: OpenRefine_Che
 projects:
-  - name: OpenRefine_Che
+  - name: OpenRefine
     source:
-      location: 'https://github.com/OpenRefine/OpenRefine'
+      location: 'https://github.com/OpenRefine/OpenRefine.git'
       type: github
       branch: master
-
-# A single development container having a small OS, Maven, and JDK
+attributes:
+  persistVolumes: 'false'
 components:
-  - alias: maven
-    id: redhat/java11/latest
+  - id: redhat/java11/latest
     type: chePlugin
-    image: 'quay.io/eclipse/che-java11-maven:nightly'
-    mountSources: true
+  - mountSources: true
     memoryLimit: 1536M
     type: dockerimage
     volumes:
       - name: m2
         containerPath: /home/user/.m2
+    alias: maven
+    image: 'quay.io/eclipse/che-java11-maven:nightly'
     env:
       - value: ''
         name: MAVEN_CONFIG
@@ -43,30 +41,20 @@ components:
           -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true
           -Xms20m -Djava.security.egd=file:/dev/./urandom
         name: JAVA_TOOL_OPTIONS
-    endpoints:
-      - name: OpenRefineUI
-        port: 3333
-        attributes:
-          discoverable: 'false'
-          public: 'true'
-          secure: 'false'
-          protocol: http
-
-# Adds to the Che Workspace the GitHub Pull Request Plugin
   - id: ms-vscode/vscode-github-pullrequest/latest
     type: chePlugin
 
-# Exposes Quick Commands available in Che Workspace Terminal
 commands:
   - name: maven build
     actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/OpenRefine_Che'
+      - workdir: '${CHE_PROJECTS_ROOT}/OpenRefine'
         type: exec
         command: mvn clean install
         component: maven
   - name: maven build and run
     actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/OpenRefine_Che'
+      - workdir: '${CHE_PROJECTS_ROOT}/OpenRefine'
         type: exec
-        component: maven
         command: mvn clean install && java -jar ./target/*.jar
+        component: maven
+
