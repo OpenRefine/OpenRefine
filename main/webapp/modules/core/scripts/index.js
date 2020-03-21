@@ -257,7 +257,7 @@ function set_preference_control_char() {
       if (o.code == "error") {
         alert(o.message);
       } else {
-        localStorage.setItem('preference_control_char', 'true');
+        $.cookie('preference_control_char', 'true');
       }
     },
     "json"
@@ -277,7 +277,7 @@ function get_preference_control_char() {
     success: function (data) {
       if (data.value != undefined) {
         control_char = data.value;
-        localStorage.setItem('preference_control_char', control_char);
+        $.cookie('preference_control_char', control_char);
       }
     },
     dataType: "json"
@@ -288,10 +288,10 @@ function get_preference_control_char() {
 
 //  Checking whether preference of control character has been set or not
 if (get_preference_control_char() == null) {
-  if (localStorage.getItem('preference_control_char') == null) {
+  if ($.cookie('preference_control_char') == null) {
     set_preference_control_char();
   }
   else {
-    localStorage.setItem('preference_control_char', 'false');
+    $.cookie('preference_control_char', 'false');
   }
 }

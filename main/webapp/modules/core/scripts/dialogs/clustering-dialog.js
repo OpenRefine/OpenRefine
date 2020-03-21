@@ -256,7 +256,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 editCheck.attr("checked", "true");
             }
 
-            var input = $('<span contenteditable="true" type="text" size="25" class="cluster-new-value" style="background-color:white; display:block;"></span>')
+            var input = $('<div contenteditable style="background-color:white; display:block;"></div>')
                 .html(control_to_tags(cluster.value))
                 .bind("keyup change input",function() {
                     cluster.value = this.value;

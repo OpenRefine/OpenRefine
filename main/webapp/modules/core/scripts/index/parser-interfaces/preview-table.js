@@ -106,13 +106,14 @@ Refine.PreviewTable.prototype._render = function() {
           .attr("target", "_blank")
           .appendTo(divContent);
         } else {
-          if (localStorage.getItem('preference_control_char') == 'true' ) {
+          if ($.cookie('preference_control_char') == 'true' ) {
             var stringIncNonPrintable = "";
             for (var character = 0; character < cell.v.length; character++) {
               var unprintableChar = "";
               var charCode = cell.v.charAt(character).charCodeAt(0);
               if (charCode <= 32) {
-                unprintableChar = "<tag class='unprintableCharacters' style='background-color: orange; color:black'>" + controlCharacters[charCode] + "</tag>";
+                var size = (controlCharacters[charCode].length + 2) * 2;
+                unprintableChar = "<input type='button' class='unprintableCharacters' disabled='disabled' width=" + size + "% value=" + controlCharacters[charCode] + ">";
               } else {
                 unprintableChar += cell.v.charAt(character);
               }

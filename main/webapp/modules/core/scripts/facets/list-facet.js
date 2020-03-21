@@ -521,7 +521,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
 
   var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
   menu.html(
-    '<div contenteditable="true" bind="textarea" class="data-table-cell-editor-editor"></div>' +
+    '<div contenteditable bind="textarea" class="data-table-cell-editor-editor"></div>' +
       '<div id="data-table-cell-editor-actions">' +
         '<div class="data-table-cell-editor-action">' +
           '<button class="button" bind="okButton">'+$.i18n('core-buttons/apply')+'</button>' +
@@ -742,13 +742,14 @@ ListFacet.prototype._setChoiceCountLimit = function(choiceCount) {
 
 // Converting control characters into tags
 function control_to_tags(str) {
-  if (localStorage.getItem('preference_control_char') == 'true') {
+  if ($.cookie('preference_control_char') == 'true') {
     var stringIncNonPrintable = '';
     for (var character = 0; character < str.length; character++) {
       var unprintableChar = '';
       var charCode = str.charAt(character).charCodeAt(0);
       if (charCode <= 32) {
-        unprintableChar = "<tag contenteditable='false' class='unprintableCharacters'>" + controlCharacters[charCode] + "</tag>";
+        var size = (controlCharacters[charCode].length + 2)* 2;
+        unprintableChar = "<input type='button' class='unprintableCharacters' disabled='disabled' width=" + size + "% value=" + controlCharacters[charCode] +">";
       } else {
         unprintableChar += str.charAt(character);
       }
@@ -761,13 +762,17 @@ function control_to_tags(str) {
 
 // Converting tags into control characters
 function tags_to_control(str) {
-  if (localStorage.getItem('preference_control_char') == 'true') {
-    var re = new RegExp("<tag [^>]+>([^<]+)<\/tag>");
+  if ($.cookie('preference_control_char') == 'true') {
+
+    var results = [];
+    var re = new RegExp("<input .*?>");
     while (re.test(str)) {
-      resultantTag = str.match(re)[0];
-      result = str.match(re)[1];
-      var indexOfControlCharacter = controlCharacters.indexOf(result);
-      str = str.replace(resultantTag, String.fromCharCode(indexOfControlCharacter));
+      $("<div></div>").html(str).find("input").each(function (l) {
+        resultantTag = str.match(re)[0];
+        result = $(this).val();
+        var indexOfControlCharacter = controlCharacters.indexOf(result);
+        str = str.replace(resultantTag, String.fromCharCode(indexOfControlCharacter));
+    });
     }
   }
   return str;
