@@ -3,7 +3,7 @@ metadata:
   projects:
     - name: OpenRefine_Che
       source:
-        location: 'https://github.com/thadguidry/OpenRefine'
+        location: 'https://github.com/OpenRefine/OpenRefine'
         type: git
         branch: master
     - name: console-java-simple
@@ -59,4 +59,3 @@ metadata:
           type: exec
           command: mvn clean install && java -jar ./target/*.jar
           component: maven
-  
