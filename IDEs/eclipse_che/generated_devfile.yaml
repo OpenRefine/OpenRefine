@@ -59,3 +59,4 @@ metadata:
           type: exec
           command: mvn clean install && java -jar ./target/*.jar
           component: maven
+
