@@ -1,0 +1,26 @@
+apiVersion: 1.0.0
+metadata:
+  generateName: openrefine-
+projects:
+  - name: openrefine
+    source:
+      type: github
+      location: 'https://github.com/OpenRefine/OpenRefine.git'
+      startPoint: master
+components:
+  - type: dockerrimage
+    image: openjdk:15-alpine
+    endpoints:
+      - name: openrefine
+        port: 3333
+        attributes:
+          discoverable: false
+          public: false
+          protocol: http
+commands:
+  - name: compile and run
+    actions:
+      - type: exec
+        component: shell
+        command: "./refine build && ./refine"
+        workdir: "${CHE_PROJECTS_ROOT}/src/github.com/OpenRefine/OpenRefine"
