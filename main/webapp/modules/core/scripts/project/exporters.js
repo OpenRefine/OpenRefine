@@ -38,19 +38,9 @@ ExporterManager.handlers = {};
 
 ExporterManager.MenuItems = [
   {
-    "id": "core/export-tsv",
+    "id": "core/export-local",
     "label": $.i18n('core-dialogs/export-to-local'),
     "click": function () { ExporterManager.handlers.exportProjectToLocal(); }
-  },
-  {
-    "id": "core/export-tsv",
-    "label": $.i18n('core-dialogs/export-to-google-drive'),
-    "click": function () { ExporterManager.handlers.exportProjectToGoogleDrive(); }
-  },
-  {
-    "id": "core/export-tsv",
-    "label": $.i18n('core-dialogs/export-to-google-sheets'),
-    "click": function () { ExporterManager.handlers.exportProjectToGoogleSheets(); }
   },
   {},
   {
@@ -184,71 +174,3 @@ ExporterManager.handlers.exportProjectToLocal = function() {
 
   document.body.removeChild(form);
 };
-
-ExporterManager.handlers.exportProjectToGoogleDrive = function () {
-  var doExportToGoogleDrive = function () {
-    var name = window.prompt($.i18n('gdata-exporter/enter-filename'), theProject.metadata.name);
-    if (name) {
-      var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
-      Refine.postCSRF(
-        "command/gdata/upload",
-        {
-          "project": theProject.id,
-          "name": name,
-          "format": "raw/openrefine-project"
-        },
-        function (o) {
-          dismiss();
-
-          if (o.url) {
-            alert($.i18n('gdata-exporter/upload-google-drive-success'));
-          } else {
-            alert($.i18n('gdata-exporter/upload-error') + o.message)
-          }
-          onDone();
-        },
-        "json"
-      );
-    }
-  };
-
-  if (GdataExtension.isAuthorized()) {
-    doExportToGoogleDrive();
-  } else {
-    GdataExtension.showAuthorizationDialog(doExportToGoogleDrive);
-  }
-}
-
-ExporterManager.handlers.exportProjectToGoogleSheets = function () {
-  var doExportToGoogleSheets = function () {
-    var name = window.prompt($.i18n('gdata-exporter/enter-spreadsheet'), theProject.metadata.name);
-    if (name) {
-      var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
-      Refine.postCSRF(
-        "command/gdata/upload",
-        {
-          "project": theProject.id,
-          "name": name,
-          "format": "gdata/google-spreadsheet"
-        },
-        function (o) {
-          dismiss();
-
-          if (o.url) {
-            alert($.i18n('gdata-exporter/upload-google-sheets-success'));
-          } else {
-            alert($.i18n('gdata-exporter/upload-error') + o.message)
-          }
-          onDone();
-        },
-        "json"
-      );
-    }
-  };
-
-  if (GdataExtension.isAuthorized()) {
-    doExportToGoogleSheets();
-  } else {
-    GdataExtension.showAuthorizationDialog(doExportToGoogleSheets);
-  }
-}

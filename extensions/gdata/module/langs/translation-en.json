@@ -35,6 +35,8 @@
     "gdata-source/title": "Title",
     "gdata-source/authors": "Authors",
     "gdata-source/updated": "Updated",
+    "gdata-exporter/export-to-google-drive": "OpenRefine project archive to Google Drive...",
+    "gdata-exporter/google-sheets": "Google Sheets...",
     "gdata-exporter/uploading": "Uploading…",
     "gdata-exporter/upload-error": "Upload error: ",
     "gdata-exporter/upload-google-drive-success": "Project was uploaded successfully to Google Drive ",
