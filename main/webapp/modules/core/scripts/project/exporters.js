@@ -38,9 +38,19 @@ ExporterManager.handlers = {};
 
 ExporterManager.MenuItems = [
   {
-    "id" : "core/export-project",
-    "label": $.i18n('core-project/export-project'),
-    "click": function() { ExporterManager.handlers.exportProject(); }
+    "id": "core/export-tsv",
+    "label": $.i18n('core-dialogs/export-to-local'),
+    "click": function () { ExporterManager.handlers.exportProjectToLocal(); }
+  },
+  {
+    "id": "core/export-tsv",
+    "label": $.i18n('core-dialogs/export-to-google-drive'),
+    "click": function () { ExporterManager.handlers.exportProjectToGoogleDrive(); }
+  },
+  {
+    "id": "core/export-tsv",
+    "label": $.i18n('core-dialogs/export-to-google-sheets'),
+    "click": function () { ExporterManager.handlers.exportProjectToGoogleSheets(); }
   },
   {},
   {
@@ -123,7 +133,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
   .attr("name", "contentType")
   .attr("value", "application/x-unknown") // force download
   .appendTo(form);
-  
+
   document.body.appendChild(form);
 
   window.open("about:blank", "refine-export");
@@ -155,90 +165,100 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
     .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
     .appendTo(form);
   }
-  
+
   return form;
 };
 
-ExporterManager.handlers.exportProject = function() {
+ExporterManager.handlers.exportProjectToLocal = function() {
   var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
-  // dialog
-  var dialog = $(DOM.loadHTML("core", "scripts/dialogs/export-project-dialog.html"));
-  var _elmts = DOM.bind(dialog);
-  
-  _elmts.dialogHeader.html($.i18n('core-dialogs/choose-export-destination'));
-  _elmts.toLocalRadio.html($.i18n('core-dialogs/export-to-local'));
-  _elmts.toGoogleDriveRadio.html($.i18n('core-dialogs/export-to-google-drive'));
-  _elmts.exportButton.html($.i18n('core-buttons/export'));
-  _elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  
-  _elmts.exportButton.click(function() { 
-      if ($("input[name='export-destination']")[0].checked) {
-          exportToLocal(name);
-      } else {
-          exportToGoogleDrive(name);
-      }
-      
-      DialogSystem.dismissAll(); 
-  });
-  
-  _elmts.cancelButton.click(function() { DialogSystem.dismissAll(); });
-  
-  DialogSystem.showDialog(dialog);
-  
-  // save to google drive
-  var doExportToGoogleDrive = function() {
-      var name = window.prompt($.i18n('gdata-exporter/enter-filename'), theProject.metadata.name);
-      if (name) {
-        var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
-        Refine.postCSRF(
-          "command/gdata/upload",
-          {
-            "project" : theProject.id,
-            "name" : name,
-            "format" : "raw/openrefine-project"
-          },
-          function(o) {
-            dismiss();
+  var form = document.createElement("form");
+  $(form)
+  .css("display", "none")
+  .attr("method", "post")
+  .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
+  .attr("target", "refine-export");
+  $('<input />')
+  .attr("name", "project")
+  .attr("value", theProject.id)
+  .appendTo(form);
 
-            if (o.url) {
-                alert($.i18n('gdata-exporter/upload-success'));
-            } else {
-                alert($.i18n('gdata-exporter/upload-error') + o.message)
-            }
-            onDone();
-          },
-          "json"
-        );
-      }
-    };
+  document.body.appendChild(form);
 
-  function exportToGoogleDrive(name) {
-    if (GdataExtension.isAuthorized()) {
-        doExportToGoogleDrive();
-    } else {
-        GdataExtension.showAuthorizationDialog(doExportToGoogleDrive);
-    }
-  }
-  
-  // save to local
-  function exportToLocal(name) {
-      var form = document.createElement("form");
-      $(form)
-      .css("display", "none")
-      .attr("method", "post")
-      .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
-      .attr("target", "refine-export");
-      $('<input />')
-      .attr("name", "project")
-      .attr("value", theProject.id)
-      .appendTo(form);
-    
-      document.body.appendChild(form);
-    
-      window.open("about:blank", "refine-export");
-      form.submit();
-    
-      document.body.removeChild(form);
-  }
+  window.open("about:blank", "refine-export");
+  form.submit();
+
+  document.body.removeChild(form);
 };
 
+ExporterManager.handlers.exportProjectToGoogleDrive = function () {
+  var doExportToGoogleDrive = function () {
+    var name = window.prompt($.i18n('gdata-exporter/enter-filename'), theProject.metadata.name);
+    if (name) {
+      var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
+      Refine.postCSRF(
+        "command/gdata/upload",
+        {
+          "project": theProject.id,
+          "name": name,
+          "format": "raw/openrefine-project"
+        },
+        function (o) {
+          dismiss();
+
+          if (o.url) {
+            alert($.i18n('gdata-exporter/upload-google-drive-success'));
+          } else {
+            alert($.i18n('gdata-exporter/upload-error') + o.message)
+          }
+          onDone();
+        },
+        "json"
+      );
+    }
+  };
+
+  if (GdataExtension.isAuthorized()) {
+    doExportToGoogleDrive();
+  } else {
+    GdataExtension.showAuthorizationDialog(doExportToGoogleDrive);
+  }
+
+}
+
+
+ExporterManager.handlers.exportProjectToGoogleSheets = function () {
+
+  var doExportToGoogleSheets = function () {
+    var name = window.prompt($.i18n('gdata-exporter/enter-spreadsheet'), theProject.metadata.name);
+    if (name) {
+      var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
+      Refine.postCSRF(
+        "command/gdata/upload",
+        {
+          "project": theProject.id,
+          "name": name,
+          "format": "gdata/google-spreadsheet"
+        },
+        function (o) {
+          dismiss();
+
+          if (o.url) {
+            alert($.i18n('gdata-exporter/upload-google-sheets-success'));
+          } else {
+            alert($.i18n('gdata-exporter/upload-error') + o.message)
+          }
+          onDone();
+        },
+        "json"
+      );
+    }
+  };
+
+  if (GdataExtension.isAuthorized()) {
+    doExportToGoogleSheets();
+  } else {
+    GdataExtension.showAuthorizationDialog(doExportToGoogleSheets);
+  }
+
+
+}
