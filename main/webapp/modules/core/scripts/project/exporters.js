@@ -90,9 +90,9 @@ ExporterManager.MenuItems = [
     "click": function() { new CustomTabularExporterDialog(); }
   },
   {
-      "id" : "core/export-sql",
-      "label": $.i18n('core-project/sql-export'),
-      "click": function() { new SqlExporterDialog(); }
+    "id" : "core/export-sql",
+    "label": $.i18n('core-project/sql-export'),
+    "click": function() { new SqlExporterDialog(); }
   },
   {
     "id" : "core/export-templating",
