@@ -133,7 +133,36 @@ public class CrossTests extends RefineTest {
         Assert.assertEquals(((EvalError) invoke("cross", "mary", projectName, nonExistentColumn)).message, 
                 "Unable to find column " + nonExistentColumn + " in project " + projectName);
     }
-    
+
+    @Test
+    public void crossFunctionSameColumnTest() throws Exception {
+        Project project = (Project) bindings.get("project");
+        Cell c = project.rows.get(0).cells.get(1);
+        WrappedCell lookup = new WrappedCell(project, "recipient", c);
+        Row row = ((Row)((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
+        String address = row.getCell(1).value.toString();
+        Assert.assertEquals(address, "50 Broadway Ave.");
+    }
+
+    @Test
+    // cross result shouldn't depend on the based column in "bindings" when the first argument is a WrappedCell instance
+    public void crossFunctionDifferentColumnTest() throws Exception {
+        Project project = (Project) bindings.get("project");
+        bindings.put("columnName", "gift"); // change the based column
+        Cell c = project.rows.get(0).cells.get(1);
+        WrappedCell lookup = new WrappedCell(project, "recipient", c);
+        Row row = ((Row)((WrappedRow) ((HasFieldsListImpl) invoke("cross", lookup, "My Address Book", "friend")).get(0)).row);
+        String address = row.getCell(1).value.toString();
+        Assert.assertEquals(address, "50 Broadway Ave.");
+    }
+
+    @Test
+    // cross result still depends on the the based column in "bindings" when the first argument is String
+    public void crossFunctionDifferentColumnStringTest() throws Exception {
+        bindings.put("columnName", "gift"); // change the based column
+        Assert.assertNull(invoke("cross", "mary", "My Address Book", "friend"));
+    }
+
     @Test
     public void crossFunctionOneToOneTest() throws Exception {
         Row row = ((Row)((WrappedRow) ((HasFieldsListImpl) invoke("cross", "mary", "My Address Book", "friend")).get(0)).row);

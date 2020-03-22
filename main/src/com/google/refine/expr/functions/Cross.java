@@ -73,7 +73,7 @@ public class Cross implements Function {
                             // source project name 
                             (Long) ((Project) bindings.get("project")).id,
                             // source column name
-                            (String) bindings.get("columnName"), 
+                            v instanceof String ? (String) bindings.get("columnName") : ((WrappedCell) v).columnName,
                             // target project name
                             toProjectID,
                             // target column name
