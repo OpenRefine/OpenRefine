@@ -506,6 +506,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 String colName = parser.getFieldName();
                 if (value instanceof String) {
                     String text = (String) value;
+                    if(parameter.trimStrings) {
+                        text = text.trim();
+                    }
                     addCell(project, thisColumnGroup, record, colName, text, 
                             parameter.storeEmptyStrings, parameter.guessDataType);
                 } else {

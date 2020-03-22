@@ -397,6 +397,52 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
+    public void trimLeadingTrailingWhitespaceOnTrimString(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
+        ParserSkip();
+
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, true, false, false);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+        log(project);
+        Assert.assertNotNull(project.rows);
+        Assert.assertEquals(project.rows.size(), 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "author1");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "a date");
+    }
+
+    @Test
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimString(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
+        ParserSkip();
+
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+        log(project);
+        Assert.assertNotNull(project.rows);
+        Assert.assertEquals(project.rows.size(), 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "  author1  ");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "  a date  ");
+    }
+
+    @Test
     public void addCellTest(){
         String columnLocalName = "author";
         String text = "Author1, The";

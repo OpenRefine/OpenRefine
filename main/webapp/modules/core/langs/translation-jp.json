@@ -739,5 +739,9 @@
     "core-views/column-join-write-selected-column": "結果を選択したカラムに書き込む。",
     "core-views/column-join-copy-to-new-column": "結果を書き込むカラムの名前…",
     "core-views/column-join-delete-joined-columns": "結合したカラムの削除。",
-    "core-views/column-join-dont-escape": "区切りや置換の文字は、改行なら\\n, タブは\\t, \\nなら\\\\n, \\t なら\\\\tです。"
+    "core-views/column-join-dont-escape": "区切りや置換の文字は、改行なら\\n, タブは\\t, \\nなら\\\\n, \\t なら\\\\tです。",
+    "core-views/add-id-column": "項目識別カラムを追加",
+    "core-views/add-id-column2": "項目を識別するカラムを追加する",
+    "core-views/add-id-col": "$1 に項目識別カラムを追加",
+    "core-dialogs/lb-formats-quotation": "常に引用符付き"
 }

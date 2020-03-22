@@ -34,8 +34,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
+import com.google.refine.model.recon.StandardReconConfig;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -45,6 +53,7 @@ import org.testng.annotations.Test;
 
 import com.google.refine.importers.WikitextImporter;
 
+@PrepareForTest(StandardReconConfig.class)
 public class WikitextImporterTests extends ImporterTest {
 
     private WikitextImporter importer = null;
@@ -123,7 +132,79 @@ public class WikitextImporterTests extends ImporterTest {
     }
     
     @Test
-    public void readTableWithLinks() {
+    public void readTableWithLinks() throws Exception {
+        String result = "{\n" +
+                "    \"q0\": {\n" +
+                "        \"result\": [\n" +
+                "            {\n" +
+                "                \"all_labels\": {\n" +
+                "                    \"score\": 100,\n" +
+                "                    \"weighted\": 100\n" +
+                "                },\n" +
+                "                \"score\": 100,\n" +
+                "                \"id\": \"Q116214\",\n" +
+                "                \"name\": \"European Centre for the Development of Vocational Training\",\n" +
+                "                \"type\": [\n" +
+                "                    {\n" +
+                "                        \"id\": \"Q392918\",\n" +
+                "                        \"name\": \"agency of the European Union\"\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"match\": true\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"q1\": {\n" +
+                "        \"result\": [\n" +
+                "            {\n" +
+                "                \"all_labels\": {\n" +
+                "                    \"score\": 100,\n" +
+                "                    \"weighted\": 100\n" +
+                "                },\n" +
+                "                \"score\": 100,\n" +
+                "                \"id\": \"Q1377549\",\n" +
+                "                \"name\": \"European Foundation for the Improvement of Living and Working Conditions\",\n" +
+                "                \"type\": [\n" +
+                "                    {\n" +
+                "                        \"id\": \"Q392918\",\n" +
+                "                        \"name\": \"agency of the European Union\"\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"match\": true\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"q2\": {\n" +
+                "        \"result\": [\n" +
+                "            {\n" +
+                "                \"all_labels\": {\n" +
+                "                    \"score\": 100,\n" +
+                "                    \"weighted\": 100\n" +
+                "                },\n" +
+                "                \"score\": 100,\n" +
+                "                \"id\": \"Q1377256\",\n" +
+                "                \"name\": \"European Monitoring Centre for Drugs and Drug Addiction\",\n" +
+                "                \"type\": [\n" +
+                "                    {\n" +
+                "                        \"id\": \"Q392918\",\n" +
+                "                        \"name\": \"agency of the European Union\"\n" +
+                "                    }\n" +
+                "                ],\n" +
+                "                \"match\": true\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        // This mock is used to avoid real network connection during test
+        URL url = PowerMockito.mock(URL.class);
+        HttpURLConnection connection = Mockito.mock(HttpURLConnection.class);
+        Mockito.when(url.openConnection()).thenReturn(connection);
+        OutputStream out = Mockito.mock(OutputStream.class);
+        Mockito.when(connection.getOutputStream()).thenReturn(out); // avoid NullPointerException
+        Mockito.when(connection.getInputStream()).thenReturn(new ByteArrayInputStream(result.getBytes()));
+        PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(url);
+
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
             +"{|\n"

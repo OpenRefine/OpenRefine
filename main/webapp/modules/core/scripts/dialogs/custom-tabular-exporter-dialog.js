@@ -40,7 +40,8 @@ function CustomTabularExporterDialog(options) {
     outputColumnHeaders: true,
     outputBlankRows: false,
     xlsx: false,
-    columns: null
+    columns: null,
+    quoteAll: false
   };
   
   this._columnOptionMap = {};
@@ -119,6 +120,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   this._elmts.or_dialog_htmlTable.html($.i18n('core-dialogs/html-table'));
   this._elmts.or_dialog_lineSep.html($.i18n('core-dialogs/line-sep'));
   this._elmts.or_dialog_charEnc.html($.i18n('core-dialogs/char-enc'));
+  this._elmts.or_dialog_quoteAll.html($.i18n('core-dialogs/lb-formats-quotation'));
   this._elmts.downloadPreviewButton.html($.i18n('core-buttons/preview'));
   this._elmts.downloadButton.html($.i18n('core-buttons/download'));
   this._elmts.or_dialog_uploadTo.html($.i18n('core-dialogs/upload-to'));
@@ -253,9 +255,10 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   this._elmts.separatorInput[0].value = escapeJavascriptString(options.separator || ',');
   this._elmts.lineSeparatorInput[0].value = escapeJavascriptString(options.lineSeparator || '\n');
   this._elmts.encodingInput[0].value = options.encoding;
-  this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
-  this._elmts.outputEmptyRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
-  
+  this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : null);
+  this._elmts.outputEmptyRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : null);
+  this._elmts.quoteAllCheckbox.attr('checked', (options.quoteAll) ? 'checked' : null);
+
   if (options.columns !== null) {
     var self = this;
     this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', false);
@@ -399,6 +402,7 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
     }
     options.lineSeparator = unescapeJavascriptString(this._elmts.lineSeparatorInput.val());
     options.encoding = this._elmts.encodingInput.val();
+    options.quoteAll = this._elmts.quoteAllCheckbox[0].checked;
   }
   options.outputColumnHeaders = this._elmts.outputColumnHeadersCheckbox[0].checked;
   options.outputBlankRows = this._elmts.outputEmptyRowsCheckbox[0].checked;

@@ -107,6 +107,48 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
+    public void trimLeadingTrailingWhitespaceOnTrimStrings(){
+        String ScraperwikiOutput = 
+            "[\n" +
+            "{\n" +
+            "        \"school\": \"  University of Cambridge  \",\n" +
+            "        \"name\": \"          Amy Zhang                   \",\n" +
+            "        \"student-faculty-score\": \"100\",\n" +
+            "        \"intl-student-score\": \"95\"\n" +
+            "    }\n" +
+            "]\n";
+        RunTest(ScraperwikiOutput, true);
+        log(project);
+        assertProjectCreated(project, 4, 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(0).value, "University of Cambridge");
+        Assert.assertEquals(row.getCell(1).value, "Amy Zhang");
+    }
+
+    @Test
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(){
+        String ScraperwikiOutput = 
+            "[\n" +
+            "{\n" +
+            "        \"school\": \"  University of Cambridge  \",\n" +
+            "        \"name\": \"          Amy Zhang                   \",\n" +
+            "        \"student-faculty-score\": \"100\",\n" +
+            "        \"intl-student-score\": \"95\"\n" +
+            "    }\n" +
+            "]\n";
+        RunTest(ScraperwikiOutput);
+        log(project);
+        assertProjectCreated(project, 4, 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(0).value, "  University of Cambridge  ");
+        Assert.assertEquals(row.getCell(1).value, "          Amy Zhang                   ");
+    }
+
+    @Test
     public void canParseSampleWithDuplicateNestedElements(){
         RunTest(getSampleWithDuplicateNestedElements());
 
@@ -414,7 +456,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
     
-    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector) {
+    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector, boolean trimStrings) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
         
@@ -423,7 +465,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.append(path, pathSelector);
         
         JSONUtilities.safePut(options, "recordPath", path);
-        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "trimStrings", trimStrings);
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
@@ -510,11 +552,15 @@ public class JsonImporterTests extends ImporterTest {
     
 
     private void RunTest(String testString) {
-        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
+        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
     
     private void RunComplexJSONTest(String testString) {
-        RunTest(testString, getOptions(job, SUT, "institutes"));
+        RunTest(testString, getOptions(job, SUT, "institutes", false));
+    }
+
+    private void RunTest(String testString, boolean trimStrings) {
+        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, trimStrings));
     }
     
     private void RunTest(String testString, ObjectNode options) {

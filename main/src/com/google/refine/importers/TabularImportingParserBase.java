@@ -104,6 +104,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
+        boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
         int filenameColumnIndex = -1;
         if (includeFileSources) {
@@ -168,6 +169,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 if (value instanceof String) {
                                     storedValue = guessCellValueTypes ?
                                         ImporterUtilities.parseCellValue((String) value) : (String) value;
+                                    if(trimStrings) {
+                                        storedValue = ((String) storedValue).toString().trim();
+                                    }
                                 } else {
                                     storedValue = ExpressionUtils.wrapStorable(value);
                                 }

@@ -2,9 +2,8 @@ name: Java CI
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0
+    branches:
+      - master
 
 jobs:
   build:
