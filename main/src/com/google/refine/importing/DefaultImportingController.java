@@ -57,8 +57,6 @@ import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-import com.google.refine.importers.tree.TreeReaderException;
-
 public class DefaultImportingController implements ImportingController {
 
     protected RefineServlet servlet;
