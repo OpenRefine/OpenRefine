@@ -46,53 +46,53 @@ import com.google.refine.util.LookupException;
 
 public class Cross implements Function {
 
-	@Override
-	public Object call(Properties bindings, Object[] args) {
-		if (args.length == 3) {
-			// 1st argument can take either value or cell(for backward compatibility)
-			Object v = args[0];
-			Object targetProjectName = args[1];
-			Object targetColumnName = args[2];
-			long targetProjectID;
-			ProjectLookup lookup;
+    @Override
+    public Object call(Properties bindings, Object[] args) {
+        if (args.length == 3) {
+            // 1st argument can take either value or cell(for backward compatibility)
+            Object v = args[0];
+            Object targetProjectName = args[1];
+            Object targetColumnName = args[2];
+            long targetProjectID;
+            ProjectLookup lookup;
 
-			if (v != null &&
-					(v instanceof String || v instanceof WrappedCell) &&
-					targetProjectName != null && targetProjectName instanceof String &&
-					targetColumnName != null && targetColumnName instanceof String) {
-				try {
-					targetProjectID = ProjectManager.singleton.getProjectID((String) targetProjectName);
-				} catch (GetProjectIDException e) {
-					return new EvalError(e.getMessage());
-				}
+            if (v != null &&
+                    (v instanceof String || v instanceof WrappedCell) &&
+                    targetProjectName != null && targetProjectName instanceof String &&
+                    targetColumnName != null && targetColumnName instanceof String) {
+                try {
+                    targetProjectID = ProjectManager.singleton.getProjectID((String) targetProjectName);
+                } catch (GetProjectIDException e) {
+                    return new EvalError(e.getMessage());
+                }
 
-				try {
-					lookup = ProjectManager.singleton.getLookupCacheManager().getLookup(targetProjectID, (String) targetColumnName);
-				} catch (LookupException e) {
-					return new EvalError(e.getMessage());
-				}
-				if (v instanceof String) {
-					return lookup.getRows(v);
-				} else {
-					return lookup.getRows(((WrappedCell) v).cell.value);
-				}
-			}
-		}
-		return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
-	}
+                try {
+                    lookup = ProjectManager.singleton.getLookupCacheManager().getLookup(targetProjectID, (String) targetColumnName);
+                } catch (LookupException e) {
+                    return new EvalError(e.getMessage());
+                }
+                if (v instanceof String) {
+                    return lookup.getRows(v);
+                } else {
+                    return lookup.getRows(((WrappedCell) v).cell.value);
+                }
+            }
+        }
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
+    }
 
-	@Override
-	public String getDescription() {
-		return "join with another project by column";
-	}
+    @Override
+    public String getDescription() {
+        return "join with another project by column";
+    }
 
-	@Override
-	public String getParams() {
-		return "cell c or string value, string projectName, string columnName";
-	}
+    @Override
+    public String getParams() {
+        return "cell c or string value, string projectName, string columnName";
+    }
 
-	@Override
-	public String getReturns() {
-		return "array";
-	}
+    @Override
+    public String getReturns() {
+        return "array";
+    }
 }
