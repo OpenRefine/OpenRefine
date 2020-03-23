@@ -143,6 +143,8 @@ public class JsonImporterTests extends ImporterTest {
                 exceptions
         );
         Assert.assertFalse(exceptions.isEmpty());
+        Assert.assertEquals(exceptions.get(0).getMessage(), "Illegal unquoted " +
+                "character ((CTRL-CHAR, code 10)): has to be escaped using backslash to be included in string value");
     }
     
     @Test

@@ -293,15 +293,7 @@ public class DefaultImportingController implements ImportingController {
             e.printStackTrace(new PrintWriter(sw));
             
             writer.writeStartObject();
-            String message = e.getLocalizedMessage();
-            
-            if(e.getCause() instanceof JsonParseException) {
-                // Get message only 
-                writer.writeStringField("isJsonParseException", "true");
-                message = ((JsonParseException)e.getCause()).getOriginalMessage();
-            }
-
-            writer.writeStringField("message", message);
+            writer.writeStringField("message", e.getLocalizedMessage());
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
         }

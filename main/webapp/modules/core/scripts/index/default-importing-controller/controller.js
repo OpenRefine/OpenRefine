@@ -233,7 +233,7 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             alert(o.message);					
             } else {
             var messages = [];
-            $.each(o.errors, function() { messages.push(this.message + "\n\n" + getLocalizedErrorMessage(this)); });
+            $.each(o.errors, function() { messages.push(this.message); });
             alert(messages.join('\n\n'));
             }
             finallyCallBack();
@@ -372,11 +372,3 @@ Refine.TagsManager._getAllProjectTags = function() {
         }
     return self.allProjectTags;
 };
-
-// Helper function to provide more localized message from plain Java Exception message.
-function getLocalizedErrorMessage(message) {
-    if(message.isJsonParseException){
-        return $.i18n("core-views/check-format");
-    }
-    return "";
-}
