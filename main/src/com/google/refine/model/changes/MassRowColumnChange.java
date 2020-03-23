@@ -81,7 +81,7 @@ public class MassRowColumnChange implements Change {
             project.rows.clear();
             project.rows.addAll(_newRows);
             
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
             
             project.update();
         }
@@ -99,7 +99,7 @@ public class MassRowColumnChange implements Change {
             project.rows.clear();
             project.rows.addAll(_oldRows);
             
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
             
             project.update();
         }

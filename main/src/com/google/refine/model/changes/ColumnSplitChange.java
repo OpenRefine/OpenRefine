@@ -125,7 +125,7 @@ public class ColumnSplitChange implements Change {
                     project.columnModel.allocateNewCellIndex();
                 }
                 
-                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _columnName);
+                ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, _columnName);
                 _column = project.columnModel.getColumnByName(_columnName);
                 _columnIndex = project.columnModel.getColumnIndexByName(_columnName);
                 
@@ -240,7 +240,7 @@ public class ColumnSplitChange implements Change {
             
             for (int i = 0; i < _columnNames.size(); i++) {
                 project.columnModel.columns.remove(_columnIndex + 1);
-                ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _columnNames.get(i));
+                ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, _columnNames.get(i));
             }
             
             project.columnModel.columnGroups.clear();
