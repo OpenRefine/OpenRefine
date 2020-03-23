@@ -139,6 +139,10 @@ public class ImporterUtilities {
                         // Already taken name
                         i++;
                     } else {
+                        // Want to update currentFileColumnNames
+                        if(! currentFileColumnNames.contains(columnName)){
+                            currentFileColumnNames.add(columnName);
+                        }
                         return column;
                     }
                 } else {

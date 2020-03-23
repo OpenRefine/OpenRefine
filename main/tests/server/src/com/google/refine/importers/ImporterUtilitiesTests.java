@@ -52,6 +52,7 @@ import com.google.refine.importers.ImporterUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.model.Column;
 
 public class ImporterUtilitiesTests extends RefineTest {
     
@@ -157,4 +158,26 @@ public class ImporterUtilitiesTests extends RefineTest {
         Assert.assertEquals( project.columnModel.columns.get(2).getName(), "Column");
     }
 
+    @Test
+    public void testGetOrAllocateColumn(){
+        Project project = new Project();
+        List<String> columnNames = new ArrayList<String>();
+        columnNames.add("Column 1");
+        columnNames.add("Column 2");
+        columnNames.add("Column 3");
+        // Set up column names in project
+        ImporterUtilities.setupColumns(project, columnNames);
+        Assert.assertEquals( project.columnModel.columns.get(0).getName(), "Column 1" );
+        Assert.assertEquals( project.columnModel.columns.get(1).getName(), "Column 2" );
+        Assert.assertEquals( project.columnModel.columns.get(2).getName(), "Column 3");
+
+        // This will mock the situation of importing another sheet from the same file.
+        // Expect newColumnNames can be updated using column names.
+        List<String> newColumnNames = new ArrayList<String>();
+        Column c0 = ImporterUtilities.getOrAllocateColumn(project, newColumnNames, 0, false);
+        Column c1 = ImporterUtilities.getOrAllocateColumn(project, newColumnNames, 1, false);
+        Assert.assertEquals(c0.getName(), "Column 1");
+        Assert.assertEquals(c1.getName(), "Column 2");
+        Assert.assertEquals(newColumnNames.size(), 2);
+    }
 }
