@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.refine.InterProjectModel;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 
@@ -122,8 +121,8 @@ public class Column  {
      * <p>
      * If you are modifying something that requires this to be called, you
      * probably also need to call
-     * {@link InterProjectModel#flushJoinsInvolvingProjectColumn(long, String)}.
-     * e.g. ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName())
+     * {@link com.google.refine.LookupCacheManager#flushLookupsInvolvingProjectColumn(long, String)}
+     * e.g. ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, column.getName())
      */
     public void clearPrecomputes() {
         if (_precomputes != null) {

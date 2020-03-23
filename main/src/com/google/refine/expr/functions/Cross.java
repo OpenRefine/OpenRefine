@@ -35,75 +35,64 @@ package com.google.refine.expr.functions;
 
 import java.util.Properties;
 
-import com.google.refine.InterProjectModel.ProjectJoin;
+import com.google.refine.LookupCacheManager.ProjectLookup;
 import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.model.Project;
 import com.google.refine.util.GetProjectIDException;
-import com.google.refine.util.JoinException;
+import com.google.refine.util.LookupException;
 
 public class Cross implements Function {
-    
-    @Override
-    public Object call(Properties bindings, Object[] args) {
-        if (args.length == 3) {
-            // 1st argument can take either value or cell(for backward compatibility)
-            Object v = args[0];
-            Object toProjectName = args[1];
-            Object toColumnName = args[2]; 
-            Long toProjectID;
-            ProjectJoin join;           
-            
-            if (v != null && 
-                ( v instanceof String || v instanceof WrappedCell ) &&
-                toProjectName != null && toProjectName instanceof String &&
-                toColumnName != null && toColumnName instanceof String) {
-                try {
-                    toProjectID = ProjectManager.singleton.getProjectID((String) toProjectName);
-                } catch (GetProjectIDException e){
-                    return new EvalError(e.getMessage());
-                }
-                // add a try/catch here - error should bubble up from getInterProjectModel.computeJoin once that's modified
-                try {
-                    join = ProjectManager.singleton.getInterProjectModel().getJoin(
-                            // getJoin(Long fromProject, String fromColumn, Long toProject, String toColumn) {
-                            // source project name 
-                            (Long) ((Project) bindings.get("project")).id,
-                            // source column name
-                            v instanceof String ? (String) bindings.get("columnName") : ((WrappedCell) v).columnName,
-                            // target project name
-                            toProjectID,
-                            // target column name
-                            (String) toColumnName
-                            );
-                } catch (JoinException e) {
-                    return new EvalError(e.getMessage());
-                }
-                if(v instanceof String) {
-                    return join.getRows(v);
-                } else {
-                    return join.getRows(((WrappedCell) v).cell.value);
-                }
-            }
-        }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
-    }
-    
-    @Override
-    public String getDescription() {
-        return "join with another project by column";
-    }
-    
-    @Override
-    public String getParams() {
-        return "cell c or string value, string projectName, string columnName";
-    }
-    
-    @Override
-    public String getReturns() {
-        return "array";
-    }
+
+	@Override
+	public Object call(Properties bindings, Object[] args) {
+		if (args.length == 3) {
+			// 1st argument can take either value or cell(for backward compatibility)
+			Object v = args[0];
+			Object targetProjectName = args[1];
+			Object targetColumnName = args[2];
+			long targetProjectID;
+			ProjectLookup lookup;
+
+			if (v != null &&
+					(v instanceof String || v instanceof WrappedCell) &&
+					targetProjectName != null && targetProjectName instanceof String &&
+					targetColumnName != null && targetColumnName instanceof String) {
+				try {
+					targetProjectID = ProjectManager.singleton.getProjectID((String) targetProjectName);
+				} catch (GetProjectIDException e) {
+					return new EvalError(e.getMessage());
+				}
+
+				try {
+					lookup = ProjectManager.singleton.getLookupCacheManager().getLookup(targetProjectID, (String) targetColumnName);
+				} catch (LookupException e) {
+					return new EvalError(e.getMessage());
+				}
+				if (v instanceof String) {
+					return lookup.getRows(v);
+				} else {
+					return lookup.getRows(((WrappedCell) v).cell.value);
+				}
+			}
+		}
+		return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
+	}
+
+	@Override
+	public String getDescription() {
+		return "join with another project by column";
+	}
+
+	@Override
+	public String getParams() {
+		return "cell c or string value, string projectName, string columnName";
+	}
+
+	@Override
+	public String getReturns() {
+		return "array";
+	}
 }

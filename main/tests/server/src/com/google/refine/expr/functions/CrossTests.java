@@ -157,13 +157,6 @@ public class CrossTests extends RefineTest {
     }
 
     @Test
-    // cross result still depends on the the based column in "bindings" when the first argument is String
-    public void crossFunctionDifferentColumnStringTest() throws Exception {
-        bindings.put("columnName", "gift"); // change the based column
-        Assert.assertNull(invoke("cross", "mary", "My Address Book", "friend"));
-    }
-
-    @Test
     public void crossFunctionOneToOneTest() throws Exception {
         Row row = ((Row)((WrappedRow) ((HasFieldsListImpl) invoke("cross", "mary", "My Address Book", "friend")).get(0)).row);
         String address = row.getCell(1).value.toString();
