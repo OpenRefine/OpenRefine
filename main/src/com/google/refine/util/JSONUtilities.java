@@ -78,7 +78,6 @@ public class JSONUtilities {
     }
 
     static public ArrayNode getArray(ObjectNode obj, String key) {
-    	JsonNode v = obj.get(key);
         if( obj.has(key) && obj.get(key) instanceof ArrayNode) {
         	return (ArrayNode) obj.get(key);
         } 
