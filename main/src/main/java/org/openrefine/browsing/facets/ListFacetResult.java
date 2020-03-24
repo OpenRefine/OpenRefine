@@ -93,7 +93,7 @@ public class ListFacetResult implements FacetResult {
     
     @JsonProperty("expression")
     public String getExpression() {
-        return _config.expression;
+        return _config.getExpression();
     }
     
     @JsonProperty("invert")
