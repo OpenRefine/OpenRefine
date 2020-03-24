@@ -218,7 +218,9 @@ public class ListFacet implements Facet {
         }
 
         _eval = _config.getEvaluable();
-        _errorMessage = _config.getErrorMessage();
+        if (_cellIndex != -1) {
+            _errorMessage = _config.getErrorMessage();
+        }
     }
 
     protected Object[] createMatches() {
