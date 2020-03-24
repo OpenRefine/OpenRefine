@@ -144,15 +144,6 @@ set REFINE_MIN_MEMORY=256M
 :gotMemory
 set OPTS=%OPTS% -Xms%REFINE_MIN_MEMORY% -Xmx%REFINE_MEMORY% -Drefine.memory=%REFINE_MEMORY%
 
-rem --- Check free memory ---------------------------------------------
-for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
-
-echo You have %freeRam%M of free memory. 
-echo Your current configuration is set to use %REFINE_MEMORY% of memory.
-echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
-echo.
-
 if not "%REFINE_MAX_FORM_CONTENT_SIZE%" == "" goto gotMaxFormContentSize
 set REFINE_MAX_FORM_CONTENT_SIZE=1048576
 :gotMaxFormContentSize
@@ -212,14 +203,14 @@ java -version 2^>^&1
 echo.=====================================================
 for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
 echo Getting Free Ram...
-wmic os get FreePhysicalMemory
-for /f "usebackq skip=1 tokens=*" %%i in (`wmic os get FreePhysicalMemory ^| findstr /r /v "^$"`) do @set /A freeRam=%%i/1024
+
+for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)
 (
 echo ----------------------- 
 echo PROCESSOR_ARCHITECTURE = %PROCESSOR_ARCHITECTURE%
 echo JAVA_HOME = %JAVA_HOME%
 echo java -version = %JVERSION%
-echo freeRam = %freeRam%M
+echo freeRam = %freeRam%
 echo REFINE_MEMORY = %REFINE_MEMORY%
 echo ----------------------- 
 ) > support.log
