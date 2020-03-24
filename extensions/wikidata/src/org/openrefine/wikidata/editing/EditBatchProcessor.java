@@ -43,6 +43,9 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+import com.google.refine.ProjectManager;
+import com.google.refine.preference.PreferenceStore;
+
 
 /**
  * Schedules and performs a list of updates to items via the API.
@@ -67,6 +70,17 @@ public class EditBatchProcessor {
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
     private int batchSize;
+    protected static final String MAX_LAG_KEY = "wikibase:upload:maxLag";
+    protected static final int MAX_LAG_DEFAULT = 5;      // 5 second default maxLag
+    protected PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+
+    private int getMaxLag() {
+	    try {
+		    return Integer.parseInt((String) prefStore.get(MAX_LAG_KEY));
+	    } catch (NumberFormatException e) {
+		    return MAX_LAG_DEFAULT;
+	    }
+    }
 
     /**
      * Initiates the process of pushing a batch of updates to Wikibase. This
@@ -99,6 +113,9 @@ public class EditBatchProcessor {
         // edit at 60 edits/min by default. If Wikidata is overloaded
         // it will slow us down via the maxlag mechanism.
         editor.setAverageTimePerEdit(1000);
+        // set maxlag based on preference store
+        int maxLag = getMaxLag();
+        editor.setMaxLag(maxLag);
 
         this.library = library;
         this.summary = summary;
