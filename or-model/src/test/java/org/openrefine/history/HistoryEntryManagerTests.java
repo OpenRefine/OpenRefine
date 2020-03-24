@@ -13,6 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.SparkBasedTest;
+import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Column;
 import org.openrefine.model.ColumnMetadata;
@@ -41,6 +42,11 @@ public class HistoryEntryManagerTests extends SparkBasedTest {
         @Override
         public boolean isImmediate() {
             return false;
+        }
+
+        @Override
+        public DagSlice getDagSlice() {
+            return null;
         }
     };
 

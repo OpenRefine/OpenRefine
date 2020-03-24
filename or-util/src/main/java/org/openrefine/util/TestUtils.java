@@ -36,6 +36,9 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -126,7 +129,7 @@ public class TestUtils {
             String jacksonJson = writer.writeValueAsString(o);
             if (!equalAsJson(targetJson, jacksonJson)) {
                 System.out.println("jackson, " + o.getClass().getName());
-                jsonDiff(targetJson, jacksonJson);
+                jsonDiff(jacksonJson, targetJson);
             }
             assertEqualAsJson(targetJson, jacksonJson);
         } catch (JsonProcessingException e) {
@@ -179,5 +182,10 @@ public class TestUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> set(T... values) {
+        return Arrays.asList(values).stream().collect(Collectors.toSet());
     }
 }

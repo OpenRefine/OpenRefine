@@ -27,6 +27,7 @@ public class CellChangeTest extends RefineTest {
             "       \"newCell\" : {\n" +
             "         \"v\" : \"changed\"\n" +
             "       },\n" +
+            "       \"columnName\": \"bar\"," +
             "       \"rowId\" : 14,\n" +
             "       \"type\" : \"org.openrefine.model.changes.CellChange\"\n" +
             "     }";
@@ -44,7 +45,7 @@ public class CellChangeTest extends RefineTest {
 
     @Test
     public void testCellChange() {
-        Change change = new CellChange(0L, 0, new Cell("changed", null));
+        Change change = new CellChange(0L, 0, "foo", new Cell("changed", null));
 
         GridState newGrid = change.apply(initialGrid);
 
@@ -56,7 +57,7 @@ public class CellChangeTest extends RefineTest {
 
     @Test
     public void testSerialize() {
-        Change change = new CellChange(14L, 23, new Cell("changed", null));
+        Change change = new CellChange(14L, 23, "bar", new Cell("changed", null));
         TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
     }
 }

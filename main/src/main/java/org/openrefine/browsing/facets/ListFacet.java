@@ -79,8 +79,11 @@ public class ListFacet implements Facet {
 
         @JsonProperty("name")
         public String name;
-        @JsonProperty("expression")
-        public String expression;
+        // accessors defined below
+        private String expression;
+        private Evaluable evaluable = null;
+        private String errorMessage = null;
+
         @JsonProperty("columnName")
         public String columnName;
         @JsonProperty("invert")
@@ -122,6 +125,66 @@ public class ListFacet implements Facet {
         public String getJsonType() {
             return "core/list";
         }
+
+        @Override
+        public Set<String> getColumnDependencies() {
+            if (evaluable == null) {
+                return null;
+            }
+            return evaluable.getColumnDependencies(columnName);
+        }
+
+        @Override
+        public ListFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            if (errorMessage != null) {
+                return null;
+            }
+            Evaluable translated = evaluable.renameColumnDependencies(substitutions);
+            if (translated == null) {
+                return null;
+            }
+            ListFacetConfig newConfig = new ListFacetConfig();
+            newConfig.columnName = substitutions.getOrDefault(columnName, columnName);
+            newConfig.setExpression(translated.getFullSource());
+            newConfig.invert = invert;
+            newConfig.name = name;
+            newConfig.omitBlank = omitBlank;
+            newConfig.omitError = omitError;
+            newConfig.selectBlank = selectBlank;
+            newConfig.selectError = selectError;
+            newConfig.selection = selection;
+            return newConfig;
+        }
+
+        @Override
+        public boolean isNeutral() {
+            return selection.size() == 0 && !selectBlank && !selectError;
+        }
+
+        @JsonProperty("expression")
+        public String getExpression() {
+            return expression;
+        }
+
+        @JsonProperty("expression")
+        public void setExpression(String expression) {
+            this.expression = expression;
+            try {
+                evaluable = MetaParser.parse(expression);
+            } catch (ParsingException e) {
+                errorMessage = e.getMessage();
+            }
+        }
+
+        @JsonIgnore
+        public Evaluable getEvaluable() {
+            return evaluable;
+        }
+
+        @JsonIgnore
+        public String getErrorMessage() {
+            return errorMessage;
+        }
     }
 
     final ListFacetConfig _config;
@@ -154,41 +217,8 @@ public class ListFacet implements Facet {
             _cellIndex = -1;
         }
 
-        try {
-            _eval = MetaParser.parse(_config.expression);
-        } catch (ParsingException e) {
-            _errorMessage = e.getMessage();
-        }
-    }
-
-    @Override
-    public Set<String> getColumnDependencies() {
-        if (_errorMessage != null) {
-            return null;
-        }
-        return _eval.getColumnDependencies(_config.columnName);
-    }
-
-    @Override
-    public ListFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
-        if (_errorMessage != null) {
-            return null;
-        }
-        Evaluable translated = _eval.renameColumnDependencies(substitutions);
-        if (translated == null) {
-            return null;
-        }
-        ListFacetConfig newConfig = new ListFacetConfig();
-        newConfig.columnName = substitutions.getOrDefault(_config.columnName, _config.columnName);
-        newConfig.expression = translated.getFullSource();
-        newConfig.invert = _config.invert;
-        newConfig.name = _config.name;
-        newConfig.omitBlank = _config.omitBlank;
-        newConfig.omitError = _config.omitError;
-        newConfig.selectBlank = _config.selectBlank;
-        newConfig.selectError = _config.selectError;
-        newConfig.selection = _config.selection;
-        return newConfig;
+        _eval = _config.getEvaluable();
+        _errorMessage = _config.getErrorMessage();
     }
 
     protected Object[] createMatches() {
@@ -223,5 +253,10 @@ public class ListFacet implements Facet {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public ListFacetConfig getConfig() {
+        return _config;
     }
 }

@@ -29,20 +29,35 @@ package org.openrefine.browsing;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.util.ParsingUtilities;
 
+/**
+ * Stores the configuration of facets and whether we are using row or record mode.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class EngineConfig {
 
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
 
+    /**
+     * Creates a new EngineConfig from a list of facet configurations and an engine mode.
+     * 
+     * @param facets
+     * @param mode
+     */
     @JsonCreator
     public EngineConfig(
             @JsonProperty("facets") List<FacetConfig> facets,
@@ -59,6 +74,31 @@ public class EngineConfig {
     @JsonProperty("facets")
     public List<FacetConfig> getFacetConfigs() {
         return _facets;
+    }
+
+    /**
+     * Computes the set of columns the facets depend on. If the extraction of dependencies fails for some facet, or if
+     * the engine uses the records mode, this returns null.
+     * 
+     * @return the set of column dependencies, or null
+     */
+    @JsonIgnore
+    public Set<String> getColumnDependencies() {
+        if (Mode.RecordBased.equals(_mode)) {
+            return null;
+        }
+        Set<String> dependencies = new HashSet<>();
+        for (FacetConfig facet : _facets) {
+            Set<String> facetDependencies = facet.getColumnDependencies();
+            if (facetDependencies == null) {
+                return null;
+                // only add the facet dependencies if the facet is actually used
+                // for filtering.
+            } else if (!facet.isNeutral()) {
+                dependencies.addAll(facetDependencies);
+            }
+        }
+        return dependencies;
     }
 
     public static EngineConfig reconstruct(String json) {

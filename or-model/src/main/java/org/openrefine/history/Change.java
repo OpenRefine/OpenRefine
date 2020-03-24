@@ -34,9 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.history;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.GridState;
 
 /**
@@ -69,6 +71,12 @@ public interface Change {
      */
     @JsonIgnore
     public boolean isImmediate();
+
+    /**
+     * Returns a DAG slice which represents the column dependencies and outputs of this change.
+     */
+    @JsonProperty("dagSlice")
+    public DagSlice getDagSlice();
 
     /*
      * @todo add ability to save optional change data

@@ -47,21 +47,48 @@ public class HistoryEntryTests {
             + "\"id\":1533633623158,"
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
-            + "\"change\":{\"type\":\"org.openrefine.history.ChangeStub\"},"
+            + "\"change\" : {\n"
+            + "  \"dagSlice\" : {\n"
+            + "    \"columnModel\" : {\n"
+            + "      \"columns\" : [ {\n"
+            + "        \"name\" : \"foo\",\n"
+            + "        \"originalName\" : \"foo\"\n"
+            + "      } ],\n"
+            + "      \"keyCellIndex\" : 0,\n"
+            + "      \"keyColumnName\" : \"foo\"\n"
+            + "    },\n"
+            + "   \"type\" : \"opaque\"\n"
+            + "  },\n"
+            + "  \"type\" : \"org.openrefine.history.ChangeStub\"\n"
+            + "},\n"
             + "\"operation\":{\"op\":\"core/my-operation\","
             + "   \"description\":\"some description\"}"
             + "}";
 
-    public static final String unknownOperationJson = "{"
-            + "\"id\":1533633623158,"
-            + "\"description\":\"some mysterious operation\","
-            + "\"time\":\"2018-08-07T09:06:37Z\","
-            + "\"change\": {\"type\":\"org.openrefine.history.ChangeStub\"},"
-            + "\"operation\":{\"op\":\"someextension/unknown-operation\","
-            + "   \"description\":\"some mysterious operation\","
-            + "   \"some_parameter\":234\n"
-            + "}\n"
-            + "}";
+    public static final String unknownOperationJson = "{\n" +
+            "  \"change\" : {\n" +
+            "    \"dagSlice\" : {\n" +
+            "      \"columnModel\" : {\n" +
+            "        \"columns\" : [ {\n" +
+            "          \"name\" : \"foo\",\n" +
+            "          \"originalName\" : \"foo\"\n" +
+            "        } ],\n" +
+            "        \"keyCellIndex\" : 0,\n" +
+            "        \"keyColumnName\" : \"foo\"\n" +
+            "      },\n" +
+            "      \"type\" : \"opaque\"\n" +
+            "    },\n" +
+            "    \"type\" : \"org.openrefine.history.ChangeStub\"\n" +
+            "  },\n" +
+            "  \"description\" : \"some mysterious operation\",\n" +
+            "  \"id\" : 1533633623158,\n" +
+            "  \"operation\" : {\n" +
+            "    \"description\" : \"some mysterious operation\",\n" +
+            "    \"op\" : \"someextension/unknown-operation\",\n" +
+            "    \"some_parameter\" : 234\n" +
+            "  },\n" +
+            "  \"time\" : \"2018-08-07T09:06:37Z\"\n" +
+            "}";
 
     @BeforeTest
     public void register() {

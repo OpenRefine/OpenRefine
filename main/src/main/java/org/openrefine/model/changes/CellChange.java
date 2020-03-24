@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
+import java.util.Collections;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -40,6 +42,8 @@ import org.apache.spark.api.java.function.Function;
 import scala.Tuple2;
 
 import org.openrefine.history.Change;
+import org.openrefine.history.dag.DagSlice;
+import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
@@ -50,6 +54,8 @@ public class CellChange implements Change {
     final public long row;
     @JsonProperty("cellIndex")
     final public int cellIndex;
+    @JsonProperty("columnName")
+    final public String columnName;
     @JsonProperty("newCell")
     final public Cell newCell;
 
@@ -57,9 +63,11 @@ public class CellChange implements Change {
     public CellChange(
             @JsonProperty("rowId") long row,
             @JsonProperty("cellIndex") int cellIndex,
+            @JsonProperty("columnName") String columnName,
             @JsonProperty("newCell") Cell newCell) {
         this.row = row;
         this.cellIndex = cellIndex;
+        this.columnName = columnName;
         this.newCell = newCell;
     }
 
@@ -93,5 +101,10 @@ public class CellChange implements Change {
     public boolean isImmediate() {
         // this change has no corresponding operation, so it can not be derived from one
         return false;
+    }
+
+    @Override
+    public DagSlice getDagSlice() {
+        return new TransformationSlice(columnName, Collections.emptySet());
     }
 }

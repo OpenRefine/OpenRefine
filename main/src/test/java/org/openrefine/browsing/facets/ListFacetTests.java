@@ -31,9 +31,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -104,16 +107,18 @@ public class ListFacetTests extends RefineTest {
             "       \"name\" : \"foo\"\n" +
             "     } ]";
 
+    private ListFacetConfig config;
+
     @BeforeTest
-    public void registerFacetConfig() {
+    public void registerFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         FacetConfigResolver.registerFacetConfig("core", "list", ListFacetConfig.class);
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        config = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
     }
 
     @Test
     public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {
-        ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
-        TestUtils.isSerializedTo(facetConfig, jsonConfig, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(config, jsonConfig, ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -168,7 +173,7 @@ public class ListFacetTests extends RefineTest {
                 });
         ListFacetConfig firstColumn = new ListFacetConfig();
         firstColumn.columnName = "foo";
-        firstColumn.expression = "grel:value";
+        firstColumn.setExpression("grel:value");
         firstColumn.invert = false;
         firstColumn.name = "foo";
         firstColumn.omitBlank = false;
@@ -178,7 +183,7 @@ public class ListFacetTests extends RefineTest {
         firstColumn.selection = Collections.emptyList();
         ListFacetConfig secondColumn = new ListFacetConfig();
         secondColumn.columnName = "bar";
-        secondColumn.expression = "grel:value";
+        secondColumn.setExpression("grel:value");
         secondColumn.invert = false;
         secondColumn.name = "foo";
         secondColumn.omitBlank = false;
@@ -191,4 +196,19 @@ public class ListFacetTests extends RefineTest {
         TestUtils.isSerializedTo(engine.getFacetResults(), expectedJson, ParsingUtilities.defaultWriter);
     }
 
+    @Test
+    public void testDependencies() throws JsonParseException, JsonMappingException, IOException {
+        Assert.assertEquals(config.getColumnDependencies(), Collections.singleton("Column A"));
+    }
+
+    @Test
+    public void testTranslate() {
+        Map<String, String> map = new HashMap<>();
+        map.put("Column A", "foo");
+        map.put("bar", "barbar");
+        ListFacetConfig translated = config.renameColumnDependencies(map);
+        Assert.assertEquals(translated.columnName, "foo");
+        Assert.assertEquals(translated.getExpression(), "grel:value + \"bar\"");
+        Assert.assertEquals(translated.getColumnDependencies(), Collections.singleton("foo"));
+    }
 }

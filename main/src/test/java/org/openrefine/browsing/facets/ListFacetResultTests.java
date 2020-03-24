@@ -64,9 +64,13 @@ public class ListFacetResultTests {
 
     @BeforeMethod
     public void setUpConfig() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        ProjectManager.singleton = mock(ProjectManager.class);
+        when(ProjectManager.singleton.getPreferenceStore()).thenReturn(new PreferenceStore());
+
         config = new ListFacetConfig();
         config.name = "facet A";
-        config.expression = "value+\"bar\"";
+        config.setExpression("value+\"bar\"");
         config.invert = false;
         config.selectBlank = false;
         config.selectError = false;
@@ -74,10 +78,6 @@ public class ListFacetResultTests {
         config.omitError = false;
         config.columnName = "Column A";
         config.selection = Arrays.asList(new DecoratedValue("foobar", "foobar"));
-
-        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-        ProjectManager.singleton = mock(ProjectManager.class);
-        when(ProjectManager.singleton.getPreferenceStore()).thenReturn(new PreferenceStore());
     }
 
     @Test

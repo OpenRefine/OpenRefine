@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -19,9 +20,12 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
+import org.openrefine.history.dag.DagSlice;
+import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
+import org.openrefine.util.TestUtils;
 
 public class MassEditChangeTests extends RefineTest {
 
@@ -46,6 +50,11 @@ public class MassEditChangeTests extends RefineTest {
             return "grel";
         }
 
+        @Override
+        public Set<String> getColumnDependencies(String baseColumn) {
+            return Collections.singleton(baseColumn);
+        }
+
     };
 
     @BeforeTest
@@ -62,7 +71,7 @@ public class MassEditChangeTests extends RefineTest {
         initialState = project.getCurrentGridState();
         ListFacetConfig facet = new ListFacetConfig();
         facet.columnName = "bar";
-        facet.expression = "grel:value";
+        facet.setExpression("grel:value");
         facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
         engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
     }
@@ -83,5 +92,15 @@ public class MassEditChangeTests extends RefineTest {
         Row row4 = applied.getRow(4);
         Assert.assertEquals(row4.getCellValue(0), "v1");
         Assert.assertEquals(row4.getCellValue(1), "b");
+    }
+
+    @Test
+    public void testDagSlice() {
+        MassEditChange change = new MassEditChange(engineConfig, eval, "foo", Collections.singletonMap("v1", "v2"), "hey", null);
+        DagSlice slice = change.getDagSlice();
+        Assert.assertTrue(slice instanceof TransformationSlice);
+        TransformationSlice transformation = (TransformationSlice) slice;
+        Assert.assertEquals(transformation.getColumnName(), "foo");
+        Assert.assertEquals(transformation.getInputColumns(), TestUtils.set("foo", "bar"));
     }
 }
