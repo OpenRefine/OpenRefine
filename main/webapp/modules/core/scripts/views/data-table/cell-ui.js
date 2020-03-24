@@ -548,6 +548,14 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
 
+  var isFF = !!navigator.userAgent.match(/firefox/i);
+
+  if (isFF) {
+    $(document).on('keydown', '#editable', function (event) {
+      backspaceFirefox(event);
+    });
+  }
+  
   var commit = function() {
     var type = elmts.typeSelect[0].value;
 

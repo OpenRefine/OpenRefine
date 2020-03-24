@@ -521,7 +521,7 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
 
   var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
   menu.html(
-    '<div contenteditable bind="textarea" class="data-table-cell-editor-editor"></div>' +
+    '<div contenteditable id="editable" bind="textarea" class="data-table-cell-editor-editor"></div>' +
       '<div id="data-table-cell-editor-actions">' +
         '<div class="data-table-cell-editor-action">' +
           '<button class="button" bind="okButton">'+$.i18n('core-buttons/apply')+'</button>' +
@@ -537,6 +537,14 @@ ListFacet.prototype._editChoice = function(choice, choiceDiv) {
 
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, choiceDiv);
+
+  var isFF = !!navigator.userAgent.match(/firefox/i);
+
+  if (isFF) {
+    $(document).on('keydown', '#editable', function (event) {
+      backspaceFirefox(event);
+    });
+  }
 
   var originalContent;
   if (choice === this._blankChoice) {
@@ -776,4 +784,163 @@ function tags_to_control(str) {
     }
   }
   return str;
+}
+
+function backspaceFirefox(event){
+  var EditableDiv = document.getElementById('editable');
+
+  var ignoreKey;
+  var key = event.keyCode || event.charCode;
+  if (!window.getSelection) return;
+  var selection = window.getSelection();
+  var focusNode = selection.focusNode,
+    anchorNode = selection.anchorNode;
+
+  var anchorOffset = selection.anchorOffset;
+
+  if (!anchorNode) return
+
+  if (anchorNode.nodeName.toLowerCase() != '#text') {
+    if (anchorOffset < anchorNode.childNodes.length)
+      anchorNode = anchorNode.childNodes[anchorOffset]
+    else {
+      while (!anchorNode.nextSibling) anchorNode = anchorNode.parentNode // this might step out of EditableDiv to "justincase" comment node
+      anchorNode = anchorNode.nextSibling
+    }
+    anchorOffset = 0
+  }
+
+  function backseek() {
+    while ((anchorOffset == 0) && (anchorNode != EditableDiv)) {
+
+      if (anchorNode.previousSibling) {
+        if (anchorNode.previousSibling.nodeName.toLowerCase() == '#text') {
+          if (anchorNode.previousSibling.nodeValue.length == 0)
+            anchorNode.parentNode.removeChild(anchorNode.previousSibling)
+          else {
+            anchorNode = anchorNode.previousSibling
+            anchorOffset = anchorNode.nodeValue.length
+          }
+        } else if ((anchorNode.previousSibling.offsetWidth == 0) && (anchorNode.previousSibling.offsetHeight == 0))
+          anchorNode.parentNode.removeChild(anchorNode.previousSibling)
+
+        else {
+          anchorNode = anchorNode.previousSibling
+
+          while ((anchorNode.lastChild) && (anchorNode.nodeName.toUpperCase() != 'INPUT')) {
+
+            if ((anchorNode.lastChild.offsetWidth == 0) && (anchorNode.lastChild.offsetHeight == 0))
+              anchorNode.removeChild(anchorNode.lastChild)
+
+            else if (anchorNode.lastChild.nodeName.toLowerCase() != '#text')
+              anchorNode = anchorNode.lastChild
+
+            else if (anchorNode.lastChild.nodeValue.length == 0)
+              anchorNode.removeChild(anchorNode.lastChild)
+
+            else {
+              anchorNode = anchorNode.lastChild
+              anchorOffset = anchorNode.nodeValue.length
+              //break							//don't need to break, textnode has no children
+            }
+          }
+          break
+        }
+      } else
+        while (((anchorNode = anchorNode.parentNode) != EditableDiv) && !anchorNode.previousSibling) { }
+    }
+  }
+
+  if (key == 8) { //backspace
+    if (!selection.isCollapsed) {
+
+      try {
+        document.createElement("select").size = -1
+      } catch (e) { //kludge for IE when 2+ SPANs are back-to-back adjacent
+
+        if (anchorNode.nodeName.toUpperCase() == 'INPUT') {
+          backseek()
+          if (anchorNode.nodeName.toUpperCase() == 'INPUT') {
+            var k = document.createTextNode(" ") // doesn't work here between two spans.  IE makes TWO EMPTY textnodes instead !
+            anchorNode.parentNode.insertBefore(k, anchorNode) // this works
+            anchorNode.parentNode.insertBefore(anchorNode, k) // simulate "insertAfter"
+          }
+        }
+      }
+
+
+    } else {
+      backseek()
+
+      if (anchorNode == EditableDiv)
+        ignoreKey = true
+
+      else if (anchorNode.nodeName.toUpperCase() == 'INPUT') {
+        SelectText(event, anchorNode)
+
+        ignoreKey = true
+      } else if ((anchorNode.nodeName.toLowerCase() == '#text') && (anchorOffset <= 1)) {
+
+        var prev, anchorNodeSave = anchorNode,
+          anchorOffsetSave = anchorOffset
+        anchorOffset = 0
+        backseek()
+        if (anchorNode.nodeName.toUpperCase() == 'INPUT') prev = anchorNode
+        anchorNode = anchorNodeSave
+        anchorOffset = anchorOffsetSave
+
+        if (prev) {
+          if (anchorOffset == 0)
+            SelectEvent(prev)
+
+          else {
+            var r = document.createRange()
+            selection.removeAllRanges()
+
+            if (anchorNode.nodeValue.length > 1) {
+              r.setStart(anchorNode, 0)
+              selection.addRange(r)
+              anchorNode.deleteData(0, 1)
+            }
+            else {
+              for (var i = 0, p = prev.parentNode; true; i++)
+                if (p.childNodes[i] == prev) break
+              r.setStart(p, ++i)
+              selection.addRange(r)
+              anchorNode.parentNode.removeChild(anchorNode)
+            }
+          }
+          ignoreKey = true
+        }
+      }
+    }
+  }
+  if (ignoreKey) {
+    var evt = event || window.event;
+    if (evt.stopPropagation) {
+      evt.stopPropagation();
+    }
+    evt.preventDefault();
+    return false;
+  }
+  function SelectText(event, element) {
+    var range, selection;
+    EditableDiv.focus();
+    if (window.getSelection) {
+      selection = window.getSelection();
+      range = document.createRange();
+      range.selectNode(element)
+      selection.removeAllRanges();
+      selection.addRange(range);
+      selection.deleteFromDocument();
+    } else {
+      range = document.body.createTextRange();
+      range.moveToElementText(element);
+      range.select();
+    }
+    var evt = (event) ? event : window.event;
+    if (evt.stopPropagation) evt.stopPropagation();
+    if (evt.cancelBubble != null) evt.cancelBubble = true;
+    return false;
+  }
 }
