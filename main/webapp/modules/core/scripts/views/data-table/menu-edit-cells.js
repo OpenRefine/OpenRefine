@@ -350,6 +350,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           alert($.i18n('core-views/warning-format'));
           return;
         }
+      } else if (mode === "cases") {
+        config.separator = "(?<=[a-z]|[a-z][\\s])(?=[A-Z])";
+        config.regex = true;
+      } else if (mode === "number") {
+        config.separator = "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z])|(?<=[a-z]|\\s|[A-Z])(?=[0-9])";
+        config.regex = true;
       }
 
       Refine.postCoreProcess(

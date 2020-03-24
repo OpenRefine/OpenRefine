@@ -66,40 +66,25 @@ public class SplitMultiValueCellsCommand extends Command {
             String mode = request.getParameter("mode");
             Boolean regex = Boolean.parseBoolean(request.getParameter("regex"));
 
-            if ("separator".equals(mode)) {
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
-                                                                         keyColumnName,
-                                                                         separator, 
-                                                                         regex);
-                Process process = op.createProcess(project, new Properties());
-                
-                performProcessAndRespond(request, response, project, process);
-            } else if ("lengths".equals(mode)) {
+            AbstractOperation op;
+
+            if ("lengths".equals(mode)) {
                 String s = request.getParameter("fieldLengths");
                 
                 int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
                 
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName,
-                                                                         keyColumnName,
-                                                                         fieldLengths);
-                Process process = op.createProcess(project, new Properties());
+                op = new MultiValuedCellSplitOperation(columnName,
+                                                       keyColumnName,
+                                                       fieldLengths);
                 
-                performProcessAndRespond(request, response, project, process);
-            } else if ("cases".equals(mode)) {
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
-                                                                         keyColumnName,
-                                                                         true);
-                Process process = op.createProcess(project, new Properties());
-
-                performProcessAndRespond(request, response, project, process);
-            } else if ("number".equals(mode)) {
-                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
-                                                                         keyColumnName,
-                                                                         false);
-                Process process = op.createProcess(project, new Properties());
-
-                performProcessAndRespond(request, response, project, process);
-            }
+            } else {
+                op = new MultiValuedCellSplitOperation(columnName, 
+                                                       keyColumnName,
+                                                       separator, 
+                                                       regex);
+            } 
+            Process process = op.createProcess(project, new Properties());
+            performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);
         }

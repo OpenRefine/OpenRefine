@@ -93,28 +93,6 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
     }
 
-    @Test
-    public void serializeMultiValuedCellSplitOperationWithCase() throws Exception {
-        String json = "{\"op\":\"core/multivalued-cell-split\","
-                + "\"description\":\"Split multi-valued cells in column Value\","
-                + "\"columnName\":\"Value\","
-                + "\"keyColumnName\":\"Key\","
-                + "\"mode\":\"cases\","
-                + "\"cases\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
-    }
-
-    @Test
-    public void serializeMultiValuedCellSplitOperationWithNumber() throws Exception {
-        String json = "{\"op\":\"core/multivalued-cell-split\","
-                + "\"description\":\"Split multi-valued cells in column Value\","
-                + "\"columnName\":\"Value\","
-                + "\"keyColumnName\":\"Key\","
-                + "\"mode\":\"number\","
-                + "\"cases\":false}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellSplitOperation.class), json);
-    }
-
     /**
      * Test to demonstrate the intended behaviour of the function, for issue #1268
      * https://github.com/OpenRefine/OpenRefine/issues/1268
@@ -127,8 +105,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
             "Key",
             ":",
             false);
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -146,8 +124,8 @@ public class SplitMultiValuedCellsTests extends RefineTest {
             "Key",
             "\\W",
             true);
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -191,9 +169,10 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
+            "(?<=[a-z]|[a-z][\\s])(?=[A-Z])",
             true);
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
@@ -213,9 +192,10 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
-            false);
-            Process process = op.createProcess(project, new Properties());
-            process.performImmediate();
+            "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z])|(?<=[a-z]|\\s|[A-Z])(?=[0-9])",
+            true);
+        Process process = op.createProcess(project, new Properties());
+        process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
