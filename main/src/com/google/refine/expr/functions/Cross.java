@@ -56,10 +56,8 @@ public class Cross implements Function {
             long targetProjectID;
             ProjectLookup lookup;
 
-            if (v != null &&
-                    (v instanceof String || v instanceof WrappedCell) &&
-                    targetProjectName != null && targetProjectName instanceof String &&
-                    targetColumnName != null && targetColumnName instanceof String) {
+            if ((v instanceof String || v instanceof Long || v instanceof Integer || v instanceof WrappedCell)
+                    && (targetProjectName instanceof String && targetColumnName instanceof String)) {
                 try {
                     targetProjectID = ProjectManager.singleton.getProjectID((String) targetProjectName);
                 } catch (GetProjectIDException e) {
@@ -71,24 +69,25 @@ public class Cross implements Function {
                 } catch (LookupException e) {
                     return new EvalError(e.getMessage());
                 }
-                if (v instanceof String) {
-                    return lookup.getRows(v);
-                } else {
+
+                if (v instanceof WrappedCell) {
                     return lookup.getRows(((WrappedCell) v).cell.value);
+                } else {
+                    return lookup.getRows(v);
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or cell, a project name to join with, and a column name in that project");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or long or int or cell, a project name to look up, and a column name in that project");
     }
 
     @Override
     public String getDescription() {
-        return "join with another project by column";
+        return "Looks up the given value in the target column of the target project, returns an array of matched rows";
     }
 
     @Override
     public String getParams() {
-        return "cell c or string value, string projectName, string columnName";
+        return "cell c or string value or long value or int value, string projectName, string columnName";
     }
 
     @Override
