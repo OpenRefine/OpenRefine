@@ -564,6 +564,8 @@
     "core-views/split-into": "Split into",
     "core-views/col-at-most": "columns at most (leave blank for no limit)",
     "core-views/field-len": "by field lengths",
+    "core-views/by-case": "by transition from lowercase to uppercase",
+    "core-views/by-number": "between numbers and letters",
     "core-views/list-int": "List of integers separated by commas, e.g., 5, 7, 15",
     "core-views/after-split": "After Splitting",
     "core-views/guess-cell": "Guess cell type",

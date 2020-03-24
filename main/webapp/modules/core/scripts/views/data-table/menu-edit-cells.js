@@ -299,6 +299,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_fieldLen.text($.i18n('core-views/field-len'));
     elmts.or_views_listInt.text($.i18n('core-views/list-int'));
 
+    elmts.or_views_byCase.text($.i18n('core-views/by-case'));
+    elmts.or_views_byNumber.text($.i18n('core-views/by-number'));
+
     elmts.okButton.html($.i18n('core-buttons/ok'));
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
 
@@ -324,7 +327,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
         config.regex = elmts.regexInput[0].checked;
 
-      } else {
+      } else if (mode === "lengths") {
         var s = "[" + elmts.lengthsTextarea[0].value + "]";
         try {
           var a = JSON.parse(s);
