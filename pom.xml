@@ -185,7 +185,6 @@
           see main/pom.xml, server/pom.xml and each extension.
        -->
   </dependencies>
-    <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 
   <profiles>
     <!-- Use new POM 4.0 feature of 'profiles' to change settings depending on the environment, such as an IDE, container, test env, etc. -->
