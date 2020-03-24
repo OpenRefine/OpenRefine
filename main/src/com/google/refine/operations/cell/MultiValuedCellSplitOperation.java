@@ -57,7 +57,8 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     final protected String  _mode;
     final protected String  _separator;
     final protected Boolean _regex;
-    
+    final protected Boolean _cases;
+
     final protected int[]      _fieldLengths;
 
     @JsonCreator
@@ -72,6 +73,8 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             String separator,
             @JsonProperty("regex")
             boolean regex,
+            @JsonProperty("cases")
+            boolean cases,
             @JsonProperty("fieldLengths")
             int[] fieldLengths) {
         if ("separator".equals(mode)) {
@@ -80,11 +83,16 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                     keyColumnName,
                     separator,
                     regex);
-        } else {
+        } else if ("lengths".equals(mode)) {
             return new MultiValuedCellSplitOperation(
                     columnName,
                     keyColumnName,
                     fieldLengths);
+        } else {
+            return new MultiValuedCellSplitOperation(
+                    columnName,
+                    keyColumnName,
+                    cases);
         }
     }
     
@@ -101,6 +109,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _regex = regex;
         
         _fieldLengths = null;
+        _cases = null;
     }
 
     public MultiValuedCellSplitOperation(
@@ -116,6 +125,28 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
         _regex = null;
 
         _fieldLengths = fieldLengths;
+        _cases = null;
+    }
+
+    public MultiValuedCellSplitOperation(
+        String      columnName,
+        String      keyColumnName,
+        boolean     cases
+    ) {
+        _columnName = columnName;
+        _keyColumnName = keyColumnName;
+        
+        if (cases) {
+            _mode = "cases";
+        } else {
+            _mode = "number";
+        }
+
+        _separator = null;
+        _regex = null;
+        
+        _fieldLengths = null;
+        _cases = cases;
     }
     
     @JsonProperty("columnName")
@@ -143,6 +174,12 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
     @JsonInclude(Include.NON_NULL)
     public Boolean getRegex() {
         return _regex;
+    }
+
+    @JsonProperty("cases")
+    @JsonInclude(Include.NON_NULL)
+    public Boolean getCase() {
+        return _cases;
     }
     
     @JsonProperty("fieldLengths")
@@ -183,7 +220,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
             Object value = oldRow.getCellValue(cellIndex);
             String s = value instanceof String ? ((String) value) : value.toString();
             String[] values = null;
-            if("lengths".equals(_mode)) {
+            if ("lengths".equals(_mode)) {
                 if (_fieldLengths.length > 0 && _fieldLengths[0] > 0) {
                     values = new String[_fieldLengths.length];
                     
@@ -201,8 +238,11 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                         lastIndex = thisIndex;
                     }
                 }
-            }
-            else if (_regex) {
+            } else if ("cases".equals(_mode)) {
+                values = s.split("(?<=[a-z]|[a-z][\\s])(?=[A-Z])");
+            } else if ("number".equals(_mode)) {
+                values = s.split("(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z])|(?<=[a-z]|\\s|[A-Z])(?=[0-9])");
+            } else if (_regex) {
                 Pattern pattern = Pattern.compile(_separator);
                 values = pattern.split(s);
             } else {

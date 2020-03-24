@@ -74,7 +74,7 @@ public class SplitMultiValueCellsCommand extends Command {
                 Process process = op.createProcess(project, new Properties());
                 
                 performProcessAndRespond(request, response, project, process);
-            } else {
+            } else if ("lengths".equals(mode)) {
                 String s = request.getParameter("fieldLengths");
                 
                 int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
@@ -84,6 +84,20 @@ public class SplitMultiValueCellsCommand extends Command {
                                                                          fieldLengths);
                 Process process = op.createProcess(project, new Properties());
                 
+                performProcessAndRespond(request, response, project, process);
+            } else if ("cases".equals(mode)) {
+                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
+                                                                         keyColumnName,
+                                                                         true);
+                Process process = op.createProcess(project, new Properties());
+
+                performProcessAndRespond(request, response, project, process);
+            } else if ("number".equals(mode)) {
+                AbstractOperation op = new MultiValuedCellSplitOperation(columnName, 
+                                                                         keyColumnName,
+                                                                         false);
+                Process process = op.createProcess(project, new Properties());
+
                 performProcessAndRespond(request, response, project, process);
             }
         } catch (Exception e) {
