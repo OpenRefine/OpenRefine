@@ -61,6 +61,7 @@ import com.google.refine.importers.tree.TreeReaderException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
+
 public class XmlImportUtilitiesTests extends RefineTest {
 
     @Override
