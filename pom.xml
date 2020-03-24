@@ -34,6 +34,9 @@
   </scm>
 
   <build>
+    <!-- It is nice for "mvn" with no arguments to do a reasonable default. -->
+    <defaultGoal>install</defaultGoal>
+    
     <finalName>openrefine</finalName>
     <resources>
     </resources>
@@ -174,70 +177,7 @@
           </sourceDirectories>
         </configuration>
        </plugin>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-        	<groupId>org.eclipse.m2e</groupId>
-        	<artifactId>lifecycle-mapping</artifactId>
-        	<version>1.0.0</version>
-        	<configuration>
-        		<lifecycleMappingMetadata>
-        			<pluginExecutions>
-        				<pluginExecution>
-        					<pluginExecutionFilter>
-        						<groupId>
-        							org.apache.maven.plugins
-        						</groupId>
-        						<artifactId>
-        							maven-install-plugin
-        						</artifactId>
-        						<versionRange>[2.5.2,)</versionRange>
-        						<goals>
-        							<goal>install-file</goal>
-        						</goals>
-        					</pluginExecutionFilter>
-        					<action>
-        						<ignore></ignore>
-        					</action>
-        				</pluginExecution>
-        			</pluginExecutions>
-        		</lifecycleMappingMetadata>
-        	</configuration>
-        </plugin>
-
     </plugins>
-    <pluginManagement>
-      <plugins>
-      <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-      	<plugin>
-      	<groupId>org.eclipse.m2e</groupId>
-      	<artifactId>lifecycle-mapping</artifactId>
-      	<version>1.0.0</version>
-      	<configuration>
-      		<lifecycleMappingMetadata>
-      			<pluginExecutions>
-      				<pluginExecution>
-      					<pluginExecutionFilter>
-      						<groupId>
-      							org.apache.maven.plugins
-      						</groupId>
-      						<artifactId>
-      							maven-install-plugin
-      						</artifactId>
-      						<versionRange>[2.5.2,)</versionRange>
-      						<goals>
-      							<goal>install-file</goal>
-      						</goals>
-      					</pluginExecutionFilter>
-      					<action>
-      						<ignore></ignore>
-      					</action>
-      				</pluginExecution>
-      			</pluginExecutions>
-      		</lifecycleMappingMetadata>
-      	</configuration>
-      	</plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <dependencies>
@@ -245,5 +185,49 @@
           see main/pom.xml, server/pom.xml and each extension.
        -->
   </dependencies>
+    <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+
+  <profiles>
+    <!-- Use new POM 4.0 feature of 'profiles' to change settings depending on the environment, such as an IDE, container, test env, etc. -->
+    <profile>
+      <id>only-eclipse</id>
+      <activation>
+        <property>
+          <name>m2e.version</name>
+        </property>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!-- Configure the Eclipse m2e plugin to support needed plugins. -->
+            <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>1.0.0</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <versionRange>[2.5.2,)</versionRange>
+                        <goals>
+                          <goal>install-file</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <ignore></ignore>
+                      </action>
+                    </pluginExecution>
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>
 
