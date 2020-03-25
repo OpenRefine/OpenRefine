@@ -28,7 +28,6 @@ package com.google.refine.expr.functions;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -82,7 +81,8 @@ public class CrossTests extends RefineTest {
                         + "2017-05-12T05:45:00Z,dateTime\n"
                         + "1600,integer\n"
                         + "123456789123456789,long\n"
-                        + "true,boolean\n";
+                        + "true,boolean\n"
+                        + "3.14,double\n";
         projectAddress = createCSVProject(projectName, input);
     
         projectName = "Christmas Gifts";
@@ -107,6 +107,7 @@ public class CrossTests extends RefineTest {
         projectAddress.rows.get(5).cells.set(0, new Cell(1600, null));
         projectAddress.rows.get(6).cells.set(0, new Cell(123456789123456789L, null));
         projectAddress.rows.get(7).cells.set(0, new Cell(true, null));
+        projectAddress.rows.get(8).cells.set(0, new Cell(3.14, null));
         projectGift.rows.get(2).cells.set(1, new Cell(dateTimeValue, null));
         projectGift.rows.get(3).cells.set(1, new Cell(1600, null));
         projectGift.rows.get(4).cells.set(1, new Cell(123456789123456789L, null));
@@ -227,6 +228,27 @@ public class CrossTests extends RefineTest {
         Assert.assertEquals(address, "long");
     }
 
+    @Test
+    public void crossFunctionDoubleArgumentTest() throws Exception {
+        Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", 3.14, "My Address Book", "friend")).get(0)).row);
+        String address = row.getCell(1).value.toString();
+        Assert.assertEquals(address, "double");
+    }
+
+    @Test
+    public void crossFunctionDateTimeArgumentTest() throws Exception {
+        Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", dateTimeValue, "My Address Book", "friend")).get(0)).row);
+        String address = row.getCell(1).value.toString();
+        Assert.assertEquals(address, "dateTime");
+    }
+
+    @Test
+    public void crossFunctionBooleanArgumentTest() throws Exception {
+        Row row = (((WrappedRow) ((HasFieldsListImpl) invoke("cross", true, "My Address Book", "friend")).get(0)).row);
+        String address = row.getCell(1).value.toString();
+        Assert.assertEquals(address, "boolean");
+    }
+
     /**
      * If no match, return null.
      * 
@@ -241,21 +263,12 @@ public class CrossTests extends RefineTest {
      
     /**
      *  
-     *  rest of cells shows "Error: cross expects a string or long or int or cell, a project name to look up, and a column name in that project"
+     *  rest of cells shows "Error: cross expects a cell or cell value, a project name to look up, and a column name in that project"
      */
     @Test
     public void crossFunctionNonLiteralValue() throws Exception {
         Assert.assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message,
-                "cross expects a string or long or int or cell, a project name to look up, and a column name in that project");
-
-        Assert.assertEquals(((EvalError) invoke("cross", 3.14159f, "My Address Book", "friend")).message,
-                "cross expects a string or long or int or cell, a project name to look up, and a column name in that project");
-
-        Assert.assertEquals(((EvalError) invoke("cross", -3.14159d, "My Address Book", "friend")).message,
-                "cross expects a string or long or int or cell, a project name to look up, and a column name in that project");
-
-        Assert.assertEquals(((EvalError) invoke("cross", Calendar.getInstance(), "My Address Book", "friend")).message,
-                "cross expects a string or long or int or cell, a project name to look up, and a column name in that project");
+                "cross expects a cell or cell value, a project name to look up, and a column name in that project");
     }
     
     /**
@@ -276,7 +289,7 @@ public class CrossTests extends RefineTest {
     
     @Test
     public void serializeCross() {
-        String json = "{\"description\":\"Looks up the given value in the target column of the target project, returns an array of matched rows\",\"params\":\"cell c or string value or long value or int value, string projectName, string columnName\",\"returns\":\"array\"}";
+        String json = "{\"description\":\"Looks up the given value in the target column of the target project, returns an array of matched rows, cell will be interpreted as cell.value\",\"params\":\"cell c or object value, string projectName, string columnName\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new Cross(), json);
     }
 }

@@ -56,8 +56,7 @@ public class Cross implements Function {
             long targetProjectID;
             ProjectLookup lookup;
 
-            if ((v instanceof String || v instanceof Long || v instanceof Integer || v instanceof WrappedCell)
-                    && (targetProjectName instanceof String && targetColumnName instanceof String)) {
+            if (v != null && targetProjectName instanceof String && targetColumnName instanceof String) {
                 try {
                     targetProjectID = ProjectManager.singleton.getProjectID((String) targetProjectName);
                 } catch (GetProjectIDException e) {
@@ -77,17 +76,17 @@ public class Cross implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or long or int or cell, a project name to look up, and a column name in that project");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or cell value, a project name to look up, and a column name in that project");
     }
 
     @Override
     public String getDescription() {
-        return "Looks up the given value in the target column of the target project, returns an array of matched rows";
+        return "Looks up the given value in the target column of the target project, returns an array of matched rows, cell will be interpreted as cell.value";
     }
 
     @Override
     public String getParams() {
-        return "cell c or string value or long value or int value, string projectName, string columnName";
+        return "cell c or object value, string projectName, string columnName";
     }
 
     @Override
