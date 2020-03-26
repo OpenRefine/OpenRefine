@@ -188,6 +188,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning());
     }
 
+    
     /**
      * Fetch invalid URLs
      * https://github.com/OpenRefine/OpenRefine/issues/1219
