@@ -64,12 +64,6 @@ import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
-
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
@@ -194,38 +188,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Assert.assertFalse(process.isRunning());
     }
 
-    @Test
-    public void testGzipEncoding() throws Exception{
-        String url = "https://www.google.com";
-        // Test response is gzip compressed
-        testResponseContentTypeIs(url , "gzip");
-        // Test can parse and store response in cell
-        Row row0 = new Row(2);
-        row0.setCell(0, new Cell(url, null));
-        project.rows.add(row0);
-        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-                "fruits",
-                "value",
-                OnError.StoreError,
-                "junk",
-                1,
-                50,
-                true,
-                null);
-
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning());
-        Assert.assertTrue(project.rows.get(0).cells.size() == 2);
-
-    }
     
     /**
      * Fetch invalid URLs
@@ -336,21 +298,4 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Assert.assertEquals(headersUsed.get("accept").asText(), acceptValue);
     }
 
-    public void testResponseContentTypeIs(String urlString, String type) {
-        URL url = null;
-        try {
-            url = new URL(urlString);
-        } catch (MalformedURLException e) {
-            Assert.fail();
-        }
-
-        try {
-            URLConnection urlConnection = url.openConnection();
-            urlConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            String encoding = urlConnection.getContentEncoding();
-            Assert.assertEquals(encoding, type);
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
 }
