@@ -68,6 +68,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipException;
+
 public class ParsingUtilities {
     public static JsonFactory jsonFactory = new JsonFactory();
     static {
@@ -133,7 +136,14 @@ public class ParsingUtilities {
     }
     
     static public String inputStreamToString(InputStream is, String encoding) throws IOException {
-        Reader reader = new InputStreamReader(is, encoding);
+        Reader reader;
+        if (encoding.equals("gzip")) {
+            InputStream inputStream = new GZIPInputStream(is);
+            reader = new InputStreamReader(inputStream);
+        } else {
+            reader = new InputStreamReader(is, encoding);
+        }
+        
         try {
             return readerToString(reader);
         } finally {

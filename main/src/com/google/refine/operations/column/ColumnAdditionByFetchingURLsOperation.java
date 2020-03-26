@@ -344,6 +344,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
             try {
                 URLConnection urlConnection = url.openConnection();
+                urlConnection.setRequestProperty("Accept-Encoding", "gzip");
                 if (_httpHeadersJson != null) {
                     for (int i = 0; i < _httpHeadersJson.size(); i++) {
                         String headerLabel = _httpHeadersJson.get(i).name;
@@ -353,6 +354,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         }
                     }
                 }
+
 
                 try {
                     InputStream is = urlConnection.getInputStream();
