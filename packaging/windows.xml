@@ -6,6 +6,13 @@
   </formats>
   <baseDirectory>${project.build.finalName}-${project.version}</baseDirectory>
   <fileSets>
+   <fileSet>
+    <directory>%JAVA_HOME%</directory>
+    <outputDirectory>server/target/jre</outputDirectory>
+    <includes>
+    <include>**</include>
+    </includes>
+   </fileSet>
     <fileSet>
       <directory>${rootdir}/server/target/lib</directory>
       <outputDirectory>server/target/lib</outputDirectory>

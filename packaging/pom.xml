@@ -231,7 +231,7 @@
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
               <jre>
-                <path>%JAVA_HOME%;%PATH%</path>
+                <path>server/target/jre</path>
                 <minVersion>1.8.0</minVersion>
                 <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
