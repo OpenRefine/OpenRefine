@@ -357,6 +357,8 @@ public class JsonImporter extends TreeImportingParserBase {
                     }
                 }
                 next = parser.nextToken();
+            } catch (JsonParseException e) {
+                throw new TreeReaderException(e.getOriginalMessage());
             } catch (IOException e) {
                 throw new TreeReaderException(e);
             }
