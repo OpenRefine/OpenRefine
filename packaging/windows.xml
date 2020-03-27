@@ -7,7 +7,7 @@
   <baseDirectory>${project.build.finalName}-${project.version}</baseDirectory>
   <fileSets>
    <fileSet>
-    <directory>%JAVA_HOME%</directory>
+    <directory>${java.home}</directory>
     <outputDirectory>server/target/jre</outputDirectory>
     <includes>
     <include>**</include>
