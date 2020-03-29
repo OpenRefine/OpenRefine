@@ -457,6 +457,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         int level,
         ImportParameters parameter
     ) throws TreeReaderException {
+        boolean nestedEntitySeen = false;
         if (logger.isTraceEnabled()) {
             logger.trace("processSubRecord(Project,TreeReader,ImportColumnGroup,ImportRecord) lvl:"+level+" "+columnGroup);
         }
@@ -494,6 +495,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         while (parser.hasNext()) {
             Token eventType = parser.next();
             if (eventType == Token.StartEntity) {
+             nestedEntitySeen = true;
                 processSubRecord(
                     project,
                     parser,
@@ -508,11 +510,15 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 String colName = parser.getFieldName();
                 if (value instanceof String) {
                     String text = (String) value;
-                    if(parameter.trimStrings) {
+                 
+                   if (!nestedEntitySeen || !text.trim().isEmpty())    // Ignore white space 
+                    {  
+                    if (parameter.trimStrings) {
                         text = text.trim();
                     }
                     addCell(project, thisColumnGroup, record, colName, text, 
                             parameter.storeEmptyStrings, parameter.guessDataType);
+                }
                 } else {
                     addCell(project, thisColumnGroup, record, colName, value);
                 }
