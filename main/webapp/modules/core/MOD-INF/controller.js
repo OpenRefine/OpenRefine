@@ -292,6 +292,9 @@ function registerImporting() {
   IM.registerMimeType("text/json", "text/json");
 
   IM.registerMimeType("application/marc", "text/marc");
+
+  IM.registerMimeType("text/xml", "text/xml");
+  IM.registerMimeType("application/xml", "text/xml");
   
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,

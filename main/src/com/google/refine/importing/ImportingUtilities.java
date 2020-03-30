@@ -770,6 +770,10 @@ public class ImportingUtilities {
         for (int i = 0; i < count; i++) {
             ObjectNode fileRecord = JSONUtilities.getObjectElement(fileRecords, i);
             String format = JSONUtilities.getString(fileRecord, "format", null);
+            if (format == null) {
+                format = guessFormatFromMimeType(JSONUtilities.getString(fileRecord, "declaredMimeType", null));
+            }
+
             if (format != null) {
                 if (formatToCount.containsKey(format)) {
                     formatToCount.put(format, formatToCount.get(format) + 1);
@@ -846,7 +850,15 @@ public class ImportingUtilities {
         
         return formats.size() > 0 ? formats.get(0) : null;
     }
-    
+
+    static protected String guessFormatFromMimeType(String mimeType) {
+        String[] components = mimeType.split(";");
+        if (components.length == 0) {
+            return null;
+        }
+        return ImportingManager.getFormatFromMimeType(components[0]);
+    }
+
     static String guessBetterFormat(ImportingJob job, String bestFormat) {
         ObjectNode retrievalRecord = job.getRetrievalRecord();
         return retrievalRecord != null ? guessBetterFormat(job, retrievalRecord, bestFormat) : bestFormat;
