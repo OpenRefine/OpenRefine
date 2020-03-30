@@ -23,7 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.utils;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
@@ -32,10 +37,6 @@ import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 public class EntityCache {
 
@@ -67,7 +68,12 @@ public class EntityCache {
     }
 
     public EntityDocument get(EntityIdValue id) {
-        return _cache.apply(id.getId());
+        try {
+            return _cache.get(id.getId());
+        } catch (ExecutionException e) {
+            _cache.invalidate(id);
+            return null;
+        }
     }
 
     public static EntityCache getEntityCache() {
