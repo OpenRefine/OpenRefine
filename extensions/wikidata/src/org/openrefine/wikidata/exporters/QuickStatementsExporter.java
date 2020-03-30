@@ -23,31 +23,22 @@
  ******************************************************************************/
 package org.openrefine.wikidata.exporters;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
+import com.google.refine.browsing.Engine;
+import com.google.refine.exporters.WriterExporter;
+import com.google.refine.model.Project;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
+import org.wikidata.wdtk.datamodel.interfaces.*;
 
-import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.WriterExporter;
-import com.google.refine.model.Project;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 public class QuickStatementsExporter implements WriterExporter {
 

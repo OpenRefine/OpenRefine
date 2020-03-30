@@ -33,13 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.math;
 
-import java.util.Properties;
-
-import java.util.concurrent.ThreadLocalRandom;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+
+import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomNumber implements Function {
     

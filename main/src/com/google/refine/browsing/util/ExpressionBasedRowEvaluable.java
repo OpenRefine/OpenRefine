@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
-import java.util.Properties;
-
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import java.util.Properties;
 
 public class ExpressionBasedRowEvaluable implements RowEvaluable {
     final protected String         _columnName;

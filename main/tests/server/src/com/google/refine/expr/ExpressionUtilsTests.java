@@ -34,13 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr;
 
 
+import com.google.refine.RefineTest;
+import com.google.refine.expr.ExpressionUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.expr.ExpressionUtils;
 
 
 public class ExpressionUtilsTests extends RefineTest {

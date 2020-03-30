@@ -33,15 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.filters;
 
-import java.util.Collection;
-import java.util.Properties;
-
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import java.util.Collection;
+import java.util.Properties;
 
 /**
  * Judge if a row matches by evaluating two given expressions on the row, based on two different columns

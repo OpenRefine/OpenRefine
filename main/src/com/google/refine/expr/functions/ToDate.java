@@ -33,27 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.TimeZone;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 public class ToDate implements Function {
 

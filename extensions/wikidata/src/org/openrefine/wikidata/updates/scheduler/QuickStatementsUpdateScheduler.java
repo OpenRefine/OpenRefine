@@ -23,19 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class QuickStatementsUpdateScheduler implements UpdateScheduler {
 

@@ -33,12 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,6 +41,12 @@ import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Class representing a single Row which contains a list of {@link Cell}s.  There may

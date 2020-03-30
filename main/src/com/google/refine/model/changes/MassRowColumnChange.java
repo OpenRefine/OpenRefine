@@ -33,14 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
@@ -48,6 +40,14 @@ import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 
 public class MassRowColumnChange implements Change {
     final protected List<Column>    _newColumns;

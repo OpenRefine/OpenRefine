@@ -33,12 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.text.CollationKey;
-import java.text.Collator;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
+
+import java.text.CollationKey;
+import java.text.Collator;
 
 public class StringCriterion extends Criterion {
     @JsonProperty("caseSensitive")

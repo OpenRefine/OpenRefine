@@ -33,16 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.google.refine.expr.HasFields;
 import com.google.refine.util.ParsingUtilities;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class ReconCandidate implements HasFields {
     @JsonProperty("id")

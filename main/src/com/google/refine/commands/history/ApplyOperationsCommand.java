@@ -33,13 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.history;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
@@ -48,6 +41,12 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.UnknownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Properties;
 
 public class ApplyOperationsCommand extends Command {
     

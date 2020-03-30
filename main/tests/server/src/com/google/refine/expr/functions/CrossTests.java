@@ -26,16 +26,6 @@
  ******************************************************************************/
 package com.google.refine.expr.functions;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Properties;
-
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
@@ -47,6 +37,15 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.TestUtils;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Properties;
 
 /**
  * Test cases for cross function.

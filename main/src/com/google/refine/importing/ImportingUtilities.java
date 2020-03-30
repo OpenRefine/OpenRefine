@@ -33,33 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importing;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.RefineServlet;
+import com.google.refine.importing.ImportingManager.Format;
+import com.google.refine.importing.UrlRewriter.Result;
+import com.google.refine.model.Project;
+import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -79,16 +62,17 @@ import org.apache.tools.tar.TarInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineServlet;
-import com.google.refine.importing.ImportingManager.Format;
-import com.google.refine.importing.UrlRewriter.Result;
-import com.google.refine.model.Project;
-import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");

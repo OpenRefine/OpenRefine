@@ -1,14 +1,5 @@
 package com.google.refine.extension.gdata;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
@@ -20,6 +11,14 @@ import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 public class GDataImporter {
     static final Logger logger = LoggerFactory.getLogger("GDataImporter");

@@ -28,21 +28,20 @@
  */
 package com.google.refine.extension.database;
 
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
 import com.google.refine.extension.database.mysql.MySQLDatabaseService;
 import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
+import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class DatabaseService {
 

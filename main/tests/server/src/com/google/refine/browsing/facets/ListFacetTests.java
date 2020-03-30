@@ -26,10 +26,6 @@
  ******************************************************************************/
 package com.google.refine.browsing.facets;
 
-import java.io.IOException;
-
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.RefineTest;
@@ -39,6 +35,9 @@ import com.google.refine.browsing.facets.ListFacet.ListFacetConfig;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class ListFacetTests extends RefineTest {
     

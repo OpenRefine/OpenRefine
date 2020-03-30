@@ -29,18 +29,17 @@
 
 package com.google.refine.exporters.sql;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.refine.util.JSONUtilities;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.refine.util.JSONUtilities;
 
 public class SqlInsertBuilder {
     

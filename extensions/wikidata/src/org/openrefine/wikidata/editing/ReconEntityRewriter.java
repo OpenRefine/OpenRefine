@@ -23,10 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -37,6 +33,10 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A class that rewrites an {@link ItemUpdate}, replacing reconciled entity id

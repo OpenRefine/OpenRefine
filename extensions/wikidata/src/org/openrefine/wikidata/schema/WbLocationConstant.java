@@ -23,15 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import java.text.ParseException;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.text.ParseException;
 
 /**
  * A constant for a geographical location. The accepted format is lat,lng or

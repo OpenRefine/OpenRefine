@@ -26,24 +26,21 @@
  ******************************************************************************/
 package com.google.refine.model.changes;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.history.Change;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.DataExtensionChange;
 import com.google.refine.util.Pool;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 
 
 public class DataExtensionChangeTest extends RefineTest {

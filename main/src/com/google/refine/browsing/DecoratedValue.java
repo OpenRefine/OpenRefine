@@ -33,11 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing;
 
-import java.time.OffsetDateTime;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.util.StringUtils;
+
+import java.time.OffsetDateTime;
 
 /**
  * Store a value and its text label, in case the value is not a string itself.

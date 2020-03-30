@@ -24,25 +24,23 @@
 
 package org.openrefine.wikidata.commands;
 
-import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.refine.browsing.Engine;
+import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
-import com.google.refine.browsing.Engine;
-import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 public class PreviewWikibaseSchemaCommand extends Command {
 	

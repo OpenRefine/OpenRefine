@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-import java.util.TreeSet;
-
 import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+
+import java.util.Properties;
+import java.util.TreeSet;
 
 public class NGramFingerprint implements Function {
 

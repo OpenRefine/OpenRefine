@@ -26,19 +26,18 @@
  ******************************************************************************/
 package com.google.refine.io;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.TimeZone;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.refine.ProjectMetadata;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.TimeZone;
 
 public class ProjectMetadataTests {
 	  

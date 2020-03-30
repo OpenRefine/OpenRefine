@@ -33,14 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
@@ -49,6 +41,14 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
 
 public class MassReconChange implements Change {
     final protected Map<Long, Recon> _newRecons;

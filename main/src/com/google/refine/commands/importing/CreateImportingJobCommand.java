@@ -33,17 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.importing;
 
-import java.io.IOException;
+import com.google.refine.commands.Command;
+import com.google.refine.importing.ImportingManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.refine.commands.Command;
-import com.google.refine.importing.ImportingManager;
+import java.io.IOException;
 
 public class CreateImportingJobCommand extends Command {
 

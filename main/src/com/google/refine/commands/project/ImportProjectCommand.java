@@ -33,16 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.project;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.commands.Command;
+import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -50,11 +45,14 @@ import org.apache.commons.fileupload.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.ProjectMetadata;
-import com.google.refine.commands.Command;
-import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Properties;
 
 public class ImportProjectCommand extends Command {
 

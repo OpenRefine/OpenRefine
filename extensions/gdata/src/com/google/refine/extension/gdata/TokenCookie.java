@@ -1,10 +1,10 @@
 package com.google.refine.extension.gdata;
 
+import com.google.refine.util.CookiesUtilities;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.refine.util.CookiesUtilities;
 
 public class TokenCookie {
     private static final String COOKIE_NAME = "oauth2_token";

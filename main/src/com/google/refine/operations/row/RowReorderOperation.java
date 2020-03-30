@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -51,6 +48,9 @@ import com.google.refine.model.changes.RowReorderChange;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RowReorderOperation extends AbstractOperation {
     final protected Mode _mode;

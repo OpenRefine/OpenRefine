@@ -33,15 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import com.google.refine.importers.tree.*;
+import com.google.refine.model.Project;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.google.refine.importers.tree.ImportColumnGroup;
-import com.google.refine.importers.tree.ImportParameters;
-import com.google.refine.importers.tree.ImportRecord;
-import com.google.refine.importers.tree.TreeReader;
-import com.google.refine.importers.tree.XmlImportUtilities;
-import com.google.refine.model.Project;
 
 public class XmlImportUtilitiesStub extends XmlImportUtilities {
     

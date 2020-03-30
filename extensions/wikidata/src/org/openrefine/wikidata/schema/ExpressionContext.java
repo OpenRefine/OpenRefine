@@ -23,14 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import org.apache.commons.lang.Validate;
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.qa.QAWarningStore;
-
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Row;
+import org.apache.commons.lang.Validate;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarningStore;
 
 /**
  * A class holding all the necessary information about the context in which a

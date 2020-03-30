@@ -33,31 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Serializable;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import com.google.refine.history.Change;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
+import com.google.refine.model.*;
 import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.ReconStats;
-import com.google.refine.model.ReconType;
-import com.google.refine.model.Row;
 import com.google.refine.model.recon.DataExtensionReconConfig;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Serializable;
+import java.io.Writer;
+import java.util.*;
 
 public class DataExtensionChange implements Change {
     final protected String              _baseColumnName;

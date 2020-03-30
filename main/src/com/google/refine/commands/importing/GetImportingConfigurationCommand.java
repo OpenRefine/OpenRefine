@@ -33,15 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.importing;
 
-import java.io.IOException;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.commands.Command;
+import com.google.refine.importing.ImportingManager.ImportingConfiguration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.commands.Command;
-import com.google.refine.importing.ImportingManager.ImportingConfiguration;
+import java.io.IOException;
 
 public class GetImportingConfigurationCommand extends Command {
     

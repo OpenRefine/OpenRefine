@@ -33,21 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.expr;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.ProjectManager;
+import com.google.refine.commands.Command;
+import com.google.refine.preference.TopList;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.ProjectManager;
-import com.google.refine.commands.Command;
-import com.google.refine.preference.TopList;
 
 public class GetExpressionHistoryCommand extends Command {
     

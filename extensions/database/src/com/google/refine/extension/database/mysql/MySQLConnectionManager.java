@@ -28,16 +28,15 @@
  */
 package com.google.refine.extension.database.mysql;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.extension.database.SQLType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 public class MySQLConnectionManager {

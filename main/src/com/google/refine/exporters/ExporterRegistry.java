@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import com.google.refine.exporters.sql.SqlExporter;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.refine.exporters.sql.SqlExporter;
 
 abstract public class ExporterRegistry {
     static final private Map<String, Exporter> s_formatToExporter = new HashMap<String, Exporter>();

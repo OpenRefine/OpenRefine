@@ -33,14 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.refine.ProjectManager;
+import com.google.refine.RefineTest;
+import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.Project;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -48,12 +46,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.RefineTest;
-import com.google.refine.browsing.Engine;
-import com.google.refine.browsing.Engine.Mode;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.model.Project;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.mockito.Mockito.*;
 
 public class CommandTests extends RefineTest {
 

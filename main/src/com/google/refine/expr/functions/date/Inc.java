@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.date;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
+
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Properties;
-
-import com.google.refine.expr.EvalError;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 
 public class Inc implements Function {
 

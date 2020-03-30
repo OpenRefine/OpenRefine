@@ -26,10 +26,10 @@
  ******************************************************************************/
 package com.google.refine.importers.tree;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A column group describes a branch in tree structured data

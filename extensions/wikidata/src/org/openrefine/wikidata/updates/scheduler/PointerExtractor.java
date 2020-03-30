@@ -23,24 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
+import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
  * A class that extracts the new entity ids referred to in a statement.

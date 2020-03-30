@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class ParseJson implements Function {
 

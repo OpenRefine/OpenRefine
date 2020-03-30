@@ -33,22 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Writer;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.History;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import java.io.*;
+import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 
 public class FileHistoryEntryManager implements HistoryEntryManager{

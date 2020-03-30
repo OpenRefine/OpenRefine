@@ -33,23 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.util.Properties;
-
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
@@ -57,11 +40,20 @@ import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.StreamExporter;
 import com.google.refine.exporters.XlsExporter;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
+import com.google.refine.model.*;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.Properties;
+
+import static org.mockito.Mockito.*;
 
 public class XlsExporterTests extends RefineTest {
 

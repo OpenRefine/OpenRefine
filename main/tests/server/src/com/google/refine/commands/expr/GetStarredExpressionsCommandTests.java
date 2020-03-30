@@ -26,14 +26,12 @@
  ******************************************************************************/
 package com.google.refine.commands.expr;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
+import com.google.refine.commands.expr.GetStarredExpressionsCommand;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.commands.expr.GetStarredExpressionsCommand;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 public class GetStarredExpressionsCommandTests extends ExpressionCommandTestBase {
 

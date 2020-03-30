@@ -36,20 +36,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.google.refine.model.recon;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -64,6 +50,12 @@ import com.google.refine.model.ReconType;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.JsonViews;
 import com.google.refine.util.ParsingUtilities;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReconciledDataExtensionJob {
 

@@ -33,28 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Properties;
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.net.URLCodec;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -67,9 +45,19 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.URLCodec;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipException;
 
 public class ParsingUtilities {
     public static JsonFactory jsonFactory = new JsonFactory();

@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.cell;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.EngineConfig;
@@ -52,6 +48,10 @@ import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.operations.EngineDependentMassCellOperation;
 import com.google.refine.operations.OnError;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Properties;
 
 public class TextTransformOperation extends EngineDependentMassCellOperation {
     @JsonProperty("expression")

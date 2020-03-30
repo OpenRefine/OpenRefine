@@ -1,13 +1,11 @@
 package com.google.refine.commands.cell;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
+import com.google.refine.commands.CommandTestBase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.refine.commands.CommandTestBase;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 public class TransposeColumnsIntoRowsCommandTests extends CommandTestBase {
 	@BeforeMethod

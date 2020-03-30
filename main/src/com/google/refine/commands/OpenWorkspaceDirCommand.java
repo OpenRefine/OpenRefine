@@ -33,16 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
+import com.google.refine.ProjectManager;
+import com.google.refine.io.FileProjectManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.refine.ProjectManager;
-import com.google.refine.io.FileProjectManager;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class OpenWorkspaceDirCommand extends Command {
     @Override

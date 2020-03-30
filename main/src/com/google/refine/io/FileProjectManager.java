@@ -33,26 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
-import org.apache.tools.tar.TarOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
@@ -62,6 +42,19 @@ import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
+import org.apache.tools.tar.TarEntry;
+import org.apache.tools.tar.TarInputStream;
+import org.apache.tools.tar.TarOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 
 public class FileProjectManager extends ProjectManager  {

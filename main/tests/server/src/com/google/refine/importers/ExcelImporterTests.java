@@ -34,19 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.Date;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.refine.importers.ExcelImporter;
+import com.google.refine.util.ParsingUtilities;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -60,9 +50,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.importers.ExcelImporter;
-import com.google.refine.util.ParsingUtilities;
+import java.io.*;
+import java.util.Calendar;
+import java.util.Date;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class ExcelImporterTests extends ImporterTest {
     

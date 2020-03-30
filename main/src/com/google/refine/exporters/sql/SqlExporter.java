@@ -29,15 +29,6 @@
 
 package com.google.refine.exporters.sql;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
@@ -46,6 +37,14 @@ import com.google.refine.exporters.TabularSerializer;
 import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class SqlExporter implements WriterExporter {
     

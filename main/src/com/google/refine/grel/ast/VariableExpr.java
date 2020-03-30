@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel.ast;
 
-import java.util.Properties;
-
 import com.google.refine.expr.Evaluable;
+
+import java.util.Properties;
 
 /**
  * An abstract syntax tree node encapsulating the retrieval of a variable's content.

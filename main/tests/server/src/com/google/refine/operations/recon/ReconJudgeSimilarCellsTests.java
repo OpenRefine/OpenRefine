@@ -26,31 +26,24 @@
  ******************************************************************************/
 package com.google.refine.operations.recon;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import com.google.refine.RefineTest;
+import com.google.refine.browsing.EngineConfig;
+import com.google.refine.model.*;
+import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.StandardReconConfig;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
+import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.browsing.EngineConfig;
-import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.model.recon.StandardReconConfig;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ReconJudgeSimilarCellsOperation;
-import com.google.refine.process.Process;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
+import static org.testng.Assert.assertNull;
 
 public class ReconJudgeSimilarCellsTests extends RefineTest {
     

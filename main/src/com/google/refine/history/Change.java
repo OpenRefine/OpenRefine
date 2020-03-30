@@ -33,11 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.history;
 
+import com.google.refine.model.Project;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
-
-import com.google.refine.model.Project;
 
 /**
  * Interface for a concrete change to a project's data. A change should consist

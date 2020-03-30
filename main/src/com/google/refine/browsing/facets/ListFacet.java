@@ -33,21 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
-import com.google.refine.browsing.DecoratedValue;
-import com.google.refine.browsing.FilteredRecords;
-import com.google.refine.browsing.FilteredRows;
-import com.google.refine.browsing.RecordFilter;
-import com.google.refine.browsing.RowFilter;
+import com.google.refine.browsing.*;
 import com.google.refine.browsing.filters.AllRowsRecordFilter;
 import com.google.refine.browsing.filters.AnyRowRecordFilter;
 import com.google.refine.browsing.filters.ExpressionEqualRowFilter;
@@ -57,6 +49,10 @@ import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListFacet implements Facet {
     public static final String ERR_TOO_MANY_CHOICES = "Too many choices";

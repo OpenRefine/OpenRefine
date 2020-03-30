@@ -33,16 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Properties;
-
-import org.apache.commons.text.StringEscapeUtils;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Properties;
 
 public class Escape implements Function {
 

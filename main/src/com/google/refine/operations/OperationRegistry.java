@@ -33,14 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations;
 
+import com.google.refine.model.AbstractOperation;
+import edu.mit.simile.butterfly.ButterflyModule;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import com.google.refine.model.AbstractOperation;
-
-import edu.mit.simile.butterfly.ButterflyModule;
 
 public abstract class OperationRegistry {
 

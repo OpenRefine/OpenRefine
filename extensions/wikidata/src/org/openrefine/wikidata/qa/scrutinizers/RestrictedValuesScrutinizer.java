@@ -1,12 +1,12 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.Set;
-
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.Set;
 
 
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {

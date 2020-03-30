@@ -23,13 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.operations;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Properties;
-
-import org.openrefine.wikidata.schema.WikibaseSchema;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,6 +32,12 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.Properties;
 
 public class SaveWikibaseSchemaOperation extends AbstractOperation {
 

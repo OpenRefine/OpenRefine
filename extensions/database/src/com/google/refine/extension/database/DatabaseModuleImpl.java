@@ -28,17 +28,15 @@
  */
 package com.google.refine.extension.database;
 
+import edu.mit.simile.butterfly.ButterflyModuleImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletConfig;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
-
-import javax.servlet.ServletConfig;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.mit.simile.butterfly.ButterflyModuleImpl;
 
 
 public class DatabaseModuleImpl extends ButterflyModuleImpl {

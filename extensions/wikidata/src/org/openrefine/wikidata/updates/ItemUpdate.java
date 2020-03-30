@@ -23,30 +23,16 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.utils.StatementGroupJson;
-import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.utils.StatementGroupJson;
+import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A class to plan an update of an item, after evaluating the statements but

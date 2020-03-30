@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import java.io.File;
-import java.io.Writer;
-import java.util.Properties;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.io.FileProjectManager;
+
+import java.io.File;
+import java.io.Writer;
+import java.util.Properties;
 
 
 public class HistoryEntryManagerStub implements HistoryEntryManager{

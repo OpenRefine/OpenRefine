@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.date;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -42,10 +46,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
-
-import com.google.refine.expr.EvalError;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 
 public class DatePart implements Function {
 

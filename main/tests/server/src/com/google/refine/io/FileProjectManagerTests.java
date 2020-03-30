@@ -26,17 +26,16 @@
  ******************************************************************************/
 package com.google.refine.io;
 
-import static org.mockito.Mockito.mock;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.io.FileProjectManager;
+import com.google.refine.util.TestUtils;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.google.refine.io.FileProjectManager;
-import com.google.refine.util.TestUtils;
-import com.google.refine.ProjectMetadata;
+import static org.mockito.Mockito.mock;
 
 public class FileProjectManagerTests  {
     protected File workspaceDir;

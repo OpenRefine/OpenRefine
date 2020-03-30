@@ -33,18 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.templating;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
 public class Template {
     protected String _prefix;

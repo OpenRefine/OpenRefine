@@ -33,15 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -49,15 +40,14 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
+import com.google.refine.model.*;
 import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassChange;
 import com.google.refine.operations.EngineDependentOperation;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
 
 public class ReconCopyAcrossColumnsOperation extends EngineDependentOperation {
     final protected String   _fromColumnName;

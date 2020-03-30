@@ -1,25 +1,23 @@
 package com.google.refine.commands.browsing;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.testng.Assert;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.browsing.GetScatterplotCommand;
 import com.google.refine.util.ParsingUtilities;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ScatterplotDrawCommandTests {
     protected HttpServletRequest request = null;

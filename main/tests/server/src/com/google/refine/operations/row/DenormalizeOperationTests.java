@@ -26,13 +26,12 @@
  ******************************************************************************/
 package com.google.refine.operations.row;
 
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.row.DenormalizeOperation;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 
 public class DenormalizeOperationTests extends RefineTest {

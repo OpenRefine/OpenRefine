@@ -33,14 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.project;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.HttpHeadersSupport;
@@ -53,6 +45,13 @@ import com.google.refine.model.ColumnModel;
 import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.RecordModel;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetModelsCommand extends Command {
 	

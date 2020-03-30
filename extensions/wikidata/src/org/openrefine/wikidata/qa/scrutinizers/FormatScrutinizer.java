@@ -23,15 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * A scrutinizer that detects incorrect formats in text values (mostly

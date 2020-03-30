@@ -33,14 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.oauth;
 
+import com.google.refine.util.CookiesUtilities;
+import oauth.signpost.OAuth;
+import oauth.signpost.http.HttpParameters;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.refine.util.CookiesUtilities;
-
-import oauth.signpost.OAuth;
-import oauth.signpost.http.HttpParameters;
 
 public class Credentials {
 

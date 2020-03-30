@@ -1,23 +1,16 @@
 package com.google.refine.extension.gdata;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.*;
+import com.google.refine.exporters.TabularSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.model.AppendCellsRequest;
-import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
-import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
-import com.google.api.services.sheets.v4.model.ExtendedValue;
-import com.google.api.services.sheets.v4.model.Request;
-import com.google.api.services.sheets.v4.model.RowData;
-import com.google.refine.exporters.TabularSerializer;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 final class SpreadsheetSerializer implements TabularSerializer {
     static final Logger logger = LoggerFactory.getLogger("SpreadsheetSerializer");

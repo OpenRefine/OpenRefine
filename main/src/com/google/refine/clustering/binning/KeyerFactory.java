@@ -27,11 +27,7 @@
 
 package com.google.refine.clustering.binning;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Registry of keyers for clustering.

@@ -1,13 +1,12 @@
 package org.openrefine.wikidata.utils;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 /**
  * Wikidata-Toolkit's StatementGroup class is not designed to be serialized,

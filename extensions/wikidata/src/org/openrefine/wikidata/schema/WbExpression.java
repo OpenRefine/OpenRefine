@@ -23,11 +23,10 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 
 /**
  * The base interface for all expressions, which evaluate to a particular type T

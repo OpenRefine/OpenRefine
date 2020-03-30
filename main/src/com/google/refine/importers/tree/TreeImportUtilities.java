@@ -33,19 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers.tree;
 
+import com.google.refine.importers.ImporterUtilities;
+import com.google.refine.model.Cell;
+import com.google.refine.model.Column;
+import com.google.refine.model.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.refine.importers.ImporterUtilities;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
 
 public abstract class TreeImportUtilities {
     final static Logger logger = LoggerFactory.getLogger("TreeImportUtilities");

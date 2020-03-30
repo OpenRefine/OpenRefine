@@ -33,10 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.filters;
 
-import java.time.OffsetDateTime;
-
 import com.google.refine.browsing.util.RowEvaluable;
 import com.google.refine.expr.ExpressionUtils;
+
+import java.time.OffsetDateTime;
 
 /**
  * Judge if a row matches by evaluating a given expression on the row, based on a particular

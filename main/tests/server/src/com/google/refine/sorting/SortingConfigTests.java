@@ -26,12 +26,11 @@
  ******************************************************************************/
 package com.google.refine.sorting;
 
-import java.io.IOException;
-
-import org.testng.annotations.Test;
-
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class SortingConfigTests {
     @Test

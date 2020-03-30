@@ -33,17 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Properties;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.Properties;
 
 public class CellChange implements Change {
     final public int     row;

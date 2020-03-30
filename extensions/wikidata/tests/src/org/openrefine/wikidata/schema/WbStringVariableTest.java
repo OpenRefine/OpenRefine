@@ -23,11 +23,10 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import com.google.refine.model.Cell;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-
-import com.google.refine.model.Cell;
 
 public class WbStringVariableTest extends WbVariableTest<StringValue> {
 

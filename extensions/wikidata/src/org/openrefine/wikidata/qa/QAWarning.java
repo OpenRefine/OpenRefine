@@ -23,15 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.jsoup.helper.Validate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jsoup.helper.Validate;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A class to represent a QA warning emitted by the Wikidata schema This could

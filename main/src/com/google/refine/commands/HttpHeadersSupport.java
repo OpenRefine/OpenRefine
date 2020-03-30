@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.RefineServlet;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 abstract public class HttpHeadersSupport {
 

@@ -23,11 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.Set;
-
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.Set;
 
 /**
  * An object that fetches constraints about properties.

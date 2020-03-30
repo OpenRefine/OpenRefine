@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.util.Properties;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.util.ExpressionNominalValueGrouper;
 import com.google.refine.expr.EvalError;
@@ -45,6 +43,8 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
+
+import java.util.Properties;
 
 public class FacetCount implements Function {
 

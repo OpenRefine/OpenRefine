@@ -26,10 +26,10 @@
  ******************************************************************************/
 package com.google.refine.importers.tree;
 
+import com.google.refine.model.Cell;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.refine.model.Cell;
 
 /**
  * A record describes a data element in a tree-structure

@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.Command;
 import com.google.refine.model.Project;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of abstract class for testing Exposes protected members as public

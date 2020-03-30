@@ -33,18 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
+import clojure.lang.IFn;
+import clojure.lang.RT;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.grel.Parser;
+
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.grel.Parser;
-
-import clojure.lang.IFn;
-import clojure.lang.RT;
 
 abstract public class MetaParser {
 

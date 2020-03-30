@@ -1,22 +1,20 @@
 package com.google.refine.commands.expr;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectManagerStub;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.CommandTestBase;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
-
-import java.io.IOException;
-import java.util.Collections;
-
-import javax.servlet.ServletException;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class LogExpressionCommandTests extends CommandTestBase {
 	

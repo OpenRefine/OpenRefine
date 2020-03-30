@@ -26,13 +26,12 @@
  ******************************************************************************/
 package com.google.refine.model;
 
-import java.io.IOException;
-
+import com.google.refine.model.ReconType;
+import com.google.refine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.model.ReconType;
-import com.google.refine.util.TestUtils;
+import java.io.IOException;
 
 public class ReconTypeTest {
     @Test

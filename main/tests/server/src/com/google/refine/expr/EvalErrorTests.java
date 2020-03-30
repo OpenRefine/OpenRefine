@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.expr;
 
-import org.testng.annotations.Test;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class EvalErrorTests {
     @Test

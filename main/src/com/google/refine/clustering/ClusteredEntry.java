@@ -26,10 +26,10 @@
  ******************************************************************************/
 package com.google.refine.clustering;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.Comparator;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ClusteredEntry {
     @JsonProperty("v")

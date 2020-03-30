@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
-import java.util.List;
-
 import org.openrefine.wikidata.updates.ItemUpdate;
+
+import java.util.List;
 
 /**
  * A scheduling strategy for item updates. Given a list of initial updates, the

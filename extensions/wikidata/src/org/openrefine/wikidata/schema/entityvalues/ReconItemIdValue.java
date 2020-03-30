@@ -23,9 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema.entityvalues;
 
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-
 import com.google.refine.model.Recon;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 public class ReconItemIdValue extends ReconEntityIdValue implements ItemIdValue {
 

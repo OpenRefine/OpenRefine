@@ -1,21 +1,15 @@
 package com.google.refine.extension.database;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class DBExtensionTestUtils {
     

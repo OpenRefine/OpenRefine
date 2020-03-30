@@ -33,27 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.ProjectMetadata;
-import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 
 
 public class RdfTripleImporter extends ImportingParserBase {

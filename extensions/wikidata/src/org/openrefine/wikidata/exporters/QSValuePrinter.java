@@ -23,20 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.exporters;
 
-import java.math.BigDecimal;
-import java.util.Locale;
-
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * Prints a Wikibase value as a string as required by QuickStatements. Format

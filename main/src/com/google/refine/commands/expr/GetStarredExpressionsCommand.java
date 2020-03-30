@@ -26,19 +26,18 @@
  ******************************************************************************/
 package com.google.refine.commands.expr;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.preference.TopList;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class GetStarredExpressionsCommand extends Command {

@@ -33,11 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.clustering.binning;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
 
 public class FingerprintKeyer extends Keyer {
 

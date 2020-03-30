@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.util.Properties;
-
 import com.google.refine.LookupCacheManager.ProjectLookup;
 import com.google.refine.ProjectManager;
 import com.google.refine.expr.EvalError;
@@ -43,6 +41,8 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.GetProjectIDException;
 import com.google.refine.util.LookupException;
+
+import java.util.Properties;
 
 public class Cross implements Function {
 

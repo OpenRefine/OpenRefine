@@ -33,11 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
 
 public class DateCriterion extends Criterion {
     final static protected EvalError s_error = new EvalError("Not a date");

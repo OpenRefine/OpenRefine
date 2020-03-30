@@ -1,11 +1,11 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.math.BigDecimal;
-
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+
+import java.math.BigDecimal;
 
 public class QuantityScrutinizerTest extends ValueScrutinizerTest{
     

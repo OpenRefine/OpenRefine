@@ -26,17 +26,6 @@
  ******************************************************************************/
 package com.google.refine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
@@ -45,6 +34,10 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FixedWidthImporter extends TabularImportingParserBase {
     public FixedWidthImporter() {

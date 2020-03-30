@@ -33,19 +33,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.io;
 
+import com.google.refine.ProjectManager;
+import com.google.refine.model.Project;
+import com.google.refine.util.Pool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.refine.ProjectManager;
-import com.google.refine.model.Project;
-import com.google.refine.util.Pool;
 
 
 public class ProjectUtilities {

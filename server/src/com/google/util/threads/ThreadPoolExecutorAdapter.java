@@ -15,13 +15,13 @@ package com.google.util.threads;
 //limitations under the License.
 //========================================================================
 
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.mortbay.component.LifeCycle;
 import org.mortbay.log.Log;
 import org.mortbay.thread.ThreadPool;
+
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Jetty {@link ThreadPool} that bridges requests to a

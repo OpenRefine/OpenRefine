@@ -26,13 +26,13 @@
  ******************************************************************************/
 package com.google.refine.commands.recon;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ReconUseValuesAsIdentifiersCommand extends EngineDependentCommand {
     @Override

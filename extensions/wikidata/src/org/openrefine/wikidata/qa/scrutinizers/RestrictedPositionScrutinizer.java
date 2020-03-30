@@ -23,14 +23,10 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.Iterator;
-
 import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.util.Iterator;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 

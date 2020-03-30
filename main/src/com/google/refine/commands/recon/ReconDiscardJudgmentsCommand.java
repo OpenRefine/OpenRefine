@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.recon;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.recon.ReconDiscardJudgmentsOperation;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ReconDiscardJudgmentsCommand extends EngineDependentCommand {
     @Override

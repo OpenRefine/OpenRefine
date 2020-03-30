@@ -33,18 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import edu.mit.simile.butterfly.ButterflyModule;
+import edu.mit.simile.butterfly.MountPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.mit.simile.butterfly.ButterflyModule;
-import edu.mit.simile.butterfly.MountPoint;
+import java.util.*;
 
 
 public class ClientSideResourceManager {

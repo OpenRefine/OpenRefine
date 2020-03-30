@@ -34,12 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import com.google.refine.browsing.Engine;
+import com.google.refine.model.Project;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.model.Project;
 
 public interface WriterExporter extends Exporter {
 

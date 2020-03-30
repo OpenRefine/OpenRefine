@@ -33,14 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
+import com.google.refine.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconType;
-import com.google.refine.model.Row;
 
 public class DataExtensionReconConfig extends StandardReconConfig {
     final public ReconType type;

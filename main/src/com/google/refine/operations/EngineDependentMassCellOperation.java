@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -48,6 +45,9 @@ import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.MassCellChange;
+
+import java.util.ArrayList;
+import java.util.List;
 
 abstract public class EngineDependentMassCellOperation extends EngineDependentOperation {
     @JsonIgnore

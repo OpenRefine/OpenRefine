@@ -28,24 +28,19 @@
  */
 package com.google.refine.extension.database.mysql;
 
+import com.google.refine.extension.database.*;
+import com.google.refine.extension.database.model.DatabaseColumn;
+import com.google.refine.extension.database.model.DatabaseInfo;
+import com.google.refine.extension.database.model.DatabaseRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.refine.extension.database.DatabaseConfiguration;
-import com.google.refine.extension.database.DatabaseService;
-import com.google.refine.extension.database.DatabaseServiceException;
-import com.google.refine.extension.database.DatabaseUtils;
-import com.google.refine.extension.database.SQLType;
-import com.google.refine.extension.database.model.DatabaseColumn;
-import com.google.refine.extension.database.model.DatabaseInfo;
-import com.google.refine.extension.database.model.DatabaseRow;
 
 public class MySQLDatabaseService extends DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger("MySQLDatabaseService");

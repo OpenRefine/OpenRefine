@@ -33,17 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.commons.text.StringEscapeUtils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Properties;
 
 public class HtmlTableExporter implements WriterExporter {
 

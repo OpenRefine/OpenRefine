@@ -1,12 +1,11 @@
 package org.openrefine.wikidata.commands;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.util.ParsingUtilities;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
 
 public class CommandUtilities {
     

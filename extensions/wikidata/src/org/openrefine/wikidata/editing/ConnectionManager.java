@@ -23,8 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import java.io.IOException;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectManager;
+import com.google.refine.preference.PreferenceStore;
+import com.google.refine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -32,11 +35,7 @@ import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.ProjectManager;
-import com.google.refine.preference.PreferenceStore;
-import com.google.refine.util.ParsingUtilities;
+import java.io.IOException;
 
 /**
  * Manages a connection to Wikidata, with login credentials stored in the

@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.AbstractOperation;
@@ -45,6 +42,9 @@ import com.google.refine.model.RecordModel.CellDependency;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.MassRowChange;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DenormalizeOperation extends AbstractOperation {
     @JsonCreator

@@ -23,8 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.Collections;
-
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
@@ -33,6 +31,8 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
+import java.util.Collections;
 
 public class NewItemScrutinizerTest extends ScrutinizerTest {
 

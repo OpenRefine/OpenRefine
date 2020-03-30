@@ -33,11 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -58,6 +53,11 @@ import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.ColumnAdditionChange;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class ColumnAdditionOperation extends EngineDependentOperation {
     final protected String     _baseColumnName;

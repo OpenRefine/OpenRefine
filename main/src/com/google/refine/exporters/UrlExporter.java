@@ -33,12 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
+import com.google.refine.browsing.Engine;
+import com.google.refine.model.Project;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-
-import com.google.refine.browsing.Engine;
-import com.google.refine.model.Project;
 
 
 public interface UrlExporter extends Exporter {

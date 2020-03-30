@@ -26,17 +26,6 @@
  ******************************************************************************/
 package com.google.refine.importers;
 
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mockito.Mockito;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
@@ -50,6 +39,16 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
+import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 public abstract class ImporterTest extends RefineTest {
     //mock dependencies

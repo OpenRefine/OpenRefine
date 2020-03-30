@@ -23,14 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.openrefine.wikidata.operations.PerformWikibaseEditsOperation;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import org.openrefine.wikidata.operations.PerformWikibaseEditsOperation;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class PerformWikibaseEditsCommand extends EngineDependentCommand {
 

@@ -33,16 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
-import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.Properties;
-
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
+
+import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.Properties;
 
 /**
  * Visit matched rows or records and slot them into bins based on the date computed

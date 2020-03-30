@@ -23,18 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.QAWarning;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * A scrutinizer that checks for missing inverse statements in edit batches.

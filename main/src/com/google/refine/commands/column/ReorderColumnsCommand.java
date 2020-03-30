@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.column;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
@@ -44,6 +40,9 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.column.ColumnReorderOperation;
 import com.google.refine.util.ParsingUtilities;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class ReorderColumnsCommand extends EngineDependentCommand {
     

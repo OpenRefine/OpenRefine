@@ -1,15 +1,14 @@
 package com.google.refine.jython;
 
-import java.util.Properties;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.google.refine.expr.CellTuple;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.util.Properties;
 
 /**
  * @author Maxim Galushka

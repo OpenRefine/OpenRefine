@@ -29,7 +29,8 @@
 
 package com.google.refine.extension.database.sqlite;
 
-import com.google.refine.extension.database.*;
+import com.google.refine.extension.database.DBExtensionTestUtils;
+import com.google.refine.extension.database.DBExtensionTests;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;

@@ -33,16 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.changes;
 
+import com.google.refine.history.Change;
+import com.google.refine.model.ColumnGroup;
+import com.google.refine.util.ParsingUtilities;
+
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import com.google.refine.history.Change;
-import com.google.refine.model.ColumnGroup;
-import com.google.refine.util.ParsingUtilities;
 
 abstract public class ColumnChange implements Change {
     

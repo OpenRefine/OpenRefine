@@ -33,13 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.pcaxis;
 
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.TabularImportingParserBase;
@@ -47,6 +40,12 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.util.List;
 
 public class PCAxisImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(PCAxisImporter.class);

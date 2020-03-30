@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.recon;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
 import com.google.refine.operations.recon.ExtendDataOperation;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ExtendDataCommand extends EngineDependentCommand {
     @Override

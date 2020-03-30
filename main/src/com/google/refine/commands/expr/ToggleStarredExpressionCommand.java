@@ -26,15 +26,14 @@
  ******************************************************************************/
 package com.google.refine.commands.expr;
 
-import java.io.IOException;
+import com.google.refine.ProjectManager;
+import com.google.refine.commands.Command;
+import com.google.refine.preference.TopList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.refine.ProjectManager;
-import com.google.refine.commands.Command;
-import com.google.refine.preference.TopList;
+import java.io.IOException;
 
 public class ToggleStarredExpressionCommand extends Command {
 

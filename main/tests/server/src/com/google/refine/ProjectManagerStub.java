@@ -33,15 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.tools.tar.TarOutputStream;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.history.HistoryEntryManager;
 import com.google.refine.model.Project;
+import org.apache.tools.tar.TarOutputStream;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Stub used to avoid saves and stub HistoryEntryManager

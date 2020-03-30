@@ -33,12 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.jython;
 
-import java.util.Properties;
-
+import com.google.refine.expr.HasFields;
 import org.python.core.Py;
 import org.python.core.PyObject;
 
-import com.google.refine.expr.HasFields;
+import java.util.Properties;
 
 public class JythonHasFieldsWrapper extends PyObject {
     private static final long serialVersionUID = -1275353513262385099L;

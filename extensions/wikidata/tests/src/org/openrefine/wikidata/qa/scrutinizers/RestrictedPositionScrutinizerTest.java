@@ -23,18 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.util.Collections;
+import java.util.List;
 
 public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
 

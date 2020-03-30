@@ -26,9 +26,9 @@
  ******************************************************************************/
 package com.google.refine.importers;
 
-import java.io.File;
-
 import com.google.refine.importing.FormatGuesser;
+
+import java.io.File;
 
 public class LineBasedFormatGuesser implements FormatGuesser {
 

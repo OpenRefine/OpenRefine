@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.row;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
@@ -44,6 +40,9 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.sorting.SortingConfig;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 public class ReorderRowsCommand extends EngineDependentCommand {
     

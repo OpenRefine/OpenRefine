@@ -33,15 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.arrays;
 
-import java.util.List;
-import java.util.Properties;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+
+import java.util.List;
+import java.util.Properties;
 
 public class Join implements Function {
 

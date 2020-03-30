@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 
 
 /**

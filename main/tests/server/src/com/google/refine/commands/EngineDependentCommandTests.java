@@ -1,16 +1,14 @@
 package com.google.refine.commands;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 public class EngineDependentCommandTests extends CommandTestBase {
 	

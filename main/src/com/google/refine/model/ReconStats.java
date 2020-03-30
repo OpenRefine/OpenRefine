@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.util.ParsingUtilities;
+
+import java.io.IOException;
+import java.io.Writer;
 
 public class ReconStats  {   
     @JsonProperty("nonBlanks")

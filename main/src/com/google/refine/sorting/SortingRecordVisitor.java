@@ -33,15 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.sorting;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.sorting.Criterion.KeyMaker;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class SortingRecordVisitor extends BaseSorter implements RecordVisitor {
     final protected RecordVisitor _visitor;

@@ -1,15 +1,14 @@
 package com.google.refine.extension.database;
 
-import java.sql.SQLException;
-
+import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
+import com.google.refine.extension.database.mysql.MySQLDatabaseService;
+import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
-import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
-import com.google.refine.extension.database.mysql.MySQLDatabaseService;
-import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
+import java.sql.SQLException;
 
 public class DatabaseTestConfig extends DBExtensionTests {
     

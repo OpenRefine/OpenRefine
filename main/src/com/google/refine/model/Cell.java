@@ -33,6 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.HasFields;
+import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.Pool;
+import com.google.refine.util.StringUtils;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
@@ -41,20 +51,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Properties;
-
-import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.expr.HasFields;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.Pool;
-import com.google.refine.util.StringUtils;
 
 public class Cell implements HasFields {
     @JsonIgnore

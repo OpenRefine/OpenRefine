@@ -1,18 +1,16 @@
 package com.google.refine.commands;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.refine.util.TestUtils;
+import org.testng.annotations.BeforeMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.testng.annotations.BeforeMethod;
-
-import com.google.refine.util.TestUtils;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CommandTestBase {
 	protected HttpServletRequest request = null;

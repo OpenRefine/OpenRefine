@@ -8,8 +8,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.LookupException;
 
-import java.util.*;
-
 /**
  * Manage the cache of project's lookups.
  *

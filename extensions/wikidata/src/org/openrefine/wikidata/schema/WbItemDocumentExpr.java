@@ -23,9 +23,10 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import java.util.Collections;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -33,10 +34,8 @@ import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The representation of an item document, which can contain variables both for

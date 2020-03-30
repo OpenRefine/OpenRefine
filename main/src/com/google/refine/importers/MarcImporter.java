@@ -33,22 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.util.JSONUtilities;
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingUtilities;
-import com.google.refine.util.JSONUtilities;
+import java.io.*;
 
 public class MarcImporter extends XmlImporter {
     

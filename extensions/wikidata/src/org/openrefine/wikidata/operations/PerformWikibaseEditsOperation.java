@@ -23,31 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.operations;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.Validate;
-import org.apache.log4j.spi.LoggerRepository;
-import org.openrefine.wikidata.editing.ConnectionManager;
-import org.openrefine.wikidata.editing.EditBatchProcessor;
-import org.openrefine.wikidata.editing.NewItemLibrary;
-import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.util.WebResourceFetcherImpl;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
-import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,6 +36,28 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.Pool;
+import org.apache.commons.lang.Validate;
+import org.openrefine.wikidata.editing.ConnectionManager;
+import org.openrefine.wikidata.editing.EditBatchProcessor;
+import org.openrefine.wikidata.editing.NewItemLibrary;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.util.WebResourceFetcherImpl;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
+import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 

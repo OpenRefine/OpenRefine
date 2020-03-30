@@ -33,17 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.refine.ProjectManager;
+import com.google.refine.model.Project;
+import com.google.refine.preference.PreferenceStore;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.refine.ProjectManager;
-import com.google.refine.model.Project;
-import com.google.refine.preference.PreferenceStore;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetAllPreferencesCommand extends Command {
 	/**

@@ -33,10 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.time.OffsetDateTime;
-import java.util.Properties;
-import java.util.TimeZone;
-
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.util.CalendarParser;
+import com.google.refine.expr.util.CalendarParserException;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -44,13 +46,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.util.CalendarParser;
-import com.google.refine.expr.util.CalendarParserException;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
-import com.google.refine.util.ParsingUtilities;
+import java.time.OffsetDateTime;
+import java.util.Properties;
 
 
 /**

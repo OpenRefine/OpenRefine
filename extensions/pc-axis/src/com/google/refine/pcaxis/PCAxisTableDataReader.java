@@ -33,17 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.pcaxis;
 
+import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
+
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
+import java.util.*;
 
 public class PCAxisTableDataReader implements TableDataReader {
     final private static class Dimension {

@@ -23,16 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.openrefine.wikidata.qa.scrutinizers.*;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.

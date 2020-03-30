@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.grel.controls;
 
-import org.testng.annotations.Test;
-
 import com.google.refine.grel.controls.With;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class WithTests {
     @Test

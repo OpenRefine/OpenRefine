@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.RecordFilter;
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.model.Project;
 import com.google.refine.model.Record;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Encapsulate logic for visiting records that match all given record filters.

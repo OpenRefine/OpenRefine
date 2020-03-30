@@ -33,13 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.browsing.RecordVisitor;
 import com.google.refine.browsing.RowVisitor;
@@ -51,6 +44,8 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Record;
 import com.google.refine.model.Row;
 import com.google.refine.util.StringUtils;
+
+import java.util.*;
 
 /**
  * Visit matched rows or records and group them into facet choices based on the values computed

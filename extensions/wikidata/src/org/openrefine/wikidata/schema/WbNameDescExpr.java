@@ -23,14 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An expression that represent a term (label, description or alias). The

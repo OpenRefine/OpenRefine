@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.math;
 
-import org.testng.annotations.Test;
-
 import com.google.refine.expr.functions.math.Odd;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class OddTests {
     @Test

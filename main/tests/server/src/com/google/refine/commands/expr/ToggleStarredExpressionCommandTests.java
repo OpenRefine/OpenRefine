@@ -26,18 +26,16 @@
  ******************************************************************************/
 package com.google.refine.commands.expr;
 
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.google.refine.commands.Command;
 import com.google.refine.commands.expr.ToggleStarredExpressionCommand;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+
+import static org.mockito.Mockito.when;
 
 public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBase {
     

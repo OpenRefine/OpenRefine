@@ -26,13 +26,13 @@
  ******************************************************************************/
 package com.google.refine.model.recon;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import java.io.IOException;
 
 public class ReconConfigResolver extends TypeIdResolverBase {
     

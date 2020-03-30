@@ -33,22 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Properties;
-
-import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
-import org.odftoolkit.odfdom.doc.table.OdfTable;
-import org.odftoolkit.odfdom.doc.table.OdfTableCell;
-import org.odftoolkit.odfdom.doc.table.OdfTableRow;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
+import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
+import org.odftoolkit.odfdom.doc.table.OdfTable;
+import org.odftoolkit.odfdom.doc.table.OdfTableCell;
+import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Properties;
 
 public class OdsExporter implements StreamExporter {
 

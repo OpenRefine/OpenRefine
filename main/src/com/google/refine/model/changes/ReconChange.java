@@ -36,12 +36,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.google.refine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.List;
-import java.util.Properties;
-
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Column;
@@ -50,6 +44,12 @@ import com.google.refine.model.ReconStats;
 import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Writer;
+import java.util.List;
+import java.util.Properties;
 
 public class ReconChange extends MassCellChange {
     final protected ReconConfig _newReconConfig;

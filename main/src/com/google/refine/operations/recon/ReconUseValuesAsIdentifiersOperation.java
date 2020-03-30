@@ -26,9 +26,6 @@
  ******************************************************************************/
 package com.google.refine.operations.recon;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,17 +33,15 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.history.Change;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
+import com.google.refine.model.*;
 import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.Row;
 import com.google.refine.model.changes.CellChange;
 import com.google.refine.model.changes.ReconChange;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentMassCellOperation;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCellOperation {
     

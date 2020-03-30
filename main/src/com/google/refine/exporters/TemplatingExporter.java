@@ -33,17 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.*;
 import com.google.refine.browsing.Engine.Mode;
-import com.google.refine.browsing.FilteredRecords;
-import com.google.refine.browsing.FilteredRows;
-import com.google.refine.browsing.RecordVisitor;
-import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.model.Project;
 import com.google.refine.sorting.SortingConfig;
@@ -52,6 +44,10 @@ import com.google.refine.sorting.SortingRowVisitor;
 import com.google.refine.templating.Parser;
 import com.google.refine.templating.Template;
 import com.google.refine.util.ParsingUtilities;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Properties;
 
 public class TemplatingExporter implements WriterExporter {
 

@@ -26,9 +26,9 @@
  ******************************************************************************/
 package com.google.refine.exporters;
 
-import java.util.List;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
 
 
 /**

@@ -64,11 +64,11 @@ package com.google.refine.logging;
  *    Original code:  http://simile.mit.edu/repository/tracer/trunk/
  */
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * This is a special Log4j log formatter that is capable of reacting on special log messages

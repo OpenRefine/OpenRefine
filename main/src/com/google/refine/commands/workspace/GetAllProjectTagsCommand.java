@@ -25,18 +25,17 @@
 
 package com.google.refine.commands.workspace;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.ProjectManager;
+import com.google.refine.commands.Command;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.ProjectManager;
-import com.google.refine.commands.Command;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 public class GetAllProjectTagsCommand extends Command {
     

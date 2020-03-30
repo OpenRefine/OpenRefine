@@ -31,17 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.clustering.binning;
 
+import com.google.refine.RefineTest;
+import com.google.refine.clustering.binning.FingerprintKeyer;
+import com.google.refine.clustering.binning.Keyer;
+import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.clustering.binning.FingerprintKeyer;
-import com.google.refine.clustering.binning.Keyer;
-import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 
 
 public class KeyerTests extends RefineTest {

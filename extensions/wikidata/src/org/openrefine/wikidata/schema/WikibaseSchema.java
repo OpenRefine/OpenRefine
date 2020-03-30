@@ -23,16 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -44,6 +34,15 @@ import com.google.refine.model.OverlayModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
+import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main class representing a skeleton of Wikibase edits with OpenRefine columns

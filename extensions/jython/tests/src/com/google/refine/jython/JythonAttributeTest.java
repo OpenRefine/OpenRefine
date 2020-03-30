@@ -1,14 +1,13 @@
 package com.google.refine.jython;
 
-import java.util.Properties;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.HasFields;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Row;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.util.Properties;
 
 public class JythonAttributeTest {
     

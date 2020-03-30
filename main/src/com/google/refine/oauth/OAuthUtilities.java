@@ -33,12 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.oauth;
 
-import java.util.HashMap;
-import java.util.Map;
+import oauth.signpost.OAuthConsumer;
 
 import javax.servlet.http.HttpServletRequest;
-
-import oauth.signpost.OAuthConsumer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OAuthUtilities {
     

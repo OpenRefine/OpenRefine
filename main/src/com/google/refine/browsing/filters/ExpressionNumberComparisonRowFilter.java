@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.filters;
 
-import java.util.Collection;
-import java.util.Properties;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.util.RowEvaluable;
@@ -43,6 +40,9 @@ import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.util.JsonValueConverter;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import java.util.Collection;
+import java.util.Properties;
 
 /**
  * Judge if a row matches by evaluating a given expression on the row, based on a particular

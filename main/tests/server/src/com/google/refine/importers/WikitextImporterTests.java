@@ -34,12 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import com.google.refine.importers.WikitextImporter;
 import com.google.refine.model.recon.StandardReconConfig;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -51,7 +46,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.WikitextImporter;
+import java.io.ByteArrayInputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @PrepareForTest(StandardReconConfig.class)
 public class WikitextImporterTests extends ImporterTest {

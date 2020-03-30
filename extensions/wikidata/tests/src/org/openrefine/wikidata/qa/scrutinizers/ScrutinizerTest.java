@@ -23,19 +23,19 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.testng.annotations.BeforeMethod;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public abstract class ScrutinizerTest {
 

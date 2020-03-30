@@ -1,17 +1,15 @@
 package com.google.refine.commands;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang.RandomStringUtils;
+
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang.RandomStringUtils;
-
-import java.security.SecureRandom;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * Generates CSRF tokens and checks their validity.

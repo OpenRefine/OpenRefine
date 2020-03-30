@@ -26,14 +26,6 @@
  ******************************************************************************/
 package com.google.refine.importing;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
@@ -44,6 +36,13 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 

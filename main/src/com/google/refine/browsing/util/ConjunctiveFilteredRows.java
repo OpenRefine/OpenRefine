@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowFilter;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Encapsulate logic for visiting rows that match all give row filters. Also visit

@@ -26,11 +26,8 @@
  ******************************************************************************/
 package com.google.refine.grel.ast;
 
-import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
-
 import com.google.refine.grel.ast.LiteralExpr;
+import org.testng.annotations.Test;
 
 public class LiteralExprTest {
 	@Test

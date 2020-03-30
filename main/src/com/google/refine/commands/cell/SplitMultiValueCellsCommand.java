@@ -33,13 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.cell;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
@@ -47,6 +40,12 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Properties;
 
 public class SplitMultiValueCellsCommand extends Command {
     @Override

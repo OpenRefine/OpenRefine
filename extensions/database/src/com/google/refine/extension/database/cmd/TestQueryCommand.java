@@ -28,25 +28,24 @@
  */
 package com.google.refine.extension.database.cmd;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.google.refine.ProjectManager;
 import com.google.refine.extension.database.DatabaseConfiguration;
 import com.google.refine.extension.database.DatabaseService;
 import com.google.refine.extension.database.DatabaseServiceException;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.util.ParsingUtilities;
+import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+
+//import com.google.refine.ProjectManager;
 
 
 public class TestQueryCommand extends DatabaseCommand {

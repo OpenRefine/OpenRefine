@@ -23,19 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema.entityvalues;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Collections;
-
+import com.google.refine.model.Recon;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
-import com.google.refine.model.Recon;
+import java.util.Collections;
+
+import static org.testng.Assert.*;
 
 public class ReconEntityIdValueTest {
 

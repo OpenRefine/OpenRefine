@@ -23,22 +23,16 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.refine.model.*;
+import com.google.refine.model.recon.ReconConfig;
+import com.google.refine.model.recon.StandardReconConfig;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.ReconStats;
-import com.google.refine.model.Row;
-import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.model.recon.StandardReconConfig;
 
 /**
  * This keeps track of the new items that we have created for each internal

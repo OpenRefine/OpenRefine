@@ -26,15 +26,15 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.refine.expr.EvalError;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 
 public class Find implements Function {
 

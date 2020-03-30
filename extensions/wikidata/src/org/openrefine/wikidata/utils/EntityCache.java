@@ -23,8 +23,9 @@
  ******************************************************************************/
 package org.openrefine.wikidata.utils;
 
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -33,9 +34,7 @@ import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.util.concurrent.TimeUnit;
 
 public class EntityCache {
 

@@ -33,8 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.util.Properties;
-
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Coalesce;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
+import com.google.refine.util.TestUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -42,12 +46,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.Coalesce;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
-import com.google.refine.util.TestUtils;
+import java.util.Properties;
 
 
 public class CoalesceTests extends RefineTest {

@@ -23,23 +23,21 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
-
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
-import org.openrefine.wikidata.schema.WikibaseSchema;
-
 import com.google.refine.commands.Command;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
+import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Properties;
+
+import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 public class SaveWikibaseSchemaCommand extends Command {
 

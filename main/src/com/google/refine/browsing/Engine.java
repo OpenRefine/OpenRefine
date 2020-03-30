@@ -33,11 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.facets.Facet;
@@ -46,6 +41,11 @@ import com.google.refine.browsing.util.ConjunctiveFilteredRows;
 import com.google.refine.browsing.util.FilteredRecordsAsFilteredRows;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Faceted browsing engine.

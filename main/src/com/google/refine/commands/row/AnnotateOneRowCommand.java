@@ -33,18 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.row;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.refine.commands.Command;
 import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.model.changes.RowFlagChange;
 import com.google.refine.model.changes.RowStarChange;
 import com.google.refine.process.QuickHistoryEntryProcess;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class AnnotateOneRowCommand extends Command {
     @Override

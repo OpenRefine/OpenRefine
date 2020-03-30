@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.process;
 
-import org.testng.annotations.Test;
-
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class LongRunningProcessTests {
     

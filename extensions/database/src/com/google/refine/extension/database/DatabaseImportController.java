@@ -29,19 +29,6 @@
 
 package com.google.refine.extension.database;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
@@ -57,6 +44,17 @@ import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 
 
 public class DatabaseImportController implements ImportingController {

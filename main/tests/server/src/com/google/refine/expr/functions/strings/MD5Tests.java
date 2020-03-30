@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
-import org.testng.annotations.Test;
-
 import com.google.refine.expr.functions.strings.MD5;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class MD5Tests {
     @Test

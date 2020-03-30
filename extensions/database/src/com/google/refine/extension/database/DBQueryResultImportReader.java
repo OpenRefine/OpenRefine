@@ -28,18 +28,17 @@
  */
 package com.google.refine.extension.database;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseQueryInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
 import com.google.refine.importers.TabularImportingParserBase.TableDataReader;
 import com.google.refine.importing.ImportingJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DBQueryResultImportReader implements TableDataReader {

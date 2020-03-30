@@ -33,16 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-
+import com.google.refine.ProjectMetadata;
+import com.google.refine.model.Project;
+import com.google.refine.model.ProjectStub;
+import com.google.refine.process.ProcessManager;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -51,10 +45,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.ProjectMetadata;
-import com.google.refine.model.Project;
-import com.google.refine.model.ProjectStub;
-import com.google.refine.process.ProcessManager;
+import java.time.LocalDateTime;
+
+import static org.mockito.Mockito.*;
 
 public class ProjectManagerTests extends RefineTest {
     ProjectManagerStub pm;

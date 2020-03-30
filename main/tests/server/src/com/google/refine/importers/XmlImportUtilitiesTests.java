@@ -33,14 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
-
+import com.google.refine.RefineTest;
+import com.google.refine.importers.JsonImporter;
+import com.google.refine.importers.JsonImporter.JSONTreeReader;
+import com.google.refine.importers.XmlImporter.XmlParser;
+import com.google.refine.importers.tree.*;
+import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -48,18 +47,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
-import com.google.refine.importers.JsonImporter;
-import com.google.refine.importers.JsonImporter.JSONTreeReader;
-import com.google.refine.importers.XmlImporter.XmlParser;
-import com.google.refine.importers.tree.ImportColumn;
-import com.google.refine.importers.tree.ImportColumnGroup;
-import com.google.refine.importers.tree.ImportParameters;
-import com.google.refine.importers.tree.ImportRecord;
-import com.google.refine.importers.tree.TreeReader;
-import com.google.refine.importers.tree.TreeReaderException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class XmlImportUtilitiesTests extends RefineTest {

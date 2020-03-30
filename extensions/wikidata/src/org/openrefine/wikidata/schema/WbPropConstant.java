@@ -23,12 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedPropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A constant property, that does not change depending on the row

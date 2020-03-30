@@ -26,14 +26,11 @@
  ******************************************************************************/
 package com.google.refine.expr.util;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class JsonValueConverterTests {
 	

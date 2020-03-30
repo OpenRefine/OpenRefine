@@ -1,14 +1,14 @@
 package com.google.refine.operations;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An operation that is unknown to the current OpenRefine

@@ -26,12 +26,12 @@
  ******************************************************************************/
 package com.google.refine.oauth;
 
-import java.util.Iterator;
-
 import oauth.signpost.OAuth;
 import oauth.signpost.http.HttpParameters;
 import oauth.signpost.http.HttpRequest;
 import oauth.signpost.signature.SigningStrategy;
+
+import java.util.Iterator;
 
 public class AuthorizationHeaderSigningStrategy implements SigningStrategy {
 

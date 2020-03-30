@@ -33,14 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -48,12 +40,7 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.history.HistoryEntry;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.Project;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.ReconType;
-import com.google.refine.model.Row;
+import com.google.refine.model.*;
 import com.google.refine.model.changes.CellAtRow;
 import com.google.refine.model.changes.DataExtensionChange;
 import com.google.refine.model.recon.ReconciledDataExtensionJob;
@@ -63,6 +50,8 @@ import com.google.refine.model.recon.ReconciledDataExtensionJob.DataExtensionCon
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
+
+import java.util.*;
 
 public class ExtendDataOperation extends EngineDependentOperation {
     @JsonProperty("baseColumnName")

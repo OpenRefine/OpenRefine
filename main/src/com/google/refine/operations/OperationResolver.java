@@ -26,14 +26,14 @@
  ******************************************************************************/
 package com.google.refine.operations;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.refine.model.AbstractOperation;
+
+import java.io.IOException;
 
 public class OperationResolver extends TypeIdResolverBase {
     

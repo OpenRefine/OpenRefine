@@ -23,6 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
+import org.jsoup.helper.Validate;
+import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -32,15 +40,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * A constant for a time value, accepting a number of formats which determine

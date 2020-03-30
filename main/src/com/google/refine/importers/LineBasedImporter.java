@@ -26,20 +26,19 @@
  ******************************************************************************/
 package com.google.refine.importers;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LineBasedImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);

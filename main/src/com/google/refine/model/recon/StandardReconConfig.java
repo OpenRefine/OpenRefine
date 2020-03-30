@@ -33,25 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -62,15 +43,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
+import com.google.refine.model.*;
 import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
-import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");

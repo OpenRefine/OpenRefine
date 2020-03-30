@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.facets;
 
-import java.util.regex.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.FilteredRecords;
 import com.google.refine.browsing.FilteredRows;
@@ -47,6 +45,8 @@ import com.google.refine.grel.ast.VariableExpr;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.PatternSyntaxExceptionParser;
+
+import java.util.regex.Pattern;
 
 public class TextSearchFacet implements Facet {
     

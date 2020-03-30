@@ -33,25 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.row;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.*;
 import com.google.refine.browsing.Engine.Mode;
-import com.google.refine.browsing.FilteredRecords;
-import com.google.refine.browsing.FilteredRows;
-import com.google.refine.browsing.RecordVisitor;
-import com.google.refine.browsing.RowVisitor;
 import com.google.refine.commands.Command;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -64,6 +51,14 @@ import com.google.refine.sorting.SortingRecordVisitor;
 import com.google.refine.sorting.SortingRowVisitor;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.Pool;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetRowsCommand extends Command {
     

@@ -26,23 +26,21 @@
  ******************************************************************************/
 package com.google.refine.commands;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.refine.RefineServlet;
+import com.google.refine.util.ParsingUtilities;
+import org.apache.velocity.VelocityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.velocity.VelocityContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.refine.RefineServlet;
-import com.google.refine.util.ParsingUtilities;
 
 abstract public class HttpUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("command");

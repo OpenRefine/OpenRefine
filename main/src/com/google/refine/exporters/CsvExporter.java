@@ -33,21 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Properties;
 
 public class CsvExporter implements WriterExporter{
 

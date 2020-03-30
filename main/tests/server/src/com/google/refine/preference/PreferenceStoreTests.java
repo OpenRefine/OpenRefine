@@ -26,18 +26,17 @@
  ******************************************************************************/
 package com.google.refine.preference;
 
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class PreferenceStoreTests {
     public static String json = "{"

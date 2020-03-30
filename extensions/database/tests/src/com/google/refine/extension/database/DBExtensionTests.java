@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.extension.database;
 
-import java.util.Properties;
-
 import org.slf4j.Logger;
+
+import java.util.Properties;
 
 public class DBExtensionTests {
     

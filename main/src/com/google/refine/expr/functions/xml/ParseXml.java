@@ -33,14 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.xml;
 
-import java.util.Properties;
-
-import org.jsoup.Jsoup;
-import org.jsoup.parser.Parser;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
+
+import java.util.Properties;
 
 public class ParseXml implements Function {
 

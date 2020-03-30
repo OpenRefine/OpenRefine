@@ -33,22 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.auth;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.refine.commands.Command;
 import com.google.refine.oauth.Credentials;
 import com.google.refine.oauth.OAuthUtilities;
 import com.google.refine.oauth.Provider;
-
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class AuthorizeCommand extends Command {
     

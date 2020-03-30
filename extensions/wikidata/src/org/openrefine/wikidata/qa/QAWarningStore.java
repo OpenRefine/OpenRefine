@@ -23,14 +23,10 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.*;
 
 /**
  * A store for QA warnings which aggregates them by type.

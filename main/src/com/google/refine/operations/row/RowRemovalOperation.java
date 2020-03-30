@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.row;
 
- import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.browsing.Engine;
@@ -47,6 +44,9 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.model.changes.RowRemovalChange;
 import com.google.refine.operations.EngineDependentOperation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RowRemovalOperation extends EngineDependentOperation {
     @JsonCreator

@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.util;
 
+import com.google.refine.util.ParsingUtilities;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
@@ -41,8 +43,6 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.refine.util.ParsingUtilities;
 
 // Taken from http://icecube.wisc.edu/~dglo/software/calparse/index.html
 // Copyright Dave Glowacki. Released under the BSD license.

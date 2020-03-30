@@ -3,11 +3,7 @@ package com.google.refine.extension.gdata;
 import com.google.refine.ProjectManager;
 import org.testng.annotations.Test;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
 
 public class GoogleAPIExtensionTest {
 

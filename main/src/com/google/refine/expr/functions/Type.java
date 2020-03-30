@@ -33,13 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Properties;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Properties;
 
 public class Type implements Function {
 

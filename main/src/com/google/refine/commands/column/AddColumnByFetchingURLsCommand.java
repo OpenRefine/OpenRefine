@@ -33,11 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.column;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.commands.EngineDependentCommand;
@@ -46,6 +41,10 @@ import com.google.refine.model.Project;
 import com.google.refine.operations.cell.TextTransformOperation;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 public class AddColumnByFetchingURLsCommand extends EngineDependentCommand {
     @Override

@@ -23,18 +23,16 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import java.io.IOException;
-import java.io.Writer;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.google.refine.commands.Command;
+import com.google.refine.util.ParsingUtilities;
+import org.openrefine.wikidata.editing.ConnectionManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.openrefine.wikidata.editing.ConnectionManager;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.refine.commands.Command;
-import com.google.refine.util.ParsingUtilities;
+import java.io.IOException;
+import java.io.Writer;
 
 public class LoginCommand extends Command {
 

@@ -1,24 +1,5 @@
 package com.google.refine.extension.gdata;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
@@ -34,6 +15,19 @@ import com.google.refine.exporters.CustomizableTabularExporterUtilities;
 import com.google.refine.io.FileProjectManager;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 
 public class UploadCommand extends Command {
     static final Logger logger = LoggerFactory.getLogger("gdata_upload");

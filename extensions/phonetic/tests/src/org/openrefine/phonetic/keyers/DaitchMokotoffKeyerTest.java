@@ -1,10 +1,7 @@
 package org.openrefine.phonetic.keyers;
 
-import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
-
 import com.google.refine.clustering.binning.Keyer;
+import org.testng.annotations.Test;
 
 public class DaitchMokotoffKeyerTest {
     protected Keyer keyer = new DaitchMokotoffKeyer();

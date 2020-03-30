@@ -26,22 +26,20 @@
  ******************************************************************************/
 package com.google.refine.model;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.testng.annotations.Test;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Recon;
 import com.google.refine.util.Pool;
 import com.google.refine.util.TestUtils;
+import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertNull;
 
 public class CellTests {
     

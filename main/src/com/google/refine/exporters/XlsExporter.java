@@ -33,28 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Properties;
-
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Properties;
 
 public class XlsExporter implements StreamExporter {
     final private boolean xml;

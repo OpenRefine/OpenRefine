@@ -1,6 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 

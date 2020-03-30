@@ -33,14 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.browsing.util;
 
+import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.model.Project;
+import com.google.refine.model.Row;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
-import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 
 /**
  * A utility class for computing the base bins that form the base histograms of 

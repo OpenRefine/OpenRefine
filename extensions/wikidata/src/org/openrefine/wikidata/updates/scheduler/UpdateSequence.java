@@ -23,14 +23,10 @@
  ******************************************************************************/
 package org.openrefine.wikidata.updates.scheduler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+
+import java.util.*;
 
 /**
  * Helper class to store a list of updates where each subject appears at most

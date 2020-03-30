@@ -33,13 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-
-import org.apache.commons.text.WordUtils;
-
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import org.apache.commons.text.WordUtils;
+
+import java.util.Properties;
 
 public class ToTitlecase implements Function {
     final static private char[] delimiters = { ' ', '\t', '\r', '\n', '.' };

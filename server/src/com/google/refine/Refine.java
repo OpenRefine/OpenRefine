@@ -33,7 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine;
 
-import java.awt.Desktop;
+import com.codeberry.jdatapath.DataPath;
+import com.codeberry.jdatapath.JDataPathSystem;
+import com.google.util.threads.ThreadPoolExecutorAdapter;
+import org.apache.log4j.Level;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.webapp.WebAppContext;
+import org.mortbay.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -47,22 +61,6 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.JFrame;
-
-import org.apache.log4j.Level;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codeberry.jdatapath.DataPath;
-import com.codeberry.jdatapath.JDataPathSystem;
-import com.google.util.threads.ThreadPoolExecutorAdapter;
 
 /**
  * Main class for Refine server application.  Starts an instance of the

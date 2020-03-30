@@ -23,13 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class WbSnakExprTest extends WbExpressionTest<Snak> {
 

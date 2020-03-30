@@ -26,10 +26,6 @@
  ******************************************************************************/
 package com.google.refine.util;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,6 +39,10 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Series of classes which configure JSON serialization at application level.

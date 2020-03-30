@@ -23,12 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.entityvalues.SuggestedItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents an item that does not vary, it is independent of the row.

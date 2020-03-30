@@ -33,11 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class Jsonize implements Function {
 

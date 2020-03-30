@@ -33,8 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
-import java.util.Properties;
-
+import com.google.refine.RefineTest;
+import com.google.refine.expr.*;
+import com.google.refine.model.Project;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -42,13 +43,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.ExpressionUtils;
-import com.google.refine.expr.MetaParser;
-import com.google.refine.expr.ParsingException;
-import com.google.refine.model.Project;
+import java.util.Properties;
 
 public class GrelTests extends RefineTest {
 

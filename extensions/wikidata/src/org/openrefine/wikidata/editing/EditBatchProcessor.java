@@ -23,13 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.editing;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.refine.ProjectManager;
+import com.google.refine.preference.PreferenceStore;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -43,8 +38,13 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-import com.google.refine.ProjectManager;
-import com.google.refine.preference.PreferenceStore;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**

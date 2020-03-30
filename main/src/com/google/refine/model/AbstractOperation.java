@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import java.util.Properties;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -44,6 +42,8 @@ import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.OperationResolver;
 import com.google.refine.process.Process;
 import com.google.refine.process.QuickHistoryEntryProcess;
+
+import java.util.Properties;
 
 /*
  *  An abstract operation can be applied to different but similar

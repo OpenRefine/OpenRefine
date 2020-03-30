@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.arrays;
 
-import java.util.Properties;
-
 import com.google.refine.grel.Function;
+
+import java.util.Properties;
 
 public class ArgsToArray implements Function {
 

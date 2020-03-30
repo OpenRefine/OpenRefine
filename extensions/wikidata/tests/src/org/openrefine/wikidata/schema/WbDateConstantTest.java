@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import java.util.Calendar;
-
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
+
+import java.util.Calendar;
 
 public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
