@@ -27,9 +27,9 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.util.ParsingUtilities;
 
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.WikidataConstraintFetcher;
@@ -38,10 +38,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.util.ParsingUtilities;
 
 @PrepareForTest(EditInspector.class)
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {

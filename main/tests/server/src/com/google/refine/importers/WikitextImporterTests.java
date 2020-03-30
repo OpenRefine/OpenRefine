@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.google.refine.model.recon.StandardReconConfig;
+
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -50,8 +51,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.importers.WikitextImporter;
 
 @PrepareForTest(StandardReconConfig.class)
 public class WikitextImporterTests extends ImporterTest {

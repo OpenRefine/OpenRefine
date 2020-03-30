@@ -28,17 +28,16 @@ package com.google.refine.operations.cell;
 
 import java.util.List;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.MassEditOperation;
 import com.google.refine.operations.cell.MassEditOperation.Edit;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 public class MassOperationTests extends RefineTest {
 

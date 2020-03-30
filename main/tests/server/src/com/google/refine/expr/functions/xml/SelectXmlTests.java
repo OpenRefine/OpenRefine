@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.xml;
 
-import org.testng.annotations.Test;
-
-import com.google.refine.expr.functions.xml.SelectXml;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.Test;
 
 public class SelectXmlTests {
     @Test

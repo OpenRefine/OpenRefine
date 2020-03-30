@@ -38,6 +38,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.refine.ProjectManager;
+import com.google.refine.ProjectMetadata;
+import com.google.refine.RefineTest;
+import com.google.refine.model.Project;
+import com.google.refine.util.TestUtils;
+
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -45,16 +51,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.ProjectManager;
-import com.google.refine.history.Change;
-import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineTest;
-import com.google.refine.history.History;
-import com.google.refine.history.HistoryEntry;
-import com.google.refine.history.HistoryEntryManager;
-import com.google.refine.model.Project;
-import com.google.refine.util.TestUtils;
 
 
 public class HistoryTests extends RefineTest {

@@ -1,10 +1,9 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
+import java.util.Set;
+
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-
-import java.util.Set;
 
 /**
  * @author Lu Liu

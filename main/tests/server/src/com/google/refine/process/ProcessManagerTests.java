@@ -26,13 +26,11 @@
  ******************************************************************************/
 package com.google.refine.process;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.google.refine.process.Process;
-import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class ProcessManagerTests {
     

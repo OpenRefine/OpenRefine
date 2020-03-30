@@ -37,14 +37,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.row.GetRowsCommand;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class GetRowsCommandTest extends RefineTest {
     

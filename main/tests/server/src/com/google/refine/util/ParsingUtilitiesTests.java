@@ -33,23 +33,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
-import java.io.*;
-import java.util.zip.GZIPOutputStream;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.zip.GZIPOutputStream;
+
+import com.google.refine.RefineTest;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.util.ParsingUtilities;
 
 public class ParsingUtilitiesTests extends RefineTest {
     

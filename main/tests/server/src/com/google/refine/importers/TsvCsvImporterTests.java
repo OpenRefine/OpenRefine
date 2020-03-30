@@ -35,6 +35,8 @@ package com.google.refine.importers;
 
 import java.io.StringReader;
 
+import com.google.refine.util.ParsingUtilities;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -42,9 +44,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import com.google.refine.importers.SeparatorBasedImporter;
-import com.google.refine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
 

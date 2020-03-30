@@ -6,16 +6,15 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
-import com.google.refine.history.HistoryEntry;
 import com.google.refine.io.FileHistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionOperation;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class FileHistoryEntryManagerTests extends RefineTest {
 	

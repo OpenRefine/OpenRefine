@@ -34,12 +34,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -47,15 +41,18 @@ import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.Row;
-import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.model.recon.ReconJob;
-import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.recon.ReconOperation;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class StandardReconConfigTests extends RefineTest {
     

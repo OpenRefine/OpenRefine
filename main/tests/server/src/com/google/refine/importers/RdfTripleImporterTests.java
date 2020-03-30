@@ -38,14 +38,13 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import com.google.refine.util.JSONUtilities;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.importers.RdfTripleImporter;
-import com.google.refine.util.JSONUtilities;
 
 public class RdfTripleImporterTests extends ImporterTest {
     

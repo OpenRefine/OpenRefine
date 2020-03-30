@@ -29,18 +29,17 @@ package com.google.refine.operations.column;
 import java.util.Arrays;
 import java.util.Properties;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnReorderOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.TestUtils;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 
 public class ColumnReorderOperationTests extends RefineTest {

@@ -31,16 +31,15 @@ import static org.testng.Assert.assertNull;
 
 import java.util.Properties;
 
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.model.Project;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.recon.ReconUseValuesAsIdentifiersOperation;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 
 public class ReconUseValuesAsIdsOperationTests extends RefineTest {

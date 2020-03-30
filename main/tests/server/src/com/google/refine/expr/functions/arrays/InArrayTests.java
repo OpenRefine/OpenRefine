@@ -26,23 +26,22 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
+import com.google.refine.util.TestUtils;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.RefineTest;
-import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.arrays.InArray;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
-import com.google.refine.util.TestUtils;
 
 public class InArrayTests extends RefineTest {
     

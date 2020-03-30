@@ -44,15 +44,13 @@ import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonParseException;
-
 import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XmlImportUtilities extends TreeImportUtilities {
     final static Logger logger = LoggerFactory.getLogger("XmlImportUtilities");

@@ -29,17 +29,16 @@ package com.google.refine.importers;
 
 import java.io.StringReader;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.importers.FixedWidthImporter;
-import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
 
 public class FixedWidthImporterTests extends ImporterTest {
     @Override

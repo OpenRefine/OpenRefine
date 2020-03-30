@@ -26,15 +26,14 @@
  ******************************************************************************/
 package com.google.refine.operations.column;
 
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnRenameOperation;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 
 public class ColumnRenameOperationTests extends RefineTest {

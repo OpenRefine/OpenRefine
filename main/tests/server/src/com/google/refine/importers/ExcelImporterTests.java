@@ -47,6 +47,9 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.refine.util.ParsingUtilities;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -59,10 +62,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.importers.ExcelImporter;
-import com.google.refine.util.ParsingUtilities;
 
 public class ExcelImporterTests extends ImporterTest {
     

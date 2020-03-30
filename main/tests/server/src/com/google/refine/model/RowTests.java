@@ -39,20 +39,16 @@ import static org.mockito.Mockito.when;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import com.google.refine.RefineTest;
+import com.google.refine.util.Pool;
+import com.google.refine.util.TestUtils;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.Row;
-import com.google.refine.util.Pool;
-import com.google.refine.util.TestUtils;
 
 public class RowTests extends RefineTest {
 

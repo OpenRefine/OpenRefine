@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
-import org.testng.annotations.Test;
-
-import com.google.refine.expr.functions.strings.SHA1;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.Test;
 
 public class SHA1Tests {
     @Test

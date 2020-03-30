@@ -28,11 +28,10 @@ package com.google.refine.browsing;
 
 import static org.mockito.Mockito.mock;
 
-import org.testng.annotations.Test;
-
-import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.Test;
 
 
 public class EngineTests {

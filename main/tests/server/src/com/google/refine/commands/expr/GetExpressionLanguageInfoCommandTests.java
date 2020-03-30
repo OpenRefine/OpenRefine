@@ -30,13 +30,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.refine.commands.expr.GetExpressionLanguageInfoCommand;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class GetExpressionLanguageInfoCommandTests extends ExpressionCommandTestBase {
 

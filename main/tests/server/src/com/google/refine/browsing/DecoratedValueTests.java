@@ -28,10 +28,9 @@ package com.google.refine.browsing;
 
 import java.time.OffsetDateTime;
 
-import org.testng.annotations.Test;
-
-import com.google.refine.browsing.DecoratedValue;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.Test;
 
 public class DecoratedValueTests {
     @Test

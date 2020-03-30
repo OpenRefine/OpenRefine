@@ -30,8 +30,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.ast.LiteralExpr;
-
 public class LiteralExprTest {
 	@Test
 	public void intLiteralToString() {

@@ -36,13 +36,12 @@ package com.google.refine.util;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import com.google.refine.RefineTest;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.util.PatternSyntaxExceptionParser;
 
 public class PatternSyntaxExceptionParserTests extends RefineTest {
     

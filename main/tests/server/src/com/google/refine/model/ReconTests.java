@@ -26,11 +26,10 @@
  ******************************************************************************/
 package com.google.refine.model;
 
-import org.testng.annotations.Test;
-
-import com.google.refine.model.Recon;
 import com.google.refine.model.Recon.Judgment;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.Test;
 
 public class ReconTests {
     

@@ -39,21 +39,20 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.importers.tree.TreeImportingParserBase;
+import com.google.refine.importing.ImportingJob;
+import com.google.refine.model.Row;
+import com.google.refine.util.JSONUtilities;
+import com.google.refine.util.ParsingUtilities;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.importers.XmlImporter;
-import com.google.refine.importers.tree.TreeImportingParserBase;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.model.Row;
-import com.google.refine.util.JSONUtilities;
-import com.google.refine.util.ParsingUtilities;
 
 
 public class XmlImporterTests extends ImporterTest {

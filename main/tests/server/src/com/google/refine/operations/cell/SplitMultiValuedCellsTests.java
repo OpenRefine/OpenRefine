@@ -36,20 +36,19 @@ package com.google.refine.operations.cell;
 
 import java.util.Properties;
 
+import com.google.refine.RefineTest;
+import com.google.refine.model.AbstractOperation;
+import com.google.refine.model.Project;
+import com.google.refine.operations.OperationRegistry;
+import com.google.refine.process.Process;
+import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
+
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.refine.RefineTest;
-import com.google.refine.model.AbstractOperation;
-import com.google.refine.model.Project;
-import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.MultiValuedCellSplitOperation;
-import com.google.refine.process.Process;
-import com.google.refine.util.ParsingUtilities;
-import com.google.refine.util.TestUtils;
 
 
 public class SplitMultiValuedCellsTests extends RefineTest {

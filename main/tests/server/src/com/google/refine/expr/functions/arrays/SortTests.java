@@ -26,10 +26,9 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.arrays;
 
-import org.testng.annotations.Test;
-
-import com.google.refine.expr.functions.arrays.Sort;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.Test;
 
 public class SortTests {
     @Test

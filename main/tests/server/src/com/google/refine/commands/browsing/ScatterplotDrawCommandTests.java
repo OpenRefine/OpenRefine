@@ -10,16 +10,15 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.testng.Assert;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.browsing.GetScatterplotCommand;
 import com.google.refine.util.ParsingUtilities;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class ScatterplotDrawCommandTests {
     protected HttpServletRequest request = null;

@@ -30,16 +30,15 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
 import com.google.refine.RefineTest;
-import com.google.refine.history.HistoryEntry;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
 import com.google.refine.operations.column.ColumnAdditionOperation;
 import com.google.refine.util.TestUtils;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class HistoryEntryTests extends RefineTest {
 	
