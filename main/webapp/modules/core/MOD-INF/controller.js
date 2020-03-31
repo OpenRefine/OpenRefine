@@ -358,6 +358,7 @@ function init() {
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
       "scripts/util/filter-lists.js",
+      "scripts/util/pref.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -447,6 +448,7 @@ function init() {
       "scripts/util/custom-suggest.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
+      "scripts/util/pref.js",
 
       "scripts/widgets/histogram-widget.js",
       "scripts/widgets/slider-widget.js",

@@ -341,6 +341,10 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 
   elmts.cellTextSpan.text(this._cell.v);
 
+  var checkRadioOne = getPreference('checkRadioOne');
+  elmts.radioSimilar[0].checked = !checkRadioOne;
+  elmts.radioOne[0].checked = checkRadioOne;
+
   var match = null;
   var commit = function() {
     if (match !== null) {
@@ -357,7 +361,8 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
         types: notable_types
       };
 
-      if (elmts.radioSimilar[0].checked) {
+      checkRadioOne = elmts.radioOne[0].checked;
+      if (!checkRadioOne) {
         params.similarValue = self._cell.v;
         params.columnName = Refine.cellIndexToColumn(self._cellIndex).name;
 
@@ -368,7 +373,8 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 
         self._postProcessOneCell("recon-judge-one-cell", {}, params, true);
       }
-
+      // Saving the preference in case of successful matches, can extend to other cases also
+      setPreference('checkRadioOne', checkRadioOne);
       dismiss();
     }
   };
