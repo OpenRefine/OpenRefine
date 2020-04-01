@@ -301,6 +301,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     elmts.or_views_byCase.text($.i18n('core-views/by-case'));
     elmts.or_views_byNumber.text($.i18n('core-views/by-number'));
+    elmts.or_views_revCase.text($.i18n('core-views/by-rev-case'));
+    elmts.or_views_revNum.text($.i18n('core-views/by-rev-number'));
 
     elmts.okButton.html($.i18n('core-buttons/ok'));
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
@@ -351,10 +353,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           return;
         }
       } else if (mode === "cases") {
-        config.separator = "(?<=[a-z]|[a-z][\\s])(?=[A-Z])";
+        if(elmts.reversTranistionCases[0].checked) {
+          config.separator = "(?<=[A-Z]|[À-Ý]|[A-Z\\s][À-Ý\\s])(?=[a-z]|[à-ÿ])";
+        } else {
+          config.separator = "(?<=[a-z]|[a-z\\s]|[à-ÿ]|[à-ÿ\\s])(?=[A-Z]|[À-Ý])";
+        }
         config.regex = true;
       } else if (mode === "number") {
-        config.separator = "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z])|(?<=[a-z]|\\s|[A-Z])(?=[0-9])";
+        if(elmts.reversTranistionNumbers[0].checked) {
+          config.separator = "(?<=[A-Z]|[a-z]|[À-Ɗ]|\s)(?=[0-9])";
+        } else {
+          config.separator = "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z]|[À-Ɗ])";
+        }
         config.regex = true;
       }
 

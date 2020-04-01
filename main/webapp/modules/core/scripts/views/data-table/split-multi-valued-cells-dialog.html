@@ -23,7 +23,7 @@
               <td colspan="2"><label for="$split-multi-valued-cells-by-lengths" bind="or_views_fieldLen"></label></td>
             </tr>
             <tr><td></td>
-              <td colspan="2"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
+              <td colspan="3"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
             </tr>
             <tr><td></td>
               <td colspan="2" bind="or_views_listInt"></td>
@@ -31,10 +31,14 @@
             <tr>
               <td width="1%"><input type="radio" name="split-by-mode" value="cases" id="$split-multi-valued-cells-by-case" /></td>
               <td colspan="2"><label for="$split-multi-valued-cells-by-case" bind="or_views_byCase"></label></td>
+              <td><input type="checkbox" bind="reversTranistionCases" id="$split-cell-transition-order-case" />
+              <label for="$split-cell-transition-order-case" bind="or_views_revCase"></label></td>
             </tr>
             <tr>
               <td width="1%"><input type="radio" name="split-by-mode" value="number" id="$split-multi-valued-cells-by-number" /></td>
               <td colspan="2"><label for="$split-multi-valued-cells-by-number" bind="or_views_byNumber"></label></td>
+              <td><input type="checkbox" bind="reversTranistionNumbers" id="$split-cell-transition-order-number" />
+              <label for="$split-cell-transition-order-number" bind="or_views_revNum"></label></td>
             </tr>
           </table></div>
         </td>
