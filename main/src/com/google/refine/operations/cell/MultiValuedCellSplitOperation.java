@@ -202,7 +202,7 @@ public class MultiValuedCellSplitOperation extends AbstractOperation {
                     }
                 }
             } else if (_regex) {
-                Pattern pattern = Pattern.compile(_separator);
+                Pattern pattern = Pattern.compile(_separator, Pattern.UNICODE_CHARACTER_CLASS);
                 values = pattern.split(s);
             } else {
                 values = StringUtils.splitByWholeSeparatorPreserveAllTokens(s, _separator);

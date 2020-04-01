@@ -169,7 +169,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
-            "(?<=[a-z]|[a-z\\s]|[à-ÿ]|[à-ÿ\\s])(?=[A-Z]|[À-Ý])",
+            "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})",
             true);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -192,7 +192,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
-            "(?<=[A-Z]|[À-Ý]|[A-Z\\s][À-Ý\\s])(?=[a-z]|[à-ÿ])",
+            "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})",
             true);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -217,7 +217,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
-            "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z]|[À-Ɗ])",
+            "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})",
             true);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
@@ -238,7 +238,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         AbstractOperation op = new MultiValuedCellSplitOperation(
             "Value",
             "Key",
-            "(?<=[A-Z]|[a-z]|[À-Ɗ]|\\s)(?=[0-9])",
+            "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})",
             true);
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();

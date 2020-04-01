@@ -354,16 +354,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
       } else if (mode === "cases") {
         if(elmts.reversTranistionCases[0].checked) {
-          config.separator = "(?<=[A-Z]|[À-Ý]|[A-Z\\s][À-Ý\\s])(?=[a-z]|[à-ÿ])";
+          config.separator = "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})";
         } else {
-          config.separator = "(?<=[a-z]|[a-z\\s]|[à-ÿ]|[à-ÿ\\s])(?=[A-Z]|[À-Ý])";
+          config.separator = "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})";
         }
         config.regex = true;
       } else if (mode === "number") {
         if(elmts.reversTranistionNumbers[0].checked) {
-          config.separator = "(?<=[A-Z]|[a-z]|[À-Ɗ]|\\s)(?=[0-9])";
+          config.separator = "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})";
         } else {
-          config.separator = "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z]|[À-Ɗ])";
+          config.separator = "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})";
         }
         config.regex = true;
       }
