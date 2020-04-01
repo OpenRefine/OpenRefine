@@ -207,7 +207,9 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(2).getCellValue(valueCol), "evèË");
         Assert.assertEquals(project.rows.get(3).getCellValue(keyCol), null);
-        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "ight;niné91011twelve thirteen 14Àifteen");
+        Assert.assertEquals(project.rows.get(3).getCellValue(valueCol), "ight;niné91011twelve thirteen 14À");
+        Assert.assertEquals(project.rows.get(4).getCellValue(keyCol), null);
+        Assert.assertEquals(project.rows.get(4).getCellValue(valueCol), "ifteen");
     }
 
     @Test
@@ -224,7 +226,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
         
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevenËight;niné91011");
+        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné91011");
         Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "twelve thirteen 14");
         Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
@@ -245,7 +247,7 @@ public class SplitMultiValuedCellsTests extends RefineTest {
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
         
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevenËight;niné");
+        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné");
         Assert.assertEquals(project.rows.get(1).getCellValue(keyCol), null);
         Assert.assertEquals(project.rows.get(1).getCellValue(valueCol), "91011twelve thirteen ");
         Assert.assertEquals(project.rows.get(2).getCellValue(keyCol), null);
