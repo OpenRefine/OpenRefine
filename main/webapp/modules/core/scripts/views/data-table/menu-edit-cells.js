@@ -361,7 +361,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         config.regex = true;
       } else if (mode === "number") {
         if(elmts.reversTranistionNumbers[0].checked) {
-          config.separator = "(?<=[A-Z]|[a-z]|[À-Ɗ]|\s)(?=[0-9])";
+          config.separator = "(?<=[A-Z]|[a-z]|[À-Ɗ]|\\s)(?=[0-9])";
         } else {
           config.separator = "(?<=[0-9]|[0-9][\\s])(?=[A-Z]|[a-z]|[À-Ɗ])";
         }
