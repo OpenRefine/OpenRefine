@@ -329,7 +329,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       self._columnHeaderUIs.push(columnHeaderUI);
     }
   };
-
   for (var i = 0; i < columns.length; i++) {
     createColumnHeader(columns[i], i);
   }
@@ -342,16 +341,13 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var rows = theProject.rowModel.rows;
   var renderRow = function(tr, r, row, even) {
     $(tr).empty();
-
     var cells = row.cells;
-
     var tdStar = tr.insertCell(tr.cells.length);
     var star = $('<a href="javascript:{}">&nbsp;</a>')
     .addClass(row.starred ? "data-table-star-on" : "data-table-star-off")
     .appendTo(tdStar)
     .click(function() {
       var newStarred = !row.starred;
-
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, starred: newStarred },
@@ -367,14 +363,12 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
         "json"
       );
     });
-
     var tdFlag = tr.insertCell(tr.cells.length);
     var flag = $('<a href="javascript:{}">&nbsp;</a>')
     .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
     .appendTo(tdFlag)
     .click(function() {
       var newFlagged = !row.flagged;
-
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, flagged: newFlagged },
@@ -432,53 +426,10 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   });
 };
 
-DataTableView.prototype._adjustDataTables = function() {
-  var dataTable = this._div.find('.data-table');
-  var headerTable = this._div.find('.data-header-table');
-  if (dataTable.length === 0 || headerTable.length === 0) {
-    return;
-  }
-  dataTable = dataTable[0];
-  headerTable = headerTable[0];
-  
-  if (dataTable.rows.length === 0) {
-    return;
-  }
-  
-  var dataTr = dataTable.rows[0];
-  var headerTr = headerTable.rows[headerTable.rows.length - 1];
-  
-  var marginColumnWidths =
-    $(dataTr.cells[0]).outerWidth(true) +
-    $(dataTr.cells[1]).outerWidth(true) +
-    $(dataTr.cells[2]).outerWidth(true) -
-    DOM.getHPaddings($(headerTr.cells[0])) + 1;
-  
-  $(headerTable)
-    .find('> tbody > tr > td:first-child')
-    .width('1%')
-    .children()
-      .first()
-      .width(marginColumnWidths);
-  
-  for (var i = 1; i < headerTr.cells.length; i++) {
-    var headerTd = $(headerTr.cells[i]);
-    var dataTd = $(dataTr.cells[i + 2]);
-    var commonWidth = Math.max(
-      Math.min(headerTd.width(), 100),
-      dataTd.width()
-    );
-    headerTd.width('1%').find('> div').width(commonWidth);
-    dataTd.children().first().width(commonWidth);
-  }
-  
-  this._adjustDataTableScroll();
-};
-
 DataTableView.prototype._adjustDataTableScroll = function() {
   var dataTableContainer = this._div.find('.data-table-container');
-  var headerTableContainer = this._div.find('.data-header-table-container');
-  if (dataTableContainer.length > 0 && headerTableContainer.length > 0) {
+  var headerTableContainer = this._div.find('.data-header-table');
+  if (dataTableContainer.length > 0 || headerTableContainer.length > 0) {
     headerTableContainer
       .find('> .data-header-table')
       .css('left', '-' + dataTableContainer[0].scrollLeft + 'px');
