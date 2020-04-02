@@ -7,8 +7,8 @@
   <baseDirectory>${project.build.finalName}-${project.version}</baseDirectory>
   <fileSets>
    <fileSet>
-    <directory>${windows-jre-home}</directory>
-    <outputDirectory>server/target/jre</outputDirectory>
+    <directory>${package-jre-directory}</directory>
+    <outputDirectory>${package-jre-outputDirectory}</outputDirectory>
     <includes>
     <include>**</include>
     </includes>
@@ -30,7 +30,6 @@
     <fileSet>
       <directory>${rootdir}/main/webapp</directory>
       <outputDirectory>webapp</outputDirectory>
-      
       <excludes>
 	<exclude>**/*.java</exclude>
 	<exclude>**/butterfly.properties</exclude>

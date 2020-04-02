@@ -9,8 +9,23 @@
         <windows-jre-home>C:\jre1.8.0_241</windows-jre-home>
       </properties>
     </profile>
+    <profile>
+      <id>embedded-jre</id>
+      <properties>
+        <package-jre-path>server/target/jre</package-jre-path>
+        <package-jre-directory>${windows-jre-home}</package-jre-directory>
+        <package-jre-outputDirectory>server/target/jre</package-jre-outputDirectory>
+      </properties>
+    </profile>
+    <profile>
+      <id>system-jre</id>
+      <properties>
+        <package-jre-path>%JAVA_HOME%;%PATH%</package-jre-path>
+        <package-jre-directory>null</package-jre-directory>
+        <package-jre-outputDirectory>jre</package-jre-outputDirectory>
+      </properties>
+    </profile>
   </profiles>
- 
   <activeProfiles>
     <activeProfile>inject-windows-jre-home</activeProfile>
   </activeProfiles>
