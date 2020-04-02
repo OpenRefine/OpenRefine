@@ -21,24 +21,6 @@
     <mac.jre.path>/opt/jre1.8.0_181.jre</mac.jre.path>
   </properties>
   
-  <!-- <profiles>
-    <profile>
-      <id>embedded-jre</id>
-      <properties>
-        <package-jre-path>server/target/jre</package-jre-path>
-        <package-jre-directory>${windows-jre-home}</package-jre-directory>
-        <package-jre-outputDirectory>server/target/jre</package-jre-outputDirectory>
-      </properties>
-    </profile>
-    <profile>
-      <id>system-jre</id>
-      <properties>
-        <package-jre-path>%JAVA_HOME%;%PATH%</package-jre-path>
-        <package-jre-directory></package-jre-directory>
-        <package-jre-outputDirectory></package-jre-outputDirectory>
-      </properties>
-    </profile>
-  </profiles> -->
   <build>
     <plugins>
       <plugin>
