@@ -35,10 +35,20 @@
               <label for="$split-cell-transition-order-case" bind="or_views_revCase"></label></td>
             </tr>
             <tr>
+              <td></td>
+              <td colspan="2"><span bind="or_views_caseExample"></span></td>
+              <td colspan="2"><span style="padding-left: 25px;" bind="or_views_caseReverseExample"></span></td>
+            </tr>
+            <tr>
               <td width="1%"><input type="radio" name="split-by-mode" value="number" id="$split-multi-valued-cells-by-number" /></td>
               <td colspan="2"><label for="$split-multi-valued-cells-by-number" bind="or_views_byNumber"></label></td>
               <td><input type="checkbox" bind="reversTranistionNumbers" id="$split-cell-transition-order-number" />
               <label for="$split-cell-transition-order-number" bind="or_views_revNum"></label></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td colspan="2"><span bind="or_views_numberExample"></span></td>
+              <td colspan="2"><span style="padding-left: 25px;" bind="or_views_numberReverseExample"></span></td>
             </tr>
           </table></div>
         </td>

@@ -301,8 +301,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     elmts.or_views_byCase.text($.i18n('core-views/by-case'));
     elmts.or_views_byNumber.text($.i18n('core-views/by-number'));
-    elmts.or_views_revCase.text($.i18n('core-views/by-rev-case'));
-    elmts.or_views_revNum.text($.i18n('core-views/by-rev-number'));
+    elmts.or_views_revCase.text($.i18n('core-views/by-rev'));
+    elmts.or_views_revNum.text($.i18n('core-views/by-rev'));
+    elmts.or_views_caseExample.text($.i18n('core-views/by-case-example'));
+    elmts.or_views_caseReverseExample.text($.i18n('core-views/by-case-rev-example'));
+    elmts.or_views_numberExample.text($.i18n('core-views/by-number-example'));
+    elmts.or_views_numberReverseExample.text($.i18n('core-views/by-number-rev-example'));
 
     elmts.okButton.html($.i18n('core-buttons/ok'));
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
