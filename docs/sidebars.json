@@ -1,0 +1,34 @@
+{
+  "docs": {
+    "Getting Started": [
+      "index",
+      "install",
+      "user_data"
+    ],
+    "Importing Data": [
+       "importers/csv",
+       "importers/json",
+       "importers/xml"
+    ],
+    "Operations": [
+        "operations/transform",
+        "operations/add_column",
+        "operations/recon"
+    ],
+    "Facets": [
+        "facets/text",
+        "facets/numeric",
+        "facets/scatterplot"
+    ],
+    "Exporters": [
+        "exporters/csv",
+        "exporters/gsheets",
+        "exporters/ods"
+    ],
+    "GREL": [
+        "grel/cross",
+        "grel/facetCount",
+        "grel/toString"
+    ]
+  }
+}
