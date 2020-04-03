@@ -16,7 +16,7 @@ const siteConfig = {
   ],
 
   users: [],
-  customDocsPath: 'docs/source',
+  customDocsPath: 'docs/src',
   docsUrl: '',
 
   /* path to images for header/footer */
@@ -57,7 +57,7 @@ const siteConfig = {
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
   // No .html extensions for paths.
-  cleanUrl: true,
+  cleanUrl: false,
 
   // Open Graph and Twitter card images.
   ogImage: 'img/openrefine_logo.png',
