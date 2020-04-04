@@ -274,6 +274,8 @@ function registerImporting() {
   IM.registerMimeType("text/n3", "text/rdf/n3");
   IM.registerMimeType("text/rdf+n3", "text/rdf/n3");
   IM.registerMimeType("text/turtle", "text/rdf/ttl");
+  IM.registerMimeType("application/xml", "text/xml");
+  IM.registerMimeType("text/xml", "text/xml");
   IM.registerMimeType("application/rdf+xml", "text/rdf/xml");
   IM.registerMimeType("application/ld+json", "text/rdf/ld+json");
 
