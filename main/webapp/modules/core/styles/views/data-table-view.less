@@ -55,14 +55,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-weight: bold;
   }
 
-.data-header-table-container {
-  border-top: 1px solid @chrome_primary;
-  border-bottom: 2px solid @chrome_primary;
-  background: @fill_primary;
-  overflow: visible;
-  }
 
-.data-header-table {
+.data-table-header {
   width: 1px;
   position: relative;
   }
@@ -71,7 +65,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   overflow: auto;
   }
 
-.data-header-table, .data-table {
+.data-table-header, .data-table {
   margin: 0;
   padding: 0;
   font-size: 1.1em;
@@ -87,19 +81,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   cursor: col-resize;       
 }
 
-.data-table td, .data-header-table td {
+.data-table td, .data-table-header td {
   padding: 2px 5px;
   }
 .data-table td {
   border-bottom: 1px dotted #ddd;
   border-right: 1px solid #ddd;
   }
-.data-header-table td {
+.data-table-header td {
   border-bottom: 1px dotted @chrome_primary;
   border-right: 1px solid @chrome_primary;
   }
 
-table.data-header-table > tbody > tr > td {
+table.data-table-header > tbody > tr > td {
   overflow: hidden !important;
   }
 
@@ -111,7 +105,7 @@ table.data-table > tbody > tr.contextual > td > div {
   opacity: 0.3;
   }
 
-table.data-header-table td.column-header, table.data-table td.column-header {
+table.data-table-header td.column-header, table.data-table td.column-header {
   vertical-align: top;
   white-space: nowrap;
   cursor: pointer;
