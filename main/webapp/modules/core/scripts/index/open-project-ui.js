@@ -218,7 +218,8 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .addClass("delete-project")
       .attr("title",$.i18n('core-index-open/del-title'))
       .attr("href","")
-      .html("<img src='images/close.png' />")
+      .css("color","red")
+      .html("Delete")
       .click(function() {
         if (window.confirm($.i18n('core-index-open/del-body') + project.name + "\"?")) {
           Refine.postCSRF(
