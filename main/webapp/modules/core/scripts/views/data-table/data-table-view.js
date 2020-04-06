@@ -70,8 +70,7 @@ DataTableView.prototype.getSorting = function() {
 DataTableView.prototype.resize = function() {
   
   var topHeight =
-    this._div.find(".viewpanel-header").outerHeight(true) +
-    this._div.find(".data-header-table-container").outerHeight(true);
+    this._div.find(".viewpanel-header").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
   
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
@@ -100,9 +99,11 @@ DataTableView.prototype.render = function() {
       '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
-      '<table bind="table" class="data-table">'+
-        '<thead bind="headerTable" class="data-header-table">'+
+      '<table class="data-table">'+
+        '<thead bind="tableHeader" class="data-table-header">'+
         '</thead>'+
+        '<tbody bind="table" class="data-table">'+
+        '</tbody>'+
       '</table>' +
     '</div>'
   );
@@ -133,7 +134,7 @@ DataTableView.prototype.render = function() {
     this._renderSortingControls(elmts.sortingControls);
   }
 
-  this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
+  this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
   this._div.empty().append(html);
 
   // show/hide null values in cells
@@ -210,7 +211,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   .appendTo(pageSizeControls);
 };
 
-DataTableView.prototype._renderDataTables = function(table, headerTable) {
+DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   var self = this;
 
   var columns = theProject.columnModel.columns;
@@ -223,7 +224,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
 
   var renderColumnKeys = function(keys) {
     if (keys.length > 0) {
-      var tr = headerTable.insertRow(headerTable.rows.length);
+      var tr = tableHeader.insertRow(tableHeader.rows.length);
       $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
@@ -250,7 +251,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     var nextLayer = [];
 
     if (groups.length > 0) {
-      var tr = headerTable.insertRow(headerTable.rows.length);
+      var tr = tableHeader.insertRow(tableHeader.rows.length);
 
       for (var c = 0; c < columns.length; c++) {
         var foundGroup = false;
@@ -301,7 +302,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
    *------------------------------------------------------------
    */
 
-  var trHead = headerTable.insertRow(headerTable.rows.length);
+  var trHead = tableHeader.insertRow(tableHeader.rows.length);
   DOM.bind(
       $(trHead.insertCell(trHead.cells.length))
       .attr("colspan", "3")
