@@ -387,7 +387,21 @@ dist() {
     get_version $1
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
-    mvn package
+    "$MVN" package
+}
+
+windows_dist() {
+    get_version $1
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P windows
+}
+
+linux_dist() {
+    get_version $1
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P linux
 }
  
 # Kept just in case someone wants to follow this workflow on a mac,
