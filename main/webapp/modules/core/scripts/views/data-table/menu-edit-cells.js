@@ -116,8 +116,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doJoinMultiValueCells = function() {
-    var separator = window.prompt($.i18n('core-views/enter-separator'), ", ");
+  var doJoinMultiValueCells = function(separator) {
     if (separator !== null) {
       Refine.postCoreProcess(
         "join-multi-value-cells",
@@ -129,6 +128,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         null,
         { rowsChanged: true }
       );
+      setDefaultSeparatorValuePreference(separator);
     }
   };
 
@@ -286,6 +286,56 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     });
   };
 
+  var setDefaultSeparatorValuePreference = function(input) {
+    Refine.postCSRF(
+      "command/core/set-preference",
+      {
+        name : "defaultSeparatorValue",
+        value : JSON.stringify(input)
+      },
+      function(o) {
+        if (o.code === "ok") {
+          ui.browsingEngine.update();
+        } else if (o.code === "error") {
+          alert(o.message);
+        }
+      },
+      "json"
+    );
+  }
+
+  var setDefaultSeparatorValue = function(sepInputVal, elmts) {
+      elmts.separatorInput[0].value = sepInputVal;
+      elmts.separatorInput.focus().select();
+  }
+
+  var getDefaultSeparatorValuePreference = function(elmts) {
+    $.getJSON(
+      "command/core/get-preference?" + $.param({ project: theProject.id, name: "defaultSeparatorValue" }),
+      null,
+      function(data) {
+        if (data.value !== null) {
+          var value = data.value;
+          try {
+            JSON.stringify(elmts).length;
+            setDefaultSeparatorValue(value, elmts);
+          } catch(e) {
+            var separator = window.prompt($.i18n('core-views/enter-separator'), value);
+            doJoinMultiValueCells(separator);
+          }
+        } else {
+          try {
+            JSON.stringify(elmts).length;
+            setDefaultSeparatorValue(",", elmts);
+          } catch(e) {
+            var separator = window.prompt($.i18n('core-views/enter-separator'), ",");
+            doJoinMultiValueCells(separator);
+          }
+        }
+      }
+    );
+  }
+
   var doSplitMultiValueCells = function() {
 
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-multi-valued-cells-dialog.html"));
@@ -315,7 +365,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
-    elmts.separatorInput.focus().select();
+    getDefaultSeparatorValuePreference(elmts);
     
     elmts.cancelButton.click(dismiss);
     elmts.okButton.click(function() {
@@ -333,7 +383,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
 
         config.regex = elmts.regexInput[0].checked;
-
+        setDefaultSeparatorValuePreference(config.separator);
       } else if (mode === "lengths") {
         var s = "[" + elmts.lengthsTextarea[0].value + "]";
         try {
@@ -480,7 +530,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/join-multi-valued-cells",
       label: $.i18n('core-views/join-cells')+"...",
-      click: doJoinMultiValueCells
+      click: getDefaultSeparatorValuePreference
     },
     {},
     {
