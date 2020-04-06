@@ -28,11 +28,6 @@ public class CellChangeTest extends RefineTest {
             "         \"v\" : \"changed\"\n" +
             "       },\n" +
             "       \"columnName\": \"bar\"," +
-            "       \"dagSlice\" : {\n" +
-            "         \"column\": \"bar\",\n" +
-            "         \"inputs\": [ ],\n" +
-            "         \"type\": \"transformation\"\n" +
-            "      },\n" +
             "       \"rowId\" : 14,\n" +
             "       \"type\" : \"org.openrefine.model.changes.CellChange\"\n" +
             "     }";

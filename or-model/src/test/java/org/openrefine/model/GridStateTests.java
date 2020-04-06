@@ -108,11 +108,13 @@ public class GridStateTests extends SparkBasedTest {
     public void testSaveAndLoad() throws IOException {
         File tempFile = TestUtils.createTempDirectory("testgrid");
         state.saveToFile(tempFile);
+        String tempFilePath = tempFile.getAbsolutePath();
 
         GridState loaded = GridState.loadFromFile(context(), tempFile);
 
         Assert.assertEquals(loaded.getOverlayModels(), state.getOverlayModels());
-        Assert.assertEquals(loaded.getGrid().collect(), state.getGrid().collect());
+        List<Tuple2<Long, Row>> loadedGrid = loaded.getGrid().collect();
+        Assert.assertEquals(loadedGrid, state.getGrid().collect());
     }
 
     @Test

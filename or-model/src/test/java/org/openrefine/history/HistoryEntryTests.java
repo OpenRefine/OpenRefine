@@ -48,17 +48,6 @@ public class HistoryEntryTests {
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
             + "\"change\" : {\n"
-            + "  \"dagSlice\" : {\n"
-            + "    \"columnModel\" : {\n"
-            + "      \"columns\" : [ {\n"
-            + "        \"name\" : \"foo\",\n"
-            + "        \"originalName\" : \"foo\"\n"
-            + "      } ],\n"
-            + "      \"keyCellIndex\" : 0,\n"
-            + "      \"keyColumnName\" : \"foo\"\n"
-            + "    },\n"
-            + "   \"type\" : \"opaque\"\n"
-            + "  },\n"
             + "  \"type\" : \"org.openrefine.history.ChangeStub\"\n"
             + "},\n"
             + "\"operation\":{\"op\":\"core/my-operation\","
@@ -67,17 +56,6 @@ public class HistoryEntryTests {
 
     public static final String unknownOperationJson = "{\n" +
             "  \"change\" : {\n" +
-            "    \"dagSlice\" : {\n" +
-            "      \"columnModel\" : {\n" +
-            "        \"columns\" : [ {\n" +
-            "          \"name\" : \"foo\",\n" +
-            "          \"originalName\" : \"foo\"\n" +
-            "        } ],\n" +
-            "        \"keyCellIndex\" : 0,\n" +
-            "        \"keyColumnName\" : \"foo\"\n" +
-            "      },\n" +
-            "      \"type\" : \"opaque\"\n" +
-            "    },\n" +
             "    \"type\" : \"org.openrefine.history.ChangeStub\"\n" +
             "  },\n" +
             "  \"description\" : \"some mysterious operation\",\n" +

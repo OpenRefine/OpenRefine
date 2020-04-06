@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -243,9 +245,13 @@ public class GridState {
     public void saveToFile(File file) throws IOException {
         File metadataFile = new File(file, METADATA_PATH);
         File gridFile = new File(file, GRID_PATH);
-        getGrid().saveAsObjectFile(gridFile.getAbsolutePath());
+        getGrid().map(r -> serializeIndexedRow(r)).saveAsTextFile(gridFile.getAbsolutePath());
 
         ParsingUtilities.saveWriter.writeValue(metadataFile, this);
+    }
+
+    protected static String serializeIndexedRow(Tuple2<Long, Row> indexedRow) throws JsonProcessingException {
+        return ParsingUtilities.mapper.writeValueAsString(IndexedRow.fromTuple(indexedRow));
     }
 
     public static GridState loadFromFile(JavaSparkContext context, File file) throws IOException {
@@ -253,7 +259,8 @@ public class GridState {
         File gridFile = new File(file, GRID_PATH);
 
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
-        JavaPairRDD<Long, Row> grid = context.<Tuple2<Long, Row>> objectFile(gridFile.getAbsolutePath())
+        JavaPairRDD<Long, Row> grid = context.textFile(gridFile.getAbsolutePath())
+                .map(s -> parseIndexedRow(s))
                 .keyBy(p -> p._1)
                 .mapValues(p -> p._2)
                 .persist(StorageLevel.MEMORY_ONLY());
@@ -261,6 +268,13 @@ public class GridState {
                 grid,
                 metadata.overlayModels,
                 metadata.size);
+    }
+
+    protected static TypeReference<Tuple2<Long, Row>> typeRef = new TypeReference<Tuple2<Long, Row>>() {
+    };
+
+    protected static Tuple2<Long, Row> parseIndexedRow(String source) throws IOException {
+        return ParsingUtilities.mapper.readValue(source, IndexedRow.class).toTuple();
     }
 
     /**
