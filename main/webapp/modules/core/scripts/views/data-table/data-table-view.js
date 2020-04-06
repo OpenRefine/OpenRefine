@@ -414,20 +414,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     }
     renderRow(tr, r, row, even);
   }
-  
-  $(table.parentNode).bind('scroll', function(evt) {
-    self._adjustDataTableScroll();
-  });
-};
-
-DataTableView.prototype._adjustDataTableScroll = function() {
-  var dataTableContainer = this._div.find('.data-table-container');
-  var headerTableContainer = this._div.find('.data-header-table');
-  if (dataTableContainer.length > 0 || headerTableContainer.length > 0) {
-    headerTableContainer
-      .find('> .data-header-table')
-      .css('left', '-' + dataTableContainer[0].scrollLeft + 'px');
-  }
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
