@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ########################################################## 
 #               OpenRefine Control System             #
@@ -583,6 +583,7 @@ run() {
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
+    echo "${RUN_CMD[@]}"
 
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
@@ -765,7 +766,13 @@ fi
 
 # ----- Load configurations -------------------------------------
 
-load_configs refine.ini
+if [ -f "refine-dev.ini" ]; then
+  echo "Using refine-dev.ini for configuration"
+  load_configs refine-dev.ini
+else
+  echo "Using refine.ini for configuration"
+  load_configs refine.ini
+fi
 
 # ----- Make sure there is an appropriate java environment is available -------------
 

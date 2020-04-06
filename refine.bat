@@ -67,9 +67,20 @@ rem --- Read ini file -----------------------------------------------
 
 set OPTS=
 
+if exist refine-dev.ini goto readDevConfig
+echo Using refine.ini for configuration
 for /f "tokens=1,* delims==" %%a in (refine.ini) do (
     set %%a=%%b
 )
+goto endConfigReading
+
+:readDevConfig
+echo Using refine-dev.ini for configuration
+for /f "tokens=1,* delims==" %%a in (refine-dev.ini) do (
+    set %%a=%%b
+)
+
+:endConfigReading
 
 rem --- Check JAVA_HOME ---------------------------------------------
 

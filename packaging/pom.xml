@@ -248,7 +248,7 @@
                     </copy>
                     
                     <replace file="${built.webapp.dir}/WEB-INF/web.xml">
-                        <replacefilter token="$VERSION" value="${version}"/>
+                        <replacefilter token="$VERSION" value="${project.version}"/>
                     </replace>
 
                     <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
@@ -408,7 +408,7 @@
           <configuration>
             <mainClass>com.google.refine.Refine</mainClass>
             <bundleName>OpenRefine</bundleName>
-            <buildDirectory>target/OpenRefine ${version}</buildDirectory>
+            <buildDirectory>target/OpenRefine ${project.version}</buildDirectory>
             <iconFile>${icon.path}</iconFile>
             <generateDiskImageFile>true</generateDiskImageFile>
             <diskImageFile>
@@ -440,7 +440,7 @@
               <fileSet>
                 <directory>${rootdir}/server/target</directory>
                 <includes>
-                  <include>openrefine-${version}-server.jar</include>
+                  <include>openrefine-${project.version}-server.jar</include>
                 </includes>
                 <excludes>
                   <exclude>**/lib/**</exclude>
