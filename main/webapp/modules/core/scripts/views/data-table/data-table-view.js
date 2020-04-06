@@ -68,7 +68,6 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  this._adjustDataTables();
   
   var topHeight =
     this._div.find(".viewpanel-header").outerHeight(true) +
@@ -357,7 +356,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           onDone: function(o) {
             row.starred = newStarred;
             renderRow(tr, r, row, even);
-            self._adjustDataTables();
           }
         },
         "json"
@@ -378,7 +376,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           onDone: function(o) {
             row.flagged = newFlagged;
             renderRow(tr, r, row, even);
-            self._adjustDataTables();
           }
         },
         "json"
