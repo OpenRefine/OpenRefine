@@ -55,7 +55,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   font-weight: bold;
   }
 
-
 .data-table-header {
   width: 1px;
   position: relative;
@@ -68,18 +67,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .data-table-header, .data-table {
   margin: 0;
   padding: 0;
-  font-size: 1.1em;
+  font-size: 1.05em;
   border-collapse: collapse;
   }
-  .resizer {
-  position: absolute;
-  top: 0;
-  right: -8px;
-  bottom: 0;
-  left: auto;
-  width: 16px;    
-  cursor: col-resize;       
-}
 
 .data-table td, .data-table-header td {
   padding: 2px 5px;
@@ -89,6 +79,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-right: 1px solid #ddd;
   }
 .data-table-header td {
+  border-top: 1px solid @chrome_primary;
   border-bottom: 1px dotted @chrome_primary;
   border-right: 1px solid @chrome_primary;
   }
