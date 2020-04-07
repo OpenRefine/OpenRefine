@@ -69,7 +69,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0;
   font-size: 1.05em;
   border-collapse: collapse;
+  dispay: table;
   }
+
 
 .data-table td, .data-table-header td {
   padding: 2px 5px;
@@ -109,6 +111,7 @@ table.data-table-header td.column-header, table.data-table td.column-header {
 table.data-table td.column-header {
   background: @fill_primary;
   border-bottom: 2px solid @chrome_primary;
+  background-clip: padding-box;
   }
 
 .column-header-name {
