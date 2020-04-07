@@ -56,6 +56,7 @@ import org.openrefine.RefineModel;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
+import org.openrefine.io.OrderedLocalFileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +121,7 @@ public class RefineServlet extends Butterfly {
         		new SparkConf()
         		.setAppName("OpenRefine")
         		.setMaster(String.format("local[%d]", defaultParallelism)));
+        s_context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");    
         

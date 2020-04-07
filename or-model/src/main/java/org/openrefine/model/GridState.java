@@ -10,12 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.storage.StorageLevel;
+import org.apache.spark.util.ClosureCleaner;
+import org.openrefine.io.OrderedTextInputFormat;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
@@ -221,7 +226,11 @@ public class GridState {
      *     the list of rows with their ids (if any)
      */
     public List<Tuple2<Long,Row>> getRows(long start, int limit) {
-        return grid.filter(takeRows(start)).take(limit);
+        if (start == 0) {
+            return grid.take(limit);
+        } else {
+            return grid.filter(takeRows(start)).take(limit);
+        }
     }
 
     /**
@@ -259,7 +268,7 @@ public class GridState {
 	public void saveToFile(File file) throws IOException {
 		File metadataFile = new File(file, METADATA_PATH);
 		File gridFile = new File(file, GRID_PATH);
-		getGrid().map(r -> serializeIndexedRow(r)).saveAsTextFile(gridFile.getAbsolutePath());
+		getGrid().map(r -> serializeIndexedRow(r)).saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
 		
 		ParsingUtilities.saveWriter.writeValue(metadataFile, this);
 	}
@@ -273,11 +282,18 @@ public class GridState {
 		File gridFile = new File(file, GRID_PATH);
 		
 		Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
+		
+		/*
+		 * The text files corresponding to each partition are read in the correct order
+		 * thanks to our dedicated file system OrderedLocalFileSystem.
+		 * https://issues.apache.org/jira/browse/SPARK-5300
+		 */
 		JavaPairRDD<Long, Row> grid = context.textFile(gridFile.getAbsolutePath())
-		        .map(s -> parseIndexedRow(s))
+		        .map(s -> parseIndexedRow(s.toString()))
 				.keyBy(p -> p._1)
 				.mapValues(p -> p._2)
 				.persist(StorageLevel.MEMORY_ONLY());
+
 		return new GridState(metadata.columnModel,
 				grid,
 				metadata.overlayModels,
@@ -386,6 +402,10 @@ public class GridState {
             
         };
         return pairRDD.mapPartitionsToPair(mapper, true);
+    }
+    
+    public static class NotSerializable {
+        
     }
     
     /**

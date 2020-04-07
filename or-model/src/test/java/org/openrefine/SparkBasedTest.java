@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 import org.testng.annotations.AfterSuite;
@@ -21,6 +22,7 @@ public class SparkBasedTest {
     @BeforeSuite
     public void setUpSpark() {
         _context = new JavaSparkContext(sparkConf);
+        _context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
     }
     
     protected JavaSparkContext context() {
@@ -36,7 +38,7 @@ public class SparkBasedTest {
     		}
     		rdd.add(new Tuple2<Long,Row>((long)i, new Row(currentCells)));
     	}
-		return context().parallelize(rdd)
+		return context().parallelize(rdd, 2)
 				.keyBy(t -> (Long)t._1)
 				.mapValues(t -> t._2);
     }
