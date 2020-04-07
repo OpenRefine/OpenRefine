@@ -122,6 +122,14 @@ public class EngineTests extends SparkBasedTest {
     }
 
     @Test
+    public void testGetMatchingRowsEmptyFacets() {
+        // when no facets are provided, grid states are not filtered
+        GridState mockState = mock(GridState.class);
+        SUT = new Engine(mockState, new EngineConfig(Collections.emptyList(), Mode.RowBased));
+        Assert.assertEquals(SUT.getMatchingRows(), mockState);
+    }
+
+    @Test
     public void testGetMismachingRows() {
         List<Tuple2<Long, Row>> rows = SUT.getMismatchingRows().getGrid().collect();
         Assert.assertEquals(rows, Collections.singletonList(new Tuple2<Long, Row>(1L,

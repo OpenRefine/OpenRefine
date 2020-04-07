@@ -111,9 +111,14 @@ public class Engine {
      */
     @JsonIgnore
     public GridState getMatchingRows() {
-        Function<Tuple2<Long, Row>, Boolean> f = rowFilterConjuction(facetRowFilters());
-        JavaPairRDD<Long, Row> matchingRows = _state.getGrid().filter(f);
-        return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
+        List<RowFilter> facetRowFilters = facetRowFilters();
+        if (facetRowFilters.isEmpty()) {
+            return _state;
+        } else {
+            Function<Tuple2<Long, Row>, Boolean> f = rowFilterConjuction(facetRowFilters);
+            JavaPairRDD<Long, Row> matchingRows = _state.getGrid().filter(f);
+            return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
+        }
     }
 
     /**
@@ -157,6 +162,7 @@ public class Engine {
         return _facets.stream()
                 .map(facet -> facet.getAggregator())
                 .map(aggregator -> aggregator == null ? null : aggregator.getRowFilter())
+                .filter(filter -> filter != null)
                 .collect(Collectors.toList());
     }
 
@@ -209,7 +215,7 @@ public class Engine {
 
             @Override
             public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                return rowFilters.stream().allMatch(f -> f == null || f.filterRow(v1._1, v1._2));
+                return rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
             }
         };
     }
