@@ -1,6 +1,9 @@
 
 package org.openrefine.model;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -164,5 +168,22 @@ public class GridStateTests extends SparkBasedTest {
         Assert.assertEquals(rows.size(), 6);
         Assert.assertEquals(rows.stream().map(t -> t._1).collect(Collectors.toList()),
                 Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetRows() {
+        JavaPairRDD<Long, Row> rdd = mock(JavaPairRDD.class), filteredRdd = mock(JavaPairRDD.class);
+        List<Tuple2<Long, Row>> rows = mock(List.class), filteredRows = mock(List.class);
+
+        when(rdd.take(5)).thenReturn(rows);
+        when(rdd.filter(Mockito.any())).thenReturn(filteredRdd);
+        when(filteredRdd.take(5)).thenReturn(filteredRows);
+
+        ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("some column")));
+        GridState gridState = new GridState(model, rdd, Collections.emptyMap());
+
+        Assert.assertEquals(gridState.getRows(0, 5), rows);
+        Assert.assertEquals(gridState.getRows(5, 5), filteredRows);
     }
 }
