@@ -229,7 +229,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
         var td = tr.insertCell(tr.cells.length);
-        if (column.name in self._collapsedColumnNames) {
+        if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
           $(td).html('&nbsp;');
         } else {
           for (var k = 0; k < keys.length; k++) {
@@ -316,7 +316,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var createColumnHeader = function(column, index) {
     var td = trHead.insertCell(trHead.cells.length);
     $(td).addClass("column-header").attr('title', column.name);
-    if (column.name in self._collapsedColumnNames) {
+    if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
       $(td).html("&nbsp;").click(function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
@@ -405,7 +405,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     for (var i = 0; i < columns.length; i++) {
       var column = columns[i];
       var td = tr.insertCell(tr.cells.length);
-      if (column.name in self._collapsedColumnNames) {
+      if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
         td.innerHTML = "&nbsp;";
       } else {
         var cell = (column.cellIndex < cells.length) ? cells[column.cellIndex] : null;
