@@ -4,7 +4,7 @@ title: Columnize by key/value columns
 sidebar_label: Columnize by key/value
 ---
 
-This operation can be used to reshape a table which contains *key* and *value* columns, such that the contents of the key column become new column names, and the contents of the value column are spread in the new columns. This operation can be invoked from
+This operation can be used to reshape a table which contains *key* and *value* columns, such that the repeating contents in the key column become new column names, and the contents of the value column are spread in the new columns. This operation can be invoked from
 any column menu, via **Transpose** → **Columnize by key/value columns**.
 
 Overview
@@ -56,7 +56,7 @@ This table is transformed by the operation as follows:
 |                       | Green    |         |
 | Narcissus cyclamineus | Yellow   | 161899  |
 
-The first key encountered by the operation serves as record key.
+The first key encountered by the operation serves as the record key.
 The "Green" value is attached to the "Galanthus nivalis" name because it is the latest record key encountered by the operation as it scans the table. See the [Row order](#row-order) section for more details about the influence of row order on
 the results of the operation.
 
@@ -118,7 +118,7 @@ Row order
 ---------
 
 In the absence of extra columns, it is important to note that the order in which 
-the key/value pairs appear matters. Specifically, the operation will use the first key it encounters as delimiter for entries:
+the key/value pairs appear matters. Specifically, the operation will use the first key it encounters as the delimiter for entries:
 every time it encounters this key again, it will produce a new row and add the following other key/value pairs to that row.
 
 Consider for instance the following table:
