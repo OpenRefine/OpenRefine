@@ -3,7 +3,8 @@
     "Getting Started": [
       "index",
       "install",
-      "user_data"
+      "user_data",
+      "records_mode"
     ],
     "Importing Data": [
        "importers/csv",
@@ -13,7 +14,10 @@
     "Operations": [
         "operations/transform",
         "operations/add_column",
-        "operations/recon"
+        "operations/fill_down",
+        "operations/blank_down",
+        "operations/recon",
+        "operations/key_value_columnize"
     ],
     "Facets": [
         "facets/text",
