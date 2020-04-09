@@ -34,7 +34,7 @@ Entries with multiple values in the same column
 -----------------------------------------------
 
 If an entry has multiple values for a given key, then these values will be grouped on consecutive rows,
-to form a [record structure](../records_mode).
+to form a [record structure](../records_mode.md).
 
 For instance, flower species can have multiple colors:
 
@@ -57,7 +57,7 @@ This table is transformed by the operation as follows:
 | Narcissus cyclamineus | Yellow   | 161899  |
 
 The first key encountered by the operation serves as record key.
-The "Green" value is attached to the "Galanthus nivalis" name because it the latest record key encountered by the operation as it scans the table. See the [Row order](#row-order) section for more details about the influence of row order on
+The "Green" value is attached to the "Galanthus nivalis" name because it is the latest record key encountered by the operation as it scans the table. See the [Row order](#row-order) section for more details about the influence of row order on
 the results of the operation.
 
 Notes column
@@ -112,7 +112,7 @@ This will be transformed to
 | Q1727024    | Narcissus cyclamineus | Yellow   | 161899  |
 
 If extra columns do not contain identical values for all old rows spanning an entry, this can
-be fixed beforehand by using the [fill down operation](fill_down).
+be fixed beforehand by using the [fill down operation](fill_down.md).
 
 Row order
 ---------
