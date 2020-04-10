@@ -72,7 +72,7 @@ public class RowRemovalChange implements Change {
             }
             
             project.columnModel.clearPrecomputes();
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(project.id);
             
             project.update();
         }

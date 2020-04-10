@@ -61,7 +61,7 @@
     "core-index-import/warning-data-file": "必须指定一个要导入的数据文件.",
     "core-index-import/uploading-data": "上传数据中…",
     "core-index-import/web-address": "网址 (URLs)",
-    "core-index-import/warning-web-address": "必须指定导入的数据来源网址.",
+    "core-index-import/warning-web-address": "你必须指定一个有效的网络地址（URL）来导入",
     "core-index-import/downloading-data": "正在下载数据…",
     "core-index-import/clipboard": "剪贴板",
     "core-index-import/warning-clipboard": "粘贴数据不能为空.",

@@ -50,6 +50,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,10 +204,10 @@ public class RefineServlet extends Butterfly {
                     command.doDelete(request, response);
                     logger.trace("< DELETE {}", commandKey);
                 } else {
-                    response.sendError(405);
+                    response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                 }
             } else {
-                response.sendError(404);
+                response.sendError(HttpStatus.SC_NOT_FOUND);
             }
         } else {
             super.service(request, response);

@@ -16,6 +16,7 @@
 
   <properties>
     <powermock.version>2.0.2</powermock.version>
+    <wdtk.version>0.11.1</wdtk.version>
   </properties>
 
   <build>
@@ -128,17 +129,17 @@
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
-      <version>0.11.0</version>
+      <version>${wdtk.version}</version>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
-      <version>0.11.0</version>
+      <version>${wdtk.version}</version>
     </dependency>
     <dependency>
       <groupId>org.wikidata.wdtk</groupId>
       <artifactId>wdtk-util</artifactId>
-      <version>0.11.0</version>
+      <version>${wdtk.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

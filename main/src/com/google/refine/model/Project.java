@@ -105,7 +105,7 @@ public class Project {
                 logger.warn("Error signaling overlay model before disposing", e);
             }
         }
-        ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(this.id);
+        ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProject(this.id);
         // The rest of the project should get garbage collected when we return.
     }
 
