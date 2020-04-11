@@ -19,6 +19,12 @@
     <webapp.target>../main/target</webapp.target>
     <icon.path>../graphics/icon/openrefine.icns</icon.path>
     <mac.jre.path>/opt/jre1.8.0_181.jre</mac.jre.path>
+
+    <!-- default options for windows: no embedded JRE. Use the "embedded-jre" from ../settings.xml to add a JRE -->
+    <windows.package.jre.path>%JAVA_HOME%;%PATH%</windows.package.jre.path>
+    <windows.package.jre.directory>null</windows.package.jre.directory>
+    <windows.package.jre.outputDirectory>jre</windows.package.jre.outputDirectory>
+    <windows.package.jre.prefix></windows.package.jre.prefix>
   </properties>
 
   <profiles>
@@ -305,7 +311,7 @@
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
               <jre>
-                <path>${package-jre-path}</path>
+                <path>${windows.package.jre.path}</path>
                 <minVersion>1.8.0</minVersion>
                 <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>

@@ -1,14 +1,14 @@
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
-  <id>win-${project.version}</id>
+  <id>win-${windows.package.jre.prefix}${project.version}</id>
   <formats>
     <format>zip</format>
   </formats>
   <baseDirectory>${project.build.finalName}-${project.version}</baseDirectory>
   <fileSets>
    <fileSet>
-    <directory>${package-jre-directory}</directory>
-    <outputDirectory>${package-jre-outputDirectory}</outputDirectory>
+    <directory>${windows.package.jre.directory}</directory>
+    <outputDirectory>${windows.package.jre.outputDirectory}</outputDirectory>
     <includes>
     <include>**</include>
     </includes>
