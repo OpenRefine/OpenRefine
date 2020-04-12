@@ -96,7 +96,6 @@ DataTableView.prototype.render = function() {
         '<span bind="modeSelectors"></span>' + 
       '</div>' +
       '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
-      '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
       '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
     '<div bind="dataHeaderTableContainer" class="data-header-table-container">' +
@@ -129,10 +128,6 @@ DataTableView.prototype.render = function() {
 
   this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
 
-  if (this._sorting.criteria.length > 0) {
-    this._renderSortingControls(elmts.sortingControls);
-  }
-
   this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
   this._div.empty().append(html);
 
@@ -142,19 +137,6 @@ DataTableView.prototype.render = function() {
   this.resize();
   
   elmts.dataTableContainer[0].scrollLeft = scrollLeft;
-};
-
-DataTableView.prototype._renderSortingControls = function(sortingControls) {
-  var self = this;
-
-  $('<a href="javascript:{}"></a>')
-  .addClass("action")
-  .text($.i18n('core-views/sort') + " ")
-  .append($('<img>').attr("src", "../images/down-arrow.png"))
-  .appendTo(sortingControls)
-  .click(function() {
-    self._createSortingMenu(this);
-  });
 };
 
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
