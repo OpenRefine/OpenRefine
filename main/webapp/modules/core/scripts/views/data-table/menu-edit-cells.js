@@ -232,6 +232,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   }
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/replace-dialog.html"));
     var elmts = DOM.bind(frame);
+	setTimeout(function(){$("#text-to-find").focus();},1);
     elmts.dialogHeader.text($.i18n('core-views/replace'));
     elmts.or_views_text_to_find.text($.i18n('core-views/text-to-find'));
     elmts.or_views_replacement.text($.i18n('core-views/replacement-text'));
