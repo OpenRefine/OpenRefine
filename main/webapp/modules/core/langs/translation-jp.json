@@ -220,7 +220,7 @@
     "core-dialogs/clustering": "クラスタリング中…",
     "core-dialogs/out-empty-row": "空の列（全セルがnull）を出力",
     "core-dialogs/from": "からの",
-    "core-dialogs/export-to-local": "ローカルにエクスポート",
+    "core-dialogs/export-to-local": "プロジェクトをエクスポート",
     "core-dialogs/drag-column": "ドラッグして並べ替え",
     "core-dialogs/custom": "カスタム",
     "core-dialogs/returns": "返値",
