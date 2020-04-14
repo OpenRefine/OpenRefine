@@ -154,5 +154,13 @@
     "import-wikibase-schema/schema-label": "Ou à partir d'un texte JSON :",
     "import-wikibase-schema/invalid-schema": "Schéma Wikibase non valide.",
     "import-wikibase-schema/import": "Importer",
-    "wikidata-extension/qs-file": "Fichier QuickStatements"
+    "wikidata-extension/qs-file": "Fichier QuickStatements",
+    "warnings-messages/item-description-identical-with-label/title": "Description et libellé sont identiques",
+    "warnings-messages/item-description-too-long/body": "La description ({lang}) <span class=\"wb-issue-preformat\">{description></span> sur {example_entity} est trop longue. Sa longueur est {length} caractères, la limite étant {max_length}. Les descriptions ne sont pas des phrases entières, mais plutôt des paraphrases succintes de deux à douze mots. Consultez le <a href=\"https://www.wikidata.org/wiki/Help:Description#Length\" target=\"_blank\">manuel</a> pour plus d'informations.",
+    "warnings-messages/item-description-too-long/title": "Description trop longue",
+    "warnings-messages/early-gregorian-date/body": "Les dates plus anciennes qu'Octobre 1582 (telles qu'en l'an {example_year}) ne sont probablement pas exprimées en calendrier Grégorien. Consultez le <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">manuel</a> pour spécifier le calendrier approprié pour vos dates.",
+    "warnings-messages/early-gregorian-date/title": "Dates anciennes en calendrier Grégorien",
+    "wikidata-schema/label": "Libellé",
+    "wikidata-extension/wikidata-schema": "Schéma Wikidata",
+    "wikidata-extension/wikidata-edits": "Contributions Wikidata…"
 }
