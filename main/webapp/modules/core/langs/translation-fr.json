@@ -220,7 +220,7 @@
     "core-dialogs/clustering": "Groupage…",
     "core-dialogs/out-empty-row": "Écrire les lignes vides (dont toutes les cellules sont des valeurs nulles)",
     "core-dialogs/from": "De",
-    "core-dialogs/export-to-local": "Exporter en local",
+    "core-dialogs/export-to-local": "Archive de projet OpenRefine",
     "core-dialogs/drag-column": "Glisser des colonnes pour les trier",
     "core-dialogs/custom": "Personnalisé",
     "core-dialogs/for-include-if-exist-drop-stmt-checkbox": "Inclure les instruction 'IF EXISTS' dans les DROP",
@@ -738,6 +738,8 @@
     "core-dialogs/record-fields": "un groupe d'une ou plusieurs lignes forme une entrée ; l'objet a plus d'attributs, voir les détails sur https://github.com/OpenRefine/OpenRefine/wiki/Variables#record",
     "core-views/blank-values": "Valeurs vides par colonne",
     "core-views/blank-records": "Entrées vides par colonne",
-    "core-views/add-id-column": "Ajouter une colonne d'identificateurs d'entité",
-    "core-dialogs/lb-formats-quotation": "Toujours citer le texte"
+    "core-views/add-id-column": "Ajouter une colonne d'identifiants d'entités",
+    "core-dialogs/lb-formats-quotation": "Toujours citer le texte",
+    "core-views/add-id-col": "Ajouter une colonne contenant des identifiants d'entités en $1",
+    "core-views/add-id-column2": "Ajouter une colonne avec des identifiants d'éléments"
 }
