@@ -42,5 +42,9 @@
     "gdata-exporter/upload-success": "プロジェクトがGoogle Driveにアップロードされました ",
     "gdata-auth/authorize-label": "OpenRefine - 認証",
     "gdata-auth/authorized-label": "認証が完了しました。このウインドウを閉じてOpenRefineで作業できます.",
-    "gdata-exporter/enter-filename": "Google Driveにエクスポートするファイル名を入力"
+    "gdata-exporter/enter-filename": "Google Driveにエクスポートするファイル名を入力",
+    "gdata-exporter/google-sheets": "Googleシート",
+    "gdata-exporter/upload-google-sheets-success": "Google Driveにアップロードされたプロジェクト ",
+    "gdata-exporter/upload-google-drive-success": "Google Driveにアップロードされたプロジェクト ",
+    "gdata-exporter/export-to-google-drive": "プロジェクトをGoogle Driveへ…"
 }
