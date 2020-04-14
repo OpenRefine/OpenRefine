@@ -3,7 +3,7 @@
     "wikidata-extension/edit-wikidata-schema": "Modifier le schéma Wikidata",
     "wikidata-extension/manage-wikidata-account": "Gérer le compte Wikidata",
     "wikidata-extension/perform-edits-on-wikidata": "Publier les modifications sur Wikidata",
-    "wikidata-extension/export-to-qs": "Exporter en QuickStatements",
+    "wikidata-extension/export-to-qs": "Exporter vers QuickStatements",
     "wikidata-extension/quickstatements-export-name": "QuickStatements",
     "wikidata-schema/dialog-header": "Aligner à Wikidata",
     "wikidata-schema/dialog-explanation": "Le schéma Wikidata ci-dessous spécifie comment vos données sont transformées en modifications sur Wikidata. Vous pouvez glisser-déposer les noms des colonnes ci-dessous dans la plupart des champs: pour chaque ligne, des modifications seront générées avec les valeurs dans ces colonnes.",
@@ -28,7 +28,6 @@
     "wikidata-schema/property-placeholder": "propriété",
     "wikidata-schema/nb-references": "&nbsp;références",
     "wikidata-schema/remove-column": "supprimer la colonne",
-    "wikidata-schema/label-if-new": "Libellé",
     "wikidata-schema/label-if-new": "Libellé (sans écraser)",
     "wikidata-schema/label-override": "Libellé (écrase si déjà présent)",
     "wikidata-schema/description": "Description",
@@ -154,5 +153,6 @@
     "import-wikibase-schema/file-label": "A partir du fichier JSON : ",
     "import-wikibase-schema/schema-label": "Ou à partir d'un texte JSON :",
     "import-wikibase-schema/invalid-schema": "Schéma Wikibase non valide.",
-    "import-wikibase-schema/import": "Importer"
+    "import-wikibase-schema/import": "Importer",
+    "wikidata-extension/qs-file": "Fichier QuickStatements"
 }
