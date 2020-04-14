@@ -18,6 +18,7 @@
     <license>
       <name>BSD 3-Clause "New" or "Revised" License</name>
       <url>https://github.com/OpenRefine/OpenRefine/blob/master/LICENSE.txt</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
   <mailingLists>
