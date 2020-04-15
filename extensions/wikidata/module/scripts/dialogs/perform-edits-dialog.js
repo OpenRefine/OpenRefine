@@ -32,35 +32,56 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
 
   var hiddenIframe = $('#hiddenIframe').contents();
 
+  this._elmts.editSummary.keypress(function (evt) {
+    evt.preventDefault();
+    if (evt.which === 13) {
+    	PerformEditsDialog.doFormSubmit();
+    }
+  });
+
   if (max_severity === 'CRITICAL') {
       elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
     elmts.performEditsButton.click(function() {
-        hiddenIframe.find('body').append(
-                elmts.performEditsForm.clone());
-        var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
-        formCopy.submit();
-
-        if(elmts.editSummary.val().length == 0) {
-            elmts.editSummary.focus();
-        } else {
-            Refine.postProcess(
-            "wikidata",
-            "perform-wikibase-edits",
-            {},
-            {
-                summary: elmts.editSummary.val(),
-            },
-            { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-            { onDone:
-                function() {
-                dismiss();
-                }
-            });
-        }
+    	PerformEditsDialog.doFormSubmit();
     });
   }
 };
+
+PerformEditsDialog.doFormSubmit = function() {
+  var self = this;
+  var elmts = this._elmts;
+
+  var dismiss = function() {
+    DialogSystem.dismissUntil(self._level - 1);
+  };
+
+  var hiddenIframe = $('#hiddenIframe').contents();
+
+	hiddenIframe.find('body').append(
+					elmts.performEditsForm.clone());
+	var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
+	formCopy.submit();
+
+	if(elmts.editSummary.val().length == 0) {
+			elmts.editSummary.focus();
+	} else {
+			Refine.postProcess(
+			"wikidata",
+			"perform-wikibase-edits",
+			{},
+			{
+					summary: elmts.editSummary.val(),
+			},
+			{ includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+			{ onDone:
+					function() {
+					dismiss();
+					}
+			});
+	}
+}
+
 
 PerformEditsDialog.updateEditCount = function(edit_count) {
   this._elmts.reviewYourEdits.html(
