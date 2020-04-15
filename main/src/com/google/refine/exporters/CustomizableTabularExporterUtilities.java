@@ -390,7 +390,7 @@ abstract public class CustomizableTabularExporterUtilities {
                     return new CellData(column.getName(), value, text, link);
                 }
             }else {//added for sql exporter
-            
+            	includeNullFieldValue = true;
                 if(includeNullFieldValue) {
                     return new CellData(column.getName(), "", "", "");
                 }
