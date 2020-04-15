@@ -247,9 +247,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     elmts.cancelButton.click(dismiss);
-	frame.ready(function() {
-		elmts.text_to_findInput.focus();
-	});
+	elmts.text_to_findInput.focus();
     elmts.okButton.click(function() {
       var text_to_find = elmts.text_to_findInput[0].value;
       var replacement_text = elmts.replacement_textInput[0].value;
