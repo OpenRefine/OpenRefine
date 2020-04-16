@@ -2,14 +2,16 @@ package com.google.refine.exporters;
 
 import java.io.StringWriter;
 
+import static org.junit.Assert.*;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
-import org.testng.Assert;
+//import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
-//import org.testng.annotations.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +20,7 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.CustomizableTabularExporterUtilities;
+//import com.google.refine.exporters.CustomizableTabularExporterUtilities;
 import com.google.refine.exporters.CustomizableTabularExporterUtilities.CellFormatter;
 import com.google.refine.exporters.TabularSerializer.CellData;
 import com.google.refine.model.Cell;
@@ -81,11 +83,22 @@ public class CustomizableTabularExporterUtilitiesTests extends RefineTest{
 	
 	@Test
 	public void testNullFieldValue() {
+		when(SUT.format(project, column, cell)).thenReturn(createCellDataWithNullValue());
+		Assert.assertEquals(SUT.format(project, column, cell), createCellDataWithNullValue());
+	}
+	
+	private CellData createCellDataWithNullValue() {
+		return new CellData("testColumnName", null, "testText", "testLink");
+	}
+	
+	@Test
+	public void test() {
 		when(SUT.format(project, column, cell)).thenReturn(createCellData());
 		Assert.assertEquals(SUT.format(project, column, cell), createCellData());
 	}
 	
 	private CellData createCellData() {
-		return new CellData("testColumnName", null, "testText", "testLink");
+		return new CellData("testColumnName", "testValue", "testText", "testLink");
 	}
+	
 }
