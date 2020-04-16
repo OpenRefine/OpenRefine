@@ -565,3 +565,7 @@ div.schema-alignment-dialog-preview {
   white-space: pre;
   font-size: 9pt;
 }
+
+.schema-alignment-dialog-columns-area div:hover{
+    cursor: grabbing;
+}

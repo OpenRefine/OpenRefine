@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +66,14 @@ public class DBExtensionTestUtils {
              DatabaseMetaData dbm = conn.getMetaData();
              // check if "employee" table is there
              ResultSet tables = dbm.getTables(null, null, tableName, null);
+             boolean dropTable = false;
              if (tables.next()) {
-                 stmt.executeUpdate("DROP TABLE " + tableName);
+                 dropTable = true;
                  //System.out.println("Drop Table Result::" + dropResult);
+             }
+             tables.close();
+             if (dropTable) {
+                 stmt.executeUpdate("DROP TABLE " + tableName);
              }
           
             String createSQL = " CREATE TABLE " + tableName + " ( "
@@ -123,7 +128,13 @@ public class DBExtensionTestUtils {
              DatabaseMetaData dbm = conn.getMetaData();
              // check if "employee" table is there
              ResultSet tables = dbm.getTables(null, null, DEFAULT_TEST_TABLE, null);
+             boolean dropTable = false;
              if (tables.next()) {
+                dropTable = true;
+                //System.out.println("Drop Table Result::" + dropResult);
+             }
+             tables.close();
+             if (dropTable) {
                  stmt.executeUpdate("DROP TABLE " + DEFAULT_TEST_TABLE);
                  //System.out.println("Drop Table Result::" + dropResult);
              }
@@ -427,7 +438,7 @@ public class DBExtensionTestUtils {
         substitutes.put("dbName", dbConfig.getDatabaseName());
         substitutes.put("useSSL", dbConfig.isUseSSL());
         String urlTemplate = "jdbc:${dbType}://${host}:${port}/${dbName}?useSSL=${useSSL}";
-        StrSubstitutor strSub = new StrSubstitutor(substitutes);
+        StringSubstitutor strSub = new StringSubstitutor(substitutes);
         return strSub.replace(urlTemplate);
     }
 

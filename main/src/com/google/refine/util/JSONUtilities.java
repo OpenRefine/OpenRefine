@@ -78,7 +78,6 @@ public class JSONUtilities {
     }
 
     static public ArrayNode getArray(ObjectNode obj, String key) {
-    	JsonNode v = obj.get(key);
         if( obj.has(key) && obj.get(key) instanceof ArrayNode) {
         	return (ArrayNode) obj.get(key);
         } 
@@ -149,7 +148,7 @@ public class JSONUtilities {
     }
     
     static public void safePut(ObjectNode options, String key, JsonNode rootElement) {
-        options.put(key, rootElement);
+        options.set(key, rootElement);
     }
     
     static public void safeInc(ObjectNode obj, String key) {

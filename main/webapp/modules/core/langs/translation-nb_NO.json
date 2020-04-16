@@ -415,5 +415,7 @@
     "core-index/title": "Tittel:",
     "core-index/license": "Lisens:",
     "core-index/homepage": "Hjemmeside:",
-    "core-index/image": "Bilde:"
+    "core-index/image": "Bilde:",
+    "core-dialogs/scatterplot-matrix": "Spredningsplott-matrise",
+    "core-dialogs/lb-formats-quotation": "Alltid siter tekst"
 }

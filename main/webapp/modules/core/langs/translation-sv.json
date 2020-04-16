@@ -340,7 +340,6 @@
     "core-project/custom-tabular": "Anpassad tab-exportör…",
     "core-project/sql-export": "SQL-exportör…",
     "core-project/templating": "Mallhantering…",
-    "core-project/warning-align": "Du har inte gjort någon schemajustering än,\nså det finns ingen trippel att exportera.\n\nAnvänd Freebase > Edit Schema Alignment Skeleton…\nkommandot för att justera dina data med Freebase scheman först.",
     "core-project/json-invalid": "Den JSON du klistrade in är ogiltig",
     "core-project/undo-history": "Oändlig ångra-historia",
     "core-project/mistakes": "Oroa dig inte för att göra misstag. Varje ändring du gör visas här, och du kan ångra dina ändringar när som helst.",

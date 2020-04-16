@@ -74,6 +74,9 @@ public class ExcelImporterTests extends ImporterTest {
     //private static final File xlsxFile = createSpreadsheet(true);
     private static final File xlsFile = createSpreadsheet(false);
     private static final File xlsxFile = createSpreadsheet(true);
+
+    private static final File xlsFileWithMultiSheets = createSheetsWithDifferentColumns(false);
+    private static final File xlsxFileWithMultiSheets = createSheetsWithDifferentColumns(true);
     
     @Override
     @BeforeTest
@@ -176,7 +179,103 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(1)).get("limit");
         verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
-    
+
+	
+    @Test
+    public void readMultiSheetXls() throws FileNotFoundException, IOException{
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+
+        InputStream stream = new FileInputStream(xlsFileWithMultiSheets);
+
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertEquals(project.rows.size(), ROWS * SHEETS);
+        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(project.columnModel.columns.size(), COLUMNS + SHEETS - 1);
+
+        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
+        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        // Check the value read from the second sheet.
+        Assert.assertEquals(((Number)project.rows.get(ROWS).getCellValue(0)).doubleValue(),0.0, EPSILON);
+        Assert.assertEquals(((Number)project.rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(),1.0, EPSILON);
+
+        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+
+        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
+        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+
+        // We will read SHEETS sheets from created xls file.
+        verify(options, times(SHEETS)).get("ignoreLines");
+        verify(options, times(SHEETS)).get("headerLines");
+        verify(options, times(SHEETS)).get("skipDataLines");
+        verify(options, times(SHEETS)).get("limit");
+        verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void readMultiSheetXlsx() throws FileNotFoundException, IOException{
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 2\", fileNameAndSheetIndex: \"file-source#2\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+
+        InputStream stream = new FileInputStream(xlsxFileWithMultiSheets);
+
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertEquals(project.rows.size(), ROWS * SHEETS);
+        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(project.columnModel.columns.size(), COLUMNS + SHEETS - 1);
+
+        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
+        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        // Check the value read from the second sheet.
+        Assert.assertEquals(((Number)project.rows.get(ROWS).getCellValue(0)).doubleValue(),0.0, EPSILON);
+        Assert.assertEquals(((Number)project.rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(),1.0, EPSILON);
+
+
+        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+
+        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
+        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+
+        // We will read SHEETS sheets from created xls file.
+        verify(options, times(SHEETS)).get("ignoreLines");
+        verify(options, times(SHEETS)).get("headerLines");
+        verify(options, times(SHEETS)).get("skipDataLines");
+        verify(options, times(SHEETS)).get("limit");
+        verify(options, times(SHEETS)).get("storeBlankCellsAsNulls");
+    }
+
     private static File createSpreadsheet(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
@@ -227,7 +326,61 @@ public class ExcelImporterTests extends ImporterTest {
             return null;
         }
         return file;
-        
+		
+    }
+ 
+   private static File createSheetsWithDifferentColumns(boolean xml) {
+
+        final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
+
+        for (int s = 0; s < SHEETS; s++) {
+            Sheet sheet = wb.createSheet("Test Sheet " + s);
+
+            for (int row = 0; row < ROWS; row++) {
+                int col = 0;
+                Row r = sheet.createRow(row);
+                Cell c;
+
+                c = r.createCell(col++);
+                c.setCellValue(row * 1.1); // double
+
+                c = r.createCell(col++);
+                c.setCellValue(row % 2 == 0); // boolean
+
+                c = r.createCell(col++);
+                c.setCellValue(Calendar.getInstance()); // calendar
+
+                c = r.createCell(col++);
+                c.setCellValue(new Date()); // date
+
+                c = r.createCell(col++);
+                c.setCellValue(" Row " + row + " Col " + col); // string
+
+                c = r.createCell(col++);
+                c.setCellValue(""); // string
+
+                // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
+                for(int i = 0; i < s; i++){
+                    c = r.createCell(col++);
+                    c.setCellValue(i + s);
+                }
+            }
+
+        }
+
+        File file = null;
+        try {
+            file = File.createTempFile("openrefine-importer-test", xml ? ".xlsx" : ".xls");
+            file.deleteOnExit();
+            OutputStream outputStream = new FileOutputStream(file);
+            wb.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+            wb.close();
+        } catch (IOException e) {
+            return null;
+        }
+        return file;
     }
 
 }

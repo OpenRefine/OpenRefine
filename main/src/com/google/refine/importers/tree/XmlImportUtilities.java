@@ -47,6 +47,8 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
+
 import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -252,7 +254,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportColumnGroup rootColumnGroup,
         int limit,
         ImportParameters parameters
-    ) {
+    ) throws TreeReaderException{
         if (logger.isTraceEnabled()) {
             logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
         }
@@ -264,8 +266,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             }
         } catch (TreeReaderException e) {
-            // TODO: This error needs to be reported to the browser/user
             logger.error("Exception from XML parse",e);
+            throw e;
         }
     }
 
@@ -506,6 +508,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 String colName = parser.getFieldName();
                 if (value instanceof String) {
                     String text = (String) value;
+                    if(parameter.trimStrings) {
+                        text = text.trim();
+                    }
                     addCell(project, thisColumnGroup, record, colName, text, 
                             parameter.storeEmptyStrings, parameter.guessDataType);
                 } else {

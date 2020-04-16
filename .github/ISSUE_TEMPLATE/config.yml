@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question (mailing list)
+    url: https://groups.google.com/d/forum/openrefine
+    about: Please ask and answer questions here.
+  - name: Gitter chat
+    url: https://gitter.im/OpenRefine/OpenRefine
+    about: General and developer discussions

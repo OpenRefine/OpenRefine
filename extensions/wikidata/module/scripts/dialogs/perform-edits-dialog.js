@@ -58,7 +58,6 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
                 }
             });
         }
-        event.preventDefault();
     });
   }
 };

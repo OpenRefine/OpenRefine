@@ -27,6 +27,7 @@
 package com.google.refine.util;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 
 public class StringUtils {
     /**
@@ -41,6 +42,8 @@ public class StringUtils {
             return ParsingUtilities.dateToString((OffsetDateTime) odt);
         } else if (o == null) {
             return "";
+        } else if(o instanceof Object[]){
+            return Arrays.deepToString((Object[]) o);
         } else {
             return o.toString();
         }
