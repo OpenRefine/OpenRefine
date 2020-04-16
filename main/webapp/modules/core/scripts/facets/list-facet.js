@@ -37,7 +37,9 @@ function ListFacet(div, config, options, selection) {
   if (!("invert" in this._config)) {
     this._config.invert = false;
   }
-
+  
+  this._config.minimize = false;
+  
   this._options = options || {};
   if (!("sort" in this._options)) {
     this._options.sort = "name";
@@ -82,6 +84,7 @@ ListFacet.prototype.getJSON = function() {
   var o = {
       type: "list",
       name: this._config.name,
+      minimize: this._config.minimize,
       columnName: this._config.columnName,
       expression: this._config.expression,
       omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
@@ -148,7 +151,12 @@ ListFacet.prototype._initializeUI = function() {
   this._div.empty().show().html(
       '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-          '<td width="1%"><a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
+          '<td width="1%">' +
+        	'<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+          '</td>' +
+          '<td width="1%">' +
+      	    '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+          '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
@@ -182,6 +190,7 @@ ListFacet.prototype._initializeUI = function() {
   });
   this._elmts.expressionDiv.text(this._config.expression).hide().click(function() { self._editExpression(); });
   this._elmts.removeButton.click(function() { self._remove(); });
+  this._elmts.minimizeButton.click(function() { self._minimize(); });
   this._elmts.resetButton.click(function() { self._reset(); });
   this._elmts.invertButton.click(function() { self._invert(); });
 
@@ -672,6 +681,17 @@ ListFacet.prototype._remove = function() {
   this._blankChoice = null;
   this._errorChoice = null;
   this._data = null;
+};
+
+ListFacet.prototype._minimize = function() {
+  if(!this._config.minimize) {
+	this._div.addClass("facet-state-minimize");
+	this._config.minimize = true;
+	
+  } else {
+	this._div.removeClass("facet-state-minimize");
+	this._config.minimize = false;
+  }
 };
 
 ListFacet.prototype._updateRest = function() {
