@@ -1,0 +1,169 @@
+<div class="dialog-frame" style="width: 800px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <div id="custom-tabular-exporter-tabs" class="refine-tabs">
+      <ul>
+        <li><a href="#custom-tabular-exporter-tabs-content" bind="or_dialog_content"></a></li>
+        <li><a href="#custom-tabular-exporter-tabs-download" bind="or_dialog_download"></a></li>
+        <li bind="uploadTabHeader"><a href="#custom-tabular-exporter-tabs-upload" bind="or_dialog_upload"></a></li>
+        <li><a href="#custom-tabular-exporter-tabs-code" bind="or_dialog_optCode"></a></li>
+      </ul>
+      
+      <div id="custom-tabular-exporter-tabs-content"><div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table>
+        <tr>
+          <td bind="or_dialog_selAndOrd"></td>
+          <td><span bind="or_dialog_optFor"></span><span bind="columnNameSpan" class="custom-tabular-exporter-selected-column"></span></td>
+        </tr>
+        <tr>
+          <td width="40%"><div bind="columnList" class="custom-tabular-exporter-columns"></div></td>
+          <td><div bind="columnOptionPane" class="custom-tabular-exporter-column-options"><div class="grid-layout layout-normal"><table>
+            <tr><td colspan="2" bind="or_dialog_forReconCell"></td></tr>
+            <tr><td><div class="grid-layout layout-tightest" ><table>
+              <tr>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-name" id="$custom-exporter-recon-entity-name" /></td>
+                <td><label for="$custom-exporter-recon-entity-name" bind="or_dialog_matchedName"></label></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="cell-content" id="$custom-exporter-recon-cell-content" /></td>
+                <td><label for="$custom-exporter-recon-cell-content" bind="or_dialog_cellCont"></label></td>
+              </tr>
+              <tr>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-recon" value="entity-id" id="$custom-exporter-recon-entity-id" /></td>
+                <td><label for="$custom-exporter-recon-entity-id" bind="or_dialog_matchedId"></label></td>
+              </tr>
+              <tr>
+                <td width="1%"><input type="checkbox" bind="reconLinkCheckbox" id="$custom-exporter-recon-link" /></td>
+                <td width="50%"><label for="$custom-exporter-recon-link" bind="or_dialog_linkMatch"></label></td>
+                <td width="1%"><input type="checkbox" bind="reconBlankUnmatchedCheckbox" id="$custom-exporter-recon-blank-unmatched" /></td>
+                <td width="50%"><label for="$custom-exporter-recon-blank-unmatched" bind="or_dialog_outNotUnMatch"></label></td>
+              </tr>
+            </table></td></tr>
+            
+            <tr><td colspan="2" bind="or_dialog_dateFormat"></td></tr>
+            <tr><td><div class="grid-layout layout-tightest"><table>
+              <tr>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="iso-8601" id="$custom-exporter-date-iso" /></td>
+                <td colspan="3"><label for="$custom-exporter-date-iso" bind="or_dialog_dateIso"></label></td>
+              </tr>
+              <tr>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-short" id="$custom-exporter-date-locale-short" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-short" bind="or_dialog_shortFormat"></label></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-medium" id="$custom-exporter-date-locale-medium" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-medium" bind="or_dialog_mediumFormat"></label></td>
+              </tr>
+              <tr>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-long" id="$custom-exporter-date-locale-long" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-long" bind="or_dialog_longFormat"></label></td>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="locale-full" id="$custom-exporter-date-locale-full" /></td>
+                <td width="50%"><label for="$custom-exporter-date-locale-full" bind="or_dialog_fullFormat"></label></td>
+              </tr>
+              <tr>
+                <td width="1%"><input type="radio" name="custom-tabular-exporter-date" value="custom" id="$custom-exporter-date-custom" /></td>
+                <td colspan="3">
+                  <label for="$custom-exporter-date-custom" bind="or_dialog_custom"></label> <input size="35" class="lightweight" bind="dateCustomInput" />
+                  <a href="" target="_blank" bind="or_dialog_help"></a>
+                </td>
+              </tr>
+              <tr>
+                <td width="1%"><input type="checkbox" bind="dateLocalTimeZoneCheckbox" id="$custom-exporter-date-local-timezone" /></td>
+                <td width="50%"><label for="$custom-exporter-date-local-timezone" bind="or_dialog_localTime"></label></td>
+                <td width="1%"><input type="checkbox" bind="omitTimeCheckbox" id="$custom-exporter-date-omit-time" /></td>
+                <td width="50%"><label for="$custom-exporter-date-omit-time" bind="or_dialog_omitTime"></label></td>
+              </tr>
+            </table></td></tr>
+          </table></div></div></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <button class="button" bind="selectAllButton"></button>
+            <button class="button" bind="deselectAllButton"></button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="grid-layout layout-tighter layout-full"><table>
+            <tr>
+              <td width="1%"><input type="checkbox" bind="outputColumnHeadersCheckbox" checked id="$custom-exporter-output-column-headers" /></td>
+              <td width="25%"><label for="$custom-exporter-output-column-headers" bind="or_dialog_outColHeader"></label></td>
+              <td width="1%"><input type="checkbox" bind="outputEmptyRowsCheckbox" id="$custom-exporter-output-empty-rows" /></td>
+              <td width="25%"><label for="$custom-exporter-output-empty-rows" bind="or_dialog_outEmptyRow"></label></td>
+              <td width="1%"><input type="checkbox" bind="exportAllRowsCheckbox" id="$custom-exporter-output-all-rows" /></td>
+              <td width="50%"><label for="$custom-exporter-output-all-rows" bind="or_dialog_ignoreFacets"></label></td>
+            </tr>
+          </table></div></td>
+        </tr>
+      </table></div></div>
+      
+      
+      <div id="custom-tabular-exporter-tabs-download" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+        <tr>
+          <th bind="or_dialog_lineFormat"></th>
+          <th bind="or_dialog_otherFormat"></th>
+        </tr>
+        <tr>
+          <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="tsv" checked id="$custom-exporter-download-tsv" /></td>
+              <td><label for="$custom-exporter-download-tsv" bind="or_dialog_tsv"></label></td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="csv" id="$custom-exporter-download-csv" /></td>
+              <td><label for="$custom-exporter-download-csv" bind="or_dialog_csv"></label></td></tr>
+            <tr><td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="*sv" id="$custom-exporter-download-sv" /></td>
+              <td><label for="$custom-exporter-download-sv" bind="or_dialog_customSep"></label>
+                <input type="text" class="lightweight" size="5" bind="separatorInput" /></td></tr>
+          </table></div></td>
+          
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xls" id="$custom-exporter-download-xls" /></td>
+              <td><label for="$custom-exporter-download-xls" bind="or_dialog_excel"></label></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="xlsx" id="$custom-exporter-download-xlsx" /></td>
+              <td><label for="$custom-exporter-download-xlsx" bind="or_dialog_excelXml"></label></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="custom-tabular-exporter-download-format" value="html" id="$custom-exporter-download-html" /></td>
+              <td><label for="$custom-exporter-download-html" bind="or_dialog_htmlTable"></label></td>
+            </tr>
+          </table></div></td>
+        </tr>
+        
+        <tr>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr><td bind="or_dialog_lineSep"></td><td><input type="text" size="5" class="lightweight" bind="lineSeparatorInput" /></td></tr>
+            <tr><td bind="or_dialog_charEnc"></td><td><input type="text" size="10" class="lightweight" bind="encodingInput" /></td></tr>
+          </table></div></td>
+        </tr>
+        
+        <tr>
+          <td colspan="2"><div class="grid-layout grid-layout-for-text layout-tightest layout-full"><table><tr>
+            <td width="100%"> </td>
+            <td width="1%"><button class="button" bind="downloadPreviewButton"></button></td>
+            <td width="1%"><button class="button button-primary" bind="downloadButton"></button></td>
+          </tr></table></div></td>
+        </tr>
+      </table></div></div>
+      
+      
+      <div bind="uploadTabBody" id="custom-tabular-exporter-tabs-upload" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+        <tr>
+          <th ><span bind="or_dialog_uploadTo"></span></th>
+        </tr>
+        <tr>
+          <td><div class="grid-layout grid-layout-for-text layout-tightest"><table bind="uploadTargetTable"></table></div></td>
+        </tr>
+        <tr>
+          <td><button class="button button-primary" bind="uploadButton"></button></td>
+        </tr>
+      </table></div></div>
+      
+      
+      <div id="custom-tabular-exporter-tabs-code" style="display: none;"><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+        <tr>
+          <td bind="or_dialog_jsonText"></td>
+          <td width="30%" style="text-align: right;"><button class="button" bind="applyOptionCodeButton"></button></td>
+        </tr>
+        <tr><td colspan="2"><textarea class="custom-tabular-exporter-code" bind="optionCodeInput"></textarea></td></tr>
+      </table></div></div>
+    </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-tightest layout-full"><table><tr>
+    <td><button class="button" bind="cancelButton"></button></td>
+  </tr></table></div></div>
+</div>

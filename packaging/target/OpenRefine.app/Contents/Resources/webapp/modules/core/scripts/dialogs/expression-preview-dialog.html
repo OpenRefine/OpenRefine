@@ -1,0 +1,35 @@
+<div class="grid-layout layout-tight layout-full"><table rows="4" cols="4">
+  <tr style="vertical-align: bottom;">
+    <td bind="or_dialog_expr"></td>
+    <td style="text-align: right;" bind="or_dialog_lang"></td>
+    <td colspan="2"><select bind="expressionPreviewLanguageSelect">$LANGUAGE_OPTIONS$</select></td>
+  </tr>
+  <tr>
+    <td colspan="3"><div class="input-container"><textarea class="expression-preview-code" bind="expressionPreviewTextarea" spellcheck="false" /></div></td>
+    <td class="expression-preview-parsing-status" bind="expressionPreviewParsingStatus" width="150" style="vertical-align: top;"></td>
+  </tr>
+  <tr>
+    <td colspan="4">
+      <div id="expression-preview-tabs" class="refine-tabs">
+        <ul>
+          <li><a href="#expression-preview-tabs-preview" bind="or_dialog_preview"></a></li>
+          <li><a href="#expression-preview-tabs-history" bind="or_dialog_history"></a></li>
+          <li><a href="#expression-preview-tabs-starred" bind="or_dialog_starred"></a></li>
+          <li><a href="#expression-preview-tabs-help" bind="or_dialog_help"></a></li>
+        </ul>
+        <div id="expression-preview-tabs-preview">
+          <div class="expression-preview-container" bind="expressionPreviewPreviewContainer"></div>
+        </div>
+        <div id="expression-preview-tabs-history" style="display: none;">
+          <div class="expression-preview-container" bind="expressionPreviewHistoryContainer"></div>
+        </div>
+        <div id="expression-preview-tabs-starred" style="display: none;">
+          <div class="expression-preview-container" bind="expressionPreviewStarredContainer"></div>
+        </div>
+        <div id="expression-preview-tabs-help" style="display: none;">
+          <div class="expression-preview-help-container" bind="expressionPreviewHelpTabBody"></div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table></div>

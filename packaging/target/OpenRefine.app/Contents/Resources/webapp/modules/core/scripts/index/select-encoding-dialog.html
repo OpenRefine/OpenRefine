@@ -1,0 +1,22 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div id="select-encodings-tabs" class="refine-tabs">
+        <ul>
+          <li><a href="#select-encodings-tabs-common" id="or-enc-common"></a></li>
+          <li><a href="#select-encodings-tabs-all" id="or-enc-all"></a></li>
+        </ul>
+        <div id="select-encodings-tabs-common">
+          <div class="select-encoding-dialog-encoding-list" bind="commonList"></div>
+        </div>
+        <div id="select-encodings-tabs-all" style="display: none;">
+          <div class="select-encoding-dialog-encoding-list" bind="allList"></div>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>

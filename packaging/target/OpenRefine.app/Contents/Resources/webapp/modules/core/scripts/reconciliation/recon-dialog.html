@@ -1,0 +1,33 @@
+<div class="dialog-frame" style="width: 900px;">
+	<div class="dialog-header" bind="dialogHeader"></div>
+	<div class="dialog-body" bind="dialogBody">
+		<div class="grid-layout layout-normal layout-full grid-layout-for-ui">
+			<div class="recon-dialog-service">
+				<div class="recon-dialog-service-list-container">
+					<div class="recon-dialog-service-opener">
+						<div class="recon-dialog-service-opener-title" bind="serviceListTitle"></div>
+						<img class="recon-dialog-service-opener-img" src="images/menu-opener.png" />
+					</div>
+					<div class="recon-dialog-service-list" bind="serviceList"></div>
+				</div>
+				<div class="recon-dialog-service-panel-container"
+					bind="servicePanelContainer">
+					<div class="recon-dialog-service-panel-message"
+						bind="servicePanelMessage"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="dialog-footer" bind="dialogFooter">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<button class="button" bind="addStandardServiceButton"></button>
+				</td>
+				<td align="right">
+					<button class="button" bind="reconcileButton"></button>
+					<button class="button" bind="cancelButton"></button>
+				</td>
+		</table>
+	</div>
+</div>

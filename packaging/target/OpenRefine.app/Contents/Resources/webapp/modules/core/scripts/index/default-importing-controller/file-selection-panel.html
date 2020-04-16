@@ -1,0 +1,33 @@
+<div bind="wizardHeader" class="default-importing-wizard-header"><div class="grid-layout layout-tightest layout-full"><table><tr>
+  <td width="1%"><button bind="startOverButton" class="button"></button></td>
+  <td width="98%" id="or-import-select"></td>
+  <td width="1%"><button bind="nextButton" class="button button-primary"></button></td>
+</tr></table></div></div>
+
+<div bind="controlPanel" class="default-importing-file-selection-control-panel">
+  <div class="grid-layout layout-full layout-tighter"><table>
+    <tr>
+      <td colspan="3" id="or-import-severalFile"></td>
+    </tr>
+    <tr>
+      <td width="98%" bind="summary"></td>
+      <td width="1%"><button bind="selectAllButton" class="button"></button></td>
+      <td width="1%"><button bind="unselectAllButton" class="button"></button></td>
+    </tr>
+  </table></div>
+  
+  <h2 id="or-import-selExt"></h2>
+  <div bind="extensionContainer" class="grid-layout layout-full layout-tightest"></div>
+  
+  <h2 id="or-import-regex"></h2>
+  <div class="grid-layout layout-full layout-tighter"><table>
+    <tr><td colspan="3"><input bind="regexInput" style="width: 100%;"/></td></tr>
+    <tr>
+      <td bind="regexSummary"></td>
+      <td width="1%"><button bind="selectRegexButton" class="button"></button></td>
+      <td width="1%"><button bind="unselectRegexButton" class="button"></button></td>
+    </tr>
+  </table></div>
+</div>
+
+<div bind="filePanel" class="default-importing-file-selection-file-panel"></div>

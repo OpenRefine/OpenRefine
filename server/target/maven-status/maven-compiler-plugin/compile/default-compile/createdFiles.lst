@@ -1,0 +1,9 @@
+com\google\util\logging\IndentingLayout.class
+com\google\refine\Refine.class
+com\google\refine\Configurations.class
+com\google\refine\RefineServer$2.class
+com\google\refine\RefineServer.class
+com\google\refine\RefineServer$1.class
+com\google\util\threads\ThreadPoolExecutorAdapter.class
+com\google\refine\RefineClient.class
+com\google\refine\ShutdownSignalHandler.class

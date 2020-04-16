@@ -1,0 +1,20 @@
+<div class="dialog-frame" style="width: 500px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+      
+    <div id="choose-export-destination" ><div class="grid-layout grid-layout-for-ui layout-loose layout-full"><table>
+        <tr>
+          <td width="60%"><div class="grid-layout grid-layout-for-text layout-tightest"><table>
+            <tr><td width="1%"><input type="radio" name="export-destination" value="local" checked id="$export-to-local" /></td>
+              <td><label for="$export-to-local" bind="toLocalRadio"></label></td></tr>
+            <tr><td width="1%"><input type="radio" name="export-destination" value="google" id="$export-to-google-drive" /></td>
+              <td><label for="$export-to-google-drive" bind="toGoogleDriveRadio"></label></td></tr>
+          </table></div></td>
+     </div>
+   </div>
+  
+  <div class="dialog-footer" bind="dialogFooter"><div class="grid-layout layout-tightest layout-full"><table><tr>
+    <td><button class="button" bind="exportButton"></button></td>
+    <td><button class="button" bind="cancelButton"></button></td>
+  </tr></table></div></div>
+</div>

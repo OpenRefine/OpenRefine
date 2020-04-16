@@ -1,0 +1,60 @@
+<div class="dialog-frame" style="width: 1000px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <div class="grid-layout layout-normal layout-full"><table>
+      <tr>
+        <td colspan="4">
+          <span bind="or_dialog_descr"></span>
+          <a href="https://github.com/OpenRefine/OpenRefine/wiki/Clustering" target="_blank" bind="or_dialog_findMore"></a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+            <span bind="or_dialog_method"></span><select bind="methodSelector">
+              <option selected="true" bind="or_dialog_keyCollision"></option>
+              <option bind="or_dialog_neighbor"></option>
+            </select>
+        </td>
+        <td>
+          <div class="binning-controls"><span bind="or_dialog_keying"></span>
+             <select bind="keyingFunctionSelector"></select>
+          </div>
+          <div class="knn-controls hidden"><span bind="or_dialog_distance"></span>
+             <select bind="distanceFunctionSelector"></select>
+          </div>
+        </td>
+        <td>
+          <div id="ngram-fingerprint-params" class="function-params hidden">
+            <span bind="or_dialog_ngramSize"></span><input type="text" value="2" bind="ngramSize" name="ngram-size" size="2" class="param" datatype="int">
+          </div>
+          <div class="knn-controls hidden">
+            <span style="margin-right: 1em"><span bind="or_dialog_radius"></span><input type="text" value="1.0" bind="radius" name="radius" size="2" class="param" datatype="float"></span>
+            <span><span bind="or_dialog_blockChars"></span><input type="text" value="6" bind="ngramBlock" name="blocking-ngram-size" size="2" class="param" datatype="int"></span>
+          </div>
+        </td>
+        <td bind="resultSummary" style="text-align:right;">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <div bind="tableContainer" class="clustering-dialog-table-container"></div>
+        </td>
+        <td colspan="1" bind="facetContainer" width="250"></td>
+      </tr>
+    </table></div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <table width="100%"><tr>
+      <td class="left" style="text-align: left">
+        <button class="button" bind="selectAllButton"></button>
+        <button class="button" bind="deselectAllButton"></button>
+      </td>
+      <td class="right" style="text-align: right">
+        <button class="button" bind="exportClusterButton"></button>
+        <button class="button button-primary" bind="applyReClusterButton"></button>
+        <button class="button" bind="applyCloseButton"></button>
+        <button class="button" bind="closeButton"></button>
+      </td>
+    </tr></table>
+  </div>
+</div>

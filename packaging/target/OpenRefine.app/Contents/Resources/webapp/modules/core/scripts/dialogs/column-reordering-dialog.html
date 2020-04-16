@@ -1,0 +1,17 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody"><div class="grid-layout grid-layout-for-ui layout-normal layout-full"><table>
+    <tr>
+      <td bind="or_dialog_dragCol"></td>
+      <td bind="or_dialog_dropCol"></td>
+    </tr>
+    <tr>
+      <td width="50%"><div class="column-reordering-dialog-column-container" bind="columnContainer"></div></td>
+      <td><div class="column-reordering-dialog-column-container" bind="trashContainer"></div></td>
+    </tr>
+  </table></div></div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="okButton"></button>
+    <button class="button" bind="cancelButton"></button>
+  </div>
+</div>

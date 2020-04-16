@@ -2,3 +2,4 @@ tests/classes/
 tests/report/
 module/MOD-INF/classes/
 module/MOD-INF/lib/cachedir/
+/target/

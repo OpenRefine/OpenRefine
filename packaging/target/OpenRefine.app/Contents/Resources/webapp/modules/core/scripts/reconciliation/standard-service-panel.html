@@ -1,0 +1,37 @@
+<div class="recon-dialog-service-panel recon-dialog-standard-service-panel">
+  <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
+    <tr>
+      <td colspan="2" style="text-align: right;">
+        <span bind="or_proc_access"></span> <a href="" target="_blank" bind="rawServiceLink"></a>
+      </td>
+    </tr>
+    <tr>
+      <td bind="or_proc_cellType"></td>
+      <td bind="or_proc_colDetail"></td>
+    </tr>
+    <tr>
+      <td><div class="type-container" bind="typeContainer"></div></td>
+      <td width="50%"><div class="detail-container" bind="detailContainer"></div></td>
+    </tr>
+    <tr>
+      <td><input type="radio" name="type-choice" value="">
+        <span bind="or_proc_againstType"></span> <input size="20" bind="typeInput" /></td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td><input type="radio" name="type-choice" value="-">
+        <span bind="or_proc_noType"></span></td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" checked bind="automatchCheck" /> <span bind="or_proc_autoMatch"></span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><span bind="or_proc_max_candidates"></span> <input type="number" bind="maxCandidates" min=0 max=9 width=20/> </td> 
+      <td></td>
+    </tr>
+  </table></div>
+</div>

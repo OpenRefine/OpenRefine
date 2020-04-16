@@ -1,0 +1,31 @@
+<div>
+  <div bind="publicDocsPanel" class="gdata-panel">
+    <h1 id="gdata-title"></h1>
+    <div class="grid-layout layout-tighter"><table>
+      <tr><td colspan="2" id="gdata-import"></td></tr>
+      <tr bind="urlRow">
+        <td><input bind="urlInput" name="download" class="default-importing-web-url" /></td>
+        <td><button bind="urlNextButton" class="button button-primary" type="button" id="gdata-next"></button></td>
+      </tr>
+    </table></div>
+  </div>
+  
+  <div bind="authorizedDocsPanel" class="gdata-panel">
+    <h1 id="gdata-auth-doc"></h1>
+    
+    <div bind="signinPage" class="gdata-page">
+      <p><span id="gdata-please"></span> <button class="gdata-signin button button-primary" id="gdata-signin-btn"></button>
+        <span id="gdata-access-data"></p>
+    </div>
+    <div bind="progressPage" class="gdata-page">
+      <p><img src="images/large-spinner.gif" /> <span id="gdata-retrieving"></span></p>
+    </div>
+    <div bind="listingPage" class="gdata-page grid-layout layout-normal"><table>
+      <tr>
+        <td width="%"><button class="gdata-signout button" id="gdata-signout"></button></td>
+        <td><button class="gdata-signin button" id="gdata-resignin"></button> <span id="gdata-another-account"></span></td>
+      </tr>
+      <tr><td colspan="2"><div bind="listingContainer" class="grid-layout layout-tight gdata-document-container"></div></td></tr>
+    </table></div>
+  </div>
+</div>

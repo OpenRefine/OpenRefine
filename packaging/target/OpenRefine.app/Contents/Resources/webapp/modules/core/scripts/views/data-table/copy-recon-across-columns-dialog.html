@@ -1,0 +1,34 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-normal layout-full grid-layout-for-ui"><table>
+        <tr>
+          <td bind="or_views_copyToCol"></td>
+          <td bind="or_views_copyOpt"></td>
+        </tr>
+        <tr>
+          <td><select bind="toColumnSelect" multiple size="20" style="width: 100%;"></select></td>
+          <td><div class="grid-layout layout-normal"><table>
+            <tr>
+              <td><input type="checkbox" bind="applyToJudgedCellsCheckbox" checked /></td><td bind="or_views_applyToCell"></td>
+            </tr>
+            <tr>
+              <td colspan="2" bind="or_views_whatToCopy"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" bind="newCheckbox" checked /></td><td bind="or_views_newRecon"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" bind="matchCheckbox" checked /></td><td bind="or_views_matchRecon"></td>
+            </tr>
+          </table></div></td>
+        </tr>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="okButton"></button>
+      <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>

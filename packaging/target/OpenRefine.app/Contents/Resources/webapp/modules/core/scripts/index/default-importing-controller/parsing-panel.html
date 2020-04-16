@@ -1,0 +1,35 @@
+<div bind="wizardHeader" class="default-importing-wizard-header">
+ <div class="grid-layout layout-tightest layout-full">
+  <table>
+  <tr>
+  <td width="1px"><button bind="startOverButton" class="button"></button></td>
+  <td width="1px"><button bind="previousButton" class="button"></button></td>
+  <td width="auto" id="or-import-parsopt"></td>
+  <td width="100px" style="text-align: right;" id="or-import-projname"></td>
+  <td width="200px">
+   <input class="inline" type="text" size="30" bind="projectNameInput" style="width: 200px;" />
+  </td>
+  <td width="35px" style="text-align: right;" id="or-import-projtags"></td>
+  <td width="200px">
+   <div id="project-tags-container" class="inline">
+    <input type="hidden" id="tagsInput" style="width: 200px;" />
+   </div>
+  </td>
+  <td width="1px"><button bind="nextButton" class="button button-primary"></button></td>
+  </tr>
+  </table>
+ </div>
+</div>
+
+<div bind="dataPanel" class="default-importing-parsing-data-panel"></div>
+<div bind="progressPanel" class="default-importing-progress-data-panel">
+    <img src="images/large-spinner.gif" /> <span id="or-import-updating"></span>
+</div>
+
+<div bind="controlPanel" class="default-importing-parsing-control-panel"><table><tr>
+  <td class="default-importing-parsing-control-panel-formats">
+    <div class="default-importing-parsing-control-panel-formats-message" id="or-import-parseas"></div>
+    <div bind="formatsContainer"></div>
+  </td>
+  <td bind="optionsContainer" class="default-importing-parsing-control-panel-options-panel"></td>
+</tr></table></div>

@@ -1,0 +1,27 @@
+<div class="dialog-frame" style="width: 80%;" >
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-tight layout-full"><table>
+        <tr><td colspan="3">$EXPRESSION_PREVIEW_WIDGET$</td></tr>
+        <tr>
+          <td><label bind="or_views_errorOn"></label></td>
+          <td>
+            <input type="radio" name="text-transform-dialog-onerror-choice" value="keep-original" checked id="$text-transform-error-keep-original" />
+              <label for="$text-transform-error-keep-original" bind="or_views_keepOr"></label><br/>
+            <input type="radio" name="text-transform-dialog-onerror-choice" value="set-to-blank" id="$text-transform-error-set-to-blank" />
+              <label for="$text-transform-error-set-to-blank" bind="or_views_setBlank"></label><br/>
+            <input type="radio" name="text-transform-dialog-onerror-choice" value="store-error" id="$text-transform-error-store-error" />
+              <label for="$text-transform-error-store-error" bind="or_views_storeErr"></label></td>
+          <td><input type="checkbox" bind="repeatCheckbox" id="$text-transform-repeat" />
+            <label for="$text-transform-repeat" bind="or_views_reTrans"></label> <input bind="repeatCountInput" value="10" size="2" />
+            <label for="$text-transform-repeat" bind="or_views_timesChang"></label></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <button class="button" bind="okButton"></button>
+    <button class="button" bind="cancelButton"></button>
+  </div>
+</div>

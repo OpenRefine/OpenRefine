@@ -1,0 +1,15 @@
+<div id="notification">
+  <div bind="progressDiv">
+    <span bind="progressDescription"></span>
+    <div bind="progressStatus">
+      <img src="images/small-spinner.gif" class="notification-loader" />
+      <span bind="progressSpan"></span>
+      <span bind="countSpan"></span>
+      <a href="javascript:{}" class="notification-action" bind="cancelLink"></a>
+    </div>
+  </div>
+  <div bind="undoDiv">
+    <span bind="undoDescription"></span> 
+    <span class="notification-action"><a href="javascript:{}" bind="undoLink"></a></span>
+  </div>
+</div>

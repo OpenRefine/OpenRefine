@@ -1,0 +1,23 @@
+#*
+ * Access this page at the URL /extension/sample/
+ *#
+<html>
+  <head>
+    <title>Sample Extension</title>
+  </head>
+  <body>
+    <h1>Sample Extension</h1>
+    
+    <p>If an extension needs its own page, then this is such an example.
+      However, mostly, extensions only need to inject their own scripts
+      and styles into the /project page.
+    </p>
+    
+    <p>Here is someString: $someString, and someInt: $someInt</p>
+    
+    <p>Here is a sample list using a veloci-macro:</p>
+    
+    #set( $greatlakes = ["Superior","Michigan","Huron","Erie","Ontario"] )
+    #makeAList( $greatlakes )
+  </body>
+</html>

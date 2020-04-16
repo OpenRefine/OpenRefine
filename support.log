@@ -1,0 +1,7 @@
+----------------------- 
+PROCESSOR_ARCHITECTURE = AMD64
+JAVA_HOME = C:\Program Files\Java\jdk1.8.0_241
+java -version = java version "1.8.0_241"
+freeRam = 816M
+REFINE_MEMORY = 1400M
+----------------------- 

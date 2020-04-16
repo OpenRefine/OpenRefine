@@ -1,0 +1,24 @@
+
+  <span bind="or_views_dataType"></span> <select bind="typeSelect">
+    <option value="text" bind="or_views_text"></option>
+    <option value="number" bind="or_views_number"></option>
+    <option value="boolean" bind="or_views_boolean"></option>
+    <option value="date" bind="or_views_date"></option>
+  </select>
+
+<textarea class="data-table-cell-editor-editor" bind="textarea" />
+
+<div id="data-table-cell-editor-actions">
+  <div class="data-table-cell-editor-action">
+    <button class="button" bind="okButton"></button>
+    <div class="data-table-cell-editor-key" bind="or_views_enter"></div>
+  </div>
+  <div class="data-table-cell-editor-action">
+    <button class="button" bind="okallButton"></button>
+    <div class="data-table-cell-editor-key" bind="or_views_ctrlEnter"></div>
+  </div>
+  <div class="data-table-cell-editor-action">
+    <button class="button" bind="cancelButton"></button>
+    <div class="data-table-cell-editor-key" bind="or_views_esc"></div>
+  </div>
+</div>

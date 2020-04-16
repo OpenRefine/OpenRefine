@@ -1,0 +1,59 @@
+<div class="dialog-frame" style="width: 600px;">
+  <div class="dialog-border">
+    <div class="dialog-header" bind="dialogHeader"></div>
+    <div class="dialog-body" bind="dialogBody">
+      <div class="grid-layout layout-looser layout-full"><table><tr>
+        <td>
+          <div class="grid-layout layout-tighter"><table>
+            <tr>
+              <td colspan="3"><h3><span bind="or_views_howSplit"></span></h3></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" checked="true" name="split-by-mode" value="separator" id="$split-column-by-separator" /></td>
+              <td colspan="2"><label for="$split-column-by-separator" bind="or_views_bySep"></label></td>
+            </tr>
+            <tr><td></td>
+              <td bind="or_views_separator"></td>
+              <td><input size="10" value="," bind="separatorInput" />
+                <input type="checkbox" bind="regexInput" id="$split-column-regex" />
+                <label for="$split-column-regex" bind="or_views_regExp"></label></td>
+            </tr>
+            <tr><td></td>
+              <td bind="or_views_splitInto"></td>
+              <td style="white-space: pre;"><input size="3" bind="maxColumnsInput" /> <span bind="or_views_colMost"></span></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="radio" name="split-by-mode" value="lengths" id="$split-column-by-lengths" /></td>
+              <td colspan="2"><label for="$split-column-by-lengths" bind="or_views_fieldLen"></label></td>
+            </tr>
+            <tr><td></td>
+              <td colspan="2"><textarea style="width: 100%;" bind="lengthsTextarea"></textarea></td>
+            </tr>
+            <tr><td></td>
+              <td colspan="2" bind="or_views_listInt"></td>
+            </tr>
+          </table></div>
+        </td>
+        <td>
+          <div class="grid-layout layout-tighter"><table>
+            <tr>
+              <td colspan="3"><h3><span bind="or_views_afterSplit"></span></h3></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="checkbox" checked="true" bind="guessCellTypeInput" id="$split-column-guess" /></td>
+              <td colspan="2"><label for="$split-column-guess" bind="or_views_guessType"></label></td>
+            </tr>
+            <tr>
+              <td width="1%"><input type="checkbox" checked="true" bind="removeColumnInput" id="$split-column-remove" /></td>
+              <td colspan="2"><label for="$split-column-remove" bind="or_views_removeCol"></label></td>
+            </tr>
+          </table></div>
+        </td>
+      </table></div>
+    </div>
+    <div class="dialog-footer" bind="dialogFooter">
+      <button class="button" bind="okButton"></button>
+      <button class="button" bind="cancelButton"></button>
+    </div>
+  </div>
+</div>
