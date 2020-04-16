@@ -28,6 +28,7 @@ test-out/
 /bin
 open-refine.log
 .vscode
+.metadata # Eclipse plugins specific
 
 .idea
 *.iml
