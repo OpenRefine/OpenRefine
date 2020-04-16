@@ -10,6 +10,39 @@
   <name>OpenRefine</name>
   <description>OpenRefine is a free, open source power tool for working with messy data and improving it</description>
   <url>http://openrefine.org/</url>
+  <organization>
+    <name>Code for Science &amp; Society Inc.</name>
+    <url>https://codeforscience.org/</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>BSD 3-Clause "New" or "Revised" License</name>
+      <url>https://github.com/OpenRefine/OpenRefine/blob/master/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <mailingLists>
+    <mailingList>
+      <name>Dev</name>
+        <post>openrefine-dev@googlegroups.com</post>
+        <archive>https://groups.google.com/group/openrefine-dev/</archive>
+     </mailingList>
+     <mailingList>
+       <name>Users</name>
+       <post>openrefine@googlegroups.com</post>
+       <archive>https://groups.google.com/group/openrefine/</archive>
+     </mailingList>
+  </mailingLists>
+  <scm>
+      <connection>scm:git:git://github.com//OpenRefine/OpenRefine.git</connection>
+      <developerConnection>scm:git:https://github.com/OpenRefine/OpenRefine</developerConnection>
+      <url>https://github.com/OpenRefine/OpenRefine.git</url>
+      <tag>HEAD</tag>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/openrefine/openrefine/issues</url>
+  </issueManagement>
 
   <modules>
         <module>main</module>
@@ -17,6 +50,7 @@
         <module>extensions</module>
         <module>packaging</module>
   </modules>
+
 
   <properties>
     <jee.path>/</jee.path>
@@ -28,10 +62,6 @@
     <jackson.version>2.9.10</jackson.version>
   </properties>
 
-  <scm>
-    <connection>scm:git:http://github.com/OpenRefine/OpenRefine</connection>
-    <url>http://github.com/OpenRefine/OpenRefine</url>
-  </scm>
 
   <build>
     <!-- It is nice for "mvn" with no arguments to do a reasonable default. -->
