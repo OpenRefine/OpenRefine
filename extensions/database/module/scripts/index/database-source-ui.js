@@ -100,7 +100,11 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
           $( "#databasePort" ).val("3306");	  
       }else if(type === "mariadb"){
           $( "#databaseUser" ).val("root");
-           $( "#databasePort" ).val("3306");	  
+          $( "#databasePort" ).val("3306");
+      }else if(type === "sqlite"){
+          $( "#databaseUser" ).val("na");
+          $( "#databasePort" ).val("0");
+          $( "#databaseHost" ).val("na");
       }else{
           $( "#databaseUser" ).val("root");
           $( "#databasePort" ).val("3306");
@@ -267,7 +271,7 @@ Refine.DatabaseSourceUI.prototype._executeQuery = function(jdbcQueryInfo) {
     //remove start line
     
     var dismiss = DialogSystem.showBusy($.i18n('database-import/checking'));
-   
+
     Refine.postCSRF(
       "command/database/test-query",
       jdbcQueryInfo,
@@ -440,7 +444,7 @@ Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
         var databaseHostTestResult = alphaNumRE.test(databaseHostInput);
         var databasePortTestResult = numRE.test(databasePortInput);
         var databaseUserTestResult = alphaNumRE.test(databaseUserInput);
-        
+
         if(alphaNumConnNameTestResult == false){
         	window.alert($.i18n('database-source/alert-conn-name-invalid-character'));
         	return false;

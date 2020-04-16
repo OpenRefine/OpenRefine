@@ -679,6 +679,16 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
     }
+
+    var currentHeight = dialog.outerHeight();
+    var currentWidth = dialog.outerWidth();
+    dialog.resizable({
+      alsoResize: ".dialog-border .dialog-body",
+      handles: "e, w, se",
+      minHeight: currentHeight,
+      maxHeight: currentHeight,
+      minWidth: currentWidth
+    });
   };
 
   MenuSystem.appendTo(menu, [ "core/transpose" ], [

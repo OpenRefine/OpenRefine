@@ -4,6 +4,7 @@ package com.google.refine.extension.database;
 import java.sql.Connection;
 import java.util.List;
 
+import com.google.refine.extension.database.sqlite.SQLiteDatabaseService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -83,6 +84,14 @@ public class DatabaseServiceTest extends DBExtensionTests{
         DatabaseService dbService = DatabaseService.get(MariaDBDatabaseService.DB_NAME);
         Assert.assertNotNull(dbService);  
         Assert.assertEquals(dbService.getClass(), MariaDBDatabaseService.class);
+    }
+
+    @Test(groups = {"requiresSQLite"})
+    public void testGetSQLiteDBService() {
+
+        DatabaseService dbService = DatabaseService.get(SQLiteDatabaseService.DB_NAME);
+        Assert.assertNotNull(dbService);
+        Assert.assertEquals(dbService.getClass(), SQLiteDatabaseService.class);
     }
 
     @Test(groups = {"requiresMySQL"})

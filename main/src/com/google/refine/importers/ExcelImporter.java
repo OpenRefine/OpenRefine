@@ -38,16 +38,12 @@ import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.common.usermodel.Hyperlink;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
@@ -66,9 +62,6 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.Recon.Judgment;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -201,7 +194,6 @@ public class ExcelImporter extends TabularImportingParserBase {
             
             TableDataReader dataReader = new TableDataReader() {
                 int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
                 
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
@@ -218,7 +210,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                             
                             org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
                             if (sourceCell != null) {
-                                cell = extractCell(sourceCell, reconMap);
+                                cell = extractCell(sourceCell);
                             }
                             cells.add(cell);
                         }
@@ -242,7 +234,7 @@ public class ExcelImporter extends TabularImportingParserBase {
         super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
     
-    static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
+    static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.FORMULA)) {
             cellType = cell.getCachedFormulaResultType();
@@ -258,8 +250,8 @@ public class ExcelImporter extends TabularImportingParserBase {
         } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
             
-            if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                value = HSSFDateUtil.getJavaDate(d);
+            if (DateUtil.isCellDateFormatted(cell)) {
+                value = DateUtil.getJavaDate(d);
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60
@@ -276,61 +268,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                 value = text;
             }
         }
-        
-        return value;
-    }
-    
-    static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {
-        Serializable value = extractCell(cell);
-        
-        if (value != null) {
-            Recon recon = null;
-            
-            Hyperlink hyperlink = cell.getHyperlink();
-            if (hyperlink != null) {
-                String url = hyperlink.getAddress();
-                
-                if (url != null && (url.startsWith("http://") ||
-                    url.startsWith("https://"))) {
-                    
-                    final String sig = "freebase.com/view";
-                    
-                    int i = url.indexOf(sig);
-                    if (i > 0) {
-                        String id = url.substring(i + sig.length());
-                        
-                        int q = id.indexOf('?');
-                        if (q > 0) {
-                            id = id.substring(0, q);
-                        }
-                        int h = id.indexOf('#');
-                        if (h > 0) {
-                            id = id.substring(0, h);
-                        }
-                        
-                        if (reconMap.containsKey(id)) {
-                            recon = reconMap.get(id);
-                            recon.judgmentBatchSize++;
-                        } else {
-                            recon = new Recon(0, null, null);
-                            recon.service = "import";
-                            recon.match = new ReconCandidate(id, value.toString(), new String[0], 100);
-                            recon.matchRank = 0;
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                            recon.judgmentBatchSize = 1;
-                            recon.addCandidate(recon.match);
-                            
-                            reconMap.put(id, recon);
-                        }
-                        
-                    }
-                }
-            }
-            
-            return new Cell(value, recon);
-        } else {
-            return null;
-        }
+
+        return new Cell(value, null);
     }
 }

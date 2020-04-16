@@ -227,7 +227,7 @@ ListFacet.prototype._copyChoices = function() {
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
   var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
-  body.html('<textarea wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
+  body.html('<textarea disabled wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
   var elmts = DOM.bind(body);
 
   $('<button class="button"></button>').text($.i18n('core-buttons/close')).click(function() {

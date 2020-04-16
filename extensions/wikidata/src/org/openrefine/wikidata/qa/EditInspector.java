@@ -28,22 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.qa.scrutinizers.CalendarScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.EditScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.NewItemScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.NoEditsMadeScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.SelfReferentialScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer;
-import org.openrefine.wikidata.qa.scrutinizers.WhitespaceScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.*;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
@@ -82,6 +67,8 @@ public class EditInspector {
         register(new RestrictedValuesScrutinizer());
         register(new EntityTypeScrutinizer());
         register(new CalendarScrutinizer());
+        register(new CommonDescriptionScrutinizer());
+        register(new EnglishDescriptionScrutinizer());
     }
 
     /**

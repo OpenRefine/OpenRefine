@@ -37,7 +37,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -56,6 +58,8 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import com.google.refine.importers.tree.ImportColumnGroup;
 
 public class JsonImporterTests extends ImporterTest {
     @Override
@@ -104,6 +108,85 @@ public class JsonImporterTests extends ImporterTest {
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    }
+
+    @Test 
+    public void canThrowError(){
+        String errJSON = getSampleWithError();
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+
+        
+        try {
+            inputStream = new ByteArrayInputStream(errJSON.getBytes( "UTF-8" ) );
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail();
+        }
+        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
+        List<Exception> exceptions = new ArrayList<Exception>();
+
+        SUT.parseOneFile(
+                project,
+                metadata,
+                job,
+                "file-source",
+                inputStream,
+                rootColumnGroup,
+                -1,
+                options,
+                exceptions
+        );
+        Assert.assertFalse(exceptions.isEmpty());
+        Assert.assertEquals(exceptions.get(0).getMessage(), "Illegal unquoted " +
+                "character ((CTRL-CHAR, code 10)): has to be escaped using backslash to be included in string value");
+    }
+    
+    @Test
+    public void trimLeadingTrailingWhitespaceOnTrimStrings(){
+        String ScraperwikiOutput = 
+            "[\n" +
+            "{\n" +
+            "        \"school\": \"  University of Cambridge  \",\n" +
+            "        \"name\": \"          Amy Zhang                   \",\n" +
+            "        \"student-faculty-score\": \"100\",\n" +
+            "        \"intl-student-score\": \"95\"\n" +
+            "    }\n" +
+            "]\n";
+        RunTest(ScraperwikiOutput, true);
+        log(project);
+        assertProjectCreated(project, 4, 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(0).value, "University of Cambridge");
+        Assert.assertEquals(row.getCell(1).value, "Amy Zhang");
+    }
+
+    @Test
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(){
+        String ScraperwikiOutput = 
+            "[\n" +
+            "{\n" +
+            "        \"school\": \"  University of Cambridge  \",\n" +
+            "        \"name\": \"          Amy Zhang                   \",\n" +
+            "        \"student-faculty-score\": \"100\",\n" +
+            "        \"intl-student-score\": \"95\"\n" +
+            "    }\n" +
+            "]\n";
+        RunTest(ScraperwikiOutput);
+        log(project);
+        assertProjectCreated(project, 4, 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(0).value, "  University of Cambridge  ");
+        Assert.assertEquals(row.getCell(1).value, "          Amy Zhang                   ");
     }
 
     @Test
@@ -414,7 +497,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
     
-    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector) {
+    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector, boolean trimStrings) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
         
@@ -423,7 +506,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.append(path, pathSelector);
         
         JSONUtilities.safePut(options, "recordPath", path);
-        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "trimStrings", trimStrings);
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
@@ -508,13 +591,24 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
     
+    private static String getSampleWithError(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append("{\"id\":" + "\"\n\";");
+        sb.append("]");
+        return sb.toString();
+    }
 
     private void RunTest(String testString) {
-        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
+        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
     
     private void RunComplexJSONTest(String testString) {
-        RunTest(testString, getOptions(job, SUT, "institutes"));
+        RunTest(testString, getOptions(job, SUT, "institutes", false));
+    }
+
+    private void RunTest(String testString, boolean trimStrings) {
+        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, trimStrings));
     }
     
     private void RunTest(String testString, ObjectNode options) {

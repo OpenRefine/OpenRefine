@@ -209,9 +209,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadSampleXml();
 
         String[] recordPath = new String[]{"library","book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
-                new ImportParameters(false, true, false));
-
+        try {
+            XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
+                    new ImportParameters(false, true, false));
+        } catch (Exception e){
+            Assert.fail();
+        }
         log(project);
         assertProjectCreated(project, 0, 6);
 
@@ -230,9 +233,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[]{"library", "book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
-                new ImportParameters(false, true, false));
-
+        try {
+            XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
+                    new ImportParameters(false, true, false));
+        } catch (Exception e){
+            Assert.fail();
+        }
         log(project);
         assertProjectCreated(project, 0, 6);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -394,6 +400,52 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertNotNull(book.subgroups.get("genre"));
 
         //TODO check record
+    }
+
+    @Test
+    public void trimLeadingTrailingWhitespaceOnTrimString(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
+        ParserSkip();
+
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, true, false, false);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+        log(project);
+        Assert.assertNotNull(project.rows);
+        Assert.assertEquals(project.rows.size(), 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "author1");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "a date");
+    }
+
+    @Test
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimString(){
+        loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
+        ParserSkip();
+
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail();
+        }
+        log(project);
+        Assert.assertNotNull(project.rows);
+        Assert.assertEquals(project.rows.size(), 1);
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "  author1  ");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "  a date  ");
     }
 
     @Test

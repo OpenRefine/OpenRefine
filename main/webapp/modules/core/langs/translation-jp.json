@@ -220,7 +220,7 @@
     "core-dialogs/clustering": "クラスタリング中…",
     "core-dialogs/out-empty-row": "空の列（全セルがnull）を出力",
     "core-dialogs/from": "からの",
-    "core-dialogs/export-to-local": "ローカルにエクスポート",
+    "core-dialogs/export-to-local": "プロジェクトをエクスポート",
     "core-dialogs/drag-column": "ドラッグして並べ替え",
     "core-dialogs/custom": "カスタム",
     "core-dialogs/returns": "返値",
@@ -353,7 +353,6 @@
     "core-project/remove-all": "全ファセットを削除",
     "core-project/complete": "完了",
     "core-project/undo": "取り消す",
-    "core-project/warning-align": "まだ任意のスキーマの配置を行っていないので、\nエクスポートするトリプルはありません。\n最初にFreebaseのスキーマで、データを整列するコマンド\n[Freebase > スキーマのアライメントスケルトンを編集…]\nを使用してください。",
     "core-project/use-to-select": "ファセットやフィルターでデータのサブセットを選択できます。各カラムのメニューからファセットとフィルターメソッドを選択してください。",
     "core-project/not-sure": "使い方がわからない?",
     "core-project/permalink": "パーマリンク",
@@ -390,7 +389,7 @@
     "core-util-enc/all": "すべての文字コード",
     "core-util-enc/years-ago": "年前",
     "core-util-enc/week-ago": "1週間前",
-    "core-util-enc/working": "進行中",
+    "core-util-enc/working": "処理中",
     "core-util-enc/encoding": "文字コード",
     "core-util-enc/months-ago": "ヶ月前",
     "core-util-enc/yesterday": "昨日",
@@ -740,5 +739,9 @@
     "core-views/column-join-write-selected-column": "結果を選択したカラムに書き込む。",
     "core-views/column-join-copy-to-new-column": "結果を書き込むカラムの名前…",
     "core-views/column-join-delete-joined-columns": "結合したカラムの削除。",
-    "core-views/column-join-dont-escape": "区切りや置換の文字は、改行なら\\n, タブは\\t, \\nなら\\\\n, \\t なら\\\\tです。"
+    "core-views/column-join-dont-escape": "区切りや置換の文字は、改行なら\\n, タブは\\t, \\nなら\\\\n, \\t なら\\\\tです。",
+    "core-views/add-id-column": "項目識別カラムを追加",
+    "core-views/add-id-column2": "項目を識別するカラムを追加する",
+    "core-views/add-id-col": "$1 に項目識別カラムを追加",
+    "core-dialogs/lb-formats-quotation": "常に引用符付き"
 }

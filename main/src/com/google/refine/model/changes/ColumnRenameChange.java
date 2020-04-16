@@ -55,7 +55,7 @@ public class ColumnRenameChange extends ColumnChange {
     @Override
     public void apply(Project project) {
         synchronized (project) {
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _oldColumnName);
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, _oldColumnName);
             project.columnModel.getColumnByName(_oldColumnName).setName(_newColumnName);
             project.columnModel.update();
         }
@@ -64,7 +64,7 @@ public class ColumnRenameChange extends ColumnChange {
     @Override
     public void revert(Project project) {
         synchronized (project) {
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _newColumnName);
+            ProjectManager.singleton.getLookupCacheManager().flushLookupsInvolvingProjectColumn(project.id, _newColumnName);
             project.columnModel.getColumnByName(_newColumnName).setName(_oldColumnName);
             project.columnModel.update();
         }

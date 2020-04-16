@@ -89,7 +89,7 @@ public class JsonImporter extends TreeImportingParserBase {
                 ObjectNode firstFileRecord = fileRecords.get(0);
                 File file = ImportingUtilities.getFile(job, firstFileRecord);
                 JsonFactory factory = new JsonFactory();
-                JsonParser parser = factory.createJsonParser(file);
+                JsonParser parser = factory.createParser(file);
 
                 PreviewParsingState state = new PreviewParsingState();
                 JsonNode rootValue = parseForPreview(parser, state);
@@ -223,7 +223,7 @@ public class JsonImporter extends TreeImportingParserBase {
         
         public JSONTreeReader(InputStream is) {
             try {
-                parser = factory.createJsonParser(is);
+                parser = factory.createParser(is);
                 current = null;
                 next  = parser.nextToken(); 
             } catch (IOException e) {
@@ -357,6 +357,8 @@ public class JsonImporter extends TreeImportingParserBase {
                     }
                 }
                 next = parser.nextToken();
+            } catch (JsonParseException e) {
+                throw new TreeReaderException(e.getOriginalMessage());
             } catch (IOException e) {
                 throw new TreeReaderException(e);
             }

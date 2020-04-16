@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
+import java.io.*;
+import java.util.zip.GZIPOutputStream;
+
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -125,5 +128,35 @@ public class ParsingUtilitiesTests extends RefineTest {
         String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
         String result = sub.replace(message);
         Assert.assertTrue(result.contains("1234"));
+    }
+    
+    @Test
+    public void testParseGZIPInutstream() throws IOException {
+        // Test decompressing gzip
+        try {
+            String sampleBody = "<HTML>\n" +
+                    "\n" +
+                    "<HEAD>\n" +
+                    "\n" +
+                    "<TITLE>Your Title Here</TITLE>\n" +
+                    "\n" +
+                    "</HEAD>\n" +
+                    "\n" +
+                    "<BODY BGCOLOR=\"FFFFFF\">\n" +
+                    "\n" +
+                    "</BODY>\n" +
+                    "\n" +
+                    "</HTML>";
+            ByteArrayOutputStream obj=new ByteArrayOutputStream();
+            GZIPOutputStream gzip = new GZIPOutputStream(obj);
+            gzip.write(sampleBody.getBytes("UTF-8"));
+            gzip.close();
+            byte[] compressed = obj.toByteArray();
+            
+            String res = ParsingUtilities.inputStreamToString(new ByteArrayInputStream(compressed), "gzip");
+            Assert.assertEquals(res, sampleBody);
+        } catch (Exception e) {
+            Assert.fail();
+        }
     }
 }

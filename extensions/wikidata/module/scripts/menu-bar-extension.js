@@ -21,19 +21,19 @@ ExporterManager.MenuItems.push({});
 ExporterManager.MenuItems.push(
         {
             id:"performWikibaseEdits",
-            label: $.i18n('wikidata-extension/perform-edits-on-wikidata'),
+            label: $.i18n('wikidata-extension/wikidata-edits'),
             click: function() { PerformEditsDialog.checkAndLaunch(); }
         });
 ExporterManager.MenuItems.push(
         {               
             id:"exportQuickStatements",
-            label: $.i18n('wikidata-extension/export-to-qs'),
+            label: $.i18n('wikidata-extension/qs-file'),
             click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("quickstatements"); }
         });
 ExporterManager.MenuItems.push(
         {               
             id:"exportWikibaseSchema",
-            label: $.i18n('wikidata-extension/export-wikidata-schema'),
+            label: $.i18n('wikidata-extension/wikidata-schema'),
             click: function() { WikibaseExporterMenuBar.checkSchemaAndExport("wikibase-schema"); }
         }
 );

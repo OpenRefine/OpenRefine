@@ -1,0 +1,8 @@
+{
+    "gdata-import/next->": "পরবর্তী&raquo;",
+    "gdata-exporter/uploading": "আপলোড চলছে…",
+    "gdata-exporter/upload-error": "আপলোড ত্রুটি: ",
+    "gdata-exporter/upload-success": "প্রকল্প সফলভাবে গুগল ড্রাইভে আপলোড করা হয়েছে ",
+    "gdata-exporter/new-spreadsheet": "একটি নতুন গুগল স্প্রেডশীট",
+    "gdata-exporter/enter-spreadsheet": "নতুন গুগল স্প্রেডশীটের নাম দিন"
+}

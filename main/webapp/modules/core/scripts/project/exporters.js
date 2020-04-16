@@ -38,9 +38,9 @@ ExporterManager.handlers = {};
 
 ExporterManager.MenuItems = [
   {
-    "id" : "core/export-project",
-    "label": $.i18n('core-project/export-project'),
-    "click": function() { ExporterManager.handlers.exportProject(); }
+    "id": "core/export-local",
+    "label": $.i18n('core-dialogs/export-to-local'),
+    "click": function () { ExporterManager.handlers.exportProjectToLocal(); }
   },
   {},
   {
@@ -80,9 +80,9 @@ ExporterManager.MenuItems = [
     "click": function() { new CustomTabularExporterDialog(); }
   },
   {
-      "id" : "core/export-sql",
-      "label": $.i18n('core-project/sql-export'),
-      "click": function() { new SqlExporterDialog(); }
+    "id" : "core/export-sql",
+    "label": $.i18n('core-project/sql-export'),
+    "click": function() { new SqlExporterDialog(); }
   },
   {
     "id" : "core/export-templating",
@@ -109,24 +109,16 @@ ExporterManager.stripNonFileChars = function(name) {
     return $.trim(name.replace(/[\\*\/:?"<>|]/g, ' ')).replace(/\s+/g, '-');
 };
 
-ExporterManager.handlers.exportTripleloader = function(format) {
-  if (!theProject.overlayModels.freebaseProtograph) {
-    alert($.i18n('triple-loader/warning-align'));
-  } else {
-    ExporterManager.handlers.exportRows(format, "txt");
-  }
-};
-
 ExporterManager.handlers.exportRows = function(format, ext) {
   var form = ExporterManager.prepareExportRowsForm(format, true, ext);
   $('<input />')
   .attr("name", "contentType")
   .attr("value", "application/x-unknown") // force download
   .appendTo(form);
-  
+
   document.body.appendChild(form);
 
-  window.open("about:blank", "refine-export");
+  window.open(" ", "refine-export");
   form.submit();
 
   document.body.removeChild(form);
@@ -149,96 +141,36 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
   .attr("name", "format")
   .attr("value", format)
   .appendTo(form);
+  $('<input />')
+  .attr("name", "quoteAll")
+  .appendTo(form);
   if (includeEngine) {
     $('<input />')
     .attr("name", "engine")
     .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
     .appendTo(form);
   }
-  
+
   return form;
 };
 
-ExporterManager.handlers.exportProject = function() {
+ExporterManager.handlers.exportProjectToLocal = function() {
   var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
-  // dialog
-  var dialog = $(DOM.loadHTML("core", "scripts/dialogs/export-project-dialog.html"));
-  var _elmts = DOM.bind(dialog);
-  
-  _elmts.dialogHeader.html($.i18n('core-dialogs/choose-export-destination'));
-  _elmts.toLocalRadio.html($.i18n('core-dialogs/export-to-local'));
-  _elmts.toGoogleDriveRadio.html($.i18n('core-dialogs/export-to-google-drive'));
-  _elmts.exportButton.html($.i18n('core-buttons/export'));
-  _elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-  
-  _elmts.exportButton.click(function() { 
-      if ($("input[name='export-destination']")[0].checked) {
-          exportToLocal(name);
-      } else {
-          exportToGoogleDrive(name);
-      }
-      
-      DialogSystem.dismissAll(); 
-  });
-  
-  _elmts.cancelButton.click(function() { DialogSystem.dismissAll(); });
-  
-  DialogSystem.showDialog(dialog);
-  
-  // save to google drive
-  var doExportToGoogleDrive = function() {
-      var name = window.prompt($.i18n('gdata-exporter/enter-filename'), theProject.metadata.name);
-      if (name) {
-        var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
-        Refine.postCSRF(
-          "command/gdata/upload",
-          {
-            "project" : theProject.id,
-            "name" : name,
-            "format" : "raw/openrefine-project"
-          },
-          function(o) {
-            dismiss();
+  var form = document.createElement("form");
+  $(form)
+  .css("display", "none")
+  .attr("method", "post")
+  .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
+  .attr("target", "refine-export");
+  $('<input />')
+  .attr("name", "project")
+  .attr("value", theProject.id)
+  .appendTo(form);
 
-            if (o.url) {
-                alert($.i18n('gdata-exporter/upload-success'));
-            } else {
-                alert($.i18n('gdata-exporter/upload-error') + o.message)
-            }
-            onDone();
-          },
-          "json"
-        );
-      }
-    };
+  document.body.appendChild(form);
 
-  function exportToGoogleDrive(name) {
-    if (GdataExtension.isAuthorized()) {
-        doExportToGoogleDrive();
-    } else {
-        GdataExtension.showAuthorizationDialog(doExportToGoogleDrive);
-    }
-  }
-  
-  // save to local
-  function exportToLocal(name) {
-      var form = document.createElement("form");
-      $(form)
-      .css("display", "none")
-      .attr("method", "post")
-      .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
-      .attr("target", "refine-export");
-      $('<input />')
-      .attr("name", "project")
-      .attr("value", theProject.id)
-      .appendTo(form);
-    
-      document.body.appendChild(form);
-    
-      window.open("about:blank", "refine-export");
-      form.submit();
-    
-      document.body.removeChild(form);
-  }
+  window.open(" ", "refine-export");
+  form.submit();
+
+  document.body.removeChild(form);
 };
-

@@ -16,11 +16,13 @@ public class DatabaseTestConfig extends DBExtensionTests {
     private DatabaseConfiguration mysqlDbConfig;
     private DatabaseConfiguration pgsqlDbConfig;
     private DatabaseConfiguration mariadbDbConfig;
+    private DatabaseConfiguration sqliteDbConfig;
 
     @BeforeSuite
     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable",
                   "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable",
-                  "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbyDbUser", "mariadbDbPassword", "mariadbTestTable"})
+                  "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbyDbUser", "mariadbDbPassword", "mariadbTestTable",
+                  "sqliteDbName", "sqliteTestTable"})
     public void beforeSuite(
             @Optional(DEFAULT_MYSQL_DB_NAME)   String mySqlDbName,     @Optional(DEFAULT_MYSQL_HOST)  String mySqlDbHost, 
             @Optional(DEFAULT_MYSQL_PORT)      String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER)  String mySqlDbUser,
@@ -32,7 +34,9 @@ public class DatabaseTestConfig extends DBExtensionTests {
             
             @Optional(DEFAULT_MARIADB_NAME)      String mariadbDbName,     @Optional(DEFAULT_MARIADB_HOST)  String mariadbDbHost, 
             @Optional(DEFAULT_MARIADB_PORT)      String mariadbDbPort,     @Optional(DEFAULT_MARIADB_USER)  String mariadbyDbUser,
-            @Optional(DEFAULT_MARIADB_PASSWORD)  String mariadbDbPassword, @Optional(DEFAULT_TEST_TABLE)    String mariadbTestTable)
+            @Optional(DEFAULT_MARIADB_PASSWORD)  String mariadbDbPassword, @Optional(DEFAULT_TEST_TABLE)    String mariadbTestTable,
+
+            @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
                     throws DatabaseServiceException, SQLException {
         
         //System.out.println("@BeforeSuite\n");
@@ -62,10 +66,14 @@ public class DatabaseTestConfig extends DBExtensionTests {
         mariadbDbConfig.setDatabaseType(MariaDBDatabaseService.DB_NAME);
         mariadbDbConfig.setDatabaseUser(mariadbyDbUser);
         mariadbDbConfig.setUseSSL(false);
+
+        sqliteDbConfig = new DatabaseConfiguration();
+        sqliteDbConfig.setDatabaseName(sqliteDbName);
     
         DBExtensionTestUtils.initTestData(mysqlDbConfig);
         DBExtensionTestUtils.initTestData(pgsqlDbConfig);
         DBExtensionTestUtils.initTestData(mariadbDbConfig);
+        DBExtensionTestUtils.initTestData(sqliteDbConfig);
     }
   
     @AfterSuite
@@ -75,6 +83,7 @@ public class DatabaseTestConfig extends DBExtensionTests {
         DBExtensionTestUtils.cleanUpTestData(mysqlDbConfig);
         DBExtensionTestUtils.cleanUpTestData(pgsqlDbConfig);
         DBExtensionTestUtils.cleanUpTestData(mariadbDbConfig);
+        DBExtensionTestUtils.cleanUpTestData(sqliteDbConfig);
     }
 
 }
