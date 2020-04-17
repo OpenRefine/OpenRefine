@@ -40,6 +40,8 @@ function TextSearchFacet(div, config, options) {
 
   this._options = options;
 
+  this._minimizeState = false;
+
   this._query = config.query || null;
   this._timerID = null;
 
@@ -89,25 +91,30 @@ TextSearchFacet.prototype._initializeUI = function() {
   var self = this;
   var counter = this._uniqueIdForLabels();
   this._div.empty().show().html(
-      '<div class="facet-title" bind="facetTitle">' + 
+    '<div class="facet-title" bind="facetTitle">' + 
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
-      '<td>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-            '<span bind="titleSpan"></span>' +
-      '</td>' +
+        '<td width="1%">' +
+          '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+        '</td>' +
+        '<td width="1%">' +
+          '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+        '</td>' +
+        '<td>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
+          '<span bind="titleSpan"></span>' +
+        '</td>' +
       '</tr></table></div>' +
-      '</div>' +
-      '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
+    '</div>' +
+    '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
       '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
       '<tr>' +
-      '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox'+counter+'" /></td>' +
-      '<td><label for="caseSensitiveCheckbox'+counter+'">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
-      '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox'+counter+'" /></td>' +
-      '<td><label for="regexCheckbox'+counter+'">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
+        '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox'+counter+'" /></td>' +
+        '<td><label for="caseSensitiveCheckbox'+counter+'">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
+        '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox'+counter+'" /></td>' +
+        '<td><label for="regexCheckbox'+counter+'">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
       '</tr>' +
-      '</table></div></div>'
+    '</table></div>'
   );
 
   this._elmts = DOM.bind(this._div);
@@ -121,6 +128,7 @@ TextSearchFacet.prototype._initializeUI = function() {
   }
 
   this._elmts.removeButton.click(function() { self._remove(); });
+  this._elmts.minimizeButton.click(function() { self._minimize(); });
   this._elmts.resetButton.click(function() { self._reset(); });
   this._elmts.invertButton.click(function() { self._invert(); });
 
@@ -184,6 +192,16 @@ TextSearchFacet.prototype._remove = function() {
   this._div = null;
   this._config = null;
   this._options = null;
+};
+
+TextSearchFacet.prototype._minimize = function() {
+  if(!this._minimizeState) {
+    this._div.addClass("facet-state-minimize");
+  } else {
+    this._div.removeClass("facet-state-minimize");
+  }
+  
+  this._minimizeState = !this._minimizeState;
 };
 
 TextSearchFacet.prototype._update = function () {
