@@ -56,7 +56,7 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <maven-compiler-plugin.release>8</maven-compiler-plugin.release>  <!-- Which Java version to cross-compile against -->  
+    <maven-compiler-plugin.release>9</maven-compiler-plugin.release>  <!-- Which Java version to cross-compile against -->  
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <build-helper-maven-plugin.version>3.1.0</build-helper-maven-plugin.version>
     <surefire.version>2.22.2</surefire.version>
