@@ -310,7 +310,7 @@
     "core-facets/facet-by-count": "Facetas por conteo de opciones",
     "core-facets/linear-plot": "Gráfica lineal",
     "core-facets/rotated-clock": "Girar 45° en dirección de las manecillas de reloj",
-    "core-facets/remove-facet": "Minimizar esta faceta",
+    "core-facets/remove-facet": "Alternar la minimización y la maximización de esta faceta",
     "core-facets/remove-facet": "Quitar esta faceta",
     "core-facets/too-many-choices": "opciones en total, son muchas para mostrar",
     "core-facets/time": "Hora",

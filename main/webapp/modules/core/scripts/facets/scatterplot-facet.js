@@ -36,6 +36,8 @@ function ScatterplotFacet(div, config, options) {
   this._config = config;
   this._options = options;
 
+  this._minimizeState = false;
+
   this._error = false;
   this._initializedUI = false;
 }
@@ -91,53 +93,60 @@ ScatterplotFacet.prototype._initializeUI = function() {
   var facet_id = container.attr("id");
 
   this._div.empty().show().html(
-      '<div class="facet-title">' +
+    '<div class="facet-title">' +
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
-      '<td>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-      '<span bind="titleSpan"></span>' +
-      '</td>' +
+        '<td width="1%">' +
+          '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+        '</td>' +
+        '<td width="1%">' +
+          '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+        '</td>' +
+        '</td>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
+          '<span bind="titleSpan"></span>' +
+        '</td>' +
       '</tr></table></div>' +
-      '</div>' +
-      '<div class="facet-scatterplot-body" bind="bodyDiv">' +
+    '</div>' +
+    '<div class="facet-scatterplot-body" bind="bodyDiv">' +
       '<div class="facet-scatterplot-message" bind="messageDiv">'+$.i18n('core-facets/loading')+'</div>' +
       '<table width="100%"><tr>' + 
-      '<td>' +
-      '<div class="facet-scatterplot-plot-container">' +
-      '<div class="facet-scatterplot-plot" bind="plotDiv">' +
-      '<img class="facet-scatterplot-image" bind="plotBaseImg" />' +
-      '<img class="facet-scatterplot-image" bind="plotImg" />' +
-      '</div>' +
-      '</div>' +
-      '</td>' +
-      '<td class="facet-scatterplot-selectors-container" width="100%">' +
-      '<div class="scatterplot-selectors" bind="selectors">' +
-      '<div class="buttonset scatterplot-dim-selector">' +
-      '<input type="radio" id="' + facet_id + '-dim-lin" name="' + facet_id + '-dim" value="lin"/><label class="dim-lin-label" for="' + facet_id + '-dim-lin" title="'+$.i18n('core-facets/linear-plot')+'">'+$.i18n('core-facets/linear-plot-abbr')+'</label>' +
-      '<input type="radio" id="' + facet_id + '-dim-log" name="' + facet_id + '-dim" value="log"/><label class="dim-log-label" for="' + facet_id + '-dim-log" title="'+$.i18n('core-facets/logar-plot')+'">'+$.i18n('core-facets/logar-plot-abbr')+'</label>' +
-      '</div>' + 
-      '<div class="buttonset scatterplot-rot-selector">' +
-      '<input type="radio" id="' + facet_id + '-rot-ccw"  name="' + facet_id + '-rot" value="ccw"/><label class="rot-ccw-label" for="' + facet_id + '-rot-ccw" title="'+$.i18n('core-facets/rotated-counter-clock')+'">&nbsp;</label>' +
-      '<input type="radio" id="' + facet_id + '-rot-none" name="' + facet_id + '-rot" value="none"/><label class="rot-none-label" for="' + facet_id + '-rot-none" title="'+$.i18n('core-facets/no-rotation')+'">&nbsp;</label>' +
-      '<input type="radio" id="' + facet_id + '-rot-cw"   name="' + facet_id + '-rot" value="cw"/><label class="rot-cw-label" for="' + facet_id + '-rot-cw" title="'+$.i18n('core-facets/rotated-clock')+'">&nbsp;</label>' +
-      '</div>' +
-      '<div class="buttonset scatterplot-dot-selector">' +
-      '<input type="radio" id="' + facet_id + '-dot-small"   name="' + facet_id + '-dot" value="small"/><label class="dot-small-label" for="' + facet_id + '-dot-small" title="'+$.i18n('core-facets/small-dot')+'">&nbsp;</label>' +
-      '<input type="radio" id="' + facet_id + '-dot-regular" name="' + facet_id + '-dot" value="regular"/><label class="dot-regular-label" for="' + facet_id + '-dot-regular" title="'+$.i18n('core-facets/regular-dot')+'">&nbsp;</label>' +
-      '<input type="radio" id="' + facet_id + '-dot-big"     name="' + facet_id + '-dot" value="big"/><label class="dot-big-label" for="' + facet_id + '-dot-big" title="'+$.i18n('core-facets/big-dot')+'">&nbsp;</label>' +
-      '</div>' +
-      '<div class="scatterplot-export-plot"><a bind="exportPlotLink" class="action" target="_blank">'+$.i18n('core-facets/export-plot')+'</a></div>' +
-      '</div>' +
-      '</td>' + 
+        '<td>' +
+          '<div class="facet-scatterplot-plot-container">' +
+          '<div class="facet-scatterplot-plot" bind="plotDiv">' +
+          '<img class="facet-scatterplot-image" bind="plotBaseImg" />' +
+          '<img class="facet-scatterplot-image" bind="plotImg" />' +
+          '</div>' +
+          '</div>' +
+        '</td>' +
+        '<td class="facet-scatterplot-selectors-container" width="100%">' +
+          '<div class="scatterplot-selectors" bind="selectors">' +
+            '<div class="buttonset scatterplot-dim-selector">' +
+              '<input type="radio" id="' + facet_id + '-dim-lin" name="' + facet_id + '-dim" value="lin"/><label class="dim-lin-label" for="' + facet_id + '-dim-lin" title="'+$.i18n('core-facets/linear-plot')+'">'+$.i18n('core-facets/linear-plot-abbr')+'</label>' +
+              '<input type="radio" id="' + facet_id + '-dim-log" name="' + facet_id + '-dim" value="log"/><label class="dim-log-label" for="' + facet_id + '-dim-log" title="'+$.i18n('core-facets/logar-plot')+'">'+$.i18n('core-facets/logar-plot-abbr')+'</label>' +
+            '</div>' + 
+            '<div class="buttonset scatterplot-rot-selector">' +
+              '<input type="radio" id="' + facet_id + '-rot-ccw"  name="' + facet_id + '-rot" value="ccw"/><label class="rot-ccw-label" for="' + facet_id + '-rot-ccw" title="'+$.i18n('core-facets/rotated-counter-clock')+'">&nbsp;</label>' +
+              '<input type="radio" id="' + facet_id + '-rot-none" name="' + facet_id + '-rot" value="none"/><label class="rot-none-label" for="' + facet_id + '-rot-none" title="'+$.i18n('core-facets/no-rotation')+'">&nbsp;</label>' +
+              '<input type="radio" id="' + facet_id + '-rot-cw"   name="' + facet_id + '-rot" value="cw"/><label class="rot-cw-label" for="' + facet_id + '-rot-cw" title="'+$.i18n('core-facets/rotated-clock')+'">&nbsp;</label>' +
+            '</div>' +
+            '<div class="buttonset scatterplot-dot-selector">' +
+              '<input type="radio" id="' + facet_id + '-dot-small"   name="' + facet_id + '-dot" value="small"/><label class="dot-small-label" for="' + facet_id + '-dot-small" title="'+$.i18n('core-facets/small-dot')+'">&nbsp;</label>' +
+              '<input type="radio" id="' + facet_id + '-dot-regular" name="' + facet_id + '-dot" value="regular"/><label class="dot-regular-label" for="' + facet_id + '-dot-regular" title="'+$.i18n('core-facets/regular-dot')+'">&nbsp;</label>' +
+              '<input type="radio" id="' + facet_id + '-dot-big"     name="' + facet_id + '-dot" value="big"/><label class="dot-big-label" for="' + facet_id + '-dot-big" title="'+$.i18n('core-facets/big-dot')+'">&nbsp;</label>' +
+            '</div>' +
+            '<div class="scatterplot-export-plot"><a bind="exportPlotLink" class="action" target="_blank">'+$.i18n('core-facets/export-plot')+'</a></div>' +
+          '</div>' +
+        '</td>' + 
       '</tr></table>' +
       '<div class="facet-scatterplot-status" bind="statusDiv"></div>' +
-      '</div>'
+    '</div>'
   );
   this._elmts = DOM.bind(this._div);
 
   this._elmts.titleSpan.text(this._config.name);
   this._elmts.removeButton.click(function() { self._remove(); });
+  this._elmts.minimizeButton.click(function() { self._minimize(); });
+  
   this._elmts.resetButton.click(function() {
     self.reset();
     self._updateRest();
@@ -349,6 +358,16 @@ ScatterplotFacet.prototype._remove = function() {
 
   this._div = null;
   this._config = null;
+};
+
+ScatterplotFacet.prototype._minimize = function() {
+  if(!this._minimizeState) {
+    this._div.addClass("facet-state-minimize");
+  } else {
+    this._div.removeClass("facet-state-minimize");
+  }
+  
+  this._minimizeState = !this._minimizeState;
 };
 
 ScatterplotFacet.prototype._updateRest = function() {

@@ -286,7 +286,7 @@
     "core-dialogs/choose-export-destination": "Please choose the destination for project export",
     "core-dialogs/export-to-local": "OpenRefine project archive to file",
     "core-facets/remove-facet": "Remove this facet",
-    "core-facets/minimize-facet": "Minimize this facet",
+    "core-facets/minimize-facet": "Toggle the minimization and maximization of this facet",
     "core-facets/reset": "reset",
     "core-facets/invert": "invert",
     "core-facets/change": "change",
