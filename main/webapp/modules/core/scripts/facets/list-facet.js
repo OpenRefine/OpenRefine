@@ -37,7 +37,7 @@ function ListFacet(div, config, options, selection) {
   if (!("invert" in this._config)) {
     this._config.invert = false;
   }
-  
+
   this._options = options || {};
   if (!("sort" in this._options)) {
     this._options.sort = "name";
@@ -46,7 +46,7 @@ function ListFacet(div, config, options, selection) {
   this._selection = selection || [];
 
   this._minimizeState = false;
-  
+
   this._blankChoice = (config.selectBlank) ? { s : true, c : 0 } : null;
   this._errorChoice = (config.selectError) ? { s : true, c : 0 } : null;
 
