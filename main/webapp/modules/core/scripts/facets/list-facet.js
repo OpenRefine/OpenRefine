@@ -38,7 +38,7 @@ function ListFacet(div, config, options, selection) {
     this._config.invert = false;
   }
   
-  this._config.minimize = false;
+  this._minimizeState = false;
   
   this._options = options || {};
   if (!("sort" in this._options)) {
@@ -84,7 +84,6 @@ ListFacet.prototype.getJSON = function() {
   var o = {
       type: "list",
       name: this._config.name,
-      minimize: this._config.minimize,
       columnName: this._config.columnName,
       expression: this._config.expression,
       omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
@@ -684,14 +683,13 @@ ListFacet.prototype._remove = function() {
 };
 
 ListFacet.prototype._minimize = function() {
-  if(!this._config.minimize) {
+  if(!this._minimizeState) {
 	this._div.addClass("facet-state-minimize");
-	this._config.minimize = true;
-	
   } else {
 	this._div.removeClass("facet-state-minimize");
-	this._config.minimize = false;
   }
+  
+  this._minimizeState = !this._minimizeState;
 };
 
 ListFacet.prototype._updateRest = function() {
