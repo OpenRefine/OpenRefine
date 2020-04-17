@@ -101,7 +101,7 @@ ScatterplotFacet.prototype._initializeUI = function() {
         '<td width="1%">' +
           '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
         '</td>' +
-        '</td>' +
+        '<td>' +
           '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
           '<span bind="titleSpan"></span>' +
         '</td>' +
