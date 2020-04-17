@@ -1,0 +1,38 @@
+{
+  "docs": {
+    "Getting Started": [
+      "index",
+      "install",
+      "user_data",
+      "records_mode"
+    ],
+    "Importing Data": [
+       "importers/csv",
+       "importers/json",
+       "importers/xml"
+    ],
+    "Operations": [
+        "operations/transform",
+        "operations/add_column",
+        "operations/fill_down",
+        "operations/blank_down",
+        "operations/recon",
+        "operations/key_value_columnize"
+    ],
+    "Facets": [
+        "facets/text",
+        "facets/numeric",
+        "facets/scatterplot"
+    ],
+    "Exporters": [
+        "exporters/csv",
+        "exporters/gsheets",
+        "exporters/ods"
+    ],
+    "GREL": [
+        "grel/cross",
+        "grel/facetCount",
+        "grel/toString"
+    ]
+  }
+}
