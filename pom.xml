@@ -56,6 +56,9 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
+    <maven-compiler-plugin.release>9</maven-compiler-plugin.release>  <!-- Which Java version to cross-compile against -->  
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <build-helper-maven-plugin.version>3.1.0</build-helper-maven-plugin.version>
     <surefire.version>2.22.2</surefire.version>
     <surefireArgs></surefireArgs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,7 +77,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>${build-helper-maven-plugin.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -92,11 +95,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>${maven-compiler-plugin.release}</release>
           <encoding>UTF-8</encoding>
+          <showWarnings>true</showWarnings>
           <showDeprecation>false</showDeprecation>
         </configuration>
       </plugin>

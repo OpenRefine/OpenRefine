@@ -28,7 +28,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>${build-helper-maven-plugin.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -46,10 +46,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>${maven-compiler-plugin.release}</release>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
