@@ -4,8 +4,8 @@
 const siteConfig = {
   title: 'OpenRefine', // Title for your website.
   tagline: 'A power tool for working with messy data.',
-  url: 'https://openrefine.github.io/',
-  baseUrl: '/docs-prototype/',
+  url: 'https://docs.openrefine.org/',
+  baseUrl: '/',
 
   projectName: 'OpenRefine',
   organizationName: 'OpenRefine',
