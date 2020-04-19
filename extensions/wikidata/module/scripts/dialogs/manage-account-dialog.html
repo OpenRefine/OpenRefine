@@ -26,7 +26,7 @@
                 </tr>
               </table>
               <div class="wikibase-login-buttons">
-                <button class="button cancel-button" bind="cancelButton1"></button>
+                <button class="button cancel-button" type="button" bind="cancelButton1"></button>
                 <input class="button button-primary" type="submit" bind="loginButton"></input>
               </div>
             </form>
@@ -34,10 +34,6 @@
           <div class="wikibase-user-logout" bind="logoutArea">
             <p><span bind="loggedInAs"></span>
                <a bind="loggedInUsername" target="_blank"></a></p>
-            <form bind="logoutForm" method="post">
-              <input type="hidden" name="wb-username" value="null" />
-              <input name="wb-password" type="hidden" value="null" />
-            </form>
             <div class="wikibase-login-buttons">
                 <button class="button cancel-button" bind="cancelButton2"></button>
                 <button class="button button-primary" bind="logoutButton"></button>

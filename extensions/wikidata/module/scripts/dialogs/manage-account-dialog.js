@@ -39,6 +39,7 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
   }
 
   this._level = DialogSystem.showDialog(frame);
+  this._elmts.usernameInput.focus();
 
   var dismiss = function() {
     DialogSystem.dismissUntil(self._level - 1);
