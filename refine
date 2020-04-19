@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ########################################################## 
 #               OpenRefine Control System             #
@@ -45,6 +45,7 @@ where [options] include:
 
   -m <memory> max memory heap size to use
      default: 1024M
+     Values less than 256M not allowed
 
   -k <google api key> a server API key for calling Google APIs
 
@@ -386,7 +387,21 @@ dist() {
     get_version $1
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
-    mvn package
+    "$MVN" package
+}
+
+windows_dist() {
+    get_version $1
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P windows
+}
+
+linux_dist() {
+    get_version $1
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P linux
 }
  
 # Kept just in case someone wants to follow this workflow on a mac,
@@ -568,6 +583,7 @@ run() {
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
+    echo "${RUN_CMD[@]}"
 
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
@@ -750,7 +766,13 @@ fi
 
 # ----- Load configurations -------------------------------------
 
-load_configs refine.ini
+if [ -f "refine-dev.ini" ]; then
+  echo "Using refine-dev.ini for configuration"
+  load_configs refine-dev.ini
+else
+  echo "Using refine.ini for configuration"
+  load_configs refine.ini
+fi
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
@@ -783,7 +805,16 @@ while [ $# -ne 0 ] ; do
     -i) shift; REFINE_HOST="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) shift; REFINE_MEMORY="$1"; shift; continue;;
+    -m) 
+      shift;
+      if [ $1 -le 256 ]
+      then
+        fail "Value of -m less than 256 not allowed";
+      else
+        REFINE_MEMORY="$1";
+        shift;
+        continue;
+      fi;;
     -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;

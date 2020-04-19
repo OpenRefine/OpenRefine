@@ -36,6 +36,8 @@ function RangeFacet(div, config, options) {
   this._config = config;
   this._options = options;
 
+  this._minimizeState = false;
+
   this._from = ("from" in this._config) ? this._config.from : null;
   this._to = ("to" in this._config) ? this._config.to : null;
 
@@ -130,25 +132,30 @@ RangeFacet.prototype._initializeUI = function() {
   .empty()
   .show()
   .html(
-      '<div class="facet-title" bind="headerDiv">' +
+    '<div class="facet-title" bind="headerDiv">' +
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-      '<td width="1%"><a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a></td>' +
-      '<td>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-      '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-      '<span bind="facetTitle"></span>' +
-      '</td>' +
+        '<td width="1%">' +
+          '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+        '</td>' +
+        '<td width="1%">' +
+          '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+        '</td>' +
+        '<td>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
+          '<span bind="facetTitle"></span>' +
+        '</td>' +
       '</tr></table></div>' +
-      '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
+    '</div>' +
+    '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
       '<div class="facet-range-body">' +
-      '<div class="facet-range-message" bind="messageDiv">'+$.i18n('core-facets/loading')+'</div>' +
-      '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
-      '<div class="facet-range-histogram" bind="histogramDiv"></div>' +
+        '<div class="facet-range-message" bind="messageDiv">'+$.i18n('core-facets/loading')+'</div>' +
+        '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
+        '<div class="facet-range-histogram" bind="histogramDiv"></div>' +
       '</div>' +
       '<div class="facet-range-status" bind="statusDiv"></div>' +
       '<div class="facet-range-other-choices" bind="otherChoicesDiv"></div>' +
-      '</div>'
+    '</div>'
   );
   this._elmts = DOM.bind(this._div);
 
@@ -168,9 +175,9 @@ RangeFacet.prototype._initializeUI = function() {
     self.reset();
     self._updateRest();
   });
-  this._elmts.removeButton.click(function() {
-    self._remove();
-  });
+  
+  this._elmts.removeButton.click(function() { self._remove(); });
+  this._elmts.minimizeButton.click(function() { self._minimize(); });
 
   this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#bbccff", "#88aaee" ] });
   this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
@@ -366,6 +373,16 @@ RangeFacet.prototype._remove = function() {
   this._div = null;
   this._config = null;
   this._data = null;
+};
+
+RangeFacet.prototype._minimize = function() {
+  if(!this._minimizeState) {
+    this._div.addClass("facet-state-minimize");
+  } else {
+    this._div.removeClass("facet-state-minimize");
+  }
+  
+  this._minimizeState = !this._minimizeState;
 };
 
 RangeFacet.prototype._updateRest = function() {

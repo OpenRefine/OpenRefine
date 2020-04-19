@@ -48,6 +48,20 @@ $.ajax({
 $.i18n().load(dictionary, lang);
 // End internationalization
 
+ExporterManager.MenuItems.push({});
+ExporterManager.MenuItems.push(
+  {
+    "id": "export-to-google-drive",
+    "label": $.i18n('gdata-exporter/export-to-google-drive'),
+    "click": function () { ExporterManager.handlers.exportProjectToGoogleDrive(); }
+  });
+ExporterManager.MenuItems.push(
+  {
+    "id": "export-to-google-sheets",
+    "label": $.i18n('gdata-exporter/google-sheets'),
+    "click": function () { ExporterManager.handlers.exportProjectToGoogleSheets(); }
+  });
+
 (function() {
   var handleUpload = function(options, exportAllRows, onDone, prompt) {
     var doUpload = function() {
@@ -84,7 +98,7 @@ $.i18n().load(dictionary, lang);
       GdataExtension.showAuthorizationDialog(doUpload);
     }
   };
-  
+
   CustomTabularExporterDialog.uploadTargets.push({
     id: 'gdata/google-spreadsheet',
     label: $.i18n('gdata-exporter/new-spreadsheet'),
@@ -93,3 +107,71 @@ $.i18n().load(dictionary, lang);
     }
   });
 })();
+
+ExporterManager.handlers.exportProjectToGoogleDrive = function () {
+  var doExportToGoogleDrive = function () {
+    var name = window.prompt($.i18n('gdata-exporter/enter-filename'), theProject.metadata.name);
+    if (name) {
+      var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
+      Refine.postCSRF(
+        "command/gdata/upload",
+        {
+          "project": theProject.id,
+          "name": name,
+          "format": "raw/openrefine-project"
+        },
+        function (o) {
+          dismiss();
+
+          if (o.url) {
+            alert($.i18n('gdata-exporter/upload-google-drive-success'));
+          } else {
+            alert($.i18n('gdata-exporter/upload-error') + o.message)
+          }
+          onDone();
+        },
+        "json"
+      );
+    }
+  };
+
+  if (GdataExtension.isAuthorized()) {
+    doExportToGoogleDrive();
+  } else {
+    GdataExtension.showAuthorizationDialog(doExportToGoogleDrive);
+  }
+}
+
+ExporterManager.handlers.exportProjectToGoogleSheets = function () {
+  var doExportToGoogleSheets = function () {
+    var name = window.prompt($.i18n('gdata-exporter/enter-spreadsheet'), theProject.metadata.name);
+    if (name) {
+      var dismiss = DialogSystem.showBusy($.i18n('gdata-exporter/uploading'));
+      Refine.postCSRF(
+        "command/gdata/upload",
+        {
+          "project": theProject.id,
+          "name": name,
+          "format": "gdata/google-spreadsheet"
+        },
+        function (o) {
+          dismiss();
+
+          if (o.url) {
+            alert($.i18n('gdata-exporter/upload-google-sheets-success'));
+          } else {
+            alert($.i18n('gdata-exporter/upload-error') + o.message)
+          }
+          onDone();
+        },
+        "json"
+      );
+    }
+  };
+
+  if (GdataExtension.isAuthorized()) {
+    doExportToGoogleSheets();
+  } else {
+    GdataExtension.showAuthorizationDialog(doExportToGoogleSheets);
+  }
+}

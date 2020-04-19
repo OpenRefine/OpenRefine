@@ -240,7 +240,8 @@ function registerImporting() {
   IM.registerExtension(".tsv", "text/line-based/*sv");
 
   IM.registerExtension(".xml", "text/xml");
-
+  IM.registerExtension(".atom", "text/xml");
+  
   IM.registerExtension(".json", "text/json");
   IM.registerExtension(".js", "text/json");
 
@@ -250,6 +251,8 @@ function registerImporting() {
   IM.registerExtension(".ods", "text/xml/ods");
   
   IM.registerExtension(".nt", "text/rdf/nt");
+  IM.registerExtension(".ntriples", "text/rdf/nt");
+  
   IM.registerExtension(".n3", "text/rdf/n3");
   IM.registerExtension(".ttl", "text/rdf/ttl");
   IM.registerExtension(".jsonld", "text/rdf/ld+json");
@@ -267,6 +270,7 @@ function registerImporting() {
   IM.registerMimeType("text/csv", "text/line-based/*sv");
   IM.registerMimeType("text/x-csv", "text/line-based/*sv");
   IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
+  IM.registerMimeType("text/tab-separated-values", "text/line-based/*sv");
 
   IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
   
@@ -274,8 +278,11 @@ function registerImporting() {
   IM.registerMimeType("text/n3", "text/rdf/n3");
   IM.registerMimeType("text/rdf+n3", "text/rdf/n3");
   IM.registerMimeType("text/turtle", "text/rdf/ttl");
+  IM.registerMimeType("application/xml", "text/xml");
+  IM.registerMimeType("text/xml", "text/xml");
   IM.registerMimeType("application/rdf+xml", "text/rdf/xml");
   IM.registerMimeType("application/ld+json", "text/rdf/ld+json");
+  IM.registerMimeType("application/atom+xml", "text/xml");
 
   IM.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");

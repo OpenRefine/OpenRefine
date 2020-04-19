@@ -52,6 +52,8 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+import com.google.refine.ProjectManager;
+import com.google.refine.preference.PreferenceStore;
 
 public class EditBatchProcessorTest extends WikidataRefineTest {
 
@@ -155,6 +157,18 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                     Collections.singletonList(description), Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList(), Collections.emptyList(), summary, tags);
         }
+    }
+
+    @Test
+    public void testSetMaxLag() {
+        // use default value
+        EditBatchProcessor processor1 = new EditBatchProcessor(fetcher, editor, Collections.emptyList(), library, summary, tags, 50);
+        verify(editor, times(1)).setMaxLag(EditBatchProcessor.MAX_LAG_DEFAULT);
+
+        // use value in preference store
+        ProjectManager.singleton.getPreferenceStore().put(EditBatchProcessor.MAX_LAG_KEY, "10");
+        EditBatchProcessor processor2 = new EditBatchProcessor(fetcher, editor, Collections.emptyList(), library, summary, tags, 50);
+        verify(editor, times(1)).setMaxLag(10);
     }
 
     private Map<String, EntityDocument> toMap(List<ItemDocument> docs) {

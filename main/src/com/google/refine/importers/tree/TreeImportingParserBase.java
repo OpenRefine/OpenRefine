@@ -40,6 +40,7 @@ import java.io.Reader;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import com.google.refine.importers.tree.TreeReaderException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
@@ -220,8 +221,12 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             assert filenameColumnIndex == 0;
         }
         
-        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, 
-                new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
-                        fileSource));
+        try {
+            XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2,
+                    new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
+                            fileSource));
+        } catch (Exception e){
+            exceptions.add(e);
+        }
     }
 }

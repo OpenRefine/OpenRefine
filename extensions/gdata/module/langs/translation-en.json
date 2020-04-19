@@ -35,12 +35,15 @@
     "gdata-source/title": "Title",
     "gdata-source/authors": "Authors",
     "gdata-source/updated": "Updated",
+    "gdata-exporter/export-to-google-drive": "OpenRefine project archive to Google Drive…",
+    "gdata-exporter/google-sheets": "Google Sheets",
     "gdata-exporter/uploading": "Uploading…",
     "gdata-exporter/upload-error": "Upload error: ",
-    "gdata-exporter/upload-success": "Project was uploaded successfully to Google Drive ",
+    "gdata-exporter/upload-google-drive-success": "Project uploaded to Google Drive ",
     "gdata-exporter/new-spreadsheet": "A new Google spreadsheet",
     "gdata-exporter/enter-spreadsheet": "Enter a name for the new Google spreadsheet",
-    "gdata-exporter/enter-filename": "Enter a file name for the project export in Google Drive",
+    "gdata-exporter/upload-google-sheets-success": "Project uploaded to Google Drive ",
+    "gdata-exporter/enter-filename": "Enter a filename for the project export in Google Drive",
     "gdata-auth/authorize-label": "OpenRefine - Authorization",
     "gdata-auth/authorized-label": "Authorization process completed. Close this window and return to OpenRefine."
 }

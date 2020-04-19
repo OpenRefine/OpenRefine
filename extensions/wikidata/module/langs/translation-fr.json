@@ -3,7 +3,7 @@
     "wikidata-extension/edit-wikidata-schema": "Modifier le schéma Wikidata",
     "wikidata-extension/manage-wikidata-account": "Gérer le compte Wikidata",
     "wikidata-extension/perform-edits-on-wikidata": "Publier les modifications sur Wikidata",
-    "wikidata-extension/export-to-qs": "Exporter en QuickStatements",
+    "wikidata-extension/export-to-qs": "Exporter vers QuickStatements",
     "wikidata-extension/quickstatements-export-name": "QuickStatements",
     "wikidata-schema/dialog-header": "Aligner à Wikidata",
     "wikidata-schema/dialog-explanation": "Le schéma Wikidata ci-dessous spécifie comment vos données sont transformées en modifications sur Wikidata. Vous pouvez glisser-déposer les noms des colonnes ci-dessous dans la plupart des champs: pour chaque ligne, des modifications seront générées avec les valeurs dans ces colonnes.",
@@ -28,7 +28,6 @@
     "wikidata-schema/property-placeholder": "propriété",
     "wikidata-schema/nb-references": "&nbsp;références",
     "wikidata-schema/remove-column": "supprimer la colonne",
-    "wikidata-schema/label-if-new": "Libellé",
     "wikidata-schema/label-if-new": "Libellé (sans écraser)",
     "wikidata-schema/label-override": "Libellé (écrase si déjà présent)",
     "wikidata-schema/description": "Description",
@@ -154,5 +153,14 @@
     "import-wikibase-schema/file-label": "A partir du fichier JSON : ",
     "import-wikibase-schema/schema-label": "Ou à partir d'un texte JSON :",
     "import-wikibase-schema/invalid-schema": "Schéma Wikibase non valide.",
-    "import-wikibase-schema/import": "Importer"
+    "import-wikibase-schema/import": "Importer",
+    "wikidata-extension/qs-file": "Fichier QuickStatements",
+    "warnings-messages/item-description-identical-with-label/title": "Description et libellé sont identiques",
+    "warnings-messages/item-description-too-long/body": "La description ({lang}) <span class=\"wb-issue-preformat\">{description></span> sur {example_entity} est trop longue. Sa longueur est {length} caractères, la limite étant {max_length}. Les descriptions ne sont pas des phrases entières, mais plutôt des paraphrases succintes de deux à douze mots. Consultez le <a href=\"https://www.wikidata.org/wiki/Help:Description#Length\" target=\"_blank\">manuel</a> pour plus d'informations.",
+    "warnings-messages/item-description-too-long/title": "Description trop longue",
+    "warnings-messages/early-gregorian-date/body": "Les dates plus anciennes qu'Octobre 1582 (telles qu'en l'an {example_year}) ne sont probablement pas exprimées en calendrier Grégorien. Consultez le <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Dates\" target=\"_blank\">manuel</a> pour spécifier le calendrier approprié pour vos dates.",
+    "warnings-messages/early-gregorian-date/title": "Dates anciennes en calendrier Grégorien",
+    "wikidata-schema/label": "Libellé",
+    "wikidata-extension/wikidata-schema": "Schéma Wikidata",
+    "wikidata-extension/wikidata-edits": "Contributions Wikidata…"
 }
