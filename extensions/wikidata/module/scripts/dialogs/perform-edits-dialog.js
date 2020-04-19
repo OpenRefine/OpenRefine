@@ -58,9 +58,9 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   });
 
   this._elmts.editSummary.keypress(function (evt) {
-    evt.preventDefault();
     if (evt.which === 13) {
-    	doFormSubmit();
+      evt.preventDefault();
+      doFormSubmit();
     }
   });
 
@@ -68,15 +68,15 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
       elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
     elmts.performEditsButton.click(function() {
-    	doFormSubmit();
+      doFormSubmit();
     });
   }
 };
 
 PerformEditsDialog.updateEditCount = function(edit_count) {
   this._elmts.reviewYourEdits.html(
-        $.i18n('perform-wikidata-edits/review-your-edits')
-                .replace('{nb_edits}', edit_count));
+    $.i18n('perform-wikidata-edits/review-your-edits')
+      .replace('{nb_edits}', edit_count));
 }
 
 PerformEditsDialog._updateWarnings = function(data) {
