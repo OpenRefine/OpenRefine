@@ -100,7 +100,7 @@ DataTableView.prototype.render = function() {
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
       '<table class="data-table">'+
-        '<thead bind="tableHeader" class="data-table-header" style="background: #ebeef8">'+
+        '<thead bind="tableHeader" class="data-table-header">'+
         '</thead>'+
         '<tbody bind="table" class="data-table">'+
         '</tbody>'+
