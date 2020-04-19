@@ -7,4 +7,5 @@ lib/core/MetadataBlog.js
 
 translated_docs
 build/
+package-lock.json
 i18n/*
